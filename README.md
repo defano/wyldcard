@@ -1,11 +1,14 @@
 # HyperTalk Java
-The HyperCard Scripting Environment
 
 Originally released in 1987 as part of System Software 6, HyperCard was an application that largely defied classification: part database, part programming language, part "paint" program. In true Apple fashion, HyperCard was a new paradigm. Other toy languages of the time made it possible to write simple console-mode programs (boring!), but with HyperCard a novice could script an application with a full graphical user interface using a very expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
 
+**Looking for a way to run the _real_ HyperCard on modern machines?** Piece of cake: Use the SheepShaver emulator to run Macintosh System Software on newer Macs or Windows machines. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
+
 ## What is this?
 
-A toy implementation of Apple's HyperCard written in HyperCard. It was submitted as a graduate school class project for the compiler design course at DePaul University, Chicago.  
+A toy implementation of Apple's HyperCard written in Java. It was created as a class project for a graduate-level compiler design course at DePaul University in Chicago.  
+
+**For the attorneys in the audience:** This project represents a homework assignment. It is not associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
 ## What this is not
 
@@ -13,17 +16,23 @@ This is not a HyperCard replacement, nor is it an open-sourced version of Apple'
 
 It won't run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbiests and academics interested in compiler/interpreter design. Among its many severe limitations, this version lacks support for: multiple cards; backgrounds; paint tools; user levels; card, background or stack-level scripts; XCMDs and XFCNs; Home stack script inheritence; and a whole lot more. 
 
-## What Was Done
+## What was done
 
 I successfully implemented enough of the runtime environment and HyperTalk scripting language to demonstrate each of the core aspects of HyperCard, including: parts, attributes, event messaging, local and global variables, built-in and user defined functions, and complex prepositional chunk expressions.
 
 I used CUP and JFLEX as the parser generator, and Sun's NetBeans IDE for much of the Swing UI development. With my application, you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command). 
 
-## Getting Started
+## Building with Gradle
 
-The folder containing this document is a Java Eclipse project. It can be imported directly into Eclipse Europa for easy compilation. As I described on the class discussion board, the project implements automatic building of the parser and lexer; any modification to the CUP/FLEX input files will cause the parser and lexer to be regenerated. 
+The project can be built with Gradle. The following Gradle tasks are defined by the project's build file:
 
-You may choose to build the project yourself (RuntimeEnv.java contains the main entry point) or, alternately, I've included an executable JAR file (in the distribution/ directory) which you can run without having to compile anything.  
+Task | Description
+-----|----------------------------
+`run` | Build, test and run the application
+`jcup` | Re-generate the LALR parser code, using JCup
+`jflex` | Re-generate the lexer code, using JFlex
+
+#### Using the program
 
 Once the program is running, you'll be presented with the application's main window. From here, you may:
 
@@ -36,11 +45,13 @@ To start scripting:
 1.	Create a new button or field, or select an existing one.
 2.	Right-click on the part and choose "Edit Script..." or "Edit Part Properties..." Both buttons and fields have several user-editable properties that can be inspected and modified within the GUI.
 
-## The Language
+## The HyperTalk Language
 
 HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements (called parts) and are triggered by user actions called events. There is no singular "main" script that executes at runtime.
 
-A script consists of zero or more handlers and function definitions. A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it. A function definition, like its counterpart in other imperative languages accepts zero or more arguments, executes one or more statements and optionally returns a single value.
+### Script Handlers
+
+A script consists of zero or more handlers and function definitions. A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it. A _function definition_, like its counterpart in other imperative languages accepts zero or more arguments, executes one or more statements and optionally returns a single value.
 
 For example, a button might contain the script:
 
@@ -63,8 +74,6 @@ My HyperCard implementation automatically sends the following event messages:
 
 Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the send command. The message need not be a known HyperCard message (i.e., from the table above); it's acceptable to send a message of the scripter's own creation. 
 
-Also note that parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
-
 For example:
 
 ```
@@ -73,15 +82,17 @@ send doSomethingCool to field "myField"
 send keyDown to me
 ```
 
+Note that parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
+
 ### Parts and their properties
 
-A part is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, my version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a card (somewhat analogous to a window or panel).
+A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, my version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window or panel).
 
-In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background and are grouped into a document called a stack (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements—backgrounds, cards, stacks, etc—could contain their own scripts and act upon event messages from HyperCard. 
+In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background and are grouped into a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard. 
 
-For simplification, this implementation treats cards as standalone documents (there is no concept of a stack), and further, the card cannot itself be scripted, nor does it support the concept of a foreground and background.
+For simplification, this implementation treats cards as standalone documents (there is no concept of a stack), and furthermore, the card cannot itself be scripted, nor does it support the concept of a foreground and background.
 
-In addition to containing scripts, a part also maintains a set of properties. Properties control various aspects of the part, typically including its name, id, size and location. A part can be programmatically modified by way of its properties, and different types of parts have different properties.
+In addition to containing scripts, a part also maintains a set of _properties_. Properties control various aspects of the part like its name, id, size and location. A part can be programmatically modified by way of its properties, and different types of parts have different properties.
 
 A button has these properties:
 
@@ -115,7 +126,7 @@ Property | Description
 `wraptext` | Returns or sets whether the text contained by the field will automatically wrap at end of line.
 `locktext` | Returns or sets whether the text contained by the field can be edited by the user. 
 
-Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as me. Properties are read using the get command, and modified with the set command. Some examples include:
+Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are read using the `get` command, and modified with the `set` command. Some examples include:
 
 ```
 set the visible of me to true
@@ -125,12 +136,13 @@ get the name of button id 0
 
 ### Variables and containers 
 
-A container is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers. 
+A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers. 
+
 HyperCard is dynamically typed. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error. 
 
-Local variables in HyperTalk are lexically scoped. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string. 
+Local variables in HyperTalk are lexically scoped and implicity declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string. 
 
-HyperTalk uses "--" to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers. 
+HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers. 
 For example:
 
 ```
@@ -163,7 +175,7 @@ put 35 + 27 into field id 12
 put the text of button myButton into the message box
 ```
 
-Note that HyperTalk contains an implicit variable named it; most expressions and some commands mutate the value of this variable so that it always contains the most recent evaluated result. The value of it may also be retrieved using the result function. For example:
+Note that HyperTalk contains an implicit variable named `it`; most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard). For example:
 
 ```
 on mouseUp
@@ -175,7 +187,7 @@ end mouseUp
 
 ### Expressions
 
-HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can access or mutate a range of words, characters, lines, or comma-delimited items in a value. Chunks may be specified numerically (line 3 of), by ordinal (the third line of), or relatively (the last line of; the middle word of).
+HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can access or mutate a range of words, characters, lines, or comma-delimited items in a value. Chunks may be specified numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
 
 Chunk expressions follow the form:
 
@@ -202,7 +214,7 @@ the second item of "Hello,Goodbye" -- yields "Goodbye"
 the middle word of "one two three" -- yields "two"
 ```
 
-When mutating a chunk of text within a container (using the put command), a preposition (before, into, or after) may be included in the expression. For example:
+When mutating a chunk of text within a container (using the `put` command), a preposition (`before`, `into`, or `after`) may be included in the expression. For example:
 
 ```
 put word 2 of "Hello Goodbye" into the first word of field id 0
@@ -210,9 +222,9 @@ put "blah" after the third character of the middle item of myVar
 put 29 before the message box
 ```
 
-In addition to chunk expressions, HyperTalk supports a typical suite of operators, including:
+In addition to chunk expressions, HyperTalk supports a typical suite of math, string and logical operators, including the following (all operators are binary, excepted where otherwise noted):
 	
-Precedence | Operator | Description (all operators are binary, excepted where otherwise noted)
+Precedence | Operator | Description 
 -----------|----------| ----------------------------------------------------------------------
 1 (highest) | `( )` | Grouping
 2 | `-` | Negation for numbers (unary)
@@ -237,7 +249,7 @@ Precedence | Operator | Description (all operators are binary, excepted where ot
 9 | `and` | Logical AND for boolean values
 10 (lowest) |  `or` | Logical OR for boolean values
 
-My implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as HyperTalk.  Valid expressions include:
+This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as real HyperTalk.  Valid expressions include:
 
 ```
 4 * (2 + 3) -- yields 20
