@@ -1,0 +1,747 @@
+package hypertalk.parser;
+
+import java_cup.runtime.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import hypertalk.ast.common.*; 
+import hypertalk.ast.constructs.*;
+import hypertalk.ast.containers.*;
+import hypertalk.ast.expressions.*;
+import hypertalk.ast.functions.*;
+import hypertalk.ast.statements.*;
+import hypertalk.exception.*;
+
+import hypertalk.*; 
+import hypercard.runtime.*;
+
+/* TO PRINT LIST OF TOKENS DURING READ, UNCOMMENT FOLLOWING LINE */
+//scan with {: return ((HtLexer) getScanner ()).debug_next_token (); :}; 
+
+terminal						ASK, ANSWER, PUT, GET, SET, SEND;
+terminal						NOT, OR;
+terminal						LPAREN, RPAREN;
+terminal						THE, WITH;
+terminal						BEFORE, AFTER, INTO;
+terminal                	    FUNCTION, RETURN;
+terminal						ON, END;
+terminal						IF, ELSE, ENDIF, THEN;
+terminal						FOR, REPEAT, ENDREPEAT, FOREVER, UNTIL, WHILE, TIMES, DOWNTO;
+terminal						DO;
+terminal						FIELD, BUTTON, ID, ME;
+terminal String        	     	LITERAL; 
+terminal String					IDENTIFIER;
+terminal Integer				INTEGER_CONSTANT;
+terminal						MESSAGEBOX;
+terminal						RETURN_KEYWORD;
+
+terminal						DOT, COMMA, GLOBAL;
+terminal						WORD, ITEM, LINE, CHAR, OF, TO;
+
+terminal						NUMBER, MOUSELOC, MOUSE, AVERAGE, RESULT;
+terminal						IN, CHARS, LINES, ITEMS, WORDS;
+
+terminal						PLUS, MINUS, STAR, SLASH, AMP, AMPAMP, MOD, DIV;
+terminal						EQUALS, LESS, GREATER, LESSGREATER, CARET, IS;
+terminal						LESSEQUALS, GREATEREQUALS, AND, CONTAINS, ISIN;
+terminal						ISNOT, ISNOTIN;
+
+terminal						FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH;
+terminal						EIGTH, NINTH, TENTH, MID, MIDDLE, LAST;
+
+non terminal Script				script;
+non terminal NamedBlock			handler;
+non terminal Statement			nonEmptyStmnt;
+non terminal StatementList		statementList;
+
+non terminal Statement			commandStmnt;
+non terminal Statement			globalStmnt;
+non terminal Statement			doStmnt;
+non terminal Statement 			returnStmnt;
+
+non terminal Statement			ifStatement;
+non terminal					then;
+non terminal ThenElseBlock		singleThen;
+non terminal ThenElseBlock		multiThen;
+non terminal StatementList		elseBlock;
+
+non terminal StatRepeat			repeatStatement;
+non terminal RepeatSpecifier	repeatRange;
+non terminal RepeatSpecifier	duration;
+non terminal RepeatSpecifier	count;
+non terminal RepeatRange		range;	
+
+non terminal Statement	 	 	answerCmd;
+non terminal Statement			askCmd;
+non terminal Statement			putCmd;
+non terminal Statement			getCmd;
+non terminal Statement			setCmd;
+non terminal Statement			sendCmd;
+
+non terminal Expression			expression;
+non terminal Preposition		preposition;
+non terminal Destination		destination;
+non terminal 					message;
+
+non terminal ExpPart			part;
+
+non terminal Expression			factor;
+non terminal ExpLiteral			literal;
+non terminal Value				number;
+non terminal Ordinal			ordinal;
+
+non terminal UserFunction		function;
+non terminal ArgumentList		argumentList;
+non terminal ParameterList		parameterList;
+non terminal Expression			builtin;
+
+non terminal Chunk				chunk;
+non terminal Chunk				charChunk;
+non terminal Chunk				wordChunk;
+non terminal Chunk				itemChunk;
+non terminal Chunk				lineChunk;
+non terminal ChunkType			countable;
+
+non terminal Expression			opLevel10Exp;
+non terminal Expression			opLevel9Exp;
+non terminal Expression			opLevel8Exp;
+non terminal Expression			opLevel7Exp;
+non terminal Expression			opLevel6Exp;
+non terminal Expression			opLevel5Exp;
+non terminal Expression			opLevel4Exp;
+non terminal Expression			opLevel3Exp;
+non terminal Expression			opLevel2Exp;
+non terminal Expression			opLevel1Exp;
+
+script				::= handler:h
+					{:
+						Script s = new Script();
+						RESULT = s.defineHandler(h);						
+					:} 
+
+					| script:s handler:h
+					{: RESULT = s.defineHandler(h); :}
+
+					| function:f
+					{: 
+						Script s = new Script();
+						RESULT = s.defineUserFunction(f);
+					:}
+					
+					| script:s function:f
+					{: RESULT = s.defineUserFunction(f); :}
+					
+					| nonEmptyStmnt:stat
+					{:
+						Script s = new Script();
+						RESULT = s.defineStatementList(new StatementList(stat));
+					:}	
+
+					| RETURN
+					{: RESULT = new Script(); :}
+	
+					| script:s RETURN
+					{: RESULT = s; :}					
+					;
+
+handler				::= ON IDENTIFIER:i RETURN statementList:sl END IDENTIFIER:endi
+					{:
+						if (!i.equals(endi))
+							throw new HtSyntaxException("on " + i + " does not match end " + endi);
+						
+						RESULT = new NamedBlock(i, sl); 
+					:}
+					
+					| ON IDENTIFIER:i RETURN END IDENTIFIER:endi
+					{:
+						if (!i.equals(endi))
+							throw new HtSyntaxException("on " + i + " does not match end " + endi);
+						
+						RESULT = new NamedBlock(i, new StatementList()); 
+					:}
+					;
+					
+function			::= FUNCTION IDENTIFIER:name parameterList:params RETURN statementList:stats END IDENTIFIER:endname
+					{:
+						if (!name.equals(endname))
+							throw new HtSyntaxException("function " + name + " does not match end " + endname);
+						
+						RESULT = new UserFunction(name, params, stats);
+					:}
+					
+					| FUNCTION IDENTIFIER:name parameterList:params RETURN END IDENTIFIER:endname
+					{:
+						if (!name.equals(endname))
+							throw new HtSyntaxException("function " + name + " does not match end " + endname);
+						
+						RESULT = new UserFunction(name, params, new StatementList());
+					:}
+					;		
+
+argumentList		::= expression:expr
+					{: RESULT = new ArgumentList(expr); :}
+
+					| argumentList:al COMMA expression:expr
+					{: RESULT = al.addArgument(expr); :}
+					
+					|
+					{: RESULT = new ArgumentList(); :}
+					;
+					
+parameterList		::= IDENTIFIER:p
+					{: RESULT = new ParameterList(p); :}
+			
+					| parameterList:pl COMMA IDENTIFIER:p
+					{: RESULT = pl.addParameter(p); :}					
+
+					|
+					{: RESULT = new ParameterList(); :}
+					;
+
+statementList		::= statementList:sl nonEmptyStmnt:s
+					{: RESULT = sl.append(s); :}
+					
+					| nonEmptyStmnt:s 
+					{: RESULT = new StatementList(s); :}
+					
+					| statementList:sl RETURN 
+					{: RESULT = sl; :}
+					
+					| RETURN
+					{: RESULT = new StatementList(); :}
+					;
+
+nonEmptyStmnt		::= commandStmnt:stat RETURN
+					{: RESULT = stat; :}
+					
+					| globalStmnt:stat RETURN
+					{: RESULT = stat; :}	
+					
+					| ifStatement:stat RETURN
+					{: RESULT = stat; :}	
+					
+					| repeatStatement:stat RETURN
+					{: RESULT = stat; :}	
+					
+					| doStmnt:stat RETURN
+					{: RESULT = stat; :}	
+					
+					| returnStmnt:stat RETURN
+					{: RESULT = stat; :}
+					
+					| expression:expr RETURN
+					{: RESULT = new StatExp(expr); :}
+					;
+					
+returnStmnt			::= RETURN_KEYWORD
+					{: RESULT = new StatReturn(); :}
+		
+					| RETURN_KEYWORD expression:expr
+					{: RESULT = new StatReturn(expr); :}
+					;
+
+doStmnt				::= DO expression:expr 
+					{: RESULT = new StatDo(expr); :}
+					;
+
+commandStmnt		::= answerCmd:cmd
+					{: RESULT = cmd; :}
+
+					| askCmd:cmd
+					{: RESULT = cmd; :}
+					
+					| putCmd:cmd
+					{: RESULT = cmd; :}
+					
+					| getCmd:cmd
+					{: RESULT = cmd; :}
+
+					| setCmd:cmd
+					{: RESULT = cmd; :}
+					
+					| sendCmd:cmd
+					{: RESULT = cmd; :}
+					;
+
+ifStatement			::= IF expression:expr then singleThen:then
+					{: RESULT = new StatIf(expr, then); :}
+
+					| IF expression:expr then RETURN multiThen:then
+					{: RESULT = new StatIf(expr, then); :}
+					;
+					
+then				::= RETURN THEN
+					| THEN
+					;
+					
+singleThen			::= nonEmptyStmnt:then RETURN elseBlock:elseblock
+					{: RESULT = new ThenElseBlock(new StatementList(then), elseblock); :}
+
+					| nonEmptyStmnt:then elseBlock:elseblock
+					{: RESULT = new ThenElseBlock(new StatementList(then), elseblock); :}					
+					;
+					
+multiThen			::= statementList:then ENDIF
+					{: RESULT = new ThenElseBlock(then, new StatementList()); :}
+					
+					| ENDIF
+					{: RESULT = new ThenElseBlock(new StatementList(), new StatementList()); :}
+					
+					| statementList:then elseBlock:elseblock
+					{: RESULT = new ThenElseBlock(then, elseblock); :}
+					;
+
+elseBlock			::= ELSE nonEmptyStmnt:s
+					{: RESULT = new StatementList(s); :}
+	
+					| ELSE RETURN statementList:sl ENDIF
+					{: RESULT = sl; :}
+					
+					| ELSE RETURN ENDIF
+					{: RESULT = new StatementList(); :}
+					;
+
+repeatStatement		::= REPEAT repeatRange:range RETURN statementList:stats ENDREPEAT
+					{: RESULT = new StatRepeat(range, stats); :}
+					
+					| REPEAT repeatRange:range RETURN ENDREPEAT
+					{: RESULT = new StatRepeat(range, new StatementList()); :}
+					;
+
+repeatRange			::= FOREVER
+					{: RESULT = new RepeatForever(); :}
+
+					| duration:d
+					{: RESULT = d; :}
+					
+					| count:c
+					{: RESULT = c; :}
+					
+					| WITH IDENTIFIER:symbol EQUALS range:r
+					{: RESULT = new RepeatWith(symbol, r); :}
+					;
+
+duration			::= UNTIL expression:expr
+					{: RESULT = new RepeatDuration(RepeatDuration.POLARITY_UNTIL, expr); :}
+
+					| WHILE expression:expr
+					{: RESULT = new RepeatDuration(RepeatDuration.POLARITY_WHILE, expr); :}
+					;
+					
+count				::= FOR expression:expr TIMES
+					{: RESULT = new RepeatCount(expr); :}
+
+					| FOR expression:expr
+					{: RESULT = new RepeatCount(expr); :}
+					
+					| expression:expr TIMES
+					{: RESULT = new RepeatCount(expr); :}
+					
+					| expression:expr
+					{: RESULT = new RepeatCount(expr); :}
+					;
+	
+range				::= expression:from DOWNTO expression:to
+					{: RESULT = new RepeatRange(RepeatRange.POLARITY_DOWNTO, from, to); :}
+
+					| expression:from TO expression:to
+					{: RESULT = new RepeatRange(RepeatRange.POLARITY_UPTO, from, to); :}
+					;
+
+globalStmnt			::= GLOBAL IDENTIFIER:i 
+					{: RESULT = new StatGlobal(i); :}
+					;
+
+answerCmd			::= ANSWER expression:ans WITH factor:ch1 OR factor:ch2 OR factor:ch3	
+					{: RESULT = new StatAnswerCmd(ans, ch1, ch2, ch3); :}
+					
+					| ANSWER expression:ans WITH factor:ch1 OR factor:ch2
+					{: RESULT = new StatAnswerCmd(ans, ch1, ch2); :}
+					 
+					| ANSWER expression:ans WITH factor:ch1
+					{: RESULT = new StatAnswerCmd(ans, ch1); :}
+					
+ 					| ANSWER expression:ans
+ 					{: RESULT = new StatAnswerCmd(ans); :} 
+					;
+
+askCmd				::= ASK expression:question WITH factor:suggestion
+					{: RESULT = new StatAskCmd(question, suggestion); :}
+					
+					| ASK expression:question
+					{: RESULT = new StatAskCmd(question); :}
+ 					;
+ 
+putCmd				::= PUT expression:e destination:d
+					{: RESULT = new StatPutCmd(e, Preposition.INTO, d); :}
+					
+					| PUT expression:e preposition:p destination:d
+					{: RESULT = new StatPutCmd(e, p, d); :}
+					; 
+
+getCmd				::= GET expression:e
+					{: RESULT = new StatGetCmd(e); :}					
+					;
+ 
+setCmd				::= SET THE IDENTIFIER:prop OF part:part TO expression:expr
+					{: RESULT = new StatSetCmd(prop, part, expr); :} 
+					;
+					
+sendCmd				::= SEND expression:expr TO part:part
+					{: RESULT = new StatSendCmd(part, expr); :}	
+					;				
+  
+preposition			::= BEFORE
+					{: RESULT = Preposition.BEFORE; :}
+					
+					| AFTER
+					{: RESULT = Preposition.AFTER; :}
+					
+					| INTO
+					{: RESULT = Preposition.INTO; :}  
+ 					;
+ 					
+destination			::= IDENTIFIER:id
+					{: RESULT = new DestinationVariable(id); :}
+					
+					| chunk:c IDENTIFIER:id
+					{: RESULT = new DestinationVariable(id, c); :}
+					
+					| part:p 
+					{: RESULT = new DestinationPart(p); :}
+					
+					| chunk:c part:p
+					{: RESULT = new DestinationPart(p, c); :}
+					
+					| message
+					{: RESULT = new DestinationMsgBox(); :}
+					
+					| chunk:c message
+					{: RESULT = new DestinationMsgBox(c); :}
+					
+					| chunk:c
+					{: RESULT = new DestinationMsgBox(c); :}
+					
+					| 
+					{: RESULT = new DestinationMsgBox(); :}
+					;
+					
+message				::= MESSAGEBOX
+					| THE MESSAGEBOX					
+					;
+										
+part				::= FIELD factor:expr
+					{: RESULT = new ExpPartName(PartType.FIELD, expr); :}
+
+					| FIELD ID factor:expr
+					{: RESULT = new ExpPartId(PartType.FIELD, expr); :}
+					
+					| BUTTON factor:expr
+					{: RESULT = new ExpPartName(PartType.BUTTON, expr); :}
+					
+					| BUTTON ID factor:expr
+					{: RESULT = new ExpPartId(PartType.BUTTON, expr); :}		
+					
+					| ME
+					{: RESULT = new ExpPartMe(); :}			
+					;										
+ 					
+chunk				::= charChunk:chunk
+					{: RESULT = chunk; :}
+					
+					| wordChunk:chunk
+					{: RESULT = chunk; :}
+					
+					| itemChunk:chunk
+					{: RESULT = chunk; :}
+
+					| lineChunk:chunk 		
+					{: RESULT = chunk; :}					
+					;								
+					
+charChunk			::= ordinal:o CHAR OF
+					{: RESULT = new Chunk(ChunkType.CHAR, new ExpLiteral(o.stringValue())); :} 
+					
+					| CHAR expression:start TO expression:end OF
+					{: RESULT = new Chunk(ChunkType.CHARRANGE, start, end); :}
+					
+					| CHAR expression:start OF
+					{: RESULT = new Chunk(ChunkType.CHAR, start); :}
+					;
+					
+wordChunk			::= ordinal:o WORD OF
+					{: RESULT = new Chunk(ChunkType.WORD, new ExpLiteral(o.stringValue())); :}
+					
+					| WORD expression:start TO expression:end OF
+					{: RESULT = new Chunk(ChunkType.WORDRANGE, start, end); :}
+					
+					| WORD expression:start OF
+					{: RESULT = new Chunk(ChunkType.WORD, start); :}
+					;
+
+itemChunk			::= ordinal:o ITEM OF
+					{: RESULT = new Chunk(ChunkType.ITEM, new ExpLiteral(o.stringValue())); :}
+					
+					| ITEM expression:start TO expression:end OF
+					{: RESULT = new Chunk(ChunkType.ITEMRANGE, start, end); :}
+					
+					| ITEM expression:start OF
+					{: RESULT = new Chunk(ChunkType.ITEM, start); :}
+					;
+					
+lineChunk			::= ordinal:o LINE OF
+					{: RESULT = new Chunk(ChunkType.LINE, new ExpLiteral(o.stringValue())); :}
+										
+					| LINE expression:start TO expression:end OF
+					{: RESULT = new Chunk(ChunkType.LINERANGE, start, end); :}
+					
+					| LINE expression:start OF
+					{: RESULT = new Chunk(ChunkType.LINE, start); :}
+					;
+															
+ordinal				::= FIRST
+					{: RESULT = Ordinal.FIRST; :}
+					| THE FIRST
+					{: RESULT = Ordinal.FIRST; :}
+					| SECOND
+					{: RESULT = Ordinal.SECOND; :}
+					| THE SECOND
+					{: RESULT = Ordinal.SECOND; :}
+					| THIRD
+					{: RESULT = Ordinal.THIRD; :}
+					| THE THIRD
+					{: RESULT = Ordinal.THIRD; :}
+					| FOURTH
+					{: RESULT = Ordinal.FOURTH; :}
+					| THE FOURTH
+					{: RESULT = Ordinal.FOURTH; :}
+					| FIFTH
+					{: RESULT = Ordinal.FIFTH; :}
+					| THE FIFTH
+					{: RESULT = Ordinal.FIFTH; :}
+					| SIXTH
+					{: RESULT = Ordinal.SIXTH; :}
+					| THE SIXTH
+					{: RESULT = Ordinal.SIXTH; :}
+					| SEVENTH
+					{: RESULT = Ordinal.SEVENTH; :}
+					| THE SEVENTH
+					{: RESULT = Ordinal.SEVENTH; :}
+					| EIGTH
+					{: RESULT = Ordinal.EIGTH; :}
+					| THE EIGTH
+					{: RESULT = Ordinal.EIGTH; :}
+					| NINTH
+					{: RESULT = Ordinal.NINTH; :}
+					| THE NINTH
+					{: RESULT = Ordinal.NINTH; :}
+					| TENTH
+					{: RESULT = Ordinal.TENTH; :}
+					| THE TENTH
+					{: RESULT = Ordinal.TENTH; :}
+					| LAST
+					{: RESULT = Ordinal.LAST; :}
+					| THE LAST
+					{: RESULT = Ordinal.LAST; :}
+					| MID
+					{: RESULT = Ordinal.MIDDLE; :}
+					| THE MID
+					{: RESULT = Ordinal.MIDDLE; :}
+					| MIDDLE
+					{: RESULT = Ordinal.MIDDLE; :}
+					| THE MIDDLE
+					{: RESULT = Ordinal.MIDDLE; :}
+					;														
+					
+expression			::= opLevel10Exp:op
+					{: RESULT = op; :}
+
+					| chunk:c expression:e
+					{: RESULT = new ExpChunk(c, e); :}
+					;					
+
+opLevel10Exp		::= opLevel9Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel10Exp:lhs OR opLevel9Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.OR, rhs); :}
+					;
+					
+opLevel9Exp			::= opLevel8Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel9Exp:lhs AND opLevel8Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.AND, rhs); :}
+					;
+					
+opLevel8Exp			::= opLevel7Exp:lhs
+					{: RESULT = lhs; :}
+
+					| opLevel8Exp:lhs EQUALS opLevel7Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.EQUALS, rhs); :}
+					
+					| opLevel8Exp:lhs ISNOT opLevel7Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.NOTEQUALS, rhs); :}
+															
+					| opLevel8Exp:lhs IS opLevel7Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.EQUALS, rhs); :}
+
+					| opLevel8Exp:lhs LESSGREATER opLevel7Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.NOTEQUALS, rhs); :}
+					;
+			
+opLevel7Exp			::= opLevel6Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel7Exp:lhs GREATER opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.GREATERTHAN, rhs); :}
+					
+					| opLevel7Exp:lhs LESS opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.LESSTHAN, rhs); :}
+					
+					| opLevel7Exp:lhs LESSEQUALS opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.LESSTHANOREQUALS, rhs); :}
+
+					| opLevel7Exp:lhs GREATEREQUALS opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.GREATERTHANOREQUALS, rhs); :}
+					
+					| opLevel7Exp:lhs CONTAINS opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.CONTAINS, rhs); :}
+
+					| opLevel7Exp:lhs ISIN opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.CONTAINS, rhs); :}
+
+					| opLevel7Exp:lhs ISNOTIN opLevel6Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.NOTCONTAINS, rhs); :}
+					;					
+			
+opLevel6Exp			::= opLevel5Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel6Exp:lhs AMP opLevel5Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.CONCAT, rhs); :}
+					
+					| opLevel6Exp:lhs AMPAMP opLevel5Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.CONCAT, rhs); :}
+					; 			
+			
+opLevel5Exp			::= opLevel4Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel5Exp:lhs PLUS opLevel4Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.PLUS, rhs); :}					
+					
+					| opLevel5Exp:lhs MINUS opLevel4Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.MINUS, rhs); :}					
+					;
+					
+opLevel4Exp			::= opLevel3Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel4Exp:lhs STAR opLevel3Exp:rhs
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.MULTIPLY, rhs); :}											
+					
+					| opLevel4Exp:lhs SLASH opLevel3Exp:rhs				
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.DIVIDE, rhs); :}
+					
+					| opLevel4Exp:lhs DIV opLevel3Exp:rhs				
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.DIVIDE, rhs); :}
+
+					| opLevel4Exp:lhs MOD opLevel3Exp:rhs				
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.MOD, rhs); :}
+					;
+					
+opLevel3Exp			::= opLevel2Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| opLevel3Exp:lhs CARET opLevel2Exp:rhs					
+					{: RESULT = new ExpBinaryOperator(lhs, BinaryOperator.EXP, rhs); :}
+					;
+					
+opLevel2Exp			::= opLevel1Exp:lhs
+					{: RESULT = lhs; :}
+					
+					| MINUS opLevel2Exp:rhs
+					{: RESULT = new ExpUnaryOperator(UnaryOperator.NEGATE, rhs); :}
+					
+					| NOT opLevel2Exp:rhs
+					{: RESULT = new ExpUnaryOperator(UnaryOperator.NOT, rhs); :}
+					;
+					
+opLevel1Exp			::= factor:lhs
+					{: RESULT = lhs; :}
+					
+					| builtin:bi 
+					{: RESULT = bi; :}
+					
+					| THE builtin:bi
+					{: RESULT = bi; :}
+					
+					| IDENTIFIER:i LPAREN argumentList:al RPAREN
+					{: RESULT = new ExpUserFunction(i, al); :}					
+					;					
+																		
+builtin				::= MOUSE
+					{: RESULT = new ExpMouseFun(); :}
+
+					| MOUSELOC 							
+					{: RESULT = new ExpMouseLocFun(); :}		
+					
+					| AVERAGE OF factor:f
+					{: RESULT = new ExpAverageFun(f); :}
+					
+					| RESULT
+					{: RESULT = new ExpResultFun(); :}		
+					
+					| NUMBER OF countable:c IN factor:f
+					{: RESULT = new ExpNumberOfFun(c, f); :}			
+					;
+								
+countable			::= CHARS
+					{: RESULT = ChunkType.CHAR; :}
+					
+					| LINES
+					{: RESULT = ChunkType.LINE; :}
+					
+					| WORDS
+					{: RESULT = ChunkType.WORD; :}
+					
+					| ITEMS							
+					{: RESULT = ChunkType.ITEM; :}	
+					;
+										
+factor				::= literal:l
+					{: RESULT = l; :}
+					
+					| IDENTIFIER:i
+					{: RESULT = new ExpVariable(i); :}
+					
+					| part:p
+					{: RESULT = p; :}
+					
+					| LPAREN expression:e RPAREN
+					{: RESULT = e; :}
+					
+					| THE IDENTIFIER:prop OF part:part
+					{: RESULT = new ExpProperty(prop, part); :}
+					;					
+					
+literal				::= LITERAL:l
+					{: RESULT = new ExpLiteral(l); :}
+					
+					| number:n
+					{: RESULT = new ExpLiteral(n.toString()); :}
+					;							
+					
+number				::= DOT INTEGER_CONSTANT:fraction
+					{: RESULT = new Value("." + fraction); :}
+					
+					| INTEGER_CONSTANT:whole DOT INTEGER_CONSTANT:fraction
+					{: RESULT = new Value(whole + "." + fraction); :}
+					
+					| INTEGER_CONSTANT:whole DOT		
+					{: RESULT = new Value(whole + ".0"); :}			
+					
+					| INTEGER_CONSTANT:ic
+					{: RESULT = new Value(ic); :}
+					;		
