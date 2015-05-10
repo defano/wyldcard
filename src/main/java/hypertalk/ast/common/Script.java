@@ -8,8 +8,7 @@
 
 package hypertalk.ast.common;
 
-import hypercard.runtime.FunctionExecutionThread;
-import hypercard.runtime.HandlerExecutionThread;
+import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
@@ -60,7 +59,7 @@ private static final long serialVersionUID = 1338999304303112852L;
 	
 	public void executeHandler (String handler) {
 		if (handlers.containsKey(handler))
-			new HandlerExecutionThread(handlers.get(handler));
+			RuntimeEnv.getRuntimeEnv().executeStatementList(handlers.get(handler));			
 	}
 	
 	public void executeStatement () throws HtSyntaxException {
@@ -69,13 +68,11 @@ private static final long serialVersionUID = 1338999304303112852L;
 	}
 	
 	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSyntaxException {
-		FunctionExecutionThread execution;
+		UserFunction theFunction = userfunctions.get(function);
 		
-		if (userfunctions.containsKey(function)) 
-			execution = new FunctionExecutionThread(userfunctions.get(function), arguments);
+		if (theFunction != null) 
+			return RuntimeEnv.getRuntimeEnv().executeUserFunction(theFunction, arguments);
 		else
 			throw new HtSyntaxException("No such function " + function);
-		
-		return execution.getReturnValue();
 	}	
 }
