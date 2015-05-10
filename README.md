@@ -1,40 +1,38 @@
 # HyperTalk Java
 
-Originally released in 1987 as part of System Software 6, HyperCard was an application that largely defied classification: part database, part programming language, part "paint" program. In true Apple fashion, HyperCard was a new paradigm. Other toy languages of the time made it possible to write simple console-mode programs (boring!), but with HyperCard a novice could script an application with a full graphical user interface using a very expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
+A toy implementation of Apple's HyperCard written in Java. Created as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+
+Originally released in 1987 as part of System Software 6, HyperCard was an application that largely defied classification: part database, part programming language, part "paint" program. In true Apple fashion, HyperCard was a new paradigm. Other "beginner" languages of the time made it possible to write boring console-mode programs, but with HyperCard, a novice could script an application with a full graphical user interface using a very expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
 
 **Looking for a way to run the _real_ HyperCard on modern machines?** Piece of cake: Use the SheepShaver emulator to run Macintosh System Software on newer Macs or Windows machines. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
-## What is this?
+**For the attorneys in the audience:** This project represents a homework assignment and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
-A toy implementation of Apple's HyperCard written in Java. It was created as a class project for a graduate-level compiler design course at DePaul University in Chicago.  
-
-**For the attorneys in the audience:** This project represents a homework assignment. It is not associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
-
-## What this is not
+## What this is not...
 
 This is not a HyperCard replacement, nor is it an open-sourced version of Apple's software.
 
-It won't run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbiests and academics interested in compiler/interpreter design. Among its many severe limitations, this version lacks support for: multiple cards; backgrounds; paint tools; user levels; card, background or stack-level scripts; XCMDs and XFCNs; Home stack script inheritence; and a whole lot more. 
+It won't run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbiests and academics interested in compiler/interpreter design. Among its many severe limitations, this implementation lacks support for multiple cards; backgrounds; paint tools; user levels; card, background or stack-level scripts; XCMDs and XFCNs; Home stack script inheritence; and a whole lot more.  
 
 ## What was done
 
-I successfully implemented enough of the runtime environment and HyperTalk scripting language to demonstrate each of the core aspects of HyperCard, including: parts, attributes, event messaging, local and global variables, built-in and user defined functions, and complex prepositional chunk expressions.
+I successfully implemented enough of the runtime environment and HyperTalk scripting language to demonstrate each of the core aspects of HyperCard, including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
 
-I used CUP and JFLEX as the parser generator, and Sun's NetBeans IDE for much of the Swing UI development. With my application, you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command). 
+The project uses CUP and JFLEX as the parser generator, and the NetBeans IDE for much of the Swing UI development. With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command). 
 
 ## Building with Gradle
 
-The project can be built with Gradle. The following Gradle tasks are defined by the project's build file:
+The project is built with Gradle (and will import easily into any IDE with Gradle integration like Eclipse or IntelliJ). The following Gradle tasks are defined by the project's build file:
 
 Task | Description
------|----------------------------
-`run` | Build, test and run the application
-`jcup` | Re-generate the LALR parser code, using JCup
+--------|----------------------------
+`run`   | Build, test and run the application
+`jcup`  | Re-generate the LALR parser code, using JCup
 `jflex` | Re-generate the lexer code, using JFlex
 
-#### Using the program
+### Running the program
 
-Once the program is running, you'll be presented with the application's main window. From here, you may:
+Execute the `gradle run` task to build and start the program, or simply execute the `RuntimeEnv` class. Once the program is running, you'll be presented with the application's main window. From here you may:
 
 *	Begin adding your own user interface elements by right clicking within the "Card" panel and selecting either "New Button" or "New Field" from the context sensitive menu.
 *	Open a previously saved card document ("File" -> "Open Card..."). I've included a few example cards in the "Examples" folder; each contains several scripted buttons and fields to experiment with.
@@ -49,9 +47,9 @@ To start scripting:
 
 HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements (called parts) and are triggered by user actions called events. There is no singular "main" script that executes at runtime.
 
-### Script Handlers
+### Script handlers
 
-A script consists of zero or more handlers and function definitions. A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it. A _function definition_, like its counterpart in other imperative languages accepts zero or more arguments, executes one or more statements and optionally returns a single value.
+A script consists of zero or more handlers and function definitions. A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it. A _function definition_, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements and optionally returns a single value.
 
 For example, a button might contain the script:
 
@@ -59,20 +57,20 @@ For example, a button might contain the script:
 	   answer "Hello World" with "Why, thank you"
     end mouseUp
 
-When the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message "mouseUp" to the affected button. Upon receipt of this message, the button executes its mouseUp handler. (In our example, this generates a "hello world" dialog box). 
+When the user clicks the button containing this script, the action of the mouse button being released over the part causes the HyperCard runtime environment to send the message `mouseUp` to the affected button. Upon receipt of this message, the button executes its `mouseUp` handler. (In our example, this generates a "hello world" dialog box). 
 
 My HyperCard implementation automatically sends the following event messages:
 
  Event Message | Description 
 ---------------|-----------------------------------------------------------------------------
- `mouseUp` | Sent when the mouse is pressed and released over a part 
- `mouseDown` | Sent when the mouse is pressed over a part 
- `mouseEnter` | Sent when the cursor enters the region of a part 
- `mouseExit` | Sent when the cursor leaves the region of a part 
- `keyDown` | Sent only to in-focus fields when the user presses a key 
- `keyUp` | Sent only to in-focus fields when the user presses then releases a key 
+ `mouseUp`     | Sent when the mouse is pressed and released over a part 
+ `mouseDown`   | Sent when the mouse is pressed over a part 
+ `mouseEnter`  | Sent when the cursor enters the region of a part 
+ `mouseExit`   | Sent when the cursor leaves the region of a part 
+ `keyDown`     | Sent only to in-focus fields when the user presses a key 
+ `keyUp`       | Sent only to in-focus fields when the user presses then releases a key 
 
-Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the send command. The message need not be a known HyperCard message (i.e., from the table above); it's acceptable to send a message of the scripter's own creation. 
+Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Moreover, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the scripter's own creation. 
 
 For example:
 
@@ -82,47 +80,47 @@ send doSomethingCool to field "myField"
 send keyDown to me
 ```
 
-Note that parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
+Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
 
 ### Parts and their properties
 
-A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, my version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window or panel).
+A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, this version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window).
 
-In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background and are grouped into a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard. 
+In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background, and are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard. 
 
 For simplification, this implementation treats cards as standalone documents (there is no concept of a stack), and furthermore, the card cannot itself be scripted, nor does it support the concept of a foreground and background.
 
-In addition to containing scripts, a part also maintains a set of _properties_. Properties control various aspects of the part like its name, id, size and location. A part can be programmatically modified by way of its properties, and different types of parts have different properties.
+In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
 
 A button has these properties:
 
-Property | Description
----------|------------
-`script` | Retrieves or replaces the current script of the button
-`id` | Returns the buttons id. Each part has a globally unique id that is assigned at creation and cannot be changed.
-`name` | Returns or sets the script-addressable name of the button
-`title` | Returns or sets the title of this button  
-`left` | Returns or sets the left-most border of the button's location
-`top`	| Returns or sets the top-most border of the button's location
-`width` | Returns or sets the width of the button (in pixels)
-`height` | Returns or sets the height of the button (in pixels)
-`visible` | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI. 
+Property    | Description
+------------|------------
+`script`    | Retrieves or replaces the current script of the button
+`id`        | Returns the buttons id. Each part has a globally unique id that is assigned at creation and cannot be changed.
+`name`      | Returns or sets the script-addressable name of the button
+`title`     | Returns or sets the title of this button  
+`left`      | Returns or sets the left-most border of the button's location
+`top`	    | Returns or sets the top-most border of the button's location
+`width`     | Returns or sets the width of the button (in pixels)
+`height`    | Returns or sets the height of the button (in pixels)
+`visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI. 
 `showtitle` | Returns or sets the visibility of the button's title (a Boolean value). When not true, the button is drawn without a name.
-`enabled` | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
+`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
 
 A field has these properties:
 
-Property | Description
----------|------------
-`script` | Retrieves or replaces the current script of the field
-`id` | Returns the field's id. Each part has a globally unique id that is assigned at creation and cannot be changed.
-`name` | Returns or sets the script-addressable name of the field
-`text` | Returns or sets the text contained within this field 
-`left` | Returns or sets the left-most border of the field's location
-`top` | Returns or sets the top-most border of the field's location
-`width` | Returns or sets the width of the field (in pixels)
-`height` | Returns or sets the height of the field (in pixels)
-`visible` | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI. 
+Property   | Description
+-----------|------------
+`script`   | Retrieves or replaces the current script of the field
+`id`       | Returns the field's id. Each part has a globally unique id that is assigned at creation and cannot be changed.
+`name`     | Returns or sets the script-addressable name of the field
+`text`     | Returns or sets the text contained within this field 
+`left`     | Returns or sets the left-most border of the field's location
+`top`      | Returns or sets the top-most border of the field's location
+`width`    | Returns or sets the width of the field (in pixels)
+`height`   | Returns or sets the height of the field (in pixels)
+`visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI. 
 `wraptext` | Returns or sets whether the text contained by the field will automatically wrap at end of line.
 `locktext` | Returns or sets whether the text contained by the field can be edited by the user. 
 
