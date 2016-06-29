@@ -692,7 +692,10 @@ builtin				::= MOUSE
 					
 					| RESULT
 					{: RESULT = new ExpResultFun(); :}		
-					
+
+					| MESSAGEBOX
+					{: RESULT = new ExpMessageBoxFun(); :}
+
 					| NUMBER OF countable:c IN factor:f
 					{: RESULT = new ExpNumberOfFun(c, f); :}			
 					;
