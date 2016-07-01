@@ -38,7 +38,7 @@ terminal						RETURN_KEYWORD;
 terminal						DOT, COMMA, GLOBAL;
 terminal						WORD, ITEM, LINE, CHAR, OF, TO;
 
-terminal						NUMBER, MOUSELOC, MOUSE, AVERAGE, RESULT;
+terminal						NUMBER, MOUSELOC, MOUSE, AVERAGE, RESULT, MIN, MAX;
 terminal						IN, CHARS, LINES, ITEMS, WORDS;
 
 terminal						PLUS, MINUS, STAR, SLASH, AMP, AMPAMP, MOD, DIV;
@@ -697,7 +697,13 @@ builtin				::= MOUSE
 					{: RESULT = new ExpMessageBoxFun(); :}
 
 					| NUMBER OF countable:c IN factor:f
-					{: RESULT = new ExpNumberOfFun(c, f); :}			
+					{: RESULT = new ExpNumberOfFun(c, f); :}
+
+					| MIN LPAREN number:x COMMA number:y RPAREN
+					{: RESULT = new ExpMinFun(x, y); :}
+
+					| MAX LPAREN number:x COMMA number:y RPAREN
+					{: RESULT = new ExpMaxFun(x, y); :}
 					;
 								
 countable			::= CHARS

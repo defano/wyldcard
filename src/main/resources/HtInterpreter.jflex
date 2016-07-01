@@ -98,6 +98,8 @@ IDENT={ALPHA}({ALPHA}|{DIGIT}|_)*
 	"mouse" {return sf.newSymbol ("mouse", sym.MOUSE); }
 	"average" {return sf.newSymbol ("average", sym.AVERAGE); }
 	"result" {return sf.newSymbol ("result", sym.RESULT); }
+    "min" {return sf.newSymbol ("min", sym.MIN); }
+    "max" {return sf.newSymbol ("max", sym.MAX); }
 
 	"number" {return sf.newSymbol ("number", sym.NUMBER); }
 	"in" {return sf.newSymbol ("in", sym.IN); }
