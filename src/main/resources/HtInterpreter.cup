@@ -38,7 +38,8 @@ terminal						RETURN_KEYWORD;
 terminal						DOT, COMMA, GLOBAL;
 terminal						WORD, ITEM, LINE, CHAR, OF, TO;
 
-terminal						NUMBER, MOUSELOC, MOUSE, AVERAGE, RESULT, MIN, MAX;
+terminal						NUMBER, MOUSELOC, MOUSE, AVERAGE, RESULT, MIN, MAX, TICKS, SECONDS;
+terminal                        TIME, DATE, LONG, SHORT, ABBREV, ABBREVIATED;
 terminal						IN, CHARS, LINES, ITEMS, WORDS;
 
 terminal						PLUS, MINUS, STAR, SLASH, AMP, AMPAMP, MOD, DIV;
@@ -69,7 +70,8 @@ non terminal StatRepeat			repeatStatement;
 non terminal RepeatSpecifier	repeatRange;
 non terminal RepeatSpecifier	duration;
 non terminal RepeatSpecifier	count;
-non terminal RepeatRange		range;	
+non terminal RepeatRange		range;
+non terminal DateFormat         dateFormat;
 
 non terminal Statement	 	 	answerCmd;
 non terminal Statement			askCmd;
@@ -704,8 +706,40 @@ builtin				::= MOUSE
 
 					| MAX LPAREN number:x COMMA number:y RPAREN
 					{: RESULT = new ExpMaxFun(x, y); :}
+
+					| TICKS
+					{: RESULT = new ExpTicksFun(); :}
+
+					| SECONDS
+					{: RESULT = new ExpSecondsFun(); :}
+
+					| DATE
+					{: RESULT = new ExpDateFun(DateFormat.SHORT); :}
+
+                    | dateFormat:format DATE
+                    {: RESULT = new ExpDateFun(format); :}
+
+                    | TIME
+                    {: RESULT = new ExpTimeFun(DateFormat.SHORT); :}
+
+                    | dateFormat:format TIME
+                    {: RESULT = new ExpTimeFun(format); :}
+
 					;
-								
+
+dateFormat          ::= LONG
+ 			        {: RESULT = DateFormat.LONG; :}
+
+                    | SHORT
+                    {: RESULT = DateFormat.SHORT; :}
+
+                    | ABBREV
+                    {: RESULT = DateFormat.ABBREVIATED; :}
+
+                    | ABBREVIATED
+                    {: RESULT = DateFormat.ABBREVIATED; :}
+                    ;
+
 countable			::= CHARS
 					{: RESULT = ChunkType.CHAR; :}
 					

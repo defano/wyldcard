@@ -100,6 +100,14 @@ IDENT={ALPHA}({ALPHA}|{DIGIT}|_)*
 	"result" {return sf.newSymbol ("result", sym.RESULT); }
     "min" {return sf.newSymbol ("min", sym.MIN); }
     "max" {return sf.newSymbol ("max", sym.MAX); }
+    "ticks" {return sf.newSymbol ("ticks", sym.TICKS); }
+    "seconds" {return sf.newSymbol ("seconds", sym.SECONDS); }
+    "date" {return sf.newSymbol ("date", sym.DATE); }
+    "time" {return sf.newSymbol ("time", sym.TIME); }
+    "short" {return sf.newSymbol ("short", sym.SHORT); }
+    "long" {return sf.newSymbol ("long", sym.LONG); }
+    "abbrev" {return sf.newSymbol ("abbrev", sym.ABBREV); }
+    "abbreviated" {return sf.newSymbol ("abbreviated", sym.ABBREVIATED); }
 
 	"number" {return sf.newSymbol ("number", sym.NUMBER); }
 	"in" {return sf.newSymbol ("in", sym.IN); }
