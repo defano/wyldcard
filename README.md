@@ -18,7 +18,7 @@ It won't run your old stacks and it's missing too many foundational aspects of t
 
 I successfully implemented enough of the runtime environment and HyperTalk scripting language to demonstrate each of the core aspects of HyperCard, including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
 
-The project uses CUP and JFLEX as the parser generator, and the NetBeans IDE for much of the Swing UI development. With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command). 
+The project uses CUP and JFLEX as the parser generator, and the NetBeans IDE for much of the Swing UI development. With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
 
 ## Building with Gradle
 
@@ -57,20 +57,20 @@ For example, a button might contain the script:
 	   answer "Hello World" with "Why, thank you"
     end mouseUp
 
-When the user clicks the button containing this script, the action of the mouse button being released over the part causes the HyperCard runtime environment to send the message `mouseUp` to the affected button. Upon receipt of this message, the button executes its `mouseUp` handler. (In our example, this generates a "hello world" dialog box). 
+When the user clicks the button containing this script, the action of the mouse button being released over the part causes the HyperCard runtime environment to send the message `mouseUp` to the affected button. Upon receipt of this message, the button executes its `mouseUp` handler. (In our example, this generates a "hello world" dialog box).
 
 My HyperCard implementation automatically sends the following event messages:
 
- Event Message | Description 
+ Event Message | Description
 ---------------|-----------------------------------------------------------------------------
- `mouseUp`     | Sent when the mouse is pressed and released over a part 
- `mouseDown`   | Sent when the mouse is pressed over a part 
- `mouseEnter`  | Sent when the cursor enters the region of a part 
- `mouseExit`   | Sent when the cursor leaves the region of a part 
- `keyDown`     | Sent only to in-focus fields when the user presses a key 
- `keyUp`       | Sent only to in-focus fields when the user presses then releases a key 
+ `mouseUp`     | Sent when the mouse is pressed and released over a part
+ `mouseDown`   | Sent when the mouse is pressed over a part
+ `mouseEnter`  | Sent when the cursor enters the region of a part
+ `mouseExit`   | Sent when the cursor leaves the region of a part
+ `keyDown`     | Sent only to in-focus fields when the user presses a key
+ `keyUp`       | Sent only to in-focus fields when the user presses then releases a key
 
-Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Moreover, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the scripter's own creation. 
+Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Moreover, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the scripter's own creation.
 
 For example:
 
@@ -86,7 +86,7 @@ Parts do not need to implement a handler for every message they might receive. M
 
 A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, this version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window).
 
-In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background, and are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard. 
+In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background, and are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
 
 For simplification, this implementation treats cards as standalone documents (there is no concept of a stack), and furthermore, the card cannot itself be scripted, nor does it support the concept of a foreground and background.
 
@@ -104,7 +104,7 @@ Property    | Description
 `top`	    | Returns or sets the top-most border of the button's location
 `width`     | Returns or sets the width of the button (in pixels)
 `height`    | Returns or sets the height of the button (in pixels)
-`visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI. 
+`visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
 `showtitle` | Returns or sets the visibility of the button's title (a Boolean value). When not true, the button is drawn without a name.
 `enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
 
@@ -115,14 +115,14 @@ Property   | Description
 `script`   | Retrieves or replaces the current script of the field
 `id`       | Returns the field's id. Each part has a globally unique id that is assigned at creation and cannot be changed.
 `name`     | Returns or sets the script-addressable name of the field
-`text`     | Returns or sets the text contained within this field 
+`text`     | Returns or sets the text contained within this field
 `left`     | Returns or sets the left-most border of the field's location
 `top`      | Returns or sets the top-most border of the field's location
 `width`    | Returns or sets the width of the field (in pixels)
 `height`   | Returns or sets the height of the field (in pixels)
-`visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI. 
+`visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
 `wraptext` | Returns or sets whether the text contained by the field will automatically wrap at end of line.
-`locktext` | Returns or sets whether the text contained by the field can be edited by the user. 
+`locktext` | Returns or sets whether the text contained by the field can be edited by the user.
 
 Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are read using the `get` command, and modified with the `set` command. Some examples include:
 
@@ -132,15 +132,15 @@ set the left of button myButton to item 1 of the mouseLoc
 get the name of button id 0
 ```
 
-### Variables and containers 
+### Variables and containers
 
-A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers. 
+A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers.
 
-HyperCard is dynamically typed. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error. 
+HyperCard is dynamically typed. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
 
-Local variables in HyperTalk are lexically scoped and implicity declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string. 
+Local variables in HyperTalk are lexically scoped and implicity declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
 
-HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers. 
+HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers.
 For example:
 
 ```
@@ -221,8 +221,8 @@ put 29 before the message box
 ```
 
 In addition to chunk expressions, HyperTalk supports a typical suite of math, string and logical operators, including the following (all operators are binary, excepted where otherwise noted):
-	
-Precedence | Operator | Description 
+
+Precedence | Operator | Description
 -----------|----------| ----------------------------------------------------------------------
 1 (highest) | `( )` | Grouping
 2 | `-` | Negation for numbers (unary)
@@ -263,10 +263,10 @@ not "nonsense" -- syntax error, "nonsense" is not a boolean
 HyperTalk supports simple conditional branching (if-then-else), plus a very flexible syntax for looping. Conditionals have the following syntax:
 
 ```
-if <expression> then 
-   <statementList> 
-[else 
-   <statementList>] 
+if <expression> then
+   <statementList>
+[else
+   <statementList>]
 end if
 ```
 
@@ -281,7 +281,7 @@ end if
 ```
 if the first line of field id 0 contains "hello" then
 	put "Hello" into the message box
-else 
+else
 	put "Goodbye" into the message box
 end if
 ```
@@ -324,8 +324,18 @@ Function | Description
 `mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
 `number` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
 `result` | Returns the current value of the implicit variable it, for example: `the result`
+`message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`
+`min(`_number-list_`)` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
+`max(`_number-list_`)` | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
+`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields 07/04/16.
+`long date` | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
+`abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
+`seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
+`ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
 
-A user may define a function of their own creation anywhere inside of a script, but keep in mind that functions cannot be nested and cannot be accessed outside of the script in which they're defined. 
+
+
+A user may define a function of their own creation anywhere inside of a script, but keep in mind that functions cannot be nested and cannot be accessed outside of the script in which they're defined.
 
 The syntax for defining a function is:
 
@@ -355,17 +365,16 @@ function factorial fact
 end factorial
 ```
 
-### Commands 
+### Commands
 
 This version of HyperCard implements the following set of commands:
 
 Command	| Description
 --------|------------
 `put` | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
-`get`	| Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0` 
+`get`	| Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `set`	| Sets the property of a part to a value; `set the wraptext of field id 3 to (5 > 3)`
-`answer` | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier. 
+`answer` | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
 `ask`	| Similar to answer, ask produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
 `do` | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
 `send` | Send a message to a part on the current card; `send "mouseUp" to field id 3`
-
