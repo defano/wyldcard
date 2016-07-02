@@ -8,19 +8,27 @@ import java.io.Serializable;
 
 public class ExpMaxFun extends Expression implements Serializable {
 
-    private final Value x, y;
+    private final ArgumentList arguments;
 
-    public ExpMaxFun (Value x, Value y) {
-        this.x = x;
-        this.y = y;
+    public ExpMaxFun (ArgumentList arguments) {
+        this.arguments = arguments;
     }
 
     @Override
     public Value evaluate() throws HtSyntaxException {
-        if (x.isNumber() && y.isNumber()) {
-            return x.floatValue() > y.floatValue() ? x : y;
+        Value max = new Value(Double.MIN_VALUE);
+        arguments.evaluate();
+
+        for (Value thisValue : arguments.getEvaluatedList()) {
+            if (!thisValue.isNumber()) {
+                throw new HtSyntaxException("All arguments to max() must be numbers.");
+            }
+
+            if (thisValue.floatValue() > max.floatValue()) {
+                max = thisValue;
+            }
         }
 
-        throw new HtSyntaxException("Arguments to max(x,y) must be numbers.");
+        return max;
     }
 }

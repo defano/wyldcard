@@ -16,7 +16,7 @@ import hypertalk.*;
 import hypercard.runtime.*;
 
 /* TO PRINT LIST OF TOKENS DURING READ, UNCOMMENT FOLLOWING LINE */
-//scan with {: return ((HtLexer) getScanner ()).debug_next_token (); :}; 
+// scan with {: return ((HtLexer) getScanner ()).debug_next_token (); :};
 
 terminal						ASK, ANSWER, PUT, GET, SET, SEND;
 terminal						NOT, OR;
@@ -669,19 +669,19 @@ opLevel2Exp			::= opLevel1Exp:lhs
 					| NOT opLevel2Exp:rhs
 					{: RESULT = new ExpUnaryOperator(UnaryOperator.NOT, rhs); :}
 					;
-					
-opLevel1Exp			::= factor:lhs
-					{: RESULT = lhs; :}
-					
-					| builtin:bi 
+
+opLevel1Exp         ::= builtin:bi
 					{: RESULT = bi; :}
-					
+
 					| THE builtin:bi
 					{: RESULT = bi; :}
-					
+
+                    | factor:lhs
+					{: RESULT = lhs; :}
+
 					| IDENTIFIER:i LPAREN argumentList:al RPAREN
-					{: RESULT = new ExpUserFunction(i, al); :}					
-					;					
+					{: RESULT = new ExpUserFunction(i, al); :}
+					;
 																		
 builtin				::= MOUSE
 					{: RESULT = new ExpMouseFun(); :}
@@ -701,11 +701,11 @@ builtin				::= MOUSE
 					| NUMBER OF countable:c IN factor:f
 					{: RESULT = new ExpNumberOfFun(c, f); :}
 
-					| MIN LPAREN number:x COMMA number:y RPAREN
-					{: RESULT = new ExpMinFun(x, y); :}
+					| MIN LPAREN argumentList:list RPAREN
+					{: RESULT = new ExpMinFun(list); :}
 
-					| MAX LPAREN number:x COMMA number:y RPAREN
-					{: RESULT = new ExpMaxFun(x, y); :}
+					| MAX LPAREN argumentList:list RPAREN
+					{: RESULT = new ExpMaxFun(list); :}
 
 					| TICKS
 					{: RESULT = new ExpTicksFun(); :}
@@ -724,7 +724,6 @@ builtin				::= MOUSE
 
                     | dateFormat:format TIME
                     {: RESULT = new ExpTimeFun(format); :}
-
 					;
 
 dateFormat          ::= LONG

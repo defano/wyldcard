@@ -8,19 +8,28 @@ import java.io.Serializable;
 
 public class ExpMinFun extends Expression implements Serializable {
 
-    private final Value x, y;
+    private final ArgumentList arguments;
 
-    public ExpMinFun (Value x, Value y) {
-        this.x = x;
-        this.y = y;
+    public ExpMinFun (ArgumentList arguments) {
+        this.arguments = arguments;
     }
 
     @Override
     public Value evaluate() throws HtSyntaxException {
-        if (x.isNumber() && y.isNumber()) {
-            return x.floatValue() > y.floatValue() ? y : x;
+        Value min = new Value(Double.MAX_VALUE);
+        arguments.evaluate();
+
+        for (Value thisValue : arguments.getEvaluatedList()) {
+
+            if (!thisValue.isNumber()) {
+                throw new HtSyntaxException("All arguments to min() must be numbers.");
+            }
+
+            if (thisValue.floatValue() < min.floatValue()) {
+                min = thisValue;
+            }
         }
 
-        throw new HtSyntaxException("Arguments to min(x,y) must be numbers.");
+        return min;
     }
 }
