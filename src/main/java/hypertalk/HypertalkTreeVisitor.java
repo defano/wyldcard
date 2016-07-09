@@ -301,22 +301,22 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
 
     @Override
     public Object visitAddCmdStmnt(HypertalkParser.AddCmdStmntContext ctx) {
-        return new StatAddCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+        return new StatAddCmd((Expression) visit(ctx.expression()), (Destination) visit(ctx.destination()));
     }
 
     @Override
     public Object visitSubtractCmdStmnt(HypertalkParser.SubtractCmdStmntContext ctx) {
-        return new StatSubtractCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+        return new StatSubtractCmd((Expression) visit(ctx.expression()), (Destination) visit(ctx.destination()));
     }
 
     @Override
     public Object visitMultiplyCmdStmnt(HypertalkParser.MultiplyCmdStmntContext ctx) {
-        return new StatMultiplyCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+        return new StatMultiplyCmd((Expression) visit(ctx.expression()), (Destination) visit(ctx.destination()));
     }
 
     @Override
     public Object visitDivideCmdStmnt(HypertalkParser.DivideCmdStmntContext ctx) {
-        return new StatDivideCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+        return new StatDivideCmd((Expression) visit(ctx.expression()), (Destination) visit(ctx.destination()));
     }
 
     @Override

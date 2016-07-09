@@ -11,24 +11,39 @@ package hypertalk.ast.containers;
 
 import hypercard.context.GlobalContext;
 import hypercard.runtime.RuntimeEnv;
+import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
 public abstract class Destination implements Serializable {
     private static final long serialVersionUID = -6162809738803477696L;
 
+    public abstract Chunk chunk();
+
     public Value getValue() throws HtException {
 
         if (this instanceof DestinationVariable) {
-            return GlobalContext.getContext().get(((DestinationVariable) this).symbol());
+            Value value = GlobalContext.getContext().get(((DestinationVariable) this).symbol());
+            return chunkOf(value, this.chunk());
         } else if (this instanceof DestinationPart) {
-            return GlobalContext.getContext().get(((DestinationPart) this).part().evaluateAsSpecifier()).getValue();
+            Value value = GlobalContext.getContext().get(((DestinationPart) this).part().evaluateAsSpecifier()).getValue();
+            return chunkOf(value, this.chunk());
         } else if (this instanceof DestinationMsgBox) {
-            return new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
+            Value value = new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
+            return chunkOf(value, this.chunk());
         } else {
             throw new HtException("Bug! Unimplemented destination type.");
+        }
+    }
+
+    private Value chunkOf (Value v, Chunk chunk) throws HtSemanticException {
+        if (chunk == null) {
+            return v;
+        } else {
+            return v.getChunk(chunk);
         }
     }
 

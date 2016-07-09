@@ -102,7 +102,7 @@ Property    | Description
 `name`      | Returns or sets the script-addressable name of the button
 `title`     | Returns or sets the title of this button  
 `left`      | Returns or sets the left-most border of the button's location
-`top`	    | Returns or sets the top-most border of the button's location
+`top`	      | Returns or sets the top-most border of the button's location
 `width`     | Returns or sets the width of the button (in pixels)
 `height`    | Returns or sets the height of the button (in pixels)
 `visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
@@ -386,12 +386,16 @@ end factorial
 
 This version of HyperCard implements the following set of commands:
 
-Command	| Description
---------|------------
-`put` | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
-`get`	| Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	| Sets the property of a part to a value; `set the wraptext of field id 3 to (5 > 3)`
-`answer` | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
-`ask`	| Similar to answer, ask produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
-`do` | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
-`send` | Send a message to a part on the current card; `send "mouseUp" to field id 3`
+Command	   | Description
+-----------|------------
+`put`      | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
+`get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
+`set`	     | Sets the property of a part to a value; `set the wraptext of field id 3 to (5 > 3)`
+`answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
+`ask`	     | Similar to answer, ask produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
+`do`       | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
+`send`     | Send a message to a part on the current card; `send "mouseUp" to field id 3`
+`add`      | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
+`subtract` | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
+`multiply` |
+`divide`   |
