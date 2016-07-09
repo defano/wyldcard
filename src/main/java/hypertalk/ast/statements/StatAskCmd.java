@@ -13,9 +13,10 @@ import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.ExpLiteral;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
+
 import javax.swing.JOptionPane;
 
 public class StatAskCmd extends Statement implements Serializable {
@@ -34,7 +35,7 @@ private static final long serialVersionUID = -5917404097409699111L;
 		this.suggestion = new ExpLiteral("");
 	}
 	
-	public void execute () throws HtSyntaxException {
+	public void execute () throws HtSemanticException {
 		if (suggestion != null)
 			ask(question.evaluate(), suggestion.evaluate());
 		else

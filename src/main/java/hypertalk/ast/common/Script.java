@@ -12,7 +12,8 @@ import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -62,17 +63,17 @@ private static final long serialVersionUID = 1338999304303112852L;
 			RuntimeEnv.getRuntimeEnv().executeStatementList(handlers.get(handler));			
 	}
 	
-	public void executeStatement () throws HtSyntaxException {
+	public void executeStatement () throws HtException {
 		if (statements != null)
 			statements.execute();
 	}
 	
-	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSyntaxException {
+	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSemanticException {
 		UserFunction theFunction = userfunctions.get(function);
 		
 		if (theFunction != null) 
 			return RuntimeEnv.getRuntimeEnv().executeUserFunction(theFunction, arguments);
 		else
-			throw new HtSyntaxException("No such function " + function);
+			throw new HtSemanticException("No such function " + function);
 	}	
 }

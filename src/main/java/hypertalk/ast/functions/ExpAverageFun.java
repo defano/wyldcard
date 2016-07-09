@@ -11,7 +11,7 @@ import java.util.List;
 
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 9127974850580430954L;
 		this.expression = expression;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		
 		float sum = 0;
 		List<Value> list = expression.evaluate().listValue();
@@ -34,7 +34,7 @@ private static final long serialVersionUID = 9127974850580430954L;
 		for (Value item : list) {
 			
 			if (!item.isNumber())
-				throw new HtSyntaxException("Can't take the average of a non-numerical list");
+				throw new HtSemanticException("Can't take the average of a non-numerical list");
 				
 			sum += item.floatValue();
 		}

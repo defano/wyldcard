@@ -15,7 +15,8 @@ import hypertalk.ast.constructs.RepeatForever;
 import hypertalk.ast.constructs.RepeatRange;
 import hypertalk.ast.constructs.RepeatSpecifier;
 import hypertalk.ast.constructs.RepeatWith;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -30,7 +31,7 @@ private static final long serialVersionUID = 4040093959379311162L;
 		this.statements = statements;
 	}
 	
-	public void execute () throws HtSyntaxException {
+	public void execute () throws HtException {
 		if (range instanceof RepeatForever) {
 			while (true)
 				statements.execute();
@@ -41,7 +42,7 @@ private static final long serialVersionUID = 4040093959379311162L;
 			Value countValue = count.count.evaluate();
 			
 			if (!countValue.isNatural())
-				throw new HtSyntaxException("Repeat range must be a natural number, got '" + countValue + "' instead.");
+				throw new HtSemanticException("Repeat range must be a natural number, got '" + countValue + "' instead.");
 			
 			int countIndex = countValue.integerValue();
 			while (countIndex-- > 0)
@@ -73,9 +74,9 @@ private static final long serialVersionUID = 4040093959379311162L;
 			Value toValue = range.to.evaluate();
 			
 			if (!fromValue.isInteger())
-				throw new HtSyntaxException("Start of repeat range is not an integer value: '" + fromValue + "'");			
+				throw new HtSemanticException("Start of repeat range is not an integer value: '" + fromValue + "'");
 			if (!toValue.isInteger())
-				throw new HtSyntaxException("End of repeat range is not an integer value: '" + toValue + "'");
+				throw new HtSemanticException("End of repeat range is not an integer value: '" + toValue + "'");
 			
 			int from = fromValue.integerValue();
 			int to = toValue.integerValue();
@@ -83,7 +84,7 @@ private static final long serialVersionUID = 4040093959379311162L;
 			if (range.polarity == RepeatRange.POLARITY_UPTO) {
 
 				if (from > to)
-					throw new HtSyntaxException("Start of repeat range is greater then end: " + from + " > " + to);
+					throw new HtSemanticException("Start of repeat range is greater then end: " + from + " > " + to);
 				
 				for (int index = from; index <= to; index++) {
 					GlobalContext.getContext().set(symbol, new Value(index));
@@ -94,7 +95,7 @@ private static final long serialVersionUID = 4040093959379311162L;
 			else { // RepeatRange.POLARITY_DOWNTO 
 
 				if (to > from)
-					throw new HtSyntaxException("End of repeat range is greater then start: " + to + " > " + from);
+					throw new HtSemanticException("End of repeat range is greater then start: " + to + " > " + from);
 				
 				for (int index = to; index >= from; index--) {
 					GlobalContext.getContext().set(symbol, new Value(index));

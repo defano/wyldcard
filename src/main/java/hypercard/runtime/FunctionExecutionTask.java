@@ -4,7 +4,7 @@ import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.util.concurrent.Callable;
 
@@ -18,7 +18,7 @@ public class FunctionExecutionTask implements Callable<Value> {
 		this.arguments = arguments;
 		
 		if (function.parameters.list.size() != arguments.getEvaluatedList().size())
-			RuntimeEnv.getRuntimeEnv().dialogSyntaxError(new HtSyntaxException("Argument count to function " + function.name + " doesn't match parameter count"));		
+			RuntimeEnv.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Argument count to function " + function.name + " doesn't match parameter count"));
 	}
 
 	
@@ -37,7 +37,7 @@ public class FunctionExecutionTask implements Callable<Value> {
 			
 			function.statements.execute();
 		
-		} catch (HtSyntaxException e) {
+		} catch (HtSemanticException e) {
 			RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
 		}
 

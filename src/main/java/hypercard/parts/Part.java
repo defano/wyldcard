@@ -12,7 +12,7 @@ import javax.swing.JComponent;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.functions.ArgumentList;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 import hypertalk.properties.Properties;
@@ -26,13 +26,13 @@ public interface Part {
 	
 	public Properties getProperties();
 	public Value getProperty (String property) throws NoSuchPropertyException;
-	public void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSyntaxException;
+	public void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException;
 	
 	public Value getValue();
 	public void setValue(Value v);
 		
-	public void sendMessage(String message) throws HtSyntaxException;
-	public Value executeUserFunction(String function, ArgumentList arguments) throws HtSyntaxException;
+	public void sendMessage(String message) throws HtSemanticException;
+	public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException;
     
     public void partOpened();
 }

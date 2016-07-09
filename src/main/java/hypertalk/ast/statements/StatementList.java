@@ -7,7 +7,7 @@
 
 package hypertalk.ast.statements;
 
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtException;
 
 import java.io.Serializable;
 import java.util.Vector;
@@ -31,7 +31,7 @@ private static final long serialVersionUID = -4315995456959242849L;
 		return this;
 	}
 	
-	public void execute() throws HtSyntaxException {
+	public void execute() throws HtException {
 		for (Statement s : list) {
 			s.execute();
 			

@@ -10,7 +10,7 @@ package hypertalk.ast.statements;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.expressions.ExpPart;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -27,11 +27,11 @@ private static final long serialVersionUID = 5770378882468419709L;
 		this.expression = expression;
 	}
 	
-	public void execute () throws HtSyntaxException {
+	public void execute () throws HtSemanticException {
 		try {
 			GlobalContext.getContext().set(property, part.evaluateAsSpecifier(), expression.evaluate());
 		} catch (Exception e) {
-			throw new HtSyntaxException(e.getMessage());
+			throw new HtSemanticException(e.getMessage());
 		}
 	}
 }

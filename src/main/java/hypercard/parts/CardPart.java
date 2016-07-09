@@ -14,7 +14,7 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -133,7 +133,7 @@ private static final long serialVersionUID = 742164164633903146L;
     }
 
 	public Value executeUserFunction (PartSpecifier ps, String function, ArgumentList arguments) 
-	throws HtSyntaxException, PartException 
+	throws HtSemanticException, PartException
 	{
 		return getPart(ps).executeUserFunction(function, arguments);
 	}

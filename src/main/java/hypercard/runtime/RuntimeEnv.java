@@ -18,7 +18,7 @@ import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
@@ -130,7 +130,7 @@ public class RuntimeEnv implements Serializable {
 	}
 
 	public void sendMessage(PartSpecifier ps, String message)
-			throws PartException, HtSyntaxException {
+			throws PartException, HtSemanticException {
 		if (!supressMessages)
 			GlobalContext.getContext().get(ps).sendMessage(message);
 	}

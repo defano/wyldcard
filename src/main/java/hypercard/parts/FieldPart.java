@@ -22,7 +22,7 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 import hypertalk.properties.Properties;
@@ -175,7 +175,7 @@ private static final long serialVersionUID = 6441731559079090863L;
 		return new Value(text.getText());
 	}
 	
-	private void compile() throws HtSyntaxException {
+	private void compile() throws HtSemanticException {
 						
 		try {
 			String scriptText = properties.getProperty(PROP_SCRIPT).toString();            
@@ -183,7 +183,7 @@ private static final long serialVersionUID = 6441731559079090863L;
 		} catch (NoSuchPropertyException e) {
 			throw new RuntimeException("Field doesn't contain a script");
 		} catch (Exception e) {
-			throw new HtSyntaxException(e.getMessage());
+			throw new HtSemanticException(e.getMessage());
 		}		
 	}
 	
@@ -194,7 +194,7 @@ private static final long serialVersionUID = 6441731559079090863L;
 		}
 	}
 	
-	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSyntaxException {
+	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSemanticException {
 		return script.executeUserFunction(function, arguments);		
 	}
 	
@@ -249,7 +249,7 @@ private static final long serialVersionUID = 6441731559079090863L;
         if (property.equals(PROP_SCRIPT)) {
     		try {
     			compile();
-    		} catch (HtSyntaxException e) {
+    		} catch (HtSemanticException e) {
     			RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
     		}
     	}

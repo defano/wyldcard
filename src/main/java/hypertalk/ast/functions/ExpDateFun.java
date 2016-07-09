@@ -3,7 +3,7 @@ package hypertalk.ast.functions;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.common.DateFormat;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -11,14 +11,15 @@ import java.util.Date;
 
 public class ExpDateFun extends Expression implements Serializable {
 
-    private final DateFormat dateFormat;
+	private static final long serialVersionUID = -1721920029843287694L;
+	private final DateFormat dateFormat;
 
     public ExpDateFun (DateFormat dateFormat) {
         this.dateFormat = dateFormat;
     }
 
     @Override
-    public Value evaluate() throws HtSyntaxException {
+    public Value evaluate() throws HtSemanticException {
         switch (dateFormat) {
             case LONG:
                 return new Value(new SimpleDateFormat("EEEEE, MMMMM dd, yyyy").format(new Date()));
@@ -27,7 +28,7 @@ public class ExpDateFun extends Expression implements Serializable {
             case ABBREVIATED:
                 return new Value(new SimpleDateFormat("EEE, MMM dd, yyyy").format(new Date()));
             default:
-                throw new HtSyntaxException("Unsupported date format.");
+                throw new HtSemanticException("Unsupported date format.");
         }
     }
 }

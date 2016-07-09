@@ -13,7 +13,7 @@ import hypercard.parts.PartException;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -28,7 +28,7 @@ private static final long serialVersionUID = 5613645247678139803L;
 		this.arguments = arguments;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		
 		try {
 			PartSpecifier ps = GlobalContext.getContext().getMe();
@@ -37,7 +37,7 @@ private static final long serialVersionUID = 5613645247678139803L;
 			arguments.evaluate();
 			return part.executeUserFunction(function, arguments);			
 		} catch (PartException e) {
-			throw new HtSyntaxException(e.getMessage());
+			throw new HtSemanticException(e.getMessage());
 		}						
 	}
 }

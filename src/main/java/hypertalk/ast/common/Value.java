@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 import hypertalk.ast.containers.Preposition;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
 import java.io.Serializable;
 
@@ -39,7 +39,7 @@ private static final long serialVersionUID = 2073264430579615009L;
 	public Value (Object v) {
 
         if (v == null)
-            value = "(null - you shouldn't be seeing this!)";
+            value = "(null)";
         else
             value = v.toString();
         
@@ -157,7 +157,7 @@ private static final long serialVersionUID = 2073264430579615009L;
 		return value.split("\n").length;
 	}
 	
-	public Value getChunk (Chunk c) throws HtSyntaxException {
+	public Value getChunk (Chunk c) throws HtSemanticException {
 		
 		Value startVal = null;
 		Value endVal = null;
@@ -171,9 +171,9 @@ private static final long serialVersionUID = 2073264430579615009L;
 			endVal = c.end.evaluate();
 						
 		if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
-			throw new HtSyntaxException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
+			throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
 		if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
-			throw new HtSyntaxException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
+			throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
 
 		if (startVal != null)
 			startIdx = startVal.integerValue();		
@@ -193,7 +193,7 @@ private static final long serialVersionUID = 2073264430579615009L;
 		}
 	}
 
-	public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtSyntaxException {
+	public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtSemanticException {
 		String mutatorString = mutator.toString();
 		String mutableString = mutable.toString();
 
@@ -209,9 +209,9 @@ private static final long serialVersionUID = 2073264430579615009L;
 			endVal = c.end.evaluate();
 		
 		if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
-			throw new HtSyntaxException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
+			throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
 		if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
-			throw new HtSyntaxException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
+			throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
 		
 		if (startVal != null)
 			startIdx = startVal.integerValue();
@@ -283,12 +283,12 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(toString().compareTo(v.toString()) <= 0);
 	}
 	
-	public Value multiply (Object val) throws HtSyntaxException {
+	public Value multiply (Object val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isNumber())
-			throw new HtSyntaxException(value + " cannot be multiplied because it is not a number");
+			throw new HtSemanticException(value + " cannot be multiplied because it is not a number");
 		if (!v.isNumber())
-			throw new HtSyntaxException(value + " cannot be multiplied by the text expression: " + v);
+			throw new HtSemanticException(value + " cannot be multiplied by the text expression: " + v);
 		
 		if (isInteger() && v.isInteger())
 			return new Value(integerValue() * v.integerValue());
@@ -296,12 +296,12 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(floatValue() * v.floatValue());
 	}
 	
-	public Value divide (Object val) throws HtSyntaxException {
+	public Value divide (Object val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isNumber())
-			throw new HtSyntaxException(value + " cannot be divided because it is not a number");
+			throw new HtSemanticException(value + " cannot be divided because it is not a number");
 		if (!v.isNumber())
-			throw new HtSyntaxException(value + " cannot be divided by the text expression: " + v);
+			throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
 		
 		if (isInteger() && v.isInteger())
 			return new Value(integerValue() / v.integerValue());
@@ -309,12 +309,12 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(floatValue() / v.floatValue());
 	}
 
-	public Value add (Object val) throws HtSyntaxException {
+	public Value add (Object val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isNumber())
-			throw new HtSyntaxException(value + " cannot be added because it is not a number");
+			throw new HtSemanticException(value + " cannot be added because it is not a number");
 		if (!v.isNumber())
-			throw new HtSyntaxException(value + " cannot be added to the text expression: " + v);
+			throw new HtSemanticException(value + " cannot be added to the text expression: " + v);
 		
 		if (isInteger() && v.isInteger())
 			return new Value(integerValue() + v.integerValue());
@@ -322,12 +322,12 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(floatValue() + v.floatValue());
 	}
 	
-	public Value subtract (Object val) throws HtSyntaxException {
+	public Value subtract (Object val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isNumber())
-			throw new HtSyntaxException(value + " cannot be subtracted because it is not a number");
+			throw new HtSemanticException(value + " cannot be subtracted because it is not a number");
 		if (!v.isNumber())
-			throw new HtSyntaxException(value + " cannot be subtracted by the text expression: " + v);
+			throw new HtSemanticException(value + " cannot be subtracted by the text expression: " + v);
 		
 		if (isInteger() && v.isInteger())
 			return new Value(integerValue() - v.integerValue());
@@ -335,22 +335,22 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(floatValue() - v.floatValue());
 	}
 	
-	public Value exponentiate (Object val) throws HtSyntaxException {
+	public Value exponentiate (Object val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isNumber())
-			throw new HtSyntaxException(value + " cannot be raised to a power because it is not a number");
+			throw new HtSemanticException(value + " cannot be raised to a power because it is not a number");
 		if (!v.isNumber())
-			throw new HtSyntaxException(value + " cannot be raised to the power of the text expression: " + v);
+			throw new HtSemanticException(value + " cannot be raised to the power of the text expression: " + v);
 		
 		return new Value(Math.pow(floatValue(), v.floatValue()));
 	}
 
-	public Value mod (Object val) throws HtSyntaxException {
+	public Value mod (Object val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isNumber())
-			throw new HtSyntaxException(value + " cannot be divided because it is not a number");
+			throw new HtSemanticException(value + " cannot be divided because it is not a number");
 		if (!v.isNumber())
-			throw new HtSyntaxException(value + " cannot be divided by the text expression: " + v);
+			throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
 		
 		if (isInteger() && v.isInteger())
 			return new Value(integerValue() % v.integerValue());
@@ -358,16 +358,16 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(floatValue() % v.floatValue());
 	}
 	
-	public Value not () throws HtSyntaxException {
+	public Value not () throws HtSemanticException {
 		if (!isBoolean())
-			throw new HtSyntaxException (value + " cannot be negated because it is not boolean");
+			throw new HtSemanticException(value + " cannot be negated because it is not boolean");
 		
 		return new Value(!booleanValue());
 	}
 
-	public Value negate () throws HtSyntaxException {
+	public Value negate () throws HtSemanticException {
 		if (!isBoolean())
-			throw new HtSyntaxException (value + " cannot be negated because it is not boolean");
+			throw new HtSemanticException(value + " cannot be negated because it is not boolean");
 		
 		if (isInteger())
 			return new Value(integerValue() * -1);
@@ -375,22 +375,22 @@ private static final long serialVersionUID = 2073264430579615009L;
 			return new Value(floatValue() * -1);
 	}
 
-	public Value and (Value val) throws HtSyntaxException {
+	public Value and (Value val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isBoolean())
-			throw new HtSyntaxException(value + " cannot be and'ed because it is not boolean");
+			throw new HtSemanticException(value + " cannot be and'ed because it is not boolean");
 		if (!v.isBoolean())
-			throw new HtSyntaxException(value + " cannot be and'ed with text value " + v);
+			throw new HtSemanticException(value + " cannot be and'ed with text value " + v);
 		
 		return new Value(booleanValue() && v.booleanValue());
 	}
 	
-	public Value or (Value val) throws HtSyntaxException {
+	public Value or (Value val) throws HtSemanticException {
 		Value v = new Value(val);
 		if (!isBoolean())
-			throw new HtSyntaxException(value + " cannot be or'ed because it is not boolean");
+			throw new HtSemanticException(value + " cannot be or'ed because it is not boolean");
 		if (!v.isBoolean())
-			throw new HtSyntaxException(value + " cannot be or'ed with text value " + v);
+			throw new HtSemanticException(value + " cannot be or'ed with text value " + v);
 		
 		return new Value(booleanValue() || v.booleanValue());
 	}

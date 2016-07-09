@@ -7,7 +7,8 @@
 
 package hypertalk.ast.statements;
 
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -18,7 +19,7 @@ private static final long serialVersionUID = 6925751727561632886L;
 	// list should not execute. 
 	public boolean breakExecution = false;
 	
-	public void execute() throws HtSyntaxException {
-		throw new HtSyntaxException("Unimplemented execution for statement");
+	public void execute() throws HtException {
+		throw new HtSemanticException("Unimplemented execution for statement");
 	}
 }

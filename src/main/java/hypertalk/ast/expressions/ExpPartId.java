@@ -13,7 +13,7 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -28,17 +28,17 @@ private static final long serialVersionUID = 8966443320347638727L;
 		this.id = id;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		try {
 			PartSpecifier part = new PartIdSpecifier(type, id.evaluate().stringValue());			
 			return GlobalContext.getContext().get(part).getValue();
 		} catch (PartException e) {
-			throw new HtSyntaxException(e.getMessage());
+			throw new HtSemanticException(e.getMessage());
 		}
 	}
 	
 	public PartSpecifier evaluateAsSpecifier () 
-	throws HtSyntaxException 
+	throws HtSemanticException
 	{		
 		return new PartIdSpecifier(type, id.evaluate().stringValue());
 	}

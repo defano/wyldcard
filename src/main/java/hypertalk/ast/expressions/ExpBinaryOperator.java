@@ -9,7 +9,7 @@ package hypertalk.ast.expressions;
 
 import hypertalk.ast.common.BinaryOperator;
 import hypertalk.ast.common.Value;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -26,7 +26,7 @@ private static final long serialVersionUID = -248264981469165715L;
 		this.rhs = rhs;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		Value lhs = this.lhs.evaluate();
 		Value rhs = this.rhs.evaluate();
 		
@@ -48,7 +48,7 @@ private static final long serialVersionUID = -248264981469165715L;
 		case CONTAINS: return new Value(lhs.contains(rhs));
 		case NOTCONTAINS: return new Value(!lhs.contains(rhs));
 		case CONCAT: return lhs.concat(rhs);
-		default: throw new HtSyntaxException("Unhandeled binary operator in evaluasion: " + operator);
+		default: throw new HtSemanticException("Unhandeled binary operator in evaluasion: " + operator);
 		}
 	}	
 }

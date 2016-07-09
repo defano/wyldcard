@@ -1,38 +1,47 @@
 apply plugin: 'java'
 apply plugin: 'application'
+apply plugin: 'antlr'
+apply plugin: 'idea'
+
+allprojects {
+	apply plugin: 'java'
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+}
 
 repositories {
 	mavenCentral()
 }
 
 configurations {
-	jflex
-	jcup
+	antlr
+}
+
+clean {
+    delete "generated-src/"
+}
+
+sourceSets {
+	main.java.srcDirs += 'generated-src/main/java'
+}
+
+idea {
+	module {
+		sourceDirs += file('generated-src/main/java')
+	}
 }
 
 dependencies {
-	
-	jcup group: 'net.sf.squirrel-sql.thirdparty-non-maven', name: 'java-cup', version: '0.11a'
-	jflex group: 'de.jflex', name: 'jflex', version: '1.4.1'
-	
+	antlr "org.antlr:antlr4:4.5"
+
 	compile group: 'net.java.dev.swing-layout', name: 'swing-layout', version:'1.0.2'
-	compile configurations.jcup
+	testCompile 'junit:junit:4.12'
 }
 
-task jflex << {
-  javaexec { 
-	classpath configurations.jflex
-  	main="JFlex.Main" 
-  	args "-d", "src/main/java/hypertalk/parser/", "src/main/resources/HtInterpreter.jflex"
-  } 
-}
-
-task jcup (dependsOn: 'jflex') << {
-	javaexec {
-		classpath configurations.jcup
-		main="java_cup.Main"
-		args "-destdir", "src/main/java/hypertalk/parser", "-parser", "HtInterpreter", "-package", "hypertalk.parser", "src/main/resources/HtInterpreter.cup"
-	}
+generateGrammarSource {
+	outputDirectory = file("generated-src/main/java/hypertalk/parser")
+	maxHeapSize = "64m"
+	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "hypertalk.parser"]
 }
 
 mainClassName="hypercard.runtime.RuntimeEnv"

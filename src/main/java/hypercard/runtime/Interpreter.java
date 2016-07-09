@@ -8,62 +8,46 @@
 
 package hypercard.runtime;
 
+import hypertalk.HypertalkErrorListener;
+import hypertalk.HypertalkTreeVisitor;
 import hypertalk.ast.common.Script;
-import hypertalk.exception.HtSyntaxException;
-import hypertalk.exception.NoSuchPropertyException;
-import hypertalk.parser.HtInterpreter;
-import hypertalk.parser.HtLexer;
-
-import java.io.ByteArrayInputStream;
+import hypertalk.exception.HtException;
+import hypertalk.parser.HypertalkLexer;
+import hypertalk.parser.HypertalkParser;
 
 import java.io.Serializable;
-import java_cup.runtime.ComplexSymbolFactory;
-import java_cup.runtime.Symbol;
-import java_cup.runtime.SymbolFactory;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class Interpreter implements Serializable {
 private static final long serialVersionUID = 1193147567809491083L;
 
-	public static Script compile (String scriptText) throws HtSyntaxException {
+	public static Script compile (String scriptText) throws HtException {
 		
 		scriptText = canonicalScriptForm(scriptText);
-		
-		try {
-            SymbolFactory sf = new ComplexSymbolFactory();
-        	HtLexer lexer = new HtLexer(new ByteArrayInputStream(scriptText.getBytes()), sf);		
-    		HtInterpreter parser = new HtInterpreter(lexer, sf);	
-            
-			Symbol ast = parser.parse();
-			return (Script) ast.value;		
-            
-		} catch (NoSuchPropertyException e) {
-			throw new RuntimeException("Field doesn't contain a script");
-		} catch (Exception e) {
-			throw new HtSyntaxException(e.getMessage());
-		}		
-	}	
-	
-	public static void execute (String statementList) 
-	throws HtSyntaxException 
-	{
-		statementList = canonicalScriptForm(statementList);		
-		
-		SymbolFactory sf = new ComplexSymbolFactory();
-		HtLexer lexer = new HtLexer(new ByteArrayInputStream(statementList.getBytes()), sf);
-		
-		HtInterpreter parser = new HtInterpreter(lexer, sf);	
-		try {
-			Symbol ast = parser.parse();
-			Script script = (Script) ast.value;
-			script.executeStatement();
-		} catch (HtSyntaxException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new HtSyntaxException("Error parsing script");
+		HypertalkErrorListener errors = new HypertalkErrorListener();
+
+			HypertalkLexer lexer = new HypertalkLexer( new ANTLRInputStream(scriptText));
+			CommonTokenStream tokens = new CommonTokenStream( lexer );
+			HypertalkParser parser = new HypertalkParser( tokens );
+			parser.addErrorListener(errors);
+			ParseTree tree = parser.script();
+
+		if (!errors.errors.isEmpty()) {
+			throw errors.errors.get(0);
 		}
+
+			return (Script) new HypertalkTreeVisitor().visit(tree);
+	}
+	
+	public static void execute (String statementList) throws HtException
+	{
+		compile(statementList).executeStatement();
 	}	
 	
-	public static String canonicalScriptForm (String scriptText) {
+	private static String canonicalScriptForm (String scriptText) {
 		return scriptText.trim() + "\n";
 	}
 }

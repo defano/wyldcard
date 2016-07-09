@@ -8,12 +8,12 @@
 package hypertalk.ast.expressions;
 
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
 public abstract class ExpPart extends Expression implements Serializable {
 	private static final long serialVersionUID = 5383623948321039949L;
 
-	public abstract PartSpecifier evaluateAsSpecifier () throws HtSyntaxException;	
+	public abstract PartSpecifier evaluateAsSpecifier () throws HtSemanticException;
 }

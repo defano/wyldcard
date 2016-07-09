@@ -15,9 +15,9 @@ public class ExpLiteral extends Expression implements Serializable {
 private static final long serialVersionUID = 7764685929011758950L;
 
 	public final String literal;
-	
-	public ExpLiteral (String literal) {
-		this.literal = literal;
+
+	public ExpLiteral (Object literal) {
+		this.literal = String.valueOf(literal);
 	}
 	
 	public Value evaluate () {

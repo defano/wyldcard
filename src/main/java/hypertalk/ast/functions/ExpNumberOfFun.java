@@ -10,7 +10,7 @@ package hypertalk.ast.functions;
 import hypertalk.ast.common.ChunkType;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 public class ExpNumberOfFun extends Expression {
 private static final long serialVersionUID = -2978627093378442998L;
@@ -23,7 +23,7 @@ private static final long serialVersionUID = -2978627093378442998L;
 		this.expression = expression;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		switch (itemtype) {
 		case CHAR: return new Value(expression.evaluate().charCount());
 		case WORD: return new Value(expression.evaluate().wordCount());

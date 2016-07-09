@@ -9,7 +9,7 @@ package hypertalk.ast.expressions;
 
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 4831685944001487239L;
 		this.expression = expression;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		return expression.evaluate().getChunk(chunk);
 	}
 }

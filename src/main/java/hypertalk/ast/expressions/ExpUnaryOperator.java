@@ -9,7 +9,7 @@ package hypertalk.ast.expressions;
 
 import hypertalk.ast.common.UnaryOperator;
 import hypertalk.ast.common.Value;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -24,13 +24,13 @@ private static final long serialVersionUID = 8022978584866255203L;
 		this.rhs = rhs;
 	}
 	
-	public Value evaluate () throws HtSyntaxException {
+	public Value evaluate () throws HtSemanticException {
 		Value rhs = this.rhs.evaluate();
 		
 		switch (operator) {
 		case NOT: return rhs.not();
 		case NEGATE: return rhs.negate();
-		default: throw new HtSyntaxException("Unhandeled unary operator in evaluation: " + operator);
+		default: throw new HtSemanticException("Unhandeled unary operator in evaluation: " + operator);
 		}
 	}
 }

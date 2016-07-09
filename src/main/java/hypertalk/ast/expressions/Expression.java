@@ -8,7 +8,7 @@
 package hypertalk.ast.expressions;
 
 import hypertalk.ast.common.Value;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
@@ -16,5 +16,5 @@ import java.io.Serializable;
 public abstract class Expression implements Serializable {
 	private static final long serialVersionUID = 1211901946883141421L;
 
-	public abstract Value evaluate() throws HtSyntaxException;
+	public abstract Value evaluate() throws HtSemanticException;
 }

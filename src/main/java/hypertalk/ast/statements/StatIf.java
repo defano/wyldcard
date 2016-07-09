@@ -9,7 +9,7 @@ package hypertalk.ast.statements;
 
 import hypertalk.ast.constructs.ThenElseBlock;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtException;
 
 import java.io.Serializable;
 
@@ -24,7 +24,7 @@ private static final long serialVersionUID = 7723910699503292875L;
 		this.then = then;
 	}
 	
-	public void execute () throws HtSyntaxException {
+	public void execute () throws HtException {
 		if (condition.evaluate().booleanValue())
 			then.thenBranch.execute();
 		else

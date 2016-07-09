@@ -20,7 +20,7 @@ import hypertalk.ast.containers.DestinationPart;
 import hypertalk.ast.containers.DestinationVariable;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.containers.Preposition;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 
@@ -102,12 +102,12 @@ private static final long serialVersionUID = -6393229377296213396L;
 	}
 	
 	public void sendMessage (PartSpecifier ps, String message) 
-	throws HtSyntaxException, PartException 
+	throws HtSemanticException, PartException
 	{
 		getCard().getPart(ps).sendMessage(message);
 	}
 	
-	public void put (Value mutator, Preposition p, DestinationMsgBox d) throws HtSyntaxException {
+	public void put (Value mutator, Preposition p, DestinationMsgBox d) throws HtSemanticException {
 
 		Chunk chunk = d.chunk();
 		Value destValue = new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
@@ -122,7 +122,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 		setIt(destValue);
 	}
 	
-	public void put (Value mutator, Preposition p, DestinationPart d) throws HtSyntaxException {
+	public void put (Value mutator, Preposition p, DestinationPart d) throws HtSemanticException {
 		
 		try {
 			Part destPart = get(d.part().evaluateAsSpecifier());
@@ -139,11 +139,11 @@ private static final long serialVersionUID = -6393229377296213396L;
 			setIt(destValue);
 			
 		} catch (PartException e) {
-			throw new HtSyntaxException(e.getMessage());
+			throw new HtSemanticException(e.getMessage());
 		}
 	}
 	
-	public void put (Value mutator, Preposition p, DestinationVariable d) throws HtSyntaxException {
+	public void put (Value mutator, Preposition p, DestinationVariable d) throws HtSemanticException {
 		String symbol = d.symbol();
 		Chunk chunk = d.chunk();
 		Value mutable = get(symbol);
@@ -190,7 +190,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 	}
 	
 	public void set (String property, PartSpecifier ps, Value value) 
-	throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSyntaxException
+	throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSemanticException
 	{
 		getCard().getPart(ps).setProperty(property, value);
 	}

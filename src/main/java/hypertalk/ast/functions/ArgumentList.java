@@ -10,7 +10,7 @@ package hypertalk.ast.functions;
 
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,7 +36,7 @@ private static final long serialVersionUID = -6598112145023266168L;
 		return this;
 	}
 	
-	public void evaluate () throws HtSyntaxException {
+	public void evaluate () throws HtSemanticException {
 		evaluatedList = new Vector<Value>();
 
 		for (Expression expr : list)

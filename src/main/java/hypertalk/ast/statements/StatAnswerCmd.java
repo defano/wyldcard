@@ -12,9 +12,10 @@ import hypercard.gui.HcWindow;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
-import hypertalk.exception.HtSyntaxException;
+import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
+
 import javax.swing.JOptionPane;
 
 public class StatAnswerCmd extends Statement implements Serializable {
@@ -53,7 +54,7 @@ private static final long serialVersionUID = -3536549602286641396L;
 		this.ch3 = null;
 	}
 	
-	public void execute () throws HtSyntaxException {
+	public void execute () throws HtSemanticException {
 		
 		if (ch1 != null && ch2 != null && ch3 != null)
 			answer(message.evaluate(), ch1.evaluate(), ch2.evaluate(), ch3.evaluate());

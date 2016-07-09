@@ -1,4 +1,9 @@
 build/
+generated-src/
 .gradle/
 .idea/
+.settings/
+.classpath
+.project
+bin/
 *.iml
