@@ -15,11 +15,7 @@ import hypercard.parts.PartException;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
-import hypertalk.ast.containers.DestinationMsgBox;
-import hypertalk.ast.containers.DestinationPart;
-import hypertalk.ast.containers.DestinationVariable;
-import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.containers.Preposition;
+import hypertalk.ast.containers.*;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
@@ -188,7 +184,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 	public Value get (String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
 		return getCard().getPart(ps).getProperty(property);
 	}
-	
+
 	public void set (String property, PartSpecifier ps, Value value) 
 	throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSemanticException
 	{

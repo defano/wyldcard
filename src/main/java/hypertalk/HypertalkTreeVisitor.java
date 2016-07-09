@@ -49,23 +49,11 @@ import hypertalk.ast.functions.ExpTicksFun;
 import hypertalk.ast.functions.ExpTimeFun;
 import hypertalk.ast.functions.ParameterList;
 import hypertalk.ast.functions.UserFunction;
-import hypertalk.ast.statements.StatAnswerCmd;
-import hypertalk.ast.statements.StatAskCmd;
-import hypertalk.ast.statements.StatDo;
-import hypertalk.ast.statements.StatExp;
-import hypertalk.ast.statements.StatGetCmd;
-import hypertalk.ast.statements.StatGlobal;
-import hypertalk.ast.statements.StatIf;
-import hypertalk.ast.statements.StatPutCmd;
-import hypertalk.ast.statements.StatRepeat;
-import hypertalk.ast.statements.StatReturn;
-import hypertalk.ast.statements.StatSendCmd;
-import hypertalk.ast.statements.StatSetCmd;
-import hypertalk.ast.statements.Statement;
-import hypertalk.ast.statements.StatementList;
+import hypertalk.ast.statements.*;
 import hypertalk.parser.HypertalkBaseVisitor;
 import hypertalk.parser.HypertalkParser;
 
+import hypertalk.parser.HypertalkVisitor;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -309,6 +297,26 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     @Override
     public Object visitSendCmdStmnt(HypertalkParser.SendCmdStmntContext ctx) {
         return visit(ctx.sendCmd());
+    }
+
+    @Override
+    public Object visitAddCmdStmnt(HypertalkParser.AddCmdStmntContext ctx) {
+        return new StatAddCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+    }
+
+    @Override
+    public Object visitSubtractCmdStmnt(HypertalkParser.SubtractCmdStmntContext ctx) {
+        return new StatSubtractCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+    }
+
+    @Override
+    public Object visitMultiplyCmdStmnt(HypertalkParser.MultiplyCmdStmntContext ctx) {
+        return new StatMultiplyCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
+    }
+
+    @Override
+    public Object visitDivideCmdStmnt(HypertalkParser.DivideCmdStmntContext ctx) {
+        return new StatDivideCmd((Expression) visit(ctx.factor()), (Destination) visit(ctx.destination()));
     }
 
     @Override

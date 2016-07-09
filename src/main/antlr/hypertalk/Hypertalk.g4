@@ -57,6 +57,10 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | getCmd                                        # getCmdStmnt
                     | setCmd                                        # setCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
+                    | 'add' factor 'to' destination                 # addCmdStmnt
+                    | 'subtract' factor 'from' destination          # subtractCmdStmnt
+                    | 'multiply' destination 'by' factor            # multiplyCmdStmnt
+                    | 'divide' destination 'by' factor              # divideCmdStmnt
                     ;
 
 answerCmd			: 'answer' factor 'with' factor 'or' factor 'or' factor     # answerThreeButtonCmd
