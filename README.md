@@ -18,17 +18,18 @@ It won't run your old stacks and it's missing too many foundational aspects of t
 
 I successfully implemented enough of the runtime environment and HyperTalk scripting language to demonstrate each of the core aspects of HyperCard, including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
 
-The project uses CUP and JFLEX as the parser generator, and the NetBeans IDE for much of the Swing UI development. With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
+The project uses Antlr4 as the parser generator, and the NetBeans IDE for much of the Swing UI development. With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
+
+Note that this project was originally implemented with the JCup/JFlex LALR parser generator tools and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
 
 ## Building with Gradle
 
-The project is built with Gradle (and will import easily into any IDE with Gradle integration like Eclipse or IntelliJ). The following Gradle tasks are defined by the project's build file:
+The project is built with Gradle (and should import easily into any IDE with Gradle integration like Eclipse or IntelliJ). The following Gradle tasks are defined by the project's build file:
 
 Task | Description
 --------|----------------------------
 `run`   | Build, test and run the application
-`jcup`  | Re-generate the LALR parser code, using JCup
-`jflex` | Re-generate the lexer code, using JFlex
+`generateGrammarSource`  | Re-generate the Hypertalk parser using Antlr4 (executes automatically as part of the `gradle build` task)
 
 ### Running the program
 
@@ -138,7 +139,7 @@ A _container_ is any entity in HyperCard that can hold a value; all parts, varia
 
 HyperCard is dynamically typed. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
 
-Local variables in HyperTalk are lexically scoped and implicity declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
+Local variables in HyperTalk are lexically scoped and implicitly declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
 
 HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers.
 For example:
@@ -283,6 +284,22 @@ if the first line of field id 0 contains "hello" then
 	put "Hello" into the message box
 else
 	put "Goodbye" into the message box
+end if
+```
+
+To address the [dangling else problem](https://en.wikipedia.org/wiki/Dangling_else), HyperTalk does not support a multi-line else-if construct. That said, nesting complex conditional logic can be achieved by nesting `if` statements. For example:
+
+```
+ask "Yes, no or maybe?" with ""
+
+if it is "yes" then
+  answer "Thank you for your support."
+else
+  if it is "maybe" then
+    answer "Make up your mind already."
+  else
+    answer "We never liked you anyway."
+  end if
 end if
 ```
 
