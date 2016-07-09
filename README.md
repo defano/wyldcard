@@ -397,5 +397,5 @@ Command	   | Description
 `send`     | Send a message to a part on the current card; `send "mouseUp" to field id 3`
 `add`      | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
 `subtract` | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
-`multiply` |
-`divide`   |
+`multiply` | Multiplies a container by a value; `multiply x by 3`
+`divide`   | Divides a container by a value; `divide x by it`
