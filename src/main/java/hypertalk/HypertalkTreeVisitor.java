@@ -426,27 +426,27 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
 
     @Override
     public Object visitAnswerThreeButtonCmd(HypertalkParser.AnswerThreeButtonCmdContext ctx) {
-        return new StatAnswerCmd((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)), (Expression) visit(ctx.factor(2)), (Expression) visit(ctx.factor(3)));
+        return new StatAnswerCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)), (Expression) visit(ctx.expression(3)));
     }
 
     @Override
     public Object visitAnswerTwoButtonCmd(HypertalkParser.AnswerTwoButtonCmdContext ctx) {
-        return new StatAnswerCmd((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)), (Expression) visit(ctx.factor(2)));
+        return new StatAnswerCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)));
     }
 
     @Override
     public Object visitAnswerOneButtonCmd(HypertalkParser.AnswerOneButtonCmdContext ctx) {
-        return new StatAnswerCmd((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
+        return new StatAnswerCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitAnswerDefaultCmd(HypertalkParser.AnswerDefaultCmdContext ctx) {
-        return new StatAnswerCmd((Expression) visit(ctx.factor()));
+        return new StatAnswerCmd((Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitAskExpWithCmd(HypertalkParser.AskExpWithCmdContext ctx) {
-        return new StatAskCmd((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
+        return new StatAskCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
@@ -886,7 +886,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
 
     @Override
     public Object visitAverageFunc(HypertalkParser.AverageFuncContext ctx) {
-        return new ExpAverageFun((Expression) visit(ctx.factor()));
+        return new ExpAverageFun((Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -901,7 +901,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
 
     @Override
     public Object visitNumberFunc(HypertalkParser.NumberFuncContext ctx) {
-        return new ExpNumberOfFun((ChunkType) visit(ctx.countable()), (Expression) visit(ctx.factor()));
+        return new ExpNumberOfFun((ChunkType) visit(ctx.countable()), (Expression) visit(ctx.expression()));
     }
 
     @Override

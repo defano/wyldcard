@@ -63,13 +63,13 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'divide' destination 'by' expression          # divideCmdStmnt
                     ;
 
-answerCmd			: 'answer' factor 'with' factor 'or' factor 'or' factor     # answerThreeButtonCmd
-                    | 'answer' factor 'with' factor 'or' factor                 # answerTwoButtonCmd
-                    | 'answer' factor 'with' factor                             # answerOneButtonCmd
-                    | 'answer' factor                                           # answerDefaultCmd
+answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
+                    | 'answer' expression 'with' expression 'or' expression                     # answerTwoButtonCmd
+                    | 'answer' expression 'with' expression                                     # answerOneButtonCmd
+                    | 'answer' expression                                                       # answerDefaultCmd
                     ;
 
-askCmd				: 'ask' expression 'with' factor                # askExpWithCmd
+askCmd				: 'ask' expression 'with' expression            # askExpWithCmd
                     | 'ask' expression                              # askExpCmd
                     ;
 
@@ -150,10 +150,10 @@ destination			: ID                                            # variableDest
                     |                                               # defaultDest
                     ;
 
-part                : 'field' factor                                # fieldPart
-                    | 'field id' factor                             # fieldIdPart
-                    | 'button' factor                               # buttonPart
-                    | 'button id' factor                            # buttonIdPart
+part                : FIELD factor                                  # fieldPart
+                    | FIELD 'id' factor                             # fieldIdPart
+                    | BUTTON factor                                 # buttonPart
+                    | BUTTON 'id' factor                            # buttonIdPart
                     | 'me'                                          # mePart
                     ;
 
@@ -248,10 +248,10 @@ opLevel1Exp         : builtin                                       # level1Exp
 
 builtin				: 'mouse'                                       # mouseFunc
                     | 'mouseloc'                                    # mouseLocFunc
-                    | 'average of' factor                           # averageFunc
+                    | 'average of' expression                       # averageFunc
                     | 'result'                                      # resultFunc
                     | MESSAGE                                       # messageFunc
-                    | 'number of' countable 'in' factor             # numberFunc
+                    | 'number of' countable 'in' expression         # numberFunc
                     | 'min' '(' argumentList ')'                    # minFunc
                     | 'max' '(' argumentList ')'                    # maxFunc
                     | 'ticks'                                       # ticksFunc
@@ -286,6 +286,9 @@ literal				: STRING_LITERAL                                # stringLiteral
                     | INTEGER_LITERAL '.'                           # numberDotLiteral
                     | INTEGER_LITERAL '.' INTEGER_LITERAL           # numberDotNumberLiteral
                     ;
+
+FIELD               : 'field' | 'card field';
+BUTTON              : 'button' | 'card button';
 
 MESSAGE				: 'message' | 'message box' | 'message window'
                     | 'the message' | 'the message box' | 'the message window' ;

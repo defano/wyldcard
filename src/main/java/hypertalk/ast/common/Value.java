@@ -100,7 +100,7 @@ private static final long serialVersionUID = 2073264430579615009L;
 	}	
 
 	public boolean isBoolean () {
-		return booleanValue != null;			
+		return booleanValue != null && booleanValue;
 	}	
 	
 	public boolean isNumber () {
