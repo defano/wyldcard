@@ -6,7 +6,7 @@
  * button is pressed over a card ("New Button", "New Field").  
  */
 
-package hypercard.gui;
+package hypercard.gui.menu;
 
 import hypercard.parts.ButtonPart;
 import hypercard.parts.CardPart;

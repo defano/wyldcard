@@ -29,8 +29,8 @@ private static final long serialVersionUID = 4751323911023854452L;
 	private Map<String, Part> namehash;
 	
 	public PartsTable () {
-		idhash = new HashMap<String,Part>();
-		namehash = new HashMap<String,Part>();
+		idhash = new HashMap<>();
+		namehash = new HashMap<>();
 	}
     
     public void sendPartOpened () {
@@ -90,7 +90,7 @@ private static final long serialVersionUID = 4751323911023854452L;
 		else if (ps instanceof PartNameSpecifier)
 			return namehash.get(ps.value());
 		else
-			throw new RuntimeException("Unhandeled part specifier type");
+			throw new RuntimeException("Unhandled part specifier type");
 	}
 
 	public boolean partExists (PartSpecifier ps) {
@@ -99,7 +99,7 @@ private static final long serialVersionUID = 4751323911023854452L;
 		else if (ps instanceof PartNameSpecifier)
 			return namehash.containsKey(ps.value());
 		else
-			throw new RuntimeException("Unhandeled part specifier type");
+			throw new RuntimeException("Unhandled part specifier type");
 	}
 	
 	public void propertyChanged (PartSpecifier ps, String property, Value oldValue, Value newValue) {

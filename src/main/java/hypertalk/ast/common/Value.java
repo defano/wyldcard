@@ -74,12 +74,10 @@ private static final long serialVersionUID = 2073264430579615009L;
 			floatValue = null;
 		}
 		
-		try {
+		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
 			booleanValue = Boolean.parseBoolean(value);
-		} catch (NumberFormatException e) {
-			booleanValue = null;
 		}
-		
+
 		// Special case: empty string is a valid int and float
 		if (value.equals("")) {
 			intValue = 0;
@@ -100,7 +98,7 @@ private static final long serialVersionUID = 2073264430579615009L;
 	}	
 
 	public boolean isBoolean () {
-		return booleanValue != null && booleanValue;
+		return booleanValue != null;
 	}	
 	
 	public boolean isNumber () {

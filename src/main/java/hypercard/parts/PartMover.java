@@ -6,7 +6,7 @@
  * of the main window. (Not nearly as trivial as one might assume.)
  */
 
-package hypercard.gui;
+package hypercard.parts;
 
 import hypercard.parts.Part;
 import hypertalk.ast.common.Value;

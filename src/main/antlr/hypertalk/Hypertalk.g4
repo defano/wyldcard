@@ -289,6 +289,7 @@ literal				: STRING_LITERAL                                # stringLiteral
 
 FIELD               : 'field' | 'card field';
 BUTTON              : 'button' | 'card button';
+CHAR                : 'char' | 'character' ;
 
 MESSAGE				: 'message' | 'message box' | 'message window'
                     | 'the message' | 'the message box' | 'the message window' ;
@@ -307,8 +308,6 @@ MIDDLE              : 'mid' | 'the mid' | 'middle' | 'the middle' ;
 LAST                : 'last' | 'the last' ;
 
 ID                  : (ALPHA (ALPHA | DIGIT)*) ;
-
-CHAR                : 'char' | 'character' ;
 
 STRING_LITERAL      : '"' ~('"' | '\r' | '\n' )* '"' ;
 INTEGER_LITERAL     : DIGIT+ ;

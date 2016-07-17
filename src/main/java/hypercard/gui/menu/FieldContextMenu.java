@@ -1,41 +1,37 @@
 /**
- * ButtonContextMenu.java
- * @author matt.defano@gmail.com
- *  
+ * FieldContextMenu.java
+ * @author matt.defano@motorola.com
+ * 
  * Implements the context-sensitive menu that appears when the right mouse 
- * button is pressed over a button part. 
+ * button is pressed over a field part.   
  */
 
-package hypercard.gui;
+package hypercard.gui.menu;
 
 import hypercard.context.GlobalContext;
-import hypercard.parts.ButtonPart;
+import hypercard.parts.FieldPart;
 
 import java.io.Serializable;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 
-/**
- *
- * @author MGIA4532
- */
-public class ButtonContextMenu extends JPopupMenu implements Serializable {
-private static final long serialVersionUID = 3341214641780506203L;
+public class FieldContextMenu extends JPopupMenu implements Serializable {
+private static final long serialVersionUID = -8909810305050480968L;
 
-	ButtonPart button;
+	FieldPart field;
 
-    JMenuItem jMenuItemEdit = new JMenuItem("Edit Button Properties...");
+    JMenuItem jMenuItemEdit = new JMenuItem("Edit Field Properties...");
     JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
     JSeparator jSeparator1 = new JSeparator();
     JMenuItem jMenuItemMove = new JMenuItem("Move");
     JMenuItem jMenuItemResize = new JMenuItem("Resize");
     JMenuItem jMenuItemDelete = new JMenuItem("Delete");
     
-    public ButtonContextMenu (ButtonPart button) {
+    public FieldContextMenu (FieldPart field) {
         super();
         
-        this.button = button;
+        this.field = field;
         
         this.add(jMenuItemEdit);
         this.add(jMenuItemEditScript);
@@ -77,23 +73,23 @@ private static final long serialVersionUID = 3341214641780506203L;
     }    
         
     public void jMenuItemEditActionPerformed(java.awt.event.ActionEvent evt) {
-        button.editProperties();
+        field.editProperties();
     }
 
     public void jMenuItemEditScriptActionPerformed(java.awt.event.ActionEvent evt) {
-        button.editScript();
+        field.editScript();
     }
 
     public void jMenuItemMoveActionPerformed(java.awt.event.ActionEvent evt) {
-        button.move();
+        field.move();
     }
 
     public void jMenuItemResizeActionPerformed(java.awt.event.ActionEvent evt) {
-        button.resize();
+        field.resize();
     }
 
     public void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {
-        GlobalContext.getContext().getCard().removeButton(button);
+        GlobalContext.getContext().getCard().removeField(field);
     }
     
 }

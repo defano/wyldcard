@@ -50,6 +50,7 @@ import hypertalk.ast.functions.ExpTimeFun;
 import hypertalk.ast.functions.ParameterList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.*;
+import hypertalk.exception.HtParseError;
 import hypertalk.parser.HypertalkBaseVisitor;
 import hypertalk.parser.HypertalkParser;
 
@@ -121,7 +122,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
         String close = (String) visit(ctx.ID(1));
 
         if (!open.equals(close)) {
-            throw new ParseCancellationException("'on " + open + "' does not match 'end " + close + "'");
+            throw new HtParseError(ctx, "'on " + open + "' does not match 'end " + close + "'");
         }
 
         return new NamedBlock(open, (StatementList) visit(ctx.statementList()));
@@ -133,7 +134,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
         String close = (String) visit(ctx.ID(1));
 
         if (!open.equals(close)) {
-            throw new ParseCancellationException("'on " + open + "' does not match 'end " + close + "'");
+            throw new HtParseError(ctx, "'on " + open + "' does not match 'end " + close + "'");
         }
 
         return new NamedBlock(open, new StatementList());
@@ -145,7 +146,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
         String close = (String) visit(ctx.ID(1));
 
         if (!open.equals(close)) {
-            throw new ParseCancellationException("'on function " + open + "' does not match 'end " + close + "'");
+            throw new HtParseError(ctx, "'on function " + open + "' does not match 'end " + close + "'");
         }
 
         return new UserFunction(open, (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
@@ -157,7 +158,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
         String close = (String) visit(ctx.ID(1));
 
         if (!open.equals(close)) {
-            throw new ParseCancellationException("'on function " + open + "' does not match 'end " + close + "'");
+            throw new HtParseError(ctx, "'on function " + open + "' does not match 'end " + close + "'");
         }
 
         return new UserFunction(open, (ParameterList) visit(ctx.parameterList()), new StatementList());

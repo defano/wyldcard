@@ -8,13 +8,13 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.gui.HcWindow;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.ExpLiteral;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
+import java.awt.*;
 import java.io.Serializable;
 
 import javax.swing.JOptionPane;
@@ -44,7 +44,7 @@ private static final long serialVersionUID = -5917404097409699111L;
 	
 	private void ask (Value question, Value suggestion) {
 
-		HcWindow parent = RuntimeEnv.getRuntimeEnv().getMainWind();
+		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
 		
 		String result = (String)JOptionPane.showInputDialog(
 		                    parent,
@@ -62,7 +62,7 @@ private static final long serialVersionUID = -5917404097409699111L;
 	}
 	
 	private void ask (Value question) {
-		HcWindow parent = RuntimeEnv.getRuntimeEnv().getMainWind();
+		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
 		
 		String result = (String)JOptionPane.showInputDialog(
 		                    parent,

@@ -10,7 +10,8 @@
 package hypercard.runtime;
 
 import hypercard.context.GlobalContext;
-import hypercard.gui.HcWindow;
+import hypercard.gui.window.StackWindow;
+import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.PartException;
 import hypertalk.ast.common.Value;
@@ -20,8 +21,7 @@ import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
 import hypertalk.exception.HtSemanticException;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
+import java.awt.*;
 import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -34,7 +34,7 @@ public class RuntimeEnv implements Serializable {
 	private static final long serialVersionUID = 3092430577877088297L;
 
 	private static RuntimeEnv _instance;
-	private HcWindow mainWind;
+	private StackWindow mainWind;
 	private boolean supressMessages = false;
 	private boolean mouseIsDown;
 
@@ -57,14 +57,20 @@ public class RuntimeEnv implements Serializable {
 		}
 
 		// Create the main window, center it on the screen and display it
-		mainWind = new HcWindow(new CardPart());
-		mainWind.setLocationRelativeTo(null);
-		mainWind.setVisible(true);
+		mainWind = new StackWindow();
+		WindowBuilder.make(mainWind)
+				.withTitle("HyperCard")
+				.resizeable(false)
+				.quitOnClose()
+				.withModel(new CardPart())
+				.withLocationRelativeTo(null)
+				.build();
 	}
 
 	public static RuntimeEnv getRuntimeEnv() {
-		if (_instance == null)
+		if (_instance == null) {
 			_instance = new RuntimeEnv();
+		}
 
 		return _instance;
 	}
@@ -95,8 +101,12 @@ public class RuntimeEnv implements Serializable {
 		}
 	}
 
-	public HcWindow getMainWind() {
-		return mainWind;
+	public Component getCardPanel() {
+		return mainWind.getWindowPanel();
+	}
+
+	public CardPart getCard () {
+		return mainWind.getCurrentCard();
 	}
 
 	public Point getTheMouseLoc() {
@@ -136,7 +146,7 @@ public class RuntimeEnv implements Serializable {
 	}
 
 	public void dialogSyntaxError(Exception e) {
-		JOptionPane.showMessageDialog(mainWind,
+		JOptionPane.showMessageDialog(mainWind.getWindowPanel(),
 				"Syntax error: " + e.getMessage());
 	}
 }

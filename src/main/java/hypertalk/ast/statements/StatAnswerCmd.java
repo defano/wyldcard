@@ -8,12 +8,12 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.gui.HcWindow;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
+import java.awt.*;
 import java.io.Serializable;
 
 import javax.swing.JOptionPane;
@@ -68,7 +68,7 @@ private static final long serialVersionUID = -3536549602286641396L;
 	
 	private void answer (Value msg, Value choice1, Value choice2, Value choice3) {
 
-		HcWindow parent = RuntimeEnv.getRuntimeEnv().getMainWind();
+		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
 		
 		Object[] choices = {choice1, choice2, choice3};
 		int choice = JOptionPane.showOptionDialog(parent, msg, "Answer", 
@@ -84,7 +84,7 @@ private static final long serialVersionUID = -3536549602286641396L;
 
 	private void answer (Value msg, Value choice1, Value choice2) {
 
-		HcWindow parent = RuntimeEnv.getRuntimeEnv().getMainWind();
+		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
 		
 		Object[] choices = {choice1, choice2};
 		int choice = JOptionPane.showOptionDialog(parent, msg, "Answer", 
@@ -99,7 +99,7 @@ private static final long serialVersionUID = -3536549602286641396L;
 	
 	private void answer (Value msg, Value choice1) {
 
-		HcWindow parent = RuntimeEnv.getRuntimeEnv().getMainWind();
+		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
 		
 		Object[] choices = {choice1};
 		int choice = JOptionPane.showOptionDialog(parent, msg, "Answer", 
@@ -113,7 +113,7 @@ private static final long serialVersionUID = -3536549602286641396L;
 	
 	private void answer (Value msg) {
 		
-		HcWindow parent = RuntimeEnv.getRuntimeEnv().getMainWind();
+		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
 		
 		Object[] choices = {"OK"};
 		JOptionPane.showOptionDialog(parent, msg, "Answer", 

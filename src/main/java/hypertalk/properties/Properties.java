@@ -60,6 +60,14 @@ private static final long serialVersionUID = -4729636262151414377L;
 		firePropertyChangeListener(property, oldValue, value);
 	}
 
+	public void setKnownProperty (String property, Value value) {
+		try {
+			setProperty(property, value);
+		} catch (NoSuchPropertyException | PropertyPermissionException e) {
+			throw new RuntimeException("Can't set known property.", e);
+		}
+	}
+
 	public Value getProperty (String property) 
 	throws NoSuchPropertyException
 	{

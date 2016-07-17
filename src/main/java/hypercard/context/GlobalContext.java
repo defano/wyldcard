@@ -66,7 +66,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 	}
 	
 	public CardPart getCard () {
-		return RuntimeEnv.getRuntimeEnv().getMainWind().getCurrentCard();
+		return RuntimeEnv.getRuntimeEnv().getCard();
 	}
 	
     public void newLocalContext () {

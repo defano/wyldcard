@@ -18,7 +18,7 @@ It won't run your old stacks and it's missing too many foundational aspects of t
 
 I successfully implemented enough of the runtime environment and HyperTalk scripting language to demonstrate each of the core aspects of HyperCard, including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
 
-The project uses Antlr4 as the parser generator, and the NetBeans IDE for much of the Swing UI development. With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
+The project uses Antlr4 as the parser generator, and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
 
 Note that this project was originally implemented with the JCup/JFlex LALR parser generator tools and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
 
@@ -43,6 +43,19 @@ To start scripting:
 
 1.	Create a new button or field, or select an existing one.
 2.	Right-click on the part and choose "Edit Script..." or "Edit Part Properties..." Both buttons and fields have several user-editable properties that can be inspected and modified within the GUI.
+
+### Editing the UI components
+
+The UI forms were generated using the GUI Designer built into IntelliJ's IDEA 15 (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
+
+Be aware that by default IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is most elegant, it produces source code that is incomplete and which cannot be built with other tools.
+
+To correct this, you need to configure IntelliJ to generate its GUI code in Java:
+
+1. From IntelliJ IDEA menu, choose "Preferences..."
+2. Navigate to "Editor" -> GUI Designer
+3. Select the "Java source code" option for GUI generation.
+4. Apply the changes and "Rebuild project" from the "Build" menu.
 
 ## The HyperTalk Language
 
