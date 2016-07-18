@@ -234,7 +234,6 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     }
 
     public void keyReleased(KeyEvent e) {
-        setValue(new Value(text.getText()));
         if (!GlobalContext.getContext().noMessages())
             sendMessage("keyUp");
     }
