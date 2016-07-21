@@ -7,9 +7,7 @@
 
 package hypertalk.ast.common;
 
-import java.io.Serializable;
-
-public enum ChunkType implements Serializable
+public enum ChunkType
 {
-	CHAR, WORD, ITEM, LINE, CHARRANGE, WORDRANGE, LINERANGE, ITEMRANGE;
+	CHAR, WORD, ITEM, LINE, CHARRANGE, WORDRANGE, LINERANGE, ITEMRANGE
 }

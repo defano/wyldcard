@@ -7,8 +7,5 @@
 
 package hypertalk.ast.constructs;
 
-import java.io.Serializable;
-
-public abstract class RepeatSpecifier implements Serializable {
-	private static final long serialVersionUID = 84052477248228076L;
+public abstract class RepeatSpecifier {
 }

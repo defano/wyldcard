@@ -16,10 +16,7 @@ import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
-public abstract class Destination implements Serializable {
-    private static final long serialVersionUID = -6162809738803477696L;
+public abstract class Destination {
 
     public abstract Chunk chunk();
 

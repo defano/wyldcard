@@ -10,8 +10,7 @@ package hypertalk.ast.functions;
 import hypertalk.ast.statements.StatementList;
 import java.io.Serializable;
 
-public class UserFunction implements Serializable {
-private static final long serialVersionUID = -8311545370557670581L;
+public class UserFunction {
 
 	public final String name;
 	public final ParameterList parameters;

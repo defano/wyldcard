@@ -5,16 +5,16 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
 import hypercard.parts.FieldPart;
+import hypercard.parts.model.PartModel;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
-import hypertalk.properties.Properties;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class FieldPropertyEditor implements HyperCardWindow {
 
-    private Properties properties;
+    private PartModel model;
 
     private JPanel fieldEditor;
     private JTextField fieldName;
@@ -35,7 +35,7 @@ public class FieldPropertyEditor implements HyperCardWindow {
             close();
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script for field " + fieldName.getText())
-                    .withModel(properties)
+                    .withModel(model)
                     .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
                     .resizeable(true)
                     .build();
@@ -56,34 +56,34 @@ public class FieldPropertyEditor implements HyperCardWindow {
 
     @Override
     public void bindModel(Object data) {
-        if (properties instanceof Properties) {
-            this.properties = (Properties) data;
+        if (data instanceof PartModel) {
+            this.model = (PartModel) data;
 
-            fieldName.setText(properties.getKnownProperty(FieldPart.PROP_NAME).stringValue());
-            fieldId.setText(properties.getKnownProperty(FieldPart.PROP_ID).stringValue());
-            fieldTop.setText(properties.getKnownProperty(FieldPart.PROP_TOP).stringValue());
-            fieldLeft.setText(properties.getKnownProperty(FieldPart.PROP_LEFT).stringValue());
-            fieldHeight.setText(properties.getKnownProperty(FieldPart.PROP_HEIGHT).stringValue());
-            fieldWidth.setText(properties.getKnownProperty(FieldPart.PROP_WIDTH).stringValue());
-            isLockText.setSelected(properties.getKnownProperty(FieldPart.PROP_LOCKTEXT).booleanValue());
-            isVisible.setSelected(properties.getKnownProperty(FieldPart.PROP_VISIBLE).booleanValue());
-            isWrapText.setSelected(properties.getKnownProperty(FieldPart.PROP_WRAPTEXT).booleanValue());
+            fieldName.setText(model.getKnownProperty(FieldPart.PROP_NAME).stringValue());
+            fieldId.setText(model.getKnownProperty(FieldPart.PROP_ID).stringValue());
+            fieldTop.setText(model.getKnownProperty(FieldPart.PROP_TOP).stringValue());
+            fieldLeft.setText(model.getKnownProperty(FieldPart.PROP_LEFT).stringValue());
+            fieldHeight.setText(model.getKnownProperty(FieldPart.PROP_HEIGHT).stringValue());
+            fieldWidth.setText(model.getKnownProperty(FieldPart.PROP_WIDTH).stringValue());
+            isLockText.setSelected(model.getKnownProperty(FieldPart.PROP_LOCKTEXT).booleanValue());
+            isVisible.setSelected(model.getKnownProperty(FieldPart.PROP_VISIBLE).booleanValue());
+            isWrapText.setSelected(model.getKnownProperty(FieldPart.PROP_WRAPTEXT).booleanValue());
         }
 
         else {
-            throw new RuntimeException("Bug! Don't know how to bind data class to window." + properties);
+            throw new RuntimeException("Bug! Don't know how to bind data class to window: " + model);
         }
     }
 
     public void updateProperties() {
-        properties.setKnownProperty(FieldPart.PROP_NAME, new Value(fieldName.getText()));
-        properties.setKnownProperty(FieldPart.PROP_TOP, new Value(fieldTop.getText()));
-        properties.setKnownProperty(FieldPart.PROP_LEFT, new Value(fieldLeft.getText()));
-        properties.setKnownProperty(FieldPart.PROP_HEIGHT, new Value(fieldHeight.getText()));
-        properties.setKnownProperty(FieldPart.PROP_WIDTH, new Value(fieldWidth.getText()));
-        properties.setKnownProperty(FieldPart.PROP_LOCKTEXT, new Value(isLockText.getSelectedObjects() != null));
-        properties.setKnownProperty(FieldPart.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
-        properties.setKnownProperty(FieldPart.PROP_WRAPTEXT, new Value(isWrapText.getSelectedObjects() != null));
+        model.setKnownProperty(FieldPart.PROP_NAME, new Value(fieldName.getText()));
+        model.setKnownProperty(FieldPart.PROP_TOP, new Value(fieldTop.getText()));
+        model.setKnownProperty(FieldPart.PROP_LEFT, new Value(fieldLeft.getText()));
+        model.setKnownProperty(FieldPart.PROP_HEIGHT, new Value(fieldHeight.getText()));
+        model.setKnownProperty(FieldPart.PROP_WIDTH, new Value(fieldWidth.getText()));
+        model.setKnownProperty(FieldPart.PROP_LOCKTEXT, new Value(isLockText.getSelectedObjects() != null));
+        model.setKnownProperty(FieldPart.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
+        model.setKnownProperty(FieldPart.PROP_WRAPTEXT, new Value(isWrapText.getSelectedObjects() != null));
     }
 
     {

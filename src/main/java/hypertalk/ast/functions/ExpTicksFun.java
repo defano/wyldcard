@@ -7,9 +7,7 @@ import hypertalk.exception.HtSemanticException;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 
-public class ExpTicksFun extends Expression implements Serializable {
-
-	private static final long serialVersionUID = 932824652479945431L;
+public class ExpTicksFun extends Expression {
 
 	@Override
     public Value evaluate() throws HtSemanticException {

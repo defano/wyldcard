@@ -11,8 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
-public class ParameterList implements Serializable {
-private static final long serialVersionUID = 6378941410182598951L;
+public class ParameterList {
 
 	public List<String> list;
 	

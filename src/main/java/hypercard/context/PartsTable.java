@@ -10,23 +10,19 @@ package hypercard.context;
 
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
+import hypercard.parts.model.PartModelChangeListener;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartNameSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.exception.NoSuchPropertyException;
-import hypertalk.properties.PropertyChangeListener;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-public class PartsTable implements PropertyChangeListener, Serializable {
-private static final long serialVersionUID = 4751323911023854452L;
+public class PartsTable<T extends Part> implements PartModelChangeListener {
 
-	private Map<String, Part> idhash;
-	private Map<String, Part> namehash;
+	private Map<Integer, T> idhash;
+	private Map<String, T> namehash;
 	
 	public PartsTable () {
 		idhash = new HashMap<>();
@@ -34,7 +30,7 @@ private static final long serialVersionUID = 4751323911023854452L;
 	}
     
     public void sendPartOpened () {
-        Iterator<String> i = idhash.keySet().iterator();
+        Iterator<Integer> i = idhash.keySet().iterator();
         while (i.hasNext()) {
             idhash.get(i.next()).partOpened();
         }
@@ -44,7 +40,7 @@ private static final long serialVersionUID = 4751323911023854452L;
 		removePart(getPart(ps));
 	}
 	
-	public void removePart (Part p) {
+	public void removePart (T p) {
 		
 		try {
 			String partId = p.getProperty("id").toString();
@@ -57,14 +53,14 @@ private static final long serialVersionUID = 4751323911023854452L;
 		}
 	}
 	
-	public void addPart(Part p) throws PartException {
+	public void addPart(T p) throws PartException {
 		
 		try {			
-			String partId = p.getProperty("id").toString();
+			Integer partId = p.getProperty("id").integerValue();
 			String partName = p.getProperty("name").toString();
 			
-			// Make us a listener to changes of this part's properties
-			p.getProperties().addPropertyChangeListener(this);
+			// Make us a listener to changes of this part's model
+			p.getPartModel().addModelChangeListener(this);
 			
 			// Check for duplicate id or name
 			if (partExists(new PartIdSpecifier(p.getType(), partId)))
@@ -80,11 +76,10 @@ private static final long serialVersionUID = 4751323911023854452L;
 		}				
 	}
 	
-	public Part getPart (PartSpecifier ps) throws PartException {
+	public T getPart (PartSpecifier ps) throws PartException {
 		
 		if (!partExists(ps))
 			throw new PartException(ps + " doesn't exist");
-		
 		if (ps instanceof PartIdSpecifier)
 			return idhash.get(ps.value());
 		else if (ps instanceof PartNameSpecifier)
@@ -102,10 +97,10 @@ private static final long serialVersionUID = 4751323911023854452L;
 			throw new RuntimeException("Unhandled part specifier type");
 	}
 	
-	public void propertyChanged (PartSpecifier ps, String property, Value oldValue, Value newValue) {
+	public void onModelChange(String property, Value oldValue, Value newValue) {
 		
 		if (property.equals("name")) {			
-			Part part = namehash.get(oldValue.stringValue());
+			T part = namehash.get(oldValue.stringValue());
 			if (part == null)
 				throw new RuntimeException("Unable to change the name of a missing part");
 			
@@ -113,5 +108,16 @@ private static final long serialVersionUID = 4751323911023854452L;
 			namehash.put(newValue.stringValue(), part);
 		}
 	}
-	
+
+	public Collection<T> getParts() {
+		return idhash.values();
+	}
+
+	public int getNextId () {
+		for (int nextId = 0; ; nextId++) {
+			if (!idhash.containsKey(nextId)) {
+				return nextId;
+			}
+		}
+	}
 }

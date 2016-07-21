@@ -9,9 +9,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ExpDateFun extends Expression implements Serializable {
+public class ExpDateFun extends Expression {
 
-	private static final long serialVersionUID = -1721920029843287694L;
 	private final DateFormat dateFormat;
 
     public ExpDateFun (DateFormat dateFormat) {

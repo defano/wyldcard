@@ -12,12 +12,13 @@ import hypertalk.ast.common.PartType;
 import java.io.Serializable;
 
 
-public class PartNameSpecifier extends PartSpecifier implements Serializable {
-private static final long serialVersionUID = -130340017416097363L;
+public class PartNameSpecifier implements PartSpecifier {
 
-	public final PartType type;
-	public final String name;
-	
+	public PartType type;
+	public String name;
+
+	public PartNameSpecifier () {}
+
 	public PartNameSpecifier (PartType type, String name) {
 		this.type = type;
 		this.name = name;

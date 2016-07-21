@@ -11,7 +11,6 @@ package hypercard.parts;
 import hypertalk.exception.HtException;
 
 public class PartException extends HtException {
-private static final long serialVersionUID = 5837496988130817034L;
 	public PartException(String message) {
 		super(message);
 	}

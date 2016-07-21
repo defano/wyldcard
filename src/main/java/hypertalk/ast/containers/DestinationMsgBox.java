@@ -10,11 +10,8 @@ package hypertalk.ast.containers;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.PartType;
 
-import java.io.Serializable;
+public class DestinationMsgBox extends Destination {
 
-public class DestinationMsgBox extends Destination implements Serializable {
-private static final long serialVersionUID = 7514871614004066200L;
-	
 	public final Chunk chunk;
 	
 	public DestinationMsgBox () {

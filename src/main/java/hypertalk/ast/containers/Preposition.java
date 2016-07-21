@@ -7,9 +7,7 @@
 
 package hypertalk.ast.containers;
 
-import java.io.Serializable;
-
-public enum Preposition implements Serializable {
+public enum Preposition {
 	BEFORE, AFTER, INTO;
 
 	public static Preposition fromString(String s) {

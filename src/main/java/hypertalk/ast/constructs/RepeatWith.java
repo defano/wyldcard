@@ -7,10 +7,7 @@
 
 package hypertalk.ast.constructs;
 
-import java.io.Serializable;
-
-public class RepeatWith extends RepeatSpecifier implements Serializable {
-private static final long serialVersionUID = 4786603013878943529L;
+public class RepeatWith extends RepeatSpecifier {
 
 	public final String symbol;
 	public final RepeatRange range;

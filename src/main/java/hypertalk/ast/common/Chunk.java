@@ -11,8 +11,7 @@ import hypertalk.ast.expressions.Expression;
 import java.io.Serializable;
 
 
-public class Chunk implements Serializable {
-private static final long serialVersionUID = 4844640632275931146L;
+public class Chunk {
 
 	public final ChunkType type;
 	public final Expression start;

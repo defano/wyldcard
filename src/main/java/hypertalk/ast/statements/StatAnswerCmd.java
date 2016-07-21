@@ -18,8 +18,7 @@ import java.io.Serializable;
 
 import javax.swing.JOptionPane;
 
-public class StatAnswerCmd extends Statement implements Serializable {
-private static final long serialVersionUID = -3536549602286641396L;
+public class StatAnswerCmd extends Statement {
 
 	public final Expression message;
 	public final Expression ch1;

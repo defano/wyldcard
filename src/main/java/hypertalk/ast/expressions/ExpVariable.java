@@ -12,8 +12,7 @@ import hypertalk.ast.common.Value;
 
 import java.io.Serializable;
 
-public class ExpVariable extends Expression implements Serializable {
-private static final long serialVersionUID = 7519151766770969204L;
+public class ExpVariable extends Expression {
 
 	public final String identifier;
 	

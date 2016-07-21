@@ -12,8 +12,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class Statement implements Serializable {
-private static final long serialVersionUID = 6925751727561632886L;
+public class Statement {
 
 	// Set by a return statement to indicate that the remainder of the statement
 	// list should not execute. 

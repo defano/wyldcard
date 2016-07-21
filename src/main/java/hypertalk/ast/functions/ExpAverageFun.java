@@ -15,8 +15,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class ExpAverageFun extends Expression implements Serializable {
-private static final long serialVersionUID = 9127974850580430954L;
+public class ExpAverageFun extends Expression {
 
 	public final Expression expression;
 	

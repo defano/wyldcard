@@ -11,8 +11,7 @@ import hypercard.context.GlobalContext;
 
 import java.io.Serializable;
 
-public class StatGlobal extends Statement implements Serializable {
-private static final long serialVersionUID = 169586275950963284L;
+public class StatGlobal extends Statement {
 
 	public final String symbol;
 	

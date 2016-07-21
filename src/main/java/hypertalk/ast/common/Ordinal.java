@@ -7,9 +7,7 @@
 
 package hypertalk.ast.common;
 
-import java.io.Serializable;
-
-public enum Ordinal implements Serializable {
+public enum Ordinal {
 	FIRST(1), SECOND(2), THIRD(3), FOURTH(4), FIFTH(5), SIXTH(6), SEVENTH(7), 
 	EIGTH(8), NINTH(9), TENTH(10), 
 	
@@ -21,7 +19,7 @@ public enum Ordinal implements Serializable {
 	
 	private int value;
 	
-	private Ordinal (int v) {
+	Ordinal(int v) {
 		value = v;
 	}
 	

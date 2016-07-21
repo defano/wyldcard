@@ -22,8 +22,7 @@ import java.util.TimerTask;
 
 import javax.swing.SwingUtilities;
 
-public class PartMover implements MouseListener, Serializable {
-private static final long serialVersionUID = -673067361516960759L;
+public class PartMover implements MouseListener {
 
 	public final int MOVER_REFRESH_MS = 10;
 	

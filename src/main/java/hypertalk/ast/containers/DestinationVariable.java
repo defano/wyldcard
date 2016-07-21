@@ -11,8 +11,7 @@ import hypertalk.ast.common.Chunk;
 
 import java.io.Serializable;
 
-public class DestinationVariable extends Destination implements Serializable {
-private static final long serialVersionUID = 4545545632198713937L;
+public class DestinationVariable extends Destination {
 
 	private final String symbol;
 	private final Chunk chunk;

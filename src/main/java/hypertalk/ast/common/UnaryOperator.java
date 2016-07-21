@@ -7,8 +7,6 @@
 
 package hypertalk.ast.common;
 
-import java.io.Serializable;
-
-public enum UnaryOperator implements Serializable {
+public enum UnaryOperator {
 	NOT, NEGATE
 }

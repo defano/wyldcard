@@ -13,8 +13,7 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.Preposition;
 import java.io.Serializable;
 
-public class ChunkUtils implements Serializable {
-private static final long serialVersionUID = -2055882808268916413L;
+public class ChunkUtils {
 
 	public static String setChar (Preposition p, String value, int charIdx, String replacement) {
 		switch (p) {

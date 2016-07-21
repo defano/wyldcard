@@ -17,8 +17,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class ExpPartId extends ExpPart implements Serializable {
-private static final long serialVersionUID = 8966443320347638727L;
+public class ExpPartId extends ExpPart {
 
 	public final PartType type;
 	public final Expression id;
@@ -30,7 +29,7 @@ private static final long serialVersionUID = 8966443320347638727L;
 	
 	public Value evaluate () throws HtSemanticException {
 		try {
-			PartSpecifier part = new PartIdSpecifier(type, id.evaluate().stringValue());			
+			PartSpecifier part = new PartIdSpecifier(type, id.evaluate().integerValue());
 			return GlobalContext.getContext().get(part).getValue();
 		} catch (PartException e) {
 			throw new HtSemanticException(e.getMessage());
@@ -40,7 +39,7 @@ private static final long serialVersionUID = 8966443320347638727L;
 	public PartSpecifier evaluateAsSpecifier () 
 	throws HtSemanticException
 	{		
-		return new PartIdSpecifier(type, id.evaluate().stringValue());
+		return new PartIdSpecifier(type, id.evaluate().integerValue());
 	}
 	
 }

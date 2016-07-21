@@ -19,8 +19,7 @@ import java.io.Serializable;
 
 import javax.swing.JOptionPane;
 
-public class StatAskCmd extends Statement implements Serializable {
-private static final long serialVersionUID = -5917404097409699111L;
+public class StatAskCmd extends Statement {
 
 	public final Expression question;
 	public final Expression suggestion;

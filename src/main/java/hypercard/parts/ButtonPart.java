@@ -10,10 +10,12 @@
 package hypercard.parts;
 
 import hypercard.context.GlobalContext;
-import hypercard.gui.menu.ButtonContextMenu;
+import hypercard.gui.menu.context.ButtonContextMenu;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
+import hypercard.parts.model.PartModel;
+import hypercard.parts.model.PartModelChangeListener;
 import hypercard.runtime.Interpreter;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.PartType;
@@ -25,20 +27,13 @@ import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
-import hypertalk.properties.Properties;
-import hypertalk.properties.PropertyChangeListener;
 
-import java.awt.Rectangle;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.Serializable;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
-
-public class ButtonPart extends JButton implements Part, MouseListener, PropertyChangeListener, Serializable {
-    private static final long serialVersionUID = 6441731559079090863L;
+public class ButtonPart extends JButton implements Part, MouseListener, PartModelChangeListener {
 
     public static final int DEFAULT_WIDTH = 85;
     public static final int DEFAULT_HEIGHT = 25;
@@ -56,42 +51,60 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     public static final String PROP_ENABLED = "enabled";
 
     private Script script;
-    private Properties properties;
+    private PartModel partModel;
     private CardPart parent;
 
-    public ButtonPart(Rectangle geometry, CardPart parent) {
+    private ButtonPart(CardPart parent) {
         super();
 
         this.parent = parent;
         this.script = new Script();
 
         initComponents();
-        initProperties(geometry);
-
-        this.setValue(properties.getKnownProperty(PROP_TITLE));
     }
 
+    public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
+        ButtonPart button = new ButtonPart(parent);
+
+        button.initProperties(geometry);
+        button.setText(button.partModel.getKnownProperty(PROP_TITLE).stringValue());
+
+        return button;
+    }
+
+    public static ButtonPart fromModel(CardPart parent, PartModel partModel) throws Exception {
+        ButtonPart button = new ButtonPart(parent);
+
+        button.partModel = partModel;
+        button.partModel.addModelChangeListener(button);
+        button.script = Interpreter.compile(partModel.getKnownProperty(PROP_SCRIPT).stringValue());
+        button.setText(button.partModel.getKnownProperty(PROP_TITLE).stringValue());
+
+        return button;
+    }
+
+    @Override
     public void partOpened() {
         this.setComponentPopupMenu(new ButtonContextMenu(this));
     }
 
     private void initProperties(Rectangle geometry) {
-        String id = String.valueOf(parent.getNextPartId());
+        int id = parent.nextButtonId();
 
-        properties = new Properties(this);
-        properties.addPropertyChangeListener(this);
+        partModel = new PartModel(PartType.BUTTON);
+        partModel.addModelChangeListener(this);
 
-        properties.defineProperty(PROP_SCRIPT, new Value(), false);
-        properties.defineProperty(PROP_ID, new Value(id), true);
-        properties.defineProperty(PROP_NAME, new Value("Button " + id), false);
-        properties.defineProperty(PROP_TITLE, new Value("Button"), false);
-        properties.defineProperty(PROP_LEFT, new Value(geometry.x), false);
-        properties.defineProperty(PROP_TOP, new Value(geometry.y), false);
-        properties.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
-        properties.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
-        properties.defineProperty(PROP_SHOWTITLE, new Value(true), false);
-        properties.defineProperty(PROP_VISIBLE, new Value(true), false);
-        properties.defineProperty(PROP_ENABLED, new Value(true), false);
+        partModel.defineProperty(PROP_SCRIPT, new Value(), false);
+        partModel.defineProperty(PROP_ID, new Value(id), true);
+        partModel.defineProperty(PROP_NAME, new Value("Button " + id), false);
+        partModel.defineProperty(PROP_TITLE, new Value("Button"), false);
+        partModel.defineProperty(PROP_LEFT, new Value(geometry.x), false);
+        partModel.defineProperty(PROP_TOP, new Value(geometry.y), false);
+        partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
+        partModel.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
+        partModel.defineProperty(PROP_SHOWTITLE, new Value(true), false);
+        partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
+        partModel.defineProperty(PROP_ENABLED, new Value(true), false);
     }
 
     private void initComponents() {
@@ -101,8 +114,8 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
     public void editProperties() {
         WindowBuilder.make(new ButtonPropertyEditor())
-                .withTitle("Button Properties")
-                .withModel(properties)
+                .withTitle("Button PartModel")
+                .withModel(partModel)
                 .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
                 .build();
     }
@@ -118,60 +131,68 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     public void editScript() {
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("HyperTalk Script Editor")
-                .withModel(properties)
+                .withModel(partModel)
                 .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
                 .resizeable(true)
                 .build();
     }
 
+    @Override
     public PartType getType() {
         return PartType.BUTTON;
     }
 
+    @Override
     public String getName() {
-        return properties.getKnownProperty(PROP_NAME).stringValue();
+        return partModel.getKnownProperty(PROP_NAME).stringValue();
     }
 
-    public String getId() {
-        return properties.getKnownProperty(PROP_ID).stringValue();
+    @Override
+    public int getId() {
+        return partModel.getKnownProperty(PROP_ID).integerValue();
     }
 
     public PartSpecifier getPartSpecifier() {
         return new PartIdSpecifier(PartType.BUTTON, getId());
     }
 
+    @Override
     public JComponent getComponent() {
         return this;
     }
 
+    @Override
     public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException {
-        properties.setProperty(property, value);
+        partModel.setProperty(property, value);
     }
 
+    @Override
     public Value getProperty(String property) throws NoSuchPropertyException {
-        return properties.getProperty(property);
+        return partModel.getProperty(property);
     }
 
-    public Properties getProperties() {
-        return properties;
+    public PartModel getPartModel() {
+        return partModel;
     }
 
+    @Override
     public void setValue(Value value) {
         try {
-            properties.setProperty(PROP_TITLE, value);
+            partModel.setProperty(PROP_TITLE, value);
         } catch (Exception e) {
             throw new RuntimeException("Button's text property cannot be set");
         }
     }
 
+    @Override
     public Value getValue() {
-        return properties.getKnownProperty(PROP_TITLE);
+        return partModel.getKnownProperty(PROP_TITLE);
     }
 
     private void compile() throws HtSemanticException {
 
         try {
-            String scriptText = properties.getProperty(PROP_SCRIPT).toString();
+            String scriptText = partModel.getProperty(PROP_SCRIPT).toString();
             script = Interpreter.compile(scriptText);
         } catch (NoSuchPropertyException e) {
             throw new RuntimeException("Button doesn't contain a script");
@@ -180,15 +201,18 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
         }
     }
 
+    @Override
     public void sendMessage(String message) {
         GlobalContext.getContext().setMe(new PartIdSpecifier(PartType.BUTTON, getId()));
         script.executeHandler(message);
     }
 
+    @Override
     public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
         return script.executeUserFunction(function, arguments);
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             RuntimeEnv.getRuntimeEnv().setTheMouse(true);
@@ -198,6 +222,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
         }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             RuntimeEnv.getRuntimeEnv().setTheMouse(false);
@@ -207,20 +232,24 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
         }
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
         if (!GlobalContext.getContext().noMessages())
             sendMessage("mouseEnter");
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
         if (!GlobalContext.getContext().noMessages())
             sendMessage("mouseExit");
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
     }
 
-    public void propertyChanged(PartSpecifier part, String property, Value oldValue, Value newValue) {
+    @Override
+    public void onModelChange(String property, Value oldValue, Value newValue) {
 
         if (property.equals(PROP_SCRIPT)) {
             try {
@@ -246,7 +275,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
         else if (property.equals(PROP_SHOWTITLE)) {
             if (newValue.booleanValue())
-                this.setText(properties.getKnownProperty(PROP_TITLE).stringValue());
+                this.setText(partModel.getKnownProperty(PROP_TITLE).stringValue());
             else
                 this.setText("");
         }
@@ -255,14 +284,14 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     public Rectangle getRect() {
         try {
             Rectangle rect = new Rectangle();
-            rect.x = properties.getProperty(PROP_LEFT).integerValue();
-            rect.y = properties.getProperty(PROP_TOP).integerValue();
-            rect.height = properties.getProperty(PROP_HEIGHT).integerValue();
-            rect.width = properties.getProperty(PROP_WIDTH).integerValue();
+            rect.x = partModel.getProperty(PROP_LEFT).integerValue();
+            rect.y = partModel.getProperty(PROP_TOP).integerValue();
+            rect.height = partModel.getProperty(PROP_HEIGHT).integerValue();
+            rect.width = partModel.getProperty(PROP_WIDTH).integerValue();
 
             return rect;
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't get geometry properties for field");
+            throw new RuntimeException("Couldn't get geometry partModel for field");
         }
     }
 }

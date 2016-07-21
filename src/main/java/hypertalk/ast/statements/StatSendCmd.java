@@ -14,8 +14,7 @@ import hypertalk.ast.expressions.Expression;
 
 import java.io.Serializable;
 
-public class StatSendCmd extends Statement implements Serializable {
-private static final long serialVersionUID = 3491353876231731415L;
+public class StatSendCmd extends Statement {
 
 	public final ExpPart part;
 	public final Expression message;

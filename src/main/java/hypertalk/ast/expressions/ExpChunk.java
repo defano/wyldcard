@@ -13,8 +13,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class ExpChunk extends Expression implements Serializable {
-private static final long serialVersionUID = 4831685944001487239L;
+public class ExpChunk extends Expression {
 
 	public final Chunk chunk;
 	public final Expression expression;

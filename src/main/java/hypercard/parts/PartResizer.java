@@ -22,8 +22,7 @@ import java.util.TimerTask;
 
 import javax.swing.SwingUtilities;
 
-public class PartResizer implements MouseListener, Serializable {
-private static final long serialVersionUID = -900632519974122141L;
+public class PartResizer implements MouseListener {
 
 	public final int RESIZER_REFRESH_MS = 10;
 	public final int MIN_WIDTH = 20;

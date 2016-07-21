@@ -17,8 +17,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class ExpUserFunction extends Expression implements Serializable {
-private static final long serialVersionUID = 5613645247678139803L;
+public class ExpUserFunction extends Expression {
 
 	public final String function;
 	public final ArgumentList arguments;

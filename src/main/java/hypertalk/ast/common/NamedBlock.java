@@ -9,10 +9,8 @@
 package hypertalk.ast.common;
 
 import hypertalk.ast.statements.StatementList;
-import java.io.Serializable;
 
-public class NamedBlock implements Serializable {
-private static final long serialVersionUID = 6117988923830804017L;
+public class NamedBlock {
 
 	public final String name;
 	public final StatementList body;

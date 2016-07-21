@@ -6,7 +6,7 @@
  * button is pressed over a card ("New Button", "New Field").  
  */
 
-package hypercard.gui.menu;
+package hypercard.gui.menu.context;
 
 import hypercard.parts.ButtonPart;
 import hypercard.parts.CardPart;
@@ -35,17 +35,8 @@ private static final long serialVersionUID = -726972665320357697L;
         this.add(jMenuItemNewButton);
         this.add(jMenuItemNewField);
         
-        jMenuItemNewField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newFieldActionPerformed(evt);
-            }
-        });
-
-        jMenuItemNewButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButtonActionPerformed(evt);
-            }
-        });        
+        jMenuItemNewField.addActionListener(evt -> newFieldActionPerformed(evt));
+        jMenuItemNewButton.addActionListener(evt -> newButtonActionPerformed(evt));
     }
     
     public void newFieldActionPerformed(java.awt.event.ActionEvent evt) {    	
@@ -53,7 +44,7 @@ private static final long serialVersionUID = -726972665320357697L;
         Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, FieldPart.DEFAULT_WIDTH, FieldPart.DEFAULT_HEIGHT);
         
         try {
-            card.addField(new FieldPart(rect, card));
+            card.addField(FieldPart.fromGeometry(card, rect));
         } catch (PartException e) {
             throw new RuntimeException("Failed to create field: " + e.getMessage());
         }
@@ -64,7 +55,7 @@ private static final long serialVersionUID = -726972665320357697L;
     	Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, ButtonPart.DEFAULT_WIDTH, ButtonPart.DEFAULT_HEIGHT);
     	
         try {
-            card.addButton(new ButtonPart(rect, card));
+            card.addButton(ButtonPart.fromGeometry(card, rect));
         } catch (PartException e) {
             throw new RuntimeException("Failed to create button: " + e.getMessage());
         }

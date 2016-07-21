@@ -14,8 +14,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class StatReturn extends Statement implements Serializable {
-private static final long serialVersionUID = -7141968148410363812L;
+public class StatReturn extends Statement {
 
 	public final Expression returnValue;
 	

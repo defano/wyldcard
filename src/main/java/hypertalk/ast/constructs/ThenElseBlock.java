@@ -10,8 +10,7 @@ package hypertalk.ast.constructs;
 import hypertalk.ast.statements.StatementList;
 import java.io.Serializable;
 
-public class ThenElseBlock implements Serializable {
-private static final long serialVersionUID = 3000630718175894912L;
+public class ThenElseBlock {
 
 	public final StatementList thenBranch;
 	public final StatementList elseBranch;

@@ -12,8 +12,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public abstract class ExpPart extends Expression implements Serializable {
-	private static final long serialVersionUID = 5383623948321039949L;
+public abstract class ExpPart extends Expression {
 
 	public abstract PartSpecifier evaluateAsSpecifier () throws HtSemanticException;
 }

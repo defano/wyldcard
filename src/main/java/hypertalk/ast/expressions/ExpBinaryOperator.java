@@ -13,8 +13,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class ExpBinaryOperator extends Expression implements Serializable {
-private static final long serialVersionUID = -248264981469165715L;
+public class ExpBinaryOperator extends Expression {
 
 	public final BinaryOperator operator;
 	public final Expression lhs;

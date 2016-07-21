@@ -9,43 +9,38 @@
 package hypercard.parts;
 
 import hypercard.context.PartsTable;
-import hypercard.gui.menu.CardContextMenu;
+import hypercard.gui.menu.context.CardContextMenu;
+import hypercard.parts.model.CardModel;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.PartType;
-import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.functions.ArgumentList;
-import hypertalk.exception.HtSemanticException;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 
-import javax.swing.JPanel;
+public class CardPart extends JPanel implements MouseListener {
 
-public class CardPart extends JPanel implements MouseListener, Serializable {
-    private static final long serialVersionUID = 742164164633903146L;
+    private PartsTable<FieldPart> fields = new PartsTable<>();
+    private PartsTable<ButtonPart> buttons = new PartsTable<>();
 
-    private PartsTable fields;
-    private PartsTable buttons;
-    private int nextId = 0;
-    private File cardFile;
-
-    public CardPart() {
+    private CardPart() {
         super();
 
         this.setComponentPopupMenu(new CardContextMenu(this));
         this.addMouseListener(this);
         this.setLayout(null);
+    }
 
-        fields = new PartsTable();
-        buttons = new PartsTable();
+    public static CardPart newCard () {
+        return new CardPart();
+    }
+
+    public static CardPart fromModel (CardModel model) throws Exception {
+        CardPart card = new CardPart();
+        model.createPartsInCard(card);
+
+        return card;
     }
 
     public void partOpened() {
@@ -53,39 +48,6 @@ public class CardPart extends JPanel implements MouseListener, Serializable {
 
         fields.sendPartOpened();
         buttons.sendPartOpened();
-    }
-
-    public static CardPart openCard(File file) {
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            CardPart card = (CardPart) ois.readObject();
-            ois.close();
-
-            card.partOpened();
-            card.cardFile = file;
-
-            return card;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load card: " + e.getMessage());
-        }
-    }
-
-    public void saveCard(File file) {
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
-            oos.close();
-
-            cardFile = file;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save card: " + e.getMessage());
-        }
-    }
-
-    public File getCardFile() {
-        return cardFile;
     }
 
     public void addField(FieldPart field) throws PartException {
@@ -113,7 +75,7 @@ public class CardPart extends JPanel implements MouseListener, Serializable {
     }
 
     public void removeButton(ButtonPart button) {
-        fields.removePart(button);
+        buttons.removePart(button);
 
         this.remove(button);
         this.validate();
@@ -129,29 +91,37 @@ public class CardPart extends JPanel implements MouseListener, Serializable {
             throw new RuntimeException("Unhandled part type");
     }
 
-    public int getNextPartId() {
-        return nextId++;
+    public CardModel getCardModel() {
+        CardModel model = new CardModel();
+        model.addParts(buttons.getParts());
+        model.addParts(fields.getParts());
+        return model;
     }
 
-    public Value executeUserFunction(PartSpecifier ps, String function, ArgumentList arguments)
-            throws HtSemanticException, PartException {
-        return getPart(ps).executeUserFunction(function, arguments);
+    public int nextButtonId() {
+        return buttons.getNextId();
     }
 
+    public int nextFieldId() {
+        return fields.getNextId();
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
         RuntimeEnv.getRuntimeEnv().setTheMouse(true);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         RuntimeEnv.getRuntimeEnv().setTheMouse(false);
     }
 
-    public void mouseEntered(MouseEvent e) {
-    }
+    @Override
+    public void mouseEntered(MouseEvent e) {}
 
-    public void mouseExited(MouseEvent e) {
-    }
+    @Override
+    public void mouseExited(MouseEvent e) {}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+    @Override
+    public void mouseClicked(MouseEvent e) {}
 }

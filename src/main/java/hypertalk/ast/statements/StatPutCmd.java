@@ -14,8 +14,7 @@ import hypertalk.exception.HtException;
 
 import java.io.Serializable;
 
-public class StatPutCmd extends Statement implements Serializable {
-private static final long serialVersionUID = 2182347647936086216L;
+public class StatPutCmd extends Statement {
 
 	public final Expression expression;
 	public final Preposition preposition;

@@ -10,6 +10,7 @@
 package hypercard.runtime;
 
 import hypercard.context.GlobalContext;
+import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.StackWindow;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
@@ -22,25 +23,22 @@ import hypertalk.ast.statements.StatementList;
 import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
-import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
-public class RuntimeEnv implements Serializable {
-	private static final long serialVersionUID = 3092430577877088297L;
+public class RuntimeEnv {
 
 	private static RuntimeEnv _instance;
-	private StackWindow mainWind;
+	private StackWindow stackWindow;
 	private boolean supressMessages = false;
 	private boolean mouseIsDown;
 
 	private ExecutorService scriptExecutor = Executors.newSingleThreadExecutor();
 
 	public static void main(String argv[]) {
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		RuntimeEnv.getRuntimeEnv();
 	}
 
@@ -57,13 +55,13 @@ public class RuntimeEnv implements Serializable {
 		}
 
 		// Create the main window, center it on the screen and display it
-		mainWind = new StackWindow();
-		WindowBuilder.make(mainWind)
+		stackWindow = new StackWindow();
+		WindowBuilder.make(stackWindow)
 				.withTitle("HyperCard")
 				.resizeable(false)
 				.quitOnClose()
-				.withModel(new CardPart())
-				.withLocationRelativeTo(null)
+				.withMenuBar(new HyperCardMenuBar())
+				.withModel(CardPart.newCard())
 				.build();
 	}
 
@@ -101,16 +99,20 @@ public class RuntimeEnv implements Serializable {
 		}
 	}
 
+	public StackWindow getStackWindow () {
+		return stackWindow;
+	}
+
 	public Component getCardPanel() {
-		return mainWind.getWindowPanel();
+		return stackWindow.getWindowPanel();
 	}
 
 	public CardPart getCard () {
-		return mainWind.getCurrentCard();
+		return stackWindow.getCurrentCard();
 	}
 
 	public Point getTheMouseLoc() {
-		CardPart theCard = mainWind.getCurrentCard();
+		CardPart theCard = stackWindow.getCurrentCard();
 		Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 		SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
 
@@ -132,11 +134,11 @@ public class RuntimeEnv implements Serializable {
 	}
 
 	public void setMsgBoxText(Object theMsg) {
-		mainWind.setMsgBoxText(theMsg.toString());
+		stackWindow.setMsgBoxText(theMsg.toString());
 	}
 
 	public String getMsgBoxText() {
-		return mainWind.getMsgBoxText();
+		return stackWindow.getMsgBoxText();
 	}
 
 	public void sendMessage(PartSpecifier ps, String message)
@@ -146,7 +148,7 @@ public class RuntimeEnv implements Serializable {
 	}
 
 	public void dialogSyntaxError(Exception e) {
-		JOptionPane.showMessageDialog(mainWind.getWindowPanel(),
+		JOptionPane.showMessageDialog(stackWindow.getWindowPanel(),
 				"Syntax error: " + e.getMessage());
 	}
 }

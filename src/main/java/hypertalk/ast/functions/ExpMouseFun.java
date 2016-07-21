@@ -12,8 +12,7 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import java.io.Serializable;
 
-public class ExpMouseFun extends Expression implements Serializable {
-private static final long serialVersionUID = -8371176840892862142L;
+public class ExpMouseFun extends Expression {
 
 	public ExpMouseFun () {}
 	

@@ -19,8 +19,7 @@ import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
 import java.io.Serializable;
 
-public class Value implements Serializable {
-private static final long serialVersionUID = 2073264430579615009L;
+public class Value {
 
 	public final static String ITEM_DELIMITER = ",";
 	

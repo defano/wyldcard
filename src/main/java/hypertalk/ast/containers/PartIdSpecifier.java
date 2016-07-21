@@ -9,16 +9,15 @@ package hypertalk.ast.containers;
 
 import hypertalk.ast.common.PartType;
 
-import java.io.Serializable;
 
+public class PartIdSpecifier implements PartSpecifier {
 
-public class PartIdSpecifier extends PartSpecifier implements Serializable {
-private static final long serialVersionUID = 6013275870535874601L;
+	public PartType type;
+	public int id;
 
-	public final PartType type;
-	public final String id;
-	
-	public PartIdSpecifier(PartType type, String id) {
+	public PartIdSpecifier() {}
+
+	public PartIdSpecifier(PartType type, int id) {
 		this.type = type;
 		this.id = id;
 	}
@@ -27,7 +26,7 @@ private static final long serialVersionUID = 6013275870535874601L;
 		return type;
 	}
 	
-	public String value () {
+	public Integer value () {
 		return id;
 	}
 	

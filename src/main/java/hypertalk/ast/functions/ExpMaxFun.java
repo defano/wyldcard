@@ -6,9 +6,8 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class ExpMaxFun extends Expression implements Serializable {
+public class ExpMaxFun extends Expression {
 
-	private static final long serialVersionUID = 8135133323812108442L;
 	private final ArgumentList arguments;
 
     public ExpMaxFun (ArgumentList arguments) {

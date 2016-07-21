@@ -1,6 +1,7 @@
 package hypercard.gui.window;
 
 import hypercard.gui.HyperCardWindow;
+import hypercard.gui.menu.MenuItemBuilder;
 import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
@@ -18,6 +19,8 @@ public class WindowBuilder {
         frame.setContentPane(window.getWindowPanel());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
     }
 
     public static WindowBuilder make (HyperCardWindow window) {
@@ -41,6 +44,11 @@ public class WindowBuilder {
 
     public WindowBuilder withModel(Object model) {
         window.bindModel(model);
+        return this;
+    }
+
+    public WindowBuilder withMenuBar (JMenuBar menuBar) {
+        frame.setJMenuBar(menuBar);
         return this;
     }
 

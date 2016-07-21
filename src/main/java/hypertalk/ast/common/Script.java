@@ -15,20 +15,18 @@ import hypertalk.ast.statements.StatementList;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Script implements Serializable {
-private static final long serialVersionUID = 1338999304303112852L;
+public class Script {
 
 	private Map<String, StatementList> handlers;
-	private Map<String, UserFunction> userfunctions;
+	private Map<String, UserFunction> functions;
 	private StatementList statements = null;
 	
 	public Script () {
-		handlers = new HashMap<String, StatementList>();
-		userfunctions = new HashMap<String, UserFunction>();
+		handlers = new HashMap<>();
+		functions = new HashMap<>();
 	}
 
 	public Script defineHandler (NamedBlock handler) {
@@ -37,7 +35,7 @@ private static final long serialVersionUID = 1338999304303112852L;
 	}
 	
 	public Script defineUserFunction (UserFunction function) {
-		userfunctions.put(function.name, function);
+		functions.put(function.name, function);
 		return this;
 	}
 	
@@ -51,7 +49,7 @@ private static final long serialVersionUID = 1338999304303112852L;
 	}
 	
 	public UserFunction getUserFunction (String function) {
-		return userfunctions.get(function);
+		return functions.get(function);
 	}
 	
 	public StatementList getStatementList () {
@@ -69,7 +67,7 @@ private static final long serialVersionUID = 1338999304303112852L;
 	}
 	
 	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSemanticException {
-		UserFunction theFunction = userfunctions.get(function);
+		UserFunction theFunction = functions.get(function);
 		
 		if (theFunction != null) 
 			return RuntimeEnv.getRuntimeEnv().executeUserFunction(theFunction, arguments);

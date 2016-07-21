@@ -13,8 +13,7 @@ import hypertalk.exception.HtException;
 
 import java.io.Serializable;
 
-public class StatIf extends Statement implements Serializable {
-private static final long serialVersionUID = 7723910699503292875L;
+public class StatIf extends Statement {
 
 	public final Expression condition;
 	public final ThenElseBlock then;

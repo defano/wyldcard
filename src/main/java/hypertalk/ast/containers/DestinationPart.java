@@ -12,8 +12,7 @@ import hypertalk.ast.expressions.ExpPart;
 import java.io.Serializable;
 
 
-public class DestinationPart extends Destination implements Serializable {
-private static final long serialVersionUID = 4157689789825652324L;
+public class DestinationPart extends Destination {
 
 	private final ExpPart part;
 	private final Chunk chunk;

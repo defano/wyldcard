@@ -9,6 +9,6 @@ package hypertalk.ast.common;
 
 import java.io.Serializable;
 
-public enum PartType implements Serializable {
-	FIELD, BUTTON, MESSAGEBOX;
+public enum PartType {
+	FIELD, BUTTON, MESSAGEBOX
 }

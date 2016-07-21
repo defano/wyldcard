@@ -16,8 +16,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
-public class ArgumentList implements Serializable {
-private static final long serialVersionUID = -6598112145023266168L;
+public class ArgumentList {
 
 	private List<Expression> list;
 	private List<Value> evaluatedList;

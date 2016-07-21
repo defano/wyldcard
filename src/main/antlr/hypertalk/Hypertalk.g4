@@ -186,7 +186,6 @@ ordinal             : FIRST                                         # firstOrd
                     ;
 
 expression			: opLevel10Exp                                  # exp
-                    | chunk expression                              # chunkExp
                     ;
 
 opLevel10Exp		: opLevel9Exp                                   # level10Exp
@@ -241,6 +240,7 @@ opLevel2Exp			: opLevel1Exp                                   # level2Exp
                     ;
 
 opLevel1Exp         : builtin                                       # level1Exp
+                    | chunk expression                              # chunkExp
                     | 'the' builtin                                 # builtinExp
                     | factor                                        # factorExp
                     | ID '(' argumentList ')'                       # functionExp

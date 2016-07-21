@@ -4,11 +4,11 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
+import hypercard.parts.model.PartModel;
 import hypercard.runtime.Interpreter;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtSyntaxException;
-import hypertalk.properties.Properties;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -22,7 +22,7 @@ public class ScriptEditor implements HyperCardWindow {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
 
-    private Properties properties;
+    private PartModel model;
 
     private JPanel scriptEditor;
     private JButton cancelButton;
@@ -87,18 +87,16 @@ public class ScriptEditor implements HyperCardWindow {
 
     @Override
     public void bindModel(Object properties) {
-        if (properties instanceof Properties) {
-            this.properties = (Properties) properties;
-            scriptField.setText(this.properties.getKnownProperty("script").stringValue());
-        }
-
-        else {
+        if (properties instanceof PartModel) {
+            this.model = (PartModel) properties;
+            scriptField.setText(this.model.getKnownProperty("script").stringValue());
+        } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + properties);
         }
     }
 
     public void updateProperties() {
-        properties.setKnownProperty("script", new Value(scriptField.getText()));
+        model.setKnownProperty("script", new Value(scriptField.getText()));
     }
 
     {
@@ -132,10 +130,11 @@ public class ScriptEditor implements HyperCardWindow {
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setFont(new Font("Monaco", scrollPane1.getFont().getStyle(), scrollPane1.getFont().getSize()));
         scriptEditor.add(scrollPane1, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scriptField = new JTextArea();
         scriptField.setFont(new Font("Monaco", scriptField.getFont().getStyle(), scriptField.getFont().getSize()));
-        scriptField.setTabSize(2);
+        scriptField.setTabSize(4);
         scrollPane1.setViewportView(scriptField);
         cancelButton = new JButton();
         cancelButton.setHorizontalAlignment(4);

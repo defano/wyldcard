@@ -23,8 +23,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class Interpreter implements Serializable {
-private static final long serialVersionUID = 1193147567809491083L;
+public class Interpreter {
 
 	public static Script compile(String scriptText) throws HtException {
 

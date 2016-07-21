@@ -9,7 +9,6 @@
 package hypertalk.exception;
 
 public class NoSuchPropertyException extends Exception {
-private static final long serialVersionUID = -757170688052055290L;
 
 	public NoSuchPropertyException(String message) {
 		super(message);

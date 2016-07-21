@@ -13,7 +13,6 @@ import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
 public class ExpNumberOfFun extends Expression {
-private static final long serialVersionUID = -2978627093378442998L;
 
 	public final ChunkType itemtype;
 	public final Expression expression;

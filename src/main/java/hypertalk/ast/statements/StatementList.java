@@ -12,8 +12,7 @@ import hypertalk.exception.HtException;
 import java.io.Serializable;
 import java.util.Vector;
 
-public class StatementList implements Serializable {
-private static final long serialVersionUID = -4315995456959242849L;
+public class StatementList {
 
 	private Vector<Statement> list;
 	

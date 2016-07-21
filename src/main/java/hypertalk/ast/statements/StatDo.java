@@ -13,9 +13,8 @@ import hypertalk.exception.HtException;
 
 import java.io.Serializable;
 
-public class StatDo extends Statement implements Serializable {
+public class StatDo extends Statement {
 
-	private static final long serialVersionUID = 1314153559792553421L;
 	public final Expression script;
 	
 	public StatDo(Expression script) {

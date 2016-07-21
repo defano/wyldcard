@@ -20,8 +20,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.io.Serializable;
 
-public class StatRepeat extends Statement implements Serializable {
-private static final long serialVersionUID = 4040093959379311162L;
+public class StatRepeat extends Statement {
 
 	public final RepeatSpecifier range;
 	public final StatementList statements;

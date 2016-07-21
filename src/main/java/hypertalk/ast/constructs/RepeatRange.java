@@ -9,10 +9,8 @@
 package hypertalk.ast.constructs;
 
 import hypertalk.ast.expressions.Expression;
-import java.io.Serializable;
 
-public class RepeatRange extends RepeatSpecifier implements Serializable {
-private static final long serialVersionUID = -7806110203950062655L;
+public class RepeatRange extends RepeatSpecifier {
 
 	public static final boolean POLARITY_UPTO = true;
 	public static final boolean POLARITY_DOWNTO = false;
