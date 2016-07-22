@@ -8,8 +8,7 @@
 
 package hypertalk.exception;
 
-public class NoSuchPropertyException extends Exception {
-
+public class NoSuchPropertyException extends HtException {
 	public NoSuchPropertyException(String message) {
 		super(message);
 	}

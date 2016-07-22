@@ -12,12 +12,16 @@ import hypertalk.parser.HypertalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
-//public class HypertalkTreeVisitor implements HypertalkVisitor<Object> {
     @Override
     public Object visitHandlerScript(HypertalkParser.HandlerScriptContext ctx) {
         Script script = new Script();
         script.defineHandler((NamedBlock) visit(ctx.handler()));
         return script;
+    }
+
+    @Override
+    public Object visitPropertyDest(HypertalkParser.PropertyDestContext ctx) {
+        return new DestinationProperty((PropertySpecifier) visit(ctx.propertySpec()));
     }
 
     @Override
@@ -425,7 +429,8 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
 
     @Override
     public Object visitSetCmd(HypertalkParser.SetCmdContext ctx) {
-        return new StatSetCmd((String) visit(ctx.ID()), (ExpPart) visit(ctx.part()), (Expression) visit(ctx.expression()));
+
+        return new StatSetCmd((PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -954,8 +959,18 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPropertySpec(HypertalkParser.PropertySpecContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.ID()), (ExpPart) visit(ctx.part()));
+    }
+
+    @Override
     public Object visitIdOfPartFactor(HypertalkParser.IdOfPartFactorContext ctx) {
-        return new ExpProperty((String) visit(ctx.ID()), (ExpPart) visit(ctx.part()));
+        return new ExpProperty((PropertySpecifier) visit(ctx.propertySpec()));
+    }
+
+    @Override
+    public Object visitEmptyExp(HypertalkParser.EmptyExpContext ctx) {
+        return new ExpLiteral("");
     }
 
     @Override
@@ -996,5 +1011,4 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     public Object visitTerminal(TerminalNode node) {
         return node.getText();
     }
-
 }

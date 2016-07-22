@@ -11,24 +11,23 @@ import hypertalk.ast.common.ChunkType;
 import hypertalk.ast.common.Ordinal;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.Preposition;
-import java.io.Serializable;
 
 public class ChunkUtils {
 
 	public static String setChar (Preposition p, String value, int charIdx, String replacement) {
 		switch (p) {
-		case BEFORE: return insert(value, ChunkType.CHAR, charIdx + 1, replacement);
-		case INTO: return replace(value, ChunkType.CHAR, charIdx + 1, charIdx + 1, replacement);
-		case AFTER: return insert(value, ChunkType.CHAR, charIdx + 2, replacement);
+		case BEFORE: return insert(value, ChunkType.CHAR, charIdx, replacement);
+		case INTO: return replace(value, ChunkType.CHAR, charIdx, charIdx, replacement);
+		case AFTER: return insert(value, ChunkType.CHAR, charIdx + 1, replacement);
 		default: throw new RuntimeException("Unhandled preposition in ChunkUtils.setChar()");
 		}		
 	}
 	
 	public static String setCharRange (Preposition p, String value, int start, int end, String replacement) {
 		switch (p) {
-		case BEFORE: return replace(value, ChunkType.CHAR, start, end + 1, replacement);
-		case INTO: return replace(value, ChunkType.CHAR, start + 1, end + 1, replacement);
-		case AFTER: return replace(value, ChunkType.CHAR, start + 1, end + 2, replacement);
+		case BEFORE: return replace(value, ChunkType.CHAR, start - 1, end, replacement);
+		case INTO: return replace(value, ChunkType.CHAR, start, end, replacement);
+		case AFTER: return replace(value, ChunkType.CHAR, start, end + 1, replacement);
 		default: throw new RuntimeException("Unhandled preposition in ChunkUtils.setCharRange()");
 		}
 	}
@@ -125,7 +124,7 @@ public class ChunkUtils {
 		case WORD: return "\\s";
 		case LINE: return "\n";
 		case ITEM: return Value.ITEM_DELIMITER;
-		default: throw new RuntimeException("Unhandeled delimiter");
+		default: throw new RuntimeException("Unhandled delimiter");
 		}
 	}
 	
@@ -135,7 +134,7 @@ public class ChunkUtils {
 		case WORD: return " ";
 		case LINE: return "\n";
 		case ITEM: return Value.ITEM_DELIMITER;
-		default: throw new RuntimeException("Unhandeled delimiter");
+		default: throw new RuntimeException("Unhandled delimiter");
 		}
 	}	
 	

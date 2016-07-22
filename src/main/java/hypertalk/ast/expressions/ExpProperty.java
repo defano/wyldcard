@@ -9,23 +9,20 @@ package hypertalk.ast.expressions;
 
 import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Value;
+import hypertalk.ast.containers.PropertySpecifier;
 import hypertalk.exception.HtSemanticException;
-
-import java.io.Serializable;
 
 public class ExpProperty extends Expression {
 
-	public final String property;
-	public final ExpPart part;
-	
-	public ExpProperty (String property, ExpPart part) {
-		this.property = property;
-		this.part = part;
+	public final PropertySpecifier propertySpecifier;
+
+	public ExpProperty (PropertySpecifier propertySpecifier) {
+		this.propertySpecifier = propertySpecifier;
 	}
 	
 	public Value evaluate () throws HtSemanticException {
 		try {
-			return GlobalContext.getContext().get(property, part.evaluateAsSpecifier());
+			return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
 		} catch (Exception e) {
 			throw new HtSemanticException(e.getMessage());
 		}

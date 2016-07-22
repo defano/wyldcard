@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
+import hypercard.gui.util.SquigglePainter;
 import hypercard.parts.model.PartModel;
 import hypercard.runtime.Interpreter;
 import hypertalk.ast.common.Value;
@@ -14,13 +15,12 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 
 public class ScriptEditor implements HyperCardWindow {
 
-    private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
+    private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 
     private PartModel model;
 

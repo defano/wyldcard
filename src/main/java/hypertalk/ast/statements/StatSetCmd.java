@@ -8,27 +8,23 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypertalk.ast.expressions.ExpPart;
+import hypertalk.ast.containers.PropertySpecifier;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class StatSetCmd extends Statement {
 
-	public final String property;
-	public final ExpPart part;
 	public final Expression expression;
-	
-	public StatSetCmd (String property, ExpPart part, Expression expression) {
-		this.property = property;
-		this.part = part;
+	public final PropertySpecifier propertySpec;
+
+	public StatSetCmd (PropertySpecifier propertySpec, Expression expression) {
+		this.propertySpec = propertySpec;
 		this.expression = expression;
 	}
 	
 	public void execute () throws HtSemanticException {
 		try {
-			GlobalContext.getContext().set(property, part.evaluateAsSpecifier(), expression.evaluate());
+			GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
 		} catch (Exception e) {
 			throw new HtSemanticException(e.getMessage());
 		}

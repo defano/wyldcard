@@ -17,8 +17,6 @@ import hypertalk.exception.HtSyntaxException;
 import hypertalk.parser.HypertalkLexer;
 import hypertalk.parser.HypertalkParser;
 
-import java.io.Serializable;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;

@@ -80,7 +80,7 @@ putCmd				: 'put' expression destination                  # putIntoCmd
 getCmd				: 'get' expression
                     ;
 
-setCmd				: 'set the' ID 'of' part 'to' expression
+setCmd				: 'set' propertySpec 'to' expression
                     ;
 
 sendCmd				: 'send' expression 'to' part
@@ -140,6 +140,20 @@ preposition			: 'before'                                      # beforePrepositio
                     | 'into'                                        # intoPreposition
                     ;
 
+chunk               : ordinal CHAR 'of'                             # ordinalCharChunk
+                    | CHAR expression 'to' expression 'of'          # rangeCharChunk
+                    | CHAR expression 'of'                          # charCharChunk
+                    | ordinal WORD 'of'                             # ordinalWordChunk
+                    | WORD expression 'to' expression 'of'        # rangeWordChunk
+                    | WORD expression 'of'                        # wordWordChunk
+                    | ordinal ITEM 'of'                             # ordinalItemChunk
+                    | ITEM expression 'to' expression 'of'        # rangeItemChunk
+                    | ITEM expression 'of'                        # itemItemChunk
+                    | ordinal 'line of'                             # ordinalLineChunk
+                    | LINE expression 'to' expression 'of'        # rangeLineChunk
+                    | LINE expression 'of'                        # lineLineChunk
+                    ;
+
 destination			: ID                                            # variableDest
                     | MESSAGE                                       # messageDest
                     | chunk MESSAGE                                 # chunkMessageDest
@@ -147,7 +161,11 @@ destination			: ID                                            # variableDest
                     | part                                          # partDest
                     | chunk part                                    # chunkPartDest
                     | chunk                                         # chunkDest
+                    | propertySpec                                  # propertyDest
                     |                                               # defaultDest
+                    ;
+
+propertySpec        : 'the' ID 'of' part
                     ;
 
 part                : FIELD factor                                  # fieldPart
@@ -155,20 +173,6 @@ part                : FIELD factor                                  # fieldPart
                     | BUTTON factor                                 # buttonPart
                     | BUTTON 'id' factor                            # buttonIdPart
                     | 'me'                                          # mePart
-                    ;
-
-chunk               : ordinal CHAR 'of'                             # ordinalCharChunk
-                    | CHAR expression 'to' expression 'of'          # rangeCharChunk
-                    | CHAR expression 'of'                          # charCharChunk
-                    | ordinal 'word of'                             # ordinalWordChunk
-                    | 'word' expression 'to' expression 'of'        # rangeWordChunk
-                    | 'word' expression 'of'                        # wordWordChunk
-                    | ordinal 'item of'                             # ordinalItemChunk
-                    | 'item' expression 'to' expression 'of'        # rangeItemChunk
-                    | 'item' expression 'of'                        # itemItemChunk
-                    | ordinal 'line of'                             # ordinalLineChunk
-                    | 'line' expression 'to' expression 'of'        # rangeLineChunk
-                    | 'line' expression 'of'                        # lineLineChunk
                     ;
 
 ordinal             : FIRST                                         # firstOrd
@@ -244,6 +248,7 @@ opLevel1Exp         : builtin                                       # level1Exp
                     | 'the' builtin                                 # builtinExp
                     | factor                                        # factorExp
                     | ID '(' argumentList ')'                       # functionExp
+                    | 'empty'                                       # emptyExp
                     ;
 
 builtin				: 'mouse'                                       # mouseFunc
@@ -277,7 +282,7 @@ factor				: literal                                       # literalFactor
                     | ID                                            # idFactor
                     | part                                          # partFactor
                     | '(' expression ')'                            # expressionFactor
-                    | 'the' ID 'of' part                            # idOfPartFactor
+                    | propertySpec                                  # idOfPartFactor
                     ;
 
 literal				: STRING_LITERAL                                # stringLiteral
@@ -289,7 +294,10 @@ literal				: STRING_LITERAL                                # stringLiteral
 
 FIELD               : 'field' | 'card field';
 BUTTON              : 'button' | 'card button';
-CHAR                : 'char' | 'character' ;
+CHAR                : 'char' | 'character' | 'chars' | 'characters' ;
+WORD                : 'word' | 'words';
+ITEM                : 'item' | 'items';
+LINE                : 'line' | 'lines';
 
 MESSAGE				: 'message' | 'message box' | 'message window'
                     | 'the message' | 'the message box' | 'the message window' ;
