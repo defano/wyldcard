@@ -1,6 +1,7 @@
 package hypercard.gui.menu;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 
@@ -26,6 +27,26 @@ public class MenuItemBuilder {
 
     public MenuItemBuilder withAction (ActionListener action) {
         this.item.addActionListener(action);
+        return this;
+    }
+
+    public MenuItemBuilder fontStyle (int fontStyle) {
+        Font defaultFont = this.item.getFont();
+        Font customFont = new Font(defaultFont.getFamily(), fontStyle, defaultFont.getSize());
+        this.item.setFont(customFont);
+        return this;
+
+    }
+
+    public MenuItemBuilder fontFamily (String fontFamily) {
+        Font defaultFont = this.item.getFont();
+        Font customFont = new Font(fontFamily, defaultFont.getStyle(), defaultFont.getSize());
+        this.item.setFont(customFont);
+        return this;
+    }
+
+    public MenuItemBuilder disabled () {
+        this.item.setEnabled(false);
         return this;
     }
 
