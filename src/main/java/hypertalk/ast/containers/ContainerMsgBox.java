@@ -1,9 +1,9 @@
 /**
- * DestinationMsgBox.java
+ * ContainerMsgBox.java
  *
  * @author matt.defano@gmail.com
  * <p>
- * Representation of the message box as a destination for Value
+ * Representation of the message box as a container for Value
  */
 
 package hypertalk.ast.containers;
@@ -15,15 +15,15 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
 
-public class DestinationMsgBox extends Destination {
+public class ContainerMsgBox extends Container {
 
     public final Chunk chunk;
 
-    public DestinationMsgBox() {
+    public ContainerMsgBox() {
         this.chunk = null;
     }
 
-    public DestinationMsgBox(Chunk chunk) {
+    public ContainerMsgBox(Chunk chunk) {
         this.chunk = chunk;
     }
 

@@ -1,9 +1,9 @@
 /**
- * DestinationVariable.java
+ * ContainerPart.java
  *
  * @author matt.defano@gmail.com
  * <p>
- * Representation of a variable as a destination for Value
+ * Representation of a HyperCard part as a container for Value
  */
 
 package hypertalk.ast.containers;
@@ -11,27 +11,27 @@ package hypertalk.ast.containers;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
+import hypertalk.ast.expressions.ExpPart;
 import hypertalk.exception.HtException;
 
-import java.io.Serializable;
 
-public class DestinationVariable extends Destination {
+public class ContainerPart extends Container {
 
-    private final String symbol;
+    private final ExpPart part;
     private final Chunk chunk;
 
-    public DestinationVariable(String symbol) {
-        this.symbol = symbol;
+    public ContainerPart(ExpPart part) {
+        this.part = part;
         this.chunk = null;
     }
 
-    public DestinationVariable(String symbol, Chunk chunk) {
-        this.symbol = symbol;
+    public ContainerPart(ExpPart part, Chunk chunk) {
+        this.part = part;
         this.chunk = chunk;
     }
 
-    public String symbol() {
-        return symbol;
+    public ExpPart part() {
+        return part;
     }
 
     public Chunk chunk() {
@@ -40,12 +40,12 @@ public class DestinationVariable extends Destination {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = GlobalContext.getContext().get(symbol);
+        Value value = GlobalContext.getContext().get(part.evaluateAsSpecifier()).getValue();
         return chunkOf(value, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        GlobalContext.getContext().put(value, preposition, (DestinationVariable) this);
+        GlobalContext.getContext().put(value, preposition, this);
     }
 }

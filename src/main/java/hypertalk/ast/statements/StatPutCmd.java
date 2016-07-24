@@ -7,26 +7,24 @@
 
 package hypertalk.ast.statements;
 
-import hypertalk.ast.containers.Destination;
+import hypertalk.ast.containers.Container;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtException;
-
-import java.io.Serializable;
 
 public class StatPutCmd extends Statement {
 
 	public final Expression expression;
 	public final Preposition preposition;
-	public final Destination destination;
+	public final Container container;
 	
-	public StatPutCmd (Expression e, Preposition p, Destination d) {
+	public StatPutCmd (Expression e, Preposition p, Container d) {
 		expression = e;
 		preposition = p;
-		destination = d;
+		container = d;
 	}
 	
 	public void execute () throws HtException {
-		destination.putValue(expression.evaluate(), preposition);
+		container.putValue(expression.evaluate(), preposition);
 	}
 }

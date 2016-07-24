@@ -103,7 +103,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 		getCard().getPart(ps).sendMessage(message);
 	}
 	
-	public void put (Value mutator, Preposition p, DestinationMsgBox d) throws HtSemanticException {
+	public void put (Value mutator, Preposition p, ContainerMsgBox d) throws HtSemanticException {
 
 		Chunk chunk = d.chunk();
 		Value destValue = new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
@@ -118,7 +118,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 		setIt(destValue);
 	}
 	
-	public void put (Value mutator, Preposition p, DestinationPart d) throws HtSemanticException {
+	public void put (Value mutator, Preposition p, ContainerPart d) throws HtSemanticException {
 		
 		try {
 			Part destPart = get(d.part().evaluateAsSpecifier());
@@ -139,7 +139,7 @@ private static final long serialVersionUID = -6393229377296213396L;
 		}
 	}
 	
-	public void put (Value mutator, Preposition p, DestinationVariable d) throws HtSemanticException {
+	public void put (Value mutator, Preposition p, ContainerVariable d) throws HtSemanticException {
 		String symbol = d.symbol();
 		Chunk chunk = d.chunk();
 		Value mutable = get(symbol);

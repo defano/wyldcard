@@ -57,10 +57,10 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | getCmd                                        # getCmdStmnt
                     | setCmd                                        # setCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
-                    | 'add' expression 'to' destination             # addCmdStmnt
-                    | 'subtract' expression 'from' destination      # subtractCmdStmnt
-                    | 'multiply' destination 'by' expression        # multiplyCmdStmnt
-                    | 'divide' destination 'by' expression          # divideCmdStmnt
+                    | 'add' expression 'to' container             # addCmdStmnt
+                    | 'subtract' expression 'from' container      # subtractCmdStmnt
+                    | 'multiply' container 'by' expression        # multiplyCmdStmnt
+                    | 'divide' container 'by' expression          # divideCmdStmnt
                     ;
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
@@ -73,8 +73,8 @@ askCmd				: 'ask' expression 'with' expression            # askExpWithCmd
                     | 'ask' expression                              # askExpCmd
                     ;
 
-putCmd				: 'put' expression destination                  # putIntoCmd
-                    | 'put' expression preposition destination      # putPrepositionCmd
+putCmd				: 'put' expression container                  # putIntoCmd
+                    | 'put' expression preposition container      # putPrepositionCmd
                     ;
 
 getCmd				: 'get' expression
@@ -154,7 +154,7 @@ chunk               : ordinal CHAR 'of'                             # ordinalCha
                     | LINE expression 'of'                        # lineLineChunk
                     ;
 
-destination			: ID                                            # variableDest
+container			: ID                                            # variableDest
                     | MESSAGE                                       # messageDest
                     | chunk MESSAGE                                 # chunkMessageDest
                     | chunk ID                                      # chunkVariableDest

@@ -6,11 +6,11 @@ import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtSemanticException;
 
-public class DestinationProperty extends Destination {
+public class ContainerProperty extends Container {
 
     public final PropertySpecifier propertySpec;
 
-    public DestinationProperty(PropertySpecifier propertySpec) {
+    public ContainerProperty(PropertySpecifier propertySpec) {
         this.propertySpec = propertySpec;
     }
 
