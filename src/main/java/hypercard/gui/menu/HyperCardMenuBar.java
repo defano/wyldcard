@@ -222,7 +222,7 @@ public class HyperCardMenuBar extends JMenuBar {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goBack())
                 .withShortcut('~')
                 .build(go);
 
@@ -399,7 +399,7 @@ public class HyperCardMenuBar extends JMenuBar {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().setStack(StackModel.newStack("Untitled")))
                 .build(file);
 
         MenuItemBuilder.ofDefaultType()

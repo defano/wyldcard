@@ -12,6 +12,7 @@ public class WindowBuilder {
     private final JFrame frame;
     private final HyperCardWindow window;
     private Point location = null;
+    private boolean initiallyVisible = true;
 
     private WindowBuilder (HyperCardWindow window) {
         this.window = window;
@@ -79,6 +80,11 @@ public class WindowBuilder {
         return this;
     }
 
+    public WindowBuilder notInitiallyVisible () {
+        this.initiallyVisible = false;
+        return this;
+    }
+
     public JFrame build () {
         frame.pack();
 
@@ -88,7 +94,7 @@ public class WindowBuilder {
             frame.setLocation(location);
         }
 
-        frame.setVisible(true);
+        frame.setVisible(initiallyVisible);
 
         return frame;
     }

@@ -4,18 +4,21 @@ import hypercard.parts.CardPart;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class StackModel {
 
-    private final List<CardModel> cards;
-    private int currentCard;
     private String name;
+    private int currentCard;
+    private Stack<Integer> backStack;
 
+    private final List<CardModel> cards;
     private transient List<StackModelObserver> observers;
 
     private StackModel () {
         this.observers = new ArrayList<>();
         this.cards = new ArrayList<>();
+        this.backStack = new Stack<>();
     }
 
     public static StackModel newStack (String name) {
@@ -43,7 +46,7 @@ public class StackModel {
 
     public CardPart goNextCard() {
         if (currentCard + 1 < cards.size()) {
-            return setCurrentCard(currentCard + 1);
+            return setCurrentCard(currentCard + 1, true);
         } else {
             return null;
         }
@@ -51,27 +54,46 @@ public class StackModel {
 
     public CardPart goPrevCard() {
         if (currentCard - 1 >= 0) {
-            return setCurrentCard(currentCard - 1);
+            return setCurrentCard(currentCard - 1, true);
         } else {
             return null;
         }
     }
 
+    public CardPart goBack() {
+        if (!backStack.isEmpty()) {
+            setCurrentCard(backStack.pop(), false);
+        }
+
+        return null;
+    }
+
     public CardPart goFirstCard() {
-        return setCurrentCard(0);
+        return setCurrentCard(0, true);
     }
 
     public CardPart goLastCard() {
-        return setCurrentCard(cards.size() - 1);
+        return setCurrentCard(cards.size() - 1, true);
     }
 
     public CardPart newCard () {
-        cards.add(currentCard, CardModel.emptyCardModel());
-        return setCurrentCard(currentCard++);
+        cards.add(currentCard + 1, CardModel.emptyCardModel());
+        return setCurrentCard(currentCard + 1, true);
     }
 
-    private CardPart setCurrentCard (int currentCard) {
-        this.currentCard = currentCard;
+    private CardPart setCurrentCard (int card, boolean push) {
+
+        // Nothing to do if navigating to current card
+        if (card == currentCard) {
+            return getCurrentCard();
+        }
+
+        // When requested, push the current card onto the backstack
+        if (push) {
+            backStack.push(currentCard);
+        }
+
+        currentCard = card;
         CardPart selectedCard = getCurrentCard();
         fireOnCurrentCardChanged(selectedCard);
         return selectedCard;

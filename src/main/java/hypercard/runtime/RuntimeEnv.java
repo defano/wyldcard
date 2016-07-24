@@ -85,6 +85,7 @@ public class RuntimeEnv implements StackModelObserver {
 				.resizeable(false)
 				.withLocationUnderneath(stackFrame)
 				.withMenuBar(menuBar)
+				.notInitiallyVisible()
 				.build();
 	}
 
