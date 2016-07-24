@@ -11,6 +11,7 @@ package hypercard.runtime;
 
 import hypercard.context.GlobalContext;
 import hypercard.gui.menu.HyperCardMenuBar;
+import hypercard.gui.window.MessageWindow;
 import hypercard.gui.window.StackWindow;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
@@ -31,7 +32,11 @@ import javax.swing.*;
 public class RuntimeEnv {
 
 	private static RuntimeEnv _instance;
+
+	private HyperCardMenuBar menuBar;
 	private StackWindow stackWindow;
+	private MessageWindow messageWindow;
+	private JFrame messageFrame;
 	private boolean supressMessages = false;
 	private boolean mouseIsDown;
 
@@ -39,6 +44,8 @@ public class RuntimeEnv {
 
 	public static void main(String argv[]) {
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
+
 		RuntimeEnv.getRuntimeEnv();
 	}
 
@@ -54,14 +61,24 @@ public class RuntimeEnv {
 			System.out.println("Unable to set the UI look and feel");
 		}
 
+		menuBar = new HyperCardMenuBar();
+
 		// Create the main window, center it on the screen and display it
 		stackWindow = new StackWindow();
-		WindowBuilder.make(stackWindow)
+		JFrame stackFrame = WindowBuilder.make(stackWindow)
 				.withTitle("HyperCard")
 				.resizeable(false)
 				.quitOnClose()
-				.withMenuBar(new HyperCardMenuBar())
+				.withMenuBar(menuBar)
 				.withModel(CardPart.newCard())
+				.build();
+
+		messageWindow = new MessageWindow();
+		messageFrame = WindowBuilder.make(messageWindow)
+				.withTitle("Message Box")
+				.resizeable(false)
+				.withLocationUnderneath(stackFrame)
+				.withMenuBar(menuBar)
 				.build();
 	}
 
@@ -133,12 +150,20 @@ public class RuntimeEnv {
 		return mouseIsDown ? new Value("down") : new Value("up");
 	}
 
+	public boolean isMessageBoxVisible () {
+		return messageFrame.isVisible();
+	}
+
+	public void setMessageBoxVisible (boolean visible) {
+		messageFrame.setVisible(visible);
+	}
+
 	public void setMsgBoxText(Object theMsg) {
-		stackWindow.setMsgBoxText(theMsg.toString());
+		messageWindow.setMsgBoxText(theMsg.toString());
 	}
 
 	public String getMsgBoxText() {
-		return stackWindow.getMsgBoxText();
+		return messageWindow.getMsgBoxText();
 	}
 
 	public void sendMessage(PartSpecifier ps, String message)

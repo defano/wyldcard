@@ -279,9 +279,12 @@ public class HyperCardMenuBar extends JMenuBar {
                 .withShortcut('F')
                 .build(go);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Message")
-                .disabled()
+                .withAction(e -> {
+                    RuntimeEnv.getRuntimeEnv().setMessageBoxVisible(!RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
+                    ((JCheckBoxMenuItem)e.getSource()).setState(RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
+                })
                 .withShortcut('M')
                 .build(go);
 
