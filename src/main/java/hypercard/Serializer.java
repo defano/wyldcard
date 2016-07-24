@@ -29,8 +29,12 @@ public class Serializer {
         return gson.fromJson(json, clazz);
     }
 
-    public static <T> T deserialize (File file, Class<T> clazz) throws IOException {
-        return deserialize(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8), clazz);
+    public static <T> T deserialize (File file, Class<T> clazz) {
+        try {
+            return deserialize(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8), clazz);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to open card.");
+        }
     }
 
     /**

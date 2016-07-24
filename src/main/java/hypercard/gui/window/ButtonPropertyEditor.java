@@ -36,7 +36,7 @@ public class ButtonPropertyEditor implements HyperCardWindow {
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of button " + model.getKnownProperty(ButtonPart.PROP_NAME).stringValue())
                     .withModel(model)
-                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
+                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                     .build();
         });
 

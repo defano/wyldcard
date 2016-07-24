@@ -14,7 +14,6 @@ import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
-import java.io.Serializable;
 
 import javax.swing.JOptionPane;
 
@@ -67,7 +66,7 @@ public class StatAnswerCmd extends Statement {
 	
 	private void answer (Value msg, Value choice1, Value choice2, Value choice3) {
 
-		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
+		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 		
 		Object[] choices = {choice1, choice2, choice3};
 		int choice = JOptionPane.showOptionDialog(parent, msg, "Answer", 
@@ -83,7 +82,7 @@ public class StatAnswerCmd extends Statement {
 
 	private void answer (Value msg, Value choice1, Value choice2) {
 
-		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
+		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 		
 		Object[] choices = {choice1, choice2};
 		int choice = JOptionPane.showOptionDialog(parent, msg, "Answer", 
@@ -98,7 +97,7 @@ public class StatAnswerCmd extends Statement {
 	
 	private void answer (Value msg, Value choice1) {
 
-		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
+		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 		
 		Object[] choices = {choice1};
 		int choice = JOptionPane.showOptionDialog(parent, msg, "Answer", 
@@ -112,7 +111,7 @@ public class StatAnswerCmd extends Statement {
 	
 	private void answer (Value msg) {
 		
-		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
+		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 		
 		Object[] choices = {"OK"};
 		JOptionPane.showOptionDialog(parent, msg, "Answer", 

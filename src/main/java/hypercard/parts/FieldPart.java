@@ -25,7 +25,7 @@ import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
-import hypercard.parts.model.PartModelChangeListener;
+import hypercard.parts.model.PartModelObserver;
 
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -38,7 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-public class FieldPart extends JScrollPane implements Part, MouseListener, PartModelChangeListener, KeyListener {
+public class FieldPart extends JScrollPane implements Part, MouseListener, PartModelObserver, KeyListener {
 
     public static final int DEFAULT_WIDTH = 250;
     public static final int DEFAULT_HEIGHT = 100;
@@ -97,7 +97,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     private void initProperties(Rectangle geometry) {
         int id = parent.nextFieldId();
 
-        partModel = new PartModel(PartType.FIELD);
+        partModel = PartModel.newPartOfType(PartType.FIELD);
         partModel.addModelChangeListener(this);
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
@@ -128,7 +128,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
         WindowBuilder.make(new FieldPropertyEditor())
                 .withTitle("Properties of field " + getName())
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
+                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .resizeable(false)
                 .build();
     }
@@ -145,7 +145,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("Script of field " + getName())
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
+                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .resizeable(true)
                 .build();
     }

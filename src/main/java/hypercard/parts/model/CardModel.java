@@ -1,33 +1,83 @@
 package hypercard.parts.model;
 
-import hypercard.parts.ButtonPart;
-import hypercard.parts.CardPart;
-import hypercard.parts.FieldPart;
-import hypercard.parts.Part;
+import hypercard.context.PartsTable;
+import hypercard.parts.*;
+import hypertalk.ast.common.PartType;
+import hypertalk.ast.containers.PartSpecifier;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class CardModel {
 
-    private Collection<PartModel> parts = new HashSet<>();
+    private Collection<PartModel> parts;
 
-    public void addParts (Collection<? extends Part> parts) {
-        this.parts.addAll(parts.stream().map(Part::getPartModel).collect(Collectors.toList()));
+    private transient PartsTable<FieldPart> fields;
+    private transient PartsTable<ButtonPart> buttons;
+
+    private CardModel () {
+        fields = new PartsTable<>();
+        buttons = new PartsTable<>();
+        parts = new ArrayList<>();
     }
 
-    public void createPartsInCard(CardPart card) throws Exception {
-        for (PartModel thisModel : parts) {
-            switch (thisModel.getType()) {
-                case BUTTON:
-                    card.addButton(ButtonPart.fromModel(card, thisModel));
-                    break;
-                case FIELD:
-                    card.addField(FieldPart.fromModel(card, thisModel));
-                    break;
-            }
+    public static CardModel emptyCardModel () {
+        return new CardModel();
+    }
+
+    public void sendPartOpened () {
+        buttons.sendPartOpened();
+        fields.sendPartOpened();
+    }
+
+    public Collection<PartModel> getPartModels() {
+        return parts;
+    }
+
+    public Part getPart (PartSpecifier ps) throws PartException {
+        if (ps.type() == PartType.FIELD)
+            return fields.getPart(ps);
+        else if (ps.type() == PartType.BUTTON)
+            return buttons.getPart(ps);
+        else
+            throw new RuntimeException("Unhandled part type");
+    }
+
+    public void removePart (Part part) {
+        switch (part.getType()) {
+            case BUTTON:
+                buttons.removePart((ButtonPart) part);
+                break;
+            case FIELD:
+                fields.removePart((FieldPart) part);
+                break;
         }
+
+        parts.remove(part.getPartModel());
     }
 
+    public void addPart (Part part) throws PartException {
+        switch (part.getType()) {
+            case BUTTON:
+                buttons.addPart((ButtonPart) part);
+                break;
+            case FIELD:
+                fields.addPart((FieldPart) part);
+                break;
+            default:
+                throw new PartException("Unsupported part type: " + part.getType());
+        }
+
+        parts.add(part.getPartModel());
+    }
+
+    public int nextFieldId () {
+        return fields.getNextId();
+    }
+
+    public int nextButtonId () {
+        return buttons.getNextId();
+    }
 }

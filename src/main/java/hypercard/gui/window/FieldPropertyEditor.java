@@ -36,7 +36,7 @@ public class FieldPropertyEditor implements HyperCardWindow {
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script for field " + fieldName.getText())
                     .withModel(model)
-                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
+                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                     .resizeable(true)
                     .build();
         });

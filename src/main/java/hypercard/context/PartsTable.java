@@ -10,7 +10,7 @@ package hypercard.context;
 
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
-import hypercard.parts.model.PartModelChangeListener;
+import hypercard.parts.model.PartModelObserver;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartNameSpecifier;
@@ -19,7 +19,7 @@ import hypertalk.exception.NoSuchPropertyException;
 
 import java.util.*;
 
-public class PartsTable<T extends Part> implements PartModelChangeListener {
+public class PartsTable<T extends Part> implements PartModelObserver {
 
 	private Map<Integer, T> idhash;
 	private Map<String, T> namehash;
@@ -35,7 +35,7 @@ public class PartsTable<T extends Part> implements PartModelChangeListener {
             idhash.get(i.next()).partOpened();
         }
     }
-    
+
 	public void removePart (PartSpecifier ps) throws PartException {
 		removePart(getPart(ps));
 	}

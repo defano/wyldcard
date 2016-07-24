@@ -8,9 +8,9 @@
 
 package hypercard.parts;
 
-import hypercard.context.PartsTable;
 import hypercard.gui.menu.context.CardContextMenu;
 import hypercard.parts.model.CardModel;
+import hypercard.parts.model.PartModel;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.containers.PartSpecifier;
@@ -21,8 +21,7 @@ import java.awt.event.MouseListener;
 
 public class CardPart extends JPanel implements MouseListener {
 
-    private PartsTable<FieldPart> fields = new PartsTable<>();
-    private PartsTable<ButtonPart> buttons = new PartsTable<>();
+    private CardModel model;
 
     private CardPart() {
         super();
@@ -33,25 +32,42 @@ public class CardPart extends JPanel implements MouseListener {
     }
 
     public static CardPart newCard () {
-        return new CardPart();
+        CardPart cardPart = new CardPart();
+        cardPart.model = CardModel.emptyCardModel();
+        return cardPart;
     }
 
     public static CardPart fromModel (CardModel model) throws Exception {
         CardPart card = new CardPart();
-        model.createPartsInCard(card);
+        card.model = model;
+
+        for (PartModel thisPart : model.getPartModels()) {
+            switch (thisPart.getType()) {
+                case BUTTON:
+                    ButtonPart button = ButtonPart.fromModel(card, thisPart);
+                    card.add(button);
+                    button.setBounds(button.getRect());
+                    card.validate();
+                    break;
+                case FIELD:
+                    FieldPart field = FieldPart.fromModel(card, thisPart);
+                    card.add(field);
+                    field.setBounds(field.getRect());
+                    card.validate();
+                    default:
+            }
+        }
 
         return card;
     }
 
     public void partOpened() {
         this.setComponentPopupMenu(new CardContextMenu(this));
-
-        fields.sendPartOpened();
-        buttons.sendPartOpened();
+        model.sendPartOpened();
     }
 
     public void addField(FieldPart field) throws PartException {
-        fields.addPart(field);
+        model.addPart(field);
 
         this.add(field);
         field.setBounds(field.getRect());
@@ -59,7 +75,7 @@ public class CardPart extends JPanel implements MouseListener {
     }
 
     public void removeField(FieldPart field) {
-        fields.removePart(field);
+        model.removePart(field);
 
         this.remove(field);
         this.validate();
@@ -67,7 +83,7 @@ public class CardPart extends JPanel implements MouseListener {
     }
 
     public void addButton(ButtonPart button) throws PartException {
-        buttons.addPart(button);
+        model.addPart(button);
 
         this.add(button);
         button.setBounds(button.getRect());
@@ -75,7 +91,7 @@ public class CardPart extends JPanel implements MouseListener {
     }
 
     public void removeButton(ButtonPart button) {
-        buttons.removePart(button);
+        model.removePart(button);
 
         this.remove(button);
         this.validate();
@@ -83,27 +99,19 @@ public class CardPart extends JPanel implements MouseListener {
     }
 
     public Part getPart(PartSpecifier ps) throws PartException {
-        if (ps.type() == PartType.FIELD)
-            return fields.getPart(ps);
-        else if (ps.type() == PartType.BUTTON)
-            return buttons.getPart(ps);
-        else
-            throw new RuntimeException("Unhandled part type");
+        return model.getPart(ps);
     }
 
     public CardModel getCardModel() {
-        CardModel model = new CardModel();
-        model.addParts(buttons.getParts());
-        model.addParts(fields.getParts());
         return model;
     }
 
     public int nextButtonId() {
-        return buttons.getNextId();
+        return model.nextButtonId();
     }
 
     public int nextFieldId() {
-        return fields.getNextId();
+        return model.nextFieldId();
     }
 
     @Override

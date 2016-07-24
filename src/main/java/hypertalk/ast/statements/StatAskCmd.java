@@ -15,7 +15,6 @@ import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
-import java.io.Serializable;
 
 import javax.swing.JOptionPane;
 
@@ -43,7 +42,7 @@ public class StatAskCmd extends Statement {
 	
 	private void ask (Value question, Value suggestion) {
 
-		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
+		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 		
 		String result = (String)JOptionPane.showInputDialog(
 		                    parent,
@@ -61,7 +60,7 @@ public class StatAskCmd extends Statement {
 	}
 	
 	private void ask (Value question) {
-		Component parent = RuntimeEnv.getRuntimeEnv().getCardPanel();
+		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 		
 		String result = (String)JOptionPane.showInputDialog(
 		                    parent,

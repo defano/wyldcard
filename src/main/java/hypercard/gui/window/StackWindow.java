@@ -2,16 +2,11 @@ package hypercard.gui.window;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import hypercard.context.GlobalContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.parts.CardPart;
-import hypercard.runtime.Interpreter;
-import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 public class StackWindow implements HyperCardWindow {
 
@@ -20,11 +15,11 @@ public class StackWindow implements HyperCardWindow {
     private JPanel cardPanel;
     private JPanel stackWindow;
 
-    public CardPart getCurrentCard() {
+    public CardPart getDisplayedCard() {
         return card;
     }
 
-    public void setCurrentCard(CardPart card) {
+    public void setDisplayedCard(CardPart card) {
         this.card = card;
         cardPanel.removeAll();
         cardPanel.add(card);
@@ -42,7 +37,7 @@ public class StackWindow implements HyperCardWindow {
     @Override
     public void bindModel(Object data) {
         if (data instanceof CardPart) {
-            setCurrentCard((CardPart) data);
+            setDisplayedCard((CardPart) data);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
         }

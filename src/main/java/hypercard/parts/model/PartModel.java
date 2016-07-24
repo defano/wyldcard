@@ -14,7 +14,6 @@ import hypertalk.ast.common.Value;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 
-import java.io.Serializable;
 import java.util.*;
 
 public class PartModel {
@@ -23,17 +22,19 @@ public class PartModel {
 	private Map<String, Value> properties = new HashMap<>();
 	private Map<String, Boolean> readOnly = new HashMap<>();
 
-	private transient List<PartModelChangeListener> listeners;
+	private transient List<PartModelObserver> listeners;
 
 	// Required to initialize transient data member when object is deserialized
 	private PartModel() {
 		this.listeners = new ArrayList<>();
 	}
 
-	public PartModel(PartType type) {
-		this.type = type;
+	public static PartModel newPartOfType (PartType type) {
+		PartModel model = new PartModel();
+		model.type = type;
+		return model;
 	}
-	
+
 	public void defineProperty (String property, Value value, boolean readOnly) {
 		property = property.toLowerCase();
 		
@@ -95,16 +96,12 @@ public class PartModel {
 		return type;
 	}
 
-	public void addModelChangeListener(PartModelChangeListener listener) {
-		if (listeners == null) {
-			listeners = new ArrayList<>();
-		}
-
+	public void addModelChangeListener(PartModelObserver listener) {
 		listeners.add(listener);
 	}
 
 	private void fireModelChangeListener(String property, Value oldValue, Value value) {
-		for (PartModelChangeListener listener : listeners)
+		for (PartModelObserver listener : listeners)
 			listener.onModelChange(property, oldValue, value);
 	}
 }

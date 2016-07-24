@@ -1,10 +1,9 @@
 package hypercard.gui.menu;
 
 import hypercard.Serializer;
-import hypercard.gui.window.StackWindow;
-import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.CardModel;
+import hypercard.parts.model.StackModel;
 import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
@@ -26,7 +25,7 @@ public class HyperCardMenuBar extends JMenuBar {
         add(buildStyleMenu());
     }
 
-    private JMenu buildStyleMenu () {
+    private JMenu buildStyleMenu() {
         JMenu style = new JMenu("Style");
 
         MenuItemBuilder.ofDefaultType()
@@ -120,7 +119,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return style;
     }
 
-    private JMenu buildFontMenu () {
+    private JMenu buildFontMenu() {
         JMenu font = new JMenu("Font");
 
         for (String thisFamily : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
@@ -134,7 +133,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return font;
     }
 
-    private JMenu buildObjectsMenu () {
+    private JMenu buildObjectsMenu() {
         JMenu objects = new JMenu("Objects");
 
         MenuItemBuilder.ofDefaultType()
@@ -197,7 +196,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return objects;
     }
 
-    private JMenu buildToolsMenu () {
+    private JMenu buildToolsMenu() {
         JMenu tools = new JMenu("Tools");
 
         MenuItemBuilder.ofDefaultType()
@@ -218,7 +217,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return tools;
     }
 
-    private JMenu buildGoMenu () {
+    private JMenu buildGoMenu() {
         JMenu go = new JMenu("Go");
 
         MenuItemBuilder.ofDefaultType()
@@ -249,25 +248,25 @@ public class HyperCardMenuBar extends JMenuBar {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goFirstCard())
                 .withShortcut('1')
                 .build(go);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goPrevCard())
                 .withShortcut('2')
                 .build(go);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goNextCard())
                 .withShortcut('3')
                 .build(go);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goLastCard())
                 .withShortcut('4')
                 .build(go);
 
@@ -283,7 +282,7 @@ public class HyperCardMenuBar extends JMenuBar {
                 .named("Message")
                 .withAction(e -> {
                     RuntimeEnv.getRuntimeEnv().setMessageBoxVisible(!RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
-                    ((JCheckBoxMenuItem)e.getSource()).setState(RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
+                    ((JCheckBoxMenuItem) e.getSource()).setState(RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
                 })
                 .withShortcut('M')
                 .build(go);
@@ -303,7 +302,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return go;
     }
 
-    private JMenu buildEditMenu () {
+    private JMenu buildEditMenu() {
         JMenu edit = new JMenu("Edit");
 
         MenuItemBuilder.ofDefaultType()
@@ -341,7 +340,7 @@ public class HyperCardMenuBar extends JMenuBar {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .disabled()
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().newCard())
                 .withShortcut('N')
                 .build(edit);
 
@@ -395,7 +394,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return edit;
     }
 
-    private JMenu buildFileMenu () {
+    private JMenu buildFileMenu() {
         JMenu file = new JMenu("File");
 
         MenuItemBuilder.ofDefaultType()
@@ -406,15 +405,11 @@ public class HyperCardMenuBar extends JMenuBar {
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
                 .withAction(e -> {
-                    try {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            CardModel model = Serializer.deserialize(chooser.getSelectedFile(), CardModel.class);
-                            RuntimeEnv.getRuntimeEnv().getStackWindow().setCurrentCard(CardPart.fromModel(model));
-                        }
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
+                    JFileChooser chooser = new JFileChooser();
+                    chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                        StackModel model = Serializer.deserialize(chooser.getSelectedFile(), StackModel.class);
+                        RuntimeEnv.getRuntimeEnv().setStack(model);
                     }
                 })
                 .withShortcut('O')
@@ -433,7 +428,7 @@ public class HyperCardMenuBar extends JMenuBar {
                         JFileChooser chooser = new JFileChooser();
                         chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            Serializer.serialize(chooser.getSelectedFile(), RuntimeEnv.getRuntimeEnv().getCard().getCardModel());
+                            Serializer.serialize(chooser.getSelectedFile(), RuntimeEnv.getRuntimeEnv().getStack());
                         }
                     } catch (IOException e1) {
                         e1.printStackTrace();

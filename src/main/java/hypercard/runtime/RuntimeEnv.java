@@ -16,6 +16,8 @@ import hypercard.gui.window.StackWindow;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.PartException;
+import hypercard.parts.model.StackModel;
+import hypercard.parts.model.StackModelObserver;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
@@ -29,7 +31,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.*;
 
-public class RuntimeEnv {
+public class RuntimeEnv implements StackModelObserver {
 
 	private static RuntimeEnv _instance;
 
@@ -37,6 +39,7 @@ public class RuntimeEnv {
 	private StackWindow stackWindow;
 	private MessageWindow messageWindow;
 	private JFrame messageFrame;
+	private StackModel stack;
 	private boolean supressMessages = false;
 	private boolean mouseIsDown;
 
@@ -63,6 +66,9 @@ public class RuntimeEnv {
 
 		menuBar = new HyperCardMenuBar();
 
+		stack = StackModel.newStack("Untitled");
+		stack.addObserver(this);
+
 		// Create the main window, center it on the screen and display it
 		stackWindow = new StackWindow();
 		JFrame stackFrame = WindowBuilder.make(stackWindow)
@@ -70,7 +76,7 @@ public class RuntimeEnv {
 				.resizeable(false)
 				.quitOnClose()
 				.withMenuBar(menuBar)
-				.withModel(CardPart.newCard())
+				.withModel(stack.getCurrentCard())
 				.build();
 
 		messageWindow = new MessageWindow();
@@ -90,10 +96,6 @@ public class RuntimeEnv {
 		return _instance;
 	}
 
-	/**
-	 * 
-	 * @param handler
-	 */
 	public void executeStatementList(StatementList handler) {
 		HandlerExecutionTask handlerTask = new HandlerExecutionTask(handler);
 		
@@ -120,16 +122,24 @@ public class RuntimeEnv {
 		return stackWindow;
 	}
 
-	public Component getCardPanel() {
+	public Component getStackPanel() {
 		return stackWindow.getWindowPanel();
 	}
 
+	public StackModel getStack () { return stack; }
+
+	public void setStack (StackModel model) {
+		this.stack = model;
+		this.stack.addObserver(this);
+		this.stackWindow.setDisplayedCard(stack.getCurrentCard());
+	}
+
 	public CardPart getCard () {
-		return stackWindow.getCurrentCard();
+		return stack.getCurrentCard();
 	}
 
 	public Point getTheMouseLoc() {
-		CardPart theCard = stackWindow.getCurrentCard();
+		CardPart theCard = stackWindow.getDisplayedCard();
 		Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 		SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
 
@@ -175,5 +185,10 @@ public class RuntimeEnv {
 	public void dialogSyntaxError(Exception e) {
 		JOptionPane.showMessageDialog(stackWindow.getWindowPanel(),
 				"Syntax error: " + e.getMessage());
+	}
+
+	@Override
+	public void onCurrentCardChanged(CardPart newCard) {
+		stackWindow.setDisplayedCard(newCard);
 	}
 }

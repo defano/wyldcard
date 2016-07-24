@@ -15,7 +15,7 @@ import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.model.PartModel;
-import hypercard.parts.model.PartModelChangeListener;
+import hypercard.parts.model.PartModelObserver;
 import hypercard.runtime.Interpreter;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.PartType;
@@ -33,7 +33,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ButtonPart extends JButton implements Part, MouseListener, PartModelChangeListener {
+public class ButtonPart extends JButton implements Part, MouseListener, PartModelObserver {
 
     public static final int DEFAULT_WIDTH = 85;
     public static final int DEFAULT_HEIGHT = 25;
@@ -91,7 +91,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
     private void initProperties(Rectangle geometry) {
         int id = parent.nextButtonId();
 
-        partModel = new PartModel(PartType.BUTTON);
+        partModel = PartModel.newPartOfType(PartType.BUTTON);
         partModel.addModelChangeListener(this);
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
@@ -116,7 +116,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         WindowBuilder.make(new ButtonPropertyEditor())
                 .withTitle("Button PartModel")
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
+                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .build();
     }
 
@@ -132,7 +132,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("HyperTalk Script Editor")
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getCardPanel())
+                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .resizeable(true)
                 .build();
     }
