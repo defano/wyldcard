@@ -10,7 +10,6 @@ package hypertalk.ast.functions;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
-import java.io.Serializable;
 
 public class ExpResultFun extends Expression {
 

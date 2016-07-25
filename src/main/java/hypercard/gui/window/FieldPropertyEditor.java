@@ -40,9 +40,7 @@ public class FieldPropertyEditor implements HyperCardWindow {
                     .resizeable(true)
                     .build();
         });
-        cancelButton.addActionListener(e -> {
-            close();
-        });
+        cancelButton.addActionListener(e -> close());
         saveButton.addActionListener(e -> {
             close();
             updateProperties();

@@ -11,22 +11,18 @@ package hypercard.gui.menu.context;
 import hypercard.context.GlobalContext;
 import hypercard.parts.FieldPart;
 
-import java.io.Serializable;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
+import javax.swing.*;
 
-public class FieldContextMenu extends JPopupMenu implements Serializable {
-private static final long serialVersionUID = -8909810305050480968L;
+public class FieldContextMenu extends JPopupMenu {
 
-	FieldPart field;
+	private FieldPart field;
 
-    JMenuItem jMenuItemEdit = new JMenuItem("Edit Field Properties...");
-    JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
-    JSeparator jSeparator1 = new JSeparator();
-    JMenuItem jMenuItemMove = new JMenuItem("Move");
-    JMenuItem jMenuItemResize = new JMenuItem("Resize");
-    JMenuItem jMenuItemDelete = new JMenuItem("Delete");
+    private JMenuItem jMenuItemEdit = new JMenuItem("Edit Field Properties...");
+    private JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
+    private JSeparator jSeparator1 = new JSeparator();
+    private JMenuItem jMenuItemMove = new JMenuItem("Move");
+    private JMenuItem jMenuItemResize = new JMenuItem("Resize");
+    private JMenuItem jMenuItemDelete = new JMenuItem("Delete");
     
     public FieldContextMenu (FieldPart field) {
         super();
@@ -40,55 +36,35 @@ private static final long serialVersionUID = -8909810305050480968L;
         this.add(jMenuItemResize);
         this.add(jMenuItemDelete);
 
-        jMenuItemEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemEditActionPerformed(evt);
-            }
-        });
+        jMenuItemEdit.addActionListener(evt -> jMenuItemEditActionPerformed());
                 
-        jMenuItemEditScript.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemEditScriptActionPerformed(evt);
-            }
-        });
+        jMenuItemEditScript.addActionListener(evt -> jMenuItemEditScriptActionPerformed());
 
-        jMenuItemMove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemMoveActionPerformed(evt);
-            }
-        });
+        jMenuItemMove.addActionListener(evt -> jMenuItemMoveActionPerformed());
         
-        jMenuItemResize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemResizeActionPerformed(evt);
-            }
-        });
+        jMenuItemResize.addActionListener(evt -> jMenuItemResizeActionPerformed());
 
-        jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemDeleteActionPerformed(evt);
-            }
-        });
+        jMenuItemDelete.addActionListener(evt -> jMenuItemDeleteActionPerformed());
         
     }    
         
-    public void jMenuItemEditActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemEditActionPerformed() {
         field.editProperties();
     }
 
-    public void jMenuItemEditScriptActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemEditScriptActionPerformed() {
         field.editScript();
     }
 
-    public void jMenuItemMoveActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemMoveActionPerformed() {
         field.move();
     }
 
-    public void jMenuItemResizeActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemResizeActionPerformed() {
         field.resize();
     }
 
-    public void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemDeleteActionPerformed() {
         GlobalContext.getContext().getCard().removeField(field);
     }
     

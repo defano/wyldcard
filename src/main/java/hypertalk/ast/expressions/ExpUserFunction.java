@@ -15,8 +15,6 @@ import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class ExpUserFunction extends Expression {
 
 	public final String function;

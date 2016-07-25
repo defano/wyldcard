@@ -11,26 +11,18 @@ package hypercard.gui.menu.context;
 import hypercard.context.GlobalContext;
 import hypercard.parts.ButtonPart;
 
-import java.io.Serializable;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
+import javax.swing.*;
 
-/**
- *
- * @author MGIA4532
- */
-public class ButtonContextMenu extends JPopupMenu implements Serializable {
-private static final long serialVersionUID = 3341214641780506203L;
+public class ButtonContextMenu extends JPopupMenu {
 
-	ButtonPart button;
+	private ButtonPart button;
 
-    JMenuItem jMenuItemEdit = new JMenuItem("Edit Button Properties...");
-    JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
-    JSeparator jSeparator1 = new JSeparator();
-    JMenuItem jMenuItemMove = new JMenuItem("Move");
-    JMenuItem jMenuItemResize = new JMenuItem("Resize");
-    JMenuItem jMenuItemDelete = new JMenuItem("Delete");
+    private JMenuItem jMenuItemEdit = new JMenuItem("Edit Button Properties...");
+    private JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
+    private JSeparator jSeparator1 = new JSeparator();
+    private JMenuItem jMenuItemMove = new JMenuItem("Move");
+    private JMenuItem jMenuItemResize = new JMenuItem("Resize");
+    private JMenuItem jMenuItemDelete = new JMenuItem("Delete");
     
     public ButtonContextMenu (ButtonPart button) {
         super();
@@ -44,55 +36,35 @@ private static final long serialVersionUID = 3341214641780506203L;
         this.add(jMenuItemResize);
         this.add(jMenuItemDelete);
 
-        jMenuItemEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemEditActionPerformed(evt);
-            }
-        });
+        jMenuItemEdit.addActionListener(evt -> jMenuItemEditActionPerformed());
                 
-        jMenuItemEditScript.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemEditScriptActionPerformed(evt);
-            }
-        });
+        jMenuItemEditScript.addActionListener(evt -> jMenuItemEditScriptActionPerformed());
 
-        jMenuItemMove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemMoveActionPerformed(evt);
-            }
-        });
+        jMenuItemMove.addActionListener(evt -> jMenuItemMoveActionPerformed());
         
-        jMenuItemResize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemResizeActionPerformed(evt);
-            }
-        });
+        jMenuItemResize.addActionListener(evt -> jMenuItemResizeActionPerformed());
 
-        jMenuItemDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItemDeleteActionPerformed(evt);
-            }
-        });
+        jMenuItemDelete.addActionListener(evt -> jMenuItemDeleteActionPerformed());
         
     }    
         
-    public void jMenuItemEditActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemEditActionPerformed() {
         button.editProperties();
     }
 
-    public void jMenuItemEditScriptActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemEditScriptActionPerformed() {
         button.editScript();
     }
 
-    public void jMenuItemMoveActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemMoveActionPerformed() {
         button.move();
     }
 
-    public void jMenuItemResizeActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemResizeActionPerformed() {
         button.resize();
     }
 
-    public void jMenuItemDeleteActionPerformed(java.awt.event.ActionEvent evt) {
+    private void jMenuItemDeleteActionPerformed() {
         GlobalContext.getContext().getCard().removeButton(button);
     }
     

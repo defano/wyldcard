@@ -9,33 +9,27 @@
 
 package hypercard.runtime;
 
-import hypercard.context.GlobalContext;
 import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.MessageWindow;
 import hypercard.gui.window.StackWindow;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
-import hypercard.parts.PartException;
 import hypercard.parts.model.StackModel;
 import hypercard.parts.model.StackModelObserver;
 import hypertalk.ast.common.Value;
-import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
-import hypertalk.exception.HtSemanticException;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.*;
 
 public class RuntimeEnv implements StackModelObserver {
 
 	private static RuntimeEnv _instance;
 
-	private HyperCardMenuBar menuBar;
 	private StackWindow stackWindow;
 	private MessageWindow messageWindow;
 	private JFrame messageFrame;
@@ -64,7 +58,7 @@ public class RuntimeEnv implements StackModelObserver {
 			System.out.println("Unable to set the UI look and feel");
 		}
 
-		menuBar = new HyperCardMenuBar();
+		HyperCardMenuBar menuBar = new HyperCardMenuBar();
 
 		stack = StackModel.newStack("Untitled");
 		stack.addObserver(this);
@@ -119,10 +113,6 @@ public class RuntimeEnv implements StackModelObserver {
 		}
 	}
 
-	public StackWindow getStackWindow () {
-		return stackWindow;
-	}
-
 	public Component getStackPanel() {
 		return stackWindow.getWindowPanel();
 	}
@@ -175,12 +165,6 @@ public class RuntimeEnv implements StackModelObserver {
 
 	public String getMsgBoxText() {
 		return messageWindow.getMsgBoxText();
-	}
-
-	public void sendMessage(PartSpecifier ps, String message)
-			throws PartException, HtSemanticException {
-		if (!supressMessages)
-			GlobalContext.getContext().get(ps).sendMessage(message);
 	}
 
 	public void dialogSyntaxError(Exception e) {

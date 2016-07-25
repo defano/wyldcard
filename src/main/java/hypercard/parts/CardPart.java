@@ -12,7 +12,6 @@ import hypercard.gui.menu.context.CardContextMenu;
 import hypercard.parts.model.CardModel;
 import hypercard.parts.model.PartModel;
 import hypercard.runtime.RuntimeEnv;
-import hypertalk.ast.common.PartType;
 import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
@@ -30,12 +29,6 @@ public class CardPart extends JPanel implements MouseListener {
         this.setComponentPopupMenu(new CardContextMenu(this));
         this.addMouseListener(this);
         this.setLayout(null);
-    }
-
-    public static CardPart newCard () {
-        CardPart cardPart = new CardPart();
-        cardPart.model = CardModel.emptyCardModel();
-        return cardPart;
     }
 
     public static CardPart fromModel (CardModel model) throws Exception {

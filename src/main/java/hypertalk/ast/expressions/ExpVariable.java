@@ -10,8 +10,6 @@ package hypertalk.ast.expressions;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Value;
 
-import java.io.Serializable;
-
 public class ExpVariable extends Expression {
 
 	public final String identifier;

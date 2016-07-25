@@ -7,8 +7,6 @@
 
 package hypertalk.ast.common;
 
-import java.io.Serializable;
-
 public enum BinaryOperator {
 	EQUALS, NOTEQUALS, LESSTHAN, GREATERTHAN, LESSTHANOREQUALS, GREATERTHANOREQUALS,
 	PLUS, MINUS, MULTIPLY, DIVIDE, MOD, EXP,

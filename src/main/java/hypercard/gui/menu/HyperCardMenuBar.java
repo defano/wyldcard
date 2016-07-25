@@ -1,15 +1,11 @@
 package hypercard.gui.menu;
 
 import hypercard.Serializer;
-import hypercard.parts.CardPart;
-import hypercard.parts.model.CardModel;
 import hypercard.parts.model.StackModel;
 import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 

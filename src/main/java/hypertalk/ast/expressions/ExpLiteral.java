@@ -9,8 +9,6 @@ package hypertalk.ast.expressions;
 
 import hypertalk.ast.common.Value;
 
-import java.io.Serializable;
-
 public class ExpLiteral extends Expression {
 
 	public final String literal;

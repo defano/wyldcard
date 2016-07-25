@@ -14,7 +14,6 @@ public class ContainerProperty extends Container {
         this.propertySpec = propertySpec;
     }
 
-    @Override
     public Chunk chunk() {
         // Properties cannot be mutated by chunk
         return null;

@@ -8,7 +8,6 @@
 package hypertalk.ast.constructs;
 
 import hypertalk.ast.expressions.Expression;
-import java.io.Serializable;
 
 public class RepeatDuration extends RepeatSpecifier {
 

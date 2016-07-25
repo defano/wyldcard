@@ -1,7 +1,5 @@
 package hypertalk.exception;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-
 public class HtSyntaxException extends HtException {
 
     public final int lineNumber, columnNumber;

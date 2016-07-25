@@ -17,7 +17,6 @@ import java.util.Vector;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
-import java.io.Serializable;
 
 public class Value {
 
@@ -110,27 +109,27 @@ public class Value {
 	
 	public int integerValue () {
 		if (intValue != null)
-			return intValue.intValue();
+			return intValue;
 		else
 			return 0;
 	}
 		
 	public float floatValue () {
 		if (floatValue != null)
-			return floatValue.floatValue();
+			return floatValue;
 		else
 			return 0.0f;
 	}
 		
 	public boolean booleanValue () {
 		if (booleanValue != null)
-			return booleanValue.booleanValue();
+			return booleanValue;
 		else
 			return false;
 	}
 			
 	public List<Value> listValue () {
-		List<Value> list = new Vector<Value>();
+		List<Value> list = new Vector<>();
 		
 		for (String item : value.split(ITEM_DELIMITER))
 			list.add(new Value(item));
@@ -393,7 +392,7 @@ public class Value {
 	}
 	
 	public Value concat (Value val) {
-		return new Value(value.toString() + val.toString());
+		return new Value(value + val.toString());
 	}
 	
 	public boolean contains (Object v) {

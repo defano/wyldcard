@@ -26,7 +26,7 @@ public interface Part {
 	
 	PartModel getPartModel();
 	Value getProperty (String property) throws NoSuchPropertyException;
-	void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException;
+	void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException;
 	
 	Value getValue();
 	void setValue(Value v);

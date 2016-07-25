@@ -44,6 +44,6 @@ public class ContainerVariable extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        GlobalContext.getContext().put(value, preposition, (ContainerVariable) this);
+        GlobalContext.getContext().put(value, preposition, this);
     }
 }

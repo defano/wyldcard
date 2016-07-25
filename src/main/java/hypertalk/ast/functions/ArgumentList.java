@@ -12,7 +12,6 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -22,11 +21,11 @@ public class ArgumentList {
 	private List<Value> evaluatedList;
 	
 	public ArgumentList () {
-		list = new Vector<Expression>();
+		list = new Vector<>();
 	}
 	
 	public ArgumentList (Expression expr) {
-		list = new Vector<Expression>();
+		list = new Vector<>();
 		list.add(expr);
 	}
 	
@@ -36,7 +35,7 @@ public class ArgumentList {
 	}
 	
 	public void evaluate () throws HtSemanticException {
-		evaluatedList = new Vector<Value>();
+		evaluatedList = new Vector<>();
 
 		for (Expression expr : list)
 			evaluatedList.add(expr.evaluate());

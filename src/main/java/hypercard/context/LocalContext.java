@@ -9,11 +9,9 @@ package hypercard.context;
 
 import hypertalk.ast.common.Value;
 
-import java.io.Serializable;
 import java.util.List;
 
-public class LocalContext implements Serializable {
-private static final long serialVersionUID = 7027403644727675565L;
+public class LocalContext {
 
 	public final SymbolTable symbols;
     private final List<String> globalsInScope;

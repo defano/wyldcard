@@ -281,7 +281,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     }
 
     @Override
-    public void onModelChange(String property, Value oldValue, Value newValue) {
+    public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
 
         if (property.equals(PROP_SCRIPT)) {
             try {

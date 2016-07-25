@@ -8,19 +8,14 @@
 
 package hypercard.parts;
 
-import hypercard.parts.Part;
 import hypertalk.ast.common.Value;
 
-import java.awt.Component;
-import java.awt.MouseInfo;
-import java.awt.Point;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.swing.SwingUtilities;
 
 public class PartMover implements MouseListener {
 

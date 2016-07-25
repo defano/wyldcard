@@ -12,8 +12,6 @@ import hypertalk.ast.expressions.ExpLiteral;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class StatReturn extends Statement {
 
 	public final Expression returnValue;

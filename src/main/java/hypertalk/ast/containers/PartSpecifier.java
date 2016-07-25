@@ -9,8 +9,6 @@ package hypertalk.ast.containers;
 
 import hypertalk.ast.common.PartType;
 
-import java.io.Serializable;
-
 
 public interface PartSpecifier {
 	Object value();

@@ -8,7 +8,6 @@
 package hypertalk.ast.functions;
 
 import hypertalk.ast.statements.StatementList;
-import java.io.Serializable;
 
 public class UserFunction {
 

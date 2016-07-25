@@ -12,8 +12,6 @@ import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class StatGetCmd extends Statement {
 
 	public final Expression expression;
@@ -30,9 +28,8 @@ public class StatGetCmd extends Statement {
 	}
 	
 	public void execute () throws HtSemanticException {
-		if (expression != null)
+		if (expression != null) {
 			GlobalContext.getContext().setIt(expression.evaluate());
-		else {
 		}
 	}
 }

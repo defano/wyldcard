@@ -11,8 +11,6 @@ import hypertalk.ast.common.UnaryOperator;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class ExpUnaryOperator extends Expression {
 
 	public final UnaryOperator operator;
@@ -29,7 +27,7 @@ public class ExpUnaryOperator extends Expression {
 		switch (operator) {
 		case NOT: return rhs.not();
 		case NEGATE: return rhs.negate();
-		default: throw new HtSemanticException("Unhandeled unary operator in evaluation: " + operator);
+		default: throw new HtSemanticException("Unhandled unary operator in evaluation: " + operator);
 		}
 	}
 }

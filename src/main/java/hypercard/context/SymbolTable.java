@@ -10,17 +10,15 @@ package hypercard.context;
 
 import hypertalk.ast.common.Value;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SymbolTable implements Serializable {
-private static final long serialVersionUID = -7770752727732751367L;
+public class SymbolTable {
 
 	private Map<String, Value> table;
 	
 	public SymbolTable () {
-		table = new HashMap<String, Value>();
+		table = new HashMap<>();
 	}
 	
 	public Value get (String id) {

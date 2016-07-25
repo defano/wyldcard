@@ -11,8 +11,6 @@ import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 
-import java.io.Serializable;
-
 public class ExpMouseLocFun extends Expression {
 
 	public ExpMouseLocFun () {}

@@ -30,20 +30,15 @@ public class PartsTable<T extends Part> implements PartModelObserver {
 	}
     
     public void sendPartOpened () {
-        Iterator<Integer> i = idhash.keySet().iterator();
-        while (i.hasNext()) {
-            idhash.get(i.next()).partOpened();
-        }
+		for (Integer integer : idhash.keySet()) {
+			idhash.get(integer).partOpened();
+		}
     }
 
-	public void removePart (PartSpecifier ps) throws PartException {
-		removePart(getPart(ps));
-	}
-	
 	public void removePart (T p) {
 		
 		try {
-			String partId = p.getProperty("id").toString();
+			Integer partId = p.getProperty("id").integerValue();
 			String partName = p.getProperty("name").toString();
 
 			idhash.remove(partId);
@@ -97,7 +92,7 @@ public class PartsTable<T extends Part> implements PartModelObserver {
 			throw new RuntimeException("Unhandled part specifier type");
 	}
 	
-	public void onModelChange(String property, Value oldValue, Value newValue) {
+	public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
 		
 		if (property.equals("name")) {			
 			T part = namehash.get(oldValue.stringValue());

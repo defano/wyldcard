@@ -20,12 +20,10 @@ import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 
-import java.io.Serializable;
 import java.util.Stack;
 import java.util.Vector;
 
-public class GlobalContext implements Serializable {
-private static final long serialVersionUID = -6393229377296213396L;
+public class GlobalContext {
 
 	private static GlobalContext _instance;
 	
@@ -38,8 +36,8 @@ private static final long serialVersionUID = -6393229377296213396L;
 	
 	private GlobalContext () {
 		globals = new SymbolTable();
-		stack = new Stack<LocalContext>();
-		locals = new LocalContext(new SymbolTable(), new Vector<String>(), new Value());		
+		stack = new Stack<>();
+		locals = new LocalContext(new SymbolTable(), new Vector<>(), new Value());
 	}
 	
 	public static GlobalContext getContext () {
@@ -70,12 +68,12 @@ private static final long serialVersionUID = -6393229377296213396L;
 	}
 	
     public void newLocalContext () {
-		locals = new LocalContext(new SymbolTable(), new Vector<String>(), new Value());
+		locals = new LocalContext(new SymbolTable(), new Vector<>(), new Value());
     }
     
 	public void pushContext () {
 		stack.push(locals);
-		locals = new LocalContext(new SymbolTable(), new Vector<String>(), new Value());
+		locals = new LocalContext(new SymbolTable(), new Vector<>(), new Value());
 	}
 	
 	public void popContext () {

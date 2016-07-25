@@ -44,18 +44,6 @@ public class Script {
 		return this;
 	}
 	
-	public StatementList getHandler (String handler) {
-		return handlers.get(handler);
-	}
-	
-	public UserFunction getUserFunction (String function) {
-		return functions.get(function);
-	}
-	
-	public StatementList getStatementList () {
-		return statements;
-	}
-	
 	public void executeHandler (String handler) {
 		if (handlers.containsKey(handler))
 			RuntimeEnv.getRuntimeEnv().executeStatementList(handlers.get(handler));			

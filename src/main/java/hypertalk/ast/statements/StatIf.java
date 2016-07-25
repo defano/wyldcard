@@ -11,8 +11,6 @@ import hypertalk.ast.constructs.ThenElseBlock;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtException;
 
-import java.io.Serializable;
-
 public class StatIf extends Statement {
 
 	public final Expression condition;

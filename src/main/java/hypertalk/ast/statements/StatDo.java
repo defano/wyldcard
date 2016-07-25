@@ -11,8 +11,6 @@ import hypercard.runtime.Interpreter;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtException;
 
-import java.io.Serializable;
-
 public class StatDo extends Statement {
 
 	public final Expression script;

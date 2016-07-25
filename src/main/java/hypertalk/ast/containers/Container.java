@@ -16,7 +16,6 @@ import hypertalk.exception.HtSemanticException;
 
 public abstract class Container {
 
-    public abstract Chunk chunk();
     public abstract Value getValue() throws HtException;
     public abstract void putValue(Value value, Preposition preposition) throws HtException;
 

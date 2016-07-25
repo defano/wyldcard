@@ -18,8 +18,6 @@ import hypertalk.ast.constructs.RepeatWith;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class StatRepeat extends Statement {
 
 	public final RepeatSpecifier range;

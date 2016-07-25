@@ -77,7 +77,7 @@ public class StackModel {
 
     public CardPart goBack() {
         if (!backStack.isEmpty()) {
-            setCurrentCard(backStack.pop(), false);
+            return setCurrentCard(backStack.pop(), false);
         }
 
         return null;

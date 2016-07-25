@@ -9,8 +9,6 @@ package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
 
-import java.io.Serializable;
-
 public class StatGlobal extends Statement {
 
 	public final String symbol;

@@ -15,8 +15,6 @@ import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class ExpPartId extends ExpPart {
 
 	public final PartType type;

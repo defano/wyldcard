@@ -38,7 +38,7 @@ public class WindowBuilder {
     }
 
     public WindowBuilder quitOnClose() {
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         return this;
     }
 
@@ -49,7 +49,7 @@ public class WindowBuilder {
 
     public WindowBuilder withMenuBar (JMenuBar menuBar) {
 
-        // Swing does not allow a JMenuBar to "live" on multiple windows at one; this lets us "steal" the
+        // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
         // menubar each time the window comes into focus.
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override
@@ -58,10 +58,9 @@ public class WindowBuilder {
             }
 
             @Override
-            public void windowLostFocus(WindowEvent e) {
-
-            }
+            public void windowLostFocus(WindowEvent e) {}
         });
+
         return this;
     }
 

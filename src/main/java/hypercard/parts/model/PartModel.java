@@ -49,7 +49,7 @@ public class PartModel {
 		
 		if (!propertyExists(property))
 			throw new NoSuchPropertyException("Can't set property " + property + " because it doesn't exist.");
-		if (readOnly.get(property) == true)
+		if (readOnly.get(property))
 			throw new PropertyPermissionException("Can't set property " + property + " because it is read only.");
 		
 		Value oldValue = properties.get(property);
@@ -102,6 +102,6 @@ public class PartModel {
 
 	private void fireModelChangeListener(String property, Value oldValue, Value value) {
 		for (PartModelObserver listener : listeners)
-			listener.onModelChange(property, oldValue, value);
+			listener.onPartAttributeChanged(property, oldValue, value);
 	}
 }

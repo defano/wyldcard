@@ -32,9 +32,7 @@ public class ScriptEditor implements HyperCardWindow {
 
     public ScriptEditor() {
 
-        cancelButton.addActionListener(e -> {
-            close();
-        });
+        cancelButton.addActionListener(e -> close());
 
         saveButton.addActionListener(e -> {
             updateProperties();

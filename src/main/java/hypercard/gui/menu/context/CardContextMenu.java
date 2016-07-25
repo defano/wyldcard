@@ -14,14 +14,10 @@ import hypercard.parts.FieldPart;
 import hypercard.parts.PartException;
 import hypercard.runtime.RuntimeEnv;
 
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.Serializable;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
+import java.awt.*;
 
-public class CardContextMenu extends JPopupMenu implements Serializable {
-private static final long serialVersionUID = -726972665320357697L;
+public class CardContextMenu extends JPopupMenu {
 
 	CardPart card;
 
@@ -35,11 +31,11 @@ private static final long serialVersionUID = -726972665320357697L;
         this.add(jMenuItemNewButton);
         this.add(jMenuItemNewField);
         
-        jMenuItemNewField.addActionListener(evt -> newFieldActionPerformed(evt));
-        jMenuItemNewButton.addActionListener(evt -> newButtonActionPerformed(evt));
+        jMenuItemNewField.addActionListener(evt -> newFieldActionPerformed());
+        jMenuItemNewButton.addActionListener(evt -> newButtonActionPerformed());
     }
     
-    public void newFieldActionPerformed(java.awt.event.ActionEvent evt) {    	
+    public void newFieldActionPerformed() {
     	Point mouseLoc = RuntimeEnv.getRuntimeEnv().getTheMouseLoc();
         Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, FieldPart.DEFAULT_WIDTH, FieldPart.DEFAULT_HEIGHT);
         
@@ -50,7 +46,7 @@ private static final long serialVersionUID = -726972665320357697L;
         }
     }
 
-    public void newButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    public void newButtonActionPerformed() {
     	Point mouseLoc = RuntimeEnv.getRuntimeEnv().getTheMouseLoc();
     	Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, ButtonPart.DEFAULT_WIDTH, ButtonPart.DEFAULT_HEIGHT);
     	

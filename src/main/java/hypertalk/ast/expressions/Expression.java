@@ -10,8 +10,6 @@ package hypertalk.ast.expressions;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 
 public abstract class Expression {
 

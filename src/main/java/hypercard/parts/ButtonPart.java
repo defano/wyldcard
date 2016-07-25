@@ -152,10 +152,6 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         return partModel.getKnownProperty(PROP_ID).integerValue();
     }
 
-    public PartSpecifier getPartSpecifier() {
-        return new PartIdSpecifier(PartType.BUTTON, getId());
-    }
-
     @Override
     public JComponent getComponent() {
         return this;
@@ -249,35 +245,39 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
     }
 
     @Override
-    public void onModelChange(String property, Value oldValue, Value newValue) {
+    public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
 
-        if (property.equals(PROP_SCRIPT)) {
-            try {
-                compile();
-            } catch (HtSemanticException e) {
-                RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
-            }
-        } else if (property.equals(PROP_TITLE))
-            this.setText(newValue.toString());
-
-        else if (property.equals(PROP_TOP) ||
-                property.equals(PROP_LEFT) ||
-                property.equals(PROP_WIDTH) ||
-                property.equals(PROP_HEIGHT)) {
-            this.setBounds(getRect());
-            this.validate();
-            this.repaint();
-        } else if (property.equals(PROP_VISIBLE))
-            this.setVisible(newValue.booleanValue());
-
-        else if (property.equals(PROP_ENABLED))
-            this.setEnabled(newValue.booleanValue());
-
-        else if (property.equals(PROP_SHOWTITLE)) {
-            if (newValue.booleanValue())
-                this.setText(partModel.getKnownProperty(PROP_TITLE).stringValue());
-            else
-                this.setText("");
+        switch (property) {
+            case PROP_SCRIPT:
+                try {
+                    compile();
+                } catch (HtSemanticException e) {
+                    RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                }
+                break;
+            case PROP_TITLE:
+                this.setText(newValue.toString());
+                break;
+            case PROP_TOP:
+            case PROP_LEFT:
+            case PROP_WIDTH:
+            case PROP_HEIGHT:
+                this.setBounds(getRect());
+                this.validate();
+                this.repaint();
+                break;
+            case PROP_VISIBLE:
+                this.setVisible(newValue.booleanValue());
+                break;
+            case PROP_ENABLED:
+                this.setEnabled(newValue.booleanValue());
+                break;
+            case PROP_SHOWTITLE:
+                if (newValue.booleanValue())
+                    this.setText(partModel.getKnownProperty(PROP_TITLE).stringValue());
+                else
+                    this.setText("");
+                break;
         }
     }
 

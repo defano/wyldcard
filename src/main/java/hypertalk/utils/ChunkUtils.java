@@ -173,14 +173,14 @@ public class ChunkUtils {
 		end = getTokenIndex(end, tokens.length);
 
 		int tokenIdx = 0;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		
 		for (String token : tokens) {
 			if (tokenIdx == start)
-				result.append(replacement + delimString);
+				result.append(replacement).append(delimString);
 			
 			if (tokenIdx < start || tokenIdx > end)
-				result.append(token + delimString);	
+				result.append(token).append(delimString);
 			
 			tokenIdx++;
 		}
@@ -196,16 +196,16 @@ public class ChunkUtils {
 		
 		index = getTokenIndex(index, tokens.length);
 		int tokenIdx = 0;
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		
 		if (index < 0)
-			result.append(replacement + delimString);
+			result.append(replacement).append(delimString);
 		
 		for (String token : tokens) {
 			if (tokenIdx == index) 
-				result.append(replacement + delimString);
+				result.append(replacement).append(delimString);
 			
-			result.append(token + delimString);			
+			result.append(token).append(delimString);
 			tokenIdx++;
 		}
 
@@ -227,7 +227,7 @@ public class ChunkUtils {
 	
 	private static String get (String value, ChunkType delimiter, int start, int end) {
 		String[] tokens = value.split(getDelimiterRegex(delimiter));
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		
 		for (int index = start; index < end; index++) {
 			buffer.append(tokens[getTokenIndex(index, tokens.length)]);

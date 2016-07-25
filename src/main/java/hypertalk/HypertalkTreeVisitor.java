@@ -7,61 +7,61 @@ import hypertalk.ast.expressions.*;
 import hypertalk.ast.functions.*;
 import hypertalk.ast.statements.*;
 import hypertalk.exception.HtParseError;
-import hypertalk.parser.HypertalkBaseVisitor;
-import hypertalk.parser.HypertalkParser;
+import hypertalk.parser.HyperTalkBaseVisitor;
+import hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
+public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
-    public Object visitHandlerScript(HypertalkParser.HandlerScriptContext ctx) {
+    public Object visitHandlerScript(HyperTalkParser.HandlerScriptContext ctx) {
         Script script = new Script();
         script.defineHandler((NamedBlock) visit(ctx.handler()));
         return script;
     }
 
     @Override
-    public Object visitGoCmdStmnt(HypertalkParser.GoCmdStmntContext ctx) {
+    public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
         return new StatGoCmd((Destination) visit(ctx.destination()));
     }
 
     @Override
-    public Object visitDestinationType(HypertalkParser.DestinationTypeContext ctx) {
+    public Object visitDestinationType(HyperTalkParser.DestinationTypeContext ctx) {
         return DestinationType.CARD;
     }
 
     @Override
-    public Object visitNextPosition(HypertalkParser.NextPositionContext ctx) {
+    public Object visitNextPosition(HyperTalkParser.NextPositionContext ctx) {
         return Position.NEXT;
     }
 
     @Override
-    public Object visitPrevPosition(HypertalkParser.PrevPositionContext ctx) {
+    public Object visitPrevPosition(HyperTalkParser.PrevPositionContext ctx) {
         return Position.PREV;
     }
 
     @Override
-    public Object visitCardNumber(HypertalkParser.CardNumberContext ctx) {
+    public Object visitCardNumber(HyperTalkParser.CardNumberContext ctx) {
         return new Destination((Expression) visit(ctx.expression()), (DestinationType) visit(ctx.destinationType()));
     }
 
     @Override
-    public Object visitCardOrdinal(HypertalkParser.CardOrdinalContext ctx) {
+    public Object visitCardOrdinal(HyperTalkParser.CardOrdinalContext ctx) {
         return new Destination((Ordinal) visit(ctx.ordinal()), (DestinationType) visit(ctx.destinationType()));
     }
 
     @Override
-    public Object visitCardPosition(HypertalkParser.CardPositionContext ctx) {
+    public Object visitCardPosition(HyperTalkParser.CardPositionContext ctx) {
         return new Destination((Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
     }
 
     @Override
-    public Object visitPropertyDest(HypertalkParser.PropertyDestContext ctx) {
+    public Object visitPropertyDest(HyperTalkParser.PropertyDestContext ctx) {
         return new ContainerProperty((PropertySpecifier) visit(ctx.propertySpec()));
     }
 
     @Override
-    public Object visitStatementScript(HypertalkParser.StatementScriptContext ctx) {
+    public Object visitStatementScript(HyperTalkParser.StatementScriptContext ctx) {
         Script script = new Script();
         Statement statement = (Statement) visit(ctx.nonEmptyStmnt());
         script.defineStatementList(new StatementList(statement));
@@ -69,48 +69,48 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitScriptFunctionScript(HypertalkParser.ScriptFunctionScriptContext ctx) {
+    public Object visitScriptFunctionScript(HyperTalkParser.ScriptFunctionScriptContext ctx) {
         Script script = (Script) visit(ctx.script());
         script.defineUserFunction((UserFunction) visit(ctx.function()));
         return script;
     }
 
     @Override
-    public Object visitFunctionScript(HypertalkParser.FunctionScriptContext ctx) {
+    public Object visitFunctionScript(HyperTalkParser.FunctionScriptContext ctx) {
         Script script = new Script();
         script.defineUserFunction((UserFunction) visit(ctx.function()));
         return script;
     }
 
     @Override
-    public Object visitScriptHandlerScript(HypertalkParser.ScriptHandlerScriptContext ctx) {
+    public Object visitScriptHandlerScript(HyperTalkParser.ScriptHandlerScriptContext ctx) {
         Script script = (Script) visit(ctx.script());
         script.defineHandler((NamedBlock) visit(ctx.handler()));
         return script;
     }
 
     @Override
-    public Object visitCommentScript(HypertalkParser.CommentScriptContext ctx) {
+    public Object visitCommentScript(HyperTalkParser.CommentScriptContext ctx) {
         return new Script();
     }
 
     @Override
-    public Object visitWhitespaceScript(HypertalkParser.WhitespaceScriptContext ctx) {
+    public Object visitWhitespaceScript(HyperTalkParser.WhitespaceScriptContext ctx) {
         return new Script();
     }
 
     @Override
-    public Object visitEofScript(HypertalkParser.EofScriptContext ctx) {
+    public Object visitEofScript(HyperTalkParser.EofScriptContext ctx) {
         return new Script();
     }
 
     @Override
-    public Object visitScriptNewlineScript(HypertalkParser.ScriptNewlineScriptContext ctx) {
+    public Object visitScriptNewlineScript(HyperTalkParser.ScriptNewlineScriptContext ctx) {
         return visit(ctx.script());
     }
 
     @Override
-    public Object visitPopulatedHandler(HypertalkParser.PopulatedHandlerContext ctx) {
+    public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
         String open = (String) visit(ctx.ID(0));
         String close = (String) visit(ctx.ID(1));
 
@@ -122,7 +122,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEmptyHandler(HypertalkParser.EmptyHandlerContext ctx) {
+    public Object visitEmptyHandler(HyperTalkParser.EmptyHandlerContext ctx) {
         String open = (String) visit(ctx.ID(0));
         String close = (String) visit(ctx.ID(1));
 
@@ -134,7 +134,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitPopulatedFunction(HypertalkParser.PopulatedFunctionContext ctx) {
+    public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
         String open = (String) visit(ctx.ID(0));
         String close = (String) visit(ctx.ID(1));
 
@@ -146,7 +146,7 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEmptyFunction(HypertalkParser.EmptyFunctionContext ctx) {
+    public Object visitEmptyFunction(HyperTalkParser.EmptyFunctionContext ctx) {
         String open = (String) visit(ctx.ID(0));
         String close = (String) visit(ctx.ID(1));
 
@@ -158,859 +158,859 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEmptyArgList(HypertalkParser.EmptyArgListContext ctx) {
+    public Object visitEmptyArgList(HyperTalkParser.EmptyArgListContext ctx) {
         return new ArgumentList();
     }
 
     @Override
-    public Object visitSingleExpArgList(HypertalkParser.SingleExpArgListContext ctx) {
+    public Object visitSingleExpArgList(HyperTalkParser.SingleExpArgListContext ctx) {
         return new ArgumentList((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitMultiExpArgList(HypertalkParser.MultiExpArgListContext ctx) {
+    public Object visitMultiExpArgList(HyperTalkParser.MultiExpArgListContext ctx) {
         ArgumentList argumentList = (ArgumentList) visit(ctx.argumentList());
         argumentList.addArgument((Expression) visit(ctx.expression()));
         return argumentList;
     }
 
     @Override
-    public Object visitEmptyParamList(HypertalkParser.EmptyParamListContext ctx) {
+    public Object visitEmptyParamList(HyperTalkParser.EmptyParamListContext ctx) {
         return new ParameterList();
     }
 
     @Override
-    public Object visitSingleParamList(HypertalkParser.SingleParamListContext ctx) {
+    public Object visitSingleParamList(HyperTalkParser.SingleParamListContext ctx) {
         return new ParameterList((String) visit(ctx.ID()));
     }
 
     @Override
-    public Object visitMultiParamList(HypertalkParser.MultiParamListContext ctx) {
+    public Object visitMultiParamList(HyperTalkParser.MultiParamListContext ctx) {
         ParameterList parameterList = (ParameterList) visit(ctx.parameterList());
         parameterList.addParameter((String) visit(ctx.ID()));
         return parameterList;
     }
 
     @Override
-    public Object visitSingleStmntList(HypertalkParser.SingleStmntListContext ctx) {
+    public Object visitSingleStmntList(HyperTalkParser.SingleStmntListContext ctx) {
         return new StatementList((Statement) visit(ctx.nonEmptyStmnt()));
     }
 
     @Override
-    public Object visitNewlineStmntList(HypertalkParser.NewlineStmntListContext ctx) {
+    public Object visitNewlineStmntList(HyperTalkParser.NewlineStmntListContext ctx) {
         return new StatementList();
     }
 
     @Override
-    public Object visitMultiStmntList(HypertalkParser.MultiStmntListContext ctx) {
+    public Object visitMultiStmntList(HyperTalkParser.MultiStmntListContext ctx) {
         StatementList statementList = (StatementList) visit(ctx.statementList());
         statementList.append((Statement) visit(ctx.nonEmptyStmnt()));
         return statementList;
     }
 
     @Override
-    public Object visitStmntListNewlineStmntList(HypertalkParser.StmntListNewlineStmntListContext ctx) {
+    public Object visitStmntListNewlineStmntList(HyperTalkParser.StmntListNewlineStmntListContext ctx) {
         return visit(ctx.statementList());
     }
 
     @Override
-    public Object visitNonEmptyCommandStmnt(HypertalkParser.NonEmptyCommandStmntContext ctx) {
+    public Object visitNonEmptyCommandStmnt(HyperTalkParser.NonEmptyCommandStmntContext ctx) {
         return visit(ctx.commandStmnt());
     }
 
     @Override
-    public Object visitNonEmptyGlobalStmnt(HypertalkParser.NonEmptyGlobalStmntContext ctx) {
+    public Object visitNonEmptyGlobalStmnt(HyperTalkParser.NonEmptyGlobalStmntContext ctx) {
         return visit(ctx.globalStmnt());
     }
 
     @Override
-    public Object visitNonEmptyIfStmnt(HypertalkParser.NonEmptyIfStmntContext ctx) {
+    public Object visitNonEmptyIfStmnt(HyperTalkParser.NonEmptyIfStmntContext ctx) {
         return visit(ctx.ifStatement());
     }
 
     @Override
-    public Object visitNonEmptyRepeatStmnt(HypertalkParser.NonEmptyRepeatStmntContext ctx) {
+    public Object visitNonEmptyRepeatStmnt(HyperTalkParser.NonEmptyRepeatStmntContext ctx) {
         return visit(ctx.repeatStatement());
     }
 
     @Override
-    public Object visitNonEmptyDoStmnt(HypertalkParser.NonEmptyDoStmntContext ctx) {
+    public Object visitNonEmptyDoStmnt(HyperTalkParser.NonEmptyDoStmntContext ctx) {
         return visit(ctx.doStmnt());
     }
 
     @Override
-    public Object visitNonEmptyReturnStmnt(HypertalkParser.NonEmptyReturnStmntContext ctx) {
+    public Object visitNonEmptyReturnStmnt(HyperTalkParser.NonEmptyReturnStmntContext ctx) {
         return visit(ctx.returnStmnt());
     }
 
     @Override
-    public Object visitNonEmptyExpStmnt(HypertalkParser.NonEmptyExpStmntContext ctx) {
+    public Object visitNonEmptyExpStmnt(HyperTalkParser.NonEmptyExpStmntContext ctx) {
         return new StatExp((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitVoidReturnStmnt(HypertalkParser.VoidReturnStmntContext ctx) {
+    public Object visitVoidReturnStmnt(HyperTalkParser.VoidReturnStmntContext ctx) {
         return new StatReturn();
     }
 
     @Override
-    public Object visitEprReturnStmnt(HypertalkParser.EprReturnStmntContext ctx) {
+    public Object visitEprReturnStmnt(HyperTalkParser.EprReturnStmntContext ctx) {
         return new StatReturn((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitDoStmnt(HypertalkParser.DoStmntContext ctx) {
+    public Object visitDoStmnt(HyperTalkParser.DoStmntContext ctx) {
         return new StatDo((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitAnswerCmdStmnt(HypertalkParser.AnswerCmdStmntContext ctx) {
+    public Object visitAnswerCmdStmnt(HyperTalkParser.AnswerCmdStmntContext ctx) {
         return visit(ctx.answerCmd());
     }
 
     @Override
-    public Object visitAskCmdStmnt(HypertalkParser.AskCmdStmntContext ctx) {
+    public Object visitAskCmdStmnt(HyperTalkParser.AskCmdStmntContext ctx) {
         return visit(ctx.askCmd());
     }
 
     @Override
-    public Object visitPutCmdStmnt(HypertalkParser.PutCmdStmntContext ctx) {
+    public Object visitPutCmdStmnt(HyperTalkParser.PutCmdStmntContext ctx) {
         return visit(ctx.putCmd());
     }
 
     @Override
-    public Object visitGetCmdStmnt(HypertalkParser.GetCmdStmntContext ctx) {
+    public Object visitGetCmdStmnt(HyperTalkParser.GetCmdStmntContext ctx) {
         return visit(ctx.getCmd());
     }
 
     @Override
-    public Object visitSetCmdStmnt(HypertalkParser.SetCmdStmntContext ctx) {
+    public Object visitSetCmdStmnt(HyperTalkParser.SetCmdStmntContext ctx) {
         return visit(ctx.setCmd());
     }
 
     @Override
-    public Object visitSendCmdStmnt(HypertalkParser.SendCmdStmntContext ctx) {
+    public Object visitSendCmdStmnt(HyperTalkParser.SendCmdStmntContext ctx) {
         return visit(ctx.sendCmd());
     }
 
     @Override
-    public Object visitAddCmdStmnt(HypertalkParser.AddCmdStmntContext ctx) {
+    public Object visitAddCmdStmnt(HyperTalkParser.AddCmdStmntContext ctx) {
         return new StatAddCmd((Expression) visit(ctx.expression()), (Container) visit(ctx.container()));
     }
 
     @Override
-    public Object visitSubtractCmdStmnt(HypertalkParser.SubtractCmdStmntContext ctx) {
+    public Object visitSubtractCmdStmnt(HyperTalkParser.SubtractCmdStmntContext ctx) {
         return new StatSubtractCmd((Expression) visit(ctx.expression()), (Container) visit(ctx.container()));
     }
 
     @Override
-    public Object visitMultiplyCmdStmnt(HypertalkParser.MultiplyCmdStmntContext ctx) {
+    public Object visitMultiplyCmdStmnt(HyperTalkParser.MultiplyCmdStmntContext ctx) {
         return new StatMultiplyCmd((Expression) visit(ctx.expression()), (Container) visit(ctx.container()));
     }
 
     @Override
-    public Object visitDivideCmdStmnt(HypertalkParser.DivideCmdStmntContext ctx) {
+    public Object visitDivideCmdStmnt(HyperTalkParser.DivideCmdStmntContext ctx) {
         return new StatDivideCmd((Expression) visit(ctx.expression()), (Container) visit(ctx.container()));
     }
 
     @Override
-    public Object visitIfThenSingleLine(HypertalkParser.IfThenSingleLineContext ctx) {
+    public Object visitIfThenSingleLine(HyperTalkParser.IfThenSingleLineContext ctx) {
         return new StatIf((Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.singleThen()));
     }
 
     @Override
-    public Object visitIfThenMultiline(HypertalkParser.IfThenMultilineContext ctx) {
+    public Object visitIfThenMultiline(HyperTalkParser.IfThenMultilineContext ctx) {
         return new StatIf((Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.multiThen()));
     }
 
     @Override
-    public Object visitSingleThen(HypertalkParser.SingleThenContext ctx) {
+    public Object visitSingleThen(HyperTalkParser.SingleThenContext ctx) {
         return new ThenElseBlock(new StatementList((Statement) visit(ctx.nonEmptyStmnt())), (StatementList) visit(ctx.elseBlock()));
     }
 
     @Override
-    public Object visitEmptyElse(HypertalkParser.EmptyElseContext ctx) {
+    public Object visitEmptyElse(HyperTalkParser.EmptyElseContext ctx) {
         return new ThenElseBlock((StatementList) visit(ctx.statementList()), new StatementList());
     }
 
     @Override
-    public Object visitEmptyThenEmptyElse(HypertalkParser.EmptyThenEmptyElseContext ctx) {
+    public Object visitEmptyThenEmptyElse(HyperTalkParser.EmptyThenEmptyElseContext ctx) {
         return new ThenElseBlock(new StatementList(), new StatementList());
     }
 
     @Override
-    public Object visitThenElse(HypertalkParser.ThenElseContext ctx) {
+    public Object visitThenElse(HyperTalkParser.ThenElseContext ctx) {
         return new ThenElseBlock((StatementList) visit(ctx.statementList()), (StatementList) visit(ctx.elseBlock()));
     }
 
     @Override
-    public Object visitElseStmntBlock(HypertalkParser.ElseStmntBlockContext ctx) {
+    public Object visitElseStmntBlock(HyperTalkParser.ElseStmntBlockContext ctx) {
         return new StatementList((Statement) visit(ctx.nonEmptyStmnt()));
     }
 
     @Override
-    public Object visitElseStmntListBlock(HypertalkParser.ElseStmntListBlockContext ctx) {
+    public Object visitElseStmntListBlock(HyperTalkParser.ElseStmntListBlockContext ctx) {
         return visit(ctx.statementList());
     }
 
     @Override
-    public Object visitElseEmptyBlock(HypertalkParser.ElseEmptyBlockContext ctx) {
+    public Object visitElseEmptyBlock(HyperTalkParser.ElseEmptyBlockContext ctx) {
         return new StatementList();
     }
 
     @Override
-    public Object visitRepeatStmntList(HypertalkParser.RepeatStmntListContext ctx) {
+    public Object visitRepeatStmntList(HyperTalkParser.RepeatStmntListContext ctx) {
         return new StatRepeat((RepeatSpecifier) visit(ctx.repeatRange()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
-    public Object visitRepeatEmpty(HypertalkParser.RepeatEmptyContext ctx) {
+    public Object visitRepeatEmpty(HyperTalkParser.RepeatEmptyContext ctx) {
         return new StatRepeat((RepeatSpecifier) visit(ctx.repeatRange()), new StatementList());
     }
 
     @Override
-    public Object visitInfiniteLoop(HypertalkParser.InfiniteLoopContext ctx) {
+    public Object visitInfiniteLoop(HyperTalkParser.InfiniteLoopContext ctx) {
         return new RepeatForever();
     }
 
     @Override
-    public Object visitDurationLoop(HypertalkParser.DurationLoopContext ctx) {
+    public Object visitDurationLoop(HyperTalkParser.DurationLoopContext ctx) {
         return visit(ctx.duration());
     }
 
     @Override
-    public Object visitCountLoop(HypertalkParser.CountLoopContext ctx) {
+    public Object visitCountLoop(HyperTalkParser.CountLoopContext ctx) {
         return visit(ctx.count());
     }
 
     @Override
-    public Object visitWithLoop(HypertalkParser.WithLoopContext ctx) {
+    public Object visitWithLoop(HyperTalkParser.WithLoopContext ctx) {
         return new RepeatWith((String) visit(ctx.ID()), (RepeatRange) visit(ctx.range()));
     }
 
     @Override
-    public Object visitUntilDuration(HypertalkParser.UntilDurationContext ctx) {
+    public Object visitUntilDuration(HyperTalkParser.UntilDurationContext ctx) {
         return new RepeatDuration(RepeatDuration.POLARITY_UNTIL, (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitWhileDuration(HypertalkParser.WhileDurationContext ctx) {
+    public Object visitWhileDuration(HyperTalkParser.WhileDurationContext ctx) {
         return new RepeatDuration(RepeatDuration.POLARITY_WHILE, (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitCount(HypertalkParser.CountContext ctx) {
+    public Object visitCount(HyperTalkParser.CountContext ctx) {
         return new RepeatCount((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitRangeDownTo(HypertalkParser.RangeDownToContext ctx) {
+    public Object visitRangeDownTo(HyperTalkParser.RangeDownToContext ctx) {
         return new RepeatRange(RepeatRange.POLARITY_DOWNTO, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitRangeUpTo(HypertalkParser.RangeUpToContext ctx) {
+    public Object visitRangeUpTo(HyperTalkParser.RangeUpToContext ctx) {
         return new RepeatRange(RepeatRange.POLARITY_UPTO, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitGlobalStmnt(HypertalkParser.GlobalStmntContext ctx) {
+    public Object visitGlobalStmnt(HyperTalkParser.GlobalStmntContext ctx) {
         return new StatGlobal((String) visit(ctx.ID()));
     }
 
     @Override
-    public Object visitAnswerThreeButtonCmd(HypertalkParser.AnswerThreeButtonCmdContext ctx) {
+    public Object visitAnswerThreeButtonCmd(HyperTalkParser.AnswerThreeButtonCmdContext ctx) {
         return new StatAnswerCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)), (Expression) visit(ctx.expression(3)));
     }
 
     @Override
-    public Object visitAnswerTwoButtonCmd(HypertalkParser.AnswerTwoButtonCmdContext ctx) {
+    public Object visitAnswerTwoButtonCmd(HyperTalkParser.AnswerTwoButtonCmdContext ctx) {
         return new StatAnswerCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)));
     }
 
     @Override
-    public Object visitAnswerOneButtonCmd(HypertalkParser.AnswerOneButtonCmdContext ctx) {
+    public Object visitAnswerOneButtonCmd(HyperTalkParser.AnswerOneButtonCmdContext ctx) {
         return new StatAnswerCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitAnswerDefaultCmd(HypertalkParser.AnswerDefaultCmdContext ctx) {
+    public Object visitAnswerDefaultCmd(HyperTalkParser.AnswerDefaultCmdContext ctx) {
         return new StatAnswerCmd((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitAskExpWithCmd(HypertalkParser.AskExpWithCmdContext ctx) {
+    public Object visitAskExpWithCmd(HyperTalkParser.AskExpWithCmdContext ctx) {
         return new StatAskCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitAskExpCmd(HypertalkParser.AskExpCmdContext ctx) {
+    public Object visitAskExpCmd(HyperTalkParser.AskExpCmdContext ctx) {
         return new StatAskCmd((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitPutIntoCmd(HypertalkParser.PutIntoCmdContext ctx) {
+    public Object visitPutIntoCmd(HyperTalkParser.PutIntoCmdContext ctx) {
         return new StatPutCmd((Expression) visit(ctx.expression()), Preposition.INTO, (Container) visit(ctx.container()));
     }
 
     @Override
-    public Object visitPutPrepositionCmd(HypertalkParser.PutPrepositionCmdContext ctx) {
+    public Object visitPutPrepositionCmd(HyperTalkParser.PutPrepositionCmdContext ctx) {
         return new StatPutCmd((Expression) visit(ctx.expression()), (Preposition) visit(ctx.preposition()), (Container) visit(ctx.container()));
     }
 
     @Override
-    public Object visitGetCmd(HypertalkParser.GetCmdContext ctx) {
+    public Object visitGetCmd(HyperTalkParser.GetCmdContext ctx) {
         return new StatGetCmd((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitSetCmd(HypertalkParser.SetCmdContext ctx) {
+    public Object visitSetCmd(HyperTalkParser.SetCmdContext ctx) {
 
         return new StatSetCmd((PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitSendCmd(HypertalkParser.SendCmdContext ctx) {
+    public Object visitSendCmd(HyperTalkParser.SendCmdContext ctx) {
         return new StatSendCmd((ExpPart) visit(ctx.part()), (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitBeforePreposition(HypertalkParser.BeforePrepositionContext ctx) {
+    public Object visitBeforePreposition(HyperTalkParser.BeforePrepositionContext ctx) {
         return Preposition.BEFORE;
     }
 
     @Override
-    public Object visitAfterPreposition(HypertalkParser.AfterPrepositionContext ctx) {
+    public Object visitAfterPreposition(HyperTalkParser.AfterPrepositionContext ctx) {
         return Preposition.AFTER;
     }
 
     @Override
-    public Object visitIntoPreposition(HypertalkParser.IntoPrepositionContext ctx) {
+    public Object visitIntoPreposition(HyperTalkParser.IntoPrepositionContext ctx) {
         return Preposition.INTO;
     }
 
     @Override
-    public Object visitVariableDest(HypertalkParser.VariableDestContext ctx) {
+    public Object visitVariableDest(HyperTalkParser.VariableDestContext ctx) {
         return new ContainerVariable((String) visit(ctx.ID()));
     }
 
     @Override
-    public Object visitChunkVariableDest(HypertalkParser.ChunkVariableDestContext ctx) {
+    public Object visitChunkVariableDest(HyperTalkParser.ChunkVariableDestContext ctx) {
         return new ContainerVariable((String) visit(ctx.ID()), (Chunk) visit(ctx.chunk()));
     }
 
     @Override
-    public Object visitPartDest(HypertalkParser.PartDestContext ctx) {
+    public Object visitPartDest(HyperTalkParser.PartDestContext ctx) {
         return new ContainerPart((ExpPart) visit(ctx.part()));
     }
 
     @Override
-    public Object visitChunkPartDest(HypertalkParser.ChunkPartDestContext ctx) {
+    public Object visitChunkPartDest(HyperTalkParser.ChunkPartDestContext ctx) {
         return new ContainerPart((ExpPart) visit(ctx.part()), (Chunk) visit(ctx.chunk()));
     }
 
     @Override
-    public Object visitMessageDest(HypertalkParser.MessageDestContext ctx) {
+    public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
         return new ContainerMsgBox();
     }
 
     @Override
-    public Object visitChunkMessageDest(HypertalkParser.ChunkMessageDestContext ctx) {
+    public Object visitChunkMessageDest(HyperTalkParser.ChunkMessageDestContext ctx) {
         return new ContainerMsgBox((Chunk) visit(ctx.chunk()));
     }
 
     @Override
-    public Object visitChunkDest(HypertalkParser.ChunkDestContext ctx) {
+    public Object visitChunkDest(HyperTalkParser.ChunkDestContext ctx) {
         return new ContainerMsgBox((Chunk) visit(ctx.chunk()));
     }
 
     @Override
-    public Object visitDefaultDest(HypertalkParser.DefaultDestContext ctx) {
+    public Object visitDefaultDest(HyperTalkParser.DefaultDestContext ctx) {
         return new ContainerMsgBox();
     }
 
     @Override
-    public Object visitFieldPart(HypertalkParser.FieldPartContext ctx) {
+    public Object visitFieldPart(HyperTalkParser.FieldPartContext ctx) {
         return new ExpPartName(PartType.FIELD, (Expression) visit(ctx.factor()));
     }
 
     @Override
-    public Object visitFieldIdPart(HypertalkParser.FieldIdPartContext ctx) {
+    public Object visitFieldIdPart(HyperTalkParser.FieldIdPartContext ctx) {
         return new ExpPartId(PartType.FIELD, (Expression) visit(ctx.factor()));
     }
 
     @Override
-    public Object visitButtonPart(HypertalkParser.ButtonPartContext ctx) {
+    public Object visitButtonPart(HyperTalkParser.ButtonPartContext ctx) {
         return new ExpPartName(PartType.BUTTON, (Expression) visit(ctx.factor()));
     }
 
     @Override
-    public Object visitButtonIdPart(HypertalkParser.ButtonIdPartContext ctx) {
+    public Object visitButtonIdPart(HyperTalkParser.ButtonIdPartContext ctx) {
         return new ExpPartId(PartType.BUTTON, (Expression) visit(ctx.factor()));
     }
 
     @Override
-    public Object visitMePart(HypertalkParser.MePartContext ctx) {
+    public Object visitMePart(HyperTalkParser.MePartContext ctx) {
         return new ExpPartMe();
     }
 
     @Override
-    public Object visitOrdinalCharChunk(HypertalkParser.OrdinalCharChunkContext ctx) {
+    public Object visitOrdinalCharChunk(HyperTalkParser.OrdinalCharChunkContext ctx) {
         return new Chunk(ChunkType.CHAR, new ExpLiteral(((Ordinal) visit(ctx.ordinal())).stringValue()));
     }
 
     @Override
-    public Object visitRangeCharChunk(HypertalkParser.RangeCharChunkContext ctx) {
+    public Object visitRangeCharChunk(HyperTalkParser.RangeCharChunkContext ctx) {
         return new Chunk(ChunkType.CHARRANGE, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitCharCharChunk(HypertalkParser.CharCharChunkContext ctx) {
+    public Object visitCharCharChunk(HyperTalkParser.CharCharChunkContext ctx) {
         return new Chunk(ChunkType.CHAR, (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitOrdinalWordChunk(HypertalkParser.OrdinalWordChunkContext ctx) {
+    public Object visitOrdinalWordChunk(HyperTalkParser.OrdinalWordChunkContext ctx) {
         return new Chunk(ChunkType.WORD, new ExpLiteral(((Ordinal) visit(ctx.ordinal())).stringValue()));
     }
 
     @Override
-    public Object visitRangeWordChunk(HypertalkParser.RangeWordChunkContext ctx) {
+    public Object visitRangeWordChunk(HyperTalkParser.RangeWordChunkContext ctx) {
         return new Chunk(ChunkType.WORDRANGE, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitWordWordChunk(HypertalkParser.WordWordChunkContext ctx) {
+    public Object visitWordWordChunk(HyperTalkParser.WordWordChunkContext ctx) {
         return new Chunk(ChunkType.WORD, (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitOrdinalItemChunk(HypertalkParser.OrdinalItemChunkContext ctx) {
+    public Object visitOrdinalItemChunk(HyperTalkParser.OrdinalItemChunkContext ctx) {
         return new Chunk(ChunkType.ITEM, new ExpLiteral(((Ordinal) visit(ctx.ordinal())).stringValue()));
     }
 
     @Override
-    public Object visitRangeItemChunk(HypertalkParser.RangeItemChunkContext ctx) {
+    public Object visitRangeItemChunk(HyperTalkParser.RangeItemChunkContext ctx) {
         return new Chunk(ChunkType.ITEMRANGE, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitItemItemChunk(HypertalkParser.ItemItemChunkContext ctx) {
+    public Object visitItemItemChunk(HyperTalkParser.ItemItemChunkContext ctx) {
         return new Chunk(ChunkType.ITEM, (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitOrdinalLineChunk(HypertalkParser.OrdinalLineChunkContext ctx) {
+    public Object visitOrdinalLineChunk(HyperTalkParser.OrdinalLineChunkContext ctx) {
         return new Chunk(ChunkType.LINE, new ExpLiteral(((Ordinal) visit(ctx.ordinal())).stringValue()));
     }
 
     @Override
-    public Object visitRangeLineChunk(HypertalkParser.RangeLineChunkContext ctx) {
+    public Object visitRangeLineChunk(HyperTalkParser.RangeLineChunkContext ctx) {
         return new Chunk(ChunkType.LINERANGE, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
-    public Object visitLineLineChunk(HypertalkParser.LineLineChunkContext ctx) {
+    public Object visitLineLineChunk(HyperTalkParser.LineLineChunkContext ctx) {
         return new Chunk(ChunkType.LINE, (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitFirstOrd(HypertalkParser.FirstOrdContext ctx) {
+    public Object visitFirstOrd(HyperTalkParser.FirstOrdContext ctx) {
         return Ordinal.FIRST;
     }
 
     @Override
-    public Object visitSecondOrd(HypertalkParser.SecondOrdContext ctx) {
+    public Object visitSecondOrd(HyperTalkParser.SecondOrdContext ctx) {
         return Ordinal.SECOND;
     }
 
     @Override
-    public Object visitThirdOrd(HypertalkParser.ThirdOrdContext ctx) {
+    public Object visitThirdOrd(HyperTalkParser.ThirdOrdContext ctx) {
         return Ordinal.THIRD;
     }
 
     @Override
-    public Object visitFourthOrd(HypertalkParser.FourthOrdContext ctx) {
+    public Object visitFourthOrd(HyperTalkParser.FourthOrdContext ctx) {
         return Ordinal.FOURTH;
     }
 
     @Override
-    public Object visitFifthOrd(HypertalkParser.FifthOrdContext ctx) {
+    public Object visitFifthOrd(HyperTalkParser.FifthOrdContext ctx) {
         return Ordinal.FIFTH;
     }
 
     @Override
-    public Object visitSixthOrd(HypertalkParser.SixthOrdContext ctx) {
+    public Object visitSixthOrd(HyperTalkParser.SixthOrdContext ctx) {
         return Ordinal.SIXTH;
     }
 
     @Override
-    public Object visitSeventhOrd(HypertalkParser.SeventhOrdContext ctx) {
+    public Object visitSeventhOrd(HyperTalkParser.SeventhOrdContext ctx) {
         return Ordinal.SEVENTH;
     }
 
     @Override
-    public Object visitEigthOrd(HypertalkParser.EigthOrdContext ctx) {
+    public Object visitEigthOrd(HyperTalkParser.EigthOrdContext ctx) {
         return Ordinal.EIGTH;
     }
 
     @Override
-    public Object visitNinthOrd(HypertalkParser.NinthOrdContext ctx) {
+    public Object visitNinthOrd(HyperTalkParser.NinthOrdContext ctx) {
         return Ordinal.NINTH;
     }
 
     @Override
-    public Object visitTenthOrd(HypertalkParser.TenthOrdContext ctx) {
+    public Object visitTenthOrd(HyperTalkParser.TenthOrdContext ctx) {
         return Ordinal.TENTH;
     }
 
     @Override
-    public Object visitMidOrd(HypertalkParser.MidOrdContext ctx) {
+    public Object visitMidOrd(HyperTalkParser.MidOrdContext ctx) {
         return Ordinal.MIDDLE;
     }
 
     @Override
-    public Object visitLastOrd(HypertalkParser.LastOrdContext ctx) {
+    public Object visitLastOrd(HyperTalkParser.LastOrdContext ctx) {
         return Ordinal.LAST;
     }
 
     @Override
-    public Object visitExp(HypertalkParser.ExpContext ctx) {
+    public Object visitExp(HyperTalkParser.ExpContext ctx) {
         return visit(ctx.opLevel10Exp());
     }
 
     @Override
-    public Object visitChunkExp(HypertalkParser.ChunkExpContext ctx) {
+    public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
         return new ExpChunk((Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitLevel10Exp(HypertalkParser.Level10ExpContext ctx) {
+    public Object visitLevel10Exp(HyperTalkParser.Level10ExpContext ctx) {
         return visit(ctx.opLevel9Exp());
     }
 
     @Override
-    public Object visitOrExp(HypertalkParser.OrExpContext ctx) {
+    public Object visitOrExp(HyperTalkParser.OrExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel10Exp()), BinaryOperator.OR, (Expression) visit(ctx.opLevel9Exp()));
     }
 
     @Override
-    public Object visitLevel9Exp(HypertalkParser.Level9ExpContext ctx) {
+    public Object visitLevel9Exp(HyperTalkParser.Level9ExpContext ctx) {
         return visit(ctx.opLevel8Exp());
     }
 
     @Override
-    public Object visitAndExp(HypertalkParser.AndExpContext ctx) {
+    public Object visitAndExp(HyperTalkParser.AndExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel9Exp()), BinaryOperator.AND, (Expression) visit(ctx.opLevel8Exp()));
     }
 
     @Override
-    public Object visitIsNotExp(HypertalkParser.IsNotExpContext ctx) {
+    public Object visitIsNotExp(HyperTalkParser.IsNotExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.NOTEQUALS, (Expression) visit(ctx.opLevel7Exp()));
     }
 
     @Override
-    public Object visitWackaWackaExp(HypertalkParser.WackaWackaExpContext ctx) {
+    public Object visitWackaWackaExp(HyperTalkParser.WackaWackaExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.NOTEQUALS, (Expression) visit(ctx.opLevel7Exp()));
     }
 
     @Override
-    public Object visitLevel8Exp(HypertalkParser.Level8ExpContext ctx) {
+    public Object visitLevel8Exp(HyperTalkParser.Level8ExpContext ctx) {
         return visit(ctx.opLevel7Exp());
     }
 
     @Override
-    public Object visitEqualsExp(HypertalkParser.EqualsExpContext ctx) {
+    public Object visitEqualsExp(HyperTalkParser.EqualsExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.EQUALS, (Expression) visit(ctx.opLevel7Exp()));
     }
 
     @Override
-    public Object visitIsExp(HypertalkParser.IsExpContext ctx) {
+    public Object visitIsExp(HyperTalkParser.IsExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.EQUALS, (Expression) visit(ctx.opLevel7Exp()));
     }
 
     @Override
-    public Object visitLevel7Exp(HypertalkParser.Level7ExpContext ctx) {
+    public Object visitLevel7Exp(HyperTalkParser.Level7ExpContext ctx) {
         return visit(ctx.opLevel6Exp());
     }
 
     @Override
-    public Object visitLessThanEqualsExp(HypertalkParser.LessThanEqualsExpContext ctx) {
+    public Object visitLessThanEqualsExp(HyperTalkParser.LessThanEqualsExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.LESSTHANOREQUALS, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitGreaterThanEqualsExp(HypertalkParser.GreaterThanEqualsExpContext ctx) {
+    public Object visitGreaterThanEqualsExp(HyperTalkParser.GreaterThanEqualsExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.GREATERTHANOREQUALS, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitLessThanExp(HypertalkParser.LessThanExpContext ctx) {
+    public Object visitLessThanExp(HyperTalkParser.LessThanExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.LESSTHAN, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitIsNotInExp(HypertalkParser.IsNotInExpContext ctx) {
+    public Object visitIsNotInExp(HyperTalkParser.IsNotInExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.NOTCONTAINS, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitContainsExp(HypertalkParser.ContainsExpContext ctx) {
+    public Object visitContainsExp(HyperTalkParser.ContainsExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.CONTAINS, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitIsInExp(HypertalkParser.IsInExpContext ctx) {
+    public Object visitIsInExp(HyperTalkParser.IsInExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.CONTAINS, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitGreaterThanExp(HypertalkParser.GreaterThanExpContext ctx) {
+    public Object visitGreaterThanExp(HyperTalkParser.GreaterThanExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.GREATERTHAN, (Expression) visit(ctx.opLevel6Exp()));
     }
 
     @Override
-    public Object visitLevel6Exp(HypertalkParser.Level6ExpContext ctx) {
+    public Object visitLevel6Exp(HyperTalkParser.Level6ExpContext ctx) {
         return visit(ctx.opLevel5Exp());
     }
 
     @Override
-    public Object visitAmpExp(HypertalkParser.AmpExpContext ctx) {
+    public Object visitAmpExp(HyperTalkParser.AmpExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel6Exp()), BinaryOperator.CONCAT, (Expression) visit(ctx.opLevel5Exp()));
     }
 
     @Override
-    public Object visitAmpAmpExp(HypertalkParser.AmpAmpExpContext ctx) {
+    public Object visitAmpAmpExp(HyperTalkParser.AmpAmpExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel6Exp()), BinaryOperator.CONCAT, (Expression) visit(ctx.opLevel5Exp()));
     }
 
     @Override
-    public Object visitMinusExp(HypertalkParser.MinusExpContext ctx) {
+    public Object visitMinusExp(HyperTalkParser.MinusExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel5Exp()), BinaryOperator.MINUS, (Expression) visit(ctx.opLevel4Exp()));
     }
 
     @Override
-    public Object visitLevel5Exp(HypertalkParser.Level5ExpContext ctx) {
+    public Object visitLevel5Exp(HyperTalkParser.Level5ExpContext ctx) {
         return visit(ctx.opLevel4Exp());
     }
 
     @Override
-    public Object visitPlusExp(HypertalkParser.PlusExpContext ctx) {
+    public Object visitPlusExp(HyperTalkParser.PlusExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel5Exp()), BinaryOperator.PLUS, (Expression) visit(ctx.opLevel4Exp()));
     }
 
     @Override
-    public Object visitModExp(HypertalkParser.ModExpContext ctx) {
+    public Object visitModExp(HyperTalkParser.ModExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.MOD, (Expression) visit(ctx.opLevel3Exp()));
     }
 
     @Override
-    public Object visitSlashExp(HypertalkParser.SlashExpContext ctx) {
+    public Object visitSlashExp(HyperTalkParser.SlashExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.DIVIDE, (Expression) visit(ctx.opLevel3Exp()));
     }
 
     @Override
-    public Object visitLevel4Exp(HypertalkParser.Level4ExpContext ctx) {
+    public Object visitLevel4Exp(HyperTalkParser.Level4ExpContext ctx) {
         return visit(ctx.opLevel3Exp());
     }
 
     @Override
-    public Object visitMultiplyExp(HypertalkParser.MultiplyExpContext ctx) {
+    public Object visitMultiplyExp(HyperTalkParser.MultiplyExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.MULTIPLY, (Expression) visit(ctx.opLevel3Exp()));
     }
 
     @Override
-    public Object visitDivExp(HypertalkParser.DivExpContext ctx) {
+    public Object visitDivExp(HyperTalkParser.DivExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.DIVIDE, (Expression) visit(ctx.opLevel3Exp()));
     }
 
     @Override
-    public Object visitCaratExp(HypertalkParser.CaratExpContext ctx) {
+    public Object visitCaratExp(HyperTalkParser.CaratExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.opLevel3Exp()), BinaryOperator.EXP, (Expression) visit(ctx.opLevel2Exp()));
     }
 
     @Override
-    public Object visitLevel3Exp(HypertalkParser.Level3ExpContext ctx) {
+    public Object visitLevel3Exp(HyperTalkParser.Level3ExpContext ctx) {
         return visit(ctx.opLevel2Exp());
     }
 
     @Override
-    public Object visitLevel2Exp(HypertalkParser.Level2ExpContext ctx) {
+    public Object visitLevel2Exp(HyperTalkParser.Level2ExpContext ctx) {
         return visit(ctx.opLevel1Exp());
     }
 
     @Override
-    public Object visitNegateExp(HypertalkParser.NegateExpContext ctx) {
+    public Object visitNegateExp(HyperTalkParser.NegateExpContext ctx) {
         return new ExpUnaryOperator(UnaryOperator.NEGATE, (Expression) visit(ctx.opLevel2Exp()));
     }
 
     @Override
-    public Object visitNotExp(HypertalkParser.NotExpContext ctx) {
+    public Object visitNotExp(HyperTalkParser.NotExpContext ctx) {
         return new ExpUnaryOperator(UnaryOperator.NOT, (Expression) visit(ctx.opLevel2Exp()));
     }
 
     @Override
-    public Object visitLevel1Exp(HypertalkParser.Level1ExpContext ctx) {
+    public Object visitLevel1Exp(HyperTalkParser.Level1ExpContext ctx) {
         return visit(ctx.builtin());
     }
 
     @Override
-    public Object visitBuiltinExp(HypertalkParser.BuiltinExpContext ctx) {
+    public Object visitBuiltinExp(HyperTalkParser.BuiltinExpContext ctx) {
         return visit(ctx.builtin());
     }
 
     @Override
-    public Object visitFactorExp(HypertalkParser.FactorExpContext ctx) {
+    public Object visitFactorExp(HyperTalkParser.FactorExpContext ctx) {
         return visit(ctx.factor());
     }
 
     @Override
-    public Object visitFunctionExp(HypertalkParser.FunctionExpContext ctx) {
+    public Object visitFunctionExp(HyperTalkParser.FunctionExpContext ctx) {
         return new ExpUserFunction((String) visit(ctx.ID()), (ArgumentList) visit(ctx.argumentList()));
     }
 
     @Override
-    public Object visitMouseFunc(HypertalkParser.MouseFuncContext ctx) {
+    public Object visitMouseFunc(HyperTalkParser.MouseFuncContext ctx) {
         return new ExpMouseFun();
     }
 
     @Override
-    public Object visitMouseLocFunc(HypertalkParser.MouseLocFuncContext ctx) {
+    public Object visitMouseLocFunc(HyperTalkParser.MouseLocFuncContext ctx) {
         return new ExpMouseLocFun();
     }
 
     @Override
-    public Object visitAverageFunc(HypertalkParser.AverageFuncContext ctx) {
+    public Object visitAverageFunc(HyperTalkParser.AverageFuncContext ctx) {
         return new ExpAverageFun((Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitResultFunc(HypertalkParser.ResultFuncContext ctx) {
+    public Object visitResultFunc(HyperTalkParser.ResultFuncContext ctx) {
         return new ExpResultFun();
     }
 
     @Override
-    public Object visitMessageFunc(HypertalkParser.MessageFuncContext ctx) {
+    public Object visitMessageFunc(HyperTalkParser.MessageFuncContext ctx) {
         return new ExpMessageBoxFun();
     }
 
     @Override
-    public Object visitNumberFunc(HypertalkParser.NumberFuncContext ctx) {
+    public Object visitNumberFunc(HyperTalkParser.NumberFuncContext ctx) {
         return new ExpNumberOfFun((ChunkType) visit(ctx.countable()), (Expression) visit(ctx.expression()));
     }
 
     @Override
-    public Object visitMinFunc(HypertalkParser.MinFuncContext ctx) {
+    public Object visitMinFunc(HyperTalkParser.MinFuncContext ctx) {
         return new ExpMinFun((ArgumentList) visit(ctx.argumentList()));
     }
 
     @Override
-    public Object visitMaxFunc(HypertalkParser.MaxFuncContext ctx) {
+    public Object visitMaxFunc(HyperTalkParser.MaxFuncContext ctx) {
         return new ExpMaxFun((ArgumentList) visit(ctx.argumentList()));
     }
 
     @Override
-    public Object visitTicksFunc(HypertalkParser.TicksFuncContext ctx) {
+    public Object visitTicksFunc(HyperTalkParser.TicksFuncContext ctx) {
         return new ExpTicksFun();
     }
 
     @Override
-    public Object visitSecondsFunc(HypertalkParser.SecondsFuncContext ctx) {
+    public Object visitSecondsFunc(HyperTalkParser.SecondsFuncContext ctx) {
         return new ExpSecondsFun();
     }
 
     @Override
-    public Object visitDateFormatFunc(HypertalkParser.DateFormatFuncContext ctx) {
+    public Object visitDateFormatFunc(HyperTalkParser.DateFormatFuncContext ctx) {
         return new ExpDateFun((DateFormat) visit(ctx.dateFormat()));
     }
 
     @Override
-    public Object visitTimeFormatFunc(HypertalkParser.TimeFormatFuncContext ctx) {
+    public Object visitTimeFormatFunc(HyperTalkParser.TimeFormatFuncContext ctx) {
         return new ExpTimeFun((DateFormat) visit(ctx.dateFormat()));
     }
 
     @Override
-    public Object visitLongDateFormat(HypertalkParser.LongDateFormatContext ctx) {
+    public Object visitLongDateFormat(HyperTalkParser.LongDateFormatContext ctx) {
         return DateFormat.LONG;
     }
 
     @Override
-    public Object visitShortDateFormat(HypertalkParser.ShortDateFormatContext ctx) {
+    public Object visitShortDateFormat(HyperTalkParser.ShortDateFormatContext ctx) {
         return DateFormat.SHORT;
     }
 
     @Override
-    public Object visitAbbrevDateFormat(HypertalkParser.AbbrevDateFormatContext ctx) {
+    public Object visitAbbrevDateFormat(HyperTalkParser.AbbrevDateFormatContext ctx) {
         return DateFormat.ABBREVIATED;
     }
 
     @Override
-    public Object visitAbbreviatedDateFormat(HypertalkParser.AbbreviatedDateFormatContext ctx) {
+    public Object visitAbbreviatedDateFormat(HyperTalkParser.AbbreviatedDateFormatContext ctx) {
         return DateFormat.ABBREVIATED;
     }
 
     @Override
-    public Object visitDefaultDateFormat(HypertalkParser.DefaultDateFormatContext ctx) {
+    public Object visitDefaultDateFormat(HyperTalkParser.DefaultDateFormatContext ctx) {
         return DateFormat.SHORT;
     }
 
     @Override
-    public Object visitCharsCountable(HypertalkParser.CharsCountableContext ctx) {
+    public Object visitCharsCountable(HyperTalkParser.CharsCountableContext ctx) {
         return ChunkType.CHAR;
     }
 
     @Override
-    public Object visitLinesCountable(HypertalkParser.LinesCountableContext ctx) {
+    public Object visitLinesCountable(HyperTalkParser.LinesCountableContext ctx) {
         return ChunkType.LINE;
     }
 
     @Override
-    public Object visitWordsCountable(HypertalkParser.WordsCountableContext ctx) {
+    public Object visitWordsCountable(HyperTalkParser.WordsCountableContext ctx) {
         return ChunkType.WORD;
     }
 
     @Override
-    public Object visitItemsCountable(HypertalkParser.ItemsCountableContext ctx) {
+    public Object visitItemsCountable(HyperTalkParser.ItemsCountableContext ctx) {
         return ChunkType.ITEM;
     }
 
     @Override
-    public Object visitLiteralFactor(HypertalkParser.LiteralFactorContext ctx) {
+    public Object visitLiteralFactor(HyperTalkParser.LiteralFactorContext ctx) {
         return new ExpLiteral(visit(ctx.literal()));
     }
 
     @Override
-    public Object visitIdFactor(HypertalkParser.IdFactorContext ctx) {
+    public Object visitIdFactor(HyperTalkParser.IdFactorContext ctx) {
         return new ExpVariable((String) visit(ctx.ID()));
     }
 
     @Override
-    public Object visitPartFactor(HypertalkParser.PartFactorContext ctx) {
+    public Object visitPartFactor(HyperTalkParser.PartFactorContext ctx) {
         return visit(ctx.part());
     }
 
     @Override
-    public Object visitExpressionFactor(HypertalkParser.ExpressionFactorContext ctx) {
+    public Object visitExpressionFactor(HyperTalkParser.ExpressionFactorContext ctx) {
         return visit(ctx.expression());
     }
 
     @Override
-    public Object visitPropertySpec(HypertalkParser.PropertySpecContext ctx) {
+    public Object visitPropertySpec(HyperTalkParser.PropertySpecContext ctx) {
         return new PropertySpecifier((String) visit(ctx.ID()), (ExpPart) visit(ctx.part()));
     }
 
     @Override
-    public Object visitIdOfPartFactor(HypertalkParser.IdOfPartFactorContext ctx) {
+    public Object visitIdOfPartFactor(HyperTalkParser.IdOfPartFactorContext ctx) {
         return new ExpProperty((PropertySpecifier) visit(ctx.propertySpec()));
     }
 
     @Override
-    public Object visitEmptyExp(HypertalkParser.EmptyExpContext ctx) {
+    public Object visitEmptyExp(HyperTalkParser.EmptyExpContext ctx) {
         return new ExpLiteral("");
     }
 
     @Override
-    public Object visitStringLiteral(HypertalkParser.StringLiteralContext ctx) {
+    public Object visitStringLiteral(HyperTalkParser.StringLiteralContext ctx) {
         String quotedLiteral = ctx.getText();
 
         if (!quotedLiteral.startsWith("\"") || !quotedLiteral.endsWith("\"")) {
@@ -1021,25 +1021,25 @@ public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitDotNumberLiteral(HypertalkParser.DotNumberLiteralContext ctx) {
+    public Object visitDotNumberLiteral(HyperTalkParser.DotNumberLiteralContext ctx) {
         Object fractional = ctx.INTEGER_LITERAL().getText();
         return new Value("0." + String.valueOf(fractional));
     }
 
     @Override
-    public Object visitNumberDotNumberLiteral(HypertalkParser.NumberDotNumberLiteralContext ctx) {
+    public Object visitNumberDotNumberLiteral(HyperTalkParser.NumberDotNumberLiteralContext ctx) {
         Object whole = ctx.INTEGER_LITERAL(0).getText();
         Object fractional = ctx.INTEGER_LITERAL(1).getText();
         return new Value(String.valueOf(whole) + "." + String.valueOf(fractional));
     }
 
     @Override
-    public Object visitNumberDotLiteral(HypertalkParser.NumberDotLiteralContext ctx) {
+    public Object visitNumberDotLiteral(HyperTalkParser.NumberDotLiteralContext ctx) {
         return new Value(ctx.getText());
     }
 
     @Override
-    public Object visitNumberLiteral(HypertalkParser.NumberLiteralContext ctx) {
+    public Object visitNumberLiteral(HyperTalkParser.NumberLiteralContext ctx) {
         return new Value(ctx.getText());
     }
 

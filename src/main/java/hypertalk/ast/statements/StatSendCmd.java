@@ -12,8 +12,6 @@ import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.expressions.ExpPart;
 import hypertalk.ast.expressions.Expression;
 
-import java.io.Serializable;
-
 public class StatSendCmd extends Statement {
 
 	public final ExpPart part;

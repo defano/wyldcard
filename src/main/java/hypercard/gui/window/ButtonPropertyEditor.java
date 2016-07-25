@@ -40,9 +40,7 @@ public class ButtonPropertyEditor implements HyperCardWindow {
                     .build();
         });
 
-        cancelButton.addActionListener(e -> {
-            close();
-        });
+        cancelButton.addActionListener(e -> close());
 
         saveButton.addActionListener(e -> {
             updateProperties();

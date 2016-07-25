@@ -7,13 +7,11 @@
 
 package hypercard.gui;
 
-import java.io.File;
-import java.io.Serializable;
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import java.io.File;
 
-public class CardFileChooser extends JFileChooser implements Serializable {
-private static final long serialVersionUID = 5843600369766743862L;
+public class CardFileChooser extends JFileChooser {
 
 	private class CardFileFilter extends FileFilter {
         

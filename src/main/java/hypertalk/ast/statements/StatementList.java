@@ -9,7 +9,6 @@ package hypertalk.ast.statements;
 
 import hypertalk.exception.HtException;
 
-import java.io.Serializable;
 import java.util.Vector;
 
 public class StatementList {
@@ -17,11 +16,11 @@ public class StatementList {
 	private Vector<Statement> list;
 	
 	public StatementList () {
-		list = new Vector<Statement>();
+		list = new Vector<>();
 	}
 	
 	public StatementList (Statement s) {
-		list = new Vector<Statement>();
+		list = new Vector<>();
 		append(s);
 	}
 

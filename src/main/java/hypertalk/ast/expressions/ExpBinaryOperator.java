@@ -11,8 +11,6 @@ import hypertalk.ast.common.BinaryOperator;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class ExpBinaryOperator extends Expression {
 
 	public final BinaryOperator operator;

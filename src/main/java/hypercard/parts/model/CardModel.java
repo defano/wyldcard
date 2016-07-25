@@ -7,8 +7,6 @@ import hypertalk.ast.containers.PartSpecifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class CardModel {
 

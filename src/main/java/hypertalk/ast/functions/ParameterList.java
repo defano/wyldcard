@@ -7,7 +7,6 @@
 
 package hypertalk.ast.functions;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -16,11 +15,11 @@ public class ParameterList {
 	public List<String> list;
 	
 	public ParameterList () {
-		list = new Vector<String>();
+		list = new Vector<>();
 	}
 	
 	public ParameterList(String p) {
-		list = new Vector<String>();
+		list = new Vector<>();
 		list.add(p);
 	}
 	

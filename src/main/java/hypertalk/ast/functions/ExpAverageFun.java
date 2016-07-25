@@ -7,13 +7,11 @@
 
 package hypertalk.ast.functions;
 
-import java.util.List;
-
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
+import java.util.List;
 
 public class ExpAverageFun extends Expression {
 

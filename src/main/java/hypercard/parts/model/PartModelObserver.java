@@ -11,5 +11,5 @@ package hypercard.parts.model;
 import hypertalk.ast.common.Value;
 
 public interface PartModelObserver {
-	void onModelChange(String property, Value oldValue, Value newValue);
+	void onPartAttributeChanged(String property, Value oldValue, Value newValue);
 }

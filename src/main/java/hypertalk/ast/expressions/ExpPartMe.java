@@ -13,8 +13,6 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.exception.HtSemanticException;
 
-import java.io.Serializable;
-
 public class ExpPartMe extends ExpPart {
 
 	public ExpPartMe () {}

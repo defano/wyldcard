@@ -8,8 +8,6 @@
 package hypertalk.ast.common;
 
 import hypertalk.ast.expressions.Expression;
-import java.io.Serializable;
-
 
 public class Chunk {
 

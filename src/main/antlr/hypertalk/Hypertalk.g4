@@ -1,4 +1,4 @@
-grammar Hypertalk;
+grammar HyperTalk;
 
 script				: handler                                       # handlerScript
                     | script handler                                # scriptHandlerScript
