@@ -61,6 +61,38 @@ To correct this, you need to configure IntelliJ to generate its GUI code in Java
 
 HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements (called parts) and are triggered by user actions called events. There is no singular "main" script that executes at runtime.
 
+### Cards & Stacks
+
+A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window. When the current card changes as result of navigating away, the contents of the new card appear in place of the old card. While cards can be "pushed" and "popped" from view, one should not confuse HyperCard's concept of a stack with the data structure known in Computer Science.
+
+The `go` command is used to navigate between cards:
+
+```
+go [to] <destination>
+```
+
+Where:
+
+```
+<destination>   :== { card | } <expression>
+                | [the] <ordinal> { card | }
+                | [the] <position> { card | }
+<ordinal>       :== first | second | third | ... | tenth
+<position>      :== first | last | next | prev | previous
+
+```
+
+For example:
+
+```
+go to myCard  -- myCard is a variable holding the number of a card
+go to card 13 -- no effect if there are fewer than 13 cards
+go 1          -- first card; cards are numbered from 1, not 0
+go next
+go previous card
+go to the third card
+```
+
 ### Script handlers
 
 A script consists of zero or more handlers and function definitions. A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it. A _function definition_, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements and optionally returns a single value.
@@ -102,7 +134,7 @@ A _part_ is a scriptable user interface element in HyperCard. Apple's implementa
 
 In Apple's HyperCard, cards contain two layers of user interface elements, a foreground and a background, and are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
 
-For simplification, this implementation treats cards as standalone documents (there is no concept of a stack), and furthermore, the card cannot itself be scripted, nor does it support the concept of a foreground and background.
+For simplification, this implementation does not allow scripting of cards or stacks, nor does it support the concept of a foreground and background.
 
 In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
 
@@ -113,9 +145,9 @@ Property    | Description
 `script`    | Retrieves or replaces the current script of the button
 `id`        | Returns the buttons id. Each part has a globally unique id that is assigned at creation and cannot be changed.
 `name`      | Returns or sets the script-addressable name of the button
-`title`     | Returns or sets the title of this button  
-`left`      | Returns or sets the left-most border of the button's location
-`top`	      | Returns or sets the top-most border of the button's location
+`title`     | Returns or sets the title of this button (in Apple's HyperCard there was no `title` attribute; the name visible to the user and the name used to identify the button to scripts was one in the same property, `name`).
+`left`      | Returns or sets the left-most border of the button's location (i.e., the button's x-coordinate on the card)
+`top`	      | Returns or sets the top-most border of the button's location (i.e, the button's y-coordinate on the card)
 `width`     | Returns or sets the width of the button (in pixels)
 `height`    | Returns or sets the height of the button (in pixels)
 `visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
