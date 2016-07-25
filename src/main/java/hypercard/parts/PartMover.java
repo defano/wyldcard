@@ -8,6 +8,7 @@
 
 package hypercard.parts;
 
+import hypercard.gui.util.ModifierKeyListener;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -20,6 +21,7 @@ import java.util.TimerTask;
 public class PartMover implements MouseListener {
 
 	public final int MOVER_REFRESH_MS = 10;
+	public final int SNAP_TO_GRID_SIZE = 10;
 	
 	private Part part;
 	private Component within;
@@ -29,12 +31,15 @@ public class PartMover implements MouseListener {
     	public void run () {    	
         	Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
         	SwingUtilities.convertPointFromScreen(mouseLoc, within);
-       		
+
+			int newTop = ModifierKeyListener.isShiftDown ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y;
+			int newLeft = ModifierKeyListener.isShiftDown ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x;
+
         	try {
-        		part.setProperty("top", new Value(mouseLoc.y));
-        		part.setProperty("left", new Value(mouseLoc.x));
+        		part.setProperty("top", new Value(newTop));
+        		part.setProperty("left", new Value(newLeft));
         	} catch (Exception e) {
-        		throw new RuntimeException (e.getMessage());
+        		throw new RuntimeException (e);
         	}
        		
        		if (!done)

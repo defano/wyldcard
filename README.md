@@ -1,6 +1,6 @@
 # HyperTalk Java
 
-A toy implementation of Apple's HyperCard written in Java. Created as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+A toy implementation of Apple's HyperCard written in Java. Originally created as a class project for a graduate-level compiler design course at DePaul University, Chicago.
 
 Originally released in 1987 as part of System Software 6, HyperCard was an application that largely defied classification: part database, part programming language, part "paint" program. In true Apple fashion, HyperCard was a new paradigm. Other "beginner" languages of the time made it possible to write boring console-mode programs, but with HyperCard, a novice could script an application with a full graphical user interface using a very expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
 
@@ -436,6 +436,7 @@ Command	   | Description
 `put`      | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
 `get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `set`	     | Sets the property of a part to a value; `set the wraptext of field id 3 to (5 > 3)`
+`go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
 `ask`	     | Similar to answer, ask produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
 `do`       | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`

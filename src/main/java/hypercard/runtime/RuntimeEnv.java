@@ -58,8 +58,6 @@ public class RuntimeEnv implements StackModelObserver {
 			System.out.println("Unable to set the UI look and feel");
 		}
 
-		HyperCardMenuBar menuBar = new HyperCardMenuBar();
-
 		stack = StackModel.newStack("Untitled");
 		stack.addObserver(this);
 
@@ -69,7 +67,7 @@ public class RuntimeEnv implements StackModelObserver {
 				.withTitle("HyperCard")
 				.resizeable(false)
 				.quitOnClose()
-				.withMenuBar(menuBar)
+				.withMenuBar(HyperCardMenuBar.instance)
 				.withModel(stack.getCurrentCard())
 				.build();
 
@@ -78,7 +76,7 @@ public class RuntimeEnv implements StackModelObserver {
 				.withTitle("Message Box")
 				.resizeable(false)
 				.withLocationUnderneath(stackFrame)
-				.withMenuBar(menuBar)
+				.withMenuBar(HyperCardMenuBar.instance)
 				.notInitiallyVisible()
 				.build();
 	}

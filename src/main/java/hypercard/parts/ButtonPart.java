@@ -63,6 +63,10 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         initComponents();
     }
 
+    public static ButtonPart newButton(CardPart parent) {
+        return fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    }
+
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
         ButtonPart button = new ButtonPart(parent);
 

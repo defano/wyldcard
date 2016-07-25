@@ -65,8 +65,11 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
 
         this.parent = parent;
         this.script = new Script();
-
         initComponents();
+    }
+
+    public static FieldPart newField(CardPart parent) {
+        return fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
     public static FieldPart fromGeometry (CardPart parent, Rectangle geometry) {
@@ -283,30 +286,37 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     @Override
     public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
 
-        if (property.equals(PROP_SCRIPT)) {
-            try {
-                compile();
-            } catch (HtSemanticException e) {
-                RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
-            }
-        } else if (property.equals(PROP_TEXT) && !newValue.toString().equals(text.getText()))
-            text.setText(newValue.toString());
-
-        else if (property.equals(PROP_TOP) ||
-                property.equals(PROP_LEFT) ||
-                property.equals(PROP_WIDTH) ||
-                property.equals(PROP_HEIGHT)) {
-            this.setBounds(getRect());
-            this.validate();
-            this.repaint();
-        } else if (property.equals(PROP_VISIBLE))
-            this.setVisible(newValue.booleanValue());
-
-        else if (property.equals(PROP_WRAPTEXT))
-            text.setLineWrap(newValue.booleanValue());
-
-        else if (property.equals(PROP_LOCKTEXT))
-            text.setEditable(!newValue.booleanValue());
+        switch (property) {
+            case PROP_SCRIPT:
+                try {
+                    compile();
+                } catch (HtSemanticException e) {
+                    RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                }
+                break;
+            case PROP_TEXT:
+                if (!newValue.toString().equals(text.getText())) {
+                    text.setText(newValue.toString());
+                }
+                break;
+            case PROP_TOP:
+            case PROP_LEFT:
+            case PROP_WIDTH:
+            case PROP_HEIGHT:
+                this.setBounds(getRect());
+                this.validate();
+                this.repaint();
+                break;
+            case PROP_VISIBLE:
+                this.setVisible(newValue.booleanValue());
+                break;
+            case PROP_WRAPTEXT:
+                text.setLineWrap(newValue.booleanValue());
+                break;
+            case PROP_LOCKTEXT:
+                text.setEditable(!newValue.booleanValue());
+                break;
+        }
     }
 
     public Rectangle getRect() {

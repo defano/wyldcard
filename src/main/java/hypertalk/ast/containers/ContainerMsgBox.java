@@ -40,6 +40,7 @@ public class ContainerMsgBox extends Container {
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
         GlobalContext.getContext().put(value, preposition, this);
+        RuntimeEnv.getRuntimeEnv().setMessageBoxVisible(true);
     }
 
     public PartType type() {

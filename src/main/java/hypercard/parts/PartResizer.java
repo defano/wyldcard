@@ -8,6 +8,7 @@
 
 package hypercard.parts;
 
+import hypercard.gui.util.ModifierKeyListener;
 import hypercard.parts.Part;
 import hypertalk.ast.common.Value;
 
@@ -23,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 public class PartResizer implements MouseListener {
 
+	public final int SNAP_TO_GRID_SIZE = 10;
 	public final int RESIZER_REFRESH_MS = 10;
 	public final int MIN_WIDTH = 20;
 	public final int MIN_HEIGHT = 20;
@@ -37,8 +39,8 @@ public class PartResizer implements MouseListener {
         	SwingUtilities.convertPointFromScreen(mouseLoc, within);
         	        	
         	Point partLoc = part.getComponent().getLocation();
-        	int newWidth = mouseLoc.x - partLoc.x;
-        	int newHeight = mouseLoc.y - partLoc.y;
+        	int newWidth = ModifierKeyListener.isShiftDown ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.x : mouseLoc.x - partLoc.x;
+        	int newHeight = ModifierKeyListener.isShiftDown ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.y : mouseLoc.y - partLoc.y;
 
         	try {
         		if (newWidth >= MIN_WIDTH)

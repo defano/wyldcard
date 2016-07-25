@@ -22,7 +22,7 @@ public class Serializer {
     }
 
     public static void serialize (File file, Object object) throws IOException {
-        Files.write(file.toPath(), serialize(object).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
+        Files.write(file.toPath(), serialize(object).getBytes(StandardCharsets.UTF_8));
     }
 
     public static <T> T deserialize (String json, Class<T> clazz) {
