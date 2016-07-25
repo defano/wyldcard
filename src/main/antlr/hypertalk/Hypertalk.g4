@@ -57,10 +57,11 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | getCmd                                        # getCmdStmnt
                     | setCmd                                        # setCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
-                    | 'add' expression 'to' container             # addCmdStmnt
-                    | 'subtract' expression 'from' container      # subtractCmdStmnt
-                    | 'multiply' container 'by' expression        # multiplyCmdStmnt
-                    | 'divide' container 'by' expression          # divideCmdStmnt
+                    | GO destination                                # goCmdStmnt
+                    | 'add' expression 'to' container               # addCmdStmnt
+                    | 'subtract' expression 'from' container        # subtractCmdStmnt
+                    | 'multiply' container 'by' expression          # multiplyCmdStmnt
+                    | 'divide' container 'by' expression            # divideCmdStmnt
                     ;
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
@@ -73,8 +74,8 @@ askCmd				: 'ask' expression 'with' expression            # askExpWithCmd
                     | 'ask' expression                              # askExpCmd
                     ;
 
-putCmd				: 'put' expression container                  # putIntoCmd
-                    | 'put' expression preposition container      # putPrepositionCmd
+putCmd				: 'put' expression container                    # putIntoCmd
+                    | 'put' expression preposition container        # putPrepositionCmd
                     ;
 
 getCmd				: 'get' expression
@@ -84,6 +85,19 @@ setCmd				: 'set' propertySpec 'to' expression
                     ;
 
 sendCmd				: 'send' expression 'to' part
+                    ;
+
+position            : NEXT                                          # nextPosition
+                    | PREV                                          # prevPosition
+                    ;
+
+destination         : destinationType expression                    # cardNumber
+                    | ordinal destinationType                       # cardOrdinal
+                    | position destinationType                      # cardPosition
+                    ;
+
+destinationType     : 'card'
+                    |
                     ;
 
 ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
@@ -144,14 +158,14 @@ chunk               : ordinal CHAR 'of'                             # ordinalCha
                     | CHAR expression 'to' expression 'of'          # rangeCharChunk
                     | CHAR expression 'of'                          # charCharChunk
                     | ordinal WORD 'of'                             # ordinalWordChunk
-                    | WORD expression 'to' expression 'of'        # rangeWordChunk
-                    | WORD expression 'of'                        # wordWordChunk
+                    | WORD expression 'to' expression 'of'          # rangeWordChunk
+                    | WORD expression 'of'                          # wordWordChunk
                     | ordinal ITEM 'of'                             # ordinalItemChunk
-                    | ITEM expression 'to' expression 'of'        # rangeItemChunk
-                    | ITEM expression 'of'                        # itemItemChunk
+                    | ITEM expression 'to' expression 'of'          # rangeItemChunk
+                    | ITEM expression 'of'                          # itemItemChunk
                     | ordinal 'line of'                             # ordinalLineChunk
-                    | LINE expression 'to' expression 'of'        # rangeLineChunk
-                    | LINE expression 'of'                        # lineLineChunk
+                    | LINE expression 'to' expression 'of'          # rangeLineChunk
+                    | LINE expression 'of'                          # lineLineChunk
                     ;
 
 container			: ID                                            # variableDest
@@ -298,6 +312,10 @@ CHAR                : 'char' | 'character' | 'chars' | 'characters' ;
 WORD                : 'word' | 'words';
 ITEM                : 'item' | 'items';
 LINE                : 'line' | 'lines';
+
+GO                  : 'go' | 'go to';
+PREV                : 'prev' | 'previous' | 'the prev' | 'the previous';
+NEXT                : 'next' | 'the next';
 
 MESSAGE				: 'message' | 'message box' | 'message window'
                     | 'the message' | 'the message box' | 'the message window' ;

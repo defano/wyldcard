@@ -13,7 +13,9 @@ public class StackModel {
     private Stack<Integer> backStack;
 
     private final List<CardModel> cards;
+
     private transient List<StackModelObserver> observers;
+    private transient CardPart currentCardPart;
 
     private StackModel () {
         this.observers = new ArrayList<>();
@@ -36,12 +38,25 @@ public class StackModel {
         return this.name;
     }
 
+    public int getCardCount() {
+        return cards.size();
+    }
+
     public CardPart getCurrentCard() {
+        if (currentCardPart != null) {
+            return currentCardPart;
+        }
+
         try {
-            return CardPart.fromModel(cards.get(currentCard));
+            currentCardPart = CardPart.fromModel(cards.get(currentCard));
+            return currentCardPart;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
+    }
+
+    public CardPart goCard(int cardNumber) {
+        return setCurrentCard(cardNumber, true);
     }
 
     public CardPart goNextCard() {
@@ -84,7 +99,7 @@ public class StackModel {
     private CardPart setCurrentCard (int card, boolean push) {
 
         // Nothing to do if navigating to current card
-        if (card == currentCard) {
+        if (card == currentCard || card < 0 || card >= cards.size()) {
             return getCurrentCard();
         }
 
@@ -93,10 +108,14 @@ public class StackModel {
             backStack.push(currentCard);
         }
 
-        currentCard = card;
-        CardPart selectedCard = getCurrentCard();
-        fireOnCurrentCardChanged(selectedCard);
-        return selectedCard;
+        try {
+            currentCard = card;
+            currentCardPart = CardPart.fromModel(cards.get(currentCard));
+            fireOnCurrentCardChanged(currentCardPart);
+            return currentCardPart;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create card.", e);
+        }
     }
 
     private void fireOnCurrentCardChanged (CardPart currentCard) {

@@ -16,6 +16,7 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -45,15 +46,11 @@ public class CardPart extends JPanel implements MouseListener {
             switch (thisPart.getType()) {
                 case BUTTON:
                     ButtonPart button = ButtonPart.fromModel(card, thisPart);
-                    card.add(button);
-                    button.setBounds(button.getRect());
-                    card.validate();
+                    card.addSwingComponent(button, button.getRect());
                     break;
                 case FIELD:
                     FieldPart field = FieldPart.fromModel(card, thisPart);
-                    card.add(field);
-                    field.setBounds(field.getRect());
-                    card.validate();
+                    card.addSwingComponent(field, field.getRect());
                     default:
             }
         }
@@ -68,42 +65,39 @@ public class CardPart extends JPanel implements MouseListener {
 
     public void addField(FieldPart field) throws PartException {
         model.addPart(field);
-
-        this.add(field);
-        field.setBounds(field.getRect());
-        this.validate();
+        addSwingComponent(field, field.getRect());
     }
 
     public void removeField(FieldPart field) {
         model.removePart(field);
-
-        this.remove(field);
-        this.validate();
-        this.repaint();
+        removeSwingComponent(field);
     }
 
     public void addButton(ButtonPart button) throws PartException {
         model.addPart(button);
-
-        this.add(button);
-        button.setBounds(button.getRect());
-        this.validate();
+        addSwingComponent(button, button.getRect());
     }
 
     public void removeButton(ButtonPart button) {
         model.removePart(button);
-
-        this.remove(button);
-        this.validate();
-        this.repaint();
+        removeSwingComponent(button);
     }
 
     public Part getPart(PartSpecifier ps) throws PartException {
         return model.getPart(ps);
     }
 
-    public CardModel getCardModel() {
-        return model;
+    private void removeSwingComponent (Component component) {
+        remove(component);
+        revalidate();
+        repaint();
+    }
+
+    private void addSwingComponent (Component component, Rectangle bounds) {
+        component.setBounds(bounds);
+        add(component);
+        revalidate();
+        repaint();
     }
 
     public int nextButtonId() {

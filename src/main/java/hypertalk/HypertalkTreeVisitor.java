@@ -12,11 +12,47 @@ import hypertalk.parser.HypertalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HypertalkTreeVisitor extends HypertalkBaseVisitor<Object> {
+
     @Override
     public Object visitHandlerScript(HypertalkParser.HandlerScriptContext ctx) {
         Script script = new Script();
         script.defineHandler((NamedBlock) visit(ctx.handler()));
         return script;
+    }
+
+    @Override
+    public Object visitGoCmdStmnt(HypertalkParser.GoCmdStmntContext ctx) {
+        return new StatGoCmd((Destination) visit(ctx.destination()));
+    }
+
+    @Override
+    public Object visitDestinationType(HypertalkParser.DestinationTypeContext ctx) {
+        return DestinationType.CARD;
+    }
+
+    @Override
+    public Object visitNextPosition(HypertalkParser.NextPositionContext ctx) {
+        return Position.NEXT;
+    }
+
+    @Override
+    public Object visitPrevPosition(HypertalkParser.PrevPositionContext ctx) {
+        return Position.PREV;
+    }
+
+    @Override
+    public Object visitCardNumber(HypertalkParser.CardNumberContext ctx) {
+        return new Destination((Expression) visit(ctx.expression()), (DestinationType) visit(ctx.destinationType()));
+    }
+
+    @Override
+    public Object visitCardOrdinal(HypertalkParser.CardOrdinalContext ctx) {
+        return new Destination((Ordinal) visit(ctx.ordinal()), (DestinationType) visit(ctx.destinationType()));
+    }
+
+    @Override
+    public Object visitCardPosition(HypertalkParser.CardPositionContext ctx) {
+        return new Destination((Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
     }
 
     @Override
