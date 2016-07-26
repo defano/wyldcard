@@ -17,17 +17,22 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class PartMover implements MouseListener {
 
 	public final int MOVER_REFRESH_MS = 10;
 	public final int SNAP_TO_GRID_SIZE = 10;
-	
+
+	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
 	private Part part;
 	private Component within;
 	private boolean done = false;
 	
-    private class MoverTask extends TimerTask {
+    private class MoverTask implements Runnable {
     	public void run () {    	
         	Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
         	SwingUtilities.convertPointFromScreen(mouseLoc, within);
@@ -42,8 +47,9 @@ public class PartMover implements MouseListener {
         		throw new RuntimeException (e);
         	}
        		
-       		if (!done)
-       			new Timer().schedule(new MoverTask(), MOVER_REFRESH_MS);       		
+       		if (!done) {
+				executor.schedule(this, MOVER_REFRESH_MS, TimeUnit.MILLISECONDS);
+			}
     	}
     }
     
@@ -53,8 +59,8 @@ public class PartMover implements MouseListener {
 
     	part.getComponent().addMouseListener(this);
     	within.addMouseListener(this);
-    	
-    	new Timer().schedule(new MoverTask(), 0);
+
+		executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
     }
 
 	public void mousePressed(MouseEvent e) {

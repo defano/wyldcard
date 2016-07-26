@@ -19,6 +19,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingUtilities;
 
@@ -28,12 +31,14 @@ public class PartResizer implements MouseListener {
 	public final int RESIZER_REFRESH_MS = 10;
 	public final int MIN_WIDTH = 20;
 	public final int MIN_HEIGHT = 20;
-	
+
+	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
 	private Part part;
 	private Component within;
 	private boolean done = false;
 	
-    private class MoverTask extends TimerTask {
+    private class MoverTask implements Runnable {
     	public void run () {    	
         	Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
         	SwingUtilities.convertPointFromScreen(mouseLoc, within);
@@ -52,8 +57,9 @@ public class PartResizer implements MouseListener {
         		throw new RuntimeException(e.getMessage());
         	}
         	
-       		if (!done)
-       			new Timer().schedule(new MoverTask(), RESIZER_REFRESH_MS);       		
+       		if (!done) {
+				executor.schedule(this, RESIZER_REFRESH_MS, TimeUnit.MILLISECONDS);
+			}
     	}
     }
     
@@ -63,8 +69,8 @@ public class PartResizer implements MouseListener {
 
     	part.getComponent().addMouseListener(this);
     	within.addMouseListener(this);
-    	
-    	new Timer().schedule(new MoverTask(), 0);
+
+		executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
     }
 
 	public void mousePressed(MouseEvent e) {
