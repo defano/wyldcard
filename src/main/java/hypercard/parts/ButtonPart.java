@@ -35,8 +35,8 @@ import java.awt.event.MouseListener;
 
 public class ButtonPart extends JButton implements Part, MouseListener, PartModelObserver {
 
-    public static final int DEFAULT_WIDTH = 85;
-    public static final int DEFAULT_HEIGHT = 25;
+    public static final int DEFAULT_WIDTH = 100;
+    public static final int DEFAULT_HEIGHT = 40;
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";

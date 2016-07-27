@@ -41,7 +41,12 @@ public class ArgumentList {
 			evaluatedList.add(expr.evaluate());
 	}
 
-	public List<Value> getEvaluatedList () {		
+	public List<Value> getEvaluatedList () throws HtSemanticException {
+		evaluate();
 		return evaluatedList;
+	}
+
+	public int getArgumentCount () {
+		return list.size();
 	}
 }

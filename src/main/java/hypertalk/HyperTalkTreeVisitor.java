@@ -21,6 +21,36 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWaitCmdStmnt(HyperTalkParser.WaitCmdStmntContext ctx) {
+        return visit(ctx.waitCmd());
+    }
+
+    @Override
+    public Object visitWaitCountCmd(HyperTalkParser.WaitCountCmdContext ctx) {
+        return new StatWaitCmd((Expression) visit(ctx.factor()), (TimeUnit) visit(ctx.timeUnit()));
+    }
+
+    @Override
+    public Object visitWaitUntilCmd(HyperTalkParser.WaitUntilCmdContext ctx) {
+        return new StatWaitCmd((Expression) visit(ctx.expression()), true);
+    }
+
+    @Override
+    public Object visitWaitWhileCmd(HyperTalkParser.WaitWhileCmdContext ctx) {
+        return new StatWaitCmd((Expression) visit(ctx.expression()), false);
+    }
+
+    @Override
+    public Object visitTicksTimeUnit(HyperTalkParser.TicksTimeUnitContext ctx) {
+        return TimeUnit.TICKS;
+    }
+
+    @Override
+    public Object visitSecondsTimeUnit(HyperTalkParser.SecondsTimeUnitContext ctx) {
+        return TimeUnit.SECONDS;
+    }
+
+    @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
         return new StatGoCmd((Destination) visit(ctx.destination()));
     }
@@ -850,16 +880,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLevel1Exp(HyperTalkParser.Level1ExpContext ctx) {
-        return visit(ctx.builtin());
-    }
-
-    @Override
-    public Object visitBuiltinExp(HyperTalkParser.BuiltinExpContext ctx) {
-        return visit(ctx.builtin());
-    }
-
-    @Override
     public Object visitFactorExp(HyperTalkParser.FactorExpContext ctx) {
         return visit(ctx.factor());
     }
@@ -871,62 +891,52 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMouseFunc(HyperTalkParser.MouseFuncContext ctx) {
-        return new ExpMouseFun();
+        return BuiltInFunction.MOUSE;
     }
 
     @Override
     public Object visitMouseLocFunc(HyperTalkParser.MouseLocFuncContext ctx) {
-        return new ExpMouseLocFun();
-    }
-
-    @Override
-    public Object visitAverageFunc(HyperTalkParser.AverageFuncContext ctx) {
-        return new ExpAverageFun((Expression) visit(ctx.expression()));
+        return BuiltInFunction.MOUSELOC;
     }
 
     @Override
     public Object visitResultFunc(HyperTalkParser.ResultFuncContext ctx) {
-        return new ExpResultFun();
+        return BuiltInFunction.RESULT;
     }
 
     @Override
     public Object visitMessageFunc(HyperTalkParser.MessageFuncContext ctx) {
-        return new ExpMessageBoxFun();
-    }
-
-    @Override
-    public Object visitNumberFunc(HyperTalkParser.NumberFuncContext ctx) {
-        return new ExpNumberOfFun((ChunkType) visit(ctx.countable()), (Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitMinFunc(HyperTalkParser.MinFuncContext ctx) {
-        return new ExpMinFun((ArgumentList) visit(ctx.argumentList()));
-    }
-
-    @Override
-    public Object visitMaxFunc(HyperTalkParser.MaxFuncContext ctx) {
-        return new ExpMaxFun((ArgumentList) visit(ctx.argumentList()));
+        return BuiltInFunction.MESSAGE;
     }
 
     @Override
     public Object visitTicksFunc(HyperTalkParser.TicksFuncContext ctx) {
-        return new ExpTicksFun();
+        return BuiltInFunction.TICKS;
     }
 
     @Override
     public Object visitSecondsFunc(HyperTalkParser.SecondsFuncContext ctx) {
-        return new ExpSecondsFun();
+        return BuiltInFunction.SECONDS;
     }
 
     @Override
     public Object visitDateFormatFunc(HyperTalkParser.DateFormatFuncContext ctx) {
-        return new ExpDateFun((DateFormat) visit(ctx.dateFormat()));
+        switch ((DateFormat) visit(ctx.dateFormat())) {
+            case LONG: return BuiltInFunction.LONG_DATE;
+            case SHORT: return BuiltInFunction.SHORT_DATE;
+            case ABBREVIATED: return BuiltInFunction.ABBREV_DATE;
+            default: throw new RuntimeException("Bug! Unimplemented case.");
+        }
     }
 
     @Override
     public Object visitTimeFormatFunc(HyperTalkParser.TimeFormatFuncContext ctx) {
-        return new ExpTimeFun((DateFormat) visit(ctx.dateFormat()));
+        switch ((DateFormat) visit(ctx.dateFormat())){
+            case LONG: return BuiltInFunction.LONG_TIME;
+            case SHORT: return BuiltInFunction.SHORT_TIME;
+            case ABBREVIATED: return BuiltInFunction.ABBREV_TIME;
+            default: throw new RuntimeException("Bug! Unimplemented case.");
+        }
     }
 
     @Override
@@ -952,26 +962,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDefaultDateFormat(HyperTalkParser.DefaultDateFormatContext ctx) {
         return DateFormat.SHORT;
-    }
-
-    @Override
-    public Object visitCharsCountable(HyperTalkParser.CharsCountableContext ctx) {
-        return ChunkType.CHAR;
-    }
-
-    @Override
-    public Object visitLinesCountable(HyperTalkParser.LinesCountableContext ctx) {
-        return ChunkType.LINE;
-    }
-
-    @Override
-    public Object visitWordsCountable(HyperTalkParser.WordsCountableContext ctx) {
-        return ChunkType.WORD;
-    }
-
-    @Override
-    public Object visitItemsCountable(HyperTalkParser.ItemsCountableContext ctx) {
-        return ChunkType.ITEM;
     }
 
     @Override
@@ -1007,6 +997,126 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitEmptyExp(HyperTalkParser.EmptyExpContext ctx) {
         return new ExpLiteral("");
+    }
+
+    @Override
+    public Object visitStmntTerminator(HyperTalkParser.StmntTerminatorContext ctx) {
+        return visit(ctx.NEWLINE());
+    }
+
+    @Override
+    public Object visitWaitForCountCmd(HyperTalkParser.WaitForCountCmdContext ctx) {
+        return new StatWaitCmd((Expression) visit(ctx.factor()), true);
+    }
+
+    @Override
+    public Object visitTickTimeUnit(HyperTalkParser.TickTimeUnitContext ctx) {
+        return TimeUnit.TICKS;
+    }
+
+    @Override
+    public Object visitSecTimeUnit(HyperTalkParser.SecTimeUnitContext ctx) {
+        return TimeUnit.SECONDS;
+    }
+
+    @Override
+    public Object visitSecondTimeUnit(HyperTalkParser.SecondTimeUnitContext ctx) {
+        return TimeUnit.SECONDS;
+    }
+
+    @Override
+    public Object visitTheOrdinalVal(HyperTalkParser.TheOrdinalValContext ctx) {
+        return visit(ctx.ordinalValue());
+    }
+
+    @Override
+    public Object visitBuiltinFuncExp(HyperTalkParser.BuiltinFuncExpContext ctx) {
+        return visit(ctx.builtinFunc());
+    }
+
+    @Override
+    public Object visitBuiltinFuncTwoArgs(HyperTalkParser.BuiltinFuncTwoArgsContext ctx) {
+        switch ((BuiltInFunction) visit(ctx.twoArgFunc())) {
+            case NUMBER_CHARS: return new ExpNumberOfFun(ChunkType.CHAR, (Expression) visit(ctx.expression()));
+            case NUMBER_ITEMS: return new ExpNumberOfFun(ChunkType.ITEM, (Expression) visit(ctx.expression()));
+            case NUMBER_LINES: return new ExpNumberOfFun(ChunkType.LINE, (Expression) visit(ctx.expression()));
+            case NUMBER_WORDS: return new ExpNumberOfFun(ChunkType.WORD, (Expression) visit(ctx.expression()));
+            default: throw new RuntimeException("Bug! Unimplemented case.");
+        }
+    }
+
+    @Override
+    public Object visitBuiltinFuncOneArgs(HyperTalkParser.BuiltinFuncOneArgsContext ctx) {
+        switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
+            case MIN: return new ExpMinFun((Expression) visit(ctx.expression()));
+            case MAX: return new ExpMaxFun((Expression) visit(ctx.expression()));
+            case AVERAGE: return new ExpAverageFun((Expression) visit(ctx.expression()));
+            default: throw new RuntimeException("Bug! Unimplemented case.");
+        }
+    }
+
+    @Override
+    public Object visitBuiltinFuncNoArg(HyperTalkParser.BuiltinFuncNoArgContext ctx) {
+        switch ((BuiltInFunction) visit(ctx.noArgFunc())) {
+            case MOUSE: return new ExpMouseFun();
+            case MOUSELOC: return new ExpMouseLocFun();
+            case RESULT: return new ExpResultFun();
+            case MESSAGE: return new ExpMessageBoxFun();
+            case TICKS: return new ExpTicksFun();
+            case SECONDS: return new ExpSecondsFun();
+            case ABBREV_DATE: return new ExpDateFun(DateFormat.ABBREVIATED);
+            case SHORT_DATE: return new ExpDateFun(DateFormat.SHORT);
+            case LONG_DATE: return new ExpDateFun(DateFormat.LONG);
+            case ABBREV_TIME: return new ExpTimeFun(DateFormat.ABBREVIATED);
+            case LONG_TIME: return new ExpTimeFun(DateFormat.LONG);
+            case SHORT_TIME: return new ExpTimeFun(DateFormat.SHORT);
+            default: throw new RuntimeException("Bug! Unimplemented case.");
+        }
+    }
+
+    @Override
+    public Object visitBuiltinFuncArgList(HyperTalkParser.BuiltinFuncArgListContext ctx) {
+        switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
+            case MIN: return new ExpMinFun((ArgumentList) visit(ctx.argumentList()));
+            case MAX: return new ExpMaxFun((ArgumentList) visit(ctx.argumentList()));
+            case AVERAGE: return new ExpAverageFun((ArgumentList) visit(ctx.argumentList()));
+            default: throw new RuntimeException("Bug! Unimplemented case.");
+        }
+    }
+
+    @Override
+    public Object visitAverageFunc(HyperTalkParser.AverageFuncContext ctx) {
+        return BuiltInFunction.AVERAGE;
+    }
+
+    @Override
+    public Object visitMinFunc(HyperTalkParser.MinFuncContext ctx) {
+        return BuiltInFunction.MIN;
+    }
+
+    @Override
+    public Object visitMaxFunc(HyperTalkParser.MaxFuncContext ctx) {
+        return BuiltInFunction.MAX;
+    }
+
+    @Override
+    public Object visitNumberOfCharsFunc(HyperTalkParser.NumberOfCharsFuncContext ctx) {
+        return BuiltInFunction.NUMBER_CHARS;
+    }
+
+    @Override
+    public Object visitNumberOfWordsFunc(HyperTalkParser.NumberOfWordsFuncContext ctx) {
+        return BuiltInFunction.NUMBER_WORDS;
+    }
+
+    @Override
+    public Object visitNumberOfItemsFunc(HyperTalkParser.NumberOfItemsFuncContext ctx) {
+        return BuiltInFunction.NUMBER_ITEMS;
+    }
+
+    @Override
+    public Object visitNumberOfLinesFunc(HyperTalkParser.NumberOfLinesFuncContext ctx) {
+        return BuiltInFunction.NUMBER_LINES;
     }
 
     @Override

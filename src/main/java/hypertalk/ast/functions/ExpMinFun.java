@@ -4,20 +4,23 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
-public class ExpMinFun extends Expression {
+import java.util.List;
 
-	private final ArgumentList arguments;
+public class ExpMinFun extends ArgListFunction {
+
+    public ExpMinFun (Expression expression) {
+        super(expression);
+    }
 
     public ExpMinFun (ArgumentList arguments) {
-        this.arguments = arguments;
+        super(arguments);
     }
 
     @Override
     public Value evaluate() throws HtSemanticException {
         Value min = new Value(Double.MAX_VALUE);
-        arguments.evaluate();
 
-        for (Value thisValue : arguments.getEvaluatedList()) {
+        for (Value thisValue : evaluateArgumentList()) {
 
             if (!thisValue.isNumber()) {
                 throw new HtSemanticException("All arguments to min() must be numbers.");

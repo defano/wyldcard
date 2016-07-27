@@ -24,7 +24,6 @@ public class Interpreter {
 
 	public static Script compile(String scriptText) throws HtException {
 
-		scriptText = canonicalScriptForm(scriptText);
 		HypertalkErrorListener errors = new HypertalkErrorListener();
 
 		HyperTalkLexer lexer = new HyperTalkLexer(new ANTLRInputStream(scriptText));
@@ -49,9 +48,5 @@ public class Interpreter {
 	public static void execute (String statementList) throws HtException
 	{
 		compile(statementList).executeStatement();
-	}
-
-	private static String canonicalScriptForm (String scriptText) {
-		return scriptText.trim() + "\n";
 	}
 }

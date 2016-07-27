@@ -17,7 +17,7 @@ public class FunctionExecutionTask implements Callable<Value> {
 		this.function = function;
 		this.arguments = arguments;
 		
-		if (function.parameters.list.size() != arguments.getEvaluatedList().size())
+		if (function.parameters.list.size() != arguments.getArgumentCount())
 			RuntimeEnv.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Argument count to function " + function.name + " doesn't match parameter count"));
 	}
 

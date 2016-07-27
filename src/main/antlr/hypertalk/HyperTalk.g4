@@ -35,14 +35,16 @@ statementList		: statementList nonEmptyStmnt                   # multiStmntList
                     | NEWLINE                                       # newlineStmntList
                     ;
 
-nonEmptyStmnt		: commandStmnt NEWLINE                          # nonEmptyCommandStmnt
-                    | globalStmnt NEWLINE                           # nonEmptyGlobalStmnt
-                    | ifStatement NEWLINE                           # nonEmptyIfStmnt
-                    | repeatStatement NEWLINE                       # nonEmptyRepeatStmnt
-                    | doStmnt NEWLINE                               # nonEmptyDoStmnt
-                    | returnStmnt NEWLINE                           # nonEmptyReturnStmnt
-                    | expression NEWLINE                            # nonEmptyExpStmnt
+nonEmptyStmnt		: commandStmnt stmntTerminator                  # nonEmptyCommandStmnt
+                    | globalStmnt stmntTerminator                   # nonEmptyGlobalStmnt
+                    | ifStatement stmntTerminator                   # nonEmptyIfStmnt
+                    | repeatStatement stmntTerminator               # nonEmptyRepeatStmnt
+                    | doStmnt stmntTerminator                       # nonEmptyDoStmnt
+                    | returnStmnt stmntTerminator                   # nonEmptyReturnStmnt
+                    | expression stmntTerminator                    # nonEmptyExpStmnt
                     ;
+
+stmntTerminator     : NEWLINE | <EOF>;
 
 returnStmnt			: 'return'                                      # voidReturnStmnt
                     | 'return' expression                           # eprReturnStmnt
@@ -57,6 +59,7 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | getCmd                                        # getCmdStmnt
                     | setCmd                                        # setCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
+                    | waitCmd                                       # waitCmdStmnt
                     | GO destination                                # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt
@@ -87,6 +90,20 @@ setCmd				: 'set' propertySpec 'to' expression
 sendCmd				: 'send' expression 'to' part
                     ;
 
+waitCmd             : 'wait' factor timeUnit                        # waitCountCmd
+                    | 'wait' 'for' factor timeUnit                  # waitForCountCmd
+                    | 'wait' 'until' expression                     # waitUntilCmd
+                    | 'wait' 'while' expression                     # waitWhileCmd
+                    ;
+
+// Can't use a lexer rule for synonyms here because it creates ambiguity with ordinals and built-in function names. :(
+timeUnit            : 'ticks'                                       # ticksTimeUnit
+                    | 'tick'                                        # tickTimeUnit
+                    | 'seconds'                                     # secondsTimeUnit
+                    | 'sec'                                         # secTimeUnit
+                    | 'second'                                      # secondTimeUnit
+                    ;
+
 position            : NEXT                                          # nextPosition
                     | PREV                                          # prevPosition
                     ;
@@ -104,22 +121,18 @@ ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
                     | 'if' expression THEN NEWLINE multiThen        # ifThenMultiline
                     ;
 
-THEN				: NEWLINE 'then'
-                    | 'then'
-                    ;
-
 singleThen			: nonEmptyStmnt NEWLINE elseBlock
                     | nonEmptyStmnt elseBlock
                     ;
 
-multiThen			: statementList 'end if'                        # emptyElse
-                    | 'end if'                                      # emptyThenEmptyElse
+multiThen			: statementList 'end' 'if'                      # emptyElse
+                    | 'end' 'if'                                    # emptyThenEmptyElse
                     | statementList elseBlock                       # thenElse
                     ;
 
 elseBlock			: 'else' nonEmptyStmnt                          # elseStmntBlock
-                    | 'else' NEWLINE statementList 'end if'         # elseStmntListBlock
-                    | 'else' NEWLINE 'end if'                       # elseEmptyBlock
+                    | 'else' NEWLINE statementList 'end' 'if'       # elseStmntListBlock
+                    | 'else' NEWLINE 'end' 'if'                     # elseEmptyBlock
                     ;
 
 repeatStatement		: 'repeat' repeatRange NEWLINE statementList 'end repeat'       # repeatStmntList
@@ -142,7 +155,7 @@ count				: 'for' expression 'times'
                     | expression
                     ;
 
-range				: expression 'down to' expression               # rangeDownTo
+range				: expression 'down' 'to' expression             # rangeDownTo
                     | expression 'to' expression                    # rangeUpTo
                     ;
 
@@ -169,8 +182,8 @@ chunk               : ordinal CHAR 'of'                             # ordinalCha
                     ;
 
 container			: ID                                            # variableDest
-                    | MESSAGE                                       # messageDest
-                    | chunk MESSAGE                                 # chunkMessageDest
+                    | 'the'? MESSAGE                                # messageDest
+                    | chunk 'the'? MESSAGE                          # chunkMessageDest
                     | chunk ID                                      # chunkVariableDest
                     | part                                          # partDest
                     | chunk part                                    # chunkPartDest
@@ -189,7 +202,10 @@ part                : FIELD factor                                  # fieldPart
                     | 'me'                                          # mePart
                     ;
 
-ordinal             : FIRST                                         # firstOrd
+ordinal             : 'the'? ordinalValue                           # theOrdinalVal
+                    ;
+
+ordinalValue        : FIRST                                         # firstOrd
                     | SECOND                                        # secondOrd
                     | THIRD                                         # thirdOrd
                     | FOURTH                                        # fourthOrd
@@ -257,22 +273,34 @@ opLevel2Exp			: opLevel1Exp                                   # level2Exp
                     | 'not' opLevel2Exp                             # notExp
                     ;
 
-opLevel1Exp         : builtin                                       # level1Exp
+opLevel1Exp         : builtinFunc                                   # builtinFuncExp
                     | chunk expression                              # chunkExp
-                    | 'the' builtin                                 # builtinExp
                     | factor                                        # factorExp
                     | ID '(' argumentList ')'                       # functionExp
                     | 'empty'                                       # emptyExp
                     ;
 
-builtin				: 'mouse'                                       # mouseFunc
+builtinFunc         : 'the'? twoArgFunc 'in' expression             # builtinFuncTwoArgs
+                    | 'the'? oneArgFunc 'of' expression             # builtinFuncOneArgs
+                    | 'the' noArgFunc                               # builtinFuncNoArg
+                    | oneArgFunc '(' argumentList ')'               # builtinFuncArgList
+                    ;
+
+oneArgFunc          : 'average'                                     # averageFunc
+                    | 'min'                                         # minFunc
+                    | 'max'                                         # maxFunc
+                    ;
+
+twoArgFunc          : 'number' 'of' CHAR                            # numberOfCharsFunc
+                    | 'number' 'of' WORD                            # numberOfWordsFunc
+                    | 'number' 'of' ITEM                            # numberOfItemsFunc
+                    | 'number' 'of' LINE                            # numberOfLinesFunc
+                    ;
+
+noArgFunc           : 'mouse'                                       # mouseFunc
                     | 'mouseloc'                                    # mouseLocFunc
-                    | 'average of' expression                       # averageFunc
                     | 'result'                                      # resultFunc
                     | MESSAGE                                       # messageFunc
-                    | 'number of' countable 'in' expression         # numberFunc
-                    | 'min' '(' argumentList ')'                    # minFunc
-                    | 'max' '(' argumentList ')'                    # maxFunc
                     | 'ticks'                                       # ticksFunc
                     | 'seconds'                                     # secondsFunc
                     | dateFormat 'date'                             # dateFormatFunc
@@ -284,12 +312,6 @@ dateFormat          : 'long'                                        # longDateFo
                     | 'abbrev'                                      # abbrevDateFormat
                     | 'abbreviated'                                 # abbreviatedDateFormat
                     |                                               # defaultDateFormat
-                    ;
-
-countable			: 'chars'                                       # charsCountable
-                    | 'lines'                                       # linesCountable
-                    | 'words'                                       # wordsCountable
-                    | 'items'                                       # itemsCountable
                     ;
 
 factor				: literal                                       # literalFactor
@@ -306,32 +328,33 @@ literal				: STRING_LITERAL                                # stringLiteral
                     | INTEGER_LITERAL '.' INTEGER_LITERAL           # numberDotNumberLiteral
                     ;
 
-FIELD               : 'field' | 'card field';
+THEN				: NEWLINE 'then' | 'then';
+
+FIELD               : 'field'  | 'card field';
 BUTTON              : 'button' | 'card button';
-CHAR                : 'char' | 'character' | 'chars' | 'characters' ;
-WORD                : 'word' | 'words';
-ITEM                : 'item' | 'items';
-LINE                : 'line' | 'lines';
+CHAR                : 'char'   | 'character' | 'chars' | 'characters' ;
+WORD                : 'word'   | 'words';
+ITEM                : 'item'   | 'items';
+LINE                : 'line'   | 'lines';
 
 GO                  : 'go' | 'go to';
 PREV                : 'prev' | 'previous' | 'the prev' | 'the previous';
 NEXT                : 'next' | 'the next';
 
-MESSAGE				: 'message' | 'message box' | 'message window'
-                    | 'the message' | 'the message box' | 'the message window' ;
+MESSAGE				: 'message' | 'message box' | 'message window';
 
-FIRST               : 'first'   | 'the first' ;
-SECOND              : 'second'  | 'the second' ;
-THIRD               : 'third'   | 'the third' ;
-FOURTH              : 'fourth'  | 'the fourth' ;
-FIFTH               : 'fifth'   | 'the fifth' ;
-SIXTH               : 'sixth'   | 'the sixth' ;
-SEVENTH             : 'seventh' | 'the seventh' ;
-EIGTH               : 'eigth'   | 'the eigth' ;
-NINTH               : 'ninth'   | 'the ninth' ;
-TENTH               : 'tenth'   | 'the tenth' ;
-MIDDLE              : 'mid' | 'the mid' | 'middle' | 'the middle' ;
-LAST                : 'last' | 'the last' ;
+FIRST               : 'first';
+SECOND              : 'second';
+THIRD               : 'third';
+FOURTH              : 'fourth';
+FIFTH               : 'fifth';
+SIXTH               : 'sixth';
+SEVENTH             : 'seventh';
+EIGTH               : 'eigth';
+NINTH               : 'ninth';
+TENTH               : 'tenth';
+MIDDLE              : 'mid' | 'middle';
+LAST                : 'last';
 
 ID                  : (ALPHA (ALPHA | DIGIT)*) ;
 
