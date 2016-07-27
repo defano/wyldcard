@@ -61,23 +61,23 @@ public class Value {
 	
 	private void parse () {		
 		try {
-			intValue = Integer.parseInt(value);
+			intValue = Integer.parseInt(value.trim());
 		} catch (NumberFormatException e) {
 			intValue = null;
 		}
 
 		try {
-			floatValue = Float.parseFloat(value);
+			floatValue = Float.parseFloat(value.trim());
 		} catch (NumberFormatException e) {
 			floatValue = null;
 		}
 		
-		if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+		if (value.trim().equalsIgnoreCase("true") || value.trim().equalsIgnoreCase("false")) {
 			booleanValue = Boolean.parseBoolean(value);
 		}
 
 		// Special case: empty string is a valid int and float
-		if (value.equals("")) {
+		if (value.trim().equals("")) {
 			intValue = 0;
 			floatValue = 0.0f;
 		}

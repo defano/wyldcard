@@ -711,7 +711,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
-        return new ExpChunk((Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
+        return new ExpChunk((Chunk) visit(ctx.chunk()), (Expression) visit(ctx.opLevel1Exp()));
     }
 
     @Override
@@ -867,6 +867,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitLevel2Exp(HyperTalkParser.Level2ExpContext ctx) {
         return visit(ctx.opLevel1Exp());
+    }
+
+    @Override
+    public Object visitLevel0Exp(HyperTalkParser.Level0ExpContext ctx) {
+        return visit(ctx.opLevel0Exp());
     }
 
     @Override

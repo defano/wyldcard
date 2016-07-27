@@ -91,9 +91,9 @@ sendCmd				: 'send' expression 'to' part
                     ;
 
 waitCmd             : 'wait' factor timeUnit                        # waitCountCmd
-                    | 'wait' 'for' factor timeUnit                  # waitForCountCmd
-                    | 'wait' 'until' expression                     # waitUntilCmd
-                    | 'wait' 'while' expression                     # waitWhileCmd
+                    | 'wait for' factor timeUnit                    # waitForCountCmd
+                    | 'wait until' expression                       # waitUntilCmd
+                    | 'wait while' expression                       # waitWhileCmd
                     ;
 
 // Can't use a lexer rule for synonyms here because it creates ambiguity with ordinals and built-in function names. :(
@@ -131,8 +131,8 @@ multiThen			: statementList 'end' 'if'                      # emptyElse
                     ;
 
 elseBlock			: 'else' nonEmptyStmnt                          # elseStmntBlock
-                    | 'else' NEWLINE statementList 'end' 'if'       # elseStmntListBlock
-                    | 'else' NEWLINE 'end' 'if'                     # elseEmptyBlock
+                    | 'else' NEWLINE statementList 'end if'         # elseStmntListBlock
+                    | 'else' NEWLINE 'end if'                       # elseEmptyBlock
                     ;
 
 repeatStatement		: 'repeat' repeatRange NEWLINE statementList 'end repeat'       # repeatStmntList
@@ -155,7 +155,7 @@ count				: 'for' expression 'times'
                     | expression
                     ;
 
-range				: expression 'down' 'to' expression             # rangeDownTo
+range				: expression 'down to' expression             # rangeDownTo
                     | expression 'to' expression                    # rangeUpTo
                     ;
 
@@ -273,11 +273,21 @@ opLevel2Exp			: opLevel1Exp                                   # level2Exp
                     | 'not' opLevel2Exp                             # notExp
                     ;
 
-opLevel1Exp         : builtinFunc                                   # builtinFuncExp
-                    | chunk expression                              # chunkExp
+opLevel1Exp         : opLevel0Exp                                   # level0Exp
+                    | chunk opLevel1Exp                             # chunkExp
                     | factor                                        # factorExp
+                    ;
+
+opLevel0Exp         : builtinFunc                                   # builtinFuncExp
                     | ID '(' argumentList ')'                       # functionExp
                     | 'empty'                                       # emptyExp
+                    ;
+
+factor				: literal                                       # literalFactor
+                    | ID                                            # idFactor
+                    | part                                          # partFactor
+                    | '(' expression ')'                            # expressionFactor
+                    | propertySpec                                  # idOfPartFactor
                     ;
 
 builtinFunc         : 'the'? twoArgFunc 'in' expression             # builtinFuncTwoArgs
@@ -291,10 +301,10 @@ oneArgFunc          : 'average'                                     # averageFun
                     | 'max'                                         # maxFunc
                     ;
 
-twoArgFunc          : 'number' 'of' CHAR                            # numberOfCharsFunc
-                    | 'number' 'of' WORD                            # numberOfWordsFunc
-                    | 'number' 'of' ITEM                            # numberOfItemsFunc
-                    | 'number' 'of' LINE                            # numberOfLinesFunc
+twoArgFunc          : 'number of' CHAR                              # numberOfCharsFunc
+                    | 'number of' WORD                              # numberOfWordsFunc
+                    | 'number of' ITEM                              # numberOfItemsFunc
+                    | 'number of' LINE                              # numberOfLinesFunc
                     ;
 
 noArgFunc           : 'mouse'                                       # mouseFunc
@@ -312,13 +322,6 @@ dateFormat          : 'long'                                        # longDateFo
                     | 'abbrev'                                      # abbrevDateFormat
                     | 'abbreviated'                                 # abbreviatedDateFormat
                     |                                               # defaultDateFormat
-                    ;
-
-factor				: literal                                       # literalFactor
-                    | ID                                            # idFactor
-                    | part                                          # partFactor
-                    | '(' expression ')'                            # expressionFactor
-                    | propertySpec                                  # idOfPartFactor
                     ;
 
 literal				: STRING_LITERAL                                # stringLiteral

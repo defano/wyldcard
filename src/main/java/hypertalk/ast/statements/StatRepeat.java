@@ -30,8 +30,10 @@ public class StatRepeat extends Statement {
 	
 	public void execute () throws HtException {
 		if (range instanceof RepeatForever) {
-			while (true)
+			while (true) {
 				statements.execute();
+				rest();
+			}
 		}
 		
 		else if (range instanceof RepeatCount) {
@@ -42,8 +44,10 @@ public class StatRepeat extends Statement {
 				throw new HtSemanticException("Repeat range must be a natural number, got '" + countValue + "' instead.");
 			
 			int countIndex = countValue.integerValue();
-			while (countIndex-- > 0)
+			while (countIndex-- > 0) {
 				statements.execute();
+				rest();
+			}
 		}
 
 		else if (range instanceof RepeatDuration) {
@@ -51,14 +55,18 @@ public class StatRepeat extends Statement {
 			
 			// While loop
 			if (duration.polarity == RepeatDuration.POLARITY_WHILE) {
-				while (duration.condition.evaluate().booleanValue())
+				while (duration.condition.evaluate().booleanValue()) {
 					statements.execute();
+					rest();
+				}
 			}
 			
 			// Until loop
 			if (duration.polarity == RepeatDuration.POLARITY_UNTIL) {
-				while (! duration.condition.evaluate().booleanValue()) 
+				while (! duration.condition.evaluate().booleanValue()) {
 					statements.execute();
+					rest();
+				}
 			}
 		}
 		
@@ -86,6 +94,7 @@ public class StatRepeat extends Statement {
 				for (int index = from; index <= to; index++) {
 					GlobalContext.getContext().set(symbol, new Value(index));
 					statements.execute();
+					rest();
 				}				
 			}
 
@@ -97,6 +106,7 @@ public class StatRepeat extends Statement {
 				for (int index = to; index >= from; index--) {
 					GlobalContext.getContext().set(symbol, new Value(index));
 					statements.execute();
+					rest();
 				}				
 			}			
 		}
@@ -104,4 +114,14 @@ public class StatRepeat extends Statement {
 		else 
 			throw new RuntimeException("Unknown repeat type");
 	}
+
+	private void rest() throws HtException {
+		try {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			Thread.interrupted();
+			throw new HtException("Interrupted");
+		}
+	}
+
 }
