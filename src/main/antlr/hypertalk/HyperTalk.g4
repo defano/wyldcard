@@ -60,7 +60,7 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | setCmd                                        # setCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
                     | waitCmd                                       # waitCmdStmnt
-                    | GO destination                                # goCmdStmnt
+                    | 'go' 'to'? destination                        # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt
                     | 'multiply' container 'by' expression          # multiplyCmdStmnt
@@ -121,12 +121,13 @@ ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
                     | 'if' expression THEN NEWLINE multiThen        # ifThenMultiline
                     ;
 
-singleThen			: nonEmptyStmnt NEWLINE elseBlock
-                    | nonEmptyStmnt elseBlock
+singleThen			: nonEmptyStmnt NEWLINE elseBlock               # singleThenNewlineElse
+                    | nonEmptyStmnt elseBlock                       # singleThenElse
+                    | nonEmptyStmnt NEWLINE                         # singleThenNoElse
                     ;
 
-multiThen			: statementList 'end' 'if'                      # emptyElse
-                    | 'end' 'if'                                    # emptyThenEmptyElse
+multiThen			: statementList 'end if'                        # emptyElse
+                    | 'end if'                                      # emptyThenEmptyElse
                     | statementList elseBlock                       # thenElse
                     ;
 
@@ -155,7 +156,7 @@ count				: 'for' expression 'times'
                     | expression
                     ;
 
-range				: expression 'down to' expression             # rangeDownTo
+range				: expression 'down to' expression               # rangeDownTo
                     | expression 'to' expression                    # rangeUpTo
                     ;
 
@@ -219,68 +220,35 @@ ordinalValue        : FIRST                                         # firstOrd
                     | LAST                                          # lastOrd
                     ;
 
-expression			: opLevel10Exp                                  # exp
-                    ;
-
-opLevel10Exp		: opLevel9Exp                                   # level10Exp
-                    | opLevel10Exp 'or' opLevel9Exp                 # orExp
-                    ;
-
-opLevel9Exp			: opLevel8Exp                                   # level9Exp
-                    | opLevel9Exp 'and' opLevel8Exp                 # andExp
-                    ;
-
-opLevel8Exp			: opLevel7Exp                                   # level8Exp
-                    | opLevel8Exp '=' opLevel7Exp                   # equalsExp
-                    | opLevel8Exp 'is not' opLevel7Exp              # isNotExp
-                    | opLevel8Exp 'is' opLevel7Exp                  # isExp
-                    | opLevel8Exp '<>' opLevel7Exp                  # wackaWackaExp
-                    ;
-
-opLevel7Exp			: opLevel6Exp                                   # level7Exp
-                    | opLevel7Exp '>' opLevel6Exp                   # greaterThanExp
-                    | opLevel7Exp '<' opLevel6Exp                   # lessThanExp
-                    | opLevel7Exp '<=' opLevel6Exp                  # lessThanEqualsExp
-                    | opLevel7Exp '>=' opLevel6Exp                  # greaterThanEqualsExp
-                    | opLevel7Exp 'contains' opLevel6Exp            # containsExp
-                    | opLevel7Exp 'is in' opLevel6Exp               # isInExp
-                    | opLevel7Exp 'is not in' opLevel6Exp           # isNotInExp
-                    ;
-
-opLevel6Exp			: opLevel5Exp                                   # level6Exp
-                    | opLevel6Exp '&' opLevel5Exp                   # ampExp
-                    | opLevel6Exp '&&' opLevel5Exp                  # ampAmpExp
-                    ;
-
-opLevel5Exp			: opLevel4Exp                                   # level5Exp
-                    | opLevel5Exp '+' opLevel4Exp                   # plusExp
-                    | opLevel5Exp '-' opLevel4Exp                   # minusExp
-                    ;
-
-opLevel4Exp			: opLevel3Exp                                   # level4Exp
-                    | opLevel4Exp '*' opLevel3Exp                   # multiplyExp
-                    | opLevel4Exp '/' opLevel3Exp                   # slashExp
-                    | opLevel4Exp 'div' opLevel3Exp                 # divExp
-                    | opLevel4Exp 'mod' opLevel3Exp                 # modExp
-                    ;
-
-opLevel3Exp			: opLevel2Exp                                   # level3Exp
-                    | opLevel3Exp '^' opLevel2Exp                   # caratExp
-                    ;
-
-opLevel2Exp			: opLevel1Exp                                   # level2Exp
-                    | '-' opLevel2Exp                               # negateExp
-                    | 'not' opLevel2Exp                             # notExp
-                    ;
-
-opLevel1Exp         : opLevel0Exp                                   # level0Exp
-                    | chunk opLevel1Exp                             # chunkExp
-                    | factor                                        # factorExp
-                    ;
-
-opLevel0Exp         : builtinFunc                                   # builtinFuncExp
+expression          : 'empty'                                       # emptyExp
+                    | builtinFunc                                   # builtinFuncExp
                     | ID '(' argumentList ')'                       # functionExp
-                    | 'empty'                                       # emptyExp
+                    | factor                                        # factorExp
+                    | chunk expression                              # chunkExp
+                    | 'not' expression                              # notExp
+                    | '-' expression                                # negateExp
+                    | expression '^' expression                     # caratExp
+                    | expression 'mod' expression                   # modExp
+                    | expression 'div' expression                   # divExp
+                    | expression '/' expression                     # slashExp
+                    | expression '*' expression                     # multiplyExp
+                    | expression '-' expression                     # minusExp
+                    | expression '+' expression                     # plusExp
+                    | expression '&&' expression                    # ampAmpExp
+                    | expression '&' expression                     # ampExp
+                    | expression 'is not in' expression             # isNotInExp
+                    | expression 'is in' expression                 # isInExp
+                    | expression 'contains' expression              # containsExp
+                    | expression '>=' expression                    # greaterThanEqualsExp
+                    | expression '<=' expression                    # lessThanEqualsExp
+                    | expression '<' expression                     # lessThanExp
+                    | expression '>' expression                     # greaterThanExp
+                    | expression '<>' expression                    # wackaWackaExp
+                    | expression 'is' expression                    # isExp
+                    | expression 'is not' expression                # isNotExp
+                    | expression '=' expression                     # equalsExp
+                    | expression 'and' expression                   # andExp
+                    | expression 'or' expression                    # orExp
                     ;
 
 factor				: literal                                       # literalFactor
@@ -340,7 +308,6 @@ WORD                : 'word'   | 'words';
 ITEM                : 'item'   | 'items';
 LINE                : 'line'   | 'lines';
 
-GO                  : 'go' | 'go to';
 PREV                : 'prev' | 'previous' | 'the prev' | 'the previous';
 NEXT                : 'next' | 'the next';
 

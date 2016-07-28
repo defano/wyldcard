@@ -45,7 +45,7 @@ public class ExpBinaryOperator extends Expression {
 		case CONTAINS: return new Value(lhs.contains(rhs));
 		case NOTCONTAINS: return new Value(!lhs.contains(rhs));
 		case CONCAT: return lhs.concat(rhs);
-		default: throw new HtSemanticException("Unhandeled binary operator in evaluasion: " + operator);
+		default: throw new HtSemanticException("Unhandled binary operator in evaluation " + operator);
 		}
 	}	
 }

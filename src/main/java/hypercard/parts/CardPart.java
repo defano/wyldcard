@@ -9,8 +9,10 @@
 package hypercard.parts;
 
 import hypercard.gui.menu.context.CardContextMenu;
+import hypercard.parts.model.ButtonModel;
 import hypercard.parts.model.CardModel;
-import hypercard.parts.model.PartModel;
+import hypercard.parts.model.FieldModel;
+import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.containers.PartSpecifier;
 
@@ -35,14 +37,14 @@ public class CardPart extends JPanel implements MouseListener {
         CardPart card = new CardPart();
         card.model = model;
 
-        for (PartModel thisPart : model.getPartModels()) {
+        for (AbstractPartModel thisPart : model.getPartModels()) {
             switch (thisPart.getType()) {
                 case BUTTON:
-                    ButtonPart button = ButtonPart.fromModel(card, thisPart);
+                    ButtonPart button = ButtonPart.fromModel(card, (ButtonModel) thisPart);
                     card.addSwingComponent(button, button.getRect());
                     break;
                 case FIELD:
-                    FieldPart field = FieldPart.fromModel(card, thisPart);
+                    FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
                     card.addSwingComponent(field, field.getRect());
                     default:
             }

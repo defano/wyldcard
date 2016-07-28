@@ -37,8 +37,11 @@ public class PartMover implements MouseListener {
         	Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
         	SwingUtilities.convertPointFromScreen(mouseLoc, within);
 
-			int newTop = ModifierKeyListener.isShiftDown ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y;
-			int newLeft = ModifierKeyListener.isShiftDown ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x;
+			int horizCenter = part.getComponent().getWidth() / 2;
+			int vertCenter = part.getComponent().getHeight() / 2;
+
+			int newTop = ModifierKeyListener.isShiftDown ? (((mouseLoc.y - vertCenter) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - vertCenter;
+			int newLeft = ModifierKeyListener.isShiftDown ? (((mouseLoc.x - horizCenter) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - horizCenter;
 
         	try {
         		part.setProperty("top", new Value(newTop));

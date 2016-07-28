@@ -15,7 +15,9 @@ import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
-import hypercard.parts.model.PartModel;
+import hypercard.parts.model.AbstractPartModel;
+
+import java.awt.*;
 
 public interface Part {
 	
@@ -24,10 +26,10 @@ public interface Part {
 	int getId();
 	JComponent getComponent();
 	
-	PartModel getPartModel();
+	AbstractPartModel getPartModel();
 	Value getProperty (String property) throws NoSuchPropertyException;
 	void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException;
-	
+
 	Value getValue();
 	void setValue(Value v);
 		
@@ -35,4 +37,5 @@ public interface Part {
 	Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException;
     
     void partOpened();
+	Rectangle getRect();
 }

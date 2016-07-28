@@ -354,8 +354,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitSingleThen(HyperTalkParser.SingleThenContext ctx) {
+    public Object visitSingleThenNewlineElse(HyperTalkParser.SingleThenNewlineElseContext ctx) {
         return new ThenElseBlock(new StatementList((Statement) visit(ctx.nonEmptyStmnt())), (StatementList) visit(ctx.elseBlock()));
+    }
+
+    @Override
+    public Object visitSingleThenElse(HyperTalkParser.SingleThenElseContext ctx) {
+        return new ThenElseBlock(new StatementList((Statement) visit(ctx.nonEmptyStmnt())), (StatementList) visit(ctx.elseBlock()));
+    }
+
+    @Override
+    public Object visitSingleThenNoElse(HyperTalkParser.SingleThenNoElseContext ctx) {
+        return new ThenElseBlock(new StatementList((Statement) visit(ctx.nonEmptyStmnt())), new StatementList());
     }
 
     @Override
@@ -705,183 +715,128 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitExp(HyperTalkParser.ExpContext ctx) {
-        return visit(ctx.opLevel10Exp());
-    }
-
-    @Override
     public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
-        return new ExpChunk((Chunk) visit(ctx.chunk()), (Expression) visit(ctx.opLevel1Exp()));
-    }
-
-    @Override
-    public Object visitLevel10Exp(HyperTalkParser.Level10ExpContext ctx) {
-        return visit(ctx.opLevel9Exp());
+        return new ExpChunk((Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitOrExp(HyperTalkParser.OrExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel10Exp()), BinaryOperator.OR, (Expression) visit(ctx.opLevel9Exp()));
-    }
-
-    @Override
-    public Object visitLevel9Exp(HyperTalkParser.Level9ExpContext ctx) {
-        return visit(ctx.opLevel8Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.OR, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitAndExp(HyperTalkParser.AndExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel9Exp()), BinaryOperator.AND, (Expression) visit(ctx.opLevel8Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.AND, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitIsNotExp(HyperTalkParser.IsNotExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.NOTEQUALS, (Expression) visit(ctx.opLevel7Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.NOTEQUALS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitWackaWackaExp(HyperTalkParser.WackaWackaExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.NOTEQUALS, (Expression) visit(ctx.opLevel7Exp()));
-    }
-
-    @Override
-    public Object visitLevel8Exp(HyperTalkParser.Level8ExpContext ctx) {
-        return visit(ctx.opLevel7Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.NOTEQUALS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitEqualsExp(HyperTalkParser.EqualsExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.EQUALS, (Expression) visit(ctx.opLevel7Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.EQUALS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitIsExp(HyperTalkParser.IsExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel8Exp()), BinaryOperator.EQUALS, (Expression) visit(ctx.opLevel7Exp()));
-    }
-
-    @Override
-    public Object visitLevel7Exp(HyperTalkParser.Level7ExpContext ctx) {
-        return visit(ctx.opLevel6Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.EQUALS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitLessThanEqualsExp(HyperTalkParser.LessThanEqualsExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.LESSTHANOREQUALS, (Expression) visit(ctx.opLevel6Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.LESSTHANOREQUALS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitGreaterThanEqualsExp(HyperTalkParser.GreaterThanEqualsExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.GREATERTHANOREQUALS, (Expression) visit(ctx.opLevel6Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.GREATERTHANOREQUALS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitLessThanExp(HyperTalkParser.LessThanExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.LESSTHAN, (Expression) visit(ctx.opLevel6Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.LESSTHAN, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitIsNotInExp(HyperTalkParser.IsNotInExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.NOTCONTAINS, (Expression) visit(ctx.opLevel6Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.NOTCONTAINS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitContainsExp(HyperTalkParser.ContainsExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.CONTAINS, (Expression) visit(ctx.opLevel6Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.CONTAINS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitIsInExp(HyperTalkParser.IsInExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.CONTAINS, (Expression) visit(ctx.opLevel6Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.CONTAINS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitGreaterThanExp(HyperTalkParser.GreaterThanExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel7Exp()), BinaryOperator.GREATERTHAN, (Expression) visit(ctx.opLevel6Exp()));
-    }
-
-    @Override
-    public Object visitLevel6Exp(HyperTalkParser.Level6ExpContext ctx) {
-        return visit(ctx.opLevel5Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.GREATERTHAN, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitAmpExp(HyperTalkParser.AmpExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel6Exp()), BinaryOperator.CONCAT, (Expression) visit(ctx.opLevel5Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.CONCAT, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitAmpAmpExp(HyperTalkParser.AmpAmpExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel6Exp()), BinaryOperator.CONCAT, (Expression) visit(ctx.opLevel5Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.CONCAT, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMinusExp(HyperTalkParser.MinusExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel5Exp()), BinaryOperator.MINUS, (Expression) visit(ctx.opLevel4Exp()));
-    }
-
-    @Override
-    public Object visitLevel5Exp(HyperTalkParser.Level5ExpContext ctx) {
-        return visit(ctx.opLevel4Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.MINUS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitPlusExp(HyperTalkParser.PlusExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel5Exp()), BinaryOperator.PLUS, (Expression) visit(ctx.opLevel4Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.PLUS, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitModExp(HyperTalkParser.ModExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.MOD, (Expression) visit(ctx.opLevel3Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.MOD, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitSlashExp(HyperTalkParser.SlashExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.DIVIDE, (Expression) visit(ctx.opLevel3Exp()));
-    }
-
-    @Override
-    public Object visitLevel4Exp(HyperTalkParser.Level4ExpContext ctx) {
-        return visit(ctx.opLevel3Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.DIVIDE, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMultiplyExp(HyperTalkParser.MultiplyExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.MULTIPLY, (Expression) visit(ctx.opLevel3Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.MULTIPLY, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitDivExp(HyperTalkParser.DivExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel4Exp()), BinaryOperator.DIVIDE, (Expression) visit(ctx.opLevel3Exp()));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.DIVIDE, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitCaratExp(HyperTalkParser.CaratExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.opLevel3Exp()), BinaryOperator.EXP, (Expression) visit(ctx.opLevel2Exp()));
-    }
-
-    @Override
-    public Object visitLevel3Exp(HyperTalkParser.Level3ExpContext ctx) {
-        return visit(ctx.opLevel2Exp());
-    }
-
-    @Override
-    public Object visitLevel2Exp(HyperTalkParser.Level2ExpContext ctx) {
-        return visit(ctx.opLevel1Exp());
-    }
-
-    @Override
-    public Object visitLevel0Exp(HyperTalkParser.Level0ExpContext ctx) {
-        return visit(ctx.opLevel0Exp());
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.EXP, (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitNegateExp(HyperTalkParser.NegateExpContext ctx) {
-        return new ExpUnaryOperator(UnaryOperator.NEGATE, (Expression) visit(ctx.opLevel2Exp()));
+        return new ExpUnaryOperator(UnaryOperator.NEGATE, (Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitNotExp(HyperTalkParser.NotExpContext ctx) {
-        return new ExpUnaryOperator(UnaryOperator.NOT, (Expression) visit(ctx.opLevel2Exp()));
+        return new ExpUnaryOperator(UnaryOperator.NOT, (Expression) visit(ctx.expression()));
     }
 
     @Override

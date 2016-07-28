@@ -7,10 +7,12 @@ import hypertalk.ast.containers.PartSpecifier;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class CardModel {
 
-    private Collection<PartModel> parts;
+    private Collection<ButtonModel> buttonModels;
+    private Collection<FieldModel> fieldModels;
 
     private transient PartsTable<FieldPart> fields;
     private transient PartsTable<ButtonPart> buttons;
@@ -18,7 +20,8 @@ public class CardModel {
     private CardModel () {
         fields = new PartsTable<>();
         buttons = new PartsTable<>();
-        parts = new ArrayList<>();
+        buttonModels = new ArrayList<>();
+        fieldModels = new ArrayList<>();
     }
 
     public static CardModel emptyCardModel () {
@@ -30,8 +33,11 @@ public class CardModel {
         fields.sendPartOpened();
     }
 
-    public Collection<PartModel> getPartModels() {
-        return parts;
+    public Collection<AbstractPartModel> getPartModels() {
+        List<AbstractPartModel> partModels = new ArrayList<>();
+        partModels.addAll(buttonModels);
+        partModels.addAll(fieldModels);
+        return partModels;
     }
 
     public Part getPart (PartSpecifier ps) throws PartException {
@@ -47,28 +53,28 @@ public class CardModel {
         switch (part.getType()) {
             case BUTTON:
                 buttons.removePart((ButtonPart) part);
+                buttonModels.remove(part.getPartModel());
                 break;
             case FIELD:
                 fields.removePart((FieldPart) part);
+                fieldModels.remove(part.getPartModel());
                 break;
         }
-
-        parts.remove(part.getPartModel());
     }
 
     public void addPart (Part part) throws PartException {
         switch (part.getType()) {
             case BUTTON:
                 buttons.addPart((ButtonPart) part);
+                buttonModels.add((ButtonModel) part.getPartModel());
                 break;
             case FIELD:
                 fields.addPart((FieldPart) part);
+                fieldModels.add((FieldModel) part.getPartModel());
                 break;
             default:
                 throw new PartException("Unsupported part type: " + part.getType());
         }
-
-        parts.add(part.getPartModel());
     }
 
     public int nextFieldId () {

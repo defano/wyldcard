@@ -10,6 +10,7 @@
 package hypercard.runtime;
 
 import hypercard.gui.menu.HyperCardMenuBar;
+import hypercard.gui.util.ModifierKeyListener;
 import hypercard.gui.window.MessageWindow;
 import hypercard.gui.window.StackWindow;
 import hypercard.gui.window.WindowBuilder;
@@ -34,12 +35,12 @@ public class RuntimeEnv implements StackModelObserver {
 	private MessageWindow messageWindow;
 	private JFrame messageFrame;
 	private StackModel stack;
-	private boolean supressMessages = false;
 	private boolean mouseIsDown;
 
-	private ExecutorService scriptExecutor = Executors.newSingleThreadExecutor();
+	private ExecutorService scriptExecutor = Executors.newCachedThreadPool();
 
 	public static void main(String argv[]) {
+		// Display the frame's menu as the Mac OS menubar
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
 
@@ -65,7 +66,7 @@ public class RuntimeEnv implements StackModelObserver {
 		stackWindow = new StackWindow();
 		JFrame stackFrame = WindowBuilder.make(stackWindow)
 				.withTitle("HyperCard")
-				.resizeable(false)
+				.resizeable(true)
 				.quitOnClose()
 				.withMenuBar(HyperCardMenuBar.instance)
 				.withModel(stack.getCurrentCard())
@@ -91,7 +92,6 @@ public class RuntimeEnv implements StackModelObserver {
 
 	public void executeStatementList(StatementList handler) {
 		HandlerExecutionTask handlerTask = new HandlerExecutionTask(handler);
-		
 		if (SwingUtilities.isEventDispatchThread())
 			scriptExecutor.submit(handlerTask);
 		else

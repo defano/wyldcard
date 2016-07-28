@@ -356,19 +356,19 @@ public class Value {
 	
 	public Value not () throws HtSemanticException {
 		if (!isBoolean())
-			throw new HtSemanticException(value + " cannot be negated because it is not boolean");
+			throw new HtSemanticException(value + " cannot be logically negated because it is not boolean");
 		
 		return new Value(!booleanValue());
 	}
 
 	public Value negate () throws HtSemanticException {
-		if (!isBoolean())
-			throw new HtSemanticException(value + " cannot be negated because it is not boolean");
-		
 		if (isInteger())
 			return new Value(integerValue() * -1);
-		else
+		else if (isFloat())
 			return new Value(floatValue() * -1);
+		else {
+			throw new HtSemanticException(value + " cannot be negated because it is not a number");
+		}
 	}
 
 	public Value and (Value val) throws HtSemanticException {
@@ -390,7 +390,7 @@ public class Value {
 		
 		return new Value(booleanValue() || v.booleanValue());
 	}
-	
+
 	public Value concat (Value val) {
 		return new Value(value + val.toString());
 	}

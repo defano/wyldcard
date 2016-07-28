@@ -16,8 +16,10 @@ import hypertalk.exception.HtParseError;
 import hypertalk.exception.HtSyntaxException;
 import hypertalk.parser.HyperTalkLexer;
 import hypertalk.parser.HyperTalkParser;
+import org.antlr.v4.misc.Utils;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class Interpreter {
@@ -29,6 +31,7 @@ public class Interpreter {
 		HyperTalkLexer lexer = new HyperTalkLexer(new ANTLRInputStream(scriptText));
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		HyperTalkParser parser = new HyperTalkParser(tokens);
+		parser.removeErrorListeners();		// don't log to console
 		parser.addErrorListener(errors);
 
 		try {

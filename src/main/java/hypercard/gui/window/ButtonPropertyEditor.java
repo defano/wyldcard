@@ -4,8 +4,8 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
-import hypercard.parts.ButtonPart;
-import hypercard.parts.model.PartModel;
+import hypercard.parts.model.ButtonModel;
+import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Value;
 
@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ButtonPropertyEditor implements HyperCardWindow {
-    private PartModel model;
+    private AbstractPartModel model;
 
     private JButton saveButton;
     private JButton cancelButton;
@@ -34,7 +34,7 @@ public class ButtonPropertyEditor implements HyperCardWindow {
         editScriptButton.addActionListener(e -> {
             close();
             WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of button " + model.getKnownProperty(ButtonPart.PROP_NAME).stringValue())
+                    .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
                     .withModel(model)
                     .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
                     .build();
@@ -56,30 +56,30 @@ public class ButtonPropertyEditor implements HyperCardWindow {
 
     @Override
     public void bindModel(Object data) {
-        this.model = (PartModel) data;
+        this.model = (AbstractPartModel) data;
 
-        buttonName.setText(model.getKnownProperty(ButtonPart.PROP_NAME).stringValue());
-        buttonTitle.setText(model.getKnownProperty(ButtonPart.PROP_TITLE).stringValue());
-        buttonId.setText(model.getKnownProperty(ButtonPart.PROP_ID).stringValue());
-        buttonTop.setText(model.getKnownProperty(ButtonPart.PROP_TOP).stringValue());
-        buttonLeft.setText(model.getKnownProperty(ButtonPart.PROP_LEFT).stringValue());
-        buttonHeight.setText(model.getKnownProperty(ButtonPart.PROP_HEIGHT).stringValue());
-        buttonWidth.setText(model.getKnownProperty(ButtonPart.PROP_WIDTH).stringValue());
-        isEnabled.setSelected(model.getKnownProperty(ButtonPart.PROP_ENABLED).booleanValue());
-        isShowTitle.setSelected(model.getKnownProperty(ButtonPart.PROP_SHOWTITLE).booleanValue());
-        isVisible.setSelected(model.getKnownProperty(ButtonPart.PROP_VISIBLE).booleanValue());
+        buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
+        buttonTitle.setText(model.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+        buttonId.setText(model.getKnownProperty(ButtonModel.PROP_ID).stringValue());
+        buttonTop.setText(model.getKnownProperty(ButtonModel.PROP_TOP).stringValue());
+        buttonLeft.setText(model.getKnownProperty(ButtonModel.PROP_LEFT).stringValue());
+        buttonHeight.setText(model.getKnownProperty(ButtonModel.PROP_HEIGHT).stringValue());
+        buttonWidth.setText(model.getKnownProperty(ButtonModel.PROP_WIDTH).stringValue());
+        isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
+        isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWTITLE).booleanValue());
+        isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
     }
 
     public void updateProperties() {
-        model.setKnownProperty(ButtonPart.PROP_NAME, new Value(buttonName.getText()));
-        model.setKnownProperty(ButtonPart.PROP_TITLE, new Value(buttonTitle.getText()));
-        model.setKnownProperty(ButtonPart.PROP_TOP, new Value(buttonTop.getText()));
-        model.setKnownProperty(ButtonPart.PROP_LEFT, new Value(buttonLeft.getText()));
-        model.setKnownProperty(ButtonPart.PROP_HEIGHT, new Value(buttonHeight.getText()));
-        model.setKnownProperty(ButtonPart.PROP_WIDTH, new Value(buttonWidth.getText()));
-        model.setKnownProperty(ButtonPart.PROP_ENABLED, new Value(isEnabled.getSelectedObjects() != null));
-        model.setKnownProperty(ButtonPart.PROP_SHOWTITLE, new Value(isShowTitle.getSelectedObjects() != null));
-        model.setKnownProperty(ButtonPart.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
+        model.setKnownProperty(ButtonModel.PROP_NAME, new Value(buttonName.getText()));
+        model.setKnownProperty(ButtonModel.PROP_TITLE, new Value(buttonTitle.getText()));
+        model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getText()));
+        model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getText()));
+        model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getText()));
+        model.setKnownProperty(ButtonModel.PROP_WIDTH, new Value(buttonWidth.getText()));
+        model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.getSelectedObjects() != null));
+        model.setKnownProperty(ButtonModel.PROP_SHOWTITLE, new Value(isShowTitle.getSelectedObjects() != null));
+        model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
     }
 
     {

@@ -9,16 +9,14 @@
 package hypercard.parts;
 
 import hypercard.gui.util.ModifierKeyListener;
-import hypercard.parts.Part;
 import hypertalk.ast.common.Value;
+import hypertalk.exception.NoSuchPropertyException;
 
 import java.awt.Component;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,7 +36,7 @@ public class PartResizer implements MouseListener {
 	private Component within;
 	private boolean done = false;
 	
-    private class MoverTask implements Runnable {
+    private class ResizerTask implements Runnable {
     	public void run () {    	
         	Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
         	SwingUtilities.convertPointFromScreen(mouseLoc, within);
@@ -70,7 +68,7 @@ public class PartResizer implements MouseListener {
     	part.getComponent().addMouseListener(this);
     	within.addMouseListener(this);
 
-		executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
+		executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
     }
 
 	public void mousePressed(MouseEvent e) {

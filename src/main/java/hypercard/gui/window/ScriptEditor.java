@@ -5,7 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.SquigglePainter;
-import hypercard.parts.model.PartModel;
+import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.Interpreter;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
@@ -22,7 +22,7 @@ public class ScriptEditor implements HyperCardWindow {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 
-    private PartModel model;
+    private AbstractPartModel model;
 
     private JPanel scriptEditor;
     private JButton cancelButton;
@@ -85,8 +85,8 @@ public class ScriptEditor implements HyperCardWindow {
 
     @Override
     public void bindModel(Object properties) {
-        if (properties instanceof PartModel) {
-            this.model = (PartModel) properties;
+        if (properties instanceof AbstractPartModel) {
+            this.model = (AbstractPartModel) properties;
             scriptField.setText(this.model.getKnownProperty("script").stringValue());
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + properties);
