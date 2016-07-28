@@ -293,9 +293,22 @@ Precedence | Operator | Description
 9 | `and` | Logical AND for boolean values
 10 (lowest) |  `or` | Logical OR for boolean values
 
+HyperCard evaluates factors and terms in the expression in the following order (top to bottom):
+
+Term | Description
+-----|------------
+`empty`                 | Keyword expression representing the empty string
+_Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
+_User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
+_Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
+_Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
+_Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
+_Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+
 This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as real HyperTalk.  Valid expressions include:
 
 ```
+item 1 of the mouseloc < 100 -- true if the mouse is towards the left of the card
 4 * (2 + 3) -- yields 20
 "hello" contains "el" and "goodbye" contains "bye" -- true
 3 * 5 is not 15 -- false
@@ -437,6 +450,7 @@ Command	   | Description
 `get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `set`	     | Sets the property of a part to a value; `set the wraptext of field id 3 to (5 > 3)`
 `go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
+`wait`     | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
 `answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
 `ask`	     | Similar to answer, ask produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
 `do`       | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
