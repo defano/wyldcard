@@ -23,6 +23,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import java.util.concurrent.Future;
+
 public class Interpreter {
 
 	public static Script compile(String scriptText) throws HtException {
@@ -49,8 +51,8 @@ public class Interpreter {
 		}
 	}
 	
-	public static void execute (PartSpecifier me, String statementList) throws HtException
+	public static Future execute (PartSpecifier me, String statementList) throws HtException
 	{
-		RuntimeEnv.getRuntimeEnv().executeStatementList(me, compile(statementList).getStatements(), true);
+		return RuntimeEnv.getRuntimeEnv().executeStatementList(me, compile(statementList).getStatements(), true);
 	}
 }

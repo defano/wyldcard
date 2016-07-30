@@ -9,6 +9,7 @@
 
 package hypercard.runtime;
 
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.MessageWindow;
@@ -28,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class RuntimeEnv implements StackModelObserver {
 
@@ -96,12 +98,14 @@ public class RuntimeEnv implements StackModelObserver {
 		executeStatementList(me, script.getHandler(handler), onNewThread);
 	}
 
-	public void executeStatementList(PartSpecifier me, StatementList handler, boolean onNewThread) {
+	public Future executeStatementList(PartSpecifier me, StatementList handler, boolean onNewThread) {
 		HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler);
 		if (SwingUtilities.isEventDispatchThread() || onNewThread)
-			scriptExecutor.submit(handlerTask);
-		else
+			return scriptExecutor.submit(handlerTask);
+		else {
 			handlerTask.run();
+			return Futures.immediateFuture(null);
+		}
 	}
 
 	public Value executeUserFunction(PartSpecifier me, UserFunction function, ArgumentList arguments, boolean onNewThread) {
