@@ -997,10 +997,10 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBuiltinFuncTwoArgs(HyperTalkParser.BuiltinFuncTwoArgsContext ctx) {
         switch ((BuiltInFunction) visit(ctx.twoArgFunc())) {
-            case NUMBER_CHARS: return new ExpNumberOfFun(ChunkType.CHAR, (Expression) visit(ctx.expression()));
-            case NUMBER_ITEMS: return new ExpNumberOfFun(ChunkType.ITEM, (Expression) visit(ctx.expression()));
-            case NUMBER_LINES: return new ExpNumberOfFun(ChunkType.LINE, (Expression) visit(ctx.expression()));
-            case NUMBER_WORDS: return new ExpNumberOfFun(ChunkType.WORD, (Expression) visit(ctx.expression()));
+            case NUMBER_CHARS: return new ExpNumberOfFun(ChunkType.CHAR, (Expression) visit(ctx.factor()));
+            case NUMBER_ITEMS: return new ExpNumberOfFun(ChunkType.ITEM, (Expression) visit(ctx.factor()));
+            case NUMBER_LINES: return new ExpNumberOfFun(ChunkType.LINE, (Expression) visit(ctx.factor()));
+            case NUMBER_WORDS: return new ExpNumberOfFun(ChunkType.WORD, (Expression) visit(ctx.factor()));
             default: throw new RuntimeException("Bug! Unimplemented case.");
         }
     }
@@ -1008,9 +1008,9 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBuiltinFuncOneArgs(HyperTalkParser.BuiltinFuncOneArgsContext ctx) {
         switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
-            case MIN: return new ExpMinFun((Expression) visit(ctx.expression()));
-            case MAX: return new ExpMaxFun((Expression) visit(ctx.expression()));
-            case AVERAGE: return new ExpAverageFun((Expression) visit(ctx.expression()));
+            case MIN: return new ExpMinFun((Expression) visit(ctx.factor()));
+            case MAX: return new ExpMaxFun((Expression) visit(ctx.factor()));
+            case AVERAGE: return new ExpAverageFun((Expression) visit(ctx.factor()));
             default: throw new RuntimeException("Bug! Unimplemented case.");
         }
     }

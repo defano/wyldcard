@@ -258,8 +258,8 @@ factor				: literal                                       # literalFactor
                     | propertySpec                                  # idOfPartFactor
                     ;
 
-builtinFunc         : 'the'? twoArgFunc 'in' expression             # builtinFuncTwoArgs
-                    | 'the'? oneArgFunc 'of' expression             # builtinFuncOneArgs
+builtinFunc         : 'the'? twoArgFunc 'in' factor                 # builtinFuncTwoArgs
+                    | 'the'? oneArgFunc 'of' factor                 # builtinFuncOneArgs
                     | 'the' noArgFunc                               # builtinFuncNoArg
                     | oneArgFunc '(' argumentList ')'               # builtinFuncArgList
                     ;
