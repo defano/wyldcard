@@ -22,6 +22,7 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
+import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
@@ -62,7 +63,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
         return fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
-    public static FieldPart fromGeometry (CardPart parent, Rectangle geometry) {
+    public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
         FieldPart field = new FieldPart(parent);
 
         field.initProperties(geometry);
@@ -70,7 +71,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
         return field;
     }
 
-    public static FieldPart fromModel (CardPart parent, FieldModel model) throws Exception {
+    public static FieldPart fromModel(CardPart parent, FieldModel model) throws Exception {
         FieldPart field = new FieldPart(parent);
 
         field.partModel = model;
@@ -197,15 +198,16 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
 
     @Override
     public void sendMessage(String message) {
-        if (!GlobalContext.getContext().noMessages()) {
-            GlobalContext.getContext().setMe(new PartIdSpecifier(PartType.FIELD, getId()));
-            script.executeHandler(message);
-        }
+        RuntimeEnv.getRuntimeEnv().executeHandler(getMe(), script, message, true);
     }
 
     @Override
     public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
-        return script.executeUserFunction(function, arguments);
+        return RuntimeEnv.getRuntimeEnv().executeUserFunction(getMe(), script.getFunction(function), arguments, false);
+    }
+
+    public PartSpecifier getMe() {
+        return new PartIdSpecifier(PartType.FIELD, getId());
     }
 
     public JTextArea getTextArea() {
@@ -216,9 +218,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             RuntimeEnv.getRuntimeEnv().setTheMouse(true);
-
-            if (!GlobalContext.getContext().noMessages())
-                sendMessage("mouseDown");
+            sendMessage("mouseDown");
         }
     }
 
@@ -226,34 +226,28 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     public void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             RuntimeEnv.getRuntimeEnv().setTheMouse(false);
-
-            if (!GlobalContext.getContext().noMessages())
-                sendMessage("mouseUp");
+            sendMessage("mouseUp");
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (!GlobalContext.getContext().noMessages())
-            sendMessage("mouseEnter");
+        sendMessage("mouseEnter");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if (!GlobalContext.getContext().noMessages())
-            sendMessage("mouseExit");
+        sendMessage("mouseExit");
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (!GlobalContext.getContext().noMessages())
-            sendMessage("keyDown");
+        sendMessage("keyDown");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (!GlobalContext.getContext().noMessages())
-            sendMessage("keyUp");
+        sendMessage("keyUp");
 
         partModel.setKnownProperty(FieldModel.PROP_TEXT, new Value(getTextArea().getText()));
     }
@@ -269,36 +263,38 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     @Override
     public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
 
-        switch (property) {
-            case FieldModel.PROP_SCRIPT:
-                try {
-                    compile();
-                } catch (HtSemanticException e) {
-                    RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
-                }
-                break;
-            case FieldModel.PROP_TEXT:
-                if (!newValue.toString().equals(text.getText())) {
-                    text.setText(newValue.toString());
-                }
-                break;
-            case FieldModel.PROP_TOP:
-            case FieldModel.PROP_LEFT:
-            case FieldModel.PROP_WIDTH:
-            case FieldModel.PROP_HEIGHT:
-                this.setBounds(partModel.getRect());
-                this.validate();
-                this.repaint();
-                break;
-            case FieldModel.PROP_VISIBLE:
-                this.setVisible(newValue.booleanValue());
-                break;
-            case FieldModel.PROP_WRAPTEXT:
-                text.setLineWrap(newValue.booleanValue());
-                break;
-            case FieldModel.PROP_LOCKTEXT:
-                text.setEditable(!newValue.booleanValue());
-                break;
-        }
+        SwingUtilities.invokeLater(() -> {
+            switch (property) {
+                case FieldModel.PROP_SCRIPT:
+                    try {
+                        compile();
+                    } catch (HtSemanticException e) {
+                        RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                    }
+                    break;
+                case FieldModel.PROP_TEXT:
+                    if (!newValue.toString().equals(text.getText())) {
+                        text.setText(newValue.toString());
+                    }
+                    break;
+                case FieldModel.PROP_TOP:
+                case FieldModel.PROP_LEFT:
+                case FieldModel.PROP_WIDTH:
+                case FieldModel.PROP_HEIGHT:
+                    setBounds(partModel.getRect());
+                    validate();
+                    repaint();
+                    break;
+                case FieldModel.PROP_VISIBLE:
+                    setVisible(newValue.booleanValue());
+                    break;
+                case FieldModel.PROP_WRAPTEXT:
+                    text.setLineWrap(newValue.booleanValue());
+                    break;
+                case FieldModel.PROP_LOCKTEXT:
+                    text.setEditable(!newValue.booleanValue());
+                    break;
+            }
+        });
     }
 }

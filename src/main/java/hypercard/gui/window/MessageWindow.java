@@ -6,6 +6,8 @@ import hypercard.context.GlobalContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.runtime.Interpreter;
 import hypercard.runtime.RuntimeEnv;
+import hypertalk.ast.containers.PartIdSpecifier;
+import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,7 +50,7 @@ public class MessageWindow implements HyperCardWindow {
 
     private void executeMessageBox() {
         try {
-            Interpreter.execute(messageBox.getText());
+            Interpreter.execute(null, messageBox.getText());
             RuntimeEnv.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
         } catch (Exception e) {
             RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);

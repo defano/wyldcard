@@ -31,7 +31,6 @@ public abstract class AbstractPartModel {
 	private PartType type;
 	private Map<String, Value> properties = new HashMap<>();
 	private List<String> readOnly = new ArrayList<>();
-//	private Map<String, Boolean> readOnly = new HashMap<>();
 
 	private transient List<PartModelObserver> listeners;
 

@@ -9,6 +9,7 @@
 
 package hypercard.runtime;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.util.ModifierKeyListener;
 import hypercard.gui.window.MessageWindow;
@@ -17,7 +18,9 @@ import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModel;
 import hypercard.parts.model.StackModelObserver;
+import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
+import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
@@ -26,6 +29,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class RuntimeEnv implements StackModelObserver {
 
@@ -37,7 +41,7 @@ public class RuntimeEnv implements StackModelObserver {
 	private StackModel stack;
 	private boolean mouseIsDown;
 
-	private ExecutorService scriptExecutor = Executors.newCachedThreadPool();
+	private ExecutorService scriptExecutor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
 
 	public static void main(String argv[]) {
 		// Display the frame's menu as the Mac OS menubar
@@ -90,19 +94,23 @@ public class RuntimeEnv implements StackModelObserver {
 		return _instance;
 	}
 
-	public void executeStatementList(StatementList handler) {
-		HandlerExecutionTask handlerTask = new HandlerExecutionTask(handler);
-		if (SwingUtilities.isEventDispatchThread())
+	public void executeHandler(PartSpecifier me, Script script, String handler, boolean onNewThread) {
+		executeStatementList(me, script.getHandler(handler), onNewThread);
+	}
+
+	public void executeStatementList(PartSpecifier me, StatementList handler, boolean onNewThread) {
+		HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler);
+		if (SwingUtilities.isEventDispatchThread() || onNewThread)
 			scriptExecutor.submit(handlerTask);
 		else
 			handlerTask.run();
 	}
 
-	public Value executeUserFunction(UserFunction function, ArgumentList arguments) {
-		FunctionExecutionTask functionTask = new FunctionExecutionTask(function, arguments);
+	public Value executeUserFunction(PartSpecifier me, UserFunction function, ArgumentList arguments, boolean onNewThread) {
+		FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
 		
 		try {
-			if (SwingUtilities.isEventDispatchThread())
+			if (SwingUtilities.isEventDispatchThread() || onNewThread)
 				return scriptExecutor.submit(functionTask).get();
 			else
 				return functionTask.call();
@@ -118,9 +126,11 @@ public class RuntimeEnv implements StackModelObserver {
 	public StackModel getStack () { return stack; }
 
 	public void setStack (StackModel model) {
-		this.stack = model;
-		this.stack.addObserver(this);
-		this.stackWindow.setDisplayedCard(stack.getCurrentCard());
+		SwingUtilities.invokeLater(() -> {
+            stack = model;
+            stack.addObserver(RuntimeEnv.this);
+            stackWindow.setDisplayedCard(stack.getCurrentCard());
+        });
 	}
 
 	public CardPart getCard () {
@@ -154,11 +164,11 @@ public class RuntimeEnv implements StackModelObserver {
 	}
 
 	public void setMessageBoxVisible (boolean visible) {
-		messageFrame.setVisible(visible);
+		SwingUtilities.invokeLater(() -> messageFrame.setVisible(visible));
 	}
 
 	public void setMsgBoxText(Object theMsg) {
-		messageWindow.setMsgBoxText(theMsg.toString());
+		SwingUtilities.invokeLater(() -> messageWindow.setMsgBoxText(theMsg.toString()));
 	}
 
 	public String getMsgBoxText() {
@@ -173,6 +183,6 @@ public class RuntimeEnv implements StackModelObserver {
 
 	@Override
 	public void onCurrentCardChanged(CardPart newCard) {
-		stackWindow.setDisplayedCard(newCard);
+		SwingUtilities.invokeLater(() -> stackWindow.setDisplayedCard(newCard));
 	}
 }

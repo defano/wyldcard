@@ -43,23 +43,16 @@ public class Script {
 		this.statements = statements;
 		return this;
 	}
-	
-	public void executeHandler (String handler) {
-		if (handlers.containsKey(handler))
-			RuntimeEnv.getRuntimeEnv().executeStatementList(handlers.get(handler));			
+
+	public StatementList getHandler(String handler) {
+		return handlers.get(handler);
 	}
-	
-	public void executeStatement () throws HtException {
-		if (statements != null)
-			statements.execute();
+
+	public UserFunction getFunction(String function) {
+		return functions.get(function);
 	}
-	
-	public Value executeUserFunction (String function, ArgumentList arguments) throws HtSemanticException {
-		UserFunction theFunction = functions.get(function);
-		
-		if (theFunction != null) 
-			return RuntimeEnv.getRuntimeEnv().executeUserFunction(theFunction, arguments);
-		else
-			throw new HtSemanticException("No such function " + function);
-	}	
+
+	public StatementList getStatements() {
+		return statements;
+	}
 }

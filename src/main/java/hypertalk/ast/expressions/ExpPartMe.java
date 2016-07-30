@@ -19,7 +19,7 @@ public class ExpPartMe extends ExpPart {
 	
 	public Value evaluate () throws HtSemanticException {
 		try {
-			PartSpecifier part = GlobalContext.getContext().getMe();			
+			PartSpecifier part = GlobalContext.getContext().getMe();
 			return GlobalContext.getContext().get(part).getValue();
 		} catch (PartException e) {
 			throw new HtSemanticException(e.getMessage());

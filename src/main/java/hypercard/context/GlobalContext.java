@@ -25,76 +25,81 @@ import java.util.Vector;
 
 public class GlobalContext {
 
-	private static GlobalContext _instance;
+	private static GlobalContext instance = new GlobalContext();
 	
-	private SymbolTable globals;	        
-	private Stack<LocalContext> stack;
-	private LocalContext locals;
-	private PartSpecifier me;
-	
-	private boolean noMessages = false;
-	
+	private SymbolTable globals;
+
+    /*
+     * In this implementation, when HyperCard sends a system-defined message to a part
+     * (i.e., "mouseEnter") the reaction to that message exists in its own thread; therefore
+     * the entire local context needs to be specific to each thread.
+     */
+	private ThreadLocal<Stack<Frame>> stack = new ThreadLocal<>();
+	private ThreadLocal<Frame> frame = new ThreadLocal<>();
+	private ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
+
 	private GlobalContext () {
 		globals = new SymbolTable();
-		stack = new Stack<>();
-		locals = new LocalContext(new SymbolTable(), new Vector<>(), new Value());
-	}
-	
-	public static GlobalContext getContext () {
-		if (_instance == null)
-			_instance = new GlobalContext();
-		
-		return _instance;
 	}
 
-	public boolean noMessages () {
-		return noMessages;
+	public static GlobalContext getContext () {
+		return instance;
 	}
-	
-	public void setNoMessages (boolean noMessages) {
-		this.noMessages = noMessages;
+
+	public void newLocalContext () {
+		setFrame(new Frame(new SymbolTable(), new Vector<>(), new Value()));
 	}
-	
-	public void setMe (PartSpecifier me) {
-		this.me = me;
-	}
-	
-	public PartSpecifier getMe () {
-		return me;
-	}
-	
-	public CardPart getCard () {
-		return RuntimeEnv.getRuntimeEnv().getCard();
-	}
-	
-    public void newLocalContext () {
-		locals = new LocalContext(new SymbolTable(), new Vector<>(), new Value());
-    }
-    
+
 	public void pushContext () {
-		stack.push(locals);
-		locals = new LocalContext(new SymbolTable(), new Vector<>(), new Value());
+		getStack().push(getFrame());
+		setFrame(new Frame(new SymbolTable(), new Vector<>(), new Value()));
 	}
-	
+
 	public void popContext () {
-		locals = stack.pop();
+		setFrame(getStack().pop());
 	}
-	
+
 	public void setReturnValue (Value returnValue) {
-		locals.setReturnValue(returnValue);
+		getFrame().setReturnValue(returnValue);
 	}
-	
+
 	public Value getReturnValue () {
-		return locals.getReturnValue();
+		return getFrame().getReturnValue();
 	}
-	
+
 	public void defineGlobal (String id) {
 		if (!globals.exists(id))
 			globals.put(id, new Value());
-        
-        locals.globalInScope(id);
+
+		getFrame().globalInScope(id);
 	}
-	
+
+	public void set (String symbol, Value v) {
+		if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
+			globals.put(symbol, v);
+		else
+			getFrame().symbols.put(symbol, v);
+	}
+
+	public Value get (String symbol) {
+		Value value;
+
+		if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
+			value = globals.get(symbol);
+		else if (getFrame().symbols.exists(symbol))
+			value = getFrame().symbols.get(symbol);
+
+			// Allow the user to refer to literals without quotation marks
+		else
+			value = new Value(symbol);
+
+		return value;
+	}
+
+	public CardPart getCard () {
+		return RuntimeEnv.getRuntimeEnv().getCard();
+	}
+
 	public void sendMessage (PartSpecifier ps, String message) 
 	throws HtSemanticException, PartException
 	{
@@ -151,30 +156,7 @@ public class GlobalContext {
 		set(symbol, mutable);
 		setIt(mutable);
 	}
-	
-	public void set (String symbol, Value v) {
-		
-		if (globals.exists(symbol) && locals.isGlobalInScope(symbol))
-			globals.put(symbol, v);
-		else
-			locals.symbols.put(symbol, v);
-	}
-	
-	public Value get (String symbol) {
-		Value value;
 
-		if (globals.exists(symbol) && locals.isGlobalInScope(symbol))
-			value = globals.get(symbol);
-		else if (locals.symbols.exists(symbol))
-			value = locals.symbols.get(symbol);
-		
-		// Allow the user to refer to literals without quotation marks
-		else 
-			value = new Value(symbol);
-		
-		return value;
-	}
-	
 	public Part get (PartSpecifier ps) throws PartException {
 		return getCard().getPart(ps);
 	}
@@ -196,5 +178,28 @@ public class GlobalContext {
 	public Value getIt () {
 		return globals.get("it");
 	}
-	
+
+	public void setMe (PartSpecifier me) {
+		this.me.set(me);
+	}
+
+	public PartSpecifier getMe () {
+		return this.me.get();
+	}
+
+	private Stack<Frame> getStack() {
+		if (this.stack.get() == null) {
+			this.stack.set(new Stack<>());
+		}
+
+		return this.stack.get();
+	}
+
+	private void setFrame(Frame frame) {
+		this.frame.set(frame);
+	}
+
+	private Frame getFrame() {
+		return frame.get();
+	}
 }

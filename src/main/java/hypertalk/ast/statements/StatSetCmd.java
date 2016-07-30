@@ -26,7 +26,7 @@ public class StatSetCmd extends Statement {
 		try {
 			GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
 		} catch (Exception e) {
-			throw new HtSemanticException(e.getMessage());
+			throw new HtSemanticException(e);
 		}
 	}
 }

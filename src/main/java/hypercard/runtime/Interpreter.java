@@ -11,6 +11,7 @@ package hypercard.runtime;
 import hypertalk.HyperTalkTreeVisitor;
 import hypertalk.HypertalkErrorListener;
 import hypertalk.ast.common.Script;
+import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtParseError;
 import hypertalk.exception.HtSyntaxException;
@@ -48,8 +49,8 @@ public class Interpreter {
 		}
 	}
 	
-	public static void execute (String statementList) throws HtException
+	public static void execute (PartSpecifier me, String statementList) throws HtException
 	{
-		compile(statementList).executeStatement();
+		RuntimeEnv.getRuntimeEnv().executeStatementList(me, compile(statementList).getStatements(), true);
 	}
 }

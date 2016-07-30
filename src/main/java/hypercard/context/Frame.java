@@ -1,5 +1,5 @@
 /**
- * LocalContext.java
+ * Frame.java
  * @author matt.defano@gmail.com
  * 
  * Maintains the current local context; analagous to the current stack frame.
@@ -11,14 +11,14 @@ import hypertalk.ast.common.Value;
 
 import java.util.List;
 
-public class LocalContext {
+public class Frame {
 
 	public final SymbolTable symbols;
     private final List<String> globalsInScope;
     
 	private Value returnValue;
 	
-	public LocalContext (SymbolTable symbols, List<String> globalsInScope, Value returnValue) {
+	public Frame(SymbolTable symbols, List<String> globalsInScope, Value returnValue) {
 		this.symbols = symbols;
         this.globalsInScope = globalsInScope;
 		this.returnValue = returnValue;

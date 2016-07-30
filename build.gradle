@@ -36,6 +36,7 @@ dependencies {
 
 	compile 'com.intellij:javac2:7.0.3'
 	compile 'com.google.code.gson:gson:2.7'
+	compile group: 'com.google.guava', name: 'guava', version: '19.0'
 
 	testCompile 'junit:junit:4.12'
 }

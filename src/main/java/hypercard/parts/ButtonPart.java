@@ -22,6 +22,7 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
+import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
@@ -181,24 +182,25 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         }
     }
 
+    public PartSpecifier getMe() {
+        return new PartIdSpecifier(PartType.BUTTON, getId());
+    }
+
     @Override
     public void sendMessage(String message) {
-        GlobalContext.getContext().setMe(new PartIdSpecifier(PartType.BUTTON, getId()));
-        script.executeHandler(message);
+        RuntimeEnv.getRuntimeEnv().executeHandler(getMe(), script, message, true);
     }
 
     @Override
     public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
-        return script.executeUserFunction(function, arguments);
+        return RuntimeEnv.getRuntimeEnv().executeUserFunction(getMe(), script.getFunction(function), arguments, false);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             RuntimeEnv.getRuntimeEnv().setTheMouse(true);
-
-            if (!GlobalContext.getContext().noMessages())
-                sendMessage("mouseDown");
+            sendMessage("mouseDown");
         }
     }
 
@@ -206,22 +208,18 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
     public void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             RuntimeEnv.getRuntimeEnv().setTheMouse(false);
-
-            if (!GlobalContext.getContext().noMessages())
-                sendMessage("mouseUp");
+            sendMessage("mouseUp");
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (!GlobalContext.getContext().noMessages())
-            sendMessage("mouseEnter");
+        sendMessage("mouseEnter");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if (!GlobalContext.getContext().noMessages())
-            sendMessage("mouseExit");
+        sendMessage("mouseExit");
     }
 
     @Override
@@ -231,37 +229,39 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
     @Override
     public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
 
-        switch (property) {
-            case ButtonModel.PROP_SCRIPT:
-                try {
-                    compile();
-                } catch (HtSemanticException e) {
-                    RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
-                }
-                break;
-            case ButtonModel.PROP_TITLE:
-                this.setText(newValue.toString());
-                break;
-            case ButtonModel.PROP_TOP:
-            case ButtonModel.PROP_LEFT:
-            case ButtonModel.PROP_WIDTH:
-            case ButtonModel.PROP_HEIGHT:
-                this.setBounds(partModel.getRect());
-                this.validate();
-                this.repaint();
-                break;
-            case ButtonModel.PROP_VISIBLE:
-                this.setVisible(newValue.booleanValue());
-                break;
-            case ButtonModel.PROP_ENABLED:
-                this.setEnabled(newValue.booleanValue());
-                break;
-            case ButtonModel.PROP_SHOWTITLE:
-                if (newValue.booleanValue())
-                    this.setText(partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
-                else
-                    this.setText("");
-                break;
-        }
+        SwingUtilities.invokeLater(() -> {
+            switch (property) {
+                case ButtonModel.PROP_SCRIPT:
+                    try {
+                        compile();
+                    } catch (HtSemanticException e) {
+                        RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                    }
+                    break;
+                case ButtonModel.PROP_TITLE:
+                    setText(newValue.toString());
+                    break;
+                case ButtonModel.PROP_TOP:
+                case ButtonModel.PROP_LEFT:
+                case ButtonModel.PROP_WIDTH:
+                case ButtonModel.PROP_HEIGHT:
+                    setBounds(partModel.getRect());
+                    validate();
+                    repaint();
+                    break;
+                case ButtonModel.PROP_VISIBLE:
+                    setVisible(newValue.booleanValue());
+                    break;
+                case ButtonModel.PROP_ENABLED:
+                    setEnabled(newValue.booleanValue());
+                    break;
+                case ButtonModel.PROP_SHOWTITLE:
+                    if (newValue.booleanValue())
+                        setText(partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+                    else
+                        setText("");
+                    break;
+            }
+        });
     }
 }

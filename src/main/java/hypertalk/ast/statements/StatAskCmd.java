@@ -16,7 +16,7 @@ import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class StatAskCmd extends Statement {
 
@@ -42,38 +42,43 @@ public class StatAskCmd extends Statement {
 	
 	private void ask (Value question, Value suggestion) {
 
-		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
-		
-		String result = (String)JOptionPane.showInputDialog(
-		                    parent,
-		                    question,
-		                    "Ask",
-		                    JOptionPane.PLAIN_MESSAGE,
-		                    null,
-		                    null,
-		                    suggestion);		
+		SwingUtilities.invokeLater(() -> {
+            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 
-		if (result == null)
-			result = "";
-		
-		GlobalContext.getContext().setIt(new Value(result));
+            String result = (String)JOptionPane.showInputDialog(
+                    parent,
+                    question,
+                    "Ask",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    suggestion);
+
+            if (result == null)
+                result = "";
+
+            GlobalContext.getContext().setIt(new Value(result));
+        });
 	}
 	
 	private void ask (Value question) {
-		Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
-		
-		String result = (String)JOptionPane.showInputDialog(
-		                    parent,
-		                    question,
-		                    "Ask",
-		                    JOptionPane.PLAIN_MESSAGE,
-		                    null,
-		                    null,
-		                    "");				
-		
-		if (result == null)
-			result = "";
-		
-		GlobalContext.getContext().setIt(new Value(result));
-	}	
+
+		SwingUtilities.invokeLater(() -> {
+            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
+
+            String result = (String)JOptionPane.showInputDialog(
+                    parent,
+                    question,
+                    "Ask",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    "");
+
+            if (result == null)
+                result = "";
+
+            GlobalContext.getContext().setIt(new Value(result));
+        });
+	}
 }

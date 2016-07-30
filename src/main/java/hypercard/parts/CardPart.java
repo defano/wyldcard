@@ -8,12 +8,14 @@
 
 package hypercard.parts;
 
+import hypercard.context.PartsTable;
 import hypercard.gui.menu.context.CardContextMenu;
 import hypercard.parts.model.ButtonModel;
 import hypercard.parts.model.CardModel;
 import hypercard.parts.model.FieldModel;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.RuntimeEnv;
+import hypertalk.ast.common.PartType;
 import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
@@ -24,6 +26,9 @@ import java.awt.event.MouseListener;
 public class CardPart extends JPanel implements MouseListener {
 
     private CardModel model;
+
+    private PartsTable<FieldPart> fields = new PartsTable<>();
+    private PartsTable<ButtonPart> buttons = new PartsTable<>();
 
     private CardPart() {
         super();
@@ -41,10 +46,12 @@ public class CardPart extends JPanel implements MouseListener {
             switch (thisPart.getType()) {
                 case BUTTON:
                     ButtonPart button = ButtonPart.fromModel(card, (ButtonModel) thisPart);
+                    card.buttons.addPart(button);
                     card.addSwingComponent(button, button.getRect());
                     break;
                 case FIELD:
                     FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
+                    card.fields.addPart(field);
                     card.addSwingComponent(field, field.getRect());
                     default:
             }
@@ -55,31 +62,39 @@ public class CardPart extends JPanel implements MouseListener {
 
     public void partOpened() {
         this.setComponentPopupMenu(new CardContextMenu(this));
-        model.sendPartOpened();
     }
 
     public void addField(FieldPart field) throws PartException {
         model.addPart(field);
+        fields.addPart(field);
         addSwingComponent(field, field.getRect());
     }
 
     public void removeField(FieldPart field) {
         model.removePart(field);
+        fields.removePart(field);
         removeSwingComponent(field);
     }
 
     public void addButton(ButtonPart button) throws PartException {
         model.addPart(button);
+        buttons.addPart(button);
         addSwingComponent(button, button.getRect());
     }
 
     public void removeButton(ButtonPart button) {
         model.removePart(button);
+        buttons.removePart(button);
         removeSwingComponent(button);
     }
 
     public Part getPart(PartSpecifier ps) throws PartException {
-        return model.getPart(ps);
+        if (ps.type() == PartType.FIELD)
+            return fields.getPart(ps);
+        else if (ps.type() == PartType.BUTTON)
+            return buttons.getPart(ps);
+        else
+            throw new RuntimeException("Unhandled part type");
     }
 
     private void removeSwingComponent (Component component) {
@@ -95,12 +110,12 @@ public class CardPart extends JPanel implements MouseListener {
         repaint();
     }
 
-    public int nextButtonId() {
-        return model.nextButtonId();
+    public int nextFieldId () {
+        return fields.getNextId();
     }
 
-    public int nextFieldId() {
-        return model.nextFieldId();
+    public int nextButtonId () {
+        return buttons.getNextId();
     }
 
     @Override
