@@ -25,63 +25,66 @@ public class Value {
 	private final String value;
 
 	// Cache for known value types
-	private Integer intValue;
-	private Float floatValue;
-	private Boolean booleanValue;
+	private final Integer intValue;
+	private final Float floatValue;
+	private final Boolean booleanValue;
 	
 	public Value () {
-		value = "";
-		parse();
+        this("");
 	}
 	
 	public Value (Object v) {
-
-        if (v == null)
-            value = "(null)";
-        else
-            value = v.toString();
-        
-		parse();
+        this(String.valueOf(v));
 	}
 	
 	public Value (int v) {
-		value = String.valueOf(v);
-		parse();
+		this(String.valueOf(v));
 	}
 	
 	public Value (float f) {
-		value = String.valueOf(f);
-		parse();
+		this(String.valueOf(f));
 	}
 	
 	public Value (boolean v) {
-		value = String.valueOf(v);
-		parse();
+		this(String.valueOf(v));
 	}
-	
-	private void parse () {		
-		try {
-			intValue = Integer.parseInt(value.trim());
-		} catch (NumberFormatException e) {
-			intValue = null;
-		}
 
-		try {
-			floatValue = Float.parseFloat(value.trim());
-		} catch (NumberFormatException e) {
-			floatValue = null;
-		}
-		
-		if (value.trim().equalsIgnoreCase("true") || value.trim().equalsIgnoreCase("false")) {
-			booleanValue = Boolean.parseBoolean(value);
-		}
+    public Value (String value) {
+        this.value = value;
 
-		// Special case: empty string is a valid int and float
-		if (value.trim().equals("")) {
-			intValue = 0;
-			floatValue = 0.0f;
-		}
-	}
+        // Special case: empty string is a valid int and float
+        if (value.trim().equals("")) {
+            intValue = 0;
+            floatValue = 0.0f;
+            booleanValue = null;
+        }
+
+        else {
+            Integer i;
+            Float f;
+
+            try {
+                i = Integer.parseInt(value.trim());
+            } catch (NumberFormatException e) {
+                i = null;
+            }
+
+            try {
+                f = Float.parseFloat(value.trim());
+            } catch (NumberFormatException e) {
+                f = null;
+            }
+
+            if (value.trim().equalsIgnoreCase("true") || value.trim().equalsIgnoreCase("false")) {
+                booleanValue = Boolean.parseBoolean(value);
+            } else {
+                booleanValue = null;
+            }
+
+            intValue = i;
+            floatValue = f;
+        }
+    }
 	
 	public boolean isInteger () {
 		return intValue != null;
@@ -176,17 +179,7 @@ public class Value {
 		if (endVal != null)
 			endIdx = endVal.integerValue();
 		
-		switch (c.type) {
-		case CHAR:		return new Value(ChunkUtils.getChar(value, startIdx));
-		case WORD:		return new Value(ChunkUtils.getWord(value, startIdx));
-		case ITEM:		return new Value(ChunkUtils.getItem(value, startIdx));
-		case LINE:		return new Value(ChunkUtils.getLine(value, startIdx));
-		case CHARRANGE:	return new Value(ChunkUtils.getCharRange(value, startIdx, endIdx));
-		case WORDRANGE:	return new Value(ChunkUtils.getWordRange(value, startIdx, endIdx));
-		case ITEMRANGE: return new Value(ChunkUtils.getItemRange(value, startIdx, endIdx));
-		case LINERANGE:	return new Value(ChunkUtils.getLineRange(value, startIdx, endIdx));
-		default: throw new RuntimeException("Value.chunkValue()| Unhandled chunk type");
-		}
+		return new Value(ChunkUtils.getChunk(c.type, value, startIdx, endIdx));
 	}
 
 	public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtSemanticException {
@@ -214,19 +207,7 @@ public class Value {
 		if (endVal != null)
 			endIdx = endVal.integerValue();
 		
-		switch (c.type) {
-		case CHAR:		mutableString = ChunkUtils.setChar(p, mutableString, startIdx, mutatorString); break;
-		case WORD:		mutableString = ChunkUtils.setWord(p, mutableString, startIdx, mutatorString); break;
-		case ITEM:		mutableString = ChunkUtils.setItem(p, mutable, startIdx, mutatorString); break;
-		case LINE: 		mutableString = ChunkUtils.setLine(p, mutableString, startIdx, mutatorString); break;
-		case CHARRANGE:	mutableString = ChunkUtils.setCharRange(p, mutableString, startIdx, endIdx, mutatorString); break;
-		case WORDRANGE:	mutableString = ChunkUtils.setWordRange(p, mutableString, startIdx, endIdx, mutatorString); break;
-		case ITEMRANGE: mutableString = ChunkUtils.setItemRange(p, mutable, startIdx, endIdx, mutatorString); break;
-		case LINERANGE:	mutableString = ChunkUtils.setLineRange(p, mutableString, startIdx, endIdx, mutatorString); break;
-		default: throw new RuntimeException("Value.setChunk()| Unhandled chunk type");
-		}
-		
-		return new Value(mutableString);
+		return new Value(ChunkUtils.putChunk(c.type, p, mutableString, startIdx, endIdx, mutatorString));
 	}
 	
 	public static Value setValue (Value mutable, Preposition p, Value mutator) {
