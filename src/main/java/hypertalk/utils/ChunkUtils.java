@@ -95,6 +95,20 @@ public class ChunkUtils {
         }
     }
 
+
+    /**
+     * Gets the number of chunks of the specified type that exist in value.
+     *
+     * @param chunkType The type of chunk to count; characters, words, lines or items.
+     * @param value The value whose chunks are to be counted.
+     * @return The number of found chunks
+     */
+    public static int getCount(ChunkType chunkType, String value) {
+        Pattern pattern = getRegexForChunkType(chunkType);
+        Matcher matcher = pattern.matcher(value);
+        return getMatchCount(matcher);
+    }
+
     protected static String putChar(Preposition p, String value, int charIdx, String replacement) {
         switch (p) {
             case BEFORE:
@@ -311,8 +325,11 @@ public class ChunkUtils {
             case ITEM:
                 StringBuilder patternBuilder = new StringBuilder();
 
+                // Match empty item in first position (i.e., ",2,3" -- item 3 is '3')
+                patternBuilder.append("^(?=").append(itemDelim).append(")|");
+
                 // Match empty item in last position (i.e., "1,2,3," -- item 4 is '')
-                patternBuilder.append("$|");
+                patternBuilder.append("(?<=").append(itemDelim).append(")$|");
 
                 // Match empty item mid-list (i.e., "1,,2,3" -- item 2 is '')
                 patternBuilder.append("(?<=").append(itemDelim).append(")(?=").append(itemDelim).append(")|");

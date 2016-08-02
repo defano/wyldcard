@@ -1,5 +1,6 @@
 package hypertalk.utils;
 
+import hypertalk.ast.common.ChunkType;
 import hypertalk.ast.common.Ordinal;
 import hypertalk.ast.containers.Preposition;
 import org.junit.Test;
@@ -188,6 +189,13 @@ public class TestChunkUtils {
         assertEquals("", ChunkUtils.getItem(",", 1));
         assertEquals("", ChunkUtils.getItem(",", 2));
         assertEquals("I1", ChunkUtils.getItem("I1", 1));
+
+        assertEquals(0, ChunkUtils.getCount(ChunkType.ITEM, ""));
+        assertEquals(1, ChunkUtils.getCount(ChunkType.ITEM, "1"));
+        assertEquals(2, ChunkUtils.getCount(ChunkType.ITEM, "1,2"));
+        assertEquals(3, ChunkUtils.getCount(ChunkType.ITEM, "1,2,"));
+        assertEquals(4, ChunkUtils.getCount(ChunkType.ITEM, ",2,3,4"));
+
     }
 
 }

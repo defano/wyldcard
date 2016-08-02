@@ -141,19 +141,19 @@ public class Value {
 	}
 	
 	public int itemCount () {
-		return listValue().size();
+		return ChunkUtils.getCount(ChunkType.ITEM, value);
 	}
 	
 	public int wordCount () {
-		return value.split("\\s").length;
+		return ChunkUtils.getCount(ChunkType.WORD, value);
 	}
 	
 	public int charCount () {
-		return value.split("").length - 1;
+		return ChunkUtils.getCount(ChunkType.CHAR, value);
 	}
 	
 	public int lineCount () {
-		return value.split("\n").length;
+		return ChunkUtils.getCount(ChunkType.LINE, value);
 	}
 	
 	public Value getChunk (Chunk c) throws HtSemanticException {
