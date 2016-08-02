@@ -182,7 +182,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
 
     @Override
     public Value getValue() {
-        return new Value(text.getText());
+        return partModel.getKnownProperty(FieldModel.PROP_TEXT);
     }
 
     private void compile() throws HtSemanticException {
