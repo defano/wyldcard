@@ -535,6 +535,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCompositeChunk(HyperTalkParser.CompositeChunkContext ctx) {
+        Chunk lChunk = (Chunk) visit(ctx.chunk(0));
+        Chunk rChunk = (Chunk) visit(ctx.chunk(1));
+        return new CompositeChunk(rChunk.type, rChunk.start, rChunk.end, lChunk);
+    }
+
+    @Override
     public Object visitChunkVariableDest(HyperTalkParser.ChunkVariableDestContext ctx) {
         return new ContainerVariable((String) visit(ctx.ID()), (Chunk) visit(ctx.chunk()));
     }

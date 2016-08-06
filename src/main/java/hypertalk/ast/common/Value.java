@@ -157,7 +157,7 @@ public class Value {
 	}
 	
 	public Value getChunk (Chunk c) throws HtSemanticException {
-		
+
 		Value startVal = null;
 		Value endVal = null;
 		
@@ -178,8 +178,16 @@ public class Value {
 			startIdx = startVal.integerValue();		
 		if (endVal != null)
 			endIdx = endVal.integerValue();
-		
-		return new Value(ChunkUtils.getChunk(c.type, value, startIdx, endIdx));
+
+		Value chunkValue = new Value(ChunkUtils.getChunk(c.type, value, startIdx, endIdx));
+
+		// If a composite chunk; evaluate right hand of the expression first
+		if (c instanceof CompositeChunk) {
+			return chunkValue.getChunk(((CompositeChunk) c).chunkOf);
+		} else {
+			return chunkValue;
+		}
+
 	}
 
 	public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtSemanticException {
@@ -206,8 +214,16 @@ public class Value {
 			startIdx = startVal.integerValue();
 		if (endVal != null)
 			endIdx = endVal.integerValue();
-		
-		return new Value(ChunkUtils.putChunk(c.type, p, mutableString, startIdx, endIdx, mutatorString));
+
+		Value chunkValue = new Value(ChunkUtils.putChunk(c.type, p, mutableString, startIdx, endIdx, mutatorString));
+
+		if (c instanceof CompositeChunk) {
+			CompositeChunk compositeChunk = (CompositeChunk) c;
+			return new Value(setChunk(chunkValue, Preposition.INTO, new Chunk(compositeChunk.type, compositeChunk.start, compositeChunk.end), mutable));
+		} else {
+			return chunkValue;
+		}
+
 	}
 	
 	public static Value setValue (Value mutable, Preposition p, Value mutator) {

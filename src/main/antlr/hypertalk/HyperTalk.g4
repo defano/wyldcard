@@ -168,7 +168,8 @@ preposition			: 'before'                                      # beforePrepositio
                     | 'into'                                        # intoPreposition
                     ;
 
-chunk               : ordinal CHAR 'of'                             # ordinalCharChunk
+chunk               : chunk chunk                                   # CompositeChunk
+                    | ordinal CHAR 'of'                             # ordinalCharChunk
                     | CHAR expression 'to' expression 'of'          # rangeCharChunk
                     | CHAR expression 'of'                          # charCharChunk
                     | ordinal WORD 'of'                             # ordinalWordChunk
