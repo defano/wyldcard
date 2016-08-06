@@ -187,10 +187,14 @@ public class Value {
 		} else {
 			return chunkValue;
 		}
-
 	}
 
 	public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtSemanticException {
+
+		if (c instanceof CompositeChunk) {
+			return new Value(ChunkUtils.putCompositeChunk((CompositeChunk) c, p, mutable.stringValue(), String.valueOf(mutator)));
+		}
+
 		String mutatorString = mutator.toString();
 		String mutableString = mutable.toString();
 
@@ -215,15 +219,7 @@ public class Value {
 		if (endVal != null)
 			endIdx = endVal.integerValue();
 
-		Value chunkValue = new Value(ChunkUtils.putChunk(c.type, p, mutableString, startIdx, endIdx, mutatorString));
-
-		if (c instanceof CompositeChunk) {
-			CompositeChunk compositeChunk = (CompositeChunk) c;
-			return new Value(setChunk(chunkValue, Preposition.INTO, new Chunk(compositeChunk.type, compositeChunk.start, compositeChunk.end), mutable));
-		} else {
-			return chunkValue;
-		}
-
+		return new Value(ChunkUtils.putChunk(c.type, p, mutableString, startIdx, endIdx, mutatorString));
 	}
 	
 	public static Value setValue (Value mutable, Preposition p, Value mutator) {

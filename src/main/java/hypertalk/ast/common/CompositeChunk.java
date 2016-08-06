@@ -10,4 +10,16 @@ public class CompositeChunk extends Chunk {
         super(type, start, end);
         this.chunkOf = chunkOf;
     }
+
+    public ChunkType getMutatedChunkType () {
+        return getMutatedChunkType(this);
+    }
+
+    public static ChunkType getMutatedChunkType (Chunk c) {
+        if (c instanceof CompositeChunk) {
+            return getMutatedChunkType(((CompositeChunk) c).chunkOf);
+        } else {
+            return c.type;
+        }
+    }
 }
