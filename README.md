@@ -229,7 +229,7 @@ on mouseUp
 end mouseUp
 ```
 
-### Expressions
+### Chunk Expressions
 
 HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can access or mutate a range of words, characters, lines, or comma-delimited items in a value. Chunks may be specified numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
 
@@ -266,37 +266,47 @@ put "blah" after the third character of the middle item of myVar
 put 29 before the message box
 ```
 
+Perhaps most impressively, HyperTalk allows you to modify a chunk of a chunk of text within a container. For example:
+
+```
+put x into the second character of the third word of the fourth line of field id 1
+put "not!" into the last word of the second item of "I'm cool,You're cool"
+put the first char of the second word of x into the middle item of the last line of y
+```
+
+## Arithmetic and Logical Expressions
+
 In addition to chunk expressions, HyperTalk supports a typical suite of math, string and logical operators, including the following (all operators are binary, excepted where otherwise noted):
 
-Precedence | Operator | Description
------------|----------| ----------------------------------------------------------------------
-1 (highest) | `( )` | Grouping
-2 | `-` | Negation for numbers (unary)
-  | `not`	| Negation for boolean values (unary)
-3 | `^` | Exponentiation for numbers
-4 | `*` | Multiplication for numbers
-  | `/` | Division for numbers
-  | `div`	| Division for numbers
-  | `mod`	| Modulus division for numbers; returns the remainder
-5 | `+` | Addition for numbers
-  | `-` | Subtraction for numbers
-6 | `&`, `&&` | Text concatenation; & and && are synonymous
-7 | `>` | Greater than comparison for numbers and text
-  | `<` | Less than comparison for numbers and text
-  | `<=` | Less than or equal to comparison for numbers and text
-  | `>=` | Greater than or equal to comparison for numbers and text
-  | `contains` | Substring comparison for text
-8 | `=` | Equality comparison for text
-  | `is` | Equality comparison for text
-  | `is not` | Negative equality comparison for text
-  | `<>`	| Synonym for is not
-9 | `and` | Logical AND for boolean values
-10 (lowest) |  `or` | Logical OR for boolean values
+Precedence  | Operator   | Description
+------------| -----------|-------------
+1 (highest) | `( )`      | Grouping
+2           | `-`        | Negation for numbers (unary)
+            | `not`	     | Negation for boolean values (unary)
+3           | `^`        | Exponentiation for numbers
+4           | `*`        | Multiplication for numbers
+            | `/`        | Division for numbers
+            | `div`	     | Division for numbers
+            | `mod`	     | Modulus division for numbers; returns the remainder
+5           | `+`        | Addition for numbers
+            | `-`        | Subtraction for numbers
+6           | `&`, `&&`  | Text concatenation; & and && are synonymous
+7           | `>`        | Greater than comparison for numbers and text
+            | `<`        | Less than comparison for numbers and text
+            | `<=`       | Less than or equal to comparison for numbers and text
+            | `>=`       | Greater than or equal to comparison for numbers and text
+            | `contains` | Substring comparison for text
+8           | `=`        | Equality comparison for text
+            | `is`       | Equality comparison for text
+            | `is not`   | Negative equality comparison for text
+            | `<>`	     | Synonym for is not
+9           | `and`      | Logical AND for boolean values
+10 (lowest) |  `or`      | Logical OR for boolean values
 
 HyperCard evaluates factors and terms in the expression in the following order (top to bottom):
 
-Term | Description
------|------------
+Term                    | Description
+------------------------|------------
 `empty`                 | Keyword expression representing the empty string
 _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
 _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
@@ -390,25 +400,25 @@ end repeat
 
 HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
 
-When executing a built-in function, the syntax is `[the] <function> [of <argument> [in <factor>]]`. This implementation includes the following built-in functions:
+There are several equivalent syntax forms that can be used when invoking a built in function. For functions that accept an argument: `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`. For functions that don't take an argument, `[the] <function>`.
+
+This implementation includes the following built-in functions:
 
 Function | Description
 ---------|-------------
-`average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` returns "3.0"
+`average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
 `mouse` | Returns the current state of the left mouse button; either "up" or "down"
 `mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
-`number` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
-`result` | Returns the current value of the implicit variable it, for example: `the result`
+`number of words` <br> `number of chars` <br> `number of lines` <br> `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
+`result` | Returns the current value of the implicit variable `it`, for example: `the result`
 `message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`
-`min(`_number-list_`)` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
-`max(`_number-list_`)` | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
+`min` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
+`max` | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
 `date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields 07/04/16.
 `long date` | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
 `abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
 `seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
-
-
 
 A user may define a function of their own creation anywhere inside of a script, but keep in mind that functions cannot be nested and cannot be accessed outside of the script in which they're defined.
 
@@ -421,7 +431,9 @@ function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
 end <functionName>
 ```
 
-When calling a user defined function, the syntax is `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique identifier.
+When calling a user defined function, the syntax is `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition and a user-defined function cannot be invoked with the `the <function> of` syntax, regardless of the number of parameters.
+
+HyperTalk does not support function overloading; each function defined in a script must have a unique name.
 
 For example:
 

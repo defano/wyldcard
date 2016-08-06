@@ -168,19 +168,19 @@ preposition			: 'before'                                      # beforePrepositio
                     | 'into'                                        # intoPreposition
                     ;
 
-chunk               : chunk chunk                                   # CompositeChunk
-                    | ordinal CHAR 'of'                             # ordinalCharChunk
-                    | CHAR expression 'to' expression 'of'          # rangeCharChunk
-                    | CHAR expression 'of'                          # charCharChunk
-                    | ordinal WORD 'of'                             # ordinalWordChunk
-                    | WORD expression 'to' expression 'of'          # rangeWordChunk
-                    | WORD expression 'of'                          # wordWordChunk
-                    | ordinal ITEM 'of'                             # ordinalItemChunk
-                    | ITEM expression 'to' expression 'of'          # rangeItemChunk
-                    | ITEM expression 'of'                          # itemItemChunk
-                    | ordinal 'line of'                             # ordinalLineChunk
-                    | LINE expression 'to' expression 'of'          # rangeLineChunk
-                    | LINE expression 'of'                          # lineLineChunk
+chunk               : chunk chunk                                   # compositeChunk
+                    | ordinal CHAR OF_IN                            # ordinalCharChunk
+                    | CHAR expression 'to' expression OF_IN         # rangeCharChunk
+                    | CHAR expression OF_IN                         # charCharChunk
+                    | ordinal WORD OF_IN                            # ordinalWordChunk
+                    | WORD expression 'to' expression OF_IN         # rangeWordChunk
+                    | WORD expression OF_IN                         # wordWordChunk
+                    | ordinal ITEM OF_IN                            # ordinalItemChunk
+                    | ITEM expression 'to' expression OF_IN         # rangeItemChunk
+                    | ITEM expression OF_IN                         # itemItemChunk
+                    | ordinal 'line' OF_IN                          # ordinalLineChunk
+                    | LINE expression 'to' expression OF_IN         # rangeLineChunk
+                    | LINE expression OF_IN                         # lineLineChunk
                     ;
 
 container			: ID                                            # variableDest
@@ -259,8 +259,7 @@ factor				: literal                                       # literalFactor
                     | propertySpec                                  # idOfPartFactor
                     ;
 
-builtinFunc         : 'the'? twoArgFunc 'in' factor                 # builtinFuncTwoArgs
-                    | 'the'? oneArgFunc 'of' factor                 # builtinFuncOneArgs
+builtinFunc         : 'the'? oneArgFunc OF_IN factor                # builtinFuncOneArgs
                     | 'the' noArgFunc                               # builtinFuncNoArg
                     | oneArgFunc '(' argumentList ')'               # builtinFuncArgList
                     ;
@@ -268,12 +267,10 @@ builtinFunc         : 'the'? twoArgFunc 'in' factor                 # builtinFun
 oneArgFunc          : 'average'                                     # averageFunc
                     | 'min'                                         # minFunc
                     | 'max'                                         # maxFunc
-                    ;
-
-twoArgFunc          : 'number of' CHAR                              # numberOfCharsFunc
-                    | 'number of' WORD                              # numberOfWordsFunc
-                    | 'number of' ITEM                              # numberOfItemsFunc
-                    | 'number of' LINE                              # numberOfLinesFunc
+                    | 'number' OF_IN CHAR                           # numberOfCharsFunc
+                    | 'number' OF_IN WORD                           # numberOfWordsFunc
+                    | 'number' OF_IN ITEM                           # numberOfItemsFunc
+                    | 'number' OF_IN LINE                           # numberOfLinesFunc
                     ;
 
 noArgFunc           : 'mouse'                                       # mouseFunc
@@ -301,6 +298,7 @@ literal				: STRING_LITERAL                                # stringLiteral
                     ;
 
 THEN				: NEWLINE 'then' | 'then';
+OF_IN               : 'of';
 
 FIELD               : 'field'  | 'card field';
 BUTTON              : 'button' | 'card button';
