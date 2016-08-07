@@ -30,7 +30,7 @@ public class ChunkUtils {
      *                       counting from 1, not zero. For range-chunk queries, the first requested chunk in the range,
      *                       inclusive (i.e., words 1 to 3; chunkNumber = 1)
      * @param endChunkNumber Ignored in single-chunk queries. In range-chunk queries the last requested chunk in the
-     *                       range, inclusive (i.e., lines 9 to 13; chunkNumber = 0, endChunkNumber = 13)
+     *                       range, inclusive (i.e., lines 9 to 13; chunkNumber = 9, endChunkNumber = 13)
      * @return The requested chunk.
      */
     public static String getChunk(ChunkType c, String value, int chunkNumber, int endChunkNumber) {
@@ -56,7 +56,7 @@ public class ChunkUtils {
      *                       counting from 1, not zero. For range-chunk queries, the first requested chunk in the range,
      *                       inclusive (i.e., words 1 to 3; chunkNumber = 1)
      * @param endChunkNumber Ignored in single-chunk queries. In range-chunk queries the last requested chunk in the
-     *                       range, inclusive (i.e., lines 9 to 13; chunkNumber = 0, endChunkNumber = 13)
+     *                       range, inclusive (i.e., lines 9 to 13; chunkNumber = 9, endChunkNumber = 13)
      * @param mutatorString  The string value that will be inserted into the mutableString.
      * @return The string resulting from this put operation.
      * @see #putCompositeChunk(CompositeChunk, Preposition, String, String)
@@ -88,7 +88,7 @@ public class ChunkUtils {
             case BEFORE:
                 return insertBefore(mutableString, c.getMutatedChunkType(), s, mutatorString);
             case INTO:
-                return replace(mutableString, c.getMutatedChunkType(), s, mutatorString);
+                return replace(mutableString, s, mutatorString);
             case AFTER:
                 return insertAfter(mutableString, c.getMutatedChunkType(), s, mutatorString);
             default:
@@ -232,7 +232,7 @@ public class ChunkUtils {
         return value.substring(0, range.end) + getSeparatorForChunkType(delimiter) + replacement + value.substring(range.end);
     }
 
-    private static String replace(String value, ChunkType delimiter, Range range, String replacement) {
+    private static String replace(String value, Range range, String replacement) {
         return value.substring(0, range.start) + replacement + value.substring(range.end);
     }
 
