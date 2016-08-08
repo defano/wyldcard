@@ -11,6 +11,7 @@ package hypercard.runtime;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import hypercard.context.GlobalContext;
 import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.MessageWindow;
 import hypercard.gui.window.StackWindow;
@@ -42,6 +43,7 @@ public class RuntimeEnv implements StackModelObserver {
 	private boolean mouseIsDown;
 
 	private ExecutorService scriptExecutor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
+	private ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
 
 	public static void main(String argv[]) {
 		// Display the frame's menu as the Mac OS menubar
@@ -175,6 +177,17 @@ public class RuntimeEnv implements StackModelObserver {
 
 	public String getMsgBoxText() {
 		return messageWindow.getMsgBoxText();
+	}
+
+	public void doMsgBoxText() {
+		messageBoxExecutor.submit((Runnable) () -> {
+            try {
+                Interpreter.execute(null, getMsgBoxText()).get();
+                RuntimeEnv.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
+            } catch (Exception e) {
+                RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+            }
+        });
 	}
 
 	public void dialogSyntaxError(Exception e) {

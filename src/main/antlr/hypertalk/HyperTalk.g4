@@ -178,7 +178,7 @@ chunk               : chunk chunk                                   # compositeC
                     | ordinal ITEM OF_IN                            # ordinalItemChunk
                     | ITEM expression 'to' expression OF_IN         # rangeItemChunk
                     | ITEM expression OF_IN                         # itemItemChunk
-                    | ordinal 'line' OF_IN                          # ordinalLineChunk
+                    | ordinal LINE OF_IN                          # ordinalLineChunk
                     | LINE expression 'to' expression OF_IN         # rangeLineChunk
                     | LINE expression OF_IN                         # lineLineChunk
                     ;
@@ -194,7 +194,7 @@ container			: ID                                            # variableDest
                     |                                               # defaultDest
                     ;
 
-propertySpec        : 'the' ID 'of' part
+propertySpec        : 'the' ID OF_IN part
                     ;
 
 part                : FIELD factor                                  # fieldPart
@@ -298,7 +298,7 @@ literal				: STRING_LITERAL                                # stringLiteral
                     ;
 
 THEN				: NEWLINE 'then' | 'then';
-OF_IN               : 'of';
+OF_IN               : 'of' | 'in';
 
 FIELD               : 'field'  | 'card field';
 BUTTON              : 'button' | 'card button';

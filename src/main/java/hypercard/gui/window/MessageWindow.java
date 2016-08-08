@@ -49,12 +49,7 @@ public class MessageWindow implements HyperCardWindow {
     }
 
     private void executeMessageBox() {
-        try {
-            Interpreter.execute(null, messageBox.getText()).get();
-            RuntimeEnv.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
-        } catch (Exception e) {
-            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
-        }
+        RuntimeEnv.getRuntimeEnv().doMsgBoxText();
     }
 
     {

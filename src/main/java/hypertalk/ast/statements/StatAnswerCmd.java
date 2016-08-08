@@ -14,6 +14,7 @@ import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
+import java.util.concurrent.CountDownLatch;
 
 import javax.swing.*;
 
@@ -65,10 +66,23 @@ public class StatAnswerCmd extends Statement {
 	
 	private void answer (Value msg, Value choice1, Value choice2, Value choice3) {
 
-		SwingUtilities.invokeLater(() -> {
-            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
+		CountDownLatch latch = new CountDownLatch(1);
 
-            Object[] choices = {choice1, choice2, choice3};
+		SwingUtilities.invokeLater(() -> {
+			System.err.println("HERE ON " + Thread.currentThread().getName());
+            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
+            Object[] choices = null;
+
+			if (choice1 != null && choice2 != null && choice3 != null) {
+				choices = new Object[]{choice1, choice2, choice3};
+			}
+			else if (choice1 != null && choice2 != null) {
+				choices = new Object[]{choice1, choice2};
+			}
+			else if (choice1 != null) {
+				choices = new Object[]{choice1};
+			}
+
             int choice = JOptionPane.showOptionDialog(parent, msg, "Answer",
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 
@@ -78,52 +92,27 @@ public class StatAnswerCmd extends Statement {
                 case 2: 	GlobalContext.getContext().setIt(choice3); break;
                 default: 	GlobalContext.getContext().setIt(new Value()); break;
             }
+
+			latch.countDown();
         });
+
+		try {
+			System.err.print("WAITING ON " + Thread.currentThread().getName());
+			latch.await();
+		} catch (InterruptedException e) {
+			Thread.interrupted();
+		}
 	}
 
 	private void answer (Value msg, Value choice1, Value choice2) {
-
-		SwingUtilities.invokeLater(() -> {
-            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
-
-            Object[] choices = {choice1, choice2};
-            int choice = JOptionPane.showOptionDialog(parent, msg, "Answer",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-
-            switch (choice) {
-                case 0: 	GlobalContext.getContext().setIt(choice1); break;
-                case 1: 	GlobalContext.getContext().setIt(choice2); break;
-                default: 	GlobalContext.getContext().setIt(new Value()); break;
-            }
-        });
+		answer(msg, choice1, choice2, null);
 	}
 	
 	private void answer (Value msg, Value choice1) {
-
-		SwingUtilities.invokeLater(() -> {
-            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
-
-            Object[] choices = {choice1};
-            int choice = JOptionPane.showOptionDialog(parent, msg, "Answer",
-                    JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-
-            if (choice == 0)
-                GlobalContext.getContext().setIt(choice1);
-            else
-                GlobalContext.getContext().setIt(new Value());
-        });
+		answer(msg, choice1, null, null);
 	}
 	
 	private void answer (Value msg) {
-
-		SwingUtilities.invokeLater(() -> {
-            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
-
-            Object[] choices = {"OK"};
-            JOptionPane.showOptionDialog(parent, msg, "Answer",
-                    JOptionPane.YES_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-
-            GlobalContext.getContext().setIt(new Value());
-        });
+		answer(msg, new Value("OK"), null, null);
 	}
 }
