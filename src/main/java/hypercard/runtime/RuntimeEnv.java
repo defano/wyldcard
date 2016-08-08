@@ -179,8 +179,7 @@ public class RuntimeEnv implements StackModelObserver {
 
 	public void dialogSyntaxError(Exception e) {
 		e.printStackTrace();
-		JOptionPane.showMessageDialog(stackWindow.getWindowPanel(),
-				"Syntax error: " + e.getMessage());
+		SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(stackWindow.getWindowPanel(), e.getMessage()));
 	}
 
 	@Override
