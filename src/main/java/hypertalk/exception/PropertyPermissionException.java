@@ -9,7 +9,7 @@ package hypertalk.exception;
 
 public class PropertyPermissionException extends HtException {
 
-	public PropertyPermissionException (String message) {
-		super(message);
-	}
+    public PropertyPermissionException (String message) {
+        super(message);
+    }
 }

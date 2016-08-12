@@ -14,19 +14,19 @@ import hypertalk.exception.HtSemanticException;
 
 public class StatSetCmd extends Statement {
 
-	public final Expression expression;
-	public final PropertySpecifier propertySpec;
+    public final Expression expression;
+    public final PropertySpecifier propertySpec;
 
-	public StatSetCmd (PropertySpecifier propertySpec, Expression expression) {
-		this.propertySpec = propertySpec;
-		this.expression = expression;
-	}
-	
-	public void execute () throws HtSemanticException {
-		try {
-			GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
-		} catch (Exception e) {
-			throw new HtSemanticException(e);
-		}
-	}
+    public StatSetCmd (PropertySpecifier propertySpec, Expression expression) {
+        this.propertySpec = propertySpec;
+        this.expression = expression;
+    }
+    
+    public void execute () throws HtSemanticException {
+        try {
+            GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
+        } catch (Exception e) {
+            throw new HtSemanticException(e);
+        }
+    }
 }

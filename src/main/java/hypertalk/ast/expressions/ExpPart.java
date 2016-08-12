@@ -12,5 +12,5 @@ import hypertalk.exception.HtSemanticException;
 
 public abstract class ExpPart extends Expression {
 
-	public abstract PartSpecifier evaluateAsSpecifier () throws HtSemanticException;
+    public abstract PartSpecifier evaluateAsSpecifier () throws HtSemanticException;
 }

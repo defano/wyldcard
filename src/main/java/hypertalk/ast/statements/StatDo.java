@@ -13,13 +13,13 @@ import hypertalk.exception.HtException;
 
 public class StatDo extends Statement {
 
-	public final Expression script;
-	
-	public StatDo(Expression script) {
-		this.script = script;
-	}
-	
-	public void execute () throws HtException {
-		Interpreter.execute(null, script.evaluate().toString());
-	}
+    public final Expression script;
+    
+    public StatDo(Expression script) {
+        this.script = script;
+    }
+    
+    public void execute () throws HtException {
+        Interpreter.execute(null, script.evaluate().toString());
+    }
 }

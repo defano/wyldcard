@@ -12,11 +12,11 @@ import hypertalk.exception.HtSemanticException;
 
 public class Statement {
 
-	// Set by a return statement to indicate that the remainder of the statement
-	// list should not execute. 
-	public boolean breakExecution = false;
-	
-	public void execute() throws HtException {
-		throw new HtSemanticException("Unimplemented execution for statement");
-	}
+    // Set by a return statement to indicate that the remainder of the statement
+    // list should not execute. 
+    public boolean breakExecution = false;
+    
+    public void execute() throws HtException {
+        throw new HtSemanticException("Unimplemented execution for statement");
+    }
 }

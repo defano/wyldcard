@@ -13,7 +13,7 @@ import java.io.File;
 
 public class CardFileChooser extends JFileChooser {
 
-	private class CardFileFilter extends FileFilter {
+    private class CardFileFilter extends FileFilter {
         
         public boolean accept(File f) {
             return f.getName().endsWith(".card") || f.isDirectory();

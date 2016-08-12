@@ -14,17 +14,17 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpProperty extends Expression {
 
-	public final PropertySpecifier propertySpecifier;
+    public final PropertySpecifier propertySpecifier;
 
-	public ExpProperty (PropertySpecifier propertySpecifier) {
-		this.propertySpecifier = propertySpecifier;
-	}
-	
-	public Value evaluate () throws HtSemanticException {
-		try {
-			return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
-		} catch (Exception e) {
-			throw new HtSemanticException(e.getMessage());
-		}
-	}	
+    public ExpProperty (PropertySpecifier propertySpecifier) {
+        this.propertySpecifier = propertySpecifier;
+    }
+    
+    public Value evaluate () throws HtSemanticException {
+        try {
+            return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
+        } catch (Exception e) {
+            throw new HtSemanticException(e.getMessage());
+        }
+    }    
 }

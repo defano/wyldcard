@@ -8,5 +8,5 @@
 package hypertalk.ast.common;
 
 public enum PartType {
-	FIELD, BUTTON, MESSAGEBOX
+    FIELD, BUTTON, MESSAGEBOX
 }

@@ -10,9 +10,9 @@ package hypertalk.ast.constructs;
 import hypertalk.ast.expressions.Expression;
 
 public class RepeatCount extends RepeatSpecifier {
-	public final Expression count;
-	
-	public RepeatCount (Expression count) {
-		this.count = count;
-	}
+    public final Expression count;
+    
+    public RepeatCount (Expression count) {
+        this.count = count;
+    }
 }

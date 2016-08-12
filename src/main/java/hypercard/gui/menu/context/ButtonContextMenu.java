@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class ButtonContextMenu extends JPopupMenu {
 
-	private ButtonPart button;
+    private ButtonPart button;
 
     private JMenuItem jMenuItemEdit = new JMenuItem("Edit Button Properties...");
     private JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");

@@ -13,19 +13,19 @@ import java.util.List;
 
 public class Frame {
 
-	public final SymbolTable symbols;
+    public final SymbolTable symbols;
     private final List<String> globalsInScope;
     
-	private Value returnValue;
-	
-	public Frame(SymbolTable symbols, List<String> globalsInScope, Value returnValue) {
-		this.symbols = symbols;
+    private Value returnValue;
+    
+    public Frame(SymbolTable symbols, List<String> globalsInScope, Value returnValue) {
+        this.symbols = symbols;
         this.globalsInScope = globalsInScope;
-		this.returnValue = returnValue;
+        this.returnValue = returnValue;
         
-		// "it" is implemented as a global variable that's always in scope
+        // "it" is implemented as a global variable that's always in scope
         globalsInScope.add("it");
-	}
+    }
     
     public void globalInScope (String symbol) {
         globalsInScope.add(symbol);
@@ -35,11 +35,11 @@ public class Frame {
         return globalsInScope.contains(symbol);
     }
     
-	public void setReturnValue (Value returnValue) {
-		this.returnValue = returnValue;
-	}
-	
-	public Value getReturnValue () {
-		return returnValue;
-	}
+    public void setReturnValue (Value returnValue) {
+        this.returnValue = returnValue;
+    }
+    
+    public Value getReturnValue () {
+        return returnValue;
+    }
 }

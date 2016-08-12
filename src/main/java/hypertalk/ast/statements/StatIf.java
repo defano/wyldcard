@@ -13,18 +13,18 @@ import hypertalk.exception.HtException;
 
 public class StatIf extends Statement {
 
-	public final Expression condition;
-	public final ThenElseBlock then;
-	
-	public StatIf (Expression condition, ThenElseBlock then) {
-		this.condition = condition;
-		this.then = then;
-	}
-	
-	public void execute () throws HtException {
-		if (condition.evaluate().booleanValue())
-			then.thenBranch.execute();
-		else
-			then.elseBranch.execute();
-	}
+    public final Expression condition;
+    public final ThenElseBlock then;
+    
+    public StatIf (Expression condition, ThenElseBlock then) {
+        this.condition = condition;
+        this.then = then;
+    }
+    
+    public void execute () throws HtException {
+        if (condition.evaluate().booleanValue())
+            then.thenBranch.execute();
+        else
+            then.elseBranch.execute();
+    }
 }

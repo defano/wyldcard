@@ -11,7 +11,7 @@ import hypertalk.ast.common.PartType;
 
 
 public interface PartSpecifier {
-	Object value();
-	PartType type();
-	String toString();
+    Object value();
+    PartType type();
+    String toString();
 }

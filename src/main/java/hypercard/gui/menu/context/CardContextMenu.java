@@ -19,7 +19,7 @@ import java.awt.*;
 
 public class CardContextMenu extends JPopupMenu {
 
-	CardPart card;
+    CardPart card;
 
     JMenuItem jMenuItemNewButton = new JMenuItem("New Button");
     JMenuItem jMenuItemNewField = new JMenuItem("New Field");
@@ -36,7 +36,7 @@ public class CardContextMenu extends JPopupMenu {
     }
     
     public void newFieldActionPerformed() {
-    	Point mouseLoc = RuntimeEnv.getRuntimeEnv().getTheMouseLoc();
+        Point mouseLoc = RuntimeEnv.getRuntimeEnv().getTheMouseLoc();
         Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, FieldPart.DEFAULT_WIDTH, FieldPart.DEFAULT_HEIGHT);
         
         try {
@@ -47,9 +47,9 @@ public class CardContextMenu extends JPopupMenu {
     }
 
     public void newButtonActionPerformed() {
-    	Point mouseLoc = RuntimeEnv.getRuntimeEnv().getTheMouseLoc();
-    	Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, ButtonPart.DEFAULT_WIDTH, ButtonPart.DEFAULT_HEIGHT);
-    	
+        Point mouseLoc = RuntimeEnv.getRuntimeEnv().getTheMouseLoc();
+        Rectangle rect = new Rectangle(mouseLoc.x, mouseLoc.y, ButtonPart.DEFAULT_WIDTH, ButtonPart.DEFAULT_HEIGHT);
+        
         try {
             card.addButton(ButtonPart.fromGeometry(card, rect));
         } catch (PartException e) {

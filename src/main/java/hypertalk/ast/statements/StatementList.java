@@ -13,28 +13,28 @@ import java.util.Vector;
 
 public class StatementList {
 
-	private Vector<Statement> list;
-	
-	public StatementList () {
-		list = new Vector<>();
-	}
-	
-	public StatementList (Statement s) {
-		list = new Vector<>();
-		append(s);
-	}
+    private Vector<Statement> list;
+    
+    public StatementList () {
+        list = new Vector<>();
+    }
+    
+    public StatementList (Statement s) {
+        list = new Vector<>();
+        append(s);
+    }
 
-	public StatementList append (Statement s) {
-		list.add(s);
-		return this;
-	}
-	
-	public void execute() throws HtException {
-		for (Statement s : list) {
-			s.execute();
-			
-			if (s.breakExecution)
-				break;
-		}
-	}
+    public StatementList append (Statement s) {
+        list.add(s);
+        return this;
+    }
+    
+    public void execute() throws HtException {
+        for (Statement s : list) {
+            s.execute();
+            
+            if (s.breakExecution)
+                break;
+        }
+    }
 }

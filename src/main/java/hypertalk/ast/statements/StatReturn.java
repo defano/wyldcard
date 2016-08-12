@@ -14,18 +14,18 @@ import hypertalk.exception.HtSemanticException;
 
 public class StatReturn extends Statement {
 
-	public final Expression returnValue;
-	
-	public StatReturn () {
-		this.returnValue = new ExpLiteral("");
-	}
-	
-	public StatReturn (Expression returnValue) {
-		this.returnValue = returnValue;
-	}
+    public final Expression returnValue;
+    
+    public StatReturn () {
+        this.returnValue = new ExpLiteral("");
+    }
+    
+    public StatReturn (Expression returnValue) {
+        this.returnValue = returnValue;
+    }
 
-	public void execute () throws HtSemanticException {
-		GlobalContext.getContext().setReturnValue(returnValue.evaluate());
-		this.breakExecution = true;
-	}
+    public void execute () throws HtSemanticException {
+        GlobalContext.getContext().setReturnValue(returnValue.evaluate());
+        this.breakExecution = true;
+    }
 }

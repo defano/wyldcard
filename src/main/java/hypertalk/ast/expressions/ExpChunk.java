@@ -13,15 +13,15 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpChunk extends Expression {
 
-	public final Chunk chunk;
-	public final Expression expression;
-	
-	public ExpChunk (Chunk chunk, Expression expression) {
-		this.chunk = chunk;
-		this.expression = expression;
-	}
-	
-	public Value evaluate () throws HtSemanticException {
-		return expression.evaluate().getChunk(chunk);
-	}
+    public final Chunk chunk;
+    public final Expression expression;
+    
+    public ExpChunk (Chunk chunk, Expression expression) {
+        this.chunk = chunk;
+        this.expression = expression;
+    }
+    
+    public Value evaluate () throws HtSemanticException {
+        return expression.evaluate().getChunk(chunk);
+    }
 }

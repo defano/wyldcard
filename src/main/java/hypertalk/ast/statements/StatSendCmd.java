@@ -14,19 +14,19 @@ import hypertalk.ast.expressions.Expression;
 
 public class StatSendCmd extends Statement {
 
-	public final ExpPart part;
-	public final Expression message;
-	
-	public StatSendCmd(ExpPart part, Expression message) {
-		this.part = part;
-		this.message = message;
-	}
-	
-	public void execute () {
-		try {
-			GlobalContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
-		} catch (Exception e) {
-			RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
-		}
-	}
+    public final ExpPart part;
+    public final Expression message;
+    
+    public StatSendCmd(ExpPart part, Expression message) {
+        this.part = part;
+        this.message = message;
+    }
+    
+    public void execute () {
+        try {
+            GlobalContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
+        } catch (Exception e) {
+            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+        }
+    }
 }

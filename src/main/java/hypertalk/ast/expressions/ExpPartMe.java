@@ -15,20 +15,20 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpPartMe extends ExpPart {
 
-	public ExpPartMe () {}
-	
-	public Value evaluate () throws HtSemanticException {
-		try {
-			PartSpecifier part = GlobalContext.getContext().getMe();
-			return GlobalContext.getContext().get(part).getValue();
-		} catch (PartException e) {
-			throw new HtSemanticException(e.getMessage());
-		}
-	}
-	
-	public PartSpecifier evaluateAsSpecifier () 
-	throws HtSemanticException
-	{		
-		return GlobalContext.getContext().getMe();
-	}	
+    public ExpPartMe () {}
+    
+    public Value evaluate () throws HtSemanticException {
+        try {
+            PartSpecifier part = GlobalContext.getContext().getMe();
+            return GlobalContext.getContext().get(part).getValue();
+        } catch (PartException e) {
+            throw new HtSemanticException(e.getMessage());
+        }
+    }
+    
+    public PartSpecifier evaluateAsSpecifier () 
+    throws HtSemanticException
+    {        
+        return GlobalContext.getContext().getMe();
+    }    
 }

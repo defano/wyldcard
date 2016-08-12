@@ -12,19 +12,19 @@ import java.util.Vector;
 
 public class ParameterList {
 
-	public List<String> list;
-	
-	public ParameterList () {
-		list = new Vector<>();
-	}
-	
-	public ParameterList(String p) {
-		list = new Vector<>();
-		list.add(p);
-	}
-	
-	public ParameterList addParameter (String p) {
-		list.add(p);
-		return this;
-	}
+    public List<String> list;
+    
+    public ParameterList () {
+        list = new Vector<>();
+    }
+    
+    public ParameterList(String p) {
+        list = new Vector<>();
+        list.add(p);
+    }
+    
+    public ParameterList addParameter (String p) {
+        list.add(p);
+        return this;
+    }
 }

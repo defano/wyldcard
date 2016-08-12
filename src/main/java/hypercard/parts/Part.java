@@ -20,22 +20,22 @@ import hypercard.parts.model.AbstractPartModel;
 import java.awt.*;
 
 public interface Part {
-	
-	PartType getType();
-	String getName();
-	int getId();
-	JComponent getComponent();
-	
-	AbstractPartModel getPartModel();
-	Value getProperty (String property) throws NoSuchPropertyException;
-	void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException;
+    
+    PartType getType();
+    String getName();
+    int getId();
+    JComponent getComponent();
+    
+    AbstractPartModel getPartModel();
+    Value getProperty (String property) throws NoSuchPropertyException;
+    void setProperty (String property, Value value) throws NoSuchPropertyException, PropertyPermissionException;
 
-	Value getValue();
-	void setValue(Value v);
-		
-	void sendMessage(String message) throws HtSemanticException;
-	Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException;
+    Value getValue();
+    void setValue(Value v);
+        
+    void sendMessage(String message) throws HtSemanticException;
+    Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException;
     
     void partOpened();
-	Rectangle getRect();
+    Rectangle getRect();
 }

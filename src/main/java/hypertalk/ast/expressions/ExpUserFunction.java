@@ -17,24 +17,24 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpUserFunction extends Expression {
 
-	public final String function;
-	public final ArgumentList arguments;
+    public final String function;
+    public final ArgumentList arguments;
 
-	public ExpUserFunction (String function, ArgumentList arguments) {
-		this.function = function;
-		this.arguments = arguments;
-	}
-	
-	public Value evaluate () throws HtSemanticException {
-		
-		try {
-			PartSpecifier ps = GlobalContext.getContext().getMe();
-			Part part = GlobalContext.getContext().get(ps);
-			
-			arguments.evaluate();
-			return part.executeUserFunction(function, arguments);			
-		} catch (PartException e) {
-			throw new HtSemanticException(e.getMessage());
-		}						
-	}
+    public ExpUserFunction (String function, ArgumentList arguments) {
+        this.function = function;
+        this.arguments = arguments;
+    }
+    
+    public Value evaluate () throws HtSemanticException {
+        
+        try {
+            PartSpecifier ps = GlobalContext.getContext().getMe();
+            Part part = GlobalContext.getContext().get(ps);
+            
+            arguments.evaluate();
+            return part.executeUserFunction(function, arguments);            
+        } catch (PartException e) {
+            throw new HtSemanticException(e.getMessage());
+        }                        
+    }
 }

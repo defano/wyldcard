@@ -27,32 +27,32 @@ import java.util.concurrent.Future;
 
 public class Interpreter {
 
-	public static Script compile(String scriptText) throws HtException {
+    public static Script compile(String scriptText) throws HtException {
 
-		HypertalkErrorListener errors = new HypertalkErrorListener();
+        HypertalkErrorListener errors = new HypertalkErrorListener();
 
-		HyperTalkLexer lexer = new HyperTalkLexer(new ANTLRInputStream(scriptText));
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		HyperTalkParser parser = new HyperTalkParser(tokens);
-		parser.removeErrorListeners();		// don't log to console
-		parser.addErrorListener(errors);
+        HyperTalkLexer lexer = new HyperTalkLexer(new ANTLRInputStream(scriptText));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        HyperTalkParser parser = new HyperTalkParser(tokens);
+        parser.removeErrorListeners();        // don't log to console
+        parser.addErrorListener(errors);
 
-		try {
-			ParseTree tree = parser.script();
+        try {
+            ParseTree tree = parser.script();
 
-			if (!errors.errors.isEmpty()) {
-				throw errors.errors.get(0);
-			}
+            if (!errors.errors.isEmpty()) {
+                throw errors.errors.get(0);
+            }
 
-			return (Script) new HyperTalkTreeVisitor().visit(tree);
+            return (Script) new HyperTalkTreeVisitor().visit(tree);
 
-		} catch (HtParseError e) {
-			throw new HtSyntaxException(e.getMessage(), e.lineNumber, e.columnNumber);
-		}
-	}
-	
-	public static Future execute (PartSpecifier me, String statementList) throws HtException
-	{
-		return RuntimeEnv.getRuntimeEnv().executeStatementList(me, compile(statementList).getStatements(), true);
-	}
+        } catch (HtParseError e) {
+            throw new HtSyntaxException(e.getMessage(), e.lineNumber, e.columnNumber);
+        }
+    }
+    
+    public static Future execute (PartSpecifier me, String statementList) throws HtException
+    {
+        return RuntimeEnv.getRuntimeEnv().executeStatementList(me, compile(statementList).getStatements(), true);
+    }
 }

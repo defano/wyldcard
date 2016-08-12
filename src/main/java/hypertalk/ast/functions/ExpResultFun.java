@@ -13,9 +13,9 @@ import hypertalk.ast.expressions.Expression;
 
 public class ExpResultFun extends Expression {
 
-	public ExpResultFun () {}
-	
-	public Value evaluate () {
-		return GlobalContext.getContext().getIt();
-	}
+    public ExpResultFun () {}
+    
+    public Value evaluate () {
+        return GlobalContext.getContext().getIt();
+    }
 }

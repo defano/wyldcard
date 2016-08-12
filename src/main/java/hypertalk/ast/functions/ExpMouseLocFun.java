@@ -13,9 +13,9 @@ import hypertalk.ast.expressions.Expression;
 
 public class ExpMouseLocFun extends Expression {
 
-	public ExpMouseLocFun () {}
-	
-	public Value evaluate () {
-		return RuntimeEnv.getRuntimeEnv().getTheMouseLocValue();
-	}
+    public ExpMouseLocFun () {}
+    
+    public Value evaluate () {
+        return RuntimeEnv.getRuntimeEnv().getTheMouseLocValue();
+    }
 }

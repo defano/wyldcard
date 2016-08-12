@@ -9,11 +9,11 @@ package hypertalk.exception;
 
 public class HtSemanticException extends HtException {
 
-	public HtSemanticException(Throwable cause) {
-		super(cause);
-	}
+    public HtSemanticException(Throwable cause) {
+        super(cause);
+    }
 
-	public HtSemanticException(String message) {
-		super(message);
-	}
+    public HtSemanticException(String message) {
+        super(message);
+    }
 }

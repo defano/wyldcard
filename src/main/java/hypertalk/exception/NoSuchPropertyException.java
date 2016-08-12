@@ -9,7 +9,7 @@
 package hypertalk.exception;
 
 public class NoSuchPropertyException extends HtException {
-	public NoSuchPropertyException(String message) {
-		super(message);
-	}
+    public NoSuchPropertyException(String message) {
+        super(message);
+    }
 }

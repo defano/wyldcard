@@ -14,14 +14,14 @@ import hypertalk.exception.HtSemanticException;
 
 public class StatExp extends Statement {
 
-	public final Expression expression;
-	
-	public StatExp (Expression expression) {
-		this.expression = expression;
-	}
-	
-	public void execute () throws HtSemanticException {
-		Value v = expression.evaluate();
-		GlobalContext.getContext().setIt(v);
-	}
+    public final Expression expression;
+    
+    public StatExp (Expression expression) {
+        this.expression = expression;
+    }
+    
+    public void execute () throws HtSemanticException {
+        Value v = expression.evaluate();
+        GlobalContext.getContext().setIt(v);
+    }
 }

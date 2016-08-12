@@ -6,7 +6,7 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpSecondsFun extends Expression {
 
-	@Override
+    @Override
     public Value evaluate() throws HtSemanticException {
         return new Value(System.currentTimeMillis() / 1000);
     }

@@ -4,15 +4,17 @@ A toy implementation of Apple's HyperCard written in Java. Originally created as
 
 Originally released in 1987 as part of System Software 6, HyperCard was an application that largely defied classification: part database, part programming language, part "paint" program. In true Apple fashion, HyperCard was a new paradigm. Other "beginner" languages of the time made it possible to write boring console-mode programs, but with HyperCard, a novice could script an application with a full graphical user interface using a very expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
 
+[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987.
+
 **Looking for a way to run the _real_ HyperCard on modern machines?** Piece of cake: Use the SheepShaver emulator to run Macintosh System Software on newer Macs or Windows machines. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
 **For the attorneys in the audience:** This project represents a homework assignment and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
 ## What this is not...
 
-This is not a HyperCard replacement, nor is it an open-sourced version of Apple's software.
+This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
 
-It won't run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbiests and academics interested in compiler/interpreter design. Among its many severe limitations, this implementation lacks support for multiple cards; backgrounds; paint tools; user levels; card, background or stack-level scripts; XCMDs and XFCNs; Home stack script inheritence; and a whole lot more.  
+It won't run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbyists and academics interested in compiler/interpreter design. Among its many severe limitations, this implementation lacks support backgrounds; paint tools; user levels; card, background or stack-level scripts; XCMDs and XFCNs; home stack script inheritance; and a great deal more.  
 
 ## What was done
 
@@ -36,8 +38,8 @@ Task | Description
 Execute the `gradle run` task to build and start the program, or simply execute the `RuntimeEnv` class. Once the program is running, you'll be presented with the application's main window. From here you may:
 
 *	Begin adding your own user interface elements by right clicking within the "Card" panel and selecting either "New Button" or "New Field" from the context sensitive menu.
-*	Open a previously saved card document ("File" -> "Open Card..."). I've included a few example cards in the "Examples" folder; each contains several scripted buttons and fields to experiment with.
-*	Enter a statement or expression in the message box. Press enter or click the adjacent button to execute or evaluate your message.
+*	Open a previously saved stack document ("File" -> "Open Stack..."). I've included a few example cards in the "Examples" folder to experiment with.
+*	Enter a statement or expression in the message box. Press enter execute or evaluate your message.
 
 To start scripting:
 
@@ -50,7 +52,7 @@ The UI forms were generated using the GUI Designer built into IntelliJ's IDEA 15
 
 Be aware that by default IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is most elegant, it produces source code that is incomplete and which cannot be built with other tools.
 
-To correct this, you need to configure IntelliJ to generate its GUI code in Java:
+To correct this, you need to configure IntelliJ to generate its GUI boilerplate code in Java source files, not in the `.class` files:
 
 1. From IntelliJ IDEA menu, choose "Preferences..."
 2. Navigate to "Editor" -> GUI Designer
@@ -59,7 +61,26 @@ To correct this, you need to configure IntelliJ to generate its GUI code in Java
 
 ## The HyperTalk Language
 
-HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements (called parts) and are triggered by user actions called events. There is no singular "main" script that executes at runtime.
+HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements (called `parts`) and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime.
+
+A simple script to prompt the user to enter their name then greet them might look like:
+
+```
+-- This is my first script
+
+on mouseUp
+  ask "Tell me your name" with "I'd rather not"
+
+  if it is "I'd rather not" or it is empty then
+    answer "Then I can't very well say hello, can I?"
+  else
+    put "Hello " && it into greeting
+    answer greeting with "Why, thanks!"
+  end if
+
+end mouseUp
+
+```
 
 ### Cards & Stacks
 
@@ -371,16 +392,26 @@ else
 end if
 ```
 
-HyperTalk also provides this self-explanatory set of looping constructs:
+#### Loop Constructs
+
+HyperTalk provides a variety of looping constructs. The overall syntax for each of them is
 
 ```
-repeat forever
-repeat until <expression>
-repeat while <expression>
-repeat [for] <expression> [times]
-repeat with <container> = <expression> down to <expression>
-repeat with <container> = <expression> to <expression>
+<repeat-construct>
+  <statement-list>
+end repeat
 ```
+
+The list of available repeat constructs is defined in the table below:
+
+Repeat Construct | Description
+-----------------|------------
+`repeat forever` | Executes the enclosed statement-list forever. Sort of. Type `cmd-.` or `ctrl-.` at anytime to break execution of the loop.
+`repeat until <expression>` | Executes the enclosed statement-list until the Boolean expression is true; if the expression is initially true, the statement-list will not be executed.
+`repeat while <expression>` | Executes the enclosed statement-list as long as the Boolean expression remains true; if the expression is initially false, the statement-list will not be executed.
+`repeat [for] <expression> [times]` | Executes the enclosed statement-list a pre-determined number of times.
+`repeat with <container> = <expression> down to <expression>` | Executes the enclosed statement-list for as long as the first expression remains numerically greater than the second expression. Decrements the first expression by one each time the loop executes and places the decremented value into the given container.
+`repeat with <container> = <expression> to <expression>` | Executes the enclosed statement-list for as long as the first expression remains numerically less than the second expression. Increments the first expression by one each time the loop executes and places the incremented value into the given container.
 
 For example:
 
@@ -400,7 +431,9 @@ end repeat
 
 HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
 
-There are several equivalent syntax forms that can be used when invoking a built in function. For functions that accept an argument: `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`. For functions that don't take an argument, `[the] <function>`.
+#### Built-in Functions
+
+There are several equivalent syntax forms that can be used when invoking a built in function. For built-in functions that accept an argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`; for functions that don't take an argument, `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
 
 This implementation includes the following built-in functions:
 
@@ -420,7 +453,9 @@ Function | Description
 `seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
 
-A user may define a function of their own creation anywhere inside of a script, but keep in mind that functions cannot be nested and cannot be accessed outside of the script in which they're defined.
+#### User-defined Functions
+
+A user may define a function of their own creation anywhere inside of a script. Note that user-defined functions cannot be nested; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
 
 The syntax for defining a function is:
 
@@ -431,9 +466,7 @@ function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
 end <functionName>
 ```
 
-When calling a user defined function, the syntax is `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition and a user-defined function cannot be invoked with the `the <function> of` syntax, regardless of the number of parameters.
-
-HyperTalk does not support function overloading; each function defined in a script must have a unique name.
+When calling a user defined function, use `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
 
 For example:
 

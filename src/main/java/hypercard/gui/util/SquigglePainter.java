@@ -23,7 +23,7 @@ public class SquigglePainter extends DefaultHighlighter.DefaultHighlightPainter
      * @param  offs0 the starting model offset >= 0
      * @param  offs1 the ending model offset >= offs1
      * @param  bounds the bounding box of the view, which is not
-     *	       necessarily the region to paint.
+     *           necessarily the region to paint.
      * @param  c the editor
      * @param  view View painting for
      * @return region drawing occured in

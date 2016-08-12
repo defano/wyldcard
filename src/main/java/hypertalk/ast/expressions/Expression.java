@@ -13,5 +13,5 @@ import hypertalk.exception.HtSemanticException;
 
 public abstract class Expression {
 
-	public abstract Value evaluate() throws HtSemanticException;
+    public abstract Value evaluate() throws HtSemanticException;
 }

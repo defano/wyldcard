@@ -14,22 +14,22 @@ import hypertalk.exception.HtSemanticException;
 
 public class StatGetCmd extends Statement {
 
-	public final Expression expression;
-	public final PartSpecifier part;
-	
-	public StatGetCmd (Expression e) {
-		expression = e;
-		part = null;
-	}
-	
-	public StatGetCmd (PartSpecifier ps) {
-		expression = null;
-		part = ps;
-	}
-	
-	public void execute () throws HtSemanticException {
-		if (expression != null) {
-			GlobalContext.getContext().setIt(expression.evaluate());
-		}
-	}
+    public final Expression expression;
+    public final PartSpecifier part;
+    
+    public StatGetCmd (Expression e) {
+        expression = e;
+        part = null;
+    }
+    
+    public StatGetCmd (PartSpecifier ps) {
+        expression = null;
+        part = ps;
+    }
+    
+    public void execute () throws HtSemanticException {
+        if (expression != null) {
+            GlobalContext.getContext().setIt(expression.evaluate());
+        }
+    }
 }

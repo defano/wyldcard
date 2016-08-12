@@ -21,31 +21,31 @@ import javax.swing.*;
 
 public class StatAskCmd extends Statement {
 
-	public final Expression question;
-	public final Expression suggestion;
-	
-	public StatAskCmd (Expression question, Expression suggestion) {
-		this.question = question;
-		this.suggestion = suggestion;
-	}
-	
-	public StatAskCmd (Expression question) {
-		this.question = question;
-		this.suggestion = new ExpLiteral("");
-	}
-	
-	public void execute () throws HtSemanticException {
-		if (suggestion != null)
-			ask(question.evaluate(), suggestion.evaluate());
-		else
-			ask(question.evaluate());
-	}
-	
-	private void ask (Value question, Value suggestion) {
+    public final Expression question;
+    public final Expression suggestion;
+    
+    public StatAskCmd (Expression question, Expression suggestion) {
+        this.question = question;
+        this.suggestion = suggestion;
+    }
+    
+    public StatAskCmd (Expression question) {
+        this.question = question;
+        this.suggestion = new ExpLiteral("");
+    }
+    
+    public void execute () throws HtSemanticException {
+        if (suggestion != null)
+            ask(question.evaluate(), suggestion.evaluate());
+        else
+            ask(question.evaluate());
+    }
+    
+    private void ask (Value question, Value suggestion) {
 
-		CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = new CountDownLatch(1);
 
-		SwingUtilities.invokeLater(() -> {
+        SwingUtilities.invokeLater(() -> {
             Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
 
             String result = (String)JOptionPane.showInputDialog(
@@ -61,17 +61,17 @@ public class StatAskCmd extends Statement {
                 result = "";
 
             GlobalContext.getContext().setIt(new Value(result));
-			latch.countDown();
+            latch.countDown();
         });
 
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			Thread.interrupted();
-		}
-	}
-	
-	private void ask (Value question) {
-		ask(question, new Value());
-	}
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+    }
+    
+    private void ask (Value question) {
+        ask(question, new Value());
+    }
 }

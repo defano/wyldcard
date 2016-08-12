@@ -8,7 +8,7 @@ import java.lang.management.ManagementFactory;
 
 public class ExpTicksFun extends Expression {
 
-	@Override
+    @Override
     public Value evaluate() throws HtSemanticException {
         long jvmStartTimeMs = ManagementFactory.getRuntimeMXBean().getUptime();
 

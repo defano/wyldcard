@@ -11,11 +11,11 @@ import hypertalk.ast.statements.StatementList;
 
 public class ThenElseBlock {
 
-	public final StatementList thenBranch;
-	public final StatementList elseBranch;
-	
-	public ThenElseBlock (StatementList thenBranch, StatementList elseBranch) {
-		this.thenBranch = thenBranch;
-		this.elseBranch = elseBranch;
-	}
+    public final StatementList thenBranch;
+    public final StatementList elseBranch;
+    
+    public ThenElseBlock (StatementList thenBranch, StatementList elseBranch) {
+        this.thenBranch = thenBranch;
+        this.elseBranch = elseBranch;
+    }
 }

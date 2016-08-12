@@ -11,13 +11,13 @@ import hypertalk.ast.common.Value;
 
 public class ExpLiteral extends Expression {
 
-	public final String literal;
+    public final String literal;
 
-	public ExpLiteral (Object literal) {
-		this.literal = String.valueOf(literal);
-	}
-	
-	public Value evaluate () {
-		return new Value(literal);
-	}
+    public ExpLiteral (Object literal) {
+        this.literal = String.valueOf(literal);
+    }
+    
+    public Value evaluate () {
+        return new Value(literal);
+    }
 }

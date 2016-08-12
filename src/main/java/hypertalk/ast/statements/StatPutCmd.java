@@ -14,17 +14,17 @@ import hypertalk.exception.HtException;
 
 public class StatPutCmd extends Statement {
 
-	public final Expression expression;
-	public final Preposition preposition;
-	public final Container container;
-	
-	public StatPutCmd (Expression e, Preposition p, Container d) {
-		expression = e;
-		preposition = p;
-		container = d;
-	}
-	
-	public void execute () throws HtException {
-		container.putValue(expression.evaluate(), preposition);
-	}
+    public final Expression expression;
+    public final Preposition preposition;
+    public final Container container;
+    
+    public StatPutCmd (Expression e, Preposition p, Container d) {
+        expression = e;
+        preposition = p;
+        container = d;
+    }
+    
+    public void execute () throws HtException {
+        container.putValue(expression.evaluate(), preposition);
+    }
 }

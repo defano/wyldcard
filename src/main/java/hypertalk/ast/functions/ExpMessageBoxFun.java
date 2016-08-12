@@ -7,7 +7,7 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpMessageBoxFun extends Expression {
 
-	@Override
+    @Override
     public Value evaluate() throws HtSemanticException {
         return new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
     }

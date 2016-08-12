@@ -31,7 +31,7 @@ public class TestGrammar {
     };
 
     @SuppressWarnings("deprecation")
-	@Test
+    @Test
     public void testValidStatements () {
         for (String thisStatement : validStatements) {
             try {
@@ -43,7 +43,7 @@ public class TestGrammar {
     }
 
     @SuppressWarnings("deprecation")
-	@Test
+    @Test
     public void testValidScripts () {
         for (String thisScript : validScripts) {
             try {

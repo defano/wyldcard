@@ -15,31 +15,31 @@ import java.util.List;
 
 public class ExpAverageFun extends ArgListFunction {
 
-	public ExpAverageFun(ArgumentList argumentList) {
-		super(argumentList);
-	}
+    public ExpAverageFun(ArgumentList argumentList) {
+        super(argumentList);
+    }
 
-	public ExpAverageFun(Expression expression) {
-		super(expression);
-	}
+    public ExpAverageFun(Expression expression) {
+        super(expression);
+    }
 
-	public Value evaluate () throws HtSemanticException {
-		float sum = 0;
-		List<Value> list = evaluateArgumentList();
+    public Value evaluate () throws HtSemanticException {
+        float sum = 0;
+        List<Value> list = evaluateArgumentList();
 
-		if (list.size() == 0) {
-			return new Value(0);
-		}
-		
-		for (Value item : list) {
+        if (list.size() == 0) {
+            return new Value(0);
+        }
+        
+        for (Value item : list) {
 
-			if (!item.isNumber()) {
-				throw new HtSemanticException("Can't take the average of a non-numerical list");
-			}
-				
-			sum += item.floatValue();
-		}
-		
-		return new Value(sum/list.size());
-	}
+            if (!item.isNumber()) {
+                throw new HtSemanticException("Can't take the average of a non-numerical list");
+            }
+                
+            sum += item.floatValue();
+        }
+        
+        return new Value(sum/list.size());
+    }
 }

@@ -6,7 +6,7 @@ public class HtException extends Exception {
         super(cause);
     }
 
-	public HtException(String message) {
+    public HtException(String message) {
         super(message);
     }
 }

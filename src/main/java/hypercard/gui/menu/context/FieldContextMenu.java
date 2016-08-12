@@ -15,7 +15,7 @@ import javax.swing.*;
 
 public class FieldContextMenu extends JPopupMenu {
 
-	private FieldPart field;
+    private FieldPart field;
 
     private JMenuItem jMenuItemEdit = new JMenuItem("Edit Field Properties...");
     private JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");

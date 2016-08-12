@@ -8,5 +8,5 @@
 package hypertalk.ast.common;
 
 public enum UnaryOperator {
-	NOT, NEGATE
+    NOT, NEGATE
 }

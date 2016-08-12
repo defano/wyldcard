@@ -12,13 +12,13 @@ import hypertalk.ast.common.Value;
 
 public class ExpVariable extends Expression {
 
-	public final String identifier;
-	
-	public ExpVariable (String identifier) {
-		this.identifier = identifier;
-	}
-	
-	public Value evaluate () {
-		return GlobalContext.getContext().get(identifier);
-	}
+    public final String identifier;
+    
+    public ExpVariable (String identifier) {
+        this.identifier = identifier;
+    }
+    
+    public Value evaluate () {
+        return GlobalContext.getContext().get(identifier);
+    }
 }

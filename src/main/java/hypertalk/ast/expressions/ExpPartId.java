@@ -17,27 +17,27 @@ import hypertalk.exception.HtSemanticException;
 
 public class ExpPartId extends ExpPart {
 
-	public final PartType type;
-	public final Expression id;
-	
-	public ExpPartId (PartType type, Expression id) {
-		this.type = type;
-		this.id = id;
-	}
-	
-	public Value evaluate () throws HtSemanticException {
-		try {
-			PartSpecifier part = new PartIdSpecifier(type, id.evaluate().integerValue());
-			return GlobalContext.getContext().get(part).getValue();
-		} catch (PartException e) {
-			throw new HtSemanticException(e.getMessage());
-		}
-	}
-	
-	public PartSpecifier evaluateAsSpecifier () 
-	throws HtSemanticException
-	{		
-		return new PartIdSpecifier(type, id.evaluate().integerValue());
-	}
-	
+    public final PartType type;
+    public final Expression id;
+    
+    public ExpPartId (PartType type, Expression id) {
+        this.type = type;
+        this.id = id;
+    }
+    
+    public Value evaluate () throws HtSemanticException {
+        try {
+            PartSpecifier part = new PartIdSpecifier(type, id.evaluate().integerValue());
+            return GlobalContext.getContext().get(part).getValue();
+        } catch (PartException e) {
+            throw new HtSemanticException(e.getMessage());
+        }
+    }
+    
+    public PartSpecifier evaluateAsSpecifier () 
+    throws HtSemanticException
+    {        
+        return new PartIdSpecifier(type, id.evaluate().integerValue());
+    }
+    
 }

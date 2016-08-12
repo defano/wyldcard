@@ -11,7 +11,7 @@ package hypercard.parts;
 import hypertalk.exception.HtException;
 
 public class PartException extends HtException {
-	public PartException(String message) {
-		super(message);
-	}
+    public PartException(String message) {
+        super(message);
+    }
 }
