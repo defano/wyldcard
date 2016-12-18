@@ -70,7 +70,7 @@ public class ButtonPropertyEditor implements HyperCardWindow {
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
     }
 
-    public void updateProperties() {
+    private void updateProperties() {
         model.setKnownProperty(ButtonModel.PROP_NAME, new Value(buttonName.getText()));
         model.setKnownProperty(ButtonModel.PROP_TITLE, new Value(buttonTitle.getText()));
         model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getText()));

@@ -8,12 +8,8 @@
 
 package hypertalk.ast.common;
 
-import hypercard.runtime.RuntimeEnv;
-import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
-import hypertalk.exception.HtException;
-import hypertalk.exception.HtSemanticException;
 
 import java.util.HashMap;
 import java.util.Map;

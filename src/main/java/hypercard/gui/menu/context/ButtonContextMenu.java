@@ -17,18 +17,18 @@ public class ButtonContextMenu extends JPopupMenu {
 
     private ButtonPart button;
 
-    private JMenuItem jMenuItemEdit = new JMenuItem("Edit Button Properties...");
-    private JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
-    private JSeparator jSeparator1 = new JSeparator();
-    private JMenuItem jMenuItemMove = new JMenuItem("Move");
-    private JMenuItem jMenuItemResize = new JMenuItem("Resize");
-    private JMenuItem jMenuItemDelete = new JMenuItem("Delete");
+    private final JMenuItem jMenuItemEdit = new JMenuItem("Edit Button Properties...");
+    private final JMenuItem jMenuItemEditScript = new JMenuItem("Edit Script...");
+    private final JSeparator jSeparator1 = new JSeparator();
+    private final JMenuItem jMenuItemMove = new JMenuItem("Move");
+    private final JMenuItem jMenuItemResize = new JMenuItem("Resize");
+    private final JMenuItem jMenuItemDelete = new JMenuItem("Delete");
     
     public ButtonContextMenu (ButtonPart button) {
         super();
         
         this.button = button;
-        
+
         this.add(jMenuItemEdit);
         this.add(jMenuItemEditScript);
         this.add(jSeparator1);

@@ -55,7 +55,11 @@ public class RangeUtils {
             advanceToMatch(matcher, count - 1);
         }
 
-        return new Range(matcher.start(), matcher.end());
+        try {
+            return new Range(matcher.start(), matcher.end());
+        } catch (IllegalStateException e) {
+            return new Range(0, 0);
+        }
     }
 
 

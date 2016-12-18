@@ -235,10 +235,6 @@ public class Value {
     public boolean isEmpty () {
         return value.equals("");
     }
-    
-    public boolean equals (Object v) {
-        return value.equals(v.toString());
-    }
 
     public Value lessThan (Object val) {
         Value v = new Value(val);
@@ -394,5 +390,19 @@ public class Value {
         
     public String toString () {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Value otherValue = (Value) o;
+        return value.equals(otherValue.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 }

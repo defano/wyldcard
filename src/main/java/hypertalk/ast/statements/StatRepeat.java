@@ -30,6 +30,7 @@ public class StatRepeat extends Statement {
         this.statements = statements;
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     public void execute() throws HtException {
         if (range instanceof RepeatForever) {
             while (true) {
