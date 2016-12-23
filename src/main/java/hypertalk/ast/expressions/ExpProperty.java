@@ -22,7 +22,16 @@ public class ExpProperty extends Expression {
     
     public Value evaluate () throws HtSemanticException {
         try {
-            return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
+
+            // Getting a HyperCard property
+            if (propertySpecifier.isGlobalPropertySpecifier()) {
+                return GlobalContext.getContext().getGlobalProperty(propertySpecifier.property);
+            }
+
+            // Getting the property of a part
+            else {
+                return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
+            }
         } catch (Exception e) {
             throw new HtSemanticException(e.getMessage());
         }

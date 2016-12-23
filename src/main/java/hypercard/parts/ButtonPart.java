@@ -9,7 +9,6 @@
 
 package hypercard.parts;
 
-import hypercard.context.GlobalContext;
 import hypercard.gui.menu.context.ButtonContextMenu;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
@@ -33,7 +32,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ButtonPart extends JButton implements Part, MouseListener, PartModelObserver {
+public class ButtonPart extends JButton implements Part, MouseListener, PropertyChangeObserver {
 
     public static final int DEFAULT_WIDTH = 160;
     public static final int DEFAULT_HEIGHT = 40;
@@ -68,7 +67,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         ButtonPart button = new ButtonPart(parent);
 
         button.partModel = partModel;
-        button.partModel.addModelChangeListener(button);
+        button.partModel.addPropertyChangedObserver(button);
         button.script = Interpreter.compile(partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).stringValue());
         button.setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
 
@@ -89,7 +88,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
         int id = parent.nextButtonId();
 
         partModel = ButtonModel.newButtonModel(id, geometry);
-        partModel.addModelChangeListener(this);
+        partModel.addPropertyChangedObserver(this);
     }
 
     private void initComponents() {
@@ -227,7 +226,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, PartMode
     }
 
     @Override
-    public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
 
         SwingUtilities.invokeLater(() -> {
             switch (property) {

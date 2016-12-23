@@ -10,7 +10,7 @@ package hypercard.context;
 
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
-import hypercard.parts.model.PartModelObserver;
+import hypercard.parts.model.PropertyChangeObserver;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartNameSpecifier;
@@ -19,7 +19,7 @@ import hypertalk.exception.NoSuchPropertyException;
 
 import java.util.*;
 
-public class PartsTable<T extends Part> implements PartModelObserver {
+public class PartsTable<T extends Part> implements PropertyChangeObserver {
 
     private Map<Integer, T> idhash;
     private Map<String, T> namehash;
@@ -55,7 +55,7 @@ public class PartsTable<T extends Part> implements PartModelObserver {
             String partName = p.getProperty("name").toString();
             
             // Make us a listener to changes of this part's model
-            p.getPartModel().addModelChangeListener(this);
+            p.getPartModel().addPropertyChangedObserver(this);
             
             // Check for duplicate id or name
             if (partExists(new PartIdSpecifier(p.getType(), partId)))
@@ -92,7 +92,7 @@ public class PartsTable<T extends Part> implements PartModelObserver {
             throw new RuntimeException("Unhandled part specifier type");
     }
     
-    public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         
         if (property.equals("name")) {            
             T part = namehash.get(oldValue.stringValue());

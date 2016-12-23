@@ -14,20 +14,19 @@ package hypertalk.ast.common;
 import java.util.List;
 import java.util.Vector;
 
+import hypercard.context.GlobalContext;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
 
 public class Value {
 
-    public final static String ITEM_DELIMITER = ",";
-    
     private final String value;
 
     // Cache for known value types
-    private final Integer intValue;
-    private final Float floatValue;
-    private final Boolean booleanValue;
+    private Integer intValue;
+    private Float floatValue;
+    private Boolean booleanValue;
     
     public Value () {
         this("");
@@ -60,19 +59,16 @@ public class Value {
         }
 
         else {
-            Integer i;
-            Float f;
-
             try {
-                i = Integer.parseInt(value.trim());
+                intValue = Integer.parseInt(value.trim());
             } catch (NumberFormatException e) {
-                i = null;
+                intValue = null;
             }
 
             try {
-                f = Float.parseFloat(value.trim());
+                floatValue = Float.parseFloat(value.trim());
             } catch (NumberFormatException e) {
-                f = null;
+                floatValue = null;
             }
 
             if (value.trim().equalsIgnoreCase("true") || value.trim().equalsIgnoreCase("false")) {
@@ -80,9 +76,6 @@ public class Value {
             } else {
                 booleanValue = null;
             }
-
-            intValue = i;
-            floatValue = f;
         }
     }
     
@@ -134,7 +127,7 @@ public class Value {
     public List<Value> listValue () {
         List<Value> list = new Vector<>();
         
-        for (String item : value.split(ITEM_DELIMITER))
+        for (String item : value.split(GlobalContext.getContext().getItemDelimiter()))
             list.add(new Value(item));
             
         return list;

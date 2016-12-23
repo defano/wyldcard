@@ -24,7 +24,16 @@ public class StatSetCmd extends Statement {
     
     public void execute () throws HtSemanticException {
         try {
-            GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
+
+            // Setting the property of HyperCard
+            if (propertySpec.isGlobalPropertySpecifier()) {
+                GlobalContext.getContext().setGlobalProperty(propertySpec.property, expression.evaluate());
+            }
+
+            // Setting the property of a part
+            else {
+                GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
+            }
         } catch (Exception e) {
             throw new HtSemanticException(e);
         }

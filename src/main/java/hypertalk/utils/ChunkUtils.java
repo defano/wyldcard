@@ -8,10 +8,14 @@
 
 package hypertalk.utils;
 
+import com.google.common.collect.Lists;
+import hypercard.context.GlobalContext;
 import hypertalk.ast.common.*;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,7 +120,6 @@ public class ChunkUtils {
      * @return The regex for the given chunk type.
      */
     static Pattern getRegexForChunkType(ChunkType chunkType) {
-        String itemDelim = Value.ITEM_DELIMITER;
 
         switch (chunkType) {
             case CHAR:
@@ -130,24 +133,49 @@ public class ChunkUtils {
                 return LINE_REGEX;
             case ITEM:
             case ITEMRANGE:
+                String itemDelimiterRegex = getItemDelimiterRegex();
                 StringBuilder patternBuilder = new StringBuilder();
 
                 // Match empty item in first position (i.e., ",2,3" -- item 3 is '3')
-                patternBuilder.append("^(?=").append(itemDelim).append(")|");
+                patternBuilder.append("^(?=").append(itemDelimiterRegex).append(")|");
 
                 // Match empty item in last position (i.e., "1,2,3," -- item 4 is '')
-                patternBuilder.append("(?<=").append(itemDelim).append(")$|");
+                patternBuilder.append("(?<=").append(itemDelimiterRegex).append(")$|");
 
                 // Match empty item mid-list (i.e., "1,,2,3" -- item 2 is '')
-                patternBuilder.append("(?<=").append(itemDelim).append(")(?=").append(itemDelim).append(")|");
+                patternBuilder.append("(?<=").append(itemDelimiterRegex).append(")(?=").append(itemDelimiterRegex).append(")|");
 
                 // Normal case: Match all non-delimiter characters between delimiters (i.e., "1,2,3" -- item 2 is '2')
-                patternBuilder.append("[^").append(itemDelim).append("]+");
+                patternBuilder.append("[^").append(itemDelimiterRegex).append("]+");
 
                 return Pattern.compile(patternBuilder.toString());
+
             default:
                 throw new RuntimeException("Bug! Not implemented.");
         }
+    }
+
+    /**
+     * Converts the item delimiter string (which may contain regex special characters) into a valid regular expression
+     * by pre-pending special characters with an escape '\'.
+     *
+     * @return A valid regular expression matching strings that are equal to item delimiter string literal.
+     */
+    private static String getItemDelimiterRegex() {
+        List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
+
+        String itemDelimiter = GlobalContext.getContext().getItemDelimiter();
+        StringBuilder itemDelimiterRegex = new StringBuilder();
+
+        for (char thisChar : itemDelimiter.toCharArray()) {
+            if (specialChars.contains(thisChar)) {
+                itemDelimiterRegex.append("\\");
+            }
+
+            itemDelimiterRegex.append(thisChar);
+        }
+
+        return itemDelimiterRegex.toString();
     }
 
     /**
@@ -166,7 +194,7 @@ public class ChunkUtils {
             case LINE:
                 return "\n";
             case ITEM:
-                return Value.ITEM_DELIMITER;
+                return GlobalContext.getContext().getItemDelimiter();
             default:
                 throw new RuntimeException("Bug! Not implemented.");
         }

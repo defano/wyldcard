@@ -577,6 +577,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPropertySpecGlobal(HyperTalkParser.PropertySpecGlobalContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.ID()));
+    }
+
+    @Override
+    public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.ID()), (ExpPart) visit(ctx.part()));
+    }
+
+    @Override
     public Object visitFieldPart(HyperTalkParser.FieldPartContext ctx) {
         return new ExpPartName(PartType.FIELD, (Expression) visit(ctx.factor()));
     }
@@ -949,11 +959,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitExpressionFactor(HyperTalkParser.ExpressionFactorContext ctx) {
         return visit(ctx.expression());
-    }
-
-    @Override
-    public Object visitPropertySpec(HyperTalkParser.PropertySpecContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.ID()), (ExpPart) visit(ctx.part()));
     }
 
     @Override

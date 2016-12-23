@@ -9,7 +9,6 @@
 
 package hypercard.parts;
 
-import hypercard.context.GlobalContext;
 import hypercard.gui.menu.context.FieldContextMenu;
 import hypercard.gui.window.FieldPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
@@ -27,7 +26,7 @@ import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
-import hypercard.parts.model.PartModelObserver;
+import hypercard.parts.model.PropertyChangeObserver;
 
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -40,7 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
-public class FieldPart extends JScrollPane implements Part, MouseListener, PartModelObserver, KeyListener {
+public class FieldPart extends JScrollPane implements Part, MouseListener, PropertyChangeObserver, KeyListener {
 
     public static final int DEFAULT_WIDTH = 250;
     public static final int DEFAULT_HEIGHT = 100;
@@ -75,7 +74,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
         FieldPart field = new FieldPart(parent);
 
         field.partModel = model;
-        field.partModel.addModelChangeListener(field);
+        field.partModel.addPropertyChangedObserver(field);
 
         field.text.setText(model.getKnownProperty(FieldModel.PROP_TEXT).stringValue());
         field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
@@ -97,7 +96,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
         int id = parent.nextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry);
-        partModel.addModelChangeListener(this);
+        partModel.addPropertyChangedObserver(this);
     }
 
     private void initComponents() {
@@ -261,7 +260,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, PartM
     }
 
     @Override
-    public void onPartAttributeChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
 
         SwingUtilities.invokeLater(() -> {
             switch (property) {

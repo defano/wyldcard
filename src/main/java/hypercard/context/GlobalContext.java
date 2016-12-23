@@ -12,6 +12,7 @@ package hypercard.context;
 import hypercard.parts.CardPart;
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
+import hypercard.parts.model.PropertiesTable;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
@@ -28,6 +29,7 @@ public class GlobalContext {
     private static GlobalContext instance = new GlobalContext();
     
     private SymbolTable globals;
+    private GlobalProperties globalProperties = new GlobalProperties();
 
     /*
      * In this implementation, when HyperCard sends a system-defined message to a part
@@ -185,6 +187,20 @@ public class GlobalContext {
 
     public PartSpecifier getMe () {
         return this.me.get();
+    }
+
+    public String getItemDelimiter() {
+        return globalProperties.getKnownProperty(GlobalProperties.ITEM_DELIM_PROPERTY).stringValue();
+    }
+
+    public void setGlobalProperty(String property, Value value)
+            throws NoSuchPropertyException, PropertyPermissionException
+    {
+        globalProperties.setProperty(property, value);
+    }
+
+    public Value getGlobalProperty(String property) throws NoSuchPropertyException {
+        return globalProperties.getProperty(property);
     }
 
     private Stack<Frame> getStack() {

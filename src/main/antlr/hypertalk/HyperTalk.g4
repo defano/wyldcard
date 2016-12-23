@@ -178,7 +178,7 @@ chunk               : chunk chunk                                   # compositeC
                     | ordinal ITEM OF_IN                            # ordinalItemChunk
                     | ITEM expression 'to' expression OF_IN         # rangeItemChunk
                     | ITEM expression OF_IN                         # itemItemChunk
-                    | ordinal LINE OF_IN                          # ordinalLineChunk
+                    | ordinal LINE OF_IN                            # ordinalLineChunk
                     | LINE expression 'to' expression OF_IN         # rangeLineChunk
                     | LINE expression OF_IN                         # lineLineChunk
                     ;
@@ -194,7 +194,8 @@ container			: ID                                            # variableDest
                     |                                               # defaultDest
                     ;
 
-propertySpec        : 'the' ID OF_IN part
+propertySpec        : 'the'? ID                                     # propertySpecGlobal
+                    | 'the' ID OF_IN part                           # propertySpecPart
                     ;
 
 part                : FIELD factor                                  # fieldPart
