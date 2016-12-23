@@ -63,7 +63,7 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 
 ## The HyperTalk Language
 
-HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements called `parts` and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime. Comments are preceded by `--`
+HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements called `parts` and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -83,6 +83,37 @@ on mouseUp
 end mouseUp
 
 ```
+
+Note that comments are preceded by `--` and, unlike C or Java, newlines have meaning in the syntax (although indentation does not). Newlines are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot break across multiple lines. For example, this is legal:
+
+```
+if x < y then
+  put x
+else
+  put y
+end if
+```
+
+... but this is not:
+
+```
+if x < 10 then
+  put x
+else put y
+end if
+```
+
+... nor is this:
+
+```
+answer "How are you today" with
+  "Pretty good" or
+  "Stinky!"
+```
+
+Apple's HyperCard supported a newline character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)) that could be used to break a long statement across multiple lines; this implementation does not.
+
+As you enter script text into the script editor, this implementation will flag syntax errors as you type by underlining the offending text with a red squiggle. A (typically useless) error message from the Antlr parser will also appear at the bottom of the editor.
 
 ### Cards & Stacks
 
