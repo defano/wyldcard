@@ -220,7 +220,7 @@ This implementation supports only a single global property:
 
 Global Property | Description
 ----------------|---------------
-`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelim to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`
+`itemDelimiter` or `itemDelim` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelim to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`
 
 ### Variables and containers
 
