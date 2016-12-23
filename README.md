@@ -207,6 +207,21 @@ set the left of button myButton to item 1 of the mouseLoc
 get the name of button id 0
 ```
 
+#### Global Properties
+
+Some properties apply to HyperCard at large instead of an individual part. The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
+
+```
+set the itemDelim to ","
+get the itemDelimiter
+```
+
+This implementation supports only a single global property:
+
+Global Property | Description
+----------------|---------------
+`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelim to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`
+
 ### Variables and containers
 
 A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers.
@@ -500,7 +515,7 @@ Command	   | Description
 -----------|------------
 `put`      | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
 `get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	     | Sets the property of a part to a value; `set the wraptext of field id 3 to (5 > 3)`
+`set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`)
 `go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `wait`     | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
 `answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
