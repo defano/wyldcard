@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 import hypercard.context.GlobalContext;
+import hypercard.parts.Part;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
@@ -46,6 +47,14 @@ public class Value {
     
     public Value (boolean v) {
         this(String.valueOf(v));
+    }
+
+    public Value (int x, int y) {
+        this(String.valueOf(x) + "," + String.valueOf(y));
+    }
+
+    public Value (int x1, int y1, int x2, int y2) {
+        this(String.valueOf(x1) + "," + String.valueOf(y1) + "," + String.valueOf(x2) + "," + String.valueOf(y2));
     }
 
     public Value (String value) {
@@ -98,7 +107,25 @@ public class Value {
     public boolean isNumber () {
         return isFloat();
     }
-        
+
+    public boolean isPoint () {
+        List<Value> listValue = listValue();
+
+        return listValue.size() == 2 &&
+                new Value(listValue.get(0)).isInteger() &&
+                new Value(listValue.get(1)).isInteger();
+    }
+
+    public boolean isRect () {
+        List<Value> listValue = listValue();
+
+        return listValue.size() == 4 &&
+                new Value(listValue.get(0)).isInteger() &&
+                new Value(listValue.get(1)).isInteger() &&
+                new Value(listValue.get(2)).isInteger() &&
+                new Value(listValue.get(3)).isInteger();
+    }
+
     public String stringValue () {
         return value;
     }    
@@ -127,12 +154,20 @@ public class Value {
     public List<Value> listValue () {
         List<Value> list = new Vector<>();
         
-        for (String item : value.split(GlobalContext.getContext().getItemDelimiter()))
+        for (String item : value.split(","))
             list.add(new Value(item));
             
         return list;
     }
-    
+
+    public Value listItemAt(int index) {
+        if (listValue().size() > index) {
+            return new Value(listValue().get(index));
+        } else {
+            return new Value();
+        }
+    }
+
     public int itemCount () {
         return ChunkUtils.getCount(ChunkType.ITEM, value);
     }

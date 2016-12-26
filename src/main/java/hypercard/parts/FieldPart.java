@@ -157,7 +157,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     }
 
     @Override
-    public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException {
+    public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException {
         partModel.setProperty(property, value);
     }
 

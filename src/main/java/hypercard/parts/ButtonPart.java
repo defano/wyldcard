@@ -142,7 +142,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     }
 
     @Override
-    public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException {
+    public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException {
         partModel.setProperty(property, value);
     }
 

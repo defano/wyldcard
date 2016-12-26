@@ -195,13 +195,15 @@ container			: ID                                            # variableDest
                     ;
 
 propertySpec        : 'the'? ID                                     # propertySpecGlobal
-                    | 'the' ID OF_IN part                           # propertySpecPart
+                    | 'the'? ID OF_IN part                           # propertySpecPart
                     ;
 
 part                : FIELD factor                                  # fieldPart
                     | FIELD 'id' factor                             # fieldIdPart
                     | BUTTON factor                                 # buttonPart
                     | BUTTON 'id' factor                            # buttonIdPart
+                    | 'card' factor                                 # cardPart
+                    | 'card' 'id' factor                            # cardIdPart
                     | 'me'                                          # mePart
                     ;
 

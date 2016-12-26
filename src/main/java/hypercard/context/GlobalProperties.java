@@ -1,19 +1,13 @@
 package hypercard.context;
 
-import hypercard.parts.model.PropertiesTable;
+import hypercard.parts.model.PropertiesModel;
 import hypertalk.ast.common.Value;
 
-public class GlobalProperties extends PropertiesTable {
+public class GlobalProperties extends PropertiesModel {
 
-    public final static String ITEM_DELIM_PROPERTY = "itemDelim";
-
-    private final static String ITEM_DELIM_ALIAS = "itemDelimiter";
+    public final static String PROP_ITEMDELIMITER = "itemDelimiter";
 
     public GlobalProperties() {
-        super();
-
-        // Define known, global HyperCard properties
-        defineProperty(ITEM_DELIM_PROPERTY, new Value(","), false);
-        defineAlias(ITEM_DELIM_PROPERTY, ITEM_DELIM_ALIAS);
+        defineProperty(PROP_ITEMDELIMITER, new Value(","), false);
     }
 }

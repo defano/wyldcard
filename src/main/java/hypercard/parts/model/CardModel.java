@@ -1,9 +1,7 @@
 package hypercard.parts.model;
 
-import hypercard.context.PartsTable;
-import hypercard.parts.*;
-import hypertalk.ast.common.PartType;
-import hypertalk.ast.containers.PartSpecifier;
+import hypercard.parts.Part;
+import hypercard.parts.PartException;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -50,7 +50,7 @@ public class RuntimeEnv implements StackModelObserver {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
 
-        RuntimeEnv.getRuntimeEnv();
+        _instance = new RuntimeEnv();
     }
 
     private RuntimeEnv() {
@@ -89,10 +89,6 @@ public class RuntimeEnv implements StackModelObserver {
     }
 
     public static RuntimeEnv getRuntimeEnv() {
-        if (_instance == null) {
-            _instance = new RuntimeEnv();
-        }
-
         return _instance;
     }
 

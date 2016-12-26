@@ -2,6 +2,7 @@ package hypercard.parts.model;
 
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
+import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 

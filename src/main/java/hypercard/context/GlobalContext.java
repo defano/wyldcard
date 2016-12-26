@@ -12,7 +12,6 @@ package hypercard.context;
 import hypercard.parts.CardPart;
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
-import hypercard.parts.model.PropertiesTable;
 import hypercard.runtime.RuntimeEnv;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
@@ -163,7 +162,7 @@ public class GlobalContext {
         return getCard().getPart(ps);
     }
     
-    public Value get (String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
+    public Value get (String property, PartSpecifier ps) throws NoSuchPropertyException, PartException, HtSemanticException {
         return getCard().getPart(ps).getProperty(property);
     }
 
@@ -190,16 +189,16 @@ public class GlobalContext {
     }
 
     public String getItemDelimiter() {
-        return globalProperties.getKnownProperty(GlobalProperties.ITEM_DELIM_PROPERTY).stringValue();
+        return globalProperties.getKnownProperty(GlobalProperties.PROP_ITEMDELIMITER).stringValue();
     }
 
     public void setGlobalProperty(String property, Value value)
-            throws NoSuchPropertyException, PropertyPermissionException
+            throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
     {
         globalProperties.setProperty(property, value);
     }
 
-    public Value getGlobalProperty(String property) throws NoSuchPropertyException {
+    public Value getGlobalProperty(String property) throws NoSuchPropertyException, HtSemanticException {
         return globalProperties.getProperty(property);
     }
 

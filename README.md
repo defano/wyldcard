@@ -198,18 +198,29 @@ For simplification, this implementation does not allow scripting of cards or sta
 
 In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
 
-A button has these properties:
+All parts have these properties:
 
 Property    | Description
 ------------|------------
-`script`    | Retrieves or replaces the current script of the button
-`id`        | Returns the buttons id. Each part has a globally unique id that is assigned at creation and cannot be changed.
-`name`      | Returns or sets the script-addressable name of the button
+`script`    | Retrieves or replaces the current script of the part
+`id`        | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
+`name`      | Returns or sets the script-addressable name of the part
+`left`      | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
+`top`	      | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
+`width`     | Returns or sets the width of the part (in pixels)
+`height`    | Returns or sets the height of the part (in pixels)
+`rect`      | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rectangle`.
+`topLeft`   | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
+`showtitle` | Returns or sets the visibility of the button's title (a Boolean value). When not true, the button is drawn without a name.
+`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
+
+A button has these additional properties:
+
+Property    | Description
+------------|------------
 `title`     | Returns or sets the title of this button (in Apple's HyperCard there was no `title` attribute; the name visible to the user and the name used to identify the button to scripts was one in the same property, `name`).
-`left`      | Returns or sets the left-most border of the button's location (i.e., the button's x-coordinate on the card)
-`top`	      | Returns or sets the top-most border of the button's location (i.e, the button's y-coordinate on the card)
-`width`     | Returns or sets the width of the button (in pixels)
-`height`    | Returns or sets the height of the button (in pixels)
 `visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
 `showtitle` | Returns or sets the visibility of the button's title (a Boolean value). When not true, the button is drawn without a name.
 `enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
@@ -218,14 +229,7 @@ A field has these properties:
 
 Property   | Description
 -----------|------------
-`script`   | Retrieves or replaces the current script of the field
-`id`       | Returns the field's id. Each part has a globally unique id that is assigned at creation and cannot be changed.
-`name`     | Returns or sets the script-addressable name of the field
 `text`     | Returns or sets the text contained within this field
-`left`     | Returns or sets the left-most border of the field's location
-`top`      | Returns or sets the top-most border of the field's location
-`width`    | Returns or sets the width of the field (in pixels)
-`height`   | Returns or sets the height of the field (in pixels)
 `visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
 `wraptext` | Returns or sets whether the text contained by the field will automatically wrap at end of line.
 `locktext` | Returns or sets whether the text contained by the field can be edited by the user.
@@ -236,6 +240,7 @@ Parts may be addressed in HyperTalk by name or id, and a part can refer to itsel
 set the visible of me to true
 set the left of button myButton to item 1 of the mouseLoc
 get the name of button id 0
+set the rect of button "Hi" to "10,10,100,100"
 ```
 
 #### Global Properties
@@ -243,7 +248,7 @@ get the name of button id 0
 Some properties apply to HyperCard at large instead of an individual part. The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
 
 ```
-set the itemDelim to ","
+set the itemDelimiter to ","
 get the itemDelimiter
 ```
 
@@ -251,7 +256,7 @@ This implementation supports only a single global property:
 
 Global Property | Description
 ----------------|---------------
-`itemDelimiter` or `itemDelim` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelim to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`
+`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 
 ### Variables and containers
 

@@ -15,14 +15,15 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartNameSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
+import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 
 import java.util.*;
 
 public class PartsTable<T extends Part> implements PropertyChangeObserver {
 
-    private Map<Integer, T> idhash;
-    private Map<String, T> namehash;
+    private Map<Integer, T> idhash;         // Mapping of ID to part
+    private Map<String, T> namehash;        // Mapping of name to part
     
     public PartsTable () {
         idhash = new HashMap<>();
@@ -44,7 +45,7 @@ public class PartsTable<T extends Part> implements PropertyChangeObserver {
             idhash.remove(partId);
             namehash.remove(partName);
         } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("All parts must have a name and id");
+            throw new RuntimeException("All parts must have a valid name and id");
         }
     }
     
@@ -67,7 +68,7 @@ public class PartsTable<T extends Part> implements PropertyChangeObserver {
             namehash.put(partName, p);
             
         } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("All parts must have a name and id");
+            throw new RuntimeException("All parts must have a valid name and id");
         }                
     }
     
