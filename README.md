@@ -510,6 +510,7 @@ Function | Description
 `abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
 `seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
+`random` | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
 
 #### User-defined Functions
 

@@ -29,4 +29,17 @@ public abstract class ArgListFunction extends Expression {
         }
     }
 
+    public Value evaluateSingleArgumentList() throws HtSemanticException {
+        if (expression != null) {
+            return expression.evaluate();
+        } else {
+            List<Value> evaluatedList = argumentList.getEvaluatedList();
+            if (evaluatedList.size() == 1) {
+                return evaluatedList.get(0);
+            } else {
+                throw new HtSemanticException("Expected a single argument but got " + evaluatedList.size());
+            }
+        }
+    }
+
 }

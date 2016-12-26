@@ -19,5 +19,6 @@ public enum BuiltInFunction {
     NUMBER_CHARS,
     NUMBER_WORDS,
     NUMBER_LINES,
-    NUMBER_ITEMS
+    NUMBER_ITEMS,
+    RANDOM
 }

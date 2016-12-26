@@ -274,6 +274,7 @@ oneArgFunc          : 'average'                                     # averageFun
                     | 'number' OF_IN WORD                           # numberOfWordsFunc
                     | 'number' OF_IN ITEM                           # numberOfItemsFunc
                     | 'number' OF_IN LINE                           # numberOfLinesFunc
+                    | 'random'                                      # randomFunc
                     ;
 
 noArgFunc           : 'mouse'                                       # mouseFunc

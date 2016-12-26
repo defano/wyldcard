@@ -176,10 +176,12 @@ public class RuntimeEnv implements StackModelObserver {
     }
 
     public void doMsgBoxText() {
-        messageBoxExecutor.submit((Runnable) () -> {
+        messageBoxExecutor.submit(() -> {
             try {
-                Interpreter.execute(null, getMsgBoxText()).get();
-                RuntimeEnv.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
+                if (!getMsgBoxText().trim().isEmpty()) {
+                    Interpreter.execute(null, getMsgBoxText()).get();
+                    RuntimeEnv.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
+                }
             } catch (Exception e) {
                 RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
             }
