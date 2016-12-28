@@ -1,0 +1,66 @@
+package hypercard.paint.tools;
+
+import hypercard.paint.canvas.Canvas;
+import hypercard.paint.observers.ObservableAttribute;
+
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+
+public abstract class AbstractPaintTool extends MouseAdapter {
+
+    private Canvas canvas;
+    private final ToolType type;
+    private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
+
+    private ObservableAttribute<Stroke> strokeProvider = new ObservableAttribute<>(new BasicStroke(2));
+    private ObservableAttribute<Paint> paintProvider = new ObservableAttribute<>(Color.black);
+
+    public AbstractPaintTool(ToolType type) {
+        this.type = type;
+    }
+
+    public void activate (Canvas canvas) {
+        this.canvas = canvas;
+        this.canvas.addMouseListener(this);
+        this.canvas.addMouseMotionListener(this);
+    }
+
+    public void deactivate() {
+        if (canvas != null) {
+            canvas.removeMouseListener(this);
+            canvas.removeMouseMotionListener(this);
+        }
+    }
+
+    public AlphaComposite getComposite() {
+        return composite;
+    }
+
+    public void setComposite(AlphaComposite composite) {
+        this.composite = composite;
+    }
+
+    public ToolType getToolType() {
+        return this.type;
+    }
+
+    protected Canvas getCanvas() {
+        return canvas;
+    }
+
+    public void setPaintProvider(ObservableAttribute<Paint> paintProvider) {
+        this.paintProvider = paintProvider;
+    }
+
+    public Paint getPaint() {
+        return paintProvider.get();
+    }
+
+    public void setStrokeProvider(ObservableAttribute<Stroke> strokeProvider) {
+        this.strokeProvider = strokeProvider;
+    }
+
+    public Stroke getStroke() {
+        return strokeProvider.get();
+    }
+}

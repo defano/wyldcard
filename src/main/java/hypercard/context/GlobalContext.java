@@ -13,6 +13,7 @@ import hypercard.parts.CardPart;
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
 import hypercard.runtime.RuntimeEnv;
+import hypercard.paint.tools.*;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.*;

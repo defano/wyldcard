@@ -3,17 +3,20 @@ package hypercard;
 import com.google.gson.*;
 import hypertalk.ast.common.Value;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Base64;
 
 public class Serializer {
 
     private final static Gson gson = new GsonBuilder()
             .registerTypeAdapter(Value.class, new ValueSerializer())
+            .registerTypeAdapter(byte[].class, new ImageSerializer())
             .setPrettyPrinting()
             .create();
 
@@ -50,6 +53,17 @@ public class Serializer {
         @Override
         public JsonElement serialize(Value src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(src.stringValue());
+        }
+    }
+
+
+    private static class ImageSerializer implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+        public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return Base64.getDecoder().decode(json.getAsString());
+        }
+
+        public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(Base64.getEncoder().encodeToString(src));
         }
     }
 }

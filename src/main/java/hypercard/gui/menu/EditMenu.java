@@ -1,5 +1,6 @@
 package hypercard.gui.menu;
 
+import hypercard.context.GlobalContext;
 import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
@@ -11,8 +12,13 @@ public class EditMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
-                .disabled()
                 .withShortcut('Z')
+                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().undo())
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Redo")
+                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().redo())
                 .build(this);
 
         this.addSeparator();

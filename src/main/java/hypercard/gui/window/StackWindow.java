@@ -34,6 +34,10 @@ public class StackWindow implements HyperCardWindow {
         return stackWindow;
     }
 
+    public JPanel getCardPanel() {
+        return cardPanel;
+    }
+
     @Override
     public void bindModel(Object data) {
         if (data instanceof CardPart) {

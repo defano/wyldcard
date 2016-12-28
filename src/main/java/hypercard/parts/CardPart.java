@@ -9,33 +9,41 @@
 package hypercard.parts;
 
 import hypercard.context.PartsTable;
-import hypercard.gui.menu.context.CardContextMenu;
+import hypercard.parts.model.AbstractPartModel;
 import hypercard.parts.model.ButtonModel;
 import hypercard.parts.model.CardModel;
 import hypercard.parts.model.FieldModel;
-import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.RuntimeEnv;
+import hypercard.paint.canvas.*;
+import hypercard.paint.canvas.Canvas;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 
-public class CardPart extends JPanel implements MouseListener {
+public class CardPart extends JLayeredPane implements MouseListener, ComponentListener, CanvasObserver {
+
+    private final static int CANVAS_LAYER = 0;
+    private final static int PARTS_LAYER = 1;
 
     private CardModel model;
 
     private PartsTable<FieldPart> fields = new PartsTable<>();
     private PartsTable<ButtonPart> buttons = new PartsTable<>();
+    private UndoableCanvas canvas;
 
     private CardPart() {
         super();
 
-        this.setComponentPopupMenu(new CardContextMenu(this));
         this.addMouseListener(this);
         this.setLayout(null);
+        this.addComponentListener(this);
     }
 
     public static CardPart fromModel (CardModel model) throws Exception {
@@ -57,11 +65,15 @@ public class CardPart extends JPanel implements MouseListener {
             }
         }
 
+        card.canvas = new UndoableCanvas(model.getCardImage());
+        card.canvas.addObserver(card);
+        card.setLayer(card.canvas, CANVAS_LAYER);
+        card.add(card.canvas);
+
         return card;
     }
 
     public void partOpened() {
-        this.setComponentPopupMenu(new CardContextMenu(this));
     }
 
     public void addField(FieldPart field) throws PartException {
@@ -97,6 +109,10 @@ public class CardPart extends JPanel implements MouseListener {
             throw new RuntimeException("Unhandled part type");
     }
 
+    public UndoableCanvas getCanvas() {
+        return canvas;
+    }
+
     private void removeSwingComponent (Component component) {
         remove(component);
         revalidate();
@@ -105,6 +121,7 @@ public class CardPart extends JPanel implements MouseListener {
 
     private void addSwingComponent (Component component, Rectangle bounds) {
         component.setBounds(bounds);
+        setLayer(component, PARTS_LAYER);
         add(component);
         revalidate();
         repaint();
@@ -136,4 +153,29 @@ public class CardPart extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+        canvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+        canvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void onCommit(Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+        model.setCardImage(canvasImage);
+    }
 }
