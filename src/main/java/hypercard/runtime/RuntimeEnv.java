@@ -13,7 +13,10 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import hypercard.context.GlobalContext;
 import hypercard.gui.menu.HyperCardMenuBar;
+import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.MouseListener;
 import hypercard.gui.window.MessageWindow;
+import hypercard.gui.window.PaintToolsPalette;
 import hypercard.gui.window.StackWindow;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.CardPart;
@@ -28,6 +31,7 @@ import hypertalk.ast.statements.StatementList;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -38,9 +42,9 @@ public class RuntimeEnv implements StackModelObserver {
 
     private StackWindow stackWindow;
     private MessageWindow messageWindow;
-    private JFrame messageFrame;
+    private PaintToolsPalette paintToolsPalette;
+
     private StackModel stack;
-    private boolean mouseIsDown;
 
     private ExecutorService scriptExecutor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
     private ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
@@ -79,13 +83,26 @@ public class RuntimeEnv implements StackModelObserver {
                 .build();
 
         messageWindow = new MessageWindow();
-        messageFrame = WindowBuilder.make(messageWindow)
+        WindowBuilder.make(messageWindow)
                 .withTitle("Message Box")
                 .resizeable(false)
                 .withLocationUnderneath(stackFrame)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .notInitiallyVisible()
                 .build();
+
+        paintToolsPalette = new PaintToolsPalette();
+        WindowBuilder.make(paintToolsPalette)
+                .resizeable(false)
+                .notFocusable()
+                .withTitle("Tools Palette")
+                .withMenuBar(HyperCardMenuBar.instance)
+                .withLocationLeftOf(stackFrame)
+                .notInitiallyVisible()
+                .build();
+
+        ModifierKeyListener.start();
+        MouseListener.start();
     }
 
     public static RuntimeEnv getRuntimeEnv() {
@@ -151,20 +168,16 @@ public class RuntimeEnv implements StackModelObserver {
                 + String.valueOf(mouseLoc.y));
     }
 
-    public void setTheMouse(boolean isDown) {
-        this.mouseIsDown = isDown;
-    }
-
     public Value getTheMouse() {
-        return mouseIsDown ? new Value("down") : new Value("up");
+        return MouseListener.isMouseDown() ? new Value("down") : new Value("up");
     }
 
     public boolean isMessageBoxVisible () {
-        return messageFrame.isVisible();
+        return messageWindow.isVisible();
     }
 
     public void setMessageBoxVisible (boolean visible) {
-        SwingUtilities.invokeLater(() -> messageFrame.setVisible(visible));
+        SwingUtilities.invokeLater(() -> messageWindow.setVisible(visible));
     }
 
     public void setMsgBoxText(Object theMsg) {
@@ -173,6 +186,14 @@ public class RuntimeEnv implements StackModelObserver {
 
     public String getMsgBoxText() {
         return messageWindow.getMsgBoxText();
+    }
+
+    public void setPaintToolsPaletteVisible (boolean visible) {
+        paintToolsPalette.setVisible(visible);
+    }
+
+    public boolean isPaintToolsPaletteVisible() {
+        return paintToolsPalette.isVisible();
     }
 
     public void doMsgBoxText() {
@@ -189,7 +210,6 @@ public class RuntimeEnv implements StackModelObserver {
     }
 
     public void dialogSyntaxError(Exception e) {
-        e.printStackTrace();
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(stackWindow.getWindowPanel(), e.getMessage()));
     }
 

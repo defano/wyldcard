@@ -41,8 +41,12 @@ public class ArgumentList {
             evaluatedList.add(expr.evaluate());
     }
 
-    public List<Value> getEvaluatedList () throws HtSemanticException {
+    public List<Value> evaluateAndGetList() throws HtSemanticException {
         evaluate();
+        return evaluatedList;
+    }
+
+    public List<Value> getEvaluatedList() throws HtSemanticException {
         return evaluatedList;
     }
 

@@ -114,7 +114,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         WindowBuilder.make(new FieldPropertyEditor())
                 .withTitle("Properties of field " + getName())
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .resizeable(false)
                 .build();
     }
@@ -131,7 +131,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("Script of field " + getName())
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .resizeable(true)
                 .build();
     }
@@ -216,7 +216,6 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            RuntimeEnv.getRuntimeEnv().setTheMouse(true);
             sendMessage("mouseDown");
         }
     }
@@ -224,7 +223,6 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     @Override
     public void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            RuntimeEnv.getRuntimeEnv().setTheMouse(false);
             sendMessage("mouseUp");
         }
     }

@@ -7,5 +7,7 @@ public enum ToolType {
     ROUND_RECTANGLE,
     PAINTBRUSH,
     ERASER,
-    LINE
+    LINE,
+    POLYGON,
+    SELECTION
 }

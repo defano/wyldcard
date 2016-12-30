@@ -1,5 +1,8 @@
 package hypercard.paint.tools;
 
+import hypercard.gui.util.ModifierKeyListener;
+import hypercard.paint.MathUtils;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -24,7 +27,13 @@ public abstract class AbstractLineTool extends AbstractPaintTool {
         g2d.setStroke(getStroke());
         g2d.setPaint(getPaint());
 
-        drawLine(g2d, initialPoint.x, initialPoint.y, e.getX(), e.getY());
+        Point currentLoc = e.getPoint();
+
+        if (e.isShiftDown()) {
+            currentLoc = MathUtils.snapLineToNearestAngle(initialPoint, currentLoc, 15);
+        }
+
+        drawLine(g2d, initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
 
         g2d.dispose();
 

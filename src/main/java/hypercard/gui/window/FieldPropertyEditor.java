@@ -12,7 +12,7 @@ import hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public class FieldPropertyEditor implements HyperCardWindow {
+public class FieldPropertyEditor extends HyperCardWindow {
 
     private AbstractPartModel model;
 
@@ -36,7 +36,7 @@ public class FieldPropertyEditor implements HyperCardWindow {
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script for field " + fieldName.getText())
                     .withModel(model)
-                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                    .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
                     .resizeable(true)
                     .build();
         });

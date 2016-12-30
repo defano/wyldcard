@@ -14,7 +14,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class MessageWindow implements HyperCardWindow {
+public class MessageWindow extends HyperCardWindow {
 
     private JTextField messageBox;
     private JPanel messageWindow;

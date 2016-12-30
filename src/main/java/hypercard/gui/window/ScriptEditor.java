@@ -18,7 +18,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 
-public class ScriptEditor implements HyperCardWindow {
+public class ScriptEditor extends HyperCardWindow {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 

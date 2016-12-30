@@ -9,19 +9,17 @@
 package hypercard.parts;
 
 import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.MouseListener;
+import hypercard.parts.model.AbstractPartModel;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class PartMover implements MouseListener {
+public class PartMover {
 
     public final int MOVER_REFRESH_MS = 10;
     public final int SNAP_TO_GRID_SIZE = 10;
@@ -44,13 +42,13 @@ public class PartMover implements MouseListener {
             int newLeft = ModifierKeyListener.isShiftDown ? (((mouseLoc.x - horizCenter) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - horizCenter;
 
             try {
-                part.setProperty("top", new Value(newTop));
-                part.setProperty("left", new Value(newLeft));
+                part.setProperty(AbstractPartModel.PROP_TOP, new Value(newTop));
+                part.setProperty(AbstractPartModel.PROP_LEFT, new Value(newLeft));
             } catch (Exception e) {
                 throw new RuntimeException (e);
             }
-               
-               if (!done) {
+
+            if (!done) {
                 executor.schedule(this, MOVER_REFRESH_MS, TimeUnit.MILLISECONDS);
             }
         }
@@ -60,18 +58,8 @@ public class PartMover implements MouseListener {
         this.part = part;
         this.within = within;
 
-        part.getComponent().addMouseListener(this);
-        within.addMouseListener(this);
+        MouseListener.notifyOnMousePressed(() -> done = true);
 
         executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
     }
-
-    public void mousePressed(MouseEvent e) {
-        done = true;
-    }
-
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void mouseClicked(MouseEvent e) {}
 }

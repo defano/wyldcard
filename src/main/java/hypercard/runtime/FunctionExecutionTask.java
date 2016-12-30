@@ -21,22 +21,25 @@ public class FunctionExecutionTask implements Callable<Value> {
         this.me = me;
 
         if (function.parameters.list.size() != arguments.getArgumentCount())
-            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Argument count to function " + function.name + " doesn't match parameter count"));
+            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + arguments.getArgumentCount() + "."));
     }
 
-    
     @Override
     public Value call() throws Exception {
+
+        // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
+        arguments.evaluate();
+
         GlobalContext.getContext().pushContext();
         GlobalContext.getContext().setMe(me);
-        
-        try {        
+
+        try {
+            // Bind argument values to parameter variables in this context
             for (int index = 0; index < function.parameters.list.size(); index++) {
-            
                 String theParam = function.parameters.list.get(index);
                 Value theArg = arguments.getEvaluatedList().get(index);
-                
-                GlobalContext.getContext().set(theParam, theArg);                    
+
+                GlobalContext.getContext().set(theParam, theArg);
             }
             
             function.statements.execute();

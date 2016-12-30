@@ -338,9 +338,9 @@ public class Value {
     public Value subtract (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be subtracted because it is not a number");
+            throw new HtSemanticException("'" + value + "' cannot be subtracted because it is not a number");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be subtracted by the text expression: " + v);
+            throw new HtSemanticException("'" + value + "' cannot be subtracted by the text expression: " + v);
         
         if (isInteger() && v.isInteger())
             return new Value(integerValue() - v.integerValue());

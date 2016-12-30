@@ -9,8 +9,8 @@ public class RoundRectangleTool extends AbstractShapeTool {
     }
 
     @Override
-    public void drawShape(Graphics g, int x1, int y1, int x2, int y2) {
-        g.drawRoundRect(x1, y1, x2 - x1, y2 - y1, 10, 10);
+    public void drawShape(Graphics g, int x1, int y1, int width, int height) {
+        g.drawRoundRect(x1, y1, width, height, 10, 10);
 
     }
 }

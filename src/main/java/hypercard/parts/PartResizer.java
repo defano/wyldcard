@@ -9,21 +9,17 @@
 package hypercard.parts;
 
 import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.MouseListener;
+import hypercard.parts.model.AbstractPartModel;
 import hypertalk.ast.common.Value;
-import hypertalk.exception.NoSuchPropertyException;
 
-import java.awt.Component;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import javax.swing.*;
+import java.awt.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.SwingUtilities;
-
-public class PartResizer implements MouseListener {
+public class PartResizer {
 
     public final int SNAP_TO_GRID_SIZE = 10;
     public final int RESIZER_REFRESH_MS = 10;
@@ -47,15 +43,16 @@ public class PartResizer implements MouseListener {
 
             try {
                 if (newWidth >= MIN_WIDTH)
-                    part.setProperty("width", new Value(newWidth));
+                    part.setProperty(AbstractPartModel.PROP_WIDTH, new Value(newWidth));
                 
                 if (newHeight >= MIN_HEIGHT)
-                    part.setProperty("height", new Value(newHeight));
+                    part.setProperty(AbstractPartModel.PROP_HEIGHT, new Value(newHeight));
+
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
             
-               if (!done) {
+            if (!done) {
                 executor.schedule(this, RESIZER_REFRESH_MS, TimeUnit.MILLISECONDS);
             }
         }
@@ -65,18 +62,8 @@ public class PartResizer implements MouseListener {
         this.part = part;
         this.within = within;
 
-        part.getComponent().addMouseListener(this);
-        within.addMouseListener(this);
+        MouseListener.notifyOnMousePressed(() -> done = true);
 
         executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
     }
-
-    public void mousePressed(MouseEvent e) {
-        done = true;
-    }
-
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
-    public void mouseClicked(MouseEvent e) {}
 }

@@ -3,7 +3,9 @@ package hypercard.paint.canvas;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A paint tools canvas with a built-in undo and redo buffer.
@@ -138,7 +140,7 @@ public class UndoableCanvas extends Canvas {
         if (permanent == null) {
             permanent = commit.image;
         } else {
-            overlayImage(commit.image, permanent, commit.composite);
+            overlayImage(0, 0, commit.image, permanent, commit.composite);
         }
     }
 
@@ -153,11 +155,11 @@ public class UndoableCanvas extends Canvas {
         BufferedImage visibleImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         if (permanent != null) {
-            overlayImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            overlayImage(0, 0, permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
 
         for (int index = 0; index <= undoBufferPointer; index++) {
-            overlayImage(undoBuffer.get(index).image, visibleImage, undoBuffer.get(index).composite);
+            overlayImage(0, 0, undoBuffer.get(index).image, visibleImage, undoBuffer.get(index).composite);
         }
 
         return visibleImage;

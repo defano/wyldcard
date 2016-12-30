@@ -100,7 +100,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
         WindowBuilder.make(new ButtonPropertyEditor())
                 .withTitle("Button PartModel")
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .build();
     }
 
@@ -116,7 +116,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("HyperTalk Script Editor")
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
                 .resizeable(true)
                 .build();
     }
@@ -198,7 +198,6 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            RuntimeEnv.getRuntimeEnv().setTheMouse(true);
             sendMessage("mouseDown");
         }
     }
@@ -206,7 +205,6 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     @Override
     public void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            RuntimeEnv.getRuntimeEnv().setTheMouse(false);
             sendMessage("mouseUp");
         }
     }

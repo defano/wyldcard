@@ -27,7 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
-public class CardPart extends JLayeredPane implements MouseListener, ComponentListener, CanvasObserver {
+public class CardPart extends JLayeredPane implements ComponentListener, CanvasObserver {
 
     private final static int CANVAS_LAYER = 0;
     private final static int PARTS_LAYER = 1;
@@ -41,7 +41,6 @@ public class CardPart extends JLayeredPane implements MouseListener, ComponentLi
     private CardPart() {
         super();
 
-        this.addMouseListener(this);
         this.setLayout(null);
         this.addComponentListener(this);
     }
@@ -135,24 +134,6 @@ public class CardPart extends JLayeredPane implements MouseListener, ComponentLi
         return buttons.getNextId();
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-        RuntimeEnv.getRuntimeEnv().setTheMouse(true);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        RuntimeEnv.getRuntimeEnv().setTheMouse(false);
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {}
-
-    @Override
-    public void mouseExited(MouseEvent e) {}
-
-    @Override
-    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void componentResized(ComponentEvent e) {

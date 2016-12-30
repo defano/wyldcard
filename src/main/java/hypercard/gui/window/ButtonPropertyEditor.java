@@ -12,7 +12,7 @@ import hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public class ButtonPropertyEditor implements HyperCardWindow {
+public class ButtonPropertyEditor extends HyperCardWindow {
     private AbstractPartModel model;
 
     private JButton saveButton;
@@ -36,7 +36,7 @@ public class ButtonPropertyEditor implements HyperCardWindow {
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
                     .withModel(model)
-                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                    .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
                     .build();
         });
 

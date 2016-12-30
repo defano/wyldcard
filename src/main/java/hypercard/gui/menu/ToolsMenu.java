@@ -4,6 +4,7 @@ import hypercard.gui.window.PaintToolsPalette;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.paint.PaintToolsManager;
 import hypercard.paint.tools.ToolType;
+import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
 
@@ -14,7 +15,7 @@ public class ToolsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Show Tools Palette")
-                .withAction(e -> WindowBuilder.make(new PaintToolsPalette()).resizeable(false).withTitle("Tools Palette").build())
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().setPaintToolsPaletteVisible(!RuntimeEnv.getRuntimeEnv().isPaintToolsPaletteVisible()))
                 .build(this);
 
         this.addSeparator();
@@ -32,6 +33,11 @@ public class ToolsMenu extends JMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Field")
                 .disabled()
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Selection")
+                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.SELECTION))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -62,6 +68,11 @@ public class ToolsMenu extends JMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Line")
                 .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.LINE))
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Polygon")
+                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.POLYGON))
                 .build(this);
     }
 }

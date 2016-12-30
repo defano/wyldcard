@@ -82,6 +82,12 @@ public class PaintToolBuilder {
             case LINE:
                 selectedTool = new LineTool();
                 break;
+            case POLYGON:
+                selectedTool = new PolygonTool();
+                break;
+            case SELECTION:
+                selectedTool = new SelectionTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);

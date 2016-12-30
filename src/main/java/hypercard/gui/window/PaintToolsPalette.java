@@ -10,8 +10,10 @@ import hypercard.paint.tools.ToolType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class PaintToolsPalette implements HyperCardWindow, PaintToolSelectionObserver {
+public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelectionObserver {
     private JPanel palettePanel;
 
     private JButton selection;
@@ -38,13 +40,15 @@ public class PaintToolsPalette implements HyperCardWindow, PaintToolSelectionObs
     public PaintToolsPalette() {
          allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
-        finger.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.ARROW));
-        pencil.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.PENCIL));
-        paintbrush.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.PAINTBRUSH));
-        eraser.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.ERASER));
-        line.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.LINE));
-        rectangle.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.RECTANGLE));
-        roundRectangle.addActionListener(e -> PaintToolsManager.getInstance().setSelectedToolType(ToolType.ROUND_RECTANGLE));
+        finger.addActionListener(e -> toolSelected(ToolType.ARROW));
+        pencil.addActionListener(e -> toolSelected(ToolType.PENCIL));
+        paintbrush.addActionListener(e -> toolSelected(ToolType.PAINTBRUSH));
+        eraser.addActionListener(e -> toolSelected(ToolType.ERASER));
+        line.addActionListener(e -> toolSelected(ToolType.LINE));
+        rectangle.addActionListener(e -> toolSelected(ToolType.RECTANGLE));
+        roundRectangle.addActionListener(e -> toolSelected(ToolType.ROUND_RECTANGLE));
+        polygon.addActionListener(e -> toolSelected(ToolType.POLYGON));
+        selection.addActionListener(e -> toolSelected(ToolType.SELECTION));
 
         PaintToolsManager.getInstance().addObserver(this);
         onPaintToolSelected(null, PaintToolsManager.getInstance().getSelectedTool());
@@ -71,6 +75,11 @@ public class PaintToolsPalette implements HyperCardWindow, PaintToolSelectionObs
         getButtonForTool(newTool.getToolType()).setEnabled(false);
     }
 
+    private void toolSelected(ToolType toolType) {
+        PaintToolsManager.getInstance().setSelectedToolType(toolType);
+        onPaintToolSelected(null, PaintToolsManager.getInstance().getSelectedTool());
+    }
+
     private JButton getButtonForTool(ToolType toolType) {
         switch (toolType) {
             case ERASER:
@@ -87,6 +96,10 @@ public class PaintToolsPalette implements HyperCardWindow, PaintToolSelectionObs
                 return rectangle;
             case ROUND_RECTANGLE:
                 return roundRectangle;
+            case POLYGON:
+                return polygon;
+            case SELECTION:
+                return selection;
 
             default:
                 throw new IllegalStateException("Bug! Unimplemented tool type " + toolType);
