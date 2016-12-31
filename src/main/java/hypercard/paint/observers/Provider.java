@@ -2,7 +2,7 @@ package hypercard.paint.observers;
 
 import java.util.ArrayList;
 
-public class ObservableAttribute<T> {
+public class Provider<T> {
 
     public interface Observer {
         void onChanged(Object oldValue, Object newValue);
@@ -11,7 +11,7 @@ public class ObservableAttribute<T> {
     private T value;
     private ArrayList<Observer> observers = new ArrayList<>();
 
-    public ObservableAttribute(T initialValue) {
+    public Provider(T initialValue) {
         this.value = initialValue;
     }
 

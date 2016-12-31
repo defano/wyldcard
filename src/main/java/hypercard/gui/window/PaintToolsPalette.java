@@ -4,7 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
 import hypercard.paint.PaintToolSelectionObserver;
-import hypercard.paint.PaintToolsManager;
+import hypercard.context.ToolsContext;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolType;
 
@@ -51,8 +51,8 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
         shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
 
-        PaintToolsManager.getInstance().addObserver(this);
-        onPaintToolSelected(null, PaintToolsManager.getInstance().getSelectedTool());
+        ToolsContext.getInstance().addObserver(this);
+        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedTool());
     }
 
     @Override
@@ -77,8 +77,8 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
     }
 
     private void toolSelected(PaintToolType toolType) {
-        PaintToolsManager.getInstance().setSelectedToolType(toolType);
-        onPaintToolSelected(null, PaintToolsManager.getInstance().getSelectedTool());
+        ToolsContext.getInstance().setSelectedToolType(toolType);
+        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedTool());
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {

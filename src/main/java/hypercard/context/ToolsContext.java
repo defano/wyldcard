@@ -1,5 +1,6 @@
-package hypercard.paint;
+package hypercard.context;
 
+import hypercard.paint.PaintToolSelectionObserver;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolBuilder;
 import hypercard.paint.tools.PaintToolType;
@@ -8,16 +9,16 @@ import hypercard.runtime.RuntimeEnv;
 import java.util.HashSet;
 import java.util.Set;
 
-public class PaintToolsManager {
+public class ToolsContext {
 
-    private final static PaintToolsManager instance = new PaintToolsManager();
+    private final static ToolsContext instance = new ToolsContext();
 
     private AbstractPaintTool selectedTool = PaintToolBuilder.createTool(PaintToolType.ARROW).build();
     private Set<PaintToolSelectionObserver> observers = new HashSet<>();
 
-    private PaintToolsManager() {}
+    private ToolsContext() {}
 
-    public static PaintToolsManager getInstance() {
+    public static ToolsContext getInstance() {
         return instance;
     }
 

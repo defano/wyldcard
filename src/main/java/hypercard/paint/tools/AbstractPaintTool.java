@@ -1,7 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.observers.ObservableAttribute;
+import hypercard.paint.observers.Provider;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -12,9 +12,9 @@ public abstract class AbstractPaintTool extends MouseAdapter {
     private final PaintToolType type;
     private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 
-    private ObservableAttribute<Stroke> strokeProvider = new ObservableAttribute<>(new BasicStroke(5));
-    private ObservableAttribute<Paint> paintProvider = new ObservableAttribute<>(Color.black);
-    private ObservableAttribute<Paint> fillProvider = new ObservableAttribute<>(null);
+    private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(5));
+    private Provider<Paint> paintProvider = new Provider<>(Color.black);
+    private Provider<Paint> fillProvider = new Provider<>(null);
 
     public AbstractPaintTool(PaintToolType type) {
         this.type = type;
@@ -49,7 +49,7 @@ public abstract class AbstractPaintTool extends MouseAdapter {
         return canvas;
     }
 
-    public void setPaintProvider(ObservableAttribute<Paint> paintProvider) {
+    public void setPaintProvider(Provider<Paint> paintProvider) {
         this.paintProvider = paintProvider;
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractPaintTool extends MouseAdapter {
         return paintProvider.get();
     }
 
-    public void setStrokeProvider(ObservableAttribute<Stroke> strokeProvider) {
+    public void setStrokeProvider(Provider<Stroke> strokeProvider) {
         this.strokeProvider = strokeProvider;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractPaintTool extends MouseAdapter {
         return strokeProvider.get();
     }
 
-    public void setFillProvider(ObservableAttribute<Paint> fillProvider) {
+    public void setFillProvider(Provider<Paint> fillProvider) {
         this.fillProvider = fillProvider;
     }
 

@@ -1,6 +1,6 @@
 package hypercard.gui.menu;
 
-import hypercard.paint.PaintToolsManager;
+import hypercard.context.ToolsContext;
 import hypercard.paint.tools.PaintToolType;
 import hypercard.runtime.RuntimeEnv;
 
@@ -20,7 +20,7 @@ public class ToolsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Finger")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.ARROW))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ARROW))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -35,57 +35,57 @@ public class ToolsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Selection")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.SELECTION))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SELECTION))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Pencil")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.PENCIL))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.PENCIL))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rectangle")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.RECTANGLE))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.RECTANGLE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Round Rectangle")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.ROUND_RECTANGLE))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ROUND_RECTANGLE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Oval")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.OVAL))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.OVAL))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paintbrush")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.PAINTBRUSH))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.PAINTBRUSH))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Eraser")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.ERASER))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ERASER))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Line")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.LINE))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.LINE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Polygon")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.POLYGON))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.POLYGON))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Shape")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.SHAPE))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SHAPE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Text")
-                .withAction(e -> PaintToolsManager.getInstance().setSelectedToolType(PaintToolType.TEXT))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.TEXT))
                 .build(this);
 
     }

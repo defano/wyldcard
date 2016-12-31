@@ -1,7 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.observers.ObservableAttribute;
+import hypercard.paint.observers.Provider;
 
 import java.awt.*;
 
@@ -10,12 +10,12 @@ public class PaintToolBuilder {
     private final PaintToolType type;
 
     private Canvas canvas;
-    private ObservableAttribute<Stroke> strokeProvider;
-    private ObservableAttribute<Paint> paintProvider;
+    private Provider<Stroke> strokeProvider;
+    private Provider<Paint> paintProvider;
 
-    private static ObservableAttribute<Stroke> defaultShapeStrokeProvider = new ObservableAttribute<>(new BasicStroke(2));
-    private static ObservableAttribute<Stroke> defaultBrushStrokeProvider = new ObservableAttribute<>(new BasicStroke(10));
-    private static ObservableAttribute<Paint> defaultPaintProvider = new ObservableAttribute<>(Color.BLACK);
+    private static Provider<Stroke> defaultShapeStrokeProvider = new Provider<>(new BasicStroke(2));
+    private static Provider<Stroke> defaultBrushStrokeProvider = new Provider<>(new BasicStroke(10));
+    private static Provider<Paint> defaultPaintProvider = new Provider<>(Color.BLACK);
     private static Canvas defaultCanvas;
 
     private PaintToolBuilder(PaintToolType type) {
@@ -37,21 +37,21 @@ public class PaintToolBuilder {
     }
 
     public PaintToolBuilder withStroke(Stroke stroke) {
-        this.strokeProvider = new ObservableAttribute<>(stroke);
+        this.strokeProvider = new Provider<>(stroke);
         return this;
     }
 
-    public PaintToolBuilder withStrokeProvider(ObservableAttribute<Stroke> strokeProvider) {
+    public PaintToolBuilder withStrokeProvider(Provider<Stroke> strokeProvider) {
         this.strokeProvider = strokeProvider;
         return this;
     }
 
     public PaintToolBuilder withPaint(Paint paint) {
-        this.paintProvider = new ObservableAttribute<>(paint);
+        this.paintProvider = new Provider<>(paint);
         return this;
     }
 
-    public PaintToolBuilder withPaintProvider(ObservableAttribute<Paint> paintProvider) {
+    public PaintToolBuilder withPaintProvider(Provider<Paint> paintProvider) {
         this.paintProvider = paintProvider;
         return this;
     }
@@ -121,19 +121,19 @@ public class PaintToolBuilder {
         return selectedTool;
     }
 
-    public static void setDefaultBrushStrokeProvider(ObservableAttribute<Stroke> strokeProvider) {
+    public static void setDefaultBrushStrokeProvider(Provider<Stroke> strokeProvider) {
         if (strokeProvider != null) {
             defaultBrushStrokeProvider = strokeProvider;
         }
     }
 
-    public static void setDefaultShapeStrokeProvider(ObservableAttribute<Stroke> strokeProvider) {
+    public static void setDefaultShapeStrokeProvider(Provider<Stroke> strokeProvider) {
         if (strokeProvider != null) {
             defaultShapeStrokeProvider = strokeProvider;
         }
     }
 
-    public static void setDefaultPaintProvider(ObservableAttribute<Paint> paintProvider) {
+    public static void setDefaultPaintProvider(Provider<Paint> paintProvider) {
         if (paintProvider != null) {
             defaultPaintProvider = paintProvider;
         }
@@ -143,7 +143,7 @@ public class PaintToolBuilder {
         defaultCanvas = canvas;
     }
 
-    private ObservableAttribute<Stroke> getDefaultStrokeProviderForTool() {
+    private Provider<Stroke> getDefaultStrokeProviderForTool() {
         switch (type) {
             case PAINTBRUSH:
                 return defaultBrushStrokeProvider;
