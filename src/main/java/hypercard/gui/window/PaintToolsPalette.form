@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="hypercard.gui.window.PaintToolsPalette">
-  <grid id="27dc6" binding="palettePanel" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="palettePanel" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -14,9 +14,12 @@
         </constraints>
         <properties>
           <enabled value="true"/>
+          <icon value="icons/selection.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
           <opaque value="true"/>
           <selected value="false"/>
-          <text value="Selection"/>
+          <text value=""/>
           <visible value="true"/>
         </properties>
       </component>
@@ -25,7 +28,10 @@
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Lasso"/>
+          <icon value="icons/lasso.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="5f8c3" class="javax.swing.JButton" binding="pencil">
@@ -34,7 +40,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Pencil"/>
+          <icon value="icons/pencil.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="5282c" class="javax.swing.JButton" binding="paintbrush">
@@ -43,7 +52,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Paintbrush"/>
+          <icon value="icons/paintbrush.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="ca8e6" class="javax.swing.JButton" binding="eraser">
@@ -52,7 +64,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Eraser"/>
+          <icon value="icons/eraser.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="f3520" class="javax.swing.JButton" binding="line">
@@ -61,7 +76,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Line"/>
+          <icon value="icons/line.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="e5868" class="javax.swing.JButton" binding="spraypaint">
@@ -70,7 +88,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Spray Paint"/>
+          <icon value="icons/spraypaint.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="e3154" class="javax.swing.JButton" binding="rectangle">
@@ -79,7 +100,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Rectangle"/>
+          <icon value="icons/rectangle.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="245a0" class="javax.swing.JButton" binding="roundRectangle">
@@ -88,7 +112,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Rounded Rectangle"/>
+          <icon value="icons/roundrect.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="27b97" class="javax.swing.JButton" binding="fill">
@@ -97,7 +124,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Fill"/>
+          <icon value="icons/fill.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="7a7f5" class="javax.swing.JButton" binding="oval">
@@ -106,7 +136,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Oval"/>
+          <icon value="icons/oval.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="eaaee" class="javax.swing.JButton" binding="curve">
@@ -115,7 +148,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Curve"/>
+          <icon value="icons/curve.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="bd8d" class="javax.swing.JButton" binding="text">
@@ -124,7 +160,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Text"/>
+          <icon value="icons/text.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="2ca15" class="javax.swing.JButton" binding="shape">
@@ -133,7 +172,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Shape"/>
+          <icon value="icons/shape.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="37d2f" class="javax.swing.JButton" binding="polygon">
@@ -142,7 +184,10 @@
         </constraints>
         <properties>
           <contentAreaFilled value="false"/>
-          <text value="Polygon"/>
+          <icon value="icons/polygon.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="6e392" class="javax.swing.JButton" binding="finger">
@@ -150,8 +195,11 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <label value="Finger"/>
-          <text value="Finger"/>
+          <icon value="icons/finger.png"/>
+          <iconTextGap value="0"/>
+          <label value=""/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="5d11a" class="javax.swing.JButton" binding="button">
@@ -159,7 +207,10 @@
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Button"/>
+          <icon value="icons/button.png"/>
+          <iconTextGap value="0"/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
       <component id="88eaa" class="javax.swing.JButton" binding="field">
@@ -167,8 +218,11 @@
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <label value="Field"/>
-          <text value="Field"/>
+          <icon value="icons/field.png"/>
+          <iconTextGap value="0"/>
+          <label value=""/>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value=""/>
         </properties>
       </component>
     </children>
