@@ -1,20 +1,39 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.MathUtils;
+import hypercard.paint.canvas.*;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractPolylineTool extends AbstractPaintTool {
+public abstract class AbstractPolylineTool extends AbstractPaintTool implements KeyListener {
 
     private List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
+    protected abstract void drawPolyline(Graphics g, int[] xPoints, int[] yPoints);
+    protected abstract void drawPolygon(Graphics g, int[] xPoints, int[] yPoints);
+
     public AbstractPolylineTool(PaintToolType type) {
         super(type);
     }
+
+    @Override
+    public void activate(hypercard.paint.canvas.Canvas canvas) {
+        super.activate(canvas);
+        getCanvas().addKeyListener(this);
+    }
+
+    @Override
+    public void deactivate() {
+        super.deactivate();
+        getCanvas().removeKeyListener(this);
+    }
+
 
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -52,21 +71,8 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
 
         // User double-clicked; complete the polygon
         if (e.getClickCount() > 1 && points.size() > 1){
-            getCanvas().clearScratch();
-
             points.add(currentPoint);
-
-            int[] xs = points.stream().mapToInt(i->i.x).toArray();
-            int[] ys = points.stream().mapToInt(i->i.y).toArray();
-
-            points.clear();
-            currentPoint = null;
-
-            Graphics2D g2d = getGraphics2D();
-            drawPolygon(g2d, xs, ys);
-            g2d.dispose();
-
-            getCanvas().commit();
+            commitPolygon();
         }
 
         // First click (creating initial point)
@@ -88,6 +94,53 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
         return g2d;
     }
 
-    protected abstract void drawPolyline(Graphics g, int[] xPoints, int[] yPoints);
-    protected abstract void drawPolygon(Graphics g, int[] xPoints, int[] yPoints);
+    private void commitPolygon() {
+        getCanvas().clearScratch();
+
+        int[] xs = points.stream().mapToInt(i->i.x).toArray();
+        int[] ys = points.stream().mapToInt(i->i.y).toArray();
+
+        points.clear();
+        currentPoint = null;
+
+        Graphics2D g2d = getGraphics2D();
+        drawPolygon(g2d, xs, ys);
+        g2d.dispose();
+
+        getCanvas().commit();
+    }
+
+    private void commitPolyline() {
+        getCanvas().clearScratch();
+
+        int[] xs = points.stream().mapToInt(i->i.x).toArray();
+        int[] ys = points.stream().mapToInt(i->i.y).toArray();
+
+        points.clear();
+        currentPoint = null;
+
+        Graphics2D g2d = getGraphics2D();
+        drawPolyline(g2d, xs, ys);
+        g2d.dispose();
+
+        getCanvas().commit();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Nothing to do
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            points.add(currentPoint);
+            commitPolyline();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Nothing to do
+    }
 }
