@@ -15,10 +15,7 @@ import hypercard.context.GlobalContext;
 import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.util.ModifierKeyListener;
 import hypercard.gui.util.MouseListener;
-import hypercard.gui.window.MessageWindow;
-import hypercard.gui.window.PaintToolsPalette;
-import hypercard.gui.window.StackWindow;
-import hypercard.gui.window.WindowBuilder;
+import hypercard.gui.window.*;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModel;
 import hypercard.parts.model.StackModelObserver;
@@ -42,6 +39,7 @@ public class RuntimeEnv implements StackModelObserver {
     private StackWindow stackWindow;
     private MessageWindow messageWindow;
     private PaintToolsPalette paintToolsPalette;
+    private ShapesPalette shapesPalette;
 
     private StackModel stack;
 
@@ -74,7 +72,7 @@ public class RuntimeEnv implements StackModelObserver {
         // Create the main window, center it on the screen and display it
         stackWindow = new StackWindow();
         JFrame stackFrame = WindowBuilder.make(stackWindow)
-                .withTitle("HyperCard")
+                .withTitle(stack.getStackName())
                 .resizeable(true)
                 .quitOnClose()
                 .withMenuBar(HyperCardMenuBar.instance)
@@ -83,7 +81,7 @@ public class RuntimeEnv implements StackModelObserver {
 
         messageWindow = new MessageWindow();
         WindowBuilder.make(messageWindow)
-                .withTitle("Message Box")
+                .withTitle("Message")
                 .resizeable(false)
                 .withLocationUnderneath(stackFrame)
                 .withMenuBar(HyperCardMenuBar.instance)
@@ -94,9 +92,19 @@ public class RuntimeEnv implements StackModelObserver {
         WindowBuilder.make(paintToolsPalette)
                 .resizeable(false)
                 .notFocusable()
-                .withTitle("Tools Palette")
+                .withTitle("Tools")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(stackFrame)
+                .notInitiallyVisible()
+                .build();
+
+        shapesPalette = new ShapesPalette();
+        WindowBuilder.make(shapesPalette)
+                .resizeable(false)
+                .withTitle("Shapes")
+                .notFocusable()
+                .withMenuBar(HyperCardMenuBar.instance)
+                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
                 .build();
 
@@ -194,6 +202,14 @@ public class RuntimeEnv implements StackModelObserver {
 
     public boolean isPaintToolsPaletteVisible() {
         return paintToolsPalette.isVisible();
+    }
+
+    public void setShapesPaletteVisible (boolean visible) {
+        shapesPalette.setVisible(true);
+    }
+
+    public boolean isShapesPaletteVisible() {
+        return shapesPalette.isVisible();
     }
 
     public void doMsgBoxText() {

@@ -1,7 +1,6 @@
 package hypercard.paint.tools;
 
-import hypercard.paint.MathUtils;
-import hypercard.paint.canvas.*;
+import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

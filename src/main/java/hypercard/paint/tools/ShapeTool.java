@@ -1,6 +1,6 @@
 package hypercard.paint.tools;
 
-import hypercard.paint.MathUtils;
+import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
 
@@ -10,14 +10,15 @@ import java.awt.*;
  */
 public class ShapeTool extends AbstractShapeTool {
 
-    private int sides = 6;
-
     public ShapeTool() {
         super(PaintToolType.SHAPE);
     }
 
     @Override
     public void drawBounds(Graphics g, int x, int y, int width, int height) {
+
+        int sides = getShapeSides();
+        Paint fill = getFill();
 
         double length = MathUtils.getLineLength(initialPoint, currentPoint);
         double rotation = Math.toRadians(MathUtils.getLineAngle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y));
@@ -40,17 +41,9 @@ public class ShapeTool extends AbstractShapeTool {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawPolygon(polygon);
 
-        if (getFill() != null) {
-            g2d.setPaint(getFill());
+        if (fill != null) {
+            g2d.setPaint(fill);
             g2d.fill(polygon);
         }
-    }
-
-    public void setSides(int sides) {
-        this.sides = sides;
-    }
-
-    public int getSides() {
-        return sides;
     }
 }

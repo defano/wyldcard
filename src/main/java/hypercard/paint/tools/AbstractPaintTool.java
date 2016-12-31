@@ -15,6 +15,8 @@ public abstract class AbstractPaintTool extends MouseAdapter {
     private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(5));
     private Provider<Paint> paintProvider = new Provider<>(Color.black);
     private Provider<Paint> fillProvider = new Provider<>(null);
+    private Provider<Integer> shapeSidesProvider = new Provider<>(5);
+    private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
 
     public AbstractPaintTool(PaintToolType type) {
         this.type = type;
@@ -71,5 +73,41 @@ public abstract class AbstractPaintTool extends MouseAdapter {
 
     public Paint getFill() {
         return fillProvider.get();
+    }
+
+    public void setShapeSidesProvider(Provider<Integer> shapeSidesProvider) {
+        this.shapeSidesProvider = shapeSidesProvider;
+    }
+
+    public void setFontProvider(Provider<Font> fontProvider) {
+        this.fontProvider = fontProvider;
+    }
+
+    public Provider<Stroke> getStrokeProvider() {
+        return strokeProvider;
+    }
+
+    public Provider<Paint> getPaintProvider() {
+        return paintProvider;
+    }
+
+    public Provider<Paint> getFillProvider() {
+        return fillProvider;
+    }
+
+    public Provider<Integer> getShapeSidesProvider() {
+        return shapeSidesProvider;
+    }
+
+    public Provider<Font> getFontProvider() {
+        return fontProvider;
+    }
+
+    public Font getFont() {
+        return fontProvider.get();
+    }
+
+    public int getShapeSides() {
+        return shapeSidesProvider.get();
     }
 }

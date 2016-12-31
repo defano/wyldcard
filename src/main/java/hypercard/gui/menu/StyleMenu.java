@@ -1,7 +1,11 @@
 package hypercard.gui.menu;
 
+import hypercard.context.ToolsContext;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class StyleMenu extends JMenu {
 
@@ -10,19 +14,19 @@ public class StyleMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Plain")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontStyle(Font.PLAIN))
                 .fontStyle(Font.PLAIN)
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Bold")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontStyle(Font.BOLD))
                 .fontStyle(Font.BOLD)
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Italic")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontStyle(Font.ITALIC))
                 .fontStyle(Font.ITALIC)
                 .build(this);
 
@@ -60,32 +64,32 @@ public class StyleMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("9")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontSize(9))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("10")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontSize(10))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("12")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontSize(12))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("14")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontSize(14))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("18")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontSize(18))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("24")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setFontSize(24))
                 .build(this);
 
         this.addSeparator();

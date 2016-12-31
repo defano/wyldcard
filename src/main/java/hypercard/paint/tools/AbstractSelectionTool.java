@@ -228,15 +228,25 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
 
         if (hasSelection()) {
             switch (e.getKeyCode()) {
+                case KeyEvent.VK_DELETE:
+                case KeyEvent.VK_BACK_SPACE:
+                    clearSelection();
+                    getCanvas().clearScratch();
+                    getCanvas().repaintCanvas();
+                    break;
+
                 case KeyEvent.VK_LEFT:
                     moveSelection(-1, 0);
                     break;
+
                 case KeyEvent.VK_RIGHT:
                     moveSelection(1, 0);
                     break;
+
                 case KeyEvent.VK_UP:
                     moveSelection(0, -1);
                     break;
+
                 case KeyEvent.VK_DOWN:
                     moveSelection(0, 1);
                     break;

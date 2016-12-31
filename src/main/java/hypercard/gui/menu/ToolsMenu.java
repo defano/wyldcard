@@ -5,6 +5,7 @@ import hypercard.paint.tools.PaintToolType;
 import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ToolsMenu extends JMenu {
 
@@ -12,8 +13,13 @@ public class ToolsMenu extends JMenu {
         super("Tools");
 
         MenuItemBuilder.ofDefaultType()
-                .named("Show Tools Palette")
+                .named("Tools Palette")
                 .withAction(e -> RuntimeEnv.getRuntimeEnv().setPaintToolsPaletteVisible(!RuntimeEnv.getRuntimeEnv().isPaintToolsPaletteVisible()))
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Shapes Palette")
+                .withAction(e -> RuntimeEnv.getRuntimeEnv().setShapesPaletteVisible(!RuntimeEnv.getRuntimeEnv().isShapesPaletteVisible()))
                 .build(this);
 
         this.addSeparator();

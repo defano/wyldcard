@@ -2,17 +2,14 @@ package hypercard.paint.tools;
 
 
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.observers.Provider;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-/**
- * Created by matt on 12/30/16.
- */
-public class TextTool extends AbstractPaintTool {
+public class TextTool extends AbstractPaintTool implements Provider.Observer {
 
     private final JTextArea textArea;
 
@@ -32,6 +29,13 @@ public class TextTool extends AbstractPaintTool {
 
         commitTextImage(textArea.getX(), textArea.getY());
         removeTextArea();
+        getFontProvider().removeObserver(this);
+    }
+
+    @Override
+    public void activate(Canvas canvas) {
+        super.activate(canvas);
+        getFontProvider().addObserver(this);
     }
 
     @Override
@@ -60,6 +64,7 @@ public class TextTool extends AbstractPaintTool {
 
         textArea.setText("");
         textArea.setBounds(left, top, getCanvas().getWidth() - left, getCanvas().getHeight() - top);
+        textArea.setFont(getFont());
 
         getCanvas().add(textArea);
         getCanvas().revalidate();
@@ -93,4 +98,10 @@ public class TextTool extends AbstractPaintTool {
         }
     }
 
+    @Override
+    public void onChanged(Object oldValue, Object newValue) {
+        if (newValue instanceof Font) {
+            textArea.setFont((Font) newValue);
+        }
+    }
 }

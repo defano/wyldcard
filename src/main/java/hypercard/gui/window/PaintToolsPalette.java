@@ -3,15 +3,16 @@ package hypercard.gui.window;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
-import hypercard.paint.PaintToolSelectionObserver;
+import hypercard.gui.util.DoubleClickMouseListener;
 import hypercard.context.ToolsContext;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolType;
+import hypercard.runtime.RuntimeEnv;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelectionObserver {
+public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.PaintToolSelectionObserver {
     private JPanel palettePanel;
 
     private JButton selection;
@@ -51,7 +52,10 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
         shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
 
-        ToolsContext.getInstance().addObserver(this);
+        eraser.addMouseListener((DoubleClickMouseListener) e -> RuntimeEnv.getRuntimeEnv().getCard().getCanvas().clearCanvas());
+        shape.addMouseListener((DoubleClickMouseListener) e -> RuntimeEnv.getRuntimeEnv().setShapesPaletteVisible(true));
+
+        ToolsContext.getInstance().addPaintToolSelectionObserver(this);
         onPaintToolSelected(null, ToolsContext.getInstance().getSelectedTool());
     }
 
@@ -129,7 +133,7 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
      */
     private void $$$setupUI$$$() {
         palettePanel = new JPanel();
-        palettePanel.setLayout(new GridLayoutManager(6, 3, new Insets(0, 0, 0, 0), 0, 0));
+        palettePanel.setLayout(new GridLayoutManager(7, 3, new Insets(0, 0, 0, 0), 0, 0));
         selection = new JButton();
         selection.setEnabled(true);
         selection.setIcon(new ImageIcon(getClass().getResource("/icons/selection.png")));
@@ -139,104 +143,104 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
         selection.setSelected(false);
         selection.setText("");
         selection.setVisible(true);
-        palettePanel.add(selection, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(selection, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lasso = new JButton();
         lasso.setIcon(new ImageIcon(getClass().getResource("/icons/lasso.png")));
         lasso.setIconTextGap(0);
         lasso.setMargin(new Insets(0, 0, 0, 0));
         lasso.setText("");
-        palettePanel.add(lasso, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(lasso, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pencil = new JButton();
         pencil.setContentAreaFilled(false);
         pencil.setIcon(new ImageIcon(getClass().getResource("/icons/pencil.png")));
         pencil.setIconTextGap(0);
         pencil.setMargin(new Insets(0, 0, 0, 0));
         pencil.setText("");
-        palettePanel.add(pencil, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(pencil, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         paintbrush = new JButton();
         paintbrush.setContentAreaFilled(false);
         paintbrush.setIcon(new ImageIcon(getClass().getResource("/icons/paintbrush.png")));
         paintbrush.setIconTextGap(0);
         paintbrush.setMargin(new Insets(0, 0, 0, 0));
         paintbrush.setText("");
-        palettePanel.add(paintbrush, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(paintbrush, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         eraser = new JButton();
         eraser.setContentAreaFilled(false);
         eraser.setIcon(new ImageIcon(getClass().getResource("/icons/eraser.png")));
         eraser.setIconTextGap(0);
         eraser.setMargin(new Insets(0, 0, 0, 0));
         eraser.setText("");
-        palettePanel.add(eraser, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(eraser, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         line = new JButton();
         line.setContentAreaFilled(false);
         line.setIcon(new ImageIcon(getClass().getResource("/icons/line.png")));
         line.setIconTextGap(0);
         line.setMargin(new Insets(0, 0, 0, 0));
         line.setText("");
-        palettePanel.add(line, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(line, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         spraypaint = new JButton();
         spraypaint.setContentAreaFilled(false);
         spraypaint.setIcon(new ImageIcon(getClass().getResource("/icons/spraypaint.png")));
         spraypaint.setIconTextGap(0);
         spraypaint.setMargin(new Insets(0, 0, 0, 0));
         spraypaint.setText("");
-        palettePanel.add(spraypaint, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(spraypaint, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rectangle = new JButton();
         rectangle.setContentAreaFilled(false);
         rectangle.setIcon(new ImageIcon(getClass().getResource("/icons/rectangle.png")));
         rectangle.setIconTextGap(0);
         rectangle.setMargin(new Insets(0, 0, 0, 0));
         rectangle.setText("");
-        palettePanel.add(rectangle, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(rectangle, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         roundRectangle = new JButton();
         roundRectangle.setContentAreaFilled(false);
         roundRectangle.setIcon(new ImageIcon(getClass().getResource("/icons/roundrect.png")));
         roundRectangle.setIconTextGap(0);
         roundRectangle.setMargin(new Insets(0, 0, 0, 0));
         roundRectangle.setText("");
-        palettePanel.add(roundRectangle, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(roundRectangle, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fill = new JButton();
         fill.setContentAreaFilled(false);
         fill.setIcon(new ImageIcon(getClass().getResource("/icons/fill.png")));
         fill.setIconTextGap(0);
         fill.setMargin(new Insets(0, 0, 0, 0));
         fill.setText("");
-        palettePanel.add(fill, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(fill, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         oval = new JButton();
         oval.setContentAreaFilled(false);
         oval.setIcon(new ImageIcon(getClass().getResource("/icons/oval.png")));
         oval.setIconTextGap(0);
         oval.setMargin(new Insets(0, 0, 0, 0));
         oval.setText("");
-        palettePanel.add(oval, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(oval, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         curve = new JButton();
         curve.setContentAreaFilled(false);
         curve.setIcon(new ImageIcon(getClass().getResource("/icons/curve.png")));
         curve.setIconTextGap(0);
         curve.setMargin(new Insets(0, 0, 0, 0));
         curve.setText("");
-        palettePanel.add(curve, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(curve, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         text = new JButton();
         text.setContentAreaFilled(false);
         text.setIcon(new ImageIcon(getClass().getResource("/icons/text.png")));
         text.setIconTextGap(0);
         text.setMargin(new Insets(0, 0, 0, 0));
         text.setText("");
-        palettePanel.add(text, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(text, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         shape = new JButton();
         shape.setContentAreaFilled(false);
         shape.setIcon(new ImageIcon(getClass().getResource("/icons/shape.png")));
         shape.setIconTextGap(0);
         shape.setMargin(new Insets(0, 0, 0, 0));
         shape.setText("");
-        palettePanel.add(shape, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(shape, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         polygon = new JButton();
         polygon.setContentAreaFilled(false);
         polygon.setIcon(new ImageIcon(getClass().getResource("/icons/polygon.png")));
         polygon.setIconTextGap(0);
         polygon.setMargin(new Insets(0, 0, 0, 0));
         polygon.setText("");
-        palettePanel.add(polygon, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        palettePanel.add(polygon, new GridConstraints(6, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         finger = new JButton();
         finger.setIcon(new ImageIcon(getClass().getResource("/icons/finger.png")));
         finger.setIconTextGap(0);
@@ -257,6 +261,8 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
         field.setMargin(new Insets(0, 0, 0, 0));
         field.setText("");
         palettePanel.add(field, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JSeparator separator1 = new JSeparator();
+        palettePanel.add(separator1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**

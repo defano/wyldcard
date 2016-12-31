@@ -61,6 +61,17 @@ public class Canvas extends JPanel {
         repaintCanvas();
     }
 
+    public void clearCanvas() {
+        Graphics2D g2 = (Graphics2D) getScratchGraphics();
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, 0, getWidth(), getHeight());
+        commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+    }
+
+    public BufferedImage getCanvasImage() {
+        return image;
+    }
+
     protected void overlayImage(int x, int y, BufferedImage source, BufferedImage destination, AlphaComposite composite) {
 
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
@@ -79,10 +90,6 @@ public class Canvas extends JPanel {
         g2d.fillRect(0, 0, width, height);
 
         return newImage;
-    }
-
-    public BufferedImage getCanvasImage() {
-        return image;
     }
 
     protected BufferedImage getScratchImage() {
