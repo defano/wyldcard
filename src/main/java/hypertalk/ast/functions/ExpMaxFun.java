@@ -23,7 +23,7 @@ public class ExpMaxFun extends ArgListFunction {
                 throw new HtSemanticException("All arguments to max() must be numbers.");
             }
 
-            if (thisValue.floatValue() > max.floatValue()) {
+            if (thisValue.doubleValue() > max.doubleValue()) {
                 max = thisValue;
             }
         }

@@ -1,13 +1,16 @@
 package hypercard.paint.tools;
 
-public enum ToolType {
+public enum PaintToolType {
     ARROW,
     PENCIL,
     RECTANGLE,
     ROUND_RECTANGLE,
+    OVAL,
     PAINTBRUSH,
     ERASER,
     LINE,
     POLYGON,
-    SELECTION
+    SHAPE,
+    SELECTION,
+    TEXT
 }

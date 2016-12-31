@@ -5,7 +5,7 @@ import java.awt.*;
 public class LineTool extends AbstractLineTool {
 
     public LineTool() {
-        super(ToolType.LINE);
+        super(PaintToolType.LINE);
     }
 
     @Override

@@ -17,10 +17,8 @@ import hypertalk.exception.HtParseError;
 import hypertalk.exception.HtSyntaxException;
 import hypertalk.parser.HyperTalkLexer;
 import hypertalk.parser.HyperTalkParser;
-import org.antlr.v4.misc.Utils;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.concurrent.Future;

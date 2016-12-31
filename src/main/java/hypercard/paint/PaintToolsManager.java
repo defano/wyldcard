@@ -2,7 +2,7 @@ package hypercard.paint;
 
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolBuilder;
-import hypercard.paint.tools.ToolType;
+import hypercard.paint.tools.PaintToolType;
 import hypercard.runtime.RuntimeEnv;
 
 import java.util.HashSet;
@@ -12,7 +12,7 @@ public class PaintToolsManager {
 
     private final static PaintToolsManager instance = new PaintToolsManager();
 
-    private AbstractPaintTool selectedTool = PaintToolBuilder.createTool(ToolType.ARROW).build();
+    private AbstractPaintTool selectedTool = PaintToolBuilder.createTool(PaintToolType.ARROW).build();
     private Set<PaintToolSelectionObserver> observers = new HashSet<>();
 
     private PaintToolsManager() {}
@@ -21,7 +21,7 @@ public class PaintToolsManager {
         return instance;
     }
 
-    public ToolType getSelectedToolType() {
+    public PaintToolType getSelectedToolType() {
         return selectedTool.getToolType();
     }
 
@@ -29,7 +29,7 @@ public class PaintToolsManager {
         return selectedTool;
     }
 
-    public void setSelectedToolType(ToolType selectedToolType) {
+    public void setSelectedToolType(PaintToolType selectedToolType) {
         AbstractPaintTool oldTool = selectedTool;
 
         selectedTool.deactivate();

@@ -14,7 +14,6 @@ import hypertalk.ast.common.*;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

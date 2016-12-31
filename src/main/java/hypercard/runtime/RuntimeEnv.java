@@ -31,7 +31,6 @@ import hypertalk.ast.statements.StatementList;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -109,8 +108,8 @@ public class RuntimeEnv implements StackModelObserver {
         return _instance;
     }
 
-    public void executeHandler(PartSpecifier me, Script script, String handler, boolean onNewThread) {
-        executeStatementList(me, script.getHandler(handler), onNewThread);
+    public void executeHandler(PartSpecifier me, Script script, String handler) {
+        executeStatementList(me, script.getHandler(handler), true);
     }
 
     public Future executeStatementList(PartSpecifier me, StatementList handler, boolean onNewThread) {
@@ -123,11 +122,12 @@ public class RuntimeEnv implements StackModelObserver {
         }
     }
 
-    public Value executeUserFunction(PartSpecifier me, UserFunction function, ArgumentList arguments, boolean onNewThread) {
+    public Value executeUserFunction(PartSpecifier me, UserFunction function, ArgumentList arguments) {
         FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
         
         try {
-            if (SwingUtilities.isEventDispatchThread() || onNewThread)
+            // Not normally possible user functions are always executed in the context of a handler
+            if (SwingUtilities.isEventDispatchThread())
                 return scriptExecutor.submit(functionTask).get();
             else
                 return functionTask.call();
@@ -211,6 +211,7 @@ public class RuntimeEnv implements StackModelObserver {
 
     public void dialogSyntaxError(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(stackWindow.getWindowPanel(), e.getMessage()));
+        e.printStackTrace();
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.awt.geom.Line2D;
 public class PaintbrushTool extends AbstractBrushTool {
 
     public PaintbrushTool() {
-        super(ToolType.PAINTBRUSH);
+        super(PaintToolType.PAINTBRUSH);
     }
 
     @Override

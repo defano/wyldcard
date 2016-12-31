@@ -5,11 +5,17 @@ import java.awt.*;
 public class RectangleTool extends AbstractShapeTool {
 
     public RectangleTool() {
-        super(ToolType.RECTANGLE);
+        super(PaintToolType.RECTANGLE);
     }
 
     @Override
-    public void drawShape(Graphics g, int x1, int y1, int width, int height) {
-        g.drawRect(x1, y1, width, height);
+    public void drawBounds(Graphics g, int x, int y, int width, int height) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawRect(x, y, width, height);
+
+        if (getFill() != null) {
+            g2d.setPaint(getFill());
+            g2d.fillRect(x, y, width, height);
+        }
     }
 }

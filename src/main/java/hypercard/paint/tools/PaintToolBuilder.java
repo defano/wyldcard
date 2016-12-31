@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class PaintToolBuilder {
 
-    private final ToolType type;
+    private final PaintToolType type;
 
     private Canvas canvas;
     private ObservableAttribute<Stroke> strokeProvider;
@@ -18,11 +18,11 @@ public class PaintToolBuilder {
     private static ObservableAttribute<Paint> defaultPaintProvider = new ObservableAttribute<>(Color.BLACK);
     private static Canvas defaultCanvas;
 
-    private PaintToolBuilder(ToolType type) {
+    private PaintToolBuilder(PaintToolType type) {
         this.type = type;
     }
 
-    public static PaintToolBuilder createTool(ToolType ofType) {
+    public static PaintToolBuilder createTool(PaintToolType ofType) {
         return new PaintToolBuilder(ofType);
     }
 
@@ -73,6 +73,9 @@ public class PaintToolBuilder {
             case ROUND_RECTANGLE:
                 selectedTool = new RoundRectangleTool();
                 break;
+            case OVAL:
+                selectedTool = new OvalTool();
+                break;
             case PAINTBRUSH:
                 selectedTool = new PaintbrushTool();
                 break;
@@ -85,8 +88,14 @@ public class PaintToolBuilder {
             case POLYGON:
                 selectedTool = new PolygonTool();
                 break;
+            case SHAPE:
+                selectedTool = new ShapeTool();
+                break;
             case SELECTION:
                 selectedTool = new SelectionTool();
+                break;
+            case TEXT:
+                selectedTool = new TextTool();
                 break;
 
             default:

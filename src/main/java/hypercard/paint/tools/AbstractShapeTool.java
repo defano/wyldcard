@@ -1,15 +1,14 @@
 package hypercard.paint.tools;
 
-import hypercard.gui.util.ModifierKeyListener;
-
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public abstract class AbstractShapeTool extends AbstractPaintTool {
 
-    private Point initialPoint;
+    protected Point initialPoint;
+    protected Point currentPoint;
 
-    public AbstractShapeTool(ToolType type) {
+    public AbstractShapeTool(PaintToolType type) {
         super(type);
     }
 
@@ -20,16 +19,17 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        currentPoint = e.getPoint();
         getCanvas().clearScratch();
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
         g2d.setStroke(getStroke());
         g2d.setPaint(getPaint());
 
-        int left = Math.min(initialPoint.x, e.getX());
-        int top = Math.min(initialPoint.y, e.getY());
-        int right = Math.max(initialPoint.x, e.getX());
-        int bottom = Math.max(initialPoint.y, e.getY());
+        int left = Math.min(initialPoint.x, currentPoint.x);
+        int top = Math.min(initialPoint.y, currentPoint.y);
+        int right = Math.max(initialPoint.x, currentPoint.x);
+        int bottom = Math.max(initialPoint.y, currentPoint.y);
 
         int width = (right - left);
         int height = (bottom - top);
@@ -38,7 +38,7 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
             width = height = Math.max(width, height);
         }
 
-        drawShape(g2d, left, top, width, height);
+        drawBounds(g2d, left, top, width, height);
         g2d.dispose();
 
         getCanvas().repaintCanvas();
@@ -49,6 +49,6 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
         getCanvas().commit();
     }
 
-    public abstract void drawShape(Graphics g, int x1, int y1, int width, int height);
+    public abstract void drawBounds(Graphics g, int x, int y, int width, int height);
 
 }

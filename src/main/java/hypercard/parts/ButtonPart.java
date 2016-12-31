@@ -187,12 +187,12 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
     @Override
     public void sendMessage(String message) {
-        RuntimeEnv.getRuntimeEnv().executeHandler(getMe(), script, message, true);
+        RuntimeEnv.getRuntimeEnv().executeHandler(getMe(), script, message);
     }
 
     @Override
     public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
-        return RuntimeEnv.getRuntimeEnv().executeUserFunction(getMe(), script.getFunction(function), arguments, false);
+        return RuntimeEnv.getRuntimeEnv().executeUserFunction(getMe(), script.getFunction(function), arguments);
     }
 
     @Override

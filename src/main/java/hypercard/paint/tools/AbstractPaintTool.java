@@ -9,13 +9,14 @@ import java.awt.event.MouseAdapter;
 public abstract class AbstractPaintTool extends MouseAdapter {
 
     private Canvas canvas;
-    private final ToolType type;
+    private final PaintToolType type;
     private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 
-    private ObservableAttribute<Stroke> strokeProvider = new ObservableAttribute<>(new BasicStroke(2));
+    private ObservableAttribute<Stroke> strokeProvider = new ObservableAttribute<>(new BasicStroke(5));
     private ObservableAttribute<Paint> paintProvider = new ObservableAttribute<>(Color.black);
+    private ObservableAttribute<Paint> fillProvider = new ObservableAttribute<>(null);
 
-    public AbstractPaintTool(ToolType type) {
+    public AbstractPaintTool(PaintToolType type) {
         this.type = type;
     }
 
@@ -40,7 +41,7 @@ public abstract class AbstractPaintTool extends MouseAdapter {
         this.composite = composite;
     }
 
-    public ToolType getToolType() {
+    public PaintToolType getToolType() {
         return this.type;
     }
 
@@ -62,5 +63,13 @@ public abstract class AbstractPaintTool extends MouseAdapter {
 
     public Stroke getStroke() {
         return strokeProvider.get();
+    }
+
+    public void setFillProvider(ObservableAttribute<Paint> fillProvider) {
+        this.fillProvider = fillProvider;
+    }
+
+    public Paint getFill() {
+        return fillProvider.get();
     }
 }

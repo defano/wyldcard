@@ -7,7 +7,7 @@ public abstract class AbstractBrushTool extends AbstractPaintTool {
 
     private Point lastPoint;
 
-    public AbstractBrushTool(ToolType type) {
+    public AbstractBrushTool(PaintToolType type) {
         super(type);
     }
 

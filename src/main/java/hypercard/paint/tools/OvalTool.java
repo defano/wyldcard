@@ -2,20 +2,20 @@ package hypercard.paint.tools;
 
 import java.awt.*;
 
-public class RoundRectangleTool extends AbstractShapeTool {
+public class OvalTool extends AbstractShapeTool {
 
-    public RoundRectangleTool() {
-        super(PaintToolType.ROUND_RECTANGLE);
+    public OvalTool() {
+        super(PaintToolType.OVAL);
     }
 
     @Override
     public void drawBounds(Graphics g, int x, int y, int width, int height) {
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawRoundRect(x, y, width, height, 10, 10);
+        g2d.drawOval(x, y, width, height);
 
         if (getFill() != null) {
             g2d.setPaint(getFill());
-            g2d.fillRoundRect(x, y, width, height, 10, 10);
+            g2d.fillOval(x, y, width, height);
         }
     }
 }

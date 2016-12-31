@@ -6,12 +6,10 @@ import hypercard.gui.HyperCardWindow;
 import hypercard.paint.PaintToolSelectionObserver;
 import hypercard.paint.PaintToolsManager;
 import hypercard.paint.tools.AbstractPaintTool;
-import hypercard.paint.tools.ToolType;
+import hypercard.paint.tools.PaintToolType;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelectionObserver {
     private JPanel palettePanel;
@@ -40,15 +38,18 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
     public PaintToolsPalette() {
          allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
-        finger.addActionListener(e -> toolSelected(ToolType.ARROW));
-        pencil.addActionListener(e -> toolSelected(ToolType.PENCIL));
-        paintbrush.addActionListener(e -> toolSelected(ToolType.PAINTBRUSH));
-        eraser.addActionListener(e -> toolSelected(ToolType.ERASER));
-        line.addActionListener(e -> toolSelected(ToolType.LINE));
-        rectangle.addActionListener(e -> toolSelected(ToolType.RECTANGLE));
-        roundRectangle.addActionListener(e -> toolSelected(ToolType.ROUND_RECTANGLE));
-        polygon.addActionListener(e -> toolSelected(ToolType.POLYGON));
-        selection.addActionListener(e -> toolSelected(ToolType.SELECTION));
+        finger.addActionListener(e -> toolSelected(PaintToolType.ARROW));
+        pencil.addActionListener(e -> toolSelected(PaintToolType.PENCIL));
+        paintbrush.addActionListener(e -> toolSelected(PaintToolType.PAINTBRUSH));
+        eraser.addActionListener(e -> toolSelected(PaintToolType.ERASER));
+        line.addActionListener(e -> toolSelected(PaintToolType.LINE));
+        rectangle.addActionListener(e -> toolSelected(PaintToolType.RECTANGLE));
+        roundRectangle.addActionListener(e -> toolSelected(PaintToolType.ROUND_RECTANGLE));
+        polygon.addActionListener(e -> toolSelected(PaintToolType.POLYGON));
+        selection.addActionListener(e -> toolSelected(PaintToolType.SELECTION));
+        oval.addActionListener(e -> toolSelected(PaintToolType.OVAL));
+        shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
+        text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
 
         PaintToolsManager.getInstance().addObserver(this);
         onPaintToolSelected(null, PaintToolsManager.getInstance().getSelectedTool());
@@ -75,13 +76,13 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
         getButtonForTool(newTool.getToolType()).setEnabled(false);
     }
 
-    private void toolSelected(ToolType toolType) {
+    private void toolSelected(PaintToolType toolType) {
         PaintToolsManager.getInstance().setSelectedToolType(toolType);
         onPaintToolSelected(null, PaintToolsManager.getInstance().getSelectedTool());
     }
 
-    private JButton getButtonForTool(ToolType toolType) {
-        switch (toolType) {
+    private JButton getButtonForTool(PaintToolType paintToolType) {
+        switch (paintToolType) {
             case ERASER:
                 return eraser;
             case ARROW:
@@ -96,13 +97,19 @@ public class PaintToolsPalette extends HyperCardWindow implements PaintToolSelec
                 return rectangle;
             case ROUND_RECTANGLE:
                 return roundRectangle;
+            case OVAL:
+                return oval;
             case POLYGON:
                 return polygon;
             case SELECTION:
                 return selection;
+            case SHAPE:
+                return shape;
+            case TEXT:
+                return text;
 
             default:
-                throw new IllegalStateException("Bug! Unimplemented tool type " + toolType);
+                throw new IllegalStateException("Bug! Unimplemented tool type " + paintToolType);
         }
     }
 

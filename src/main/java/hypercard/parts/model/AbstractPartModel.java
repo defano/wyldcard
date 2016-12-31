@@ -39,8 +39,8 @@ public abstract class AbstractPartModel extends PropertiesModel {
             if (value.isRect()) {
                 model.setKnownProperty(PROP_LEFT, value.listItemAt(0));
                 model.setKnownProperty(PROP_TOP, value.listItemAt(1));
-                model.setKnownProperty(PROP_HEIGHT, new Value(value.listItemAt(3).integerValue() - value.listItemAt(1).integerValue()));
-                model.setKnownProperty(PROP_WIDTH, new Value(value.listItemAt(2).integerValue() - value.listItemAt(0).integerValue()));
+                model.setKnownProperty(PROP_HEIGHT, new Value(value.listItemAt(3).longValue() - value.listItemAt(1).longValue()));
+                model.setKnownProperty(PROP_WIDTH, new Value(value.listItemAt(2).longValue() - value.listItemAt(0).longValue()));
             } else {
                 throw new HtSemanticException("Expected a rectangle but got " + value.stringValue());
             }
@@ -70,8 +70,8 @@ public abstract class AbstractPartModel extends PropertiesModel {
 
         defineComputedSetterProperty(PROP_BOTTOMRIGHT, (model, propertyName, value) -> {
             if (value.isPoint()) {
-                model.setKnownProperty(PROP_LEFT, new Value(value.listItemAt(0).integerValue() - model.getKnownProperty(PROP_WIDTH).integerValue()));
-                model.setKnownProperty(PROP_TOP, new Value(value.listItemAt(1).integerValue() - model.getKnownProperty(PROP_HEIGHT).integerValue()));
+                model.setKnownProperty(PROP_LEFT, new Value(value.listItemAt(0).longValue() - model.getKnownProperty(PROP_WIDTH).longValue()));
+                model.setKnownProperty(PROP_TOP, new Value(value.listItemAt(1).longValue() - model.getKnownProperty(PROP_HEIGHT).longValue()));
             } else {
                 throw new HtSemanticException("Expected a point but got " + value.stringValue());
             }

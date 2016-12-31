@@ -1,11 +1,10 @@
 package hypercard.paint.tools;
 
-import hypercard.gui.util.ModifierKeyListener;
 import hypercard.paint.MathUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractPolylineTool extends AbstractPaintTool {
@@ -13,7 +12,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
     private List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
-    public AbstractPolylineTool(ToolType type) {
+    public AbstractPolylineTool(PaintToolType type) {
         super(type);
     }
 
@@ -49,7 +48,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
 
         // User double-clicked; complete the polygon
         if (e.getClickCount() > 1 && points.size() > 1){

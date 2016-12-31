@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 public class SelectionTool extends AbstractSelectionTool {
 
     public SelectionTool() {
-        super(ToolType.SELECTION);
+        super(PaintToolType.SELECTION);
     }
 
     @Override

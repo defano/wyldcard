@@ -5,7 +5,7 @@ import java.awt.*;
 public class PolygonTool extends AbstractPolylineTool {
 
     public PolygonTool() {
-        super(ToolType.POLYGON);
+        super(PaintToolType.POLYGON);
     }
 
     @Override
@@ -15,6 +15,12 @@ public class PolygonTool extends AbstractPolylineTool {
 
     @Override
     protected void drawPolygon(Graphics g, int[] xPoints, int[] yPoints) {
-        g.drawPolygon(xPoints, yPoints, xPoints.length);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawPolygon(xPoints, yPoints, xPoints.length);
+
+        if (getFill() != null) {
+            g2d.setPaint(getFill());
+            g2d.fillPolygon(xPoints, yPoints, xPoints.length);
+        }
     }
 }

@@ -2,12 +2,8 @@ package hypercard.gui.window;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import hypercard.context.GlobalContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.runtime.Interpreter;
 import hypercard.runtime.RuntimeEnv;
-import hypertalk.ast.containers.PartIdSpecifier;
-import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
 import java.awt.*;

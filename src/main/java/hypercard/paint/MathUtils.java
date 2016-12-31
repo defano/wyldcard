@@ -2,10 +2,8 @@ package hypercard.paint;
 
 import java.awt.*;
 
-/**
- * Created by matt on 12/29/16.
- */
 public class MathUtils {
+
     public static int round(Double value, int toNearest) {
         return (int) (toNearest * Math.round(value / toNearest));
     }

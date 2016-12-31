@@ -5,7 +5,7 @@ import java.awt.*;
 public class PencilTool extends AbstractBrushTool {
 
     public PencilTool() {
-        super(ToolType.PENCIL);
+        super(PaintToolType.PENCIL);
     }
 
     @Override

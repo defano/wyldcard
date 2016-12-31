@@ -28,7 +28,9 @@ public class Canvas extends JPanel {
         scratch = newTransparentImage(image.getWidth(), image.getHeight());
 
         setOpaque(false);
-        setEnabled(false);
+        setEnabled(true);
+        setFocusable(true);
+        setLayout(null);
     }
 
     public void setSize(int width, int height) {

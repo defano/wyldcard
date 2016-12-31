@@ -26,7 +26,7 @@ public class StatWaitCmd extends Statement {
 
         if (units != null) {
             try {
-                Thread.sleep(units.toMilliseconds(expression.evaluate().floatValue()));
+                Thread.sleep(units.toMilliseconds(expression.evaluate().doubleValue()));
             } catch (InterruptedException e) {
                 Thread.interrupted();
             }

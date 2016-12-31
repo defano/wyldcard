@@ -201,6 +201,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     public Object visitMultiExpArgList(HyperTalkParser.MultiExpArgListContext ctx) {
         ArgumentList argumentList = (ArgumentList) visit(ctx.argumentList());
         argumentList.addArgument((Expression) visit(ctx.expression()));
+//        return new ArgumentList(argumentList, (Expression) visit(ctx.expression()));
         return argumentList;
     }
 

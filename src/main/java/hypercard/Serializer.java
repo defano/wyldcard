@@ -3,13 +3,11 @@ package hypercard;
 import com.google.gson.*;
 import hypertalk.ast.common.Value;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.Base64;
 
 public class Serializer {

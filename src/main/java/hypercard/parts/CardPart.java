@@ -13,7 +13,6 @@ import hypercard.parts.model.AbstractPartModel;
 import hypercard.parts.model.ButtonModel;
 import hypercard.parts.model.CardModel;
 import hypercard.parts.model.FieldModel;
-import hypercard.runtime.RuntimeEnv;
 import hypercard.paint.canvas.*;
 import hypercard.paint.canvas.Canvas;
 import hypertalk.ast.common.PartType;
@@ -23,8 +22,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
 public class CardPart extends JLayeredPane implements ComponentListener, CanvasObserver {

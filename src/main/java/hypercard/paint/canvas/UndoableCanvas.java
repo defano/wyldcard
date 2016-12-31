@@ -3,9 +3,7 @@ package hypercard.paint.canvas;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A paint tools canvas with a built-in undo and redo buffer.

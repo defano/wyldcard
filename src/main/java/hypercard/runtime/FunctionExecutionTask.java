@@ -7,6 +7,7 @@ import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.exception.HtSemanticException;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public class FunctionExecutionTask implements Callable<Value> {
@@ -28,7 +29,7 @@ public class FunctionExecutionTask implements Callable<Value> {
     public Value call() throws Exception {
 
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-        arguments.evaluate();
+        List<Value> evaluatedArguments = arguments.evaluate();
 
         GlobalContext.getContext().pushContext();
         GlobalContext.getContext().setMe(me);
@@ -37,7 +38,7 @@ public class FunctionExecutionTask implements Callable<Value> {
             // Bind argument values to parameter variables in this context
             for (int index = 0; index < function.parameters.list.size(); index++) {
                 String theParam = function.parameters.list.get(index);
-                Value theArg = arguments.getEvaluatedList().get(index);
+                Value theArg = evaluatedArguments.get(index);
 
                 GlobalContext.getContext().set(theParam, theArg);
             }
