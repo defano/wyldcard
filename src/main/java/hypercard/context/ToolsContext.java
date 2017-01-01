@@ -1,10 +1,10 @@
 package hypercard.context;
 
+import hypercard.HyperCard;
 import hypercard.paint.observers.Provider;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolBuilder;
 import hypercard.paint.tools.PaintToolType;
-import hypercard.HyperCard;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
 
@@ -14,22 +14,17 @@ public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
-    private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(5));
+    private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
+    private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
     private Provider<Stroke> brushStrokeProvider = new Provider<>(new BasicStroke(5));
-    private Provider<Paint> paintProvider = new Provider<>(Color.black);
-    private Provider<Paint> fillProvider = new Provider<>(null);
+    private Provider<Paint> linePaintProvider = new Provider<>(Color.black);
+    private Provider<Paint> fillPaintProvider = new Provider<>(null);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 12));
 
     private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
 
     private ToolsContext() {
-        PaintToolBuilder.setDefaultBrushStrokeProvider(brushStrokeProvider);
-        PaintToolBuilder.setDefaultPaintProvider(paintProvider);
-        PaintToolBuilder.setDefaultShapeSidesProvider(shapeSidesProvider);
-        PaintToolBuilder.setDefaultFontProvider(fontProvider);
-        PaintToolBuilder.setDefaultLineStrokeProvider(lineStrokeProvider);
-
         HyperCard.getRuntimeEnv().getStack().addObserver(this);
     }
 
@@ -46,10 +41,13 @@ public class ToolsContext implements StackModelObserver {
     }
 
     public void setSelectedToolType(PaintToolType selectedToolType) {
-        AbstractPaintTool oldTool = toolProvider.get();
-
         toolProvider.get().deactivate();
         toolProvider.set(PaintToolBuilder.create(selectedToolType)
+                .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
+                .withStrokePaintProvider(linePaintProvider)
+                .withFillPaintProvider(fillPaintProvider)
+                .withFontProvider(fontProvider)
+                .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
                 .build());
     }
@@ -100,5 +98,20 @@ public class ToolsContext implements StackModelObserver {
     public void onCurrentCardChanged(CardPart newCard) {
         toolProvider.get().deactivate();
         toolProvider.get().activate(newCard.getCanvas());
+    }
+
+    private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {
+
+        switch (type) {
+            case PAINTBRUSH:
+                return brushStrokeProvider;
+
+            case ERASER:
+                return eraserStrokeProvider;
+
+            default:
+                return lineStrokeProvider;
+        }
+
     }
 }

@@ -12,11 +12,17 @@ public abstract class AbstractPaintTool extends MouseAdapter {
     private final PaintToolType type;
     private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 
-    private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(5));
-    private Provider<Paint> paintProvider = new Provider<>(Color.black);
-    private Provider<Paint> fillProvider = new Provider<>(null);
-    private Provider<Integer> shapeSidesProvider = new Provider<>(5);
-    private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
+    private Stroke defaultStroke = new BasicStroke(2);
+    private Paint defaultStrokePaint = Color.BLACK;
+    private Paint defaultFillPaint = null;
+    private int defaultShapeSides = 5;
+    private Font defaultFont = new Font("Courier", Font.PLAIN, 14);
+
+    private Provider<Stroke> strokeProvider = new Provider<>(defaultStroke);
+    private Provider<Paint> strokePaintProvider = new Provider<>(defaultStrokePaint);
+    private Provider<Paint> fillPaintProvider = new Provider<>(defaultFillPaint);
+    private Provider<Integer> shapeSidesProvider = new Provider<>(defaultShapeSides);
+    private Provider<Font> fontProvider = new Provider<>(defaultFont);
 
     public AbstractPaintTool(PaintToolType type) {
         this.type = type;
@@ -51,56 +57,42 @@ public abstract class AbstractPaintTool extends MouseAdapter {
         return canvas;
     }
 
-    public void setPaintProvider(Provider<Paint> paintProvider) {
-        this.paintProvider = paintProvider;
-    }
-
-    public Paint getPaint() {
-        return paintProvider.get();
+    public void setStrokePaintProvider(Provider<Paint> strokePaintProvider) {
+        if (strokePaintProvider != null) {
+            this.strokePaintProvider = strokePaintProvider;
+        }
     }
 
     public void setStrokeProvider(Provider<Stroke> strokeProvider) {
-        this.strokeProvider = strokeProvider;
+        if (strokeProvider != null) {
+            this.strokeProvider = strokeProvider;
+        }
+    }
+
+    public void setShapeSidesProvider(Provider<Integer> shapeSidesProvider) {
+        if (shapeSidesProvider != null) {
+            this.shapeSidesProvider = shapeSidesProvider;
+        }
+    }
+
+    public void setFontProvider(Provider<Font> fontProvider) {
+        if (fontProvider != null) {
+            this.fontProvider = fontProvider;
+        }
+    }
+
+    public void setFillPaintProvider(Provider<Paint> fillPaintProvider) {
+        if (fillPaintProvider != null) {
+            this.fillPaintProvider = fillPaintProvider;
+        }
     }
 
     public Stroke getStroke() {
         return strokeProvider.get();
     }
 
-    public void setFillProvider(Provider<Paint> fillProvider) {
-        this.fillProvider = fillProvider;
-    }
-
-    public Paint getFill() {
-        return fillProvider.get();
-    }
-
-    public void setShapeSidesProvider(Provider<Integer> shapeSidesProvider) {
-        this.shapeSidesProvider = shapeSidesProvider;
-    }
-
-    public void setFontProvider(Provider<Font> fontProvider) {
-        this.fontProvider = fontProvider;
-    }
-
-    public Provider<Stroke> getStrokeProvider() {
-        return strokeProvider;
-    }
-
-    public Provider<Paint> getPaintProvider() {
-        return paintProvider;
-    }
-
-    public Provider<Paint> getFillProvider() {
-        return fillProvider;
-    }
-
-    public Provider<Integer> getShapeSidesProvider() {
-        return shapeSidesProvider;
-    }
-
-    public Provider<Font> getFontProvider() {
-        return fontProvider;
+    public Paint getFillPaint() {
+        return fillPaintProvider.get();
     }
 
     public Font getFont() {
@@ -109,5 +101,29 @@ public abstract class AbstractPaintTool extends MouseAdapter {
 
     public int getShapeSides() {
         return shapeSidesProvider.get();
+    }
+
+    public Paint getStrokePaint() {
+        return strokePaintProvider.get();
+    }
+
+    public Provider<Paint> getFillPaintProvider() {
+        return fillPaintProvider;
+    }
+
+    public Provider<Stroke> getStrokeProvider() {
+        return strokeProvider;
+    }
+
+    public Provider<Paint> getStrokePaintProvider() {
+        return strokePaintProvider;
+    }
+
+    public Provider<Integer> getShapeSidesProvider() {
+        return shapeSidesProvider;
+    }
+
+    public Provider<Font> getFontProvider() {
+        return fontProvider;
     }
 }

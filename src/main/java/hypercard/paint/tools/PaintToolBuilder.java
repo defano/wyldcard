@@ -11,15 +11,10 @@ public class PaintToolBuilder {
 
     private Canvas canvas;
     private Provider<Stroke> strokeProvider;
-    private Provider<Paint> paintProvider;
+    private Provider<Paint> strokePaintProvider;
+    private Provider<Paint> fillPaintProvider;
     private Provider<Integer> shapeSidesProvider;
     private Provider<Font> fontProvider;
-
-    private static Provider<Stroke> defaultLineStrokeProvider = new Provider<>(new BasicStroke(2));
-    private static Provider<Stroke> defaultBrushStrokeProvider = new Provider<>(new BasicStroke(10));
-    private static Provider<Paint> defaultPaintProvider = new Provider<>(Color.BLACK);
-    private static Provider<Integer> defaultShapeSidesProvider = new Provider<>(5);
-    private static Provider<Font> defaultFontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
 
     private static Canvas defaultCanvas;
 
@@ -71,13 +66,23 @@ public class PaintToolBuilder {
         return this;
     }
 
-    public PaintToolBuilder withPaint(Paint paint) {
-        this.paintProvider = new Provider<>(paint);
+    public PaintToolBuilder withStrokePaint(Paint strokePaint) {
+        this.strokePaintProvider = new Provider<Paint>(strokePaint);
         return this;
     }
 
-    public PaintToolBuilder withPaintProvider(Provider<Paint> paintProvider) {
-        this.paintProvider = paintProvider;
+    public PaintToolBuilder withStrokePaintProvider(Provider<Paint> strokePaintProvider) {
+        this.strokePaintProvider = strokePaintProvider;
+        return this;
+    }
+
+    public PaintToolBuilder withFillPaint(Paint paint) {
+        this.fillPaintProvider = new Provider<>(paint);
+        return this;
+    }
+
+    public PaintToolBuilder withFillPaintProvider(Provider<Paint> paintProvider) {
+        this.fillPaintProvider = paintProvider;
         return this;
     }
 
@@ -122,6 +127,9 @@ public class PaintToolBuilder {
             case TEXT:
                 selectedTool = new TextTool();
                 break;
+            case FILL:
+                selectedTool = new FillTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);
@@ -129,26 +137,22 @@ public class PaintToolBuilder {
 
         if (strokeProvider != null) {
             selectedTool.setStrokeProvider(strokeProvider);
-        } else {
-            selectedTool.setStrokeProvider(getDefaultStrokeProviderForTool(type));
         }
 
-        if (paintProvider != null) {
-            selectedTool.setPaintProvider(paintProvider);
-        } else {
-            selectedTool.setPaintProvider(defaultPaintProvider);
+        if (strokePaintProvider != null) {
+            selectedTool.setStrokePaintProvider(strokePaintProvider);
         }
 
         if (shapeSidesProvider != null) {
             selectedTool.setShapeSidesProvider(shapeSidesProvider);
-        } else {
-            selectedTool.setShapeSidesProvider(defaultShapeSidesProvider);
         }
 
         if (fontProvider != null) {
             selectedTool.setFontProvider(fontProvider);
-        } else {
-            selectedTool.setFontProvider(defaultFontProvider);
+        }
+
+        if (fillPaintProvider != null) {
+            selectedTool.setFillPaintProvider(fillPaintProvider);
         }
 
         if (canvas != null) {
@@ -158,45 +162,7 @@ public class PaintToolBuilder {
         return selectedTool;
     }
 
-    public static void setDefaultBrushStrokeProvider(Provider<Stroke> strokeProvider) {
-        if (strokeProvider != null) {
-            defaultBrushStrokeProvider = strokeProvider;
-        }
-    }
-
-    public static void setDefaultLineStrokeProvider(Provider<Stroke> strokeProvider) {
-        if (strokeProvider != null) {
-            defaultLineStrokeProvider = strokeProvider;
-        }
-    }
-
-    public static void setDefaultFontProvider(Provider<Font> fontProvider) {
-        if (fontProvider != null) {
-            defaultFontProvider = fontProvider;
-        }
-    }
-
-    public static void setDefaultPaintProvider(Provider<Paint> paintProvider) {
-        if (paintProvider != null) {
-            defaultPaintProvider = paintProvider;
-        }
-    }
-
-    public static void setDefaultShapeSidesProvider(Provider<Integer> defaultShapeSidesProvider) {
-        PaintToolBuilder.defaultShapeSidesProvider = defaultShapeSidesProvider;
-    }
-
     public static void setDefaultCanvas(Canvas canvas) {
         defaultCanvas = canvas;
-    }
-
-    private Provider<Stroke> getDefaultStrokeProviderForTool(PaintToolType type) {
-        switch (type) {
-            case PAINTBRUSH:
-                return defaultBrushStrokeProvider;
-
-            default:
-                return defaultLineStrokeProvider;
-        }
     }
 }

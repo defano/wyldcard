@@ -83,16 +83,16 @@ public class Canvas extends JPanel {
     private BufferedImage newTransparentImage(int width, int height) {
         BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);
+        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
         Graphics2D g2d = (Graphics2D) newImage.getGraphics();
         g2d.setComposite(composite);
-        g2d.setColor(new Color(0, 0, 0, 0));
+        g2d.setColor(new Color(255, 255, 255, 0));
         g2d.fillRect(0, 0, width, height);
 
         return newImage;
     }
 
-    protected BufferedImage getScratchImage() {
+    public BufferedImage getScratchImage() {
         return scratch;
     }
 

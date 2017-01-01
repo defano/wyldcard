@@ -56,6 +56,12 @@ public class ToolsMenu extends JMenu {
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
+                .named("Fill")
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.FILL))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.FILL))
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
                 .named("Pencil")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.PENCIL))
                 .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.PENCIL))

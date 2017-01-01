@@ -12,6 +12,9 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
         super(type);
     }
 
+    public abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height);
+    public abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
+
     @Override
     public void mousePressed(MouseEvent e) {
         initialPoint = new Point(e.getX(), e.getY());
@@ -23,8 +26,6 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
         getCanvas().clearScratch();
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        g2d.setStroke(getStroke());
-        g2d.setPaint(getPaint());
 
         int left = Math.min(initialPoint.x, currentPoint.x);
         int top = Math.min(initialPoint.y, currentPoint.y);
@@ -38,7 +39,12 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
             width = height = Math.max(width, height);
         }
 
-        drawBounds(g2d, left, top, width, height);
+        drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
+
+        if (getFillPaint() != null) {
+            drawFill(g2d, getFillPaint(), left, top, width, height);
+        }
+
         g2d.dispose();
 
         getCanvas().repaintCanvas();
@@ -48,7 +54,4 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
     public void mouseReleased(MouseEvent e) {
         getCanvas().commit();
     }
-
-    public abstract void drawBounds(Graphics g, int x, int y, int width, int height);
-
 }

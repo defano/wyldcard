@@ -20,7 +20,7 @@ public abstract class AbstractBrushTool extends AbstractPaintTool {
     public void mouseDragged(MouseEvent e) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
         g2d.setStroke(getStroke());
-        g2d.setPaint(getPaint());
+        g2d.setPaint(getStrokePaint());
         drawSegment(g2d, lastPoint.x, lastPoint.y, e.getX(), e.getY());
         g2d.dispose();
 

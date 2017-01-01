@@ -44,7 +44,6 @@ public class WindowManager {
                 .withTitle("")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(stackFrame)
-                .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(shapesPalette)

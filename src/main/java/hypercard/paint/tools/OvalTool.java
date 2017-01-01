@@ -9,13 +9,15 @@ public class OvalTool extends AbstractShapeTool {
     }
 
     @Override
-    public void drawBounds(Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawOval(x, y, width, height);
+    public void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
+        g.setStroke(stroke);
+        g.setPaint(paint);
+        g.drawOval(x, y, width, height);
+    }
 
-        if (getFill() != null) {
-            g2d.setPaint(getFill());
-            g2d.fillOval(x, y, width, height);
-        }
+    @Override
+    public void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
+        g.setPaint(getFillPaint());
+        g.fillOval(x, y, width, height);
     }
 }

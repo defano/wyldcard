@@ -88,7 +88,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
     private Graphics2D getGraphics2D() {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
         g2d.setStroke(getStroke());
-        g2d.setPaint(getPaint());
+        g2d.setPaint(getStrokePaint());
 
         return g2d;
     }

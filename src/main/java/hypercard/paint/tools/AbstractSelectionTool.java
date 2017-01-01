@@ -41,16 +41,20 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
     }
 
     @Override
-    public void drawBounds(Graphics g, int x, int y, int width, int height) {
+    public void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
 
         BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, new float[]{5.0f}, 0.0f);
 
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setStroke(dashed);
-        g2d.setColor(Color.BLACK);
-        drawSelectionBounds(g2d, new Rectangle(x, y, width, height));
+        g.setStroke(dashed);
+        g.setColor(Color.BLACK);
+        drawSelectionBounds(g, new Rectangle(x, y, width, height));
 
         selectionRectangle = new Rectangle(x, y, width, height);
+    }
+
+    @Override
+    public void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
+        // Never filled
     }
 
     @Override
@@ -186,7 +190,7 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
             getCanvas().commit();
 
             g2d = (Graphics2D) getCanvas().getScratchGraphics();
-            drawBounds(g2d, selectionRectangle.x, selectionRectangle.y, selectionRectangle.width, selectionRectangle.height);
+            drawBounds(g2d, null, null, selectionRectangle.x, selectionRectangle.y, selectionRectangle.width, selectionRectangle.height);
             g2d.dispose();
 
             clearSelection();
@@ -202,7 +206,7 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
     private void drawSelection(BufferedImage selectedImage, Rectangle location) {
         getCanvas().clearScratch();
 
-        drawBounds(getCanvas().getScratchGraphics(), location.x, location.y, location.width, location.height);
+        drawBounds((Graphics2D) getCanvas().getScratchGraphics(), null, null, location.x, location.y, location.width, location.height);
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
         drawSelectedImage(g2d, selectedImage, location.x, location.y);

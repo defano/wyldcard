@@ -13,6 +13,8 @@ public abstract class AbstractLineTool extends AbstractPaintTool {
         super(type);
     }
 
+    public abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
+
     @Override
     public void mousePressed(MouseEvent e) {
         initialPoint = new Point(e.getX(), e.getY());
@@ -28,13 +30,8 @@ public abstract class AbstractLineTool extends AbstractPaintTool {
             currentLoc = MathUtils.snapLineToNearestAngle(initialPoint, currentLoc, 15);
         }
 
-
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        g2d.setStroke(getStroke());
-        g2d.setPaint(getPaint());
-
-        drawLine(g2d, initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
-
+        drawLine(g2d, getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
         g2d.dispose();
 
         getCanvas().repaintCanvas();
@@ -44,7 +41,4 @@ public abstract class AbstractLineTool extends AbstractPaintTool {
     public void mouseReleased(MouseEvent e) {
         getCanvas().commit();
     }
-
-    public abstract void drawLine(Graphics g, int x1, int y1, int x2, int y2);
-
 }

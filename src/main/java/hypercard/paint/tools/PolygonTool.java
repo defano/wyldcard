@@ -18,8 +18,8 @@ public class PolygonTool extends AbstractPolylineTool {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawPolygon(xPoints, yPoints, xPoints.length);
 
-        if (getFill() != null) {
-            g2d.setPaint(getFill());
+        if (getFillPaint() != null) {
+            g2d.setPaint(getFillPaint());
             g2d.fillPolygon(xPoints, yPoints, xPoints.length);
         }
     }

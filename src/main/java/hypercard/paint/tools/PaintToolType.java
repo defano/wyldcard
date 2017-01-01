@@ -12,5 +12,6 @@ public enum PaintToolType {
     POLYGON,
     SHAPE,
     SELECTION,
-    TEXT
+    TEXT,
+    FILL
 }

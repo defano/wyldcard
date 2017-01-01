@@ -15,11 +15,19 @@ public class ShapeTool extends AbstractShapeTool {
     }
 
     @Override
-    public void drawBounds(Graphics g, int x, int y, int width, int height) {
+    public void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
+        g.setStroke(stroke);
+        g.setPaint(paint);
+        g.drawPolygon(getRegularPolygon(getShapeSides()));
+    }
 
-        int sides = getShapeSides();
-        Paint fill = getFill();
+    @Override
+    public void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
+        g.setPaint(fill);
+        g.fill(getRegularPolygon(getShapeSides()));
+    }
 
+    private Polygon getRegularPolygon(int sides) {
         double length = MathUtils.getLineLength(initialPoint, currentPoint);
         double rotation = Math.toRadians(MathUtils.getLineAngle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y));
 
@@ -38,12 +46,6 @@ public class ShapeTool extends AbstractShapeTool {
             polygon.addPoint((int) xPoint, (int) yPoint);
         }
 
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawPolygon(polygon);
-
-        if (fill != null) {
-            g2d.setPaint(fill);
-            g2d.fill(polygon);
-        }
+        return polygon;
     }
 }
