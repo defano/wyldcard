@@ -30,6 +30,7 @@ public class Provider<T> {
 
     public void addObserver(ProvidedValueObserver observer) {
         observers.add(observer);
+        observer.onChanged(null, get());
     }
 
     public boolean removeObserver(ProvidedValueObserver observer) {

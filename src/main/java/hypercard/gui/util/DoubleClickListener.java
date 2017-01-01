@@ -2,7 +2,7 @@ package hypercard.gui.util;
 
 import java.awt.event.*;
 
-public interface DoubleClickMouseListener extends java.awt.event.MouseListener {
+public interface DoubleClickListener extends java.awt.event.MouseListener {
 
     void onDoubleClick(MouseEvent e);
 

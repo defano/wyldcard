@@ -3,7 +3,7 @@ package hypercard.gui.window;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
-import hypercard.gui.util.DoubleClickMouseListener;
+import hypercard.gui.util.DoubleClickListener;
 import hypercard.context.ToolsContext;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolType;
@@ -53,8 +53,8 @@ public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.P
         shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
 
-        eraser.addMouseListener((DoubleClickMouseListener) e -> RuntimeEnv.getRuntimeEnv().getCard().getCanvas().clearCanvas());
-        shape.addMouseListener((DoubleClickMouseListener) e -> WindowManager.getShapesPalette().setVisible(true));
+        eraser.addMouseListener((DoubleClickListener) e -> RuntimeEnv.getRuntimeEnv().getCard().getCanvas().clearCanvas());
+        shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setVisible(true));
 
         ToolsContext.getInstance().addPaintToolSelectionObserver(this);
         onPaintToolSelected(null, ToolsContext.getInstance().getSelectedToolProvider());
