@@ -37,9 +37,10 @@ Task | Description
 
 ### Running the program
 
-Execute the `gradle run` task to build and start the program, or simply execute the `RuntimeEnv` class. Once the program is running, you'll be presented with the application's main window. From here you may:
+Execute the `gradle run` task to build and start the program, or simply execute the `HyperCard` class. Once the program is running, you'll be presented with the application's main window. From here you may:
 
-*	Begin adding your own user interface elements by right clicking within the "Card" panel and selecting either "New Button" or "New Field" from the context sensitive menu.
+*	Begin adding your own user interface elements by choosing "New Button" or "New Field" from the "Objects" menu.
+* Use the paint tools (choose "Tools Palette" from the "Tools" menu) to draw on the card.
 *	Open a previously saved stack document ("File" -> "Open Stack..."). I've included a few example cards in the "Examples" folder to experiment with.
 *	Enter a statement or expression in the message box. Press enter to execute or evaluate your message.
 

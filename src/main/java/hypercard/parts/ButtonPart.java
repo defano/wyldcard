@@ -16,7 +16,7 @@ import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
@@ -233,7 +233,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
                     try {
                         compile();
                     } catch (HtSemanticException e) {
-                        RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                        HyperCard.getRuntimeEnv().dialogSyntaxError(e);
                     }
                     break;
                 case ButtonModel.PROP_TITLE:

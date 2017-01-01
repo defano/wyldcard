@@ -1,5 +1,6 @@
 package hypercard.runtime;
 
+import hypercard.HyperCard;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
@@ -22,7 +23,7 @@ public class FunctionExecutionTask implements Callable<Value> {
         this.me = me;
 
         if (function.parameters.list.size() != arguments.getArgumentCount())
-            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + arguments.getArgumentCount() + "."));
+            HyperCard.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + arguments.getArgumentCount() + "."));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class FunctionExecutionTask implements Callable<Value> {
             function.statements.execute();
         
         } catch (HtSemanticException e) {
-            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+            HyperCard.getRuntimeEnv().dialogSyntaxError(e);
         }
 
         Value returnValue = GlobalContext.getContext().getReturnValue();

@@ -3,7 +3,7 @@ package hypercard.gui.window;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class MessageWindow extends HyperCardWindow {
     }
 
     private void executeMessageBox() {
-        RuntimeEnv.getRuntimeEnv().doMsgBoxText();
+        HyperCard.getRuntimeEnv().doMsgBoxText();
     }
 
     {

@@ -8,7 +8,7 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypertalk.ast.expressions.ExpPart;
 import hypertalk.ast.expressions.Expression;
 
@@ -26,7 +26,7 @@ public class StatSendCmd extends Statement {
         try {
             GlobalContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
         } catch (Exception e) {
-            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+            HyperCard.getRuntimeEnv().dialogSyntaxError(e);
         }
     }
 }

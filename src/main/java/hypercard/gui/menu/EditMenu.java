@@ -1,7 +1,7 @@
 package hypercard.gui.menu;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 
 import javax.swing.*;
 
@@ -50,7 +50,7 @@ public class EditMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().newCard())
+                .withAction(e -> HyperCard.getRuntimeEnv().getStack().newCard())
                 .withShortcut('N')
                 .build(this);
 

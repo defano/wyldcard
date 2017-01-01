@@ -1,5 +1,6 @@
 package hypercard.runtime;
 
+import hypercard.HyperCard;
 import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.*;
 
@@ -20,11 +21,11 @@ public class WindowManager {
 
         // Create the main window, center it on the screen and display it
         JFrame stackFrame = WindowBuilder.make(stackWindow)
-                .withTitle(RuntimeEnv.getRuntimeEnv().getStack().getStackName())
+                .withTitle(HyperCard.getRuntimeEnv().getStack().getStackName())
                 .resizeable(true)
                 .quitOnClose()
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withModel(RuntimeEnv.getRuntimeEnv().getStack().getCurrentCard())
+                .withModel(HyperCard.getRuntimeEnv().getStack().getCurrentCard())
                 .build();
 
         WindowBuilder.make(messageWindow)

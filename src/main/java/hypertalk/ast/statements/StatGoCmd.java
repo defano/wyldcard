@@ -1,6 +1,6 @@
 package hypertalk.ast.statements;
 
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypertalk.ast.common.Destination;
 import hypertalk.ast.common.Ordinal;
 import hypertalk.ast.common.Position;
@@ -17,24 +17,24 @@ public class StatGoCmd extends Statement {
     public void execute() throws HtException {
         if (destination.ordinal != null) {
             if (destination.ordinal == Ordinal.FIRST) {
-                RuntimeEnv.getRuntimeEnv().getStack().goFirstCard();
+                HyperCard.getRuntimeEnv().getStack().goFirstCard();
             } else if (destination.ordinal == Ordinal.LAST) {
-                RuntimeEnv.getRuntimeEnv().getStack().goLastCard();
+                HyperCard.getRuntimeEnv().getStack().goLastCard();
             } else {
-                RuntimeEnv.getRuntimeEnv().getStack().goCard(destination.ordinal.intValue() - 1);
+                HyperCard.getRuntimeEnv().getStack().goCard(destination.ordinal.intValue() - 1);
             }
         }
 
         else if (destination.position != null) {
             if (destination.position == Position.NEXT) {
-                RuntimeEnv.getRuntimeEnv().getStack().goNextCard();
+                HyperCard.getRuntimeEnv().getStack().goNextCard();
             } else {
-                RuntimeEnv.getRuntimeEnv().getStack().goPrevCard();
+                HyperCard.getRuntimeEnv().getStack().goPrevCard();
             }
         }
 
         else if (destination.expression != null) {
-            RuntimeEnv.getRuntimeEnv().getStack().goCard(destination.expression.evaluate().integerValue() - 1);
+            HyperCard.getRuntimeEnv().getStack().goCard(destination.expression.evaluate().integerValue() - 1);
         }
     }
 }

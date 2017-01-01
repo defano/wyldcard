@@ -8,7 +8,6 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
 import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.ExpLiteral;

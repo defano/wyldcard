@@ -9,7 +9,7 @@
 package hypertalk.ast.containers;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.PartType;
@@ -36,7 +36,7 @@ public class ContainerMsgBox extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
+        Value value = new Value(HyperCard.getRuntimeEnv().getMsgBoxText());
         return chunkOf(value, this.chunk());
     }
 

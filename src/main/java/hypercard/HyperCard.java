@@ -1,5 +1,5 @@
 /**
- * RuntimeEnv.java
+ * HyperCard.java
  * @author matt.defano@gmail.com
  * 
  * The HyperCard runtime environment; this is the program's main class and is
@@ -7,7 +7,7 @@
  * and reporting exceptions to the user.
  */
 
-package hypercard.runtime;
+package hypercard;
 
 import hypercard.context.GlobalContext;
 import hypercard.context.ToolsContext;
@@ -17,16 +17,16 @@ import hypercard.paint.tools.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModel;
 import hypercard.parts.model.StackModelObserver;
-import hypertalk.ast.common.Value;
+import hypercard.runtime.Interpreter;
+import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RuntimeEnv implements StackModelObserver {
+public class HyperCard implements StackModelObserver {
 
-    private static RuntimeEnv _instance;
+    private static HyperCard _instance;
     private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
 
     private StackModel stack;
@@ -36,24 +36,23 @@ public class RuntimeEnv implements StackModelObserver {
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
 
-        _instance = new RuntimeEnv();
+        _instance = new HyperCard();
     }
 
-    private RuntimeEnv() {
-        /*
-         * Use this operating systems look and feel for our user interface. If
-         * this causes an exception, just ignore it (it's not the end of the
-         * world if we can't use the native look anyway).
-         */
+    private HyperCard() {
+
         try {
+            // Use this operating systems look and feel for our user interface.
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            System.out.println("Unable to set the UI look and feel");
+            // Nothing to do
         }
 
+        // Create a new stack to work on.
         stack = StackModel.newStack("Untitled");
         stack.addObserver(this);
 
+        // Fire up the key and mouse listeners
         ModifierKeyListener.start();
         MouseListener.start();
 
@@ -65,7 +64,7 @@ public class RuntimeEnv implements StackModelObserver {
         });
     }
 
-    public static RuntimeEnv getRuntimeEnv() {
+    public static HyperCard getRuntimeEnv() {
         return _instance;
     }
 
@@ -75,7 +74,7 @@ public class RuntimeEnv implements StackModelObserver {
     public void setStack (StackModel model) {
         SwingUtilities.invokeLater(() -> {
             stack = model;
-            stack.addObserver(RuntimeEnv.this);
+            stack.addObserver(HyperCard.this);
             WindowManager.getStackWindow().setDisplayedCard(stack.getCurrentCard());
         });
     }
@@ -97,10 +96,10 @@ public class RuntimeEnv implements StackModelObserver {
             try {
                 if (!getMsgBoxText().trim().isEmpty()) {
                     Interpreter.executeString(null, getMsgBoxText()).get();
-                    RuntimeEnv.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
+                    HyperCard.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
                 }
             } catch (Exception e) {
-                RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                HyperCard.getRuntimeEnv().dialogSyntaxError(e);
             }
         });
     }

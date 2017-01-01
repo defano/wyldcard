@@ -5,15 +5,16 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
 import hypercard.context.ToolsContext;
+import hypercard.paint.observers.ProvidedValueObserver;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolType;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.PaintToolSelectionObserver {
+public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueObserver {
     private JPanel palettePanel;
 
     private JButton selection;
@@ -53,11 +54,10 @@ public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.P
         shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
 
-        eraser.addMouseListener((DoubleClickListener) e -> RuntimeEnv.getRuntimeEnv().getCard().getCanvas().clearCanvas());
+        eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getRuntimeEnv().getCard().getCanvas().clearCanvas());
         shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setVisible(true));
 
-        ToolsContext.getInstance().addPaintToolSelectionObserver(this);
-        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedToolProvider());
+        ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
     }
 
     @Override
@@ -70,20 +70,8 @@ public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.P
         // Nothing to do
     }
 
-    @Override
-    public void onPaintToolSelected(AbstractPaintTool oldTool, AbstractPaintTool newTool) {
-        for (JButton thisToolButton : allTools) {
-            if (thisToolButton != null) {
-                thisToolButton.setEnabled(true);
-            }
-        }
-
-        getButtonForTool(newTool.getToolType()).setEnabled(false);
-    }
-
     private void toolSelected(PaintToolType toolType) {
         ToolsContext.getInstance().setSelectedToolType(toolType);
-        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedToolProvider());
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {
@@ -115,6 +103,21 @@ public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.P
 
             default:
                 throw new IllegalStateException("Bug! Unimplemented tool type " + paintToolType);
+        }
+    }
+
+    @Override
+    public void onChanged(Object oldValue, Object newValue) {
+        if (newValue instanceof AbstractPaintTool) {
+            AbstractPaintTool selectedTool = (AbstractPaintTool) newValue;
+
+            for (JButton thisToolButton : allTools) {
+                if (thisToolButton != null) {
+                    thisToolButton.setEnabled(true);
+                }
+            }
+
+            getButtonForTool(selectedTool.getToolType()).setEnabled(false);
         }
     }
 

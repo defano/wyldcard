@@ -6,7 +6,6 @@ import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.parts.model.FieldModel;
-import hypercard.runtime.RuntimeEnv;
 import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Value;
 

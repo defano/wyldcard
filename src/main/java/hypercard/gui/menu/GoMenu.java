@@ -1,6 +1,6 @@
 package hypercard.gui.menu;
 
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ public class GoMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goBack())
+                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goBack())
                 .withShortcut('~')
                 .build(this);
 
@@ -38,25 +38,25 @@ public class GoMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goFirstCard())
+                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goFirstCard())
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goPrevCard())
+                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goPrevCard())
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goNextCard())
+                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goNextCard())
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().getStack().goLastCard())
+                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goLastCard())
                 .withShortcut('4')
                 .build(this);
 

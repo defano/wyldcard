@@ -1,5 +1,6 @@
 package hypercard.runtime;
 
+import hypercard.HyperCard;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.statements.StatementList;
@@ -25,7 +26,7 @@ public class HandlerExecutionTask implements Runnable {
 
             handler.execute();
         } catch (HtException e) {
-            RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+            HyperCard.getRuntimeEnv().dialogSyntaxError(e);
         }
     }
 

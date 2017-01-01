@@ -16,7 +16,7 @@ import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.model.FieldModel;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.Interpreter;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
@@ -267,7 +267,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
                     try {
                         compile();
                     } catch (HtSemanticException e) {
-                        RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                        HyperCard.getRuntimeEnv().dialogSyntaxError(e);
                     }
                     break;
                 case FieldModel.PROP_TEXT:

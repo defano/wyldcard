@@ -12,7 +12,7 @@ package hypercard.context;
 import hypercard.parts.CardPart;
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.*;
@@ -98,7 +98,7 @@ public class GlobalContext {
     }
 
     public CardPart getCard () {
-        return RuntimeEnv.getRuntimeEnv().getCard();
+        return HyperCard.getRuntimeEnv().getCard();
     }
 
     public void sendMessage (PartSpecifier ps, String message) 
@@ -110,7 +110,7 @@ public class GlobalContext {
     public void put (Value mutator, Preposition p, ContainerMsgBox d) throws HtSemanticException {
 
         Chunk chunk = d.chunk();
-        Value destValue = new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
+        Value destValue = new Value(HyperCard.getRuntimeEnv().getMsgBoxText());
         
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -118,7 +118,7 @@ public class GlobalContext {
         else
             destValue = Value.setValue(destValue, p, mutator);
         
-        RuntimeEnv.getRuntimeEnv().setMsgBoxText(destValue);
+        HyperCard.getRuntimeEnv().setMsgBoxText(destValue);
         setIt(destValue);
     }
     

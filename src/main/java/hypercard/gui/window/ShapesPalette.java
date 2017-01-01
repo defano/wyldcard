@@ -4,12 +4,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.paint.observers.ProvidedValueObserver;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ShapesPalette extends HyperCardWindow implements ToolsContext.ShapeSelectionObserver {
+public class ShapesPalette extends HyperCardWindow implements ProvidedValueObserver {
 
     private JPanel shapesPanel;
 
@@ -30,8 +30,7 @@ public class ShapesPalette extends HyperCardWindow implements ToolsContext.Shape
         hexagon.addActionListener(e -> selectShape(6));
         octogon.addActionListener(e -> selectShape(8));
 
-        ToolsContext.getInstance().addShapeSelectionObserver(this);
-        onShapeSelected(ToolsContext.getInstance().getShapeSides());
+        ToolsContext.getInstance().getShapeSidesProvider().addObserver(this);
     }
 
     @Override
@@ -66,12 +65,14 @@ public class ShapesPalette extends HyperCardWindow implements ToolsContext.Shape
     }
 
     @Override
-    public void onShapeSelected(int sides) {
-        for (JButton thisShape : allShapes) {
-            thisShape.setEnabled(true);
-        }
+    public void onChanged(Object oldValue, Object newValue) {
+        if (newValue instanceof Integer) {
+            for (JButton thisShape : allShapes) {
+                thisShape.setEnabled(true);
+            }
 
-        getButtonForShape(sides).setEnabled(false);
+            getButtonForShape((int) newValue).setEnabled(false);
+        }
     }
 
     {

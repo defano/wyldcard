@@ -4,11 +4,9 @@ import hypercard.paint.observers.Provider;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolBuilder;
 import hypercard.paint.tools.PaintToolType;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ToolsContext {
 
@@ -20,18 +18,7 @@ public class ToolsContext {
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 12));
 
-    private Provider<AbstractPaintTool> selectedToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
-
-    private Set<PaintToolSelectionObserver> paintToolSelectionObservers = new HashSet<>();
-    private Set<ShapeSelectionObserver> shapeSelectionObservers = new HashSet<>();
-
-    public interface PaintToolSelectionObserver {
-        void onPaintToolSelected(AbstractPaintTool oldTool, AbstractPaintTool newTool);
-    }
-
-    public interface ShapeSelectionObserver {
-        void onShapeSelected(int sides);
-    }
+    private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
 
     private ToolsContext() {
         PaintToolBuilder.setDefaultBrushStrokeProvider(strokeProvider);
@@ -45,31 +32,32 @@ public class ToolsContext {
     }
 
     public Provider<AbstractPaintTool> getPaintToolProvider() {
-        return selectedToolProvider;
+        return toolProvider;
     }
 
-    public AbstractPaintTool getSelectedToolProvider() {
-        return selectedToolProvider.get();
+    public AbstractPaintTool getToolProvider() {
+        return toolProvider.get();
     }
 
     public void setSelectedToolType(PaintToolType selectedToolType) {
-        AbstractPaintTool oldTool = selectedToolProvider.get();
+        AbstractPaintTool oldTool = toolProvider.get();
 
-        selectedToolProvider.get().deactivate();
-        selectedToolProvider.set(PaintToolBuilder.create(selectedToolType)
-                .makeActiveOnCanvas(RuntimeEnv.getRuntimeEnv().getCard().getCanvas())
+        toolProvider.get().deactivate();
+        toolProvider.set(PaintToolBuilder.create(selectedToolType)
+                .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
                 .build());
-
-        firePaintToolSelectionChanged(oldTool, selectedToolProvider.get());
     }
 
     public void setShapeSides(int shapeSides) {
         shapeSidesProvider.set(shapeSides);
-        fireShapeSelectionChanged(shapeSides);
     }
 
     public int getShapeSides() {
         return shapeSidesProvider.get();
+    }
+
+    public Provider<Integer> getShapeSidesProvider() {
+        return shapeSidesProvider;
     }
 
     public void setFontSize(int size) {
@@ -97,33 +85,4 @@ public class ToolsContext {
     public Provider<Font> getFontProvider() {
         return fontProvider;
     }
-
-    public boolean addPaintToolSelectionObserver(PaintToolSelectionObserver observer) {
-        return paintToolSelectionObservers.add(observer);
-    }
-
-    public boolean removePaintToolSelectionObserver(PaintToolSelectionObserver observer) {
-        return paintToolSelectionObservers.remove(observer);
-    }
-
-    public boolean addShapeSelectionObserver(ShapeSelectionObserver observer) {
-        return shapeSelectionObservers.add(observer);
-    }
-
-    public boolean removeShapeSelectionObserver(ShapeSelectionObserver observer) {
-        return shapeSelectionObservers.remove(observer);
-    }
-
-    private void fireShapeSelectionChanged(int sides) {
-        for (ShapeSelectionObserver thisObserver : shapeSelectionObservers) {
-            thisObserver.onShapeSelected(sides);
-        }
-    }
-
-    private void firePaintToolSelectionChanged(AbstractPaintTool oldTool, AbstractPaintTool newTool) {
-        for (PaintToolSelectionObserver thisObserver : paintToolSelectionObservers) {
-            thisObserver.onPaintToolSelected(oldTool, newTool);
-        }
-    }
-
 }
