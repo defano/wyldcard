@@ -113,6 +113,7 @@ public class ToolsContext implements StackModelObserver {
 
         switch (type) {
             case PAINTBRUSH:
+            case SPRAYPAINT:
                 return brushStrokeProvider;
 
             case ERASER:

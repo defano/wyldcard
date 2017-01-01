@@ -13,5 +13,6 @@ public enum PaintToolType {
     SHAPE,
     SELECTION,
     TEXT,
-    FILL
+    FILL,
+    SPRAYPAINT
 }

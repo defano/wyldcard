@@ -100,6 +100,12 @@ public class ToolsMenu extends JMenu {
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
+                .named("Spraypaint")
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SPRAYPAINT))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.SPRAYPAINT))
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
                 .named("Eraser")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ERASER))
                 .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.ERASER))

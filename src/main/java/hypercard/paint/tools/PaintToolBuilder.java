@@ -130,6 +130,9 @@ public class PaintToolBuilder {
             case FILL:
                 selectedTool = new FillTool();
                 break;
+            case SPRAYPAINT:
+                selectedTool = new SpraypaintTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);
