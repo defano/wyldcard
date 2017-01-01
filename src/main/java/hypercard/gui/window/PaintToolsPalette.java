@@ -56,6 +56,7 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
 
         eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getRuntimeEnv().getCard().getCanvas().clearCanvas());
         shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setVisible(true));
+        line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setVisible(true));
 
         ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
     }

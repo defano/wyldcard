@@ -15,7 +15,7 @@ public class PaintToolBuilder {
     private Provider<Integer> shapeSidesProvider;
     private Provider<Font> fontProvider;
 
-    private static Provider<Stroke> defaultShapeStrokeProvider = new Provider<>(new BasicStroke(2));
+    private static Provider<Stroke> defaultLineStrokeProvider = new Provider<>(new BasicStroke(2));
     private static Provider<Stroke> defaultBrushStrokeProvider = new Provider<>(new BasicStroke(10));
     private static Provider<Paint> defaultPaintProvider = new Provider<>(Color.BLACK);
     private static Provider<Integer> defaultShapeSidesProvider = new Provider<>(5);
@@ -164,9 +164,9 @@ public class PaintToolBuilder {
         }
     }
 
-    public static void setDefaultShapeStrokeProvider(Provider<Stroke> strokeProvider) {
+    public static void setDefaultLineStrokeProvider(Provider<Stroke> strokeProvider) {
         if (strokeProvider != null) {
-            defaultShapeStrokeProvider = strokeProvider;
+            defaultLineStrokeProvider = strokeProvider;
         }
     }
 
@@ -196,7 +196,7 @@ public class PaintToolBuilder {
                 return defaultBrushStrokeProvider;
 
             default:
-                return defaultShapeStrokeProvider;
+                return defaultLineStrokeProvider;
         }
     }
 }

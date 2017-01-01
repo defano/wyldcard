@@ -14,7 +14,8 @@ public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
-    private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(5));
+    private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(5));
+    private Provider<Stroke> brushStrokeProvider = new Provider<>(new BasicStroke(5));
     private Provider<Paint> paintProvider = new Provider<>(Color.black);
     private Provider<Paint> fillProvider = new Provider<>(null);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
@@ -23,10 +24,11 @@ public class ToolsContext implements StackModelObserver {
     private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
 
     private ToolsContext() {
-        PaintToolBuilder.setDefaultBrushStrokeProvider(strokeProvider);
+        PaintToolBuilder.setDefaultBrushStrokeProvider(brushStrokeProvider);
         PaintToolBuilder.setDefaultPaintProvider(paintProvider);
         PaintToolBuilder.setDefaultShapeSidesProvider(shapeSidesProvider);
         PaintToolBuilder.setDefaultFontProvider(fontProvider);
+        PaintToolBuilder.setDefaultLineStrokeProvider(lineStrokeProvider);
 
         HyperCard.getRuntimeEnv().getStack().addObserver(this);
     }
@@ -35,12 +37,12 @@ public class ToolsContext implements StackModelObserver {
         return instance;
     }
 
-    public Provider<AbstractPaintTool> getPaintToolProvider() {
-        return toolProvider;
+    public Provider<Stroke> getLineStrokeProvider() {
+        return lineStrokeProvider;
     }
 
-    public AbstractPaintTool getToolProvider() {
-        return toolProvider.get();
+    public Provider<AbstractPaintTool> getPaintToolProvider() {
+        return toolProvider;
     }
 
     public void setSelectedToolType(PaintToolType selectedToolType) {
@@ -88,6 +90,10 @@ public class ToolsContext implements StackModelObserver {
 
     public Provider<Font> getFontProvider() {
         return fontProvider;
+    }
+
+    public void setLineWidth(int width) {
+        lineStrokeProvider.set(new BasicStroke(width));
     }
 
     @Override

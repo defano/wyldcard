@@ -25,6 +25,12 @@ public class ToolsMenu extends JMenu {
                 .withCheckmarkProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
+        MenuItemBuilder.ofCheckType()
+                .named("Lines Palette")
+                .withAction(e -> WindowManager.getLinesPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getLinesPalette().getWindowVisibleProvider())
+                .build(this);
+
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()

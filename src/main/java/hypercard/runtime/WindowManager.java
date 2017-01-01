@@ -12,6 +12,7 @@ public class WindowManager {
     private final static MessageWindow messageWindow = new MessageWindow();
     private final static PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
     private final static ShapesPalette shapesPalette = new ShapesPalette();
+    private final static LinesPalette linesPalette = new LinesPalette();
 
     private WindowManager() {
         start();
@@ -55,6 +56,17 @@ public class WindowManager {
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
                 .build();
+
+        WindowBuilder.make(linesPalette)
+                .resizeable(false)
+                .withTitle("Lines")
+                .floating()
+                .notFocusable()
+                .withMenuBar(HyperCardMenuBar.instance)
+                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .notInitiallyVisible()
+                .build();
+
     }
 
     public static StackWindow getStackWindow() {
@@ -71,5 +83,9 @@ public class WindowManager {
 
     public static ShapesPalette getShapesPalette() {
         return shapesPalette;
+    }
+
+    public static LinesPalette getLinesPalette() {
+        return linesPalette;
     }
 }
