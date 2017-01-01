@@ -1,6 +1,7 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
+import hypercard.paint.observers.Provider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +12,10 @@ public class FontMenu extends JMenu {
         super("Font");
 
         for (String thisFamily : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            MenuItemBuilder.ofDefaultType()
+            MenuItemBuilder.ofCheckType()
                     .named(thisFamily)
                     .withAction(e -> ToolsContext.getInstance().setFontFamily(thisFamily))
+                    .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getFontProvider(), f -> ((Font)f).getFamily().equalsIgnoreCase(thisFamily)))
                     .fontFamily(thisFamily)
                     .build(this);
         }

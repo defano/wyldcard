@@ -55,7 +55,9 @@ public class RuntimeEnv implements StackModelObserver {
         ModifierKeyListener.start();
         MouseListener.start();
 
-        SwingUtilities.invokeLater(() -> WindowManager.start());
+        // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
+        // directly from the constructor
+        SwingUtilities.invokeLater(WindowManager::start);
     }
 
     public static RuntimeEnv getRuntimeEnv() {

@@ -10,6 +10,7 @@ public class Provider<T> {
 
     public Provider(Provider derivedFrom, ProviderTransform<T> transform) {
         derivedFrom.addObserver((oldValue, newValue) -> set(transform.transform(newValue)));
+        set(transform.transform(derivedFrom.get()));
     }
 
     public Provider(T initialValue) {

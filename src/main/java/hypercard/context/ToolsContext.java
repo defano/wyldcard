@@ -94,6 +94,10 @@ public class ToolsContext {
         fontProvider.set(new Font(fontName, currentStyle, currentSize));
     }
 
+    public Provider<Font> getFontProvider() {
+        return fontProvider;
+    }
+
     public boolean addPaintToolSelectionObserver(PaintToolSelectionObserver observer) {
         return paintToolSelectionObservers.add(observer);
     }
