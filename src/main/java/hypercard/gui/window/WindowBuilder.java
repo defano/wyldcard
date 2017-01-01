@@ -47,6 +47,11 @@ public class WindowBuilder {
         return this;
     }
 
+    public WindowBuilder floating() {
+        frame.setAlwaysOnTop(true);
+        return this;
+    }
+
     public WindowBuilder withMenuBar (JMenuBar menuBar) {
 
         // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
