@@ -1,6 +1,7 @@
 package hypercard.gui.menu;
 
 import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 
@@ -69,10 +70,8 @@ public class GoMenu extends JMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Message")
-                .withAction(e -> {
-                    RuntimeEnv.getRuntimeEnv().setMessageBoxVisible(!RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
-                    ((JCheckBoxMenuItem) e.getSource()).setState(RuntimeEnv.getRuntimeEnv().isMessageBoxVisible());
-                })
+                .withAction(e -> WindowManager.getMessageWindow().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getMessageWindow().getWindowVisibleProvider())
                 .withShortcut('M')
                 .build(this);
 

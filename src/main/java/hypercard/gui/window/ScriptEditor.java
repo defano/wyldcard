@@ -32,11 +32,11 @@ public class ScriptEditor extends HyperCardWindow {
 
     public ScriptEditor() {
 
-        cancelButton.addActionListener(e -> close());
+        cancelButton.addActionListener(e -> dispose());
 
         saveButton.addActionListener(e -> {
             updateProperties();
-            close();
+            dispose();
         });
 
         scriptField.getDocument().addDocumentListener(new DocumentListener() {

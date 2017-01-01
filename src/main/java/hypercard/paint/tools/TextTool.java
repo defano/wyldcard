@@ -2,14 +2,14 @@ package hypercard.paint.tools;
 
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.observers.Provider;
+import hypercard.paint.observers.ProvidedValueObserver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class TextTool extends AbstractPaintTool implements Provider.Observer {
+public class TextTool extends AbstractPaintTool implements ProvidedValueObserver {
 
     private final JTextArea textArea;
 

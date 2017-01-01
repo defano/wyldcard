@@ -7,7 +7,7 @@
 
 package hypertalk.ast.functions;
 
-import hypercard.runtime.RuntimeEnv;
+import hypercard.gui.util.MouseListener;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 
@@ -16,6 +16,6 @@ public class ExpMouseFun extends Expression {
     public ExpMouseFun () {}
     
     public Value evaluate () {
-        return RuntimeEnv.getRuntimeEnv().getTheMouse();
+        return MouseListener.isMouseDown() ? new Value("down") : new Value("up");
     }
 }

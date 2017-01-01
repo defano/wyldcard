@@ -17,6 +17,7 @@ import hypercard.parts.model.FieldModel;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.Interpreter;
 import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
@@ -114,7 +115,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         WindowBuilder.make(new FieldPropertyEditor())
                 .withTitle("Properties of field " + getName())
                 .withModel(partModel)
-                .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(false)
                 .build();
     }
@@ -131,7 +132,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("Script of field " + getName())
                 .withModel(partModel)
-                .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(true)
                 .build();
     }
@@ -197,12 +198,12 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
     @Override
     public void sendMessage(String message) {
-        RuntimeEnv.getRuntimeEnv().executeHandler(getMe(), script, message);
+        Interpreter.executeHandler(getMe(), script, message);
     }
 
     @Override
     public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
-        return RuntimeEnv.getRuntimeEnv().executeUserFunction(getMe(), script.getFunction(function), arguments);
+        return Interpreter.executeFunction(getMe(), script.getFunction(function), arguments);
     }
 
     public PartSpecifier getMe() {

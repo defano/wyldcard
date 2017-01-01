@@ -1,97 +1,112 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
+import hypercard.paint.observers.Provider;
+import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolType;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class ToolsMenu extends JMenu {
 
     public ToolsMenu() {
         super("Tools");
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Tools Palette")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().setPaintToolsPaletteVisible(!RuntimeEnv.getRuntimeEnv().isPaintToolsPaletteVisible()))
+                .withAction(e -> WindowManager.getPaintToolsPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getPaintToolsPalette().getWindowVisibleProvider())
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Shapes Palette")
-                .withAction(e -> RuntimeEnv.getRuntimeEnv().setShapesPaletteVisible(!RuntimeEnv.getRuntimeEnv().isShapesPaletteVisible()))
+                .withAction(e -> WindowManager.getShapesPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Finger")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ARROW))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.ARROW))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Button")
                 .disabled()
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Field")
                 .disabled()
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Selection")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SELECTION))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.SELECTION))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Pencil")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.PENCIL))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.PENCIL))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Rectangle")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.RECTANGLE))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.RECTANGLE))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Round Rectangle")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ROUND_RECTANGLE))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.ROUND_RECTANGLE))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Oval")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.OVAL))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.OVAL))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Paintbrush")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.PAINTBRUSH))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.PAINTBRUSH))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Eraser")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ERASER))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.ERASER))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Line")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.LINE))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.LINE))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Polygon")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.POLYGON))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.POLYGON))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Shape")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SHAPE))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.SHAPE))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Text")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.TEXT))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.TEXT))
                 .build(this);
 
     }

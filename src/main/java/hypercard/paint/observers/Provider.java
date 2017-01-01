@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 public class Provider<T> {
 
-    public interface Observer {
-        void onChanged(Object oldValue, Object newValue);
-    }
-
     private T value;
-    private ArrayList<Observer> observers = new ArrayList<>();
+
+    private final ArrayList<ProvidedValueObserver> observers = new ArrayList<>();
+
+    public Provider(Provider derivedFrom, ProviderTransform<T> transform) {
+        derivedFrom.addObserver((oldValue, newValue) -> set(transform.transform(newValue)));
+    }
 
     public Provider(T initialValue) {
         this.value = initialValue;
@@ -26,16 +27,16 @@ public class Provider<T> {
         fireOnChanged(oldValue, this.value);
     }
 
-    public void addObserver(Observer observer) {
+    public void addObserver(ProvidedValueObserver observer) {
         observers.add(observer);
     }
 
-    public boolean removeObserver(Observer observer) {
+    public boolean removeObserver(ProvidedValueObserver observer) {
         return observers.remove(observer);
     }
 
     private void fireOnChanged(T oldValue, T newValue) {
-        for (Observer thisObserver : observers) {
+        for (ProvidedValueObserver thisObserver : observers) {
             thisObserver.onChanged(oldValue, newValue);
         }
     }

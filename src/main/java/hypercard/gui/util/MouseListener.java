@@ -1,5 +1,10 @@
 package hypercard.gui.util;
 
+import hypercard.parts.CardPart;
+import hypercard.runtime.WindowManager;
+import hypertalk.ast.common.Value;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
@@ -13,12 +18,36 @@ public class MouseListener {
     private static Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
     private static Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
 
+    public static void start() {
+        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
+    }
+
     public interface MousePressedObserver {
         void onMousePressed();
     }
 
     public interface MouseReleasedObserver {
         void onMouseReleased();
+    }
+
+    public static Point getMouseLoc() {
+        CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
+        Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+        SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
+
+        return mouseLoc;
+    }
+
+    public static boolean isMouseDown() {
+        return mouseIsDown;
+    }
+
+    public static void notifyOnMousePressed(MousePressedObserver observer) {
+        pressedObserverSet.add(observer);
+    }
+
+    public static void notifyOnMouseReleased(MouseReleasedObserver observer) {
+        releasedObserverSet.add(observer);
     }
 
     private static final AWTEventListener listener = event -> {
@@ -38,22 +67,6 @@ public class MouseListener {
             // Nothing to do
         }
     };
-
-    public static boolean isMouseDown() {
-        return mouseIsDown;
-    }
-
-    public static void start() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
-    }
-
-    public static void notifyOnMousePressed(MousePressedObserver observer) {
-        pressedObserverSet.add(observer);
-    }
-
-    public static void notifyOnMouseReleased(MouseReleasedObserver observer) {
-        releasedObserverSet.add(observer);
-    }
 
     private static void fireOnMousePressed() {
         for (MousePressedObserver thisObserver : pressedObserverSet) {

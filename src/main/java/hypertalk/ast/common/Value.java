@@ -11,6 +11,7 @@
 
 package hypertalk.ast.common;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,7 +31,11 @@ public class Value {
     public Value () {
         this("");
     }
-    
+
+    public Value (Point p) {
+        this(p.x + "," + p.y);
+    }
+
     public Value (Object v) {
         this(String.valueOf(v));
     }

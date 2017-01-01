@@ -8,6 +8,7 @@ import hypercard.context.ToolsContext;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolType;
 import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,10 +54,10 @@ public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.P
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
 
         eraser.addMouseListener((DoubleClickMouseListener) e -> RuntimeEnv.getRuntimeEnv().getCard().getCanvas().clearCanvas());
-        shape.addMouseListener((DoubleClickMouseListener) e -> RuntimeEnv.getRuntimeEnv().setShapesPaletteVisible(true));
+        shape.addMouseListener((DoubleClickMouseListener) e -> WindowManager.getShapesPalette().setVisible(true));
 
         ToolsContext.getInstance().addPaintToolSelectionObserver(this);
-        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedTool());
+        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedToolProvider());
     }
 
     @Override
@@ -82,7 +83,7 @@ public class PaintToolsPalette extends HyperCardWindow implements ToolsContext.P
 
     private void toolSelected(PaintToolType toolType) {
         ToolsContext.getInstance().setSelectedToolType(toolType);
-        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedTool());
+        onPaintToolSelected(null, ToolsContext.getInstance().getSelectedToolProvider());
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {

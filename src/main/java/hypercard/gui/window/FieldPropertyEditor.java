@@ -7,6 +7,7 @@ import hypercard.gui.HyperCardWindow;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.parts.model.FieldModel;
 import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -32,17 +33,17 @@ public class FieldPropertyEditor extends HyperCardWindow {
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
-            close();
+            dispose();
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script for field " + fieldName.getText())
                     .withModel(model)
-                    .withLocationCenteredOver(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                    .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                     .resizeable(true)
                     .build();
         });
-        cancelButton.addActionListener(e -> close());
+        cancelButton.addActionListener(e -> dispose());
         saveButton.addActionListener(e -> {
-            close();
+            dispose();
             updateProperties();
         });
     }

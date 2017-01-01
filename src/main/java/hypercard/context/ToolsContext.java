@@ -20,7 +20,7 @@ public class ToolsContext {
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 12));
 
-    private AbstractPaintTool selectedTool = PaintToolBuilder.create(PaintToolType.ARROW).build();
+    private Provider<AbstractPaintTool> selectedToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
 
     private Set<PaintToolSelectionObserver> paintToolSelectionObservers = new HashSet<>();
     private Set<ShapeSelectionObserver> shapeSelectionObservers = new HashSet<>();
@@ -44,19 +44,23 @@ public class ToolsContext {
         return instance;
     }
 
-    public AbstractPaintTool getSelectedTool() {
-        return selectedTool;
+    public Provider<AbstractPaintTool> getPaintToolProvider() {
+        return selectedToolProvider;
+    }
+
+    public AbstractPaintTool getSelectedToolProvider() {
+        return selectedToolProvider.get();
     }
 
     public void setSelectedToolType(PaintToolType selectedToolType) {
-        AbstractPaintTool oldTool = selectedTool;
+        AbstractPaintTool oldTool = selectedToolProvider.get();
 
-        selectedTool.deactivate();
-        selectedTool = PaintToolBuilder.create(selectedToolType)
+        selectedToolProvider.get().deactivate();
+        selectedToolProvider.set(PaintToolBuilder.create(selectedToolType)
                 .makeActiveOnCanvas(RuntimeEnv.getRuntimeEnv().getCard().getCanvas())
-                .build();
+                .build());
 
-        firePaintToolSelectionChanged(oldTool, selectedTool);
+        firePaintToolSelectionChanged(oldTool, selectedToolProvider.get());
     }
 
     public void setShapeSides(int shapeSides) {
