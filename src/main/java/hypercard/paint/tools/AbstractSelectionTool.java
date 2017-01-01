@@ -104,7 +104,7 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
         super.deactivate();
 
         // Need to remove selection frame when tool is no longer active
-        clearSelection();
+        putDownSelection();
         getCanvas().removeKeyListener(this);
     }
 

@@ -5,10 +5,12 @@ import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolBuilder;
 import hypercard.paint.tools.PaintToolType;
 import hypercard.HyperCard;
+import hypercard.parts.CardPart;
+import hypercard.parts.model.StackModelObserver;
 
 import java.awt.*;
 
-public class ToolsContext {
+public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
@@ -25,6 +27,8 @@ public class ToolsContext {
         PaintToolBuilder.setDefaultPaintProvider(paintProvider);
         PaintToolBuilder.setDefaultShapeSidesProvider(shapeSidesProvider);
         PaintToolBuilder.setDefaultFontProvider(fontProvider);
+
+        HyperCard.getRuntimeEnv().getStack().addObserver(this);
     }
 
     public static ToolsContext getInstance() {
@@ -84,5 +88,11 @@ public class ToolsContext {
 
     public Provider<Font> getFontProvider() {
         return fontProvider;
+    }
+
+    @Override
+    public void onCurrentCardChanged(CardPart newCard) {
+        toolProvider.get().deactivate();
+        toolProvider.get().activate(newCard.getCanvas());
     }
 }
