@@ -2,6 +2,7 @@ package hypercard.context;
 
 import hypercard.HyperCard;
 import hypercard.paint.observers.Provider;
+import hypercard.paint.patterns.StandardPatternFactory;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.PaintToolBuilder;
 import hypercard.paint.tools.PaintToolType;
@@ -18,7 +19,7 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
     private Provider<Stroke> brushStrokeProvider = new Provider<>(new BasicStroke(5));
     private Provider<Paint> linePaintProvider = new Provider<>(Color.black);
-    private Provider<Paint> fillPaintProvider = new Provider<>(null);
+    private Provider<Integer> fillPatternProvider = new Provider<>(0);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 12));
 
@@ -45,7 +46,7 @@ public class ToolsContext implements StackModelObserver {
         toolProvider.set(PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(fillPaintProvider)
+                .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> (int) t == 0 ? null : StandardPatternFactory.create((int) t)))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
@@ -62,6 +63,10 @@ public class ToolsContext implements StackModelObserver {
 
     public Provider<Integer> getShapeSidesProvider() {
         return shapeSidesProvider;
+    }
+
+    public Provider<Integer> getFillPatternProvider() {
+        return fillPatternProvider;
     }
 
     public void setFontSize(int size) {
@@ -92,6 +97,10 @@ public class ToolsContext implements StackModelObserver {
 
     public void setLineWidth(int width) {
         lineStrokeProvider.set(new BasicStroke(width));
+    }
+
+    public void setPattern(int patternId) {
+            fillPatternProvider.set(patternId);
     }
 
     @Override

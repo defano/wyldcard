@@ -19,9 +19,7 @@ public abstract class AbstractBrushTool extends AbstractPaintTool {
     @Override
     public void mouseDragged(MouseEvent e) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        g2d.setStroke(getStroke());
-        g2d.setPaint(getStrokePaint());
-        drawSegment(g2d, lastPoint.x, lastPoint.y, e.getX(), e.getY());
+        drawSegment(g2d, getStroke(), getFillPaint(), lastPoint.x, lastPoint.y, e.getX(), e.getY());
         g2d.dispose();
 
         lastPoint = new Point(e.getX(), e.getY());
@@ -33,5 +31,5 @@ public abstract class AbstractBrushTool extends AbstractPaintTool {
         getCanvas().commit(getComposite());
     }
 
-    public abstract void drawSegment(Graphics g, int x1, int y1, int x2, int y2);
+    public abstract void drawSegment(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
 }

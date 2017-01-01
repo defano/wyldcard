@@ -23,6 +23,11 @@ public class FillTool extends AbstractPaintTool {
         canvasBounds = getCanvas().getBounds();
         fillPaint = getFillPaint();
 
+        // Nothing to do if no fill is specified
+        if (fillPaint == null) {
+            return;
+        }
+
         getCanvas().clearScratch();
 
         floodFill(e.getX(), e.getY(), point -> {
@@ -36,17 +41,17 @@ public class FillTool extends AbstractPaintTool {
     }
 
     private void floodFill(int x, int y, Predicate<Point> boundaryFunction) {
-        Stack<Point> fillPixels = new Stack<>();
+        final Stack<Point> fillPixels = new Stack<>();
         fillPixels.push(new Point(x, y));
 
         while (!fillPixels.isEmpty()) {
-            Point thisPixel = fillPixels.pop();
+            final Point thisPixel = fillPixels.pop();
             fill(thisPixel);
 
-            Point right = new Point(thisPixel.x + 1, thisPixel.y);
-            Point left = new Point(thisPixel.x - 1, thisPixel.y);
-            Point down = new Point(thisPixel.x, thisPixel.y + 1);
-            Point up = new Point(thisPixel.x, thisPixel.y - 1);
+            final Point right = new Point(thisPixel.x + 1, thisPixel.y);
+            final Point left = new Point(thisPixel.x - 1, thisPixel.y);
+            final Point down = new Point(thisPixel.x, thisPixel.y + 1);
+            final Point up = new Point(thisPixel.x, thisPixel.y - 1);
 
             if (canvasBounds.contains(right) && boundaryFunction.test(right)) {
                 fillPixels.push(right);
@@ -73,11 +78,11 @@ public class FillTool extends AbstractPaintTool {
 
     private int getFillRgb(int x, int y, Paint paint) {
 
-        if (paint == null) {
-            return new Color(0, 0, 0, 0).getRGB();
-        }
-        else if (paint instanceof Color) {
+        if (paint instanceof Color) {
             return ((Color) paint).getRGB();
+        } else if (paint instanceof TexturePaint) {
+            BufferedImage texture = ((TexturePaint) paint).getImage();
+            return texture.getRGB(x % texture.getWidth(), y % texture.getHeight());
         }
 
         throw new IllegalArgumentException("Don't know how to fill with paint " + paint);
