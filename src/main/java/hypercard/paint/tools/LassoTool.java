@@ -50,7 +50,6 @@ public class LassoTool extends AbstractSelectionTool {
     @Override
     protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));
-
     }
 
     @Override

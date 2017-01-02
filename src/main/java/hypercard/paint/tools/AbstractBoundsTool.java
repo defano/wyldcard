@@ -7,9 +7,10 @@ import java.awt.event.MouseEvent;
 
 /**
  * Mouse and keyboard event handler for tools that define a bounding box by clicking and dragging
- * the mouse from the top-left point of the bounds to the bottom-right point. When the shift key is held down
- * the bounding box is constrained to a square whose height and width is equal to the larger of the two dimensions
- * defined by the mouse location.
+ * the mouse from the top-left point of the bounds to the bottom-right point.
+ *
+ * When the shift key is held down the bounding box is constrained to a square whose height and width is equal to the
+ * larger of the two dimensions defined by the mouse location.
  *
  */
 public abstract class AbstractBoundsTool extends AbstractPaintTool {

@@ -33,19 +33,14 @@ public class SelectionTool extends AbstractSelectionTool {
     protected void drawSelectionBounds(Graphics2D g, boolean constrainToSquare) {
         if (selectionBounds != null) {
 
-            int left = selectionBounds.x;
-            int top = selectionBounds.y;
-            int right = selectionBounds.x + selectionBounds.width;
-            int bottom = selectionBounds.y + selectionBounds.height;
-
-            int width = (right - left);
-            int height = (bottom - top);
+            int width = selectionBounds.width;
+            int height = selectionBounds.height;
 
             if (constrainToSquare) {
                 width = height = Math.max(width, height);
             }
 
-            selectionBounds = new Rectangle(left, top, width, height);
+            selectionBounds = new Rectangle(selectionBounds.x, selectionBounds.y, width, height);
 
             g.setStroke(MARCHING_ANTS);
             g.setColor(Color.BLACK);

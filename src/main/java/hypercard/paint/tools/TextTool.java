@@ -43,7 +43,7 @@ public class TextTool extends AbstractPaintTool implements ProvidedValueObserver
     @Override
     public void mousePressed(MouseEvent e) {
         if (!isEditing()) {
-            addTextArea(e.getX(), e.getY());
+            addTextArea(e.getX(), e.getY() - getFontAscent());
         } else {
             commitTextImage(textArea.getX(), textArea.getY());
             removeTextArea();
@@ -107,5 +107,13 @@ public class TextTool extends AbstractPaintTool implements ProvidedValueObserver
         if (newValue instanceof Font) {
             textArea.setFont((Font) newValue);
         }
+    }
+
+    private int getFontAscent() {
+        Graphics g = getCanvas().getScratchGraphics();
+        FontMetrics metrics = g.getFontMetrics(getFont());
+        g.dispose();
+
+        return metrics.getAscent();
     }
 }
