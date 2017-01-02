@@ -1,12 +1,10 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
-import hypercard.paint.observers.Provider;
+import hypercard.paint.model.Provider;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class StyleMenu extends JMenu {
 

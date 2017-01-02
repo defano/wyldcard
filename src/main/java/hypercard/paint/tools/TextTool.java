@@ -2,7 +2,8 @@ package hypercard.paint.tools;
 
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.observers.ProvidedValueObserver;
+import hypercard.paint.model.PaintToolType;
+import hypercard.paint.model.ProvidedValueObserver;
 
 import javax.swing.*;
 import java.awt.*;

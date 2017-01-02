@@ -1,6 +1,6 @@
 package hypercard.gui.menu;
 
-import hypercard.paint.observers.Provider;
+import hypercard.paint.model.Provider;
 
 import javax.swing.*;
 import java.awt.*;

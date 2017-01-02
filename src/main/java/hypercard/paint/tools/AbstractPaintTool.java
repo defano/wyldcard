@@ -1,7 +1,8 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.observers.Provider;
+import hypercard.paint.model.PaintToolType;
+import hypercard.paint.model.Provider;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

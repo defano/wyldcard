@@ -1,7 +1,9 @@
-package hypercard.paint.tools;
+package hypercard.paint.utils;
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.observers.Provider;
+import hypercard.paint.model.PaintToolType;
+import hypercard.paint.model.Provider;
+import hypercard.paint.tools.*;
 
 import java.awt.*;
 

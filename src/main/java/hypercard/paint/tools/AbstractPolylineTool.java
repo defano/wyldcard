@@ -1,7 +1,7 @@
 package hypercard.paint.tools;
 
+import hypercard.paint.model.PaintToolType;
 import hypercard.paint.utils.MathUtils;
-import org.antlr.v4.misc.Graph;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

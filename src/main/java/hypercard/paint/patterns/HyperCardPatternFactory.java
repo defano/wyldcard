@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class StandardPatternFactory {
+public class HyperCardPatternFactory {
 
     private final static int SPRITE_MATRIX_WIDTH = 17;
     private final static int SPRITE_MATRIX_HEIGHT = 12;
@@ -22,7 +22,7 @@ public class StandardPatternFactory {
         int yOffset = 1 + (row * SPRITE_MATRIX_HEIGHT) + row;
 
         try {
-            BufferedImage spriteSheet = ImageIO.read(StandardPatternFactory.class.getResource("/patterns/patterns.png"));
+            BufferedImage spriteSheet = ImageIO.read(HyperCardPatternFactory.class.getResource("/patterns/patterns.png"));
             BufferedImage sprite = spriteSheet.getSubimage(xOffset, yOffset, PATTERN_WIDTH, PATTERN_HEIGHT);
             return new TexturePaint(sprite, new Rectangle(0,0,sprite.getWidth(),sprite.getHeight()));
         } catch (IOException e) {

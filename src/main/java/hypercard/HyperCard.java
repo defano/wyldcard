@@ -13,7 +13,7 @@ import hypercard.context.GlobalContext;
 import hypercard.context.ToolsContext;
 import hypercard.gui.util.ModifierKeyListener;
 import hypercard.gui.util.MouseListener;
-import hypercard.paint.tools.PaintToolType;
+import hypercard.paint.model.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModel;
 import hypercard.parts.model.StackModelObserver;

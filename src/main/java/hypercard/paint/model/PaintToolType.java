@@ -1,4 +1,4 @@
-package hypercard.paint.tools;
+package hypercard.paint.model;
 
 public enum PaintToolType {
     ARROW,

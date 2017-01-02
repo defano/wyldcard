@@ -5,9 +5,9 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
 import hypercard.context.ToolsContext;
-import hypercard.paint.observers.ProvidedValueObserver;
+import hypercard.paint.model.ProvidedValueObserver;
 import hypercard.paint.tools.AbstractPaintTool;
-import hypercard.paint.tools.PaintToolType;
+import hypercard.paint.model.PaintToolType;
 import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 

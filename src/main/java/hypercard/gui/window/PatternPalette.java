@@ -4,8 +4,8 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.paint.observers.ProvidedValueObserver;
-import hypercard.paint.patterns.StandardPatternFactory;
+import hypercard.paint.model.ProvidedValueObserver;
+import hypercard.paint.patterns.HyperCardPatternFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -93,7 +93,7 @@ public class PatternPalette extends HyperCardWindow implements ProvidedValueObse
     private BufferedImage createIconForButton(int width, int height, int patternId) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setPaint(StandardPatternFactory.create(patternId));
+        g.setPaint(HyperCardPatternFactory.create(patternId));
         g.fillRect(0, 0, width, height);
         g.dispose();
 

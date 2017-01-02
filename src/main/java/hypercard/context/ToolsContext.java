@@ -1,11 +1,11 @@
 package hypercard.context;
 
 import hypercard.HyperCard;
-import hypercard.paint.observers.Provider;
-import hypercard.paint.patterns.StandardPatternFactory;
+import hypercard.paint.model.Provider;
+import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.tools.AbstractPaintTool;
-import hypercard.paint.tools.PaintToolBuilder;
-import hypercard.paint.tools.PaintToolType;
+import hypercard.paint.utils.PaintToolBuilder;
+import hypercard.paint.model.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
 
@@ -46,7 +46,7 @@ public class ToolsContext implements StackModelObserver {
         toolProvider.set(PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> (int) t == 0 ? null : StandardPatternFactory.create((int) t)))
+                .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> (int) t == 0 ? null : HyperCardPatternFactory.create((int) t)))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())

@@ -1,4 +1,4 @@
-package hypercard.paint.observers;
+package hypercard.paint.model;
 
 import java.util.ArrayList;
 

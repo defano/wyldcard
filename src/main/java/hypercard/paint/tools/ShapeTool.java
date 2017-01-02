@@ -1,5 +1,6 @@
 package hypercard.paint.tools;
 
+import hypercard.paint.model.PaintToolType;
 import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;

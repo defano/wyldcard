@@ -1,5 +1,7 @@
 package hypercard.paint.tools;
 
+import hypercard.paint.model.PaintToolType;
+
 import java.awt.*;
 
 public class RectangleTool extends AbstractShapeTool {

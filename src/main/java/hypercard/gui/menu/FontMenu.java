@@ -1,7 +1,7 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
-import hypercard.paint.observers.Provider;
+import hypercard.paint.model.Provider;
 
 import javax.swing.*;
 import java.awt.*;
