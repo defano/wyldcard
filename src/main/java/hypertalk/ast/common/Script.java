@@ -26,12 +26,12 @@ public class Script {
     }
 
     public Script defineHandler (NamedBlock handler) {
-        handlers.put(handler.name, handler.body);
+        handlers.put(handler.name.toLowerCase(), handler.body);
         return this;
     }
     
     public Script defineUserFunction (UserFunction function) {
-        functions.put(function.name, function);
+        functions.put(function.name.toLowerCase(), function);
         return this;
     }
     
@@ -41,11 +41,11 @@ public class Script {
     }
 
     public StatementList getHandler(String handler) {
-        return handlers.get(handler);
+        return handlers.get(handler.toLowerCase());
     }
 
     public UserFunction getFunction(String function) {
-        return functions.get(function);
+        return functions.get(function.toLowerCase());
     }
 
     public StatementList getStatements() {

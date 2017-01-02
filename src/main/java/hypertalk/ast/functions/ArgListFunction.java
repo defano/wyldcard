@@ -25,7 +25,7 @@ public abstract class ArgListFunction extends Expression {
         if (expression != null) {
             return expression.evaluate().listValue();
         } else {
-            return argumentList.getEvaluatedList();
+            return argumentList.evaluate();
         }
     }
 
@@ -33,7 +33,7 @@ public abstract class ArgListFunction extends Expression {
         if (expression != null) {
             return expression.evaluate();
         } else {
-            List<Value> evaluatedList = argumentList.getEvaluatedList();
+            List<Value> evaluatedList = argumentList.evaluate();
             if (evaluatedList.size() == 1) {
                 return evaluatedList.get(0);
             } else {

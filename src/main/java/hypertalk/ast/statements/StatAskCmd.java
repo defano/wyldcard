@@ -8,7 +8,7 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.ExpLiteral;
 import hypertalk.ast.expressions.Expression;
@@ -46,7 +46,7 @@ public class StatAskCmd extends Statement {
         CountDownLatch latch = new CountDownLatch(1);
 
         SwingUtilities.invokeLater(() -> {
-            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
+            Component parent = WindowManager.getStackWindow().getWindowPanel();
 
             String result = (String)JOptionPane.showInputDialog(
                     parent,

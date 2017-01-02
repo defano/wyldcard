@@ -4,7 +4,7 @@ import hypercard.parts.ButtonPart;
 import hypercard.parts.CardPart;
 import hypercard.parts.FieldPart;
 import hypercard.parts.PartException;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
 
 import javax.swing.*;
 
@@ -58,7 +58,7 @@ public class ObjectsMenu extends JMenu {
                 .named("New Button")
                 .withAction(e -> {
                     try {
-                        CardPart currentCard = RuntimeEnv.getRuntimeEnv().getStack().getCurrentCard();
+                        CardPart currentCard = HyperCard.getRuntimeEnv().getStack().getCurrentCard();
                         currentCard.addButton(ButtonPart.newButton(currentCard));
                     } catch (PartException ex) {
                         throw new RuntimeException(ex);
@@ -70,7 +70,7 @@ public class ObjectsMenu extends JMenu {
                 .named("New Field")
                 .withAction(e -> {
                     try {
-                        CardPart currentCard = RuntimeEnv.getRuntimeEnv().getStack().getCurrentCard();
+                        CardPart currentCard = HyperCard.getRuntimeEnv().getStack().getCurrentCard();
                         currentCard.addField(FieldPart.newField(currentCard));
                     } catch (PartException ex) {
                         throw new RuntimeException(ex);

@@ -8,7 +8,7 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
@@ -69,7 +69,7 @@ public class StatAnswerCmd extends Statement {
         CountDownLatch latch = new CountDownLatch(1);
 
         SwingUtilities.invokeLater(() -> {
-            Component parent = RuntimeEnv.getRuntimeEnv().getStackPanel();
+            Component parent = WindowManager.getStackWindow().getWindowPanel();
             Object[] choices = null;
 
             if (choice1 != null && choice2 != null && choice3 != null) {

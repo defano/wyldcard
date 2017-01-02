@@ -32,7 +32,7 @@ public class ExpUserFunction extends Expression {
             Part part = GlobalContext.getContext().get(ps);
             
             arguments.evaluate();
-            return part.executeUserFunction(function, arguments);            
+            return part.executeUserFunction(function, arguments);
         } catch (PartException e) {
             throw new HtSemanticException(e.getMessage());
         }                        

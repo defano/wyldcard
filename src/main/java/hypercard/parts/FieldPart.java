@@ -16,7 +16,8 @@ import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.model.FieldModel;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.Interpreter;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
@@ -114,7 +115,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         WindowBuilder.make(new FieldPropertyEditor())
                 .withTitle("Properties of field " + getName())
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(false)
                 .build();
     }
@@ -131,7 +132,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         WindowBuilder.make(new ScriptEditor())
                 .withTitle("Script of field " + getName())
                 .withModel(partModel)
-                .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(true)
                 .build();
     }
@@ -197,12 +198,12 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
     @Override
     public void sendMessage(String message) {
-        RuntimeEnv.getRuntimeEnv().executeHandler(getMe(), script, message, true);
+        Interpreter.executeHandler(getMe(), script, message);
     }
 
     @Override
     public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
-        return RuntimeEnv.getRuntimeEnv().executeUserFunction(getMe(), script.getFunction(function), arguments, false);
+        return Interpreter.executeFunction(getMe(), script.getFunction(function), arguments);
     }
 
     public PartSpecifier getMe() {
@@ -216,7 +217,6 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     @Override
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            RuntimeEnv.getRuntimeEnv().setTheMouse(true);
             sendMessage("mouseDown");
         }
     }
@@ -224,7 +224,6 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     @Override
     public void mouseReleased(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            RuntimeEnv.getRuntimeEnv().setTheMouse(false);
             sendMessage("mouseUp");
         }
     }
@@ -268,7 +267,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
                     try {
                         compile();
                     } catch (HtSemanticException e) {
-                        RuntimeEnv.getRuntimeEnv().dialogSyntaxError(e);
+                        HyperCard.getRuntimeEnv().dialogSyntaxError(e);
                     }
                     break;
                 case FieldModel.PROP_TEXT:

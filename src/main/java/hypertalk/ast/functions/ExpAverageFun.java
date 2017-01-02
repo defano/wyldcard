@@ -37,7 +37,7 @@ public class ExpAverageFun extends ArgListFunction {
                 throw new HtSemanticException("Can't take the average of a non-numerical list");
             }
                 
-            sum += item.floatValue();
+            sum += item.doubleValue();
         }
         
         return new Value(sum/list.size());

@@ -20,6 +20,6 @@ public class StatDo extends Statement {
     }
     
     public void execute () throws HtException {
-        Interpreter.execute(null, script.evaluate().toString());
+        Interpreter.executeString(null, script.evaluate().toString());
     }
 }

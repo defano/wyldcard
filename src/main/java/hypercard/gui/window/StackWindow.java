@@ -8,7 +8,7 @@ import hypercard.parts.CardPart;
 import javax.swing.*;
 import java.awt.*;
 
-public class StackWindow implements HyperCardWindow {
+public class StackWindow extends HyperCardWindow {
 
     private CardPart card;
 
@@ -32,6 +32,10 @@ public class StackWindow implements HyperCardWindow {
     @Override
     public JPanel getWindowPanel() {
         return stackWindow;
+    }
+
+    public JPanel getCardPanel() {
+        return cardPanel;
     }
 
     @Override

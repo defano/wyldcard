@@ -47,6 +47,11 @@ public class WindowBuilder {
         return this;
     }
 
+    public WindowBuilder floating() {
+        frame.setAlwaysOnTop(true);
+        return this;
+    }
+
     public WindowBuilder withMenuBar (JMenuBar menuBar) {
 
         // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
@@ -74,8 +79,23 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder withLocationRelativeTo(Component component) {
+    public WindowBuilder withLocationLeftOf (Component component) {
+        frame.pack();
+
+        int targetY = (int) component.getLocation().getY();
+        int targetX = (int) component.getLocation().getX() - frame.getWidth() - 10;
+        location = new Point(targetX, targetY);
+
+        return this;
+    }
+
+    public WindowBuilder withLocationCenteredOver(Component component) {
         frame.setLocationRelativeTo(component);
+        return this;
+    }
+
+    public WindowBuilder notFocusable() {
+        frame.setFocusableWindowState(false);
         return this;
     }
 
@@ -94,6 +114,7 @@ public class WindowBuilder {
         }
 
         frame.setVisible(initiallyVisible);
+        window.setWindowFrame(frame);
 
         return frame;
     }

@@ -9,11 +9,14 @@
 package hypertalk.ast.containers;
 
 import hypercard.context.GlobalContext;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.HyperCard;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Chunk;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtException;
+
+import javax.swing.*;
 
 public class ContainerMsgBox extends Container {
 
@@ -33,14 +36,14 @@ public class ContainerMsgBox extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = new Value(RuntimeEnv.getRuntimeEnv().getMsgBoxText());
+        Value value = new Value(HyperCard.getRuntimeEnv().getMsgBoxText());
         return chunkOf(value, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
         GlobalContext.getContext().put(value, preposition, this);
-        RuntimeEnv.getRuntimeEnv().setMessageBoxVisible(true);
+        SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setVisible(true));
     }
 
     public PartType type() {

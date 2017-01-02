@@ -6,13 +6,13 @@ import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
 import hypercard.parts.model.ButtonModel;
 import hypercard.parts.model.AbstractPartModel;
-import hypercard.runtime.RuntimeEnv;
+import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ButtonPropertyEditor implements HyperCardWindow {
+public class ButtonPropertyEditor extends HyperCardWindow {
     private AbstractPartModel model;
 
     private JButton saveButton;
@@ -32,19 +32,19 @@ public class ButtonPropertyEditor implements HyperCardWindow {
 
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
-            close();
+            dispose();
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
                     .withModel(model)
-                    .withLocationRelativeTo(RuntimeEnv.getRuntimeEnv().getStackPanel())
+                    .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                     .build();
         });
 
-        cancelButton.addActionListener(e -> close());
+        cancelButton.addActionListener(e -> dispose());
 
         saveButton.addActionListener(e -> {
             updateProperties();
-            close();
+            dispose();
         });
 
     }

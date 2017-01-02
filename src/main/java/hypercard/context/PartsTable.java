@@ -15,7 +15,6 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartNameSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 
 import java.util.*;

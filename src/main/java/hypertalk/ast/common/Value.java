@@ -11,11 +11,10 @@
 
 package hypertalk.ast.common;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Vector;
 
-import hypercard.context.GlobalContext;
-import hypercard.parts.Part;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
@@ -25,23 +24,27 @@ public class Value {
     private final String value;
 
     // Cache for known value types
-    private Integer intValue;
-    private Float floatValue;
+    private Long longValue;
+    private Double floatValue;
     private Boolean booleanValue;
     
     public Value () {
         this("");
     }
-    
+
+    public Value (Point p) {
+        this(p.x + "," + p.y);
+    }
+
     public Value (Object v) {
         this(String.valueOf(v));
     }
     
-    public Value (int v) {
+    public Value (long v) {
         this(String.valueOf(v));
     }
     
-    public Value (float f) {
+    public Value (double f) {
         this(String.valueOf(f));
     }
     
@@ -62,20 +65,20 @@ public class Value {
 
         // Special case: empty string is a valid int and float
         if (value.trim().equals("")) {
-            intValue = 0;
-            floatValue = 0.0f;
+            longValue = 0L;
+            floatValue = 0.0;
             booleanValue = null;
         }
 
         else {
             try {
-                intValue = Integer.parseInt(value.trim());
+                longValue = Long.parseLong(value.trim());
             } catch (NumberFormatException e) {
-                intValue = null;
+                longValue = null;
             }
 
             try {
-                floatValue = Float.parseFloat(value.trim());
+                floatValue = Double.parseDouble(value.trim());
             } catch (NumberFormatException e) {
                 floatValue = null;
             }
@@ -89,7 +92,7 @@ public class Value {
     }
     
     public boolean isInteger () {
-        return intValue != null;
+        return longValue != null;
     }
 
     public boolean isFloat () {
@@ -97,7 +100,7 @@ public class Value {
     }    
     
     public boolean isNatural () {
-        return isInteger() && integerValue() >= 0;
+        return isInteger() && longValue() >= 0;
     }    
 
     public boolean isBoolean () {
@@ -129,15 +132,23 @@ public class Value {
     public String stringValue () {
         return value;
     }    
-    
-    public int integerValue () {
-        if (intValue != null)
-            return intValue;
+
+    public int integerValue() {
+        if (longValue != null) {
+            return longValue.intValue();
+        } else {
+            return 0;
+        }
+    }
+
+    public long longValue() {
+        if (longValue != null)
+            return longValue;
         else
             return 0;
     }
         
-    public float floatValue () {
+    public double doubleValue() {
         if (floatValue != null)
             return floatValue;
         else
@@ -203,7 +214,7 @@ public class Value {
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
 
         if (startVal != null)
-            startIdx = startVal.integerValue();        
+            startIdx = startVal.integerValue();
         if (endVal != null)
             endIdx = endVal.integerValue();
 
@@ -267,7 +278,7 @@ public class Value {
     public Value lessThan (Object val) {
         Value v = new Value(val);
         if (isFloat() && v.isFloat())
-            return new Value(floatValue() < v.floatValue());
+            return new Value(doubleValue() < v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) < 0);
     }
@@ -275,7 +286,7 @@ public class Value {
     public Value greaterThan (Object val) {
         Value v = new Value(val);
         if (isFloat() && v.isFloat())
-            return new Value(floatValue() > v.floatValue());
+            return new Value(doubleValue() > v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) > 0);
     }
@@ -283,7 +294,7 @@ public class Value {
     public Value greaterThanOrEqualTo (Object val) {
         Value v = new Value(val);
         if (isFloat() && v.isFloat())
-            return new Value (floatValue() >= v.floatValue());
+            return new Value (doubleValue() >= v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) >= 0);
     }
@@ -291,7 +302,7 @@ public class Value {
     public Value lessThanOrEqualTo (Object val) {
         Value v = new Value(val);
         if (isFloat() && v.isFloat())
-            return new Value(floatValue() <= v.floatValue());
+            return new Value(doubleValue() <= v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) <= 0);
     }
@@ -302,11 +313,15 @@ public class Value {
             throw new HtSemanticException(value + " cannot be multiplied because it is not a number");
         if (!v.isNumber())
             throw new HtSemanticException(value + " cannot be multiplied by the text expression: " + v);
-        
-        if (isInteger() && v.isInteger())
-            return new Value(integerValue() * v.integerValue());
-        else
-            return new Value(floatValue() * v.floatValue());
+
+        try {
+            if (isInteger() && v.isInteger())
+                return new Value(Math.multiplyExact(longValue(), v.longValue()));
+            else
+                return new Value(doubleValue() * v.doubleValue());
+        } catch (ArithmeticException e) {
+            throw new HtSemanticException("Overflow when trying to multiply " + stringValue() + " by " + v.stringValue());
+        }
     }
     
     public Value divide (Object val) throws HtSemanticException {
@@ -315,11 +330,15 @@ public class Value {
             throw new HtSemanticException(value + " cannot be divided because it is not a number");
         if (!v.isNumber())
             throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
-        
-        if (isInteger() && v.isInteger())
-            return new Value(integerValue() / v.integerValue());
-        else
-            return new Value(floatValue() / v.floatValue());
+
+        try {
+            if (isInteger() && v.isInteger())
+                return new Value(longValue() / v.longValue());
+            else
+                return new Value(doubleValue() / v.doubleValue());
+        } catch (ArithmeticException e) {
+            throw new HtSemanticException("Cannot divide " + stringValue() + " by zero");
+        }
     }
 
     public Value add (Object val) throws HtSemanticException {
@@ -328,24 +347,32 @@ public class Value {
             throw new HtSemanticException(value + " cannot be added because it is not a number");
         if (!v.isNumber())
             throw new HtSemanticException(value + " cannot be added to the text expression: " + v);
-        
-        if (isInteger() && v.isInteger())
-            return new Value(integerValue() + v.integerValue());
-        else
-            return new Value(floatValue() + v.floatValue());
+
+        try {
+            if (isInteger() && v.isInteger())
+                return new Value(Math.addExact(longValue(), v.longValue()));
+            else
+                return new Value(doubleValue() + v.doubleValue());
+        } catch (ArithmeticException e) {
+            throw new HtSemanticException("Overflow when trying to add " + stringValue() + " to " + v.stringValue());
+        }
     }
     
     public Value subtract (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be subtracted because it is not a number");
+            throw new HtSemanticException("'" + value + "' cannot be subtracted because it is not a number");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be subtracted by the text expression: " + v);
-        
-        if (isInteger() && v.isInteger())
-            return new Value(integerValue() - v.integerValue());
-        else
-            return new Value(floatValue() - v.floatValue());
+            throw new HtSemanticException("'" + value + "' cannot be subtracted by the text expression: " + v);
+
+        try {
+            if (isInteger() && v.isInteger())
+                return new Value(Math.subtractExact(longValue(), v.longValue()));
+            else
+                return new Value(doubleValue() - v.doubleValue());
+        } catch (ArithmeticException e) {
+            throw new HtSemanticException("Overflow when trying to subtract " + v.stringValue() + " from " + stringValue());
+        }
     }
     
     public Value exponentiate (Object val) throws HtSemanticException {
@@ -354,8 +381,8 @@ public class Value {
             throw new HtSemanticException(value + " cannot be raised to a power because it is not a number");
         if (!v.isNumber())
             throw new HtSemanticException(value + " cannot be raised to the power of the text expression: " + v);
-        
-        return new Value(Math.pow(floatValue(), v.floatValue()));
+
+        return new Value(Math.pow(doubleValue(), v.doubleValue()));
     }
 
     public Value mod (Object val) throws HtSemanticException {
@@ -366,9 +393,9 @@ public class Value {
             throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
         
         if (isInteger() && v.isInteger())
-            return new Value(integerValue() % v.integerValue());
+            return new Value(longValue() % v.longValue());
         else
-            return new Value(floatValue() % v.floatValue());
+            return new Value(doubleValue() % v.doubleValue());
     }
     
     public Value not () throws HtSemanticException {
@@ -380,9 +407,9 @@ public class Value {
 
     public Value negate () throws HtSemanticException {
         if (isInteger())
-            return new Value(integerValue() * -1);
+            return new Value(longValue() * -1);
         else if (isFloat())
-            return new Value(floatValue() * -1);
+            return new Value(doubleValue() * -1);
         else {
             throw new HtSemanticException(value + " cannot be negated because it is not a number");
         }
@@ -426,7 +453,17 @@ public class Value {
         if (o == null || getClass() != o.getClass()) return false;
 
         Value otherValue = (Value) o;
-        return value.equals(otherValue.value);
+
+        if (isBoolean() && otherValue.isBoolean()) {
+            return this.booleanValue() == otherValue.booleanValue();
+        } else if (isInteger() && otherValue.isInteger()) {
+            return this.integerValue() == otherValue.integerValue();
+        } else if (isInteger() || isFloat()) {
+            return this.doubleValue() == otherValue.doubleValue();
+        } else {
+            return this.stringValue().equalsIgnoreCase(otherValue.stringValue());
+        }
+
     }
 
     @Override

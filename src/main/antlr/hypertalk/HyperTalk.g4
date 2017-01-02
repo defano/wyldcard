@@ -46,8 +46,8 @@ nonEmptyStmnt		: commandStmnt stmntTerminator                  # nonEmptyCommand
 
 stmntTerminator     : NEWLINE | <EOF>;
 
-returnStmnt			: 'return'                                      # voidReturnStmnt
-                    | 'return' expression                           # eprReturnStmnt
+returnStmnt			: 'return' expression                           # eprReturnStmnt
+                    | 'return'                                      # voidReturnStmnt
                     ;
 
 doStmnt				: 'do' expression
@@ -195,7 +195,7 @@ container			: ID                                            # variableDest
                     ;
 
 propertySpec        : 'the'? ID                                     # propertySpecGlobal
-                    | 'the'? ID OF_IN part                           # propertySpecPart
+                    | 'the'? ID OF_IN part                          # propertySpecPart
                     ;
 
 part                : FIELD factor                                  # fieldPart

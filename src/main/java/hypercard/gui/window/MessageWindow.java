@@ -2,19 +2,15 @@ package hypercard.gui.window;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import hypercard.context.GlobalContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.runtime.Interpreter;
-import hypercard.runtime.RuntimeEnv;
-import hypertalk.ast.containers.PartIdSpecifier;
-import hypertalk.ast.containers.PartSpecifier;
+import hypercard.HyperCard;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class MessageWindow implements HyperCardWindow {
+public class MessageWindow extends HyperCardWindow {
 
     private JTextField messageBox;
     private JPanel messageWindow;
@@ -49,7 +45,7 @@ public class MessageWindow implements HyperCardWindow {
     }
 
     private void executeMessageBox() {
-        RuntimeEnv.getRuntimeEnv().doMsgBoxText();
+        HyperCard.getRuntimeEnv().doMsgBoxText();
     }
 
     {
