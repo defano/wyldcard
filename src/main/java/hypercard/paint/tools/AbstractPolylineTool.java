@@ -132,8 +132,12 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            points.add(currentPoint);
-            commitPolyline();
+
+            // Ignore esc unless at least one point has been defined
+            if (points.size() > 0) {
+                points.add(currentPoint);
+                commitPolyline();
+            }
         }
     }
 

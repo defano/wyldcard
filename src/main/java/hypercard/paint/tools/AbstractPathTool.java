@@ -7,8 +7,6 @@ import java.awt.event.MouseEvent;
 
 public abstract class AbstractPathTool extends AbstractPaintTool {
 
-    private Point lastPoint;
-
     public abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
     public abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
 
