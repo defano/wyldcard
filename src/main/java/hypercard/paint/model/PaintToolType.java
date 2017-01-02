@@ -12,6 +12,7 @@ public enum PaintToolType {
     POLYGON,
     SHAPE,
     SELECTION,
+    LASSO,
     TEXT,
     FILL,
     SPRAYPAINT,

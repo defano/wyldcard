@@ -56,6 +56,7 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
         fill.addActionListener(e -> toolSelected(PaintToolType.FILL));
         spraypaint.addActionListener(e -> toolSelected(PaintToolType.SPRAYPAINT));
         curve.addActionListener(e -> toolSelected(PaintToolType.CURVE));
+        lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
 
         eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getRuntimeEnv().getCard().getCanvas().clearCanvas());
         shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setVisible(true));
@@ -110,6 +111,8 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
                 return spraypaint;
             case CURVE:
                 return curve;
+            case LASSO:
+                return lasso;
 
             default:
                 throw new IllegalStateException("Bug! Unimplemented tool type " + paintToolType);

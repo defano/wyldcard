@@ -8,6 +8,6 @@ public class ArrowTool extends AbstractPaintTool {
 
     public ArrowTool() {
         super(PaintToolType.ARROW);
-        setToolCursor(new Cursor(Cursor.HAND_CURSOR));
+        setToolCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 }

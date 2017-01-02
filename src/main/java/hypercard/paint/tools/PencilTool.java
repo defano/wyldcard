@@ -5,7 +5,7 @@ import hypercard.paint.model.PaintToolType;
 import java.awt.*;
 import java.awt.geom.Line2D;
 
-public class PencilTool extends AbstractBrushTool {
+public class PencilTool extends AbstractPathTool {
 
     public PencilTool() {
         super(PaintToolType.PENCIL);

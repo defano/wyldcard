@@ -1,13 +1,15 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.canvas.CanvasObserver;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
+import java.awt.image.BufferedImage;
 
-public abstract class AbstractPaintTool extends MouseAdapter {
+public abstract class AbstractPaintTool extends MouseAdapter implements CanvasObserver {
 
     private Canvas canvas;
     private final PaintToolType type;
@@ -43,6 +45,11 @@ public abstract class AbstractPaintTool extends MouseAdapter {
             canvas.removeMouseMotionListener(this);
             canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
+    }
+
+    @Override
+    public void onCommit(Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+        // Nothing to do
     }
 
     public AlphaComposite getComposite() {
@@ -137,5 +144,9 @@ public abstract class AbstractPaintTool extends MouseAdapter {
 
     public void setToolCursor(Cursor toolCursor) {
         this.toolCursor = toolCursor;
+
+        if (this.canvas != null) {
+            this.canvas.setCursor(toolCursor);
+        }
     }
 }

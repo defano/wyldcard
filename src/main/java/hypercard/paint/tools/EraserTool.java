@@ -4,7 +4,7 @@ import hypercard.paint.model.PaintToolType;
 
 import java.awt.*;
 
-public class EraserTool extends AbstractBrushTool {
+public class EraserTool extends AbstractPathTool {
 
     public EraserTool() {
         super(PaintToolType.ERASER);

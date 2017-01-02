@@ -8,100 +8,90 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.RasterFormatException;
 
-public abstract class AbstractSelectionTool extends AbstractShapeTool implements KeyListener {
+public abstract class AbstractSelectionTool extends AbstractPaintTool implements KeyListener {
 
-    private Rectangle selectionRectangle;
+    protected final BasicStroke MARCHING_ANTS = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, new float[]{5.0f}, 0.0f);
+
     private BufferedImage selectedImage;
+    private Point initialPoint, lastPoint;
+    private boolean isMovingSelection = false;
 
-    private Point lastPoint;
-    private boolean clickInsideSelection = false;
-
-    /**
-     * Draws a selection frame of the given bounds onto the Graphics context. For example, renders a rectangle of
-     * "marching ants".
-     *
-     * @param g      The graphics context to draw onto.
-     * @param bounds The bounds of the selection frame.
-     */
-    protected abstract void drawSelectionBounds(Graphics g, Rectangle bounds);
-
-    /**
-     * Draws the selected image at the given coordinates.
-     *
-     * @param g     The graphics context to draw onto
-     * @param image The image to draw
-     * @param x     The x coordinate of where the image should be drawn
-     * @param y     The y coordinate of where the image should be drawn
-     */
-    protected abstract void drawSelectedImage(Graphics g, BufferedImage image, int x, int y);
+    protected abstract void resetSelection();
+    protected abstract void defineSelectionBounds(Point initialPoint, Point currentPoint);
+    protected abstract void completeSelectionBounds(Point finalPoint);
+    protected abstract void drawSelectionBounds(Graphics2D g, boolean constrainToSquare);
+    protected abstract Shape getSelectionBounds();
+    protected abstract void adjustSelectionBounds(int xDelta, int yDelta);
+    protected abstract BufferedImage getSelectedImage(Graphics2D scratch, BufferedImage canvasImage);
 
     public AbstractSelectionTool(PaintToolType type) {
         super(type);
     }
 
     @Override
-    public void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
-
-        BasicStroke dashed = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, new float[]{5.0f}, 0.0f);
-
-        g.setStroke(dashed);
-        g.setColor(Color.BLACK);
-        drawSelectionBounds(g, new Rectangle(x, y, width, height));
-
-        selectionRectangle = new Rectangle(x, y, width, height);
-    }
-
-    @Override
-    public void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
-        // Never filled
+    public void mouseMoved(MouseEvent e) {
+        if (hasSelectionBounds() && getSelectionBounds().contains(e.getPoint())) {
+            setToolCursor(Cursor.getDefaultCursor());
+        } else {
+            setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        clickInsideSelection = selectionRectangle != null && selectionRectangle.contains(e.getPoint());
-
-        // User clicked outside current selection bounds
-        if (!clickInsideSelection) {
-            putDownSelection();
-            super.mousePressed(e);
-        }
+        isMovingSelection = getSelectionBounds() != null && getSelectionBounds().contains(e.getPoint());
 
         // User clicked inside selection bounds; start moving selection
-        else {
+        if (isMovingSelection) {
             lastPoint = e.getPoint();
+        }
+
+        // User clicked outside current selection bounds
+        else {
+            putDownSelection();
+            initialPoint = e.getPoint();
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
 
-        // User is defining a new selection rectangle
-        if (!clickInsideSelection) {
-            super.mouseDragged(e);
+        // User is moving an existing selection
+        if (isMovingSelection) {
+            adjustSelectionBounds(e.getX() - lastPoint.x, e.getY() - lastPoint.y);
+            drawSelection(selectedImage);
+            lastPoint = e.getPoint();
         }
 
-        // User is moving an existing selection
+        // User is defining a new selection rectangle
         else {
-            moveSelection(e.getX() - lastPoint.x, e.getY() - lastPoint.y);
-            lastPoint = e.getPoint();
+            defineSelectionBounds(initialPoint, e.getPoint());
+
+            getCanvas().clearScratch();
+            Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+            drawSelectionBounds(g, e.isShiftDown());
+            g.dispose();
+
+            getCanvas().repaintCanvas();
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionBounds()) {
-            pickupSelection(selectionRectangle);
+            completeSelectionBounds(e.getPoint());
+            pickupSelection();
         }
     }
 
     @Override
     public void activate(Canvas canvas) {
         super.activate(canvas);
+
         getCanvas().addKeyListener(this);
+        getCanvas().addObserver(this);
     }
 
     @Override
@@ -111,6 +101,7 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
         // Need to remove selection frame when tool is no longer active
         putDownSelection();
         getCanvas().removeKeyListener(this);
+        getCanvas().removeObserver(this);
     }
 
     /**
@@ -118,8 +109,8 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
      * selected.
      */
     public void clearSelection() {
-        selectionRectangle = null;
         selectedImage = null;
+        resetSelection();
 
         getCanvas().clearScratch();
         getCanvas().repaintCanvas();
@@ -146,33 +137,17 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
      * @return True if a selection boundary exists, false otherwise.
      */
     public boolean hasSelectionBounds() {
-        return selectionRectangle != null && selectionRectangle.width > 0 && selectionRectangle.height > 0;
+        return getSelectionBounds() != null && getSelectionBounds().getBounds().width > 0 && getSelectionBounds().getBounds().height > 0;
     }
 
     /**
      * Make the canvas image bounded by the given selection rectangle the current selected image.
      *
-     * @param selectionRectangle The selection bounds to capture.
      */
-    protected void pickupSelection(Rectangle selectionRectangle) {
-        try {
-            BufferedImage selection = getCanvas().getCanvasImage().getSubimage(selectionRectangle.x, selectionRectangle.y, selectionRectangle.width, selectionRectangle.height);
-            eraseCanvasRectangle(selectionRectangle);
-            drawSelection(selection, selectionRectangle);
-            selectedImage = selection;
-        } catch (RasterFormatException ex) {
-        }
-    }
-
-    /**
-     * Moves the selected image (including the selection frame) by some delta in the x/y direction.
-     *
-     * @param xDelta Number of pixels +/- to move in the x-direction
-     * @param yDelta Number of pixels +/- to move in the y-direction
-     */
-    protected void moveSelection(int xDelta, int yDelta) {
-        selectionRectangle.setLocation(selectionRectangle.x + xDelta, selectionRectangle.y + yDelta);
-        drawSelection(selectedImage, selectionRectangle);
+    protected void pickupSelection() {
+        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+        selectedImage = getSelectedImage(g, getCanvas().getCanvasImage());
+        drawSelection(selectedImage);
     }
 
     /**
@@ -185,15 +160,10 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
             getCanvas().clearScratch();
 
             Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-            drawSelectedImage(g2d, selectedImage, selectionRectangle.x, selectionRectangle.y);
+            g2d.drawImage(selectedImage, getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y, null);
             g2d.dispose();
 
             getCanvas().commit();
-
-            g2d = (Graphics2D) getCanvas().getScratchGraphics();
-            drawBounds(g2d, null, null, selectionRectangle.x, selectionRectangle.y, selectionRectangle.width, selectionRectangle.height);
-            g2d.dispose();
-
             clearSelection();
         }
     }
@@ -202,30 +172,23 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
      * Draws the provided image and selection frame ("marching ants") onto the scratch buffer at the given location.
      *
      * @param selectedImage The selected image to draw
-     * @param location      The bounding box of the selection (i.e., rectangle of ants)
      */
-    private void drawSelection(BufferedImage selectedImage, Rectangle location) {
+    private void drawSelection(BufferedImage selectedImage) {
         getCanvas().clearScratch();
+        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
 
-        drawBounds((Graphics2D) getCanvas().getScratchGraphics(), null, null, location.x, location.y, location.width, location.height);
-
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        drawSelectedImage(g2d, selectedImage, location.x, location.y);
-        g2d.dispose();
+        drawSelectionBounds(g, false);
+        g.drawImage(selectedImage, getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y, null);
+        g.dispose();
 
         getCanvas().repaintCanvas();
     }
 
-    /**
-     * Erases the contents of the canvas bounded by the given rectangle.
-     *
-     * @param bounds
-     */
-    private void eraseCanvasRectangle(Rectangle bounds) {
-        Graphics2D g2 = (Graphics2D) getCanvas().getScratchGraphics();
-        g2.setColor(Color.WHITE);
-        g2.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-        getCanvas().commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+    @Override
+    public void onCommit(Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+        if (hasSelection()) {
+            clearSelection();
+        }
     }
 
     @Override
@@ -241,19 +204,23 @@ public abstract class AbstractSelectionTool extends AbstractShapeTool implements
                     break;
 
                 case KeyEvent.VK_LEFT:
-                    moveSelection(-1, 0);
+                    adjustSelectionBounds(-1, 0);
+                    drawSelection(selectedImage);
                     break;
 
                 case KeyEvent.VK_RIGHT:
-                    moveSelection(1, 0);
+                    adjustSelectionBounds(1, 0);
+                    drawSelection(selectedImage);
                     break;
 
                 case KeyEvent.VK_UP:
-                    moveSelection(0, -1);
+                    adjustSelectionBounds(0, -1);
+                    drawSelection(selectedImage);
                     break;
 
                 case KeyEvent.VK_DOWN:
-                    moveSelection(0, 1);
+                    adjustSelectionBounds(0, 1);
+                    drawSelection(selectedImage);
                     break;
             }
         }

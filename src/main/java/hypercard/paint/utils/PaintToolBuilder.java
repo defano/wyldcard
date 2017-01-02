@@ -138,6 +138,9 @@ public class PaintToolBuilder {
             case CURVE:
                 selectedTool = new CurveTool();
                 break;
+            case LASSO:
+                selectedTool = new LassoTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);

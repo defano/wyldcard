@@ -43,6 +43,7 @@ public class UndoableCanvas extends Canvas {
 
         if (hasUndoableChanges()) {
             undoBufferPointer--;
+            fireObservers(null, getCanvasImage());
             repaintCanvas();
             return true;
         }
@@ -58,6 +59,7 @@ public class UndoableCanvas extends Canvas {
 
         if (hasRedoableChanges()) {
             undoBufferPointer++;
+            fireObservers(null, getCanvasImage());
             repaintCanvas();
             return true;
         }
