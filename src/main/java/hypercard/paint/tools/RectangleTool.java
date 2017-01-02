@@ -4,7 +4,7 @@ import hypercard.paint.model.PaintToolType;
 
 import java.awt.*;
 
-public class RectangleTool extends AbstractShapeTool {
+public class RectangleTool extends AbstractBoundsTool {
 
     public RectangleTool() {
         super(PaintToolType.RECTANGLE);

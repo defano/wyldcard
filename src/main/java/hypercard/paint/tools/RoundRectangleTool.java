@@ -4,7 +4,7 @@ import hypercard.paint.model.PaintToolType;
 
 import java.awt.*;
 
-public class RoundRectangleTool extends AbstractShapeTool {
+public class RoundRectangleTool extends AbstractBoundsTool {
 
     private int cornerRadius = 10;
 

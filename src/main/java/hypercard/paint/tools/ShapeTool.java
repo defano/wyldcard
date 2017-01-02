@@ -9,7 +9,7 @@ import java.awt.*;
  * Tool for drawing regular polygons ("shapes") based on a configurable number of sides. For example, triangles,
  * squares, pentagons, hexagons, etc.
  */
-public class ShapeTool extends AbstractShapeTool {
+public class ShapeTool extends AbstractBoundsTool {
 
     public ShapeTool() {
         super(PaintToolType.SHAPE);

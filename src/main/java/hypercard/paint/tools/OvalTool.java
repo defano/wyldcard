@@ -4,7 +4,7 @@ import hypercard.paint.model.PaintToolType;
 
 import java.awt.*;
 
-public class OvalTool extends AbstractShapeTool {
+public class OvalTool extends AbstractBoundsTool {
 
     public OvalTool() {
         super(PaintToolType.OVAL);

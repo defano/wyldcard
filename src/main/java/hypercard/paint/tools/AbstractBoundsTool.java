@@ -5,12 +5,19 @@ import hypercard.paint.model.PaintToolType;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public abstract class AbstractShapeTool extends AbstractPaintTool {
+/**
+ * Mouse and keyboard event handler for tools that define a bounding box by clicking and dragging
+ * the mouse from the top-left point of the bounds to the bottom-right point. When the shift key is held down
+ * the bounding box is constrained to a square whose height and width is equal to the larger of the two dimensions
+ * defined by the mouse location.
+ *
+ */
+public abstract class AbstractBoundsTool extends AbstractPaintTool {
 
     protected Point initialPoint;
     protected Point currentPoint;
 
-    public AbstractShapeTool(PaintToolType type) {
+    public AbstractBoundsTool(PaintToolType type) {
         super(type);
     }
 
@@ -27,8 +34,6 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
         currentPoint = e.getPoint();
         getCanvas().clearScratch();
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-
         int left = Math.min(initialPoint.x, currentPoint.x);
         int top = Math.min(initialPoint.y, currentPoint.y);
         int right = Math.max(initialPoint.x, currentPoint.x);
@@ -41,13 +46,15 @@ public abstract class AbstractShapeTool extends AbstractPaintTool {
             width = height = Math.max(width, height);
         }
 
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
         drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
+        g2d.dispose();
 
         if (getFillPaint() != null) {
+            g2d = (Graphics2D) getCanvas().getScratchGraphics();
             drawFill(g2d, getFillPaint(), left, top, width, height);
+            g2d.dispose();
         }
-
-        g2d.dispose();
 
         getCanvas().repaintCanvas();
     }

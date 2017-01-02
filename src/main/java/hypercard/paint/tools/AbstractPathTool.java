@@ -9,7 +9,8 @@ public abstract class AbstractPathTool extends AbstractPaintTool {
 
     private Point lastPoint;
 
-    public abstract void drawSegment(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
+    public abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
+    public abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
 
     public AbstractPathTool(PaintToolType type) {
         super(type);
@@ -17,16 +18,19 @@ public abstract class AbstractPathTool extends AbstractPaintTool {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        lastPoint = new Point(e.getX(), e.getY());
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        startPath(g2d, getStroke(), getStrokePaint(), e.getPoint());
+        g2d.dispose();
+
+        getCanvas().repaintCanvas();
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        drawSegment(g2d, getStroke(), getFillPaint(), lastPoint.x, lastPoint.y, e.getX(), e.getY());
+        addPoint(g2d, getStroke(), getFillPaint(), e.getPoint());
         g2d.dispose();
 
-        lastPoint = new Point(e.getX(), e.getY());
         getCanvas().repaintCanvas();
     }
 
