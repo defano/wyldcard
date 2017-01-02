@@ -18,6 +18,7 @@ public abstract class AbstractPaintTool extends MouseAdapter {
     private Paint defaultFillPaint = null;
     private int defaultShapeSides = 5;
     private Font defaultFont = new Font("Courier", Font.PLAIN, 14);
+    private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 
     private Provider<Stroke> strokeProvider = new Provider<>(defaultStroke);
     private Provider<Paint> strokePaintProvider = new Provider<>(defaultStrokePaint);
@@ -33,12 +34,14 @@ public abstract class AbstractPaintTool extends MouseAdapter {
         this.canvas = canvas;
         this.canvas.addMouseListener(this);
         this.canvas.addMouseMotionListener(this);
+        this.canvas.setCursor(toolCursor);
     }
 
     public void deactivate() {
         if (canvas != null) {
             canvas.removeMouseListener(this);
             canvas.removeMouseMotionListener(this);
+            canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -126,5 +129,13 @@ public abstract class AbstractPaintTool extends MouseAdapter {
 
     public Provider<Font> getFontProvider() {
         return fontProvider;
+    }
+
+    public Cursor getToolCursor() {
+        return toolCursor;
+    }
+
+    public void setToolCursor(Cursor toolCursor) {
+        this.toolCursor = toolCursor;
     }
 }

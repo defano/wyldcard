@@ -16,6 +16,7 @@ public class TextTool extends AbstractPaintTool implements ProvidedValueObserver
 
     public TextTool() {
         super(PaintToolType.TEXT);
+        setToolCursor(new Cursor(Cursor.TEXT_CURSOR));
 
         textArea = new JTextArea();
         textArea.setVisible(true);

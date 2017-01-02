@@ -22,8 +22,8 @@ public class MathUtils {
     }
 
     public static Point snapLineToNearestAngle(Point p1, Point p2, int toNearestAngle) {
-        double length = MathUtils.getLineLength(p1, p2);
-        double nearestAngle = MathUtils.round(MathUtils.getLineAngle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
-        return MathUtils.lineAtAngle(p1, (int) length, nearestAngle);
+        double length = getLineLength(p1, p2);
+        double nearestAngle = round(MathUtils.getLineAngle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
+        return lineAtAngle(p1, (int) length, nearestAngle);
     }
 }
