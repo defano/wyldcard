@@ -197,7 +197,6 @@
         <properties>
           <icon value="icons/finger.png"/>
           <iconTextGap value="0"/>
-          <label value=""/>
           <margin top="0" left="0" bottom="0" right="0"/>
           <text value=""/>
         </properties>
@@ -220,7 +219,6 @@
         <properties>
           <icon value="icons/field.png"/>
           <iconTextGap value="0"/>
-          <label value=""/>
           <margin top="0" left="0" bottom="0" right="0"/>
           <text value=""/>
         </properties>

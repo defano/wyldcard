@@ -258,7 +258,6 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
         finger = new JButton();
         finger.setIcon(new ImageIcon(getClass().getResource("/icons/finger.png")));
         finger.setIconTextGap(0);
-        finger.setLabel("");
         finger.setMargin(new Insets(0, 0, 0, 0));
         finger.setText("");
         palettePanel.add(finger, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -271,7 +270,6 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
         field = new JButton();
         field.setIcon(new ImageIcon(getClass().getResource("/icons/field.png")));
         field.setIconTextGap(0);
-        field.setLabel("");
         field.setMargin(new Insets(0, 0, 0, 0));
         field.setText("");
         palettePanel.add(field, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
