@@ -1,6 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.utils.MathUtils;
+import org.antlr.v4.misc.Graph;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -14,8 +15,9 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
     private List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
-    protected abstract void drawPolyline(Graphics g, int[] xPoints, int[] yPoints);
-    protected abstract void drawPolygon(Graphics g, int[] xPoints, int[] yPoints);
+    protected abstract void drawPolyline(Graphics2D g, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints);
+    protected abstract void drawPolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
+    protected abstract void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints);
 
     public AbstractPolylineTool(PaintToolType type) {
         super(type);
@@ -56,8 +58,8 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
 
         getCanvas().clearScratch();
 
-        Graphics2D g2d = getGraphics2D();
-        drawPolyline(g2d, xs, ys);
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        drawPolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
         getCanvas().repaintCanvas();
@@ -85,14 +87,6 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
         }
     }
 
-    private Graphics2D getGraphics2D() {
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        g2d.setStroke(getStroke());
-        g2d.setPaint(getStrokePaint());
-
-        return g2d;
-    }
-
     private void commitPolygon() {
         getCanvas().clearScratch();
 
@@ -102,8 +96,13 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
         points.clear();
         currentPoint = null;
 
-        Graphics2D g2d = getGraphics2D();
-        drawPolygon(g2d, xs, ys);
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        drawPolygon(g2d, getStroke(), getStrokePaint(), xs, ys);
+
+        if (getFillPaint() != null) {
+            fillPolygon(g2d, getFillPaint(), xs, ys);
+        }
+
         g2d.dispose();
 
         getCanvas().commit();
@@ -118,8 +117,8 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
         points.clear();
         currentPoint = null;
 
-        Graphics2D g2d = getGraphics2D();
-        drawPolyline(g2d, xs, ys);
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        drawPolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
         getCanvas().commit();

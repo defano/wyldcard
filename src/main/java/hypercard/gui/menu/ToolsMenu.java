@@ -118,6 +118,12 @@ public class ToolsMenu extends JMenu {
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
+                .named("Curve")
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.CURVE))
+                .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.CURVE))
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
                 .named("Polygon")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.POLYGON))
                 .withCheckmarkProvider(new Provider<>(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.POLYGON))

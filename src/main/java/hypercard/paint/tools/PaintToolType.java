@@ -14,5 +14,6 @@ public enum PaintToolType {
     SELECTION,
     TEXT,
     FILL,
-    SPRAYPAINT
+    SPRAYPAINT,
+    CURVE
 }

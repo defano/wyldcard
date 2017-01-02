@@ -9,18 +9,22 @@ public class PolygonTool extends AbstractPolylineTool {
     }
 
     @Override
-    protected void drawPolyline(Graphics g, int[] xPoints, int[] yPoints) {
+    protected void drawPolyline(Graphics2D g, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
+        g.setPaint(paint);
+        g.setStroke(stroke);
         g.drawPolyline(xPoints, yPoints, xPoints.length);
     }
 
     @Override
-    protected void drawPolygon(Graphics g, int[] xPoints, int[] yPoints) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawPolygon(xPoints, yPoints, xPoints.length);
+    protected void drawPolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
+        g.setStroke(stroke);
+        g.setPaint(strokePaint);
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
+    }
 
-        if (getFillPaint() != null) {
-            g2d.setPaint(getFillPaint());
-            g2d.fillPolygon(xPoints, yPoints, xPoints.length);
-        }
+    @Override
+    protected void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints) {
+        g.setPaint(getFillPaint());
+        g.fillPolygon(xPoints, yPoints, xPoints.length);
     }
 }

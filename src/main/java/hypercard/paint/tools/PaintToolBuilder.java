@@ -133,6 +133,9 @@ public class PaintToolBuilder {
             case SPRAYPAINT:
                 selectedTool = new SpraypaintTool();
                 break;
+            case CURVE:
+                selectedTool = new CurveTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);
