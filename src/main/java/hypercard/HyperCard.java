@@ -35,6 +35,8 @@ public class HyperCard implements StackModelObserver {
         // Display the frame's menu as the Mac OS menubar
         System.setProperty("apple.laf.useScreenMenuBar", "true");
         System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
+        System.setProperty("apple.awt.application.name", "HyperCard");
 
         _instance = new HyperCard();
     }

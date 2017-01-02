@@ -2,7 +2,9 @@
 
 A toy implementation of Apple's HyperCard written in Java. Originally created as a class project for a graduate-level compiler design course at DePaul University, Chicago.
 
-Originally released in 1987 as part of System Software 6, HyperCard was an application that largely defied classification; part database, part programming language, part "paint" program. In true Apple fashion, HyperCard represented something entirely new. Other "educational" programming languages of the time made it possible to write boring console-mode programs, but with HyperCard, a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
+## What is (was) HyperCard?
+
+HyperCard was released in 1987 as part of Apple's System Software 6. It was an application that largely defied classification; part database, part programming language, part "paint" program. HyperCard represented something entirely new. Other "educational" programming languages of the time made it possible to write console-mode programs, but with HyperCard, a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
 
 [Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987.
 
@@ -10,23 +12,19 @@ Originally released in 1987 as part of System Software 6, HyperCard was an appli
 
 **What if I'm an attorney looking to sue?** This project represents a homework assignment and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
-## What's it do?
+## What can I do with this?
 
-Lets users create fields and buttons on a card and attach HyperTalk scripts to those user interface elements.
+You can create stacks of cards containing graphics, buttons and fields. Buttons and fields are scriptable, and the full suite of HyperCard paint tools (and patterns) are available.
 
-Enough of the runtime environment and HyperTalk scripting language is complete to demonstrate each of the core aspects of HyperCard including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
+Much of the HyperTalk language has been implemented including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
 
-The project uses Antlr4 as the parser generator, and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
-
-Note that this project was originally implemented with the JCup/JFlex LALR parser generator tools and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
-
-## What this is not...
+## What can't I do?
 
 This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
 
-It won't run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbyists and academics interested in compiler/interpreter design. Among its many limitations, this implementation lacks support for backgrounds; paint tools; user levels; card, background or stack-level scripts; XCMDs and XFCNs; home stack script inheritance; and a great deal more.
+It won't import and run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbyists and academics. Among its limitations, this implementation lacks support for backgrounds; user levels; card, background or stack-level scripts; externals (XCMDs/XFCNs) and home stack script inheritance.
 
-## Building with Gradle
+# Building the application
 
 The project is built with Gradle (and should import easily into any IDE with Gradle integration like Eclipse or IntelliJ). The following Gradle tasks are defined by the project's build file:
 
@@ -34,6 +32,10 @@ Task | Description
 --------|----------------------------
 `run`   | Build, test and run the application
 `generateGrammarSource`  | Re-generate the HyperTalk parser using Antlr4 (executes automatically as part of the `gradle build` task)
+
+The project uses Antlr4 as the parser generator, and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
+
+Note that this project was originally implemented with the JCup/JFlex LALR parser generator tools and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
 
 ### Running the program
 
@@ -49,7 +51,7 @@ To start scripting:
 1.	Create a new button or field, or select an existing one.
 2.	Right-click on the part and choose "Edit Script..." or "Edit Part Properties..." Both buttons and fields have several user-editable properties that can be inspected and modified within the GUI.
 
-### Editing the UI components
+### Modifying the UI components
 
 The UI forms were generated using the GUI Designer built into IntelliJ's IDEA 15 (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
 
@@ -62,7 +64,7 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 3. Select the "Java source code" option for GUI generation.
 4. Apply the changes and "Rebuild project" from the "Build" menu.
 
-## The HyperTalk Language
+# The HyperTalk Language
 
 HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements called `parts` and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime.
 
@@ -116,7 +118,7 @@ Apple's HyperCard supported a newline character (_logical negation_ symbol, [Uni
 
 As you enter script text into the script editor, this implementation will flag syntax errors as you type by underlining the offending text with a red squiggle. A (typically useless) error message from the Antlr parser will also appear at the bottom of the editor.
 
-### Cards & Stacks
+## Cards & Stacks
 
 A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window. When the current card changes as result of navigating away, the contents of the new card appear in place of the old card. While cards can be "pushed" and "popped" from view, one should not confuse HyperCard's concept of a stack with the data structure known in Computer Science.
 
@@ -152,7 +154,7 @@ go to the previous card
 go to the prev card
 ```
 
-### Script handlers
+## Script handlers
 
 A script consists of zero or more handlers and function definitions. A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it. A _function definition_, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements and optionally returns a single value.
 
@@ -189,7 +191,7 @@ send keyDown to me
 
 Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
 
-### Parts and their properties
+## Parts and their properties
 
 A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, this version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window).
 
@@ -244,7 +246,7 @@ get the name of button id 0
 set the rect of button "Hi" to "10,10,100,100"
 ```
 
-#### Global Properties
+### Global Properties
 
 Some properties apply to HyperCard at large instead of an individual part. The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
 
@@ -259,7 +261,7 @@ Global Property | Description
 ----------------|---------------
 `itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 
-### Variables and containers
+## Variables and containers
 
 A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers.
 
@@ -310,7 +312,7 @@ on mouseUp
 end mouseUp
 ```
 
-### Chunk Expressions
+## Chunk Expressions
 
 HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can access or mutate a range of words, characters, lines, or comma-delimited items in a value. Chunks may be specified numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
 
@@ -407,7 +409,7 @@ item 1 of the mouseloc < 100 -- true if the mouse is towards the left of the car
 not "nonsense" -- syntax error, "nonsense" is not a boolean
 ```
 
-### Control Structures
+## Control Structures
 
 HyperTalk supports simple conditional branching (if-then-else), plus a very flexible syntax for looping. Conditionals have the following syntax:
 
@@ -451,7 +453,7 @@ else
 end if
 ```
 
-#### Loop Constructs
+### Loop Constructs
 
 HyperTalk provides a variety of looping constructs. The overall syntax for each of them is
 
@@ -486,11 +488,11 @@ repeat while the mouse is down
 end repeat
 ```
 
-### Functions
+## Functions
 
 HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
 
-#### Built-in Functions
+### Built-in Functions
 
 There are several equivalent syntax forms that can be used when invoking a built in function. For built-in functions that accept an argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`; for functions that don't take an argument, `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
 
@@ -513,7 +515,7 @@ Function | Description
 `ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
 `random` | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
 
-#### User-defined Functions
+### User-defined Functions
 
 A user may define a function of their own creation anywhere inside of a script. Note that user-defined functions cannot be nested; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
 
@@ -545,7 +547,7 @@ function factorial fact
 end factorial
 ```
 
-### Commands
+## Commands
 
 This version of HyperCard implements the following set of commands:
 
