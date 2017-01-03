@@ -566,3 +566,4 @@ Command	   | Description
 `subtract` | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
 `multiply` | Multiplies a container by a value; `multiply x by 3`
 `divide`   | Divides a container by a value; `divide x by it`
+`choose`   | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`

@@ -8,6 +8,8 @@ import hypercard.paint.utils.PaintToolBuilder;
 import hypercard.paint.model.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
+import hypertalk.ast.common.Tool;
+import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 
@@ -101,6 +103,69 @@ public class ToolsContext implements StackModelObserver {
 
     public void setPattern(int patternId) {
             fillPatternProvider.set(patternId);
+    }
+
+    public void setSelectedTool (Tool tool) {
+        switch (tool) {
+            case BROWSE:
+                setSelectedToolType(PaintToolType.ARROW);
+                break;
+            case OVAL:
+                setSelectedToolType(PaintToolType.OVAL);
+                break;
+            case BRUSH:
+                setSelectedToolType(PaintToolType.PAINTBRUSH);
+                break;
+            case PENCIL:
+                setSelectedToolType(PaintToolType.PENCIL);
+                break;
+            case BUCKET:
+                setSelectedToolType(PaintToolType.FILL);
+                break;
+            case POLYGON:
+                setSelectedToolType(PaintToolType.POLYGON);
+                break;
+            case BUTTON:
+                // TODO: Not implemented
+                break;
+            case RECTANGLE:
+                setSelectedToolType(PaintToolType.RECTANGLE);
+                break;
+            case CURVE:
+                setSelectedToolType(PaintToolType.CURVE);
+                break;
+            case SHAPE:
+                setSelectedToolType(PaintToolType.SHAPE);
+                break;
+            case ERASER:
+                setSelectedToolType(PaintToolType.ERASER);
+                break;
+            case ROUNDRECT:
+                setSelectedToolType(PaintToolType.ROUND_RECTANGLE);
+                break;
+            case FIELD:
+                // TODO: Not implemented
+                break;
+            case SELECT:
+                setSelectedToolType(PaintToolType.SELECTION);
+                break;
+            case LASSO:
+                setSelectedToolType(PaintToolType.LASSO);
+                break;
+            case SPRAY:
+                setSelectedToolType(PaintToolType.SPRAYPAINT);
+                break;
+            case LINE:
+                setSelectedToolType(PaintToolType.LINE);
+                break;
+            case TEXT:
+                setSelectedToolType(PaintToolType.TEXT);
+                break;
+        }
+    }
+
+    public void setSelectedTool (int toolNumber) throws HtSemanticException {
+        setSelectedTool(Tool.byNumber(toolNumber));
     }
 
     @Override

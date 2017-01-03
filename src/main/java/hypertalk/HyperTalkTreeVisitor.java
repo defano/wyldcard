@@ -345,6 +345,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitChooseToolCmdStmt(HyperTalkParser.ChooseToolCmdStmtContext ctx) {
+        return new StatChooseCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitChooseToolNumberCmdStmt(HyperTalkParser.ChooseToolNumberCmdStmtContext ctx) {
+        return new StatChooseCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitIfThenSingleLine(HyperTalkParser.IfThenSingleLineContext ctx) {
         return new StatIf((Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.singleThen()));
     }

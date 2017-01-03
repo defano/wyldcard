@@ -65,6 +65,8 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt
                     | 'multiply' container 'by' expression          # multiplyCmdStmnt
                     | 'divide' container 'by' expression            # divideCmdStmnt
+                    | 'choose' expression 'tool'                    # chooseToolCmdStmt
+                    | 'choose' 'tool' expression                    # chooseToolNumberCmdStmt
                     ;
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
