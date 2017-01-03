@@ -1,6 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.patterns.HyperCardPatternFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -44,7 +45,7 @@ public class SelectionTool extends AbstractSelectionTool {
 
             g.setStroke(MARCHING_ANTS);
             g.setColor(Color.BLACK);
-            g.draw(selectionBounds);
+            g.drawRect(selectionBounds.x, selectionBounds.y, selectionBounds.width, selectionBounds.height);
         }
     }
 
@@ -66,9 +67,8 @@ public class SelectionTool extends AbstractSelectionTool {
 
         BufferedImage selection = canvasImage.getSubimage(subimageBounds.x, subimageBounds.y, subimageBounds.width, subimageBounds.height);
 
-        Graphics2D g2 = (Graphics2D) getCanvas().getScratchGraphics();
-        g2.setColor(Color.WHITE);
-        g2.fill(getSelectionBounds());
+        scratch.setColor(Color.WHITE);
+        scratch.fill(getSelectionBounds());
         getCanvas().commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
 
         return selection;

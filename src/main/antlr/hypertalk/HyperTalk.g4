@@ -19,8 +19,8 @@ function			: 'function' ID parameterList NEWLINE statementList 'end' ID    # pop
                     | 'function' ID parameterList NEWLINE 'end' ID                  # emptyFunction
                     ;
 
-argumentList		: expression                                    # singleExpArgList
-                    | argumentList ',' expression                   # multiExpArgList
+expressionList		: expression                                    # singleExpArgList
+                    | expressionList ',' expression                 # multiExpArgList
                     |                                               # emptyArgList
                     ;
 
@@ -67,6 +67,10 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'divide' container 'by' expression            # divideCmdStmnt
                     | 'choose' expression 'tool'                    # chooseToolCmdStmt
                     | 'choose' 'tool' expression                    # chooseToolNumberCmdStmt
+                    | 'click' 'at' expression                       # clickCmdStmt
+                    | 'click' 'at' expression 'with' expressionList # clickWithKeyCmdStmt
+                    | 'drag' 'from' expression 'to' expression      # dragCmdStmt
+                    | 'drag' 'from' expression 'to' expression 'with' expressionList            # dragWithKeyCmdStmt
                     ;
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
@@ -228,7 +232,7 @@ ordinalValue        : FIRST                                         # firstOrd
 
 expression          : 'empty'                                       # emptyExp
                     | builtinFunc                                   # builtinFuncExp
-                    | ID '(' argumentList ')'                       # functionExp
+                    | ID '(' expressionList ')'                       # functionExp
                     | factor                                        # factorExp
                     | chunk expression                              # chunkExp
                     | 'not' expression                              # notExp
@@ -266,7 +270,7 @@ factor				: literal                                       # literalFactor
 
 builtinFunc         : 'the'? oneArgFunc OF_IN factor                # builtinFuncOneArgs
                     | 'the' noArgFunc                               # builtinFuncNoArg
-                    | oneArgFunc '(' argumentList ')'               # builtinFuncArgList
+                    | oneArgFunc '(' expressionList ')'               # builtinFuncArgList
                     ;
 
 oneArgFunc          : 'average'                                     # averageFunc
@@ -331,13 +335,14 @@ TENTH               : 'tenth';
 MIDDLE              : 'mid' | 'middle';
 LAST                : 'last';
 
-ID                  : (ALPHA (ALPHA | DIGIT)*) ;
+ID                  : POINT | (ALPHA (ALPHA | DIGIT)*) ;
 
 STRING_LITERAL      : '"' ~('"' | '\r' | '\n' )* '"' ;
 INTEGER_LITERAL     : DIGIT+ ;
 
 ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
 DIGIT               : ('0' .. '9')+ ;
+POINT               : (DIGIT ',' DIGIT);
 
 COMMENT             : '--' ~('\r' | '\n')* -> skip;
 NEWLINE             : ('\n' | '\r')+;

@@ -145,8 +145,12 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      *
      */
     protected void pickupSelection() {
+        getCanvas().clearScratch();
+
         Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
         selectedImage = getSelectedImage(g, getCanvas().getCanvasImage());
+        g.dispose();
+
         drawSelection(selectedImage);
     }
 

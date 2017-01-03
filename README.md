@@ -22,7 +22,7 @@ Much of the HyperTalk language has been implemented including parts, attributes,
 
 This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
 
-It won't import and run your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbyists and academics. Among its limitations, this implementation lacks support for backgrounds; user levels; card, background or stack-level scripts; externals (XCMDs/XFCNs) and home stack script inheritance.
+It won't import your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbyists and academics. Among its limitations, this implementation lacks support for backgrounds; user levels; card, background or stack-level scripts; externals (XCMDs/XFCNs) and home stack script inheritance.
 
 # Building the application
 
@@ -67,6 +67,8 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 # The HyperTalk Language
 
 HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements called `parts` and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime.
+
+HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -265,8 +267,6 @@ Global Property | Description
 
 A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers.
 
-HyperCard is dynamically typed. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
-
 Local variables in HyperTalk are lexically scoped and implicitly declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
 
 HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers.
@@ -409,6 +409,88 @@ item 1 of the mouseloc < 100 -- true if the mouse is towards the left of the car
 not "nonsense" -- syntax error, "nonsense" is not a boolean
 ```
 
+## Commands
+
+This version of HyperCard implements the following set of commands:
+
+Command	   | Description
+-----------|------------
+`put`      | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
+`get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
+`set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`)
+`go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
+`wait`     | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
+`answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
+`ask`	     | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
+`do`       | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
+`send`     | Send a message to a part on the current card; `send "mouseUp" to field id 3`
+`add`      | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
+`subtract` | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
+`multiply` | Multiplies a container by a value; `multiply x by 3`
+`divide`   | Divides a container by a value; `divide x by it`
+`choose`   | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
+`click`    | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
+`drag`     | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
+
+## Functions
+
+HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
+
+### Built-in Functions
+
+There are several equivalent syntax forms that can be used when invoking a built in function. For built-in functions that accept an argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`; for functions that don't take an argument, `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
+
+This implementation includes the following built-in functions:
+
+Function | Description
+---------|-------------
+`average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
+`mouse` | Returns the current state of the left mouse button; either "up" or "down"
+`mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
+`number of words` <br> `number of chars` <br> `number of lines` <br> `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
+`result` | Returns the current value of the implicit variable `it`, for example: `the result`
+`message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`
+`min` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
+`max` | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
+`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields 07/04/16.
+`long date` | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
+`abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
+`seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
+`ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
+`random` | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
+
+### User-defined Functions
+
+A user may define a function of their own creation anywhere inside of a script. Note that user-defined functions cannot be nested; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
+
+The syntax for defining a function is:
+
+```
+function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
+	<statementList>
+	[return <expression>]
+end <functionName>
+```
+
+When calling a user defined function, use `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
+
+For example:
+
+```
+on mouseUp
+	-- factorial(5) returns 120
+	answer "The factorial of 5 is " && factorial(5)
+end mouseUp
+
+function factorial fact
+	if fact = 1 then
+		return 1
+	else
+		return fact * factorial(fact – 1)
+	end if
+end factorial
+```
+
 ## Control Structures
 
 HyperTalk supports simple conditional branching (if-then-else), plus a very flexible syntax for looping. Conditionals have the following syntax:
@@ -487,83 +569,3 @@ repeat while the mouse is down
 	set the top of me to item 2 of the mouseLoc
 end repeat
 ```
-
-## Functions
-
-HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
-
-### Built-in Functions
-
-There are several equivalent syntax forms that can be used when invoking a built in function. For built-in functions that accept an argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`; for functions that don't take an argument, `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
-
-This implementation includes the following built-in functions:
-
-Function | Description
----------|-------------
-`average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
-`mouse` | Returns the current state of the left mouse button; either "up" or "down"
-`mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
-`number of words` <br> `number of chars` <br> `number of lines` <br> `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
-`result` | Returns the current value of the implicit variable `it`, for example: `the result`
-`message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`
-`min` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
-`max` | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
-`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields 07/04/16.
-`long date` | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
-`abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
-`seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
-`ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
-`random` | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
-
-### User-defined Functions
-
-A user may define a function of their own creation anywhere inside of a script. Note that user-defined functions cannot be nested; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
-
-The syntax for defining a function is:
-
-```
-function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
-	<statementList>
-	[return <expression>]
-end <functionName>
-```
-
-When calling a user defined function, use `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
-
-For example:
-
-```
-on mouseUp
-	-- factorial(5) returns 120
-	answer "The factorial of 5 is " && factorial(5)
-end mouseUp
-
-function factorial fact
-	if fact = 1 then
-		return 1
-	else
-		return fact * factorial(fact – 1)
-	end if
-end factorial
-```
-
-## Commands
-
-This version of HyperCard implements the following set of commands:
-
-Command	   | Description
------------|------------
-`put`      | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
-`get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`)
-`go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
-`wait`     | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
-`answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
-`ask`	     | Similar to answer, ask produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
-`do`       | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
-`send`     | Send a message to a part on the current card; `send "mouseUp" to field id 3`
-`add`      | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
-`subtract` | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
-`multiply` | Multiplies a container by a value; `multiply x by 3`
-`divide`   | Divides a container by a value; `divide x by it`
-`choose`   | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`

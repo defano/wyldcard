@@ -7,7 +7,7 @@
 
 package hypertalk.ast.functions;
 
-import hypercard.gui.util.MouseListener;
+import hypercard.gui.util.MouseManager;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 
@@ -16,6 +16,6 @@ public class ExpMouseLocFun extends Expression {
     public ExpMouseLocFun () {}
     
     public Value evaluate () {
-        return new Value(MouseListener.getMouseLoc());
+        return new Value(MouseManager.getMouseLoc());
     }
 }

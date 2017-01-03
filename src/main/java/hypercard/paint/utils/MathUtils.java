@@ -4,14 +4,40 @@ import java.awt.*;
 
 public class MathUtils {
 
+    /**
+     * Rounds a given value to the nearest provided integer multiple. For example rounding 24.3 to the nearest 10
+     * yields 20.
+     *
+     * @param value The value to round
+     * @param toNearest The nearest integer multiple.
+     * @return
+     */
     public static int round(Double value, int toNearest) {
         return (int) (toNearest * Math.round(value / toNearest));
     }
 
+    /**
+     * Returns the angle (in degrees) of the line represented by (x1, y1), (x2, y2).
+     *
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     * @return
+     */
     public static double getLineAngle(int x1, int y1, int x2, int y2) {
         return Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
     }
 
+    /**
+     * Given an origin point and a length, calculates the second point of a line whose length and angle match the
+     * provided values.
+     *
+     * @param origin Origin/location of the line
+     * @param length Length of the line
+     * @param angle Desired angle (in degrees) of the resulting line
+     * @return
+     */
     public static Point lineAtAngle(Point origin, int length, double angle) {
         double radians = Math.toRadians(angle);
         return new Point((int)(origin.x + length * Math.cos(radians)), (int)(origin.y + length * Math.sin(radians)));

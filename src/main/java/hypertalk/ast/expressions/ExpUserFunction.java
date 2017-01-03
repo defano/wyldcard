@@ -10,17 +10,17 @@ package hypertalk.ast.expressions;
 import hypercard.context.GlobalContext;
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 
 public class ExpUserFunction extends Expression {
 
     public final String function;
-    public final ArgumentList arguments;
+    public final ExpressionList arguments;
 
-    public ExpUserFunction (String function, ArgumentList arguments) {
+    public ExpUserFunction (String function, ExpressionList arguments) {
         this.function = function;
         this.arguments = arguments;
     }

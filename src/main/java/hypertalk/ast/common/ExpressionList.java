@@ -1,5 +1,5 @@
 /**
- * ArgumentList.java
+ * ExpressionList.java
  *
  * @author matt.defano@gmail.com
  * <p>
@@ -7,27 +7,26 @@
  * list are not evaluated until the function is called.
  */
 
-package hypertalk.ast.functions;
+package hypertalk.ast.common;
 
-import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArgumentList {
+public class ExpressionList {
 
     private final List<Expression> list = new ArrayList<>();
 
-    public ArgumentList() {
+    public ExpressionList() {
     }
 
-    public ArgumentList(Expression expr) {
+    public ExpressionList(Expression expr) {
         list.add(expr);
     }
 
-    public ArgumentList addArgument(Expression expr) {
+    public ExpressionList addArgument(Expression expr) {
         list.add(expr);
         return this;
     }

@@ -43,7 +43,7 @@ public class ContainerMsgBox extends Container {
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
         GlobalContext.getContext().put(value, preposition, this);
-        SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setVisible(true));
+        SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setShown(true));
     }
 
     public PartType type() {

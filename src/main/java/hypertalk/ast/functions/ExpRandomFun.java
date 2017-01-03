@@ -1,5 +1,6 @@
 package hypertalk.ast.functions;
 
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
@@ -12,7 +13,7 @@ public class ExpRandomFun extends ArgListFunction {
         super(bound);
     }
 
-    public ExpRandomFun(ArgumentList argumentList) {
+    public ExpRandomFun(ExpressionList argumentList) {
         super(argumentList);
     }
 

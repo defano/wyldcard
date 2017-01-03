@@ -39,39 +39,35 @@ public class WindowManager {
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
+                .asPalette(stackWindow)
                 .resizeable(false)
-                .notFocusable()
-                .floating()
                 .withTitle("")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(stackFrame)
                 .build();
 
         WindowBuilder.make(shapesPalette)
+                .asPalette(stackWindow)
                 .resizeable(false)
                 .withTitle("Shapes")
-                .floating()
-                .notFocusable()
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(linesPalette)
+                .asPalette(stackWindow)
                 .resizeable(false)
                 .withTitle("Lines")
-                .floating()
-                .notFocusable()
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(patternsPalette)
+                .asPalette(stackWindow)
                 .resizeable(false)
                 .withTitle("")
-                .floating()
-                .notFocusable()
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(paintToolsPalette.getWindowFrame())
                 .build();

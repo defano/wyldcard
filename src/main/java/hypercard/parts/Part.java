@@ -11,7 +11,7 @@ import javax.swing.JComponent;
 
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
-import hypertalk.ast.functions.ArgumentList;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
@@ -34,7 +34,7 @@ public interface Part {
     void setValue(Value v);
         
     void sendMessage(String message) throws HtSemanticException;
-    Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException;
+    Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException;
     
     void partOpened();
     Rectangle getRect();

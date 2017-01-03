@@ -1,17 +1,20 @@
 package hypercard.gui.util;
 
+import hypercard.HyperCard;
 import hypercard.parts.CardPart;
 import hypercard.runtime.WindowManager;
-import hypertalk.ast.common.Value;
+import hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MouseListener {
+public class MouseManager {
 
     private static boolean mouseIsDown;
 
@@ -36,6 +39,61 @@ public class MouseListener {
         SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
 
         return mouseLoc;
+    }
+
+    public static void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
+
+        SwingUtilities.convertPointToScreen(p1, HyperCard.getRuntimeEnv().getCard());
+        SwingUtilities.convertPointToScreen(p2, HyperCard.getRuntimeEnv().getCard());
+
+        try {
+            Robot r = new Robot();
+            r.setAutoWaitForIdle(true);
+            r.setAutoDelay(20);
+
+            r.mouseMove(p1.x, p1.y);
+
+            if (withShift) r.keyPress(KeyEvent.VK_SHIFT);
+            if (withOption) r.keyPress(KeyEvent.VK_META);
+            if (withCommand) r.keyPress(KeyEvent.VK_CONTROL);
+            r.mousePress(InputEvent.BUTTON1_MASK);
+
+            r.mouseMove(p2.x, p2.y);
+
+            r.mouseRelease(InputEvent.BUTTON1_MASK);
+            if (withShift) r.keyRelease(KeyEvent.VK_SHIFT);
+            if (withOption) r.keyRelease(KeyEvent.VK_META);
+            if (withCommand) r.keyRelease(KeyEvent.VK_CONTROL);
+
+        } catch (AWTException e) {
+            throw new HtSemanticException("Sorry, scripted dragging is not supported on this system.");
+        }
+    }
+
+    public static void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
+
+        SwingUtilities.convertPointToScreen(p, HyperCard.getRuntimeEnv().getCard());
+
+        try {
+            Robot r = new Robot();
+            r.setAutoWaitForIdle(true);
+            r.setAutoDelay(20);
+
+            r.mouseMove(p.x, p.y);
+
+            if (withShift) r.keyPress(KeyEvent.VK_SHIFT);
+            if (withOption) r.keyPress(KeyEvent.VK_META);
+            if (withCommand) r.keyPress(KeyEvent.VK_CONTROL);
+            r.mousePress(InputEvent.BUTTON1_MASK);
+
+            r.mouseRelease(InputEvent.BUTTON1_MASK);
+            if (withShift) r.keyRelease(KeyEvent.VK_SHIFT);
+            if (withOption) r.keyRelease(KeyEvent.VK_META);
+            if (withCommand) r.keyRelease(KeyEvent.VK_CONTROL);
+
+        } catch (AWTException e) {
+            throw new HtSemanticException("Sorry, scripted clicking is not supported on this system.");
+        }
     }
 
     public static boolean isMouseDown() {

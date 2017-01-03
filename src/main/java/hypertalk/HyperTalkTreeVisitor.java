@@ -9,9 +9,11 @@ import hypertalk.ast.statements.*;
 import hypertalk.exception.HtParseError;
 import hypertalk.parser.HyperTalkBaseVisitor;
 import hypertalk.parser.HyperTalkParser;
+import hypertalk.parser.HyperTalkVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
+//public class HyperTalkTreeVisitor extends HyperTalkVisitor<Object> {
 
     @Override
     public Object visitHandlerScript(HyperTalkParser.HandlerScriptContext ctx) {
@@ -189,19 +191,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitEmptyArgList(HyperTalkParser.EmptyArgListContext ctx) {
-        return new ArgumentList();
+        return new ExpressionList();
     }
 
     @Override
     public Object visitSingleExpArgList(HyperTalkParser.SingleExpArgListContext ctx) {
-        return new ArgumentList((Expression) visit(ctx.expression()));
+        return new ExpressionList((Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitMultiExpArgList(HyperTalkParser.MultiExpArgListContext ctx) {
-        ArgumentList argumentList = (ArgumentList) visit(ctx.argumentList());
+        ExpressionList argumentList = (ExpressionList) visit(ctx.expressionList());
         argumentList.addArgument((Expression) visit(ctx.expression()));
-//        return new ArgumentList(argumentList, (Expression) visit(ctx.expression()));
         return argumentList;
     }
 
@@ -352,6 +353,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitChooseToolNumberCmdStmt(HyperTalkParser.ChooseToolNumberCmdStmtContext ctx) {
         return new StatChooseCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitClickCmdStmt(HyperTalkParser.ClickCmdStmtContext ctx) {
+        return new StatClickCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitClickWithKeyCmdStmt(HyperTalkParser.ClickWithKeyCmdStmtContext ctx) {
+        return new StatClickCmd((Expression) visit(ctx.expression()), (ExpressionList) visit(ctx.expressionList()));
+    }
+
+    @Override
+    public Object visitDragCmdStmt(HyperTalkParser.DragCmdStmtContext ctx) {
+        return new StatDragCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitDragWithKeyCmdStmt(HyperTalkParser.DragWithKeyCmdStmtContext ctx) {
+        return new StatDragCmd((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (ExpressionList) visit(ctx.expressionList()));
     }
 
     @Override
@@ -874,7 +895,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFunctionExp(HyperTalkParser.FunctionExpContext ctx) {
-        return new ExpUserFunction((String) visit(ctx.ID()), (ArgumentList) visit(ctx.argumentList()));
+        return new ExpUserFunction((String) visit(ctx.ID()), (ExpressionList) visit(ctx.expressionList()));
     }
 
     @Override
@@ -1054,10 +1075,10 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBuiltinFuncArgList(HyperTalkParser.BuiltinFuncArgListContext ctx) {
         switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
-            case MIN: return new ExpMinFun((ArgumentList) visit(ctx.argumentList()));
-            case MAX: return new ExpMaxFun((ArgumentList) visit(ctx.argumentList()));
-            case AVERAGE: return new ExpAverageFun((ArgumentList) visit(ctx.argumentList()));
-            case RANDOM: return new ExpRandomFun((ArgumentList) visit(ctx.argumentList()));
+            case MIN: return new ExpMinFun((ExpressionList) visit(ctx.expressionList()));
+            case MAX: return new ExpMaxFun((ExpressionList) visit(ctx.expressionList()));
+            case AVERAGE: return new ExpAverageFun((ExpressionList) visit(ctx.expressionList()));
+            case RANDOM: return new ExpRandomFun((ExpressionList) visit(ctx.expressionList()));
             default: throw new RuntimeException("Bug! Unimplemented case.");
         }
     }

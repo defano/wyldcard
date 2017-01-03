@@ -47,8 +47,30 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder floating() {
+    public WindowBuilder asPalette(HyperCardWindow overWindow) {
         frame.setAlwaysOnTop(true);
+        frame.setFocusableWindowState(false);
+
+        return sharesFocusWith(overWindow);
+    }
+
+    public WindowBuilder sharesFocusWith(HyperCardWindow parentWindow) {
+        if (parentWindow.getWindowFrame() == null) {
+            throw new IllegalStateException("Parent window must be built before a palette can be added to it.");
+        }
+
+        parentWindow.getWindowFrame().addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                window.setVisible(window.isShown());
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                window.setVisible(false);
+            }
+        });
+
         return this;
     }
 
@@ -94,11 +116,6 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder notFocusable() {
-        frame.setFocusableWindowState(false);
-        return this;
-    }
-
     public WindowBuilder notInitiallyVisible () {
         this.initiallyVisible = false;
         return this;
@@ -113,8 +130,8 @@ public class WindowBuilder {
             frame.setLocation(location);
         }
 
-        frame.setVisible(initiallyVisible);
         window.setWindowFrame(frame);
+        window.setShown(initiallyVisible);
 
         return frame;
     }

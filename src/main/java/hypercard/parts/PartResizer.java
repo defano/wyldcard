@@ -9,7 +9,7 @@
 package hypercard.parts;
 
 import hypercard.gui.util.ModifierKeyListener;
-import hypercard.gui.util.MouseListener;
+import hypercard.gui.util.MouseManager;
 import hypercard.parts.model.AbstractPartModel;
 import hypertalk.ast.common.Value;
 
@@ -62,7 +62,7 @@ public class PartResizer {
         this.part = part;
         this.within = within;
 
-        MouseListener.notifyOnMousePressed(() -> done = true);
+        MouseManager.notifyOnMousePressed(() -> done = true);
 
         executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
     }

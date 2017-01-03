@@ -1,12 +1,13 @@
 package hypertalk.ast.functions;
 
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
 
 public class ExpMaxFun extends ArgListFunction {
 
-    public ExpMaxFun(ArgumentList argumentList) {
+    public ExpMaxFun(ExpressionList argumentList) {
         super(argumentList);
     }
 

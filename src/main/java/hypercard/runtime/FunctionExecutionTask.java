@@ -4,7 +4,7 @@ import hypercard.HyperCard;
 import hypercard.context.GlobalContext;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.functions.ArgumentList;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.exception.HtSemanticException;
 
@@ -14,10 +14,10 @@ import java.util.concurrent.Callable;
 public class FunctionExecutionTask implements Callable<Value> {
 
     private final UserFunction function;
-    private final ArgumentList arguments;
+    private final ExpressionList arguments;
     private final PartSpecifier me;
 
-    public FunctionExecutionTask (PartSpecifier me, UserFunction function, ArgumentList arguments) {
+    public FunctionExecutionTask (PartSpecifier me, UserFunction function, ExpressionList arguments) {
         this.function = function;
         this.arguments = arguments;
         this.me = me;

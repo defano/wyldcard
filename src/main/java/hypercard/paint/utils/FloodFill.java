@@ -4,9 +4,6 @@ import java.awt.*;
 import java.util.Stack;
 import java.util.function.Predicate;
 
-/**
- * Created by matt on 1/2/17.
- */
 public class FloodFill {
 
     public interface FillFunction {

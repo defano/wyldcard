@@ -7,6 +7,7 @@
 
 package hypertalk.ast.functions;
 
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class ExpAverageFun extends ArgListFunction {
 
-    public ExpAverageFun(ArgumentList argumentList) {
+    public ExpAverageFun(ExpressionList argumentList) {
         super(argumentList);
     }
 

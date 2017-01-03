@@ -23,7 +23,7 @@ import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.functions.ArgumentList;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
@@ -202,7 +202,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     }
 
     @Override
-    public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
+    public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
         return Interpreter.executeFunction(getMe(), script.getFunction(function), arguments);
     }
 

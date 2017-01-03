@@ -12,10 +12,10 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import hypertalk.HyperTalkTreeVisitor;
 import hypertalk.HypertalkErrorListener;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.functions.ArgumentList;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatementList;
 import hypertalk.exception.HtException;
@@ -68,7 +68,7 @@ public class Interpreter {
         executeStatementList(me, script.getHandler(handler), true);
     }
 
-    public static Value executeFunction(PartSpecifier me, UserFunction function, ArgumentList arguments) {
+    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) {
         FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
 
         try {

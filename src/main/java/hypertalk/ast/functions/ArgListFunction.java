@@ -1,5 +1,6 @@
 package hypertalk.ast.functions;
 
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
@@ -8,10 +9,10 @@ import java.util.List;
 
 public abstract class ArgListFunction extends Expression {
 
-    private final ArgumentList argumentList;
+    private final ExpressionList argumentList;
     private final Expression expression;
 
-    public ArgListFunction(ArgumentList argumentList) {
+    public ArgListFunction(ExpressionList argumentList) {
         this.argumentList = argumentList;
         this.expression = null;
     }

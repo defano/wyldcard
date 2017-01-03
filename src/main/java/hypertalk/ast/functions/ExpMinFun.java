@@ -1,5 +1,6 @@
 package hypertalk.ast.functions;
 
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
@@ -10,7 +11,7 @@ public class ExpMinFun extends ArgListFunction {
         super(expression);
     }
 
-    public ExpMinFun (ArgumentList arguments) {
+    public ExpMinFun (ExpressionList arguments) {
         super(arguments);
     }
 

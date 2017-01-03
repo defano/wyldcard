@@ -18,12 +18,12 @@ import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
 import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.functions.ArgumentList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
@@ -192,7 +192,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     }
 
     @Override
-    public Value executeUserFunction(String function, ArgumentList arguments) throws HtSemanticException {
+    public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
         return Interpreter.executeFunction(getMe(), script.getFunction(function), arguments);
     }
 

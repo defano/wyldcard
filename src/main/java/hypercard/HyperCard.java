@@ -12,7 +12,7 @@ package hypercard;
 import hypercard.context.GlobalContext;
 import hypercard.context.ToolsContext;
 import hypercard.gui.util.ModifierKeyListener;
-import hypercard.gui.util.MouseListener;
+import hypercard.gui.util.MouseManager;
 import hypercard.paint.model.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModel;
@@ -56,7 +56,7 @@ public class HyperCard implements StackModelObserver {
 
         // Fire up the key and mouse listeners
         ModifierKeyListener.start();
-        MouseListener.start();
+        MouseManager.start();
 
         // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
         // directly from the constructor
@@ -69,7 +69,6 @@ public class HyperCard implements StackModelObserver {
     public static HyperCard getRuntimeEnv() {
         return _instance;
     }
-
 
     public StackModel getStack () { return stack; }
 
