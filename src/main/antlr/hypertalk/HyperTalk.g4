@@ -335,7 +335,7 @@ TENTH               : 'tenth';
 MIDDLE              : 'mid' | 'middle';
 LAST                : 'last';
 
-ID                  : POINT | (ALPHA (ALPHA | DIGIT)*) ;
+ID                  : POINT | RECT | (ALPHA (ALPHA | DIGIT)*) ;
 
 STRING_LITERAL      : '"' ~('"' | '\r' | '\n' )* '"' ;
 INTEGER_LITERAL     : DIGIT+ ;
@@ -343,6 +343,7 @@ INTEGER_LITERAL     : DIGIT+ ;
 ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
 DIGIT               : ('0' .. '9')+ ;
 POINT               : (DIGIT ',' DIGIT);
+RECT                : (DIGIT ',' DIGIT ',' DIGIT ',' DIGIT);
 
 COMMENT             : '--' ~('\r' | '\n')* -> skip;
 NEWLINE             : ('\n' | '\r')+;

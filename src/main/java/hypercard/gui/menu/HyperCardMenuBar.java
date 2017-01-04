@@ -11,6 +11,8 @@ public class HyperCardMenuBar extends JMenuBar {
         add(new EditMenu());
         add(new GoMenu());
         add(new ToolsMenu());
+        add(new PaintMenu());
+        add(new OptionsMenu());
         add(new ObjectsMenu());
         add(new FontMenu());
         add(new StyleMenu());

@@ -17,6 +17,8 @@ public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
+    private boolean shapesFilled = false;
+
     private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
     private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
     private Provider<Stroke> brushStrokeProvider = new Provider<>(new BasicStroke(5));
@@ -24,7 +26,6 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Integer> fillPatternProvider = new Provider<>(0);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 12));
-
     private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
 
     private ToolsContext() {
@@ -48,7 +49,7 @@ public class ToolsContext implements StackModelObserver {
         toolProvider.set(PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> (int) t == 0 ? null : HyperCardPatternFactory.create((int) t)))
+                .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> isShapesFilled() ? HyperCardPatternFactory.create((int) t) : null))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
@@ -103,6 +104,15 @@ public class ToolsContext implements StackModelObserver {
 
     public void setPattern(int patternId) {
             fillPatternProvider.set(patternId);
+    }
+
+    public boolean isShapesFilled() {
+        return shapesFilled;
+    }
+
+    public void toggleShapesFilled() {
+        this.shapesFilled = !shapesFilled;
+        setSelectedToolType(toolProvider.get().getToolType());
     }
 
     public void setSelectedTool (Tool tool) {
@@ -175,7 +185,6 @@ public class ToolsContext implements StackModelObserver {
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {
-
         switch (type) {
             case PAINTBRUSH:
             case SPRAYPAINT:
@@ -187,6 +196,5 @@ public class ToolsContext implements StackModelObserver {
             default:
                 return lineStrokeProvider;
         }
-
     }
 }
