@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractBoundsTool extends AbstractPaintTool {
 
+    private boolean drawMultiple = false;
+
     protected Point initialPoint;
     protected Point currentPoint;
 
@@ -33,7 +35,10 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
     @Override
     public void mouseDragged(MouseEvent e) {
         currentPoint = e.getPoint();
-        getCanvas().clearScratch();
+
+        if (!drawMultiple) {
+            getCanvas().clearScratch();
+        }
 
         int left = Math.min(initialPoint.x, currentPoint.x);
         int top = Math.min(initialPoint.y, currentPoint.y);
@@ -63,5 +68,13 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
     @Override
     public void mouseReleased(MouseEvent e) {
         getCanvas().commit();
+    }
+
+    public boolean isDrawMultiple() {
+        return drawMultiple;
+    }
+
+    public void setDrawMultiple(boolean drawMultiple) {
+        this.drawMultiple = drawMultiple;
     }
 }

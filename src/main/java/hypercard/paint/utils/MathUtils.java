@@ -1,5 +1,7 @@
 package hypercard.paint.utils;
 
+import org.w3c.dom.css.Rect;
+
 import java.awt.*;
 
 public class MathUtils {
@@ -51,5 +53,36 @@ public class MathUtils {
         double length = getLineLength(p1, p2);
         double nearestAngle = round(MathUtils.getLineAngle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
         return lineAtAngle(p1, (int) length, nearestAngle);
+    }
+
+    /**
+     * Returns a point closest to the given point but which remains inside the provided boundary.
+     *
+     * @param p
+     * @param bounds
+     * @return
+     */
+    public static Point pointWithinBounds(Point p, Rectangle bounds) {
+
+        if (bounds.contains(p)) {
+            return p;
+        }
+
+        int newX = p.x;
+        int newY = p.y;
+
+        if (p.x < bounds.x) {
+            newX = bounds.x;
+        } else if (p.x > bounds.x + bounds.width) {
+            newX = bounds.x + bounds.width;
+        }
+
+        if (p.y < bounds.y) {
+            newY = bounds.y;
+        } else if (p.y > bounds.y + bounds.height) {
+            newY = bounds.y + bounds.height;
+        }
+
+        return new Point(newX, newY);
     }
 }

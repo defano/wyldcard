@@ -13,12 +13,12 @@ public class EditMenu extends JMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().undo())
+                .withAction(e -> GlobalContext.getContext().getCard().getForegroundCanvas().undo())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().redo())
+                .withAction(e -> GlobalContext.getContext().getCard().getForegroundCanvas().redo())
                 .build(this);
 
         this.addSeparator();

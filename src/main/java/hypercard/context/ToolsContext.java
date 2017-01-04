@@ -17,7 +17,7 @@ public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
-    private boolean shapesFilled = false;
+    private boolean shapesFilled = true;
 
     private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
     private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
@@ -52,7 +52,7 @@ public class ToolsContext implements StackModelObserver {
                 .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> isShapesFilled() ? HyperCardPatternFactory.create((int) t) : null))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
-                .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
+                .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getForegroundCanvas())
                 .build());
     }
 
@@ -181,7 +181,7 @@ public class ToolsContext implements StackModelObserver {
     @Override
     public void onCurrentCardChanged(CardPart newCard) {
         toolProvider.get().deactivate();
-        toolProvider.get().activate(newCard.getCanvas());
+        toolProvider.get().activate(newCard.getForegroundCanvas());
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {

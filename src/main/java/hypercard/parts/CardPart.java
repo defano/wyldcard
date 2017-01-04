@@ -105,7 +105,7 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
             throw new RuntimeException("Unhandled part type");
     }
 
-    public UndoableCanvas getCanvas() {
+    public UndoableCanvas getForegroundCanvas() {
         return canvas;
     }
 
