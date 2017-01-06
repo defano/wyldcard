@@ -58,7 +58,7 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
         curve.addActionListener(e -> toolSelected(PaintToolType.CURVE));
         lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
 
-        eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getRuntimeEnv().getCard().getForegroundCanvas().clearCanvas());
+        eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getRuntimeEnv().getCard().getCanvas().clearCanvas());
         shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setShown(true));
         line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setShown(true));
 

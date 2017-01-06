@@ -14,6 +14,7 @@ import java.util.List;
 
 public class CardModel {
 
+    private int backgroundId = 0;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
     private byte[] cardImage;
@@ -56,6 +57,14 @@ public class CardModel {
             default:
                 throw new PartException("Unsupported part type: " + part.getType());
         }
+    }
+
+    public int getBackgroundId() {
+        return backgroundId;
+    }
+
+    public void setBackgroundId(int backgroundId) {
+        this.backgroundId = backgroundId;
     }
 
     public void setCardImage(BufferedImage image) {

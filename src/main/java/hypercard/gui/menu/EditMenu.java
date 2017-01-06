@@ -2,6 +2,7 @@ package hypercard.gui.menu;
 
 import hypercard.context.GlobalContext;
 import hypercard.HyperCard;
+import hypercard.context.ToolsContext;
 
 import javax.swing.*;
 
@@ -13,12 +14,12 @@ public class EditMenu extends JMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> GlobalContext.getContext().getCard().getForegroundCanvas().undo())
+                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().undo())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> GlobalContext.getContext().getCard().getForegroundCanvas().redo())
+                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().redo())
                 .build(this);
 
         this.addSeparator();
@@ -77,9 +78,10 @@ public class EditMenu extends JMenu {
                 .withShortcut('T')
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Background")
-                .disabled()
+                .withCheckmarkProvider(ToolsContext.getInstance().isEditingBackgroundProvider())
+                .withAction(e -> ToolsContext.getInstance().toggleIsEditingBackground())
                 .withShortcut('B')
                 .build(this);
 

@@ -162,8 +162,10 @@ public class Canvas extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.drawImage(getCanvasImage(), 0, 0, null);
-        g.drawImage(getScratchImage(), 0, 0, null);
+        if (isVisible()) {
+            g.drawImage(getCanvasImage(), 0, 0, null);
+            g.drawImage(getScratchImage(), 0, 0, null);
+        }
     }
 
     protected void fireObservers(BufferedImage committedImage, BufferedImage canvasImage) {

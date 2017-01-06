@@ -1,6 +1,7 @@
 package hypercard.context;
 
 import hypercard.HyperCard;
+import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.Provider;
 import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.tools.AbstractPaintTool;
@@ -13,11 +14,14 @@ import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 
+
 public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
     private boolean shapesFilled = true;
+
+    private Provider<Boolean> isEditingBackground = new Provider<>(false);
 
     private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
     private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
@@ -40,6 +44,11 @@ public class ToolsContext implements StackModelObserver {
         return lineStrokeProvider;
     }
 
+    public void reactivateTool(Canvas canvas) {
+        toolProvider.get().deactivate();
+        toolProvider.get().activate(canvas);
+    }
+
     public Provider<AbstractPaintTool> getPaintToolProvider() {
         return toolProvider;
     }
@@ -52,7 +61,7 @@ public class ToolsContext implements StackModelObserver {
                 .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> isShapesFilled() ? HyperCardPatternFactory.create((int) t) : null))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
-                .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getForegroundCanvas())
+                .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
                 .build());
     }
 
@@ -104,6 +113,18 @@ public class ToolsContext implements StackModelObserver {
 
     public void setPattern(int patternId) {
             fillPatternProvider.set(patternId);
+    }
+
+    public boolean isEditingBackground() {
+        return isEditingBackground.get();
+    }
+
+    public Provider<Boolean> isEditingBackgroundProvider() {
+        return isEditingBackground;
+    }
+
+    public void toggleIsEditingBackground() {
+        isEditingBackground.set(!isEditingBackground.get());
     }
 
     public boolean isShapesFilled() {
@@ -179,9 +200,17 @@ public class ToolsContext implements StackModelObserver {
     }
 
     @Override
-    public void onCurrentCardChanged(CardPart newCard) {
+    public void onCardClosing(CardPart oldCard) {
         toolProvider.get().deactivate();
-        toolProvider.get().activate(newCard.getForegroundCanvas());
+    }
+
+    @Override
+    public void onCardOpening(CardPart newCard) {
+    }
+
+    @Override
+    public void onCardOpened(CardPart newCard) {
+        toolProvider.get().activate(newCard.getCanvas());
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {
@@ -197,4 +226,5 @@ public class ToolsContext implements StackModelObserver {
                 return lineStrokeProvider;
         }
     }
+
 }

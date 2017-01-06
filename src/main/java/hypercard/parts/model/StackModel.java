@@ -2,9 +2,7 @@ package hypercard.parts.model;
 
 import hypercard.parts.CardPart;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class StackModel {
 
@@ -13,6 +11,7 @@ public class StackModel {
     private Stack<Integer> backStack;
 
     private final List<CardModel> cards;
+    private final Map<Integer, BackgroundModel> backgrounds;
 
     private transient List<StackModelObserver> observers;
     private transient CardPart currentCardPart;
@@ -20,12 +19,14 @@ public class StackModel {
     private StackModel () {
         this.observers = new ArrayList<>();
         this.cards = new ArrayList<>();
+        this.backgrounds = new HashMap<>();
         this.backStack = new Stack<>();
     }
 
     public static StackModel newStack (String name) {
         StackModel stack = new StackModel();
         stack.cards.add(CardModel.emptyCardModel());
+        stack.backgrounds.put(0, BackgroundModel.emptyBackground());
         stack.name = name;
         return stack;
     }
@@ -48,7 +49,7 @@ public class StackModel {
         }
 
         try {
-            currentCardPart = CardPart.fromModel(cards.get(currentCard));
+            currentCardPart = CardPart.fromModel(cards.get(currentCard), this);
             return currentCardPart;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
@@ -103,6 +104,8 @@ public class StackModel {
             return getCurrentCard();
         }
 
+        fireOnCardClosing(currentCardPart);
+
         // When requested, push the current card onto the backstack
         if (push) {
             backStack.push(currentCard);
@@ -110,17 +113,36 @@ public class StackModel {
 
         try {
             currentCard = card;
-            currentCardPart = CardPart.fromModel(cards.get(currentCard));
-            fireOnCurrentCardChanged(currentCardPart);
+            currentCardPart = CardPart.fromModel(cards.get(currentCard), this);
+
+            fireOnCardOpening(currentCardPart);
+
             return currentCardPart;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
     }
 
-    private void fireOnCurrentCardChanged (CardPart currentCard) {
+    public BackgroundModel getBackground(int backgroundId) {
+        return backgrounds.get(backgroundId);
+    }
+
+    private void fireOnCardClosing (CardPart closingCard) {
         for (StackModelObserver observer : observers) {
-            observer.onCurrentCardChanged(currentCard);
+            observer.onCardOpening(closingCard);
         }
     }
+
+    private void fireOnCardOpening (CardPart openingCard) {
+        for (StackModelObserver observer : observers) {
+            observer.onCardOpening(openingCard);
+        }
+    }
+
+    public void fireOnCardOpened (CardPart openedCard) {
+        for (StackModelObserver observer : observers) {
+            observer.onCardOpening(openedCard);
+        }
+    }
+
 }

@@ -9,12 +9,12 @@
 package hypercard.parts;
 
 import hypercard.context.PartsTable;
-import hypercard.parts.model.AbstractPartModel;
-import hypercard.parts.model.ButtonModel;
-import hypercard.parts.model.CardModel;
-import hypercard.parts.model.FieldModel;
-import hypercard.paint.canvas.*;
+import hypercard.context.ToolsContext;
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.canvas.CanvasObserver;
+import hypercard.paint.canvas.UndoableCanvas;
+import hypercard.parts.model.*;
+import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.containers.PartSpecifier;
 
@@ -26,14 +26,20 @@ import java.awt.image.BufferedImage;
 
 public class CardPart extends JLayeredPane implements ComponentListener, CanvasObserver {
 
-    private final static int CANVAS_LAYER = 0;
-    private final static int PARTS_LAYER = 1;
+    private final static int BACKGROUND_CANVAS_LAYER = 0;
+    private final static int BACKGROUND_PARTS_LAYER = 1;
+    private final static int FOREGROUND_CANVAS_LAYER = 2;
+    private final static int FOREGROUND_PARTS_LAYER = 3;
 
     private CardModel model;
 
     private PartsTable<FieldPart> fields = new PartsTable<>();
     private PartsTable<ButtonPart> buttons = new PartsTable<>();
-    private UndoableCanvas canvas;
+
+    private UndoableCanvas foregroundCanvas;
+    private UndoableCanvas backgroundCanvas;
+
+    private transient StackModel stack;
 
     private CardPart() {
         super();
@@ -42,9 +48,10 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
         this.addComponentListener(this);
     }
 
-    public static CardPart fromModel (CardModel model) throws Exception {
+    public static CardPart fromModel (CardModel model, StackModel stack) throws Exception {
         CardPart card = new CardPart();
         card.model = model;
+        card.stack = stack;
 
         for (AbstractPartModel thisPart : model.getPartModels()) {
             switch (thisPart.getType()) {
@@ -61,15 +68,23 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
             }
         }
 
-        card.canvas = new UndoableCanvas(model.getCardImage());
-        card.canvas.addObserver(card);
-        card.setLayer(card.canvas, CANVAS_LAYER);
-        card.add(card.canvas);
+        card.foregroundCanvas = new UndoableCanvas(model.getCardImage());
+        card.foregroundCanvas.addObserver(card);
+        card.backgroundCanvas = new UndoableCanvas(card.getCardBackground().getBackgroundImage());
+        card.backgroundCanvas.addObserver(card);
+
+        card.setLayer(card.foregroundCanvas, FOREGROUND_CANVAS_LAYER);
+        card.add(card.foregroundCanvas);
+
+        card.setLayer(card.backgroundCanvas, BACKGROUND_CANVAS_LAYER);
+        card.add(card.backgroundCanvas);
+
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, newValue) -> {
+            ToolsContext.getInstance().reactivateTool(card.getCanvas());
+            card.foregroundCanvas.setVisible(!(boolean)newValue);
+        });
 
         return card;
-    }
-
-    public void partOpened() {
     }
 
     public void addField(FieldPart field) throws PartException {
@@ -105,8 +120,12 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
             throw new RuntimeException("Unhandled part type");
     }
 
-    public UndoableCanvas getForegroundCanvas() {
-        return canvas;
+    public UndoableCanvas getCanvas() {
+        return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
+    }
+
+    public BackgroundModel getCardBackground() {
+        return stack.getBackground(model.getBackgroundId());
     }
 
     private void removeSwingComponent (Component component) {
@@ -117,7 +136,7 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
 
     private void addSwingComponent (Component component, Rectangle bounds) {
         component.setBounds(bounds);
-        setLayer(component, PARTS_LAYER);
+        setLayer(component, FOREGROUND_PARTS_LAYER);
         add(component);
         revalidate();
         repaint();
@@ -131,10 +150,10 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
         return buttons.getNextId();
     }
 
-
     @Override
     public void componentResized(ComponentEvent e) {
-        canvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+        foregroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+        backgroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
     }
 
     @Override
@@ -144,7 +163,10 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
 
     @Override
     public void componentShown(ComponentEvent e) {
-        canvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+        foregroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+        backgroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
+
+        stack.fireOnCardOpened(this);
     }
 
     @Override
@@ -154,6 +176,10 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasO
 
     @Override
     public void onCommit(Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
-        model.setCardImage(canvasImage);
+        if (ToolsContext.getInstance().isEditingBackground()) {
+            getCardBackground().setBackgroundImage(canvasImage);
+        } else {
+            model.setCardImage(canvasImage);
+        }
     }
 }
