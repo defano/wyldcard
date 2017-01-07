@@ -80,12 +80,12 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Slant")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SLANT))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Distort")
-                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SLANT))
+                .disabled()
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

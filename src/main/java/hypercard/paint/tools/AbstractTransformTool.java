@@ -11,9 +11,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     private final static int HANDLE_SIZE = 8;
 
-    private boolean selectionComplete = false;
-
-    protected BufferedImage originalImage;
+    private BufferedImage originalImage;
     private Rectangle selectionBounds;
     private FlexQuadrilateral transformBounds;
 
@@ -21,41 +19,48 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     private boolean dragTopLeft, dragTopRight, dragBottomRight, dragBottomLeft;
 
     public abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition);
+
     public abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition);
+
     public abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition);
+
     public abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition);
 
     public AbstractTransformTool(PaintToolType type) {
         super(type);
     }
 
-    public AbstractTransformTool(PaintToolType type, Rectangle selectionBounds) {
-        super(type);
-        this.transformBounds = new FlexQuadrilateral(selectionBounds);
-        selectionComplete = true;
-    }
-
     @Override
     public void mousePressed(MouseEvent e) {
-        if (!selectionComplete) {
-            super.mousePressed(e);
-        }
 
-        else {
+        // User has already made selection; we'll handle the mouse press
+        if (hasSelection()) {
+
+            // User is clicking a drag handle
             dragTopLeft = topLeftHandle.contains(e.getPoint());
             dragTopRight = topRightHandle.contains(e.getPoint());
             dragBottomLeft = bottomLeftHandle.contains(e.getPoint());
             dragBottomRight = bottomRightHandle.contains(e.getPoint());
+
+            // User is clicking outside the selection bounds; clear selection
+            if (!getSelectionBounds().contains(e.getPoint())) {
+                putDownSelection();
+                clearSelection();
+            }
+        }
+
+        // No selection; delegate to selection tool to create a selection
+        else {
+            super.mousePressed(e);
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if (!selectionComplete) {
-            super.mouseDragged(e);
-        }
 
-        else {
+        // Selection exists, see if we're dragging a handle
+        if (hasSelection()) {
+
             if (dragTopLeft) {
                 moveTopLeft(transformBounds, e.getPoint());
             } else if (dragTopRight) {
@@ -68,12 +73,21 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
             drawSelection();
         }
+
+        // No selection, delegate to selection tool to define selection
+        else {
+            super.mouseDragged(e);
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (!selectionComplete) {
+
+        // User is completing selection
+        if (!hasSelection()) {
             super.mouseReleased(e);
+
+            // Grab a copy of the selected image before we begin transforming it
             originalImage = getSelectedImage();
         }
     }
@@ -95,7 +109,6 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     @Override
     protected void completeSelectionBounds(Point finalPoint) {
-        selectionComplete = true;
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
@@ -117,29 +130,31 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 
+    protected BufferedImage getOriginalImage() {
+        return originalImage;
+    }
+
     protected void drawSelectionBounds() {
         super.drawSelectionBounds();
 
         if (hasSelection()) {
-            drawDragHandles();
+
+            // Render drag handles on selection bounds
+            Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+            g.setPaint(Color.BLACK);
+
+            topLeftHandle = new Rectangle(transformBounds.getTopLeft().x, transformBounds.getTopLeft().y, HANDLE_SIZE, HANDLE_SIZE);
+            topRightHandle = new Rectangle(transformBounds.getTopRight().x - HANDLE_SIZE, transformBounds.getTopRight().y, HANDLE_SIZE, HANDLE_SIZE);
+            bottomRightHandle = new Rectangle(transformBounds.getBottomRight().x - HANDLE_SIZE, transformBounds.getBottomRight().y - HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE);
+            bottomLeftHandle = new Rectangle(transformBounds.getBottomLeft().x, transformBounds.getBottomLeft().y - HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE);
+
+            g.fill(topLeftHandle);
+            g.fill(topRightHandle);
+            g.fill(bottomRightHandle);
+            g.fill(bottomLeftHandle);
+
+            g.dispose();
         }
-    }
-
-    private void drawDragHandles() {
-        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
-        g.setPaint(Color.BLACK);
-
-        topLeftHandle = new Rectangle(transformBounds.getTopLeft().x, transformBounds.getTopLeft().y, HANDLE_SIZE, HANDLE_SIZE);
-        topRightHandle = new Rectangle(transformBounds.getTopRight().x - HANDLE_SIZE, transformBounds.getTopRight().y, HANDLE_SIZE, HANDLE_SIZE);
-        bottomRightHandle = new Rectangle(transformBounds.getBottomRight().x - HANDLE_SIZE, transformBounds.getBottomRight().y - HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE);
-        bottomLeftHandle = new Rectangle(transformBounds.getBottomLeft().x, transformBounds.getBottomLeft().y - HANDLE_SIZE, HANDLE_SIZE, HANDLE_SIZE);
-
-        g.fill(topLeftHandle);
-        g.fill(topRightHandle);
-        g.fill(bottomRightHandle);
-        g.fill(bottomLeftHandle);
-
-        g.dispose();
     }
 
 }
