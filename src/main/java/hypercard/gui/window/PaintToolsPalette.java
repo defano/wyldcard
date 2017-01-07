@@ -2,19 +2,20 @@ package hypercard.gui.window;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import hypercard.HyperCard;
+import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
-import hypercard.context.ToolsContext;
-import hypercard.paint.model.ProvidedValueObserver;
-import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.model.PaintToolType;
-import hypercard.HyperCard;
+import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueObserver {
+public class PaintToolsPalette extends HyperCardWindow implements Observer {
     private JPanel palettePanel;
 
     private JButton selection;
@@ -120,7 +121,8 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
     }
 
     @Override
-    public void onChanged(Object oldValue, Object newValue) {
+    public void update(Observable o, Object newValue) {
+
         if (newValue instanceof AbstractPaintTool) {
             AbstractPaintTool selectedTool = (AbstractPaintTool) newValue;
             JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());

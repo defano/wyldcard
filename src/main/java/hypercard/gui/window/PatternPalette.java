@@ -4,14 +4,15 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.paint.model.ProvidedValueObserver;
 import hypercard.paint.patterns.HyperCardPatternFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PatternPalette extends HyperCardWindow implements ProvidedValueObserver {
+public class PatternPalette extends HyperCardWindow implements Observer {
 
     private final int PATTERN_WIDTH = 30;
     private final int PATTERN_HEIGHT = 20;
@@ -101,7 +102,7 @@ public class PatternPalette extends HyperCardWindow implements ProvidedValueObse
     }
 
     @Override
-    public void onChanged(Object oldValue, Object newValue) {
+    public void update(Observable o, Object newValue) {
         if (newValue instanceof Integer) {
             for (JButton thisButton : allPatterns) {
                 thisButton.setEnabled(true);

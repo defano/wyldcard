@@ -4,12 +4,13 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.paint.model.ProvidedValueObserver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
-public class LinesPalette extends HyperCardWindow implements ProvidedValueObserver {
+public class LinesPalette extends HyperCardWindow implements Observer {
     private JPanel linesPanel;
 
     private JButton px1;
@@ -44,7 +45,7 @@ public class LinesPalette extends HyperCardWindow implements ProvidedValueObserv
     }
 
     @Override
-    public void onChanged(Object oldValue, Object newValue) {
+    public void update(Observable o, Object newValue) {
 
         if (newValue instanceof BasicStroke) {
             int newWidth = (int) ((BasicStroke) newValue).getLineWidth();

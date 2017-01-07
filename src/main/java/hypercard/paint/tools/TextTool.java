@@ -3,14 +3,15 @@ package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.model.ProvidedValueObserver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
+import java.util.Observer;
 
-public class TextTool extends AbstractPaintTool implements ProvidedValueObserver {
+public class TextTool extends AbstractPaintTool implements Observer {
 
     private final JTextArea textArea;
 
@@ -31,7 +32,7 @@ public class TextTool extends AbstractPaintTool implements ProvidedValueObserver
 
         commitTextImage(textArea.getX(), textArea.getY());
         removeTextArea();
-        getFontProvider().removeObserver(this);
+        getFontProvider().deleteObserver(this);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class TextTool extends AbstractPaintTool implements ProvidedValueObserver
     }
 
     @Override
-    public void onChanged(Object oldValue, Object newValue) {
+    public void update(Observable o, Object newValue) {
         if (newValue instanceof Font) {
             textArea.setFont((Font) newValue);
         }

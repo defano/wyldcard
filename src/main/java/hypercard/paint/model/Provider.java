@@ -1,12 +1,10 @@
 package hypercard.paint.model;
 
-import java.util.ArrayList;
+import java.util.Observable;
 
-public class Provider<T> {
+public class Provider<T> extends Observable {
 
     private T value;
-
-    private final ArrayList<ProvidedValueObserver> observers = new ArrayList<>();
 
     public Provider(Provider derivedFrom, ProviderTransform<T> transform) {
         derivedFrom.addObserver((oldValue, newValue) -> set(transform.transform(newValue)));
@@ -17,29 +15,18 @@ public class Provider<T> {
         this.value = initialValue;
     }
 
+    public static <T> Provider<T> copyOf(Provider<T> provider) {
+        return new Provider<>(provider, value -> (T) value);
+    }
+
     public T get() {
         return value;
     }
 
     public void set(T value) {
-        T oldValue = this.value;
         this.value = value;
 
-        fireOnChanged(oldValue, this.value);
-    }
-
-    public void addObserver(ProvidedValueObserver observer) {
-        observers.add(observer);
-        observer.onChanged(null, get());
-    }
-
-    public boolean removeObserver(ProvidedValueObserver observer) {
-        return observers.remove(observer);
-    }
-
-    private void fireOnChanged(T oldValue, T newValue) {
-        for (ProvidedValueObserver thisObserver : observers) {
-            thisObserver.onChanged(oldValue, newValue);
-        }
+        setChanged();
+        notifyObservers(this.value);
     }
 }

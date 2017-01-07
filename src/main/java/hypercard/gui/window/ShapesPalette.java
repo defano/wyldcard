@@ -4,12 +4,13 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.paint.model.ProvidedValueObserver;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
-public class ShapesPalette extends HyperCardWindow implements ProvidedValueObserver {
+public class ShapesPalette extends HyperCardWindow implements Observer {
 
     private JPanel shapesPanel;
 
@@ -65,7 +66,7 @@ public class ShapesPalette extends HyperCardWindow implements ProvidedValueObser
     }
 
     @Override
-    public void onChanged(Object oldValue, Object newValue) {
+    public void update(Observable o, Object newValue) {
         if (newValue instanceof Integer) {
             for (JButton thisShape : allShapes) {
                 thisShape.setEnabled(true);
