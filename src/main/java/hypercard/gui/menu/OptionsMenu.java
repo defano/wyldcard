@@ -85,7 +85,7 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Distort")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SLANT))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

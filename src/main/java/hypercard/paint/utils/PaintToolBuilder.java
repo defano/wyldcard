@@ -141,6 +141,9 @@ public class PaintToolBuilder {
             case LASSO:
                 selectedTool = new LassoTool();
                 break;
+            case SLANT:
+                selectedTool = new SlantTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);

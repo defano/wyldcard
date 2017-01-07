@@ -115,7 +115,7 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
                 return lasso;
 
             default:
-                throw new IllegalStateException("Bug! Unimplemented tool type " + paintToolType);
+                return null;
         }
     }
 
@@ -123,14 +123,18 @@ public class PaintToolsPalette extends HyperCardWindow implements ProvidedValueO
     public void onChanged(Object oldValue, Object newValue) {
         if (newValue instanceof AbstractPaintTool) {
             AbstractPaintTool selectedTool = (AbstractPaintTool) newValue;
+            JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
 
-            for (JButton thisToolButton : allTools) {
-                if (thisToolButton != null) {
-                    thisToolButton.setEnabled(true);
+            if (selectedToolButton != null) {
+
+                for (JButton thisToolButton : allTools) {
+                    if (thisToolButton != null) {
+                        thisToolButton.setEnabled(true);
+                    }
                 }
-            }
 
-            getButtonForTool(selectedTool.getToolType()).setEnabled(false);
+                selectedToolButton.setEnabled(false);
+            }
         }
     }
 
