@@ -51,26 +51,6 @@ public class WindowBuilder {
         frame.setAlwaysOnTop(true);
         frame.setFocusableWindowState(false);
 
-        return sharesFocusWith(overWindow);
-    }
-
-    public WindowBuilder sharesFocusWith(HyperCardWindow parentWindow) {
-        if (parentWindow.getWindowFrame() == null) {
-            throw new IllegalStateException("Parent window must be built before a palette can be added to it.");
-        }
-
-        parentWindow.getWindowFrame().addWindowFocusListener(new WindowFocusListener() {
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-                window.setVisible(window.isShown());
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-                window.setVisible(false);
-            }
-        });
-
         return this;
     }
 

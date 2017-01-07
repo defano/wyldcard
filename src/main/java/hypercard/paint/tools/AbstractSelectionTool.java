@@ -121,6 +121,15 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         }
     }
 
+    public BufferedImage getSelectedImage() {
+        return selectedImage;
+    }
+
+    protected void setSelectedImage(BufferedImage selectedImage) {
+        this.selectedImage = selectedImage;
+        drawSelection();
+    }
+
     protected Stroke getMarchingAnts() {
         return new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, new float[]{5.0f}, antsPhase);
     }
@@ -171,7 +180,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * Make the canvas image bounded by the given selection rectangle the current selected image.
      *
      */
-    private void pickupSelection() {
+    protected void pickupSelection() {
         getCanvas().clearScratch();
 
         Shape selectionBounds = getSelectionBounds();
@@ -194,7 +203,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * Drops the selected image onto the canvas and clears the selection. This has the effect of completing a select-
      * and-move operation.
      */
-    private void putDownSelection() {
+    protected void putDownSelection() {
 
         if (hasSelection()) {
             getCanvas().clearScratch();
@@ -212,7 +221,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * Draws the provided image and selection bounds ("marching ants") onto the scratch buffer at the given location.
      *
      */
-    private void drawSelection() {
+    protected void drawSelection() {
         getCanvas().clearScratch();
 
         Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
@@ -224,7 +233,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         getCanvas().repaintCanvas();
     }
 
-    private void drawSelectionBounds() {
+    protected void drawSelectionBounds() {
         Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
 
         g.setStroke(getMarchingAnts());

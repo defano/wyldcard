@@ -55,6 +55,15 @@ public class MathUtils {
         return lineAtAngle(p1, (int) length, nearestAngle);
     }
 
+    public static double angleBetweenTwoPoints(Point origin, Point p1, Point p2) {
+
+        double angle1 = Math.atan2(p1.y - origin.y, p1.x - origin.x);
+        double angle2 = Math.atan2(p2.y - origin.y, p2.x - origin.x);
+
+        return angle1 - angle2;
+    }
+
+
     /**
      * Returns a point closest to the given point but which remains inside the provided boundary.
      *
