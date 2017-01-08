@@ -1,5 +1,5 @@
 package hypercard.paint.model;
 
-public interface ProviderTransform<T> {
-    T transform(Object value);
+public interface ProviderTransform<S, T> {
+    T transform(S value);
 }

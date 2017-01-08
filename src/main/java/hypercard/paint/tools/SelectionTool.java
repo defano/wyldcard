@@ -5,6 +5,7 @@ import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class SelectionTool extends AbstractSelectionTool {
@@ -16,7 +17,7 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(currentPoint);
 
@@ -31,7 +32,7 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected void completeSelectionBounds(Point finalPoint) {
+    public void completeSelectionBounds(Point finalPoint) {
         // Nothing to do
     }
 
@@ -41,12 +42,17 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected Shape getSelectionBounds() {
+    public void setSelectionBounds(Rectangle bounds) {
+        selectionBounds = bounds;
+    }
+
+    @Override
+    public Shape getSelectionBounds() {
         return selectionBounds;
     }
 
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 

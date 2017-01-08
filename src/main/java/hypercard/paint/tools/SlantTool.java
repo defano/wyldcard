@@ -1,5 +1,6 @@
 package hypercard.paint.tools;
 
+import hypercard.paint.Transform;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.utils.FlexQuadrilateral;
 import hypercard.paint.utils.MathUtils;
@@ -20,7 +21,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().x = newPosition.x;
 
         int xTranslation = (quadrilateral.getTopLeft().x - getSelectionBounds().getBounds().x) / 2;
-        slant(quadrilateral, xTranslation);
+        setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
     @Override
@@ -29,7 +30,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopRight().x = newPosition.x;
 
         int xTranslation = (quadrilateral.getTopLeft().x - getSelectionBounds().getBounds().x) / 2;
-        slant(quadrilateral, xTranslation);
+        setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
     @Override
@@ -38,7 +39,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomLeft().x = newPosition.x;
 
         int xTranslation = ((getSelectionBounds().getBounds().x + getSelectionBounds().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
-        slant(quadrilateral, xTranslation);
+        setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
     @Override
@@ -47,19 +48,6 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomRight().x = newPosition.x;
 
         int xTranslation = ((getSelectionBounds().getBounds().x + getSelectionBounds().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
-        slant(quadrilateral, xTranslation);
+        setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
-
-    private void slant(FlexQuadrilateral quadrilateral, int xTranslation) {
-        Point p = new Point(quadrilateral.getBottomLeft().x, quadrilateral.getTopLeft().y);
-        double theta = MathUtils.angleBetweenTwoPoints(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
-
-        AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, 0);
-        transform.shear(Math.tan(theta), 0);
-
-        transform.translate(xTranslation,0);
-        AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
-        setSelectedImage(op.filter(getOriginalImage(),null));
-    }
-
 }

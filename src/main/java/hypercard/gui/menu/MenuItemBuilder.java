@@ -1,16 +1,20 @@
 package hypercard.gui.menu;
 
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.Provider;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.util.Observable;
+import java.util.Observer;
 
 public class MenuItemBuilder {
 
     private JMenuItem item;
-    private Provider<Boolean> checkmarkProvider;
+    private ImmutableProvider<Boolean> checkmarkProvider;
+    private ImmutableProvider<Boolean> disabledProvider;
 
     private MenuItemBuilder(JMenuItem item) {
         this.item = item;
@@ -48,13 +52,18 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public MenuItemBuilder withCheckmarkProvider(Provider<Boolean> checkmarkProvider) {
+    public MenuItemBuilder withCheckmarkProvider(ImmutableProvider<Boolean> checkmarkProvider) {
         this.checkmarkProvider = checkmarkProvider;
         return this;
     }
 
     public MenuItemBuilder disabled () {
         this.item.setEnabled(false);
+        return this;
+    }
+
+    public MenuItemBuilder withDisabledProvider(ImmutableProvider<Boolean> disabledProvider) {
+        this.disabledProvider = disabledProvider;
         return this;
     }
 
@@ -71,10 +80,15 @@ public class MenuItemBuilder {
     }
 
     public void build (JMenu intoMenu) {
+
         if (checkmarkProvider != null && item instanceof JCheckBoxMenuItem) {
-            checkmarkProvider.addObserver((oldValue, newValue) -> {
-                item.setSelected((boolean) newValue);
-            });
+            checkmarkProvider.addObserver((o, newValue) -> item.setSelected((boolean) newValue));
+            item.setSelected(checkmarkProvider.get());
+        }
+
+        if (disabledProvider != null) {
+            disabledProvider.addObserver((o, arg) -> item.setEnabled(!(boolean) arg));
+            item.setEnabled(!disabledProvider.get());
         }
 
         intoMenu.add(item);

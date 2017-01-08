@@ -5,6 +5,7 @@ import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 
@@ -17,12 +18,17 @@ public class LassoTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected void resetSelection() {
+    public void resetSelection() {
         selectionBounds = null;
     }
 
     @Override
-    protected void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void setSelectionBounds(Rectangle bounds) {
+        selectionBounds = new GeneralPath(bounds);
+    }
+
+    @Override
+    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
         if (selectionBounds == null) {
             selectionBounds = new Path2D.Double();
             selectionBounds.moveTo(initialPoint.getX(), initialPoint.getY());
@@ -32,17 +38,17 @@ public class LassoTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected void completeSelectionBounds(Point finalPoint) {
+    public void completeSelectionBounds(Point finalPoint) {
         selectionBounds.closePath();
     }
 
     @Override
-    protected Shape getSelectionBounds() {
+    public Shape getSelectionBounds() {
         return selectionBounds;
     }
 
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));
     }
 }

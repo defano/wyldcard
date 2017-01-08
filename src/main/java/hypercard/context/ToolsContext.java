@@ -2,9 +2,11 @@ package hypercard.context;
 
 import hypercard.HyperCard;
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.Provider;
 import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.tools.AbstractPaintTool;
+import hypercard.paint.tools.AbstractSelectionTool;
 import hypercard.paint.utils.PaintToolBuilder;
 import hypercard.paint.model.PaintToolType;
 import hypercard.parts.CardPart;
@@ -13,6 +15,7 @@ import hypertalk.ast.common.Tool;
 import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 
 public class ToolsContext implements StackModelObserver {
@@ -22,6 +25,7 @@ public class ToolsContext implements StackModelObserver {
     private boolean shapesFilled = true;
 
     private Provider<Boolean> isEditingBackground = new Provider<>(false);
+    private ImmutableProvider<BufferedImage> selectedImageProvider = new ImmutableProvider<>();
 
     private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
     private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
@@ -53,16 +57,30 @@ public class ToolsContext implements StackModelObserver {
         return toolProvider;
     }
 
+    public AbstractPaintTool getPaintTool() {
+        return toolProvider.get();
+    }
+
     public void setSelectedToolType(PaintToolType selectedToolType) {
         toolProvider.get().deactivate();
-        toolProvider.set(PaintToolBuilder.create(selectedToolType)
+        AbstractPaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(new Provider<>(fillPatternProvider, t -> isShapesFilled() ? HyperCardPatternFactory.create((int) t) : null))
+                .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() ? HyperCardPatternFactory.create((int) t) : (Paint) null))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
-                .build());
+                .build();
+
+        if (selectedTool instanceof AbstractSelectionTool) {
+            selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
+        }
+
+        toolProvider.set(selectedTool);
+    }
+
+    public ImmutableProvider<BufferedImage> getSelectedImageProvider() {
+        return selectedImageProvider;
     }
 
     public void setShapeSides(int shapeSides) {

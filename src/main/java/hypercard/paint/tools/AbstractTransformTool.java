@@ -5,6 +5,7 @@ import hypercard.paint.utils.FlexQuadrilateral;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public abstract class AbstractTransformTool extends AbstractSelectionTool {
@@ -61,6 +62,10 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         // Selection exists, see if we're dragging a handle
         if (hasSelection()) {
 
+            if (dragTopLeft || dragTopRight || dragBottomLeft || dragBottomRight) {
+                setChanged();
+            }
+
             if (dragTopLeft) {
                 moveTopLeft(transformBounds, e.getPoint());
             } else if (dragTopRight) {
@@ -93,7 +98,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(currentPoint);
 
@@ -108,7 +113,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected void completeSelectionBounds(Point finalPoint) {
+    public void completeSelectionBounds(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
@@ -121,12 +126,17 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected Shape getSelectionBounds() {
+    public void setSelectionBounds(Rectangle bounds) {
+        throw new IllegalStateException("No implemented");
+    }
+
+    @Override
+    public Shape getSelectionBounds() {
         return transformBounds != null ? transformBounds.getShape() : selectionBounds;
     }
 
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 

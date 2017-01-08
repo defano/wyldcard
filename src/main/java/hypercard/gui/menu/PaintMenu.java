@@ -1,10 +1,13 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.tools.AbstractPaintTool;
+import hypercard.paint.tools.AbstractSelectionTool;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class PaintMenu extends JMenu {
 
@@ -63,22 +66,26 @@ public class PaintMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Left")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).rotateLeft())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Right")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).rotateRight())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Vertical")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).flipVerical())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Horizontal")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).flipHorizontal())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         this.addSeparator();

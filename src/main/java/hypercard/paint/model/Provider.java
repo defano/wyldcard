@@ -1,26 +1,30 @@
 package hypercard.paint.model;
 
 import java.util.Observable;
+import java.util.Observer;
 
-public class Provider<T> extends Observable {
+public class Provider<T> extends ImmutableProvider<T> implements Observer {
 
-    private T value;
+    private Observable source;
+    private ProviderTransform transform;
 
-    public Provider(Provider derivedFrom, ProviderTransform<T> transform) {
-        derivedFrom.addObserver((oldValue, newValue) -> set(transform.transform(newValue)));
-        set(transform.transform(derivedFrom.get()));
+    public Provider() {
+        value = null;
     }
 
     public Provider(T initialValue) {
         this.value = initialValue;
     }
 
-    public static <T> Provider<T> copyOf(Provider<T> provider) {
-        return new Provider<>(provider, value -> (T) value);
+    private <S> Provider(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
+        this.transform = transform;
+
+        setSource(derivedFrom);
+        update(derivedFrom, derivedFrom.get());
     }
 
-    public T get() {
-        return value;
+    public static <S, T> Provider<T> derivedFrom(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
+        return new Provider<T>(derivedFrom, transform);
     }
 
     public void set(T value) {
@@ -29,4 +33,14 @@ public class Provider<T> extends Observable {
         setChanged();
         notifyObservers(this.value);
     }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (transform != null) {
+            set((T) transform.transform(arg));
+        } else {
+            set((T) arg);
+        }
+    }
+
 }

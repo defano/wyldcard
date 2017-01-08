@@ -1,6 +1,7 @@
 package hypercard.paint.utils;
 
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 import hypercard.paint.tools.*;
