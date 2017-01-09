@@ -63,6 +63,17 @@ public class MathUtils {
         return angle1 - angle2;
     }
 
+    /**
+     * Changes the location of rect such that it's center is the same as inBounds center.
+     * @param rect
+     * @param inBounds
+     */
+    public static void centerBounds(Rectangle rect, Rectangle inBounds) {
+        int x = inBounds.x + ((inBounds.width - rect.width) / 2);
+        int y = inBounds.y + ((inBounds.height - rect.height) / 2);
+
+        rect.setLocation(x, y);
+    }
 
     /**
      * Returns a point closest to the given point but which remains inside the provided boundary.

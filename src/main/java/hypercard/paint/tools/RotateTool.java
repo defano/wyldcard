@@ -6,6 +6,7 @@ import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class RotateTool extends AbstractSelectionTool {
@@ -23,11 +24,11 @@ public class RotateTool extends AbstractSelectionTool {
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (hasSelection() && getSelectionBounds().contains(e.getPoint())) {
-            originalImage = getSelectedImage();
-            originalSelectionBounds = getSelectionBounds();
+        if (hasSelection() && getSelectionOutline().contains(e.getPoint())) {
+            originalImage = square(getSelectedImage());
+            originalSelectionBounds = getSelectionOutline();
 
-            Rectangle selectionBounds = getSelectionBounds().getBounds();
+            Rectangle selectionBounds = getSelectionOutline().getBounds();
             angleOrigin = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
 
         } else {
@@ -48,7 +49,7 @@ public class RotateTool extends AbstractSelectionTool {
     @Override
     public void mouseReleased(MouseEvent e) {
         if (angleOrigin != null || angleDestination != null) {
-            putDownSelection();
+            finishSelection();
         } else {
             super.mouseReleased(e);
         }
@@ -82,7 +83,7 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public Shape getSelectionBounds() {
+    public Shape getSelectionOutline() {
         return selectionBounds;
     }
 
@@ -92,14 +93,49 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    protected Point getSelectedImageAnchor() {
-        return originalSelectionBounds == null ? getSelectionBounds().getBounds().getLocation() : originalSelectionBounds.getBounds().getLocation();
+    protected Point getSelectedImageLocation() {
+        if (originalSelectionBounds == null) {
+            return getSelectionOutline().getBounds().getLocation();
+        } else {
+            Rectangle enlargedBounds = originalImage.getRaster().getBounds();
+            MathUtils.centerBounds(enlargedBounds, originalSelectionBounds.getBounds());
+            return enlargedBounds.getLocation();
+        }
+    }
+
+    /**
+     * Square the bounds of the given image so that the resulting image has equal height and width (whichever is
+     * the larger of the given image) and translate the graphic such that whichever dimension was adjusted, the
+     * resultant image is centered in that direction.
+     *
+     * @param image
+     * @return
+     */
+    private BufferedImage square(BufferedImage image) {
+        int max = Math.max(image.getHeight(), image.getWidth());
+
+        int deltaX = 0;
+        int deltaY = 0;
+
+        if (image.getHeight() > image.getWidth()) {
+            deltaX = image.getHeight() - image.getWidth();
+        } else {
+            deltaY = image.getWidth() - image.getHeight();
+        }
+
+        BufferedImage enlarged = new BufferedImage(max, max, image.getType());
+
+        Graphics2D g = enlarged.createGraphics();
+        g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2, deltaY / 2), null);
+        g.dispose();
+
+        return enlarged;
     }
 
     private void drawRotation(double angle) {
+        setDirty();
 
-        setChanged();
         selectionBounds = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalSelectionBounds);
-        setSelectedImage(Transform.rotate(originalImage, angle, originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().height / 2));
+        setSelectedImage(Transform.rotate(originalImage, angle, originalImage.getWidth() / 2, originalImage.getHeight() / 2));
     }
 }
