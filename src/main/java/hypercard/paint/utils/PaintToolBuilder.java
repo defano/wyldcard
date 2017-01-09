@@ -1,7 +1,6 @@
 package hypercard.paint.utils;
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 import hypercard.paint.tools.*;
@@ -19,19 +18,12 @@ public class PaintToolBuilder {
     private Provider<Integer> shapeSidesProvider;
     private Provider<Font> fontProvider;
 
-    private static Canvas defaultCanvas;
-
     private PaintToolBuilder(PaintToolType toolType) {
         this.type = toolType;
     }
 
     public static PaintToolBuilder create(PaintToolType toolType) {
         return new PaintToolBuilder(toolType);
-    }
-
-    public PaintToolBuilder makeActive() {
-        this.canvas = defaultCanvas;
-        return this;
     }
 
     public PaintToolBuilder makeActiveOnCanvas(Canvas canvas) {
@@ -133,8 +125,8 @@ public class PaintToolBuilder {
             case FILL:
                 selectedTool = new FillTool();
                 break;
-            case SPRAYPAINT:
-                selectedTool = new SpraypaintTool();
+            case AIRBRUSH:
+                selectedTool = new AirbrushTool();
                 break;
             case CURVE:
                 selectedTool = new CurveTool();
@@ -178,9 +170,5 @@ public class PaintToolBuilder {
         }
 
         return selectedTool;
-    }
-
-    public static void setDefaultCanvas(Canvas canvas) {
-        defaultCanvas = canvas;
     }
 }

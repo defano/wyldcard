@@ -55,7 +55,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
         fill.addActionListener(e -> toolSelected(PaintToolType.FILL));
-        spraypaint.addActionListener(e -> toolSelected(PaintToolType.SPRAYPAINT));
+        spraypaint.addActionListener(e -> toolSelected(PaintToolType.AIRBRUSH));
         curve.addActionListener(e -> toolSelected(PaintToolType.CURVE));
         lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
 
@@ -108,7 +108,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
                 return text;
             case FILL:
                 return fill;
-            case SPRAYPAINT:
+            case AIRBRUSH:
                 return spraypaint;
             case CURVE:
                 return curve;

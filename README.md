@@ -197,9 +197,9 @@ Parts do not need to implement a handler for every message they might receive. M
 
 A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, this version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window).
 
-In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background, which are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between two or more cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
+In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background, which are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
 
-For simplification, this implementation does not allow scripting of cards or stacks, nor does it support the concept of a foreground and background.
+For simplification, this implementation does not allow scripting of cards, stacks or backgrounds. Currently, this implementation supports a single background shared across all cards but only for the purpose of graphics (parts cannot yet be added to the background--coming soon).
 
 In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
 
@@ -405,8 +405,9 @@ item 1 of the mouseloc < 100 -- true if the mouse is towards the left of the car
 "hello" contains "el" and "goodbye" contains "bye" -- true
 3 * 5 is not 15 -- false
 "Hello" && " World" -- produces "Hello World"
-"Hyper" > "Card" – true, "Hyper" is alphabetically after "Card"
+"Hyper" > "Card" -- true, "Hyper" is alphabetically after "Card"
 not "nonsense" -- syntax error, "nonsense" is not a boolean
+false is not "tr" && "ue" -- true, concatenating 'tr' with 'ue' produces a logical value
 ```
 
 ## Commands
@@ -438,7 +439,11 @@ HyperCard provides both a suite of built-in functions as well as the ability for
 
 ### Built-in Functions
 
-There are several equivalent syntax forms that can be used when invoking a built in function. For built-in functions that accept an argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`; for functions that don't take an argument, `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
+There are several equivalent syntax forms that can be used when invoking a built in function:
+
+* For built-in functions that accept a single argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`
+* For built-in functions that don't accept any arguments, use `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
+* For built-in functions that accept multiple arguments, use `function(<arg1>, <arg2>, ...)`.
 
 This implementation includes the following built-in functions:
 
@@ -463,6 +468,8 @@ Function | Description
 
 A user may define a function of their own creation anywhere inside of a script. Note that user-defined functions cannot be nested; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
 
+There is no distinction between a function that returns a value and one that does not (there is no requirement that a function call `return`). If a user-defined function does not invoke `return`, the empty string is implicitly returned.
+
 The syntax for defining a function is:
 
 ```
@@ -472,7 +479,7 @@ function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
 end <functionName>
 ```
 
-When calling a user defined function, use `<functionName>(<arg1>, <arg2>, ..., <argN>)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
+When calling a user defined function, use the calling syntax `<functionName>(<arg1>, <arg2>, ...)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
 
 For example:
 

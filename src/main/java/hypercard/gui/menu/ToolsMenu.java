@@ -2,7 +2,6 @@ package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.Provider;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.model.PaintToolType;
 import hypercard.runtime.WindowManager;
@@ -108,8 +107,8 @@ public class ToolsMenu extends JMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Spraypaint")
-                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SPRAYPAINT))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.SPRAYPAINT))
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.AIRBRUSH))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> ((AbstractPaintTool) t).getToolType() == PaintToolType.AIRBRUSH))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()

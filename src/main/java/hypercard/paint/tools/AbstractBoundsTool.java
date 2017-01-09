@@ -1,6 +1,8 @@
 package hypercard.paint.tools;
 
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.model.Provider;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -15,7 +17,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractBoundsTool extends AbstractPaintTool {
 
-    private boolean drawMultiple = false;
+    private ImmutableProvider<Boolean> drawMultiple = new ImmutableProvider<>();
 
     protected Point initialPoint;
     protected Point currentPoint;
@@ -36,7 +38,7 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
     public void mouseDragged(MouseEvent e) {
         currentPoint = e.getPoint();
 
-        if (!drawMultiple) {
+        if (!drawMultiple.get()) {
             getCanvas().clearScratch();
         }
 
@@ -54,14 +56,12 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
         drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
-        g2d.dispose();
 
         if (getFillPaint() != null) {
-            g2d = (Graphics2D) getCanvas().getScratchGraphics();
             drawFill(g2d, getFillPaint(), left, top, width, height);
-            g2d.dispose();
         }
 
+        g2d.dispose();
         getCanvas().repaintCanvas();
     }
 
@@ -70,11 +70,11 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
         getCanvas().commit();
     }
 
-    public boolean isDrawMultiple() {
+    public ImmutableProvider<Boolean> getDrawMultiple() {
         return drawMultiple;
     }
 
-    public void setDrawMultiple(boolean drawMultiple) {
+    public void setDrawMultiple(ImmutableProvider<Boolean> drawMultiple) {
         this.drawMultiple = drawMultiple;
     }
 }

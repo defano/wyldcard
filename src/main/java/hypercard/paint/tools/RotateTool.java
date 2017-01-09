@@ -30,7 +30,6 @@ public class RotateTool extends AbstractSelectionTool {
 
             Rectangle selectionBounds = getSelectionOutline().getBounds();
             angleOrigin = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
-
         } else {
             super.mousePressed(e);
         }
@@ -94,26 +93,28 @@ public class RotateTool extends AbstractSelectionTool {
 
     @Override
     protected Point getSelectedImageLocation() {
-        if (originalSelectionBounds == null) {
+        if (angleDestination == null) {
             return getSelectionOutline().getBounds().getLocation();
         } else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
-            MathUtils.centerBounds(enlargedBounds, originalSelectionBounds.getBounds());
+            MathUtils.center(enlargedBounds, originalSelectionBounds.getBounds());
             return enlargedBounds.getLocation();
         }
     }
 
     /**
      * Square the bounds of the given image so that the resulting image has equal height and width (whichever is
-     * the larger of the given image) and translate the graphic such that whichever dimension was adjusted, the
-     * resultant image is centered in that direction.
+     * the larger) and translate the original graphic such that whichever dimension was enlarged, the original image is
+     * centered in that dimension.
+     *
+     * For example, if the provided image is 10x30, the resulting image will be 30x30 with the contents of the original
+     * drawn at 15,0 inside of it.
      *
      * @param image
      * @return
      */
     private BufferedImage square(BufferedImage image) {
-        int max = Math.max(image.getHeight(), image.getWidth());
-
+        int maxDimension = Math.max(image.getHeight(), image.getWidth());
         int deltaX = 0;
         int deltaY = 0;
 
@@ -123,7 +124,7 @@ public class RotateTool extends AbstractSelectionTool {
             deltaY = image.getWidth() - image.getHeight();
         }
 
-        BufferedImage enlarged = new BufferedImage(max, max, image.getType());
+        BufferedImage enlarged = new BufferedImage(maxDimension, maxDimension, image.getType());
 
         Graphics2D g = enlarged.createGraphics();
         g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2, deltaY / 2), null);

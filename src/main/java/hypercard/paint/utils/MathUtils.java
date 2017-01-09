@@ -68,7 +68,7 @@ public class MathUtils {
      * @param rect
      * @param inBounds
      */
-    public static void centerBounds(Rectangle rect, Rectangle inBounds) {
+    public static void center(Rectangle rect, Rectangle inBounds) {
         int x = inBounds.x + ((inBounds.width - rect.width) / 2);
         int y = inBounds.y + ((inBounds.height - rect.height) / 2);
 
@@ -105,4 +105,24 @@ public class MathUtils {
 
         return new Point(newX, newY);
     }
+
+    public static Polygon getRegularPolygon(Point location, int sides, double length, double rotation) {
+        double angle = (2 * Math.PI) / sides;
+        double radius = (length / 2) / Math.sin(angle / 2);
+
+        double xPoint = (Math.cos(rotation) * radius) + location.x;
+        double yPoint = (Math.sin(rotation) * radius) + location.y;
+
+        Polygon polygon = new Polygon();
+        polygon.addPoint((int)xPoint, (int)yPoint);
+
+        for (int i = 1; i <= sides; i++) {
+            xPoint = (Math.cos((angle * i) + rotation) * radius) + location.x;
+            yPoint = (Math.sin((angle * i) + rotation) * radius) + location.y;
+            polygon.addPoint((int) xPoint, (int) yPoint);
+        }
+
+        return polygon;
+    }
+
 }

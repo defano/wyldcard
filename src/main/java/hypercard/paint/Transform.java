@@ -32,14 +32,14 @@ public class Transform {
 
     public static AffineTransform rotateLeft(int width, int height) {
         AffineTransform transform = AffineTransform.getTranslateInstance(height / 2, width / 2);
-        transform.quadrantRotate(1);
+        transform.quadrantRotate(3);
         transform.translate(-width / 2,-height / 2);
         return transform;
     }
 
     public static AffineTransform rotateRight(int width, int height) {
         AffineTransform transform = AffineTransform.getTranslateInstance(height / 2, width / 2);
-        transform.quadrantRotate(3);
+        transform.quadrantRotate(1);
         transform.translate(-width / 2,-height / 2);
         return transform;
     }

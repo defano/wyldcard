@@ -5,12 +5,12 @@ import hypercard.paint.model.PaintToolType;
 import java.awt.*;
 import java.awt.geom.Line2D;
 
-public class SpraypaintTool extends AbstractPathTool {
+public class AirbrushTool extends AbstractPathTool {
 
     private Point lastPoint;
 
-    public SpraypaintTool() {
-        super(PaintToolType.SPRAYPAINT);
+    public AirbrushTool() {
+        super(PaintToolType.AIRBRUSH);
     }
 
     @Override
