@@ -3,11 +3,8 @@ package hypercard.paint.tools;
 import hypercard.paint.Transform;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.utils.FlexQuadrilateral;
-import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 
 public class SlantTool extends AbstractTransformTool {
 
@@ -20,7 +17,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopRight().x += newPosition.x - quadrilateral.getTopLeft().x;
         quadrilateral.getTopLeft().x = newPosition.x;
 
-        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionBounds().getBounds().x) / 2;
+        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionOutline().getBounds().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
@@ -29,7 +26,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().x += newPosition.x - quadrilateral.getTopRight().x;
         quadrilateral.getTopRight().x = newPosition.x;
 
-        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionBounds().getBounds().x) / 2;
+        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionOutline().getBounds().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
@@ -38,7 +35,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomRight().x += newPosition.x - quadrilateral.getBottomLeft().x;
         quadrilateral.getBottomLeft().x = newPosition.x;
 
-        int xTranslation = ((getSelectionBounds().getBounds().x + getSelectionBounds().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
+        int xTranslation = ((getSelectionOutline().getBounds().x + getSelectionOutline().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
@@ -47,7 +44,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomLeft().x += newPosition.x - quadrilateral.getBottomRight().x;
         quadrilateral.getBottomRight().x = newPosition.x;
 
-        int xTranslation = ((getSelectionBounds().getBounds().x + getSelectionBounds().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
+        int xTranslation = ((getSelectionOutline().getBounds().x + getSelectionOutline().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 }

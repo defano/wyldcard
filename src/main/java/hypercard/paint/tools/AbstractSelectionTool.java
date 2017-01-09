@@ -24,7 +24,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     private Provider<BufferedImage> selectedImage = new Provider<>();
     private Point initialPoint, lastPoint;
     private boolean isMovingSelection = false;
-    private boolean selectionChanged = false;
+    private boolean dirty = false;
 
     private int antsPhase;
     private ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
@@ -38,7 +38,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
     public abstract void completeSelectionBounds(Point finalPoint);
 
-    public abstract Shape getSelectionBounds();
+    public abstract Shape getSelectionOutline();
 
     public abstract void adjustSelectionBounds(int xDelta, int yDelta);
 
@@ -48,7 +48,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (hasSelectionBounds() && getSelectionBounds().contains(e.getPoint())) {
+        if (hasSelectionBounds() && getSelectionOutline().contains(e.getPoint())) {
             setToolCursor(Cursor.getDefaultCursor());
         } else {
             setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -57,7 +57,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
     @Override
     public void mousePressed(MouseEvent e) {
-        isMovingSelection = getSelectionBounds() != null && getSelectionBounds().contains(e.getPoint());
+        isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(e.getPoint());
 
         // User clicked inside selection bounds; start moving selection
         if (isMovingSelection) {
@@ -66,8 +66,8 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
         // User clicked outside current selection bounds
         else {
-            if (hasChanged()) {
-                putDownSelection();
+            if (isDirty()) {
+                finishSelection();
             } else {
                 clearSelection();
             }
@@ -81,7 +81,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
         // User is moving an existing selection
         if (isMovingSelection) {
-            setChanged();
+            setDirty();
             adjustSelectionBounds(e.getX() - lastPoint.x, e.getY() - lastPoint.y);
             drawSelection();
             lastPoint = e.getPoint();
@@ -92,7 +92,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
             defineSelectionBounds(initialPoint, MathUtils.pointWithinBounds(e.getPoint(), getCanvas().getBounds()), e.isShiftDown());
 
             getCanvas().clearScratch();
-            drawSelectionBounds();
+            drawSelectionOutline();
             getCanvas().repaintCanvas();
         }
     }
@@ -129,7 +129,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         super.deactivate();
 
         // Need to remove selection frame when tool is no longer active
-        putDownSelection();
+        finishSelection();
         getCanvas().removeKeyListener(this);
         getCanvas().removeObserver(this);
 
@@ -156,7 +156,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
     public void transformSelection(AffineTransform transform) {
         if (hasSelection()) {
-            setChanged();
+            setDirty();
 
             // Get the original location of the selection
             Point originalLocation = getSelectionLocation();
@@ -186,6 +186,11 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         drawSelection();
     }
 
+    /**
+     * Gets the stroke used to paint the selection outline (typically, a dashed, "marching ants" stroke). May be
+     * overridden by a subclass to change the tool of the selection.
+     * @return
+     */
     protected Stroke getMarchingAnts() {
         return new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, new float[]{5.0f}, antsPhase);
     }
@@ -196,17 +201,11 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      */
     public void clearSelection() {
         selectedImage.set(null);
-        selectionChanged = false;
+        dirty = false;
         resetSelection();
 
         getCanvas().clearScratch();
         getCanvas().repaintCanvas();
-    }
-
-    public void cancelSelection() {
-        if (hasSelection()) {
-            putDownSelection();
-        }
     }
 
     /**
@@ -230,7 +229,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * @return True if a selection boundary exists, false otherwise.
      */
     public boolean hasSelectionBounds() {
-        return getSelectionBounds() != null && getSelectionBounds().getBounds().width > 0 && getSelectionBounds().getBounds().height > 0;
+        return getSelectionOutline() != null && getSelectionOutline().getBounds().width > 0 && getSelectionOutline().getBounds().height > 0;
     }
 
     /**
@@ -239,7 +238,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     private void getSelectionFromCanvas() {
         getCanvas().clearScratch();
 
-        Shape selectionBounds = getSelectionBounds();
+        Shape selectionBounds = getSelectionOutline();
         BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
@@ -247,21 +246,29 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         drawSelection();
     }
 
+    /**
+     * Determines the location (top-left x,y coordinate) of the selection outline.
+     * @return
+     */
     private Point getSelectionLocation() {
         if (!hasSelection()) {
             return null;
         }
 
-        return getSelectionBounds().getBounds().getLocation();
+        return getSelectionOutline().getBounds().getLocation();
     }
 
-    public void eraseSelectionFromCanvas() {
+    /**
+     * Removes the image bounded by the selection outline from the canvas by filling bounded pixels with
+     * fully transparent pixels.
+     */
+    private void eraseSelectionFromCanvas() {
         getCanvas().clearScratch();
 
         // Clear image underneath selection
         Graphics2D scratch = (Graphics2D) getCanvas().getScratchGraphics();
         scratch.setColor(Color.WHITE);
-        scratch.fill(getSelectionBounds());
+        scratch.fill(getSelectionOutline());
         scratch.dispose();
 
         getCanvas().commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
@@ -269,16 +276,16 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     }
 
     /**
-     * Drops the selected image onto the canvas and clears the selection. This has the effect of completing a select-
-     * and-move operation.
+     * Drops the selected image onto the canvas (committing the change) and clears the selection outline. This has the
+     * effect of completing a select-and-move operation.
      */
-    protected void putDownSelection() {
+    protected void finishSelection() {
 
         if (hasSelection()) {
             getCanvas().clearScratch();
 
             Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-            g2d.drawImage(selectedImage.get(), getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y, null);
+            g2d.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g2d.dispose();
 
             getCanvas().commit();
@@ -287,46 +294,71 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     }
 
     /**
-     * Draws the provided image and selection bounds ("marching ants") onto the scratch buffer at the given location.
+     * Draws the provided image and selection frame ("marching ants") onto the scratch buffer at the given location.
      */
     protected void drawSelection() {
         getCanvas().clearScratch();
 
         Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
-        g.drawImage(selectedImage.get(), getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y, null);
+        g.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         g.dispose();
 
-        drawSelectionBounds();
+        drawSelectionOutline();
 
         getCanvas().repaintCanvas();
     }
 
-    protected void drawSelectionBounds() {
+    /**
+     * Returns the location (top-left x,y coordinates) on the canvas where the selected image should be drawn.
+     * Typically, this is the location of the selection shape.
+     *
+     * However, for tools that mutate the selection shape (i.e., {@link RotateTool}), this location may need to be
+     * adjusted to account for changes to the selection shape's bounds.
+     *
+     * @return The x,y coordinate where the selected image should be drawn on the canvas.
+     */
+    protected Point getSelectedImageLocation() {
+        return new Point(getSelectionOutline().getBounds().x, getSelectionOutline().getBounds().y);
+    }
+
+    /**
+     * Renders the selection outline (marching ants) on the canvas.
+     */
+    protected void drawSelectionOutline() {
         Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
 
         g.setStroke(getMarchingAnts());
         g.setColor(Color.BLACK);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.XOR));
-        g.draw(getSelectionBounds());
+        g.draw(getSelectionOutline());
         g.dispose();
     }
 
-    protected void setChanged() {
+    /**
+     * Marks the selection as having been mutated (either by transformation or movement).
+     */
+    protected void setDirty() {
 
         // First time we attempt to modify the selection, clear it from the canvas (so that we don't duplicate it)
-        if (!selectionChanged) {
+        if (!dirty) {
             eraseSelectionFromCanvas();
         }
 
-        selectionChanged = true;
-    }
-
-    protected boolean hasChanged() {
-        return selectionChanged;
+        dirty = true;
     }
 
     /**
-     * Creates a new image in which every pixel not within the given shape has been changed to clear.
+     * Determines if the current selection has been changed or moved in any way since the selection outline was
+     * defined.
+     *
+     * @return True if the selection was changed, false otherrwise.
+     */
+    protected boolean isDirty() {
+        return dirty;
+    }
+
+    /**
+     * Creates a new image in which every pixel not within the given shape has been changed to fully transparent.
      *
      * @param image The image to mask
      * @param shape The shape bounding the subimage to keep
@@ -366,34 +398,34 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
                 case KeyEvent.VK_BACK_SPACE:
-                    setChanged();
+                    setDirty();
                     clearSelection();
                     break;
 
                 case KeyEvent.VK_ESCAPE:
-                    cancelSelection();
+                    finishSelection();
                     break;
 
                 case KeyEvent.VK_LEFT:
-                    setChanged();
+                    setDirty();
                     adjustSelectionBounds(-1, 0);
                     drawSelection();
                     break;
 
                 case KeyEvent.VK_RIGHT:
-                    setChanged();
+                    setDirty();
                     adjustSelectionBounds(1, 0);
                     drawSelection();
                     break;
 
                 case KeyEvent.VK_UP:
-                    setChanged();
+                    setDirty();
                     adjustSelectionBounds(0, -1);
                     drawSelection();
                     break;
 
                 case KeyEvent.VK_DOWN:
-                    setChanged();
+                    setDirty();
                     adjustSelectionBounds(0, 1);
                     drawSelection();
                     break;

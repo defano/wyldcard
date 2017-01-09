@@ -5,7 +5,6 @@ import hypercard.paint.utils.FlexQuadrilateral;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public abstract class AbstractTransformTool extends AbstractSelectionTool {
@@ -44,8 +43,8 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             dragBottomRight = bottomRightHandle.contains(e.getPoint());
 
             // User is clicking outside the selection bounds; clear selection
-            if (!getSelectionBounds().contains(e.getPoint())) {
-                putDownSelection();
+            if (!getSelectionOutline().contains(e.getPoint())) {
+                finishSelection();
                 clearSelection();
             }
         }
@@ -63,7 +62,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         if (hasSelection()) {
 
             if (dragTopLeft || dragTopRight || dragBottomLeft || dragBottomRight) {
-                setChanged();
+                setDirty();
             }
 
             if (dragTopLeft) {
@@ -131,7 +130,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public Shape getSelectionBounds() {
+    public Shape getSelectionOutline() {
         return transformBounds != null ? transformBounds.getShape() : selectionBounds;
     }
 
@@ -144,8 +143,8 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         return originalImage;
     }
 
-    protected void drawSelectionBounds() {
-        super.drawSelectionBounds();
+    protected void drawSelectionOutline() {
+        super.drawSelectionOutline();
 
         if (hasSelection()) {
 

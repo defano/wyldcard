@@ -47,7 +47,7 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    public Shape getSelectionBounds() {
+    public Shape getSelectionOutline() {
         return selectionBounds;
     }
 
