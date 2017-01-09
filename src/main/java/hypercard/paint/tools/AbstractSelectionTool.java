@@ -278,7 +278,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
             getCanvas().clearScratch();
 
             Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-            g2d.drawImage(selectedImage.get(), getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y, null);
+            g2d.drawImage(selectedImage.get(), getSelectedImageAnchor().x, getSelectedImageAnchor().y, null);
             g2d.dispose();
 
             getCanvas().commit();
@@ -293,12 +293,16 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         getCanvas().clearScratch();
 
         Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
-        g.drawImage(selectedImage.get(), getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y, null);
+        g.drawImage(selectedImage.get(), getSelectedImageAnchor().x, getSelectedImageAnchor().y, null);
         g.dispose();
 
         drawSelectionBounds();
 
         getCanvas().repaintCanvas();
+    }
+
+    protected Point getSelectedImageAnchor() {
+        return new Point(getSelectionBounds().getBounds().x, getSelectionBounds().getBounds().y);
     }
 
     protected void drawSelectionBounds() {

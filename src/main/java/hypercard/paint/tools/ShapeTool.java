@@ -30,7 +30,7 @@ public class ShapeTool extends AbstractBoundsTool {
 
     private Polygon getRegularPolygon(int sides) {
         double length = MathUtils.getLineLength(initialPoint, currentPoint);
-        double rotation = Math.toRadians(MathUtils.getLineAngle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y));
+        double rotation = MathUtils.getLineAngle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y);
 
         double angle = (2 * Math.PI) / sides;
         double radius = (length / 2) / Math.sin(angle / 2);

@@ -2,7 +2,6 @@ package hypercard.paint;
 
 import hypercard.paint.utils.FlexQuadrilateral;
 import hypercard.paint.utils.MathUtils;
-import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -21,6 +20,10 @@ public class Transform {
         transform.translate(xTranslation,0);
         AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BILINEAR);
         return op.filter(image ,null);
+    }
+
+    public static BufferedImage rotate(BufferedImage image, double theta, int anchorX, int anchorY) {
+        return new AffineTransformOp(rotateTransform(theta, anchorX, anchorY),AffineTransformOp.TYPE_BILINEAR).filter(image, null);
     }
 
     public static BufferedImage transform(BufferedImage image, AffineTransform transform) {
@@ -53,10 +56,8 @@ public class Transform {
         return transform;
     }
 
-    public static AffineTransform rotateTransform(int degrees, int anchorX, int anchorY) {
-        AffineTransform transform = AffineTransform.getRotateInstance(Math.toRadians(degrees), anchorX, anchorY);
-        transform.translate(-anchorX, -anchorY);
-        return transform;
+    public static AffineTransform rotateTransform(double radians, int centerX, int centerY) {
+        return AffineTransform.getRotateInstance(radians, centerX, centerY);
     }
 
 }

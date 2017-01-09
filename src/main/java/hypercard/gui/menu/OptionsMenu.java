@@ -75,7 +75,7 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate")
-                .disabled()
+                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ROTATE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

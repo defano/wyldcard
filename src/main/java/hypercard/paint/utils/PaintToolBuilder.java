@@ -145,6 +145,9 @@ public class PaintToolBuilder {
             case SLANT:
                 selectedTool = new SlantTool();
                 break;
+            case ROTATE:
+                selectedTool = new RotateTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);
