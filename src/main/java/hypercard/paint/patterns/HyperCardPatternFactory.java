@@ -15,6 +15,10 @@ public class HyperCardPatternFactory {
 
     public static TexturePaint create (int id) {
 
+        if (id > 39) {
+            throw new IllegalArgumentException("No such pattern. Patterns are numbered 0 to 39.");
+        }
+
         int row = (id / 4);
         int column = (id % 4);
 

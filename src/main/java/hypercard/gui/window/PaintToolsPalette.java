@@ -42,6 +42,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
     public PaintToolsPalette() {
         allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
+        // Single click actions
         finger.addActionListener(e -> toolSelected(PaintToolType.ARROW));
         pencil.addActionListener(e -> toolSelected(PaintToolType.PENCIL));
         paintbrush.addActionListener(e -> toolSelected(PaintToolType.PAINTBRUSH));
@@ -55,13 +56,16 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
         fill.addActionListener(e -> toolSelected(PaintToolType.FILL));
-        spraypaint.addActionListener(e -> toolSelected(PaintToolType.SPRAYPAINT));
+        spraypaint.addActionListener(e -> toolSelected(PaintToolType.AIRBRUSH));
         curve.addActionListener(e -> toolSelected(PaintToolType.CURVE));
         lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
 
+        // Double-click actions
         eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getRuntimeEnv().getCard().getCanvas().clearCanvas());
         shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setShown(true));
         line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setShown(true));
+        paintbrush.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
+        spraypaint.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
 
         ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
     }
@@ -108,7 +112,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
                 return text;
             case FILL:
                 return fill;
-            case SPRAYPAINT:
+            case AIRBRUSH:
                 return spraypaint;
             case CURVE:
                 return curve;

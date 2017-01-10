@@ -1,13 +1,10 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
 
 public class LassoTool extends AbstractSelectionTool {
 
@@ -24,7 +21,7 @@ public class LassoTool extends AbstractSelectionTool {
 
     @Override
     public void setSelectionBounds(Rectangle bounds) {
-        selectionBounds = new GeneralPath(bounds);
+        selectionBounds = new Path2D.Double(bounds);
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.util.Observer;
 
 public class Provider<T> extends ImmutableProvider<T> implements Observer {
 
-    private Observable source;
     private ProviderTransform transform;
 
     public Provider() {
@@ -16,7 +15,7 @@ public class Provider<T> extends ImmutableProvider<T> implements Observer {
         this.value = initialValue;
     }
 
-    private <S> Provider(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
+    public <S> Provider(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
         this.transform = transform;
 
         setSource(derivedFrom);
@@ -24,7 +23,7 @@ public class Provider<T> extends ImmutableProvider<T> implements Observer {
     }
 
     public static <S, T> Provider<T> derivedFrom(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
-        return new Provider<T>(derivedFrom, transform);
+        return new Provider<>(derivedFrom, transform);
     }
 
     public void set(T value) {

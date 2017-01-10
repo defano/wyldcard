@@ -3,16 +3,18 @@ package hypercard.context;
 import hypercard.HyperCard;
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.ImmutableProvider;
+import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
+import hypercard.paint.model.ProviderTransform;
+import hypercard.paint.patterns.BasicBrush;
 import hypercard.paint.patterns.HyperCardPatternFactory;
+import hypercard.paint.tools.AbstractBoundsTool;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.paint.tools.AbstractSelectionTool;
 import hypercard.paint.utils.PaintToolBuilder;
-import hypercard.paint.model.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
 import hypertalk.ast.common.Tool;
-import hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,19 +24,21 @@ public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
-    private boolean shapesFilled = true;
-
-    private Provider<Boolean> isEditingBackground = new Provider<>(false);
+    // Properties that the tools provide to us...
     private ImmutableProvider<BufferedImage> selectedImageProvider = new ImmutableProvider<>();
 
+    // Properties that we provide the tools...
+    private Provider<Boolean> shapesFilled = new Provider<>(false);
+    private Provider<Boolean> isEditingBackground = new Provider<>(false);
     private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
-    private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
-    private Provider<Stroke> brushStrokeProvider = new Provider<>(new BasicStroke(5));
+    private Provider<BasicBrush> eraserStrokeProvider = new Provider<>(BasicBrush.SQUARE_12X12);
+    private Provider<BasicBrush> brushStrokeProvider = new Provider<>(BasicBrush.ROUND_12X12);
     private Provider<Paint> linePaintProvider = new Provider<>(Color.black);
     private Provider<Integer> fillPatternProvider = new Provider<>(0);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
-    private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 12));
+    private Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
     private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private Provider<Boolean> drawMultiple = new Provider<>(false);
 
     private ToolsContext() {
         HyperCard.getRuntimeEnv().getStack().addObserver(this);
@@ -66,7 +70,7 @@ public class ToolsContext implements StackModelObserver {
         AbstractPaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() ? HyperCardPatternFactory.create((int) t) : (Paint) null))
+                .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
@@ -76,7 +80,27 @@ public class ToolsContext implements StackModelObserver {
             selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
         }
 
+        if (selectedTool instanceof AbstractBoundsTool) {
+            ((AbstractBoundsTool)selectedTool).setDrawMultiple(drawMultiple);
+        }
+
         toolProvider.set(selectedTool);
+    }
+
+    public void setSelectedBrush(BasicBrush brush) {
+        brushStrokeProvider.set(brush);
+    }
+
+    public Provider<BasicBrush> getSelectedBrushProvider() {
+        return brushStrokeProvider;
+    }
+
+    public void toggleDrawMultiple() {
+        drawMultiple.set(!drawMultiple.get());
+    }
+
+    public Provider<Boolean> getDrawMultipleProvider() {
+        return drawMultiple;
     }
 
     public ImmutableProvider<BufferedImage> getSelectedImageProvider() {
@@ -85,10 +109,6 @@ public class ToolsContext implements StackModelObserver {
 
     public void setShapeSides(int shapeSides) {
         shapeSidesProvider.set(shapeSides);
-    }
-
-    public int getShapeSides() {
-        return shapeSidesProvider.get();
     }
 
     public Provider<Integer> getShapeSidesProvider() {
@@ -146,12 +166,16 @@ public class ToolsContext implements StackModelObserver {
     }
 
     public boolean isShapesFilled() {
-        return shapesFilled;
+        return shapesFilled.get();
     }
 
     public void toggleShapesFilled() {
-        this.shapesFilled = !shapesFilled;
+        shapesFilled.set(!shapesFilled.get());
         setSelectedToolType(toolProvider.get().getToolType());
+    }
+
+    public Provider<Boolean> getShapesFilledProvider() {
+        return shapesFilled;
     }
 
     public void setSelectedTool (Tool tool) {
@@ -202,7 +226,7 @@ public class ToolsContext implements StackModelObserver {
                 setSelectedToolType(PaintToolType.LASSO);
                 break;
             case SPRAY:
-                setSelectedToolType(PaintToolType.SPRAYPAINT);
+                setSelectedToolType(PaintToolType.AIRBRUSH);
                 break;
             case LINE:
                 setSelectedToolType(PaintToolType.LINE);
@@ -211,10 +235,6 @@ public class ToolsContext implements StackModelObserver {
                 setSelectedToolType(PaintToolType.TEXT);
                 break;
         }
-    }
-
-    public void setSelectedTool (int toolNumber) throws HtSemanticException {
-        setSelectedTool(Tool.byNumber(toolNumber));
     }
 
     @Override
@@ -234,11 +254,11 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {
         switch (type) {
             case PAINTBRUSH:
-            case SPRAYPAINT:
-                return brushStrokeProvider;
+            case AIRBRUSH:
+                return new Provider<>(brushStrokeProvider, value -> value.stroke);
 
             case ERASER:
-                return eraserStrokeProvider;
+                return new Provider<>(eraserStrokeProvider, value -> value.stroke);
 
             default:
                 return lineStrokeProvider;

@@ -15,8 +15,16 @@ public enum PaintToolType {
     LASSO,
     TEXT,
     FILL,
-    SPRAYPAINT,
+    AIRBRUSH,
     CURVE,
     SLANT,
-    ROTATE
+    ROTATE;
+
+    public boolean isShapeTool() {
+        return  this == RECTANGLE       ||
+                this == ROUND_RECTANGLE ||
+                this == OVAL            ||
+                this == POLYGON         ||
+                this == SHAPE;
+    }
 }

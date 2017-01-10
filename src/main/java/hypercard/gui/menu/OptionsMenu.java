@@ -3,6 +3,7 @@ package hypercard.gui.menu;
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.tools.AbstractPaintTool;
+import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 
@@ -36,12 +37,14 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Line Size...")
-                .disabled()
+                .withAction(a -> WindowManager.getLinesPalette().setShown(true))
+                .withDisabledProvider(WindowManager.getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Brush Shape...")
-                .disabled()
+                .withAction(a -> WindowManager.getBrushesPalette().setShown(true))
+                .withDisabledProvider(WindowManager.getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -50,15 +53,17 @@ public class OptionsMenu extends JMenu {
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Polygon Sides")
-                .disabled()
+                .named("Polygon Sides...")
+                .withAction(a -> WindowManager.getShapesPalette().setShown(true))
+                .withDisabledProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Draw Filled")
-                .disabled()
+                .withAction(a -> ToolsContext.getInstance().toggleShapesFilled())
+                .withCheckmarkProvider(ToolsContext.getInstance().getShapesFilledProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -66,9 +71,10 @@ public class OptionsMenu extends JMenu {
                 .disabled()
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Draw Multiple")
-                .disabled()
+                .withAction(a -> ToolsContext.getInstance().toggleDrawMultiple())
+                .withCheckmarkProvider(ToolsContext.getInstance().getDrawMultipleProvider())
                 .build(this);
 
         this.addSeparator();

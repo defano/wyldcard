@@ -3,6 +3,12 @@ package hypercard.paint.model;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Provides an {@link Observable} interface to a variable whose value may change over time, but whose value cannot be
+ * changed by this provider.
+ *
+ * @param <T> The type of value being provided.
+ */
 public class ImmutableProvider<T> extends Observable implements Observer {
 
     protected T value;
@@ -14,6 +20,12 @@ public class ImmutableProvider<T> extends Observable implements Observer {
         source = null;
         transform = null;
         value = null;
+    }
+
+    public ImmutableProvider(T value) {
+        this.value = value;
+        this.transform = null;
+        this.source = null;
     }
 
     private <S> ImmutableProvider(ImmutableProvider<S> derivedFrom, ProviderTransform<S, T> transform) {
@@ -47,14 +59,14 @@ public class ImmutableProvider<T> extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (transform != null) {
-            value = (T) transform.transform(arg);
-        } else {
-            value = (T) arg;
-        }
+        value = (transform == null) ? (T) arg : (T) transform.transform(arg);
 
         setChanged();
         notifyObservers(value);
     }
 
+    public void addObserverAndUpdate(Observer o) {
+        super.addObserver(o);
+        o.update(this, value);
+    }
 }

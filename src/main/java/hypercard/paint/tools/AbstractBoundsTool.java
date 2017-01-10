@@ -1,6 +1,8 @@
 package hypercard.paint.tools;
 
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -15,7 +17,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractBoundsTool extends AbstractPaintTool {
 
-    private boolean drawMultiple = false;
+    private ImmutableProvider<Boolean> drawMultiple = new ImmutableProvider<>();
 
     protected Point initialPoint;
     protected Point currentPoint;
@@ -36,32 +38,23 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
     public void mouseDragged(MouseEvent e) {
         currentPoint = e.getPoint();
 
-        if (!drawMultiple) {
+        if (!drawMultiple.get()) {
             getCanvas().clearScratch();
         }
 
-        int left = Math.min(initialPoint.x, currentPoint.x);
-        int top = Math.min(initialPoint.y, currentPoint.y);
-        int right = Math.max(initialPoint.x, currentPoint.x);
-        int bottom = Math.max(initialPoint.y, currentPoint.y);
-
-        int width = (right - left);
-        int height = (bottom - top);
-
-        if (e.isShiftDown()) {
-            width = height = Math.max(width, height);
-        }
+        Rectangle bounds = e.isShiftDown() ?
+                Geometry.squareAtAnchor(initialPoint, e.getPoint()) :
+                Geometry.rectangleFromPoints(initialPoint, e.getPoint());
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
-        g2d.dispose();
 
         if (getFillPaint() != null) {
-            g2d = (Graphics2D) getCanvas().getScratchGraphics();
-            drawFill(g2d, getFillPaint(), left, top, width, height);
-            g2d.dispose();
+            drawFill(g2d, getFillPaint(), bounds.x, bounds.y, bounds.width, bounds.height);
         }
 
+        drawBounds(g2d, getStroke(), getStrokePaint(), bounds.x, bounds.y, bounds.width, bounds.height);
+
+        g2d.dispose();
         getCanvas().repaintCanvas();
     }
 
@@ -70,11 +63,11 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
         getCanvas().commit();
     }
 
-    public boolean isDrawMultiple() {
+    public ImmutableProvider<Boolean> getDrawMultiple() {
         return drawMultiple;
     }
 
-    public void setDrawMultiple(boolean drawMultiple) {
+    public void setDrawMultiple(ImmutableProvider<Boolean> drawMultiple) {
         this.drawMultiple = drawMultiple;
     }
 }

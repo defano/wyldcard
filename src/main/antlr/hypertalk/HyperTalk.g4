@@ -232,7 +232,7 @@ ordinalValue        : FIRST                                         # firstOrd
 
 expression          : 'empty'                                       # emptyExp
                     | builtinFunc                                   # builtinFuncExp
-                    | ID '(' expressionList ')'                       # functionExp
+                    | ID '(' expressionList ')'                     # functionExp
                     | factor                                        # factorExp
                     | chunk expression                              # chunkExp
                     | 'not' expression                              # notExp

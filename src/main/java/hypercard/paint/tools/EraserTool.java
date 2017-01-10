@@ -4,10 +4,11 @@ import hypercard.paint.model.PaintToolType;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 
 public class EraserTool extends AbstractPathTool {
 
-    private Point lastPoint;
+    private Path2D path;
 
     public EraserTool() {
         super(PaintToolType.ERASER);
@@ -18,15 +19,16 @@ public class EraserTool extends AbstractPathTool {
 
     @Override
     public void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
-        lastPoint = initialPoint;
+        path = new Path2D.Double();
+        path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
     @Override
     public void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
-        g.setStroke(stroke);
-        g.setColor(Color.WHITE);
-        g.draw(new Line2D.Float(lastPoint, point));
+        path.lineTo(point.getX(), point.getY());
 
-        lastPoint = point;
+        g.setStroke(stroke);
+        g.setPaint(Color.WHITE);
+        g.draw(path);
     }
 }
