@@ -15,7 +15,7 @@ public class Provider<T> extends ImmutableProvider<T> implements Observer {
         this.value = initialValue;
     }
 
-    private <S> Provider(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
+    public <S> Provider(Provider<S> derivedFrom, ProviderTransform<S, T> transform) {
         this.transform = transform;
 
         setSource(derivedFrom);

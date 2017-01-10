@@ -97,12 +97,12 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
         currentPoint = null;
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        drawPolygon(g2d, getStroke(), getStrokePaint(), xs, ys);
 
         if (getFillPaint() != null) {
             fillPolygon(g2d, getFillPaint(), xs, ys);
         }
 
+        drawPolygon(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
         getCanvas().commit();

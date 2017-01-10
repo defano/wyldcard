@@ -5,7 +5,8 @@ import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
-import hypercard.paint.patterns.BrushFactory;
+import hypercard.paint.model.ProviderTransform;
+import hypercard.paint.patterns.BasicBrush;
 import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.tools.AbstractBoundsTool;
 import hypercard.paint.tools.AbstractPaintTool;
@@ -30,9 +31,8 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Boolean> shapesFilled = new Provider<>(false);
     private Provider<Boolean> isEditingBackground = new Provider<>(false);
     private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
-    private Provider<Stroke> eraserStrokeProvider = new Provider<>(new BasicStroke(10));
-//    private Provider<Stroke> brushStrokeProvider = new Provider<>(new BasicStroke(5));
-    private Provider<Stroke> brushStrokeProvider = new Provider<>(BrushFactory.createRoundBrush(16));
+    private Provider<BasicBrush> eraserStrokeProvider = new Provider<>(BasicBrush.SQUARE_12X12);
+    private Provider<BasicBrush> brushStrokeProvider = new Provider<>(BasicBrush.ROUND_12X12);
     private Provider<Paint> linePaintProvider = new Provider<>(Color.black);
     private Provider<Integer> fillPatternProvider = new Provider<>(0);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
@@ -247,10 +247,10 @@ public class ToolsContext implements StackModelObserver {
         switch (type) {
             case PAINTBRUSH:
             case AIRBRUSH:
-                return brushStrokeProvider;
+                return new Provider<>(brushStrokeProvider, value -> value.stroke);
 
             case ERASER:
-                return eraserStrokeProvider;
+                return new Provider<>(eraserStrokeProvider, value -> value.stroke);
 
             default:
                 return lineStrokeProvider;

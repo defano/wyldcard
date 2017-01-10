@@ -32,6 +32,7 @@ public abstract class AbstractLineTool extends AbstractPaintTool {
         }
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         drawLine(g2d, getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
         g2d.dispose();
 

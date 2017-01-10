@@ -22,6 +22,12 @@ public class ImmutableProvider<T> extends Observable implements Observer {
         value = null;
     }
 
+    public ImmutableProvider(T value) {
+        this.value = value;
+        this.transform = null;
+        this.source = null;
+    }
+
     private <S> ImmutableProvider(ImmutableProvider<S> derivedFrom, ProviderTransform<S, T> transform) {
         this.transform = transform;
 

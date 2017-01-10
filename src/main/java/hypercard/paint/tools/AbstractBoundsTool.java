@@ -55,11 +55,12 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
         }
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
 
         if (getFillPaint() != null) {
             drawFill(g2d, getFillPaint(), left, top, width, height);
         }
+
+        drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
 
         g2d.dispose();
         getCanvas().repaintCanvas();
