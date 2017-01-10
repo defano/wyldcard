@@ -31,7 +31,7 @@ public class LinesPalette extends HyperCardWindow implements Observer {
         px6.addActionListener(l -> select(6));
 
         allLines = new JButton[]{px1, px2, px3, px4, px5, px6};
-        ToolsContext.getInstance().getLineStrokeProvider().addObserver(this);
+        ToolsContext.getInstance().getLineStrokeProvider().addObserverAndUpdate(this);
     }
 
     @Override

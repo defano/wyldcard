@@ -87,6 +87,14 @@ public class ToolsContext implements StackModelObserver {
         toolProvider.set(selectedTool);
     }
 
+    public void setSelectedBrush(BasicBrush brush) {
+        brushStrokeProvider.set(brush);
+    }
+
+    public Provider<BasicBrush> getSelectedBrushProvider() {
+        return brushStrokeProvider;
+    }
+
     public void toggleDrawMultiple() {
         drawMultiple.set(!drawMultiple.get());
     }

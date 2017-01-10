@@ -1,12 +1,8 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.patterns.HyperCardPatternFactory;
-import hypercard.paint.utils.MathUtils;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 public class SelectionTool extends AbstractSelectionTool {
 

@@ -38,11 +38,13 @@ public class OptionsMenu extends JMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Line Size...")
                 .withAction(a -> WindowManager.getLinesPalette().setShown(true))
+                .withDisabledProvider(WindowManager.getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Brush Shape...")
-                .disabled()
+                .withAction(a -> WindowManager.getBrushesPalette().setShown(true))
+                .withDisabledProvider(WindowManager.getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -51,8 +53,9 @@ public class OptionsMenu extends JMenu {
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Polygon Sides")
+                .named("Polygon Sides...")
                 .withAction(a -> WindowManager.getShapesPalette().setShown(true))
+                .withDisabledProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();

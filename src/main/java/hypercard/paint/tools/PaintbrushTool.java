@@ -3,11 +3,13 @@ package hypercard.paint.tools;
 import hypercard.paint.model.PaintToolType;
 
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 
 public class PaintbrushTool extends AbstractPathTool {
 
-    private Point lastPoint;
+    private Path2D path;
 
     public PaintbrushTool() {
         super(PaintToolType.PAINTBRUSH);
@@ -15,15 +17,16 @@ public class PaintbrushTool extends AbstractPathTool {
 
     @Override
     public void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
-        lastPoint = initialPoint;
+        path = new Path2D.Double();
+        path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
     @Override
     public void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
+        path.lineTo(point.getX(), point.getY());
+
         g.setStroke(stroke);
         g.setPaint(paint);
-        g.draw(new Line2D.Float(lastPoint, point));
-
-        lastPoint = point;
+        g.draw(path);
     }
 }

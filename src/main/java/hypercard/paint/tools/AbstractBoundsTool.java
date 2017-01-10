@@ -2,7 +2,7 @@ package hypercard.paint.tools;
 
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.model.Provider;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -42,25 +42,17 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
             getCanvas().clearScratch();
         }
 
-        int left = Math.min(initialPoint.x, currentPoint.x);
-        int top = Math.min(initialPoint.y, currentPoint.y);
-        int right = Math.max(initialPoint.x, currentPoint.x);
-        int bottom = Math.max(initialPoint.y, currentPoint.y);
-
-        int width = (right - left);
-        int height = (bottom - top);
-
-        if (e.isShiftDown()) {
-            width = height = Math.max(width, height);
-        }
+        Rectangle bounds = e.isShiftDown() ?
+                Geometry.squareAtAnchor(initialPoint, e.getPoint()) :
+                Geometry.rectangleFromPoints(initialPoint, e.getPoint());
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
 
         if (getFillPaint() != null) {
-            drawFill(g2d, getFillPaint(), left, top, width, height);
+            drawFill(g2d, getFillPaint(), bounds.x, bounds.y, bounds.width, bounds.height);
         }
 
-        drawBounds(g2d, getStroke(), getStrokePaint(), left, top, width, height);
+        drawBounds(g2d, getStroke(), getStrokePaint(), bounds.x, bounds.y, bounds.width, bounds.height);
 
         g2d.dispose();
         getCanvas().repaintCanvas();

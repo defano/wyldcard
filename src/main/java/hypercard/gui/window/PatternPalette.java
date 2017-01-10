@@ -78,7 +78,7 @@ public class PatternPalette extends HyperCardWindow implements Observer {
             allPatterns[index].addActionListener(e -> ToolsContext.getInstance().setPattern(i));
         }
 
-        ToolsContext.getInstance().getFillPatternProvider().addObserver(this);
+        ToolsContext.getInstance().getFillPatternProvider().addObserverAndUpdate(this);
     }
 
     @Override

@@ -2,7 +2,7 @@ package hypercard.paint.tools;
 
 import hypercard.paint.Transform;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.utils.MathUtils;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -39,7 +39,7 @@ public class RotateTool extends AbstractSelectionTool {
     public void mouseDragged(MouseEvent e) {
         if (angleOrigin != null) {
             angleDestination = e.getPoint();
-            drawRotation(Math.toRadians(MathUtils.getLineAngle(angleOrigin.x, angleOrigin.y, angleDestination.x, angleDestination.y)));
+            drawRotation(Math.toRadians(Geometry.getLineAngle(angleOrigin.x, angleOrigin.y, angleDestination.x, angleDestination.y)));
         } else {
             super.mouseDragged(e);
         }
@@ -97,7 +97,7 @@ public class RotateTool extends AbstractSelectionTool {
             return getSelectionOutline().getBounds().getLocation();
         } else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
-            MathUtils.center(enlargedBounds, originalSelectionBounds.getBounds());
+            Geometry.center(enlargedBounds, originalSelectionBounds.getBounds());
             return enlargedBounds.getLocation();
         }
     }

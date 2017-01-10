@@ -7,7 +7,7 @@ import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 import hypercard.paint.utils.MarchingAnts;
 import hypercard.paint.utils.MarchingAntsObserver;
-import hypercard.paint.utils.MathUtils;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -23,6 +23,9 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     private boolean isMovingSelection = false;
     private boolean dirty = false;
 
+    /**
+     * Reset the selection boundary to its initial, no-selection state.
+     */
     public abstract void resetSelection();
 
     public abstract void setSelectionBounds(Rectangle bounds);
@@ -82,7 +85,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
         // User is defining a new selection rectangle
         else {
-            defineSelectionBounds(initialPoint, MathUtils.pointWithinBounds(e.getPoint(), getCanvas().getBounds()), e.isShiftDown());
+            defineSelectionBounds(initialPoint, Geometry.pointWithinBounds(e.getPoint(), getCanvas().getBounds()), e.isShiftDown());
 
             getCanvas().clearScratch();
             drawSelectionOutline();
@@ -133,7 +136,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         transformSelection(Transform.flipHorizontalTransform(selectedImage.get().getWidth()));
     }
 
-    public void flipVerical() {
+    public void flipVertical() {
         transformSelection(Transform.flipVerticalTransform(selectedImage.get().getHeight()));
     }
 
@@ -292,7 +295,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * @return The x,y coordinate where the selected image should be drawn on the canvas.
      */
     protected Point getSelectedImageLocation() {
-        return new Point(getSelectionOutline().getBounds().x, getSelectionOutline().getBounds().y);
+        return getSelectionOutline().getBounds().getLocation();
     }
 
     /**
@@ -325,7 +328,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * Determines if the current selection has been changed or moved in any way since the selection outline was
      * defined.
      *
-     * @return True if the selection was changed, false otherrwise.
+     * @return True if the selection was changed, false otherwise.
      */
     protected boolean isDirty() {
         return dirty;
@@ -335,10 +338,10 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * Creates a new image in which every pixel not within the given shape has been changed to fully transparent.
      *
      * @param image The image to mask
-     * @param shape The shape bounding the subimage to keep
+     * @param mask The shape bounding the subimage to keep
      * @return
      */
-    private BufferedImage maskSelection(BufferedImage image, Shape shape) {
+    private BufferedImage maskSelection(BufferedImage image, Shape mask) {
         BufferedImage subimage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         int clearPixel = new Color(0, 0, 0, 0).getRGB();
@@ -347,7 +350,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
             for (int x = 0; x < image.getRaster().getWidth(); x++) {
                 if (x > image.getWidth() || y > image.getHeight()) continue;
 
-                if (shape.contains(x, y)) {
+                if (mask.contains(x, y)) {
                     subimage.setRGB(x, y, image.getRGB(x, y));
                 } else {
                     subimage.setRGB(x, y, clearPixel);

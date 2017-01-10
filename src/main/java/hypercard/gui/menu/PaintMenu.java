@@ -78,7 +78,7 @@ public class PaintMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Vertical")
-                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).flipVerical())
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).flipVertical())
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 

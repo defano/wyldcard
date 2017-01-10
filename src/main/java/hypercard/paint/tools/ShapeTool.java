@@ -1,7 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.utils.MathUtils;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 
@@ -19,20 +19,20 @@ public class ShapeTool extends AbstractBoundsTool {
     public void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
         g.setStroke(stroke);
         g.setPaint(paint);
-        g.drawPolygon(MathUtils.getRegularPolygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
+        g.drawPolygon(Geometry.getRegularPolygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
     }
 
     @Override
     public void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
         g.setPaint(fill);
-        g.fill(MathUtils.getRegularPolygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
+        g.fill(Geometry.getRegularPolygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
     }
 
     private double getRadius() {
-        return MathUtils.getLineLength(initialPoint, currentPoint);
+        return Geometry.getLineLength(initialPoint, currentPoint);
     }
 
     private double getRotationAngle() {
-        return Math.toRadians(MathUtils.getLineAngle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y));
+        return Math.toRadians(Geometry.getLineAngle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y));
     }
 }

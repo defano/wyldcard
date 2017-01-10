@@ -31,7 +31,7 @@ public class ShapesPalette extends HyperCardWindow implements Observer {
         hexagon.addActionListener(e -> selectShape(6));
         octogon.addActionListener(e -> selectShape(8));
 
-        ToolsContext.getInstance().getShapeSidesProvider().addObserver(this);
+        ToolsContext.getInstance().getShapeSidesProvider().addObserverAndUpdate(this);
     }
 
     @Override

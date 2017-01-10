@@ -65,4 +65,8 @@ public class ImmutableProvider<T> extends Observable implements Observer {
         notifyObservers(value);
     }
 
+    public void addObserverAndUpdate(Observer o) {
+        super.addObserver(o);
+        o.update(this, value);
+    }
 }

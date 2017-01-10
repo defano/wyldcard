@@ -1,7 +1,7 @@
 package hypercard.paint;
 
 import hypercard.paint.utils.FlexQuadrilateral;
-import hypercard.paint.utils.MathUtils;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -12,7 +12,7 @@ public class Transform {
 
     public static BufferedImage slant(BufferedImage image, FlexQuadrilateral quadrilateral, int xTranslation) {
         Point p = new Point(quadrilateral.getBottomLeft().x, quadrilateral.getTopLeft().y);
-        double theta = MathUtils.angleBetweenTwoPoints(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
+        double theta = Geometry.angleBetweenTwoPoints(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
 
         AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, 0);
         transform.shear(Math.tan(theta), 0);
