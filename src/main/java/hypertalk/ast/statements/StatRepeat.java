@@ -93,12 +93,13 @@ public class StatRepeat extends Statement {
                     statements.execute();
                     rest();
                 }
-            } else { // RepeatRange.POLARITY_DOWNTO
+            }
 
+            else if (range.polarity == RepeatRange.POLARITY_DOWNTO) {
                 if (to > from)
                     throw new HtSemanticException("End of repeat range is less then start: " + to + " > " + from);
 
-                for (int index = to; index >= from; index--) {
+                for (int index = from; index >= to; index--) {
                     GlobalContext.getContext().set(symbol, new Value(index));
                     statements.execute();
                     rest();

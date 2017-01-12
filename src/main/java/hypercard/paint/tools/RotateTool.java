@@ -103,28 +103,23 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     /**
-     * Square the bounds of the given image so that the resulting image has equal height and width (whichever is
-     * the larger) and translate the original graphic such that whichever dimension was enlarged, the original image is
-     * centered in that dimension.
-     *
-     * For example, if the provided image is 10x30, the resulting image will be 30x30 with the contents of the original
-     * drawn at 15,0 inside of it.
+     * Square the bounds of a given image so that the resulting image has an equal height and width whose value is
+     * equal to the diagonal of the original image. The original image will be drawn centered inside the enlarged bounds
+     * of the result.
+     * <p>
+     * For example, if the provided image is 10x30, the resulting image will be 32x32 with the contents of the original
+     * drawn at (16,1) inside of it.
      *
      * @param image
      * @return
      */
     private BufferedImage square(BufferedImage image) {
-        int maxDimension = Math.max(image.getHeight(), image.getWidth());
-        int deltaX = 0;
-        int deltaY = 0;
+        int diagonal = (int) Math.ceil(Math.sqrt(image.getHeight() * image.getHeight() + image.getWidth() * image.getWidth()));
 
-        if (image.getHeight() > image.getWidth()) {
-            deltaX = image.getHeight() - image.getWidth();
-        } else {
-            deltaY = image.getWidth() - image.getHeight();
-        }
+        int deltaX = diagonal - image.getWidth();
+        int deltaY = diagonal - image.getHeight();
 
-        BufferedImage enlarged = new BufferedImage(maxDimension, maxDimension, image.getType());
+        BufferedImage enlarged = new BufferedImage(diagonal, diagonal, image.getType());
 
         Graphics2D g = enlarged.createGraphics();
         g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2, deltaY / 2), null);

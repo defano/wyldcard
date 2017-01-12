@@ -230,35 +230,21 @@ ordinalValue        : FIRST                                         # firstOrd
                     | LAST                                          # lastOrd
                     ;
 
-expression          : 'empty'                                       # emptyExp
-                    | builtinFunc                                   # builtinFuncExp
-                    | ID '(' expressionList ')'                     # functionExp
-                    | factor                                        # factorExp
-                    | chunk expression                              # chunkExp
-                    | 'not' expression                              # notExp
-                    | '-' expression                                # negateExp
-                    | expression '^' expression                     # caratExp
-                    | expression 'mod' expression                   # modExp
-                    | expression 'div' expression                   # divExp
-                    | expression '/' expression                     # slashExp
-                    | expression '*' expression                     # multiplyExp
-                    | expression '-' expression                     # minusExp
-                    | expression '+' expression                     # plusExp
-                    | expression '&&' expression                    # ampAmpExp
-                    | expression '&' expression                     # ampExp
-                    | expression 'is not in' expression             # isNotInExp
-                    | expression 'is in' expression                 # isInExp
-                    | expression 'contains' expression              # containsExp
-                    | expression '>=' expression                    # greaterThanEqualsExp
-                    | expression '<=' expression                    # lessThanEqualsExp
-                    | expression '<' expression                     # lessThanExp
-                    | expression '>' expression                     # greaterThanExp
-                    | expression '<>' expression                    # wackaWackaExp
-                    | expression 'is' expression                    # isExp
-                    | expression 'is not' expression                # isNotExp
-                    | expression '=' expression                     # equalsExp
-                    | expression 'and' expression                   # andExp
-                    | expression 'or' expression                    # orExp
+expression          : 'empty'                                                           # emptyExp
+                    | builtinFunc                                                       # builtinFuncExp
+                    | ID '(' expressionList ')'                                         # functionExp
+                    | factor                                                            # factorExp
+                    | chunk expression                                                  # chunkExp
+                    | 'not' expression                                                  # notExp
+                    | '-' expression                                                    # negateExp
+                    | expression '^' expression                                         # caratExp
+                    | expression op=('mod'|'div'|'/'|'*') expression                    # multiplicationExp
+                    | expression op=('+'|'-') expression                                # additionExp
+                    | expression ('&&'|'&') expression                                  # concatExp
+                    | expression op=('>='|'<='|'<'|'>'|'contains'|'is in') expression   # equalityExp
+                    | expression op=('='|'is not'|'is'|'<>'|'is not in') expression     # comparisonExp
+                    | expression 'and' expression                                       # andExp
+                    | expression 'or' expression                                        # orExp
                     ;
 
 factor				: literal                                       # literalFactor
@@ -270,7 +256,7 @@ factor				: literal                                       # literalFactor
 
 builtinFunc         : 'the'? oneArgFunc OF_IN factor                # builtinFuncOneArgs
                     | 'the' noArgFunc                               # builtinFuncNoArg
-                    | oneArgFunc '(' expressionList ')'               # builtinFuncArgList
+                    | oneArgFunc '(' expressionList ')'             # builtinFuncArgList
                     ;
 
 oneArgFunc          : 'average'                                     # averageFunc

@@ -24,10 +24,15 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     private boolean dirty = false;
 
     /**
-     * Reset the selection boundary to its initial, no-selection state.
+     * Reset the selection boundary to its initial, no-selection state. {@link #getSelectionOutline()} should return
+     * null following a selection reset, but prior to defining a new selection via {@link #defineSelectionBounds(Point, Point, boolean)}
      */
     public abstract void resetSelection();
 
+    /**
+     *
+     * @param bounds
+     */
     public abstract void setSelectionBounds(Rectangle bounds);
 
     public abstract void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain);
