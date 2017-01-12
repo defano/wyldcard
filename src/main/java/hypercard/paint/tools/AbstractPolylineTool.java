@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractPolylineTool extends AbstractPaintTool implements KeyListener {
+public abstract class AbstractPolylineTool extends AbstractPaintTool {
 
     private int snapToDegrees = 15;
     private List<Point> points = new ArrayList<>();
@@ -27,20 +27,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
     }
 
     @Override
-    public void activate(hypercard.paint.canvas.Canvas canvas) {
-        super.activate(canvas);
-        getCanvas().addKeyListener(this);
-    }
-
-    @Override
-    public void deactivate() {
-        super.deactivate();
-        getCanvas().removeKeyListener(this);
-    }
-
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(MouseEvent e, int scaleX, int scaleY) {
 
         // Nothing to do if initial point is not yet established
         if (points.size() == 0) {
@@ -52,7 +39,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
             currentPoint = Geometry.snapLineToNearestAngle(lastPoint, e.getPoint(), snapToDegrees);
             points.add(currentPoint);
         } else {
-            currentPoint = e.getPoint();
+            currentPoint = new Point(scaleX, scaleY);
             points.add(currentPoint);
         }
 
@@ -71,7 +58,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
 
         // User double-clicked; complete the polygon
         if (e.getClickCount() > 1 && points.size() > 1) {
@@ -81,7 +68,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
 
         // First click (creating initial point)
         else if (currentPoint == null) {
-            points.add(e.getPoint());
+            points.add(new Point(scaleX, scaleY));
         }
 
         // Single click with initial point established
@@ -128,11 +115,6 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-        // Nothing to do
-    }
-
-    @Override
     public void keyPressed(KeyEvent e) {
 
         // Ignore escape unless at least one point has been defined
@@ -140,11 +122,6 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool implements 
             points.add(currentPoint);
             commitPolyline();
         }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // Nothing to do
     }
 
     public int getSnapToDegrees() {

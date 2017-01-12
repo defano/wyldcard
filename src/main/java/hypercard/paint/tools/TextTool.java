@@ -6,7 +6,9 @@ import hypercard.paint.model.PaintToolType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
@@ -14,6 +16,7 @@ import java.util.Observer;
 public class TextTool extends AbstractPaintTool implements Observer {
 
     private final JTextArea textArea;
+    private Point textLocation;
 
     public TextTool() {
         super(PaintToolType.TEXT);
@@ -23,14 +26,13 @@ public class TextTool extends AbstractPaintTool implements Observer {
         textArea.setVisible(true);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
-        textArea.addMouseListener(this);
     }
 
     @Override
     public void deactivate() {
         super.deactivate();
 
-        commitTextImage(textArea.getX(), textArea.getY());
+        commitTextImage();
         removeTextArea();
         getFontProvider().deleteObserver(this);
     }
@@ -42,11 +44,12 @@ public class TextTool extends AbstractPaintTool implements Observer {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
         if (!isEditing()) {
+            textLocation = new Point(scaleX, scaleY - getScaledFontAscent());
             addTextArea(e.getX(), e.getY() - getFontAscent());
         } else {
-            commitTextImage(textArea.getX(), textArea.getY());
+            commitTextImage();
             removeTextArea();
         }
     }
@@ -56,33 +59,36 @@ public class TextTool extends AbstractPaintTool implements Observer {
     }
 
     protected void removeTextArea() {
-        getCanvas().remove(textArea);
-        getCanvas().revalidate();
-        getCanvas().repaint();
+        getCanvas().removeComponent(textArea);
     }
 
     protected void addTextArea(int x, int y) {
-        int left = getCanvas().getInsets().left + x;
-        int top = getCanvas().getInsets().top + y;
+        int left = getCanvas().getBounds().x + x;
+        int top = getCanvas().getBounds().y + y;
 
         textArea.setText("");
         textArea.setBounds(left, top, getCanvas().getWidth() - left, getCanvas().getHeight() - top);
-        textArea.setFont(getFont());
+        textArea.setFont(getScaledFont());
+        textArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                TextTool.this.mousePressed(e, 0, 0);
+            }
+        });
 
-        getCanvas().add(textArea);
-        getCanvas().revalidate();
-        getCanvas().repaint();
+        getCanvas().addComponent(textArea);
 
         textArea.requestFocus();
     }
 
-    protected BufferedImage renderTextImage() {
+    private BufferedImage renderTextImage() {
 
         // Clear selection before rasterizing
         textArea.setSelectionStart(0);
         textArea.setSelectionEnd(0);
 
         textArea.getCaret().setVisible(false);
+        textArea.setFont(getFont());
 
         BufferedImage image = new BufferedImage(textArea.getWidth(), textArea.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -94,12 +100,12 @@ public class TextTool extends AbstractPaintTool implements Observer {
         return image;
     }
 
-    public void commitTextImage(int x, int y) {
+    private void commitTextImage() {
 
         // Don't commit if user hasn't entered any text
         if (textArea.getText().trim().length() > 0) {
             Graphics g = getCanvas().getScratchGraphics();
-            g.drawImage(renderTextImage(), x, y, null);
+            g.drawImage(renderTextImage(), textLocation.x, textLocation.y, null);
             g.dispose();
 
             getCanvas().commit();
@@ -111,6 +117,14 @@ public class TextTool extends AbstractPaintTool implements Observer {
         if (newValue instanceof Font) {
             textArea.setFont((Font) newValue);
         }
+    }
+
+    private Font getScaledFont() {
+        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScale()));
+    }
+
+    private int getScaledFontAscent() {
+        return (int) (getFontAscent() / getCanvas().getScale());
     }
 
     private int getFontAscent() {

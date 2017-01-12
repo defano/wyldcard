@@ -23,7 +23,7 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
         if (hasSelection() && getSelectionOutline().contains(e.getPoint())) {
             originalImage = square(getSelectedImage());
             originalSelectionBounds = getSelectionOutline();
@@ -31,26 +31,26 @@ public class RotateTool extends AbstractSelectionTool {
             Rectangle selectionBounds = getSelectionOutline().getBounds();
             angleOrigin = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
         } else {
-            super.mousePressed(e);
+            super.mousePressed(e, scaleX, scaleY);
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
         if (angleOrigin != null) {
             angleDestination = e.getPoint();
             drawRotation(Math.toRadians(Geometry.getLineAngle(angleOrigin.x, angleOrigin.y, angleDestination.x, angleDestination.y)));
         } else {
-            super.mouseDragged(e);
+            super.mouseDragged(e, scaleX, scaleY);
         }
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
         if (angleOrigin != null || angleDestination != null) {
             finishSelection();
         } else {
-            super.mouseReleased(e);
+            super.mouseReleased(e, scaleX, scaleY);
         }
     }
 

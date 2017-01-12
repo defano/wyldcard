@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * A paint tools canvas with a built-in undo and redo buffer.
  */
-public class UndoableCanvas extends Canvas {
+public class UndoableCanvas extends BasicCanvas {
 
     // TODO: Add constructor arg to set this value
     private final int maxUndoBufferDepth = 20;

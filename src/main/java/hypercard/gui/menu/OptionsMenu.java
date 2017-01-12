@@ -1,11 +1,13 @@
 package hypercard.gui.menu;
 
+import hypercard.HyperCard;
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class OptionsMenu extends JMenu {
 
@@ -25,7 +27,10 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("FatBits")
-                .disabled()
+                .withAction(a -> {
+                    HyperCard.getRuntimeEnv().getCard().getCanvas().setScale(4.0);
+                    HyperCard.getRuntimeEnv().getCard().getCanvas().setImageLocation(new Point(200,200));
+                })
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
