@@ -99,7 +99,6 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
         repaintCanvas();
     }
 
-
     private int translateX(int x) {
         return (int) (getImageLocation().x / scale + (x / getScale()));
     }
@@ -123,9 +122,9 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
             Graphics2D g2d = (Graphics2D) g;
             BufferedImage canvasImage = getCanvasImage();
             BufferedImage scratchImage = getScratchImage();
-            g2d.drawImage(canvasImage, -getImageLocation().x, -getImageLocation().y, (int) (canvasImage.getWidth() * scale), (int) (canvasImage.getHeight() * scale), null);
-            g2d.drawImage(scratchImage, -getImageLocation().x, -getImageLocation().y, (int) (canvasImage.getWidth() * scale), (int) (canvasImage.getHeight() * scale), null);
-            g2d.dispose();
+
+            g2d.drawImage(canvasImage, -offset.x, -offset.y, (int) (canvasImage.getWidth() * scale), (int) (canvasImage.getHeight() * scale), null);
+            g2d.drawImage(scratchImage, -offset.x, -offset.y, (int) (scratchImage.getWidth() * scale), (int) (scratchImage.getHeight() * scale), null);
         }
     }
 

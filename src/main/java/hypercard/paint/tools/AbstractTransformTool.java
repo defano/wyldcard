@@ -37,13 +37,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         if (hasSelection()) {
 
             // User is clicking a drag handle
-            dragTopLeft = topLeftHandle.contains(e.getPoint());
-            dragTopRight = topRightHandle.contains(e.getPoint());
-            dragBottomLeft = bottomLeftHandle.contains(e.getPoint());
-            dragBottomRight = bottomRightHandle.contains(e.getPoint());
+            dragTopLeft = topLeftHandle.contains(new Point(scaleX, scaleY));
+            dragTopRight = topRightHandle.contains(new Point(scaleX, scaleY));
+            dragBottomLeft = bottomLeftHandle.contains(new Point(scaleX, scaleY));
+            dragBottomRight = bottomRightHandle.contains(new Point(scaleX, scaleY));
 
             // User is clicking outside the selection bounds; clear selection
-            if (!getSelectionOutline().contains(e.getPoint())) {
+            if (!getSelectionOutline().contains(new Point(scaleX, scaleY))) {
                 finishSelection();
                 clearSelection();
             }
@@ -66,13 +66,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             }
 
             if (dragTopLeft) {
-                moveTopLeft(transformBounds, e.getPoint());
+                moveTopLeft(transformBounds, new Point(scaleX, scaleY));
             } else if (dragTopRight) {
-                moveTopRight(transformBounds, e.getPoint());
+                moveTopRight(transformBounds, new Point(scaleX, scaleY));
             } else if (dragBottomLeft) {
-                moveBottomLeft(transformBounds, e.getPoint());
+                moveBottomLeft(transformBounds, new Point(scaleX, scaleY));
             } else if (dragBottomRight) {
-                moveBottomRight(transformBounds, e.getPoint());
+                moveBottomRight(transformBounds, new Point(scaleX, scaleY));
             }
 
             drawSelection();

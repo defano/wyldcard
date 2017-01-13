@@ -2,7 +2,9 @@ package hypercard.gui.menu;
 
 import hypercard.HyperCard;
 import hypercard.context.ToolsContext;
+import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.model.ProviderTransform;
 import hypercard.paint.tools.AbstractPaintTool;
 import hypercard.runtime.WindowManager;
 
@@ -25,12 +27,10 @@ public class OptionsMenu extends JMenu {
                 .disabled()
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
-                .named("FatBits")
-                .withAction(a -> {
-                    HyperCard.getRuntimeEnv().getCard().getCanvas().setScale(4.0);
-                    HyperCard.getRuntimeEnv().getCard().getCanvas().setImageLocation(new Point(200,200));
-                })
+        MenuItemBuilder.ofCheckType()
+                .named("Magnifier")
+                .withAction(a -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.MAGNIFIER))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.MAGNIFIER))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -84,14 +84,16 @@ public class OptionsMenu extends JMenu {
 
         this.addSeparator();
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Rotate")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ROTATE))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ROTATE))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Slant")
                 .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SLANT))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SLANT))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
