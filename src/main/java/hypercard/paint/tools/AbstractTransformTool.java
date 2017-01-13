@@ -31,19 +31,19 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
 
         // User has already made selection; we'll handle the mouse press
         if (hasSelection()) {
 
             // User is clicking a drag handle
-            dragTopLeft = topLeftHandle.contains(e.getPoint());
-            dragTopRight = topRightHandle.contains(e.getPoint());
-            dragBottomLeft = bottomLeftHandle.contains(e.getPoint());
-            dragBottomRight = bottomRightHandle.contains(e.getPoint());
+            dragTopLeft = topLeftHandle.contains(new Point(scaleX, scaleY));
+            dragTopRight = topRightHandle.contains(new Point(scaleX, scaleY));
+            dragBottomLeft = bottomLeftHandle.contains(new Point(scaleX, scaleY));
+            dragBottomRight = bottomRightHandle.contains(new Point(scaleX, scaleY));
 
             // User is clicking outside the selection bounds; clear selection
-            if (!getSelectionOutline().contains(e.getPoint())) {
+            if (!getSelectionOutline().contains(new Point(scaleX, scaleY))) {
                 finishSelection();
                 clearSelection();
             }
@@ -51,12 +51,12 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
         // No selection; delegate to selection tool to create a selection
         else {
-            super.mousePressed(e);
+            super.mousePressed(e, scaleX, scaleY);
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
 
         // Selection exists, see if we're dragging a handle
         if (hasSelection()) {
@@ -66,13 +66,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             }
 
             if (dragTopLeft) {
-                moveTopLeft(transformBounds, e.getPoint());
+                moveTopLeft(transformBounds, new Point(scaleX, scaleY));
             } else if (dragTopRight) {
-                moveTopRight(transformBounds, e.getPoint());
+                moveTopRight(transformBounds, new Point(scaleX, scaleY));
             } else if (dragBottomLeft) {
-                moveBottomLeft(transformBounds, e.getPoint());
+                moveBottomLeft(transformBounds, new Point(scaleX, scaleY));
             } else if (dragBottomRight) {
-                moveBottomRight(transformBounds, e.getPoint());
+                moveBottomRight(transformBounds, new Point(scaleX, scaleY));
             }
 
             drawSelection();
@@ -80,16 +80,16 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
         // No selection, delegate to selection tool to define selection
         else {
-            super.mouseDragged(e);
+            super.mouseDragged(e, scaleX, scaleY);
         }
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
 
         // User is completing selection
         if (!hasSelection()) {
-            super.mouseReleased(e);
+            super.mouseReleased(e, scaleX, scaleY);
 
             // Grab a copy of the selected image before we begin transforming it
             originalImage = getSelectedImage();

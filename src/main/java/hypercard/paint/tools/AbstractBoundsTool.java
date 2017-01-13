@@ -30,21 +30,21 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
     public abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
 
     @Override
-    public void mousePressed(MouseEvent e) {
-        initialPoint = new Point(e.getX(), e.getY());
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+        initialPoint = new Point(scaleX, scaleY);
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
-        currentPoint = e.getPoint();
+    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
+        currentPoint = new Point(scaleX, scaleY);
 
         if (!drawMultiple.get()) {
             getCanvas().clearScratch();
         }
 
         Rectangle bounds = e.isShiftDown() ?
-                Geometry.squareAtAnchor(initialPoint, e.getPoint()) :
-                Geometry.rectangleFromPoints(initialPoint, e.getPoint());
+                Geometry.squareAtAnchor(initialPoint, currentPoint) :
+                Geometry.rectangleFromPoints(initialPoint, currentPoint);
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
 
@@ -59,7 +59,7 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
         getCanvas().commit();
     }
 

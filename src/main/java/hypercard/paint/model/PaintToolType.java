@@ -18,7 +18,8 @@ public enum PaintToolType {
     AIRBRUSH,
     CURVE,
     SLANT,
-    ROTATE;
+    ROTATE,
+    MAGNIFIER;
 
     public boolean isShapeTool() {
         return  this == RECTANGLE       ||

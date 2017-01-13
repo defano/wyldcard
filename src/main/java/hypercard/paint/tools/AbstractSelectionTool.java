@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractSelectionTool extends AbstractPaintTool implements KeyListener, MarchingAntsObserver {
+public abstract class AbstractSelectionTool extends AbstractPaintTool implements MarchingAntsObserver {
 
     private Provider<BufferedImage> selectedImage = new Provider<>();
     private Point initialPoint, lastPoint;
@@ -29,10 +29,6 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      */
     public abstract void resetSelection();
 
-    /**
-     *
-     * @param bounds
-     */
     public abstract void setSelectionBounds(Rectangle bounds);
 
     public abstract void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain);
@@ -48,8 +44,8 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-        if (hasSelectionBounds() && getSelectionOutline().contains(e.getPoint())) {
+    public void mouseMoved(MouseEvent e, int scaleX, int scaleY) {
+        if (hasSelectionBounds() && getSelectionOutline().contains(new Point(scaleX, scaleY))) {
             setToolCursor(Cursor.getDefaultCursor());
         } else {
             setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -57,12 +53,12 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-        isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(e.getPoint());
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+        isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(new Point(scaleX, scaleY));
 
         // User clicked inside selection bounds; start moving selection
         if (isMovingSelection) {
-            lastPoint = e.getPoint();
+            lastPoint = new Point(scaleX, scaleY);
         }
 
         // User clicked outside current selection bounds
@@ -73,24 +69,24 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
                 clearSelection();
             }
 
-            initialPoint = e.getPoint();
+            initialPoint = new Point(scaleX, scaleY);
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
 
         // User is moving an existing selection
         if (isMovingSelection) {
             setDirty();
-            adjustSelectionBounds(e.getX() - lastPoint.x, e.getY() - lastPoint.y);
+            adjustSelectionBounds(scaleX - lastPoint.x, scaleY - lastPoint.y);
             drawSelection();
-            lastPoint = e.getPoint();
+            lastPoint = new Point(scaleX, scaleY);
         }
 
         // User is defining a new selection rectangle
         else {
-            defineSelectionBounds(initialPoint, Geometry.pointWithinBounds(e.getPoint(), getCanvas().getBounds()), e.isShiftDown());
+            defineSelectionBounds(initialPoint, Geometry.pointWithinBounds(new Point(scaleX, scaleY), getCanvas().getBounds()), e.isShiftDown());
 
             getCanvas().clearScratch();
             drawSelectionOutline();
@@ -99,10 +95,10 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionBounds()) {
-            completeSelectionBounds(e.getPoint());
+            completeSelectionBounds(new Point(scaleX, scaleY));
             getSelectionFromCanvas();
         }
     }
@@ -111,9 +107,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     public void activate(Canvas canvas) {
         super.activate(canvas);
 
-        getCanvas().addKeyListener(this);
         getCanvas().addObserver(this);
-
         MarchingAnts.getInstance().addObserver(this);
     }
 
@@ -123,9 +117,8 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
         // Need to remove selection frame when tool is no longer active
         finishSelection();
-        getCanvas().removeKeyListener(this);
-        getCanvas().removeObserver(this);
 
+        getCanvas().removeObserver(this);
         MarchingAnts.getInstance().removeObserver(this);
     }
 
@@ -413,16 +406,6 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
                     break;
             }
         }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // Nothing to do
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // Nothing to do
     }
 
     @Override

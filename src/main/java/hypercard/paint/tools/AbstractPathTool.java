@@ -15,25 +15,25 @@ public abstract class AbstractPathTool extends AbstractPaintTool {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        startPath(g2d, getStroke(), getStrokePaint(), e.getPoint());
+        startPath(g2d, getStroke(), getStrokePaint(), new Point(scaleX, scaleY));
         g2d.dispose();
 
         getCanvas().repaintCanvas();
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
-        addPoint(g2d, getStroke(), getFillPaint(), e.getPoint());
+        addPoint(g2d, getStroke(), getFillPaint(), new Point(scaleX, scaleY));
         g2d.dispose();
 
         getCanvas().repaintCanvas();
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
         getCanvas().commit(getComposite());
     }
 }

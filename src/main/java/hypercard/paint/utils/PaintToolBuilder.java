@@ -140,6 +140,9 @@ public class PaintToolBuilder {
             case ROTATE:
                 selectedTool = new RotateTool();
                 break;
+            case MAGNIFIER:
+                selectedTool = new MagnifierTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);

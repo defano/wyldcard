@@ -1,15 +1,18 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.canvas.CanvasInteractionListener;
 import hypercard.paint.canvas.CanvasObserver;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractPaintTool extends MouseAdapter implements CanvasObserver {
+public abstract class AbstractPaintTool implements CanvasInteractionListener, CanvasObserver {
 
     private Canvas canvas;
     private final PaintToolType type;
@@ -34,15 +37,13 @@ public abstract class AbstractPaintTool extends MouseAdapter implements CanvasOb
 
     public void activate (Canvas canvas) {
         this.canvas = canvas;
-        this.canvas.addMouseListener(this);
-        this.canvas.addMouseMotionListener(this);
+        this.canvas.addCanvasInteractionListener(this);
         this.canvas.setCursor(toolCursor);
     }
 
     public void deactivate() {
         if (canvas != null) {
-            canvas.removeMouseListener(this);
-            canvas.removeMouseMotionListener(this);
+            canvas.removeCanvasInteractionListener(this);
             canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
     }
@@ -148,5 +149,55 @@ public abstract class AbstractPaintTool extends MouseAdapter implements CanvasOb
         if (this.canvas != null) {
             this.canvas.setCursor(toolCursor);
         }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e, int scaleX, int scaleY) {
+        // Nothing to do
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // Nothing to do
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // Nothing to do
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Nothing to do
     }
 }
