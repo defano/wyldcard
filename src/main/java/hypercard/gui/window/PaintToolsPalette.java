@@ -7,7 +7,7 @@ import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.AbstractPaintTool;
+import hypercard.paint.tools.base.AbstractPaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;

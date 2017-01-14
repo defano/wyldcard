@@ -6,7 +6,7 @@ public interface CanvasInteractionListener extends KeyListener {
 
     /**
      * Invoked when the mouse button has been clicked (pressed
-     * and released) on a component.
+     * and released) on the canvas.
      */
     void mouseClicked(MouseEvent e, int scaleX, int scaleY);
 

@@ -1,4 +1,4 @@
-package hypercard.paint.tools;
+package hypercard.paint.tools.base;
 
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.canvas.CanvasInteractionListener;

@@ -3,12 +3,12 @@ package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.tools.base.AbstractPaintTool;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
@@ -120,11 +120,11 @@ public class TextTool extends AbstractPaintTool implements Observer {
     }
 
     private Font getScaledFont() {
-        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScale()));
+        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleProvider().get()));
     }
 
     private int getScaledFontAscent() {
-        return (int) (getFontAscent() / getCanvas().getScale());
+        return (int) (getFontAscent() / getCanvas().getScaleProvider().get());
     }
 
     private int getFontAscent() {

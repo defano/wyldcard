@@ -1,14 +1,11 @@
 package hypercard.gui.menu;
 
 import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.Provider;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.util.Observable;
-import java.util.Observer;
 
 public class MenuItemBuilder {
 
@@ -30,6 +27,10 @@ public class MenuItemBuilder {
 
     public static MenuItemBuilder ofDefaultType () {
         return new MenuItemBuilder(new JMenuItem());
+    }
+
+    public static MenuItemBuilder ofHeirarchicalType() {
+        return new MenuItemBuilder(new JMenu());
     }
 
     public MenuItemBuilder withAction (ActionListener action) {
@@ -79,9 +80,14 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public void build (JMenu intoMenu) {
+    public MenuItemBuilder withIcon(Icon icon) {
+        this.item.setIcon(icon);
+        return this;
+    }
 
-        if (checkmarkProvider != null && item instanceof JCheckBoxMenuItem) {
+    public JMenuItem build (JMenuItem intoMenu) {
+
+        if (checkmarkProvider != null) {
             checkmarkProvider.addObserver((o, newValue) -> item.setSelected((boolean) newValue));
             item.setSelected(checkmarkProvider.get());
         }
@@ -92,5 +98,6 @@ public class MenuItemBuilder {
         }
 
         intoMenu.add(item);
+        return item;
     }
 }

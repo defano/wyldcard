@@ -485,21 +485,24 @@ end <functionName>
 
 When calling a user defined function, use the calling syntax `<functionName>(<arg1>, <arg2>, ...)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
 
-For example:
+Consider this recursive function for generating the Fibonacci sequence:
 
 ```
 on mouseUp
-	-- factorial(5) returns 120
-	answer "The factorial of 5 is " && factorial(5)
+  answer fibonacci("", 0, 1, 200)
 end mouseUp
 
-function factorial fact
-	if fact = 1 then
-		return 1
+function fibonacci sequence, lastValue, thisValue, maxValue
+	if sequence is empty then put "0" into sequence
+	put thisValue + lastValue after the last item of sequence
+
+	if thisValue + lastValue <= maxValue then
+		return fibonacci(sequence, thisValue, thisValue + lastValue, maxValue)
 	else
-		return fact * factorial(fact – 1)
+		return sequence
 	end if
-end factorial
+
+end fibonacci
 ```
 
 ## Control Structures

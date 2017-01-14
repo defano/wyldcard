@@ -1,6 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.tools.base.AbstractPathTool;
 
 import java.awt.*;
 import java.awt.geom.Line2D;

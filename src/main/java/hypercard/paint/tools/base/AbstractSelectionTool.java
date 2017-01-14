@@ -1,17 +1,17 @@
-package hypercard.paint.tools;
+package hypercard.paint.tools.base;
 
 import hypercard.paint.Transform;
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
+import hypercard.paint.tools.RotateTool;
 import hypercard.paint.utils.MarchingAnts;
 import hypercard.paint.utils.MarchingAntsObserver;
 import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;

@@ -16,6 +16,10 @@ public class Geometry {
         return (int) (toNearest * Math.round(value / toNearest));
     }
 
+    public static int round(int value, int toNearest) {
+        return toNearest * Math.round(value / toNearest);
+    }
+
     /**
      * Returns the angle (in degrees) of the line represented by (x1, y1), (x2, y2).
      *

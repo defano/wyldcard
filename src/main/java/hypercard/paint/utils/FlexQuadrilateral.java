@@ -58,33 +58,6 @@ public class FlexQuadrilateral {
         return new Point[] {getTopLeft(), getTopRight(), getBottomRight(), getBottomLeft()};
     }
 
-    public void transform(AffineTransform t) {
-        PathIterator pi = getShape().getPathIterator(t);
-        ArrayList<Point> points = new ArrayList<>();
-
-        while (!pi.isDone()) {
-            double[] coordinates = new double[6];
-            int type = pi.currentSegment(coordinates);
-            if (type == PathIterator.SEG_MOVETO || type == PathIterator.SEG_LINETO) {
-                points.add(new Point((int) coordinates[0], (int) coordinates[1]));
-            }
-            pi.next();
-        }
-
-        if (points.size() == 4) {
-            topLeft = points.get(0);
-            topRight = points.get(1);
-            bottomRight = points.get(2);
-            bottomLeft = points.get(3);
-        }
-
-        for (Point thisP : points) {
-            System.err.println(thisP);
-        }
-
-        System.err.println();
-    }
-
     public Point getCenter() {
         return new Point(getShape().getBounds().width / 2, getShape().getBounds().height / 2);
     }

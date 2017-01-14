@@ -1,6 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.tools.base.AbstractBoundsTool;
 import hypercard.paint.utils.Geometry;
 
 import java.awt.*;

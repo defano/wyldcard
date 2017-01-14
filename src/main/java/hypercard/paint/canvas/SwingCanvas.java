@@ -1,6 +1,9 @@
 package hypercard.paint.canvas;
 
 
+import hypercard.paint.model.Provider;
+import hypercard.paint.utils.Geometry;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,9 +13,10 @@ import java.util.List;
 
 public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener, MouseListener, MouseMotionListener {
 
-    private double scale = 1.0;
-    private Point imageLocation = new Point(0, 0);
+    private Provider<Double> scale = new Provider<>(1.0);
+    private Provider<Integer> gridSpacing = new Provider<>(1);
 
+    private Point imageLocation = new Point(0, 0);
     private List<CanvasObserver> observers = new ArrayList<>();
     private List<CanvasInteractionListener> interactionListeners = new ArrayList<>();
 
@@ -89,22 +93,34 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
     }
 
     @Override
-    public double getScale() {
+    public Provider<Double> getScaleProvider() {
         return scale;
     }
 
     @Override
+    public void setGridSpacing(int grid) {
+        this.gridSpacing.set(grid);
+    }
+
+    @Override
+    public Provider<Integer> getGridSpacingProvider() {
+        return gridSpacing;
+    }
+
+    @Override
     public void setScale(double scale) {
-        this.scale = scale;
+        this.scale.set(scale);
         repaintCanvas();
     }
 
     private int translateX(int x) {
-        return (int) (getImageLocation().x / scale + (x / getScale()));
+        x = Geometry.round(x, (int) (gridSpacing.get() * scale.get()));
+        return (int) (getImageLocation().x / scale.get() + (x / scale.get()));
     }
 
     private int translateY(int y) {
-        return (int) (getImageLocation().y / scale + (y / getScale()));
+        y = Geometry.round(y, (int) (gridSpacing.get() * scale.get()));
+        return (int) (getImageLocation().y / scale.get() + (y / scale.get()));
     }
 
     /**
@@ -116,7 +132,7 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
         super.paintComponent(g);
 
         if (isVisible()) {
-            double scale = getScale();
+            double scale = this.scale.get();
             Point offset = getImageLocation();
 
             Graphics2D g2d = (Graphics2D) g;

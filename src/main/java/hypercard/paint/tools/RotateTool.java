@@ -2,6 +2,7 @@ package hypercard.paint.tools;
 
 import hypercard.paint.Transform;
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.tools.base.AbstractSelectionTool;
 import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
@@ -11,12 +12,17 @@ import java.awt.image.BufferedImage;
 
 public class RotateTool extends AbstractSelectionTool {
 
-    private Point angleOrigin;
-    private Point angleDestination;
+    private Point centerpoint;
+    private Point dragLocation;
+
+    private BufferedImage originalImage;
 
     private Shape selectionBounds;
     private Shape originalSelectionBounds;
-    private BufferedImage originalImage;
+    private Shape dragHandle;
+    private Shape originalDragHandle;
+
+    private boolean rotating = false;
 
     public RotateTool() {
         super(PaintToolType.ROTATE);
@@ -24,33 +30,53 @@ public class RotateTool extends AbstractSelectionTool {
 
     @Override
     public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
-        if (hasSelection() && getSelectionOutline().contains(new Point(scaleX, scaleY))) {
-            originalImage = square(getSelectedImage());
-            originalSelectionBounds = getSelectionOutline();
 
-            Rectangle selectionBounds = getSelectionOutline().getBounds();
-            angleOrigin = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
-        } else {
+        // User clicked outside the selection after making a rotation change
+        if (isDirty() && !selectionBounds.contains(e.getPoint())) {
+            rotating = false;
+            finishSelection();
+        }
+
+        // User clicked inside drag handle
+        else if (hasSelection() && dragHandle.contains(new Point(scaleX, scaleY))) {
+            rotating = true;
+
+            if (centerpoint == null) {
+                originalImage = square(getSelectedImage());
+                originalSelectionBounds = getSelectionOutline();
+
+                Rectangle selectionBounds = getSelectionOutline().getBounds();
+                centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
+            }
+        }
+
+        // None of the above; delegate to superclass
+        else {
+            rotating = false;
             super.mousePressed(e, scaleX, scaleY);
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
-        if (angleOrigin != null) {
-            angleDestination = new Point(scaleX, scaleY);
-            drawRotation(Math.toRadians(Geometry.getLineAngle(angleOrigin.x, angleOrigin.y, angleDestination.x, angleDestination.y)));
-        } else {
-            super.mouseDragged(e, scaleX, scaleY);
-        }
-    }
 
-    @Override
-    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
-        if (angleOrigin != null || angleDestination != null) {
-            finishSelection();
-        } else {
-            super.mouseReleased(e, scaleX, scaleY);
+        if (rotating) {
+            setDirty();     // Mutating the selected image
+
+            // Calculate the rotation angle
+            dragLocation = new Point(scaleX, scaleY);
+            double angle = Math.toRadians(Geometry.getLineAngle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y));
+
+            // Rotate the marching ants and drag handle
+            selectionBounds = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalSelectionBounds);
+            dragHandle = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalDragHandle);
+
+            // Rotate the selected canvas image
+            setSelectedImage(Transform.rotate(originalImage, angle, originalImage.getWidth() / 2, originalImage.getHeight() / 2));
+        }
+
+        else {
+            super.mouseDragged(e, scaleX, scaleY);
         }
     }
 
@@ -58,8 +84,8 @@ public class RotateTool extends AbstractSelectionTool {
     public void resetSelection() {
         selectionBounds = null;
         originalSelectionBounds = null;
-        angleOrigin = null;
-        angleDestination = null;
+        centerpoint = null;
+        dragLocation = null;
         originalImage = null;
     }
 
@@ -70,10 +96,13 @@ public class RotateTool extends AbstractSelectionTool {
 
     @Override
     public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+        int handleSize = 8;
+
         Rectangle selectionRectangle = new Rectangle(initialPoint);
         selectionRectangle.add(currentPoint);
 
         selectionBounds = selectionRectangle;
+        originalDragHandle = dragHandle = new Rectangle(selectionRectangle.x + selectionRectangle.width - handleSize, selectionRectangle.y + selectionRectangle.height / 2 - handleSize / 2, handleSize, handleSize);
     }
 
     @Override
@@ -88,14 +117,17 @@ public class RotateTool extends AbstractSelectionTool {
 
     @Override
     public void adjustSelectionBounds(int xDelta, int yDelta) {
-        // Nothing to do
+        // Nothing to do; user can't move selection
     }
 
     @Override
     protected Point getSelectedImageLocation() {
-        if (angleDestination == null) {
+
+        if (dragLocation == null) {
             return getSelectionOutline().getBounds().getLocation();
-        } else {
+        }
+
+        else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
             Geometry.center(enlargedBounds, originalSelectionBounds.getBounds());
             return enlargedBounds.getLocation();
@@ -128,10 +160,15 @@ public class RotateTool extends AbstractSelectionTool {
         return enlarged;
     }
 
-    private void drawRotation(double angle) {
-        setDirty();
+    @Override
+    protected void drawSelection() {
+        super.drawSelection();
 
-        selectionBounds = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalSelectionBounds);
-        setSelectedImage(Transform.rotate(originalImage, angle, originalImage.getWidth() / 2, originalImage.getHeight() / 2));
+        // Draw the drag handle on the selection
+        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+        g.setColor(Color.black);
+        g.fill(dragHandle);
+        g.dispose();
     }
+
 }

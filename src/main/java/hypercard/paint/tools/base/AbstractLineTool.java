@@ -1,4 +1,4 @@
-package hypercard.paint.tools;
+package hypercard.paint.tools.base;
 
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.utils.Geometry;

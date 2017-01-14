@@ -3,8 +3,8 @@ package hypercard.gui.menu;
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.AbstractPaintTool;
-import hypercard.paint.tools.AbstractSelectionTool;
+import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import java.util.Objects;

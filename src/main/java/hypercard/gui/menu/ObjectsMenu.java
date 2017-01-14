@@ -2,7 +2,7 @@ package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.AbstractPaintTool;
+import hypercard.paint.tools.base.AbstractPaintTool;
 import hypercard.parts.ButtonPart;
 import hypercard.parts.CardPart;
 import hypercard.parts.FieldPart;

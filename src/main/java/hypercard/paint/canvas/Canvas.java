@@ -1,5 +1,7 @@
 package hypercard.paint.canvas;
 
+import hypercard.paint.model.Provider;
+
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
@@ -31,7 +33,10 @@ public interface Canvas {
     void setImageLocation(Point location);
     Point getImageLocation();
     void setScale(double scale);
-    double getScale();
+    Provider<Double> getScaleProvider();
+
+    void setGridSpacing(int grid);
+    Provider<Integer> getGridSpacingProvider();
 
     BufferedImage getCanvasImage();
     BufferedImage getScratchImage();

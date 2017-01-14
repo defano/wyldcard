@@ -4,6 +4,7 @@ import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 import hypercard.paint.tools.*;
+import hypercard.paint.tools.base.AbstractPaintTool;
 
 import java.awt.*;
 

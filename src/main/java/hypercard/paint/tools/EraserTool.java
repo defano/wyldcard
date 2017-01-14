@@ -1,9 +1,9 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.tools.base.AbstractPathTool;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 
 public class EraserTool extends AbstractPathTool {

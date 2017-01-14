@@ -4,12 +4,10 @@ import hypercard.HyperCard;
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.model.ProviderTransform;
-import hypercard.paint.tools.AbstractPaintTool;
+import hypercard.paint.tools.base.AbstractPaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class OptionsMenu extends JMenu {
 
@@ -22,10 +20,35 @@ public class OptionsMenu extends JMenu {
             OptionsMenu.this.setVisible(selectedTool.getToolType() != PaintToolType.ARROW);
         });
 
-        MenuItemBuilder.ofDefaultType()
+        JMenuItem grid = MenuItemBuilder.ofHeirarchicalType()
                 .named("Grid")
-                .disabled()
+                .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(1))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t != 1))
                 .build(this);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("2 px")
+                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 2 ? 1 : 2))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 2))
+                        .build(grid);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("5 px")
+                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 5 ? 1 : 5))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 5))
+                        .build(grid);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("10 px")
+                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 10 ? 1 : 10))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 10))
+                        .build(grid);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("20 px")
+                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 20 ? 1 : 20))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 20))
+                        .build(grid);
 
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")

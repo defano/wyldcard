@@ -1,6 +1,7 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
+import hypercard.paint.tools.base.AbstractPolylineTool;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
