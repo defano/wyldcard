@@ -1,7 +1,7 @@
 package hypercard.paint.canvas;
 
 
-import hypercard.paint.model.Provider;
+import hypercard.paint.canvas.surface.PaintableSurface;
 import hypercard.paint.utils.Geometry;
 
 import javax.swing.*;
@@ -11,16 +11,17 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener, MouseListener, MouseMotionListener {
+public abstract class AbstractSwingCanvas extends JPanel implements PaintableSurface, KeyListener, MouseListener, MouseMotionListener {
 
-    private Provider<Double> scale = new Provider<>(1.0);
-    private Provider<Integer> gridSpacing = new Provider<>(1);
+    private List<CanvasCommitObserver> observers = new ArrayList<>();
+    private List<CanvasInteractionObserver> interactionListeners = new ArrayList<>();
 
-    private Point imageLocation = new Point(0, 0);
-    private List<CanvasObserver> observers = new ArrayList<>();
-    private List<CanvasInteractionListener> interactionListeners = new ArrayList<>();
+    public AbstractSwingCanvas() {
+        setOpaque(false);
+        setEnabled(true);
+        setFocusable(true);
+        setLayout(null);
 
-    public SwingCanvas() {
         addMouseListener(this);
         addMouseMotionListener(this);
         addKeyListener(this);
@@ -44,7 +45,7 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
      * Adds an observer to be notified of scratch buffer commits.
      * @param observer The observer to be registered.
      */
-    public void addObserver(CanvasObserver observer) {
+    public void addObserver(CanvasCommitObserver observer) {
         observers.add(observer);
     }
 
@@ -53,74 +54,69 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
      * @param observer The observer to be removed.
      * @return True if the given observer was successfully unregistered; false otherwise.
      */
-    public boolean removeObserver(CanvasObserver observer) {
+    public boolean removeObserver(CanvasCommitObserver observer) {
         return observers.remove(observer);
     }
 
-    @Override
-    public void addCanvasInteractionListener(CanvasInteractionListener listener) {
-        interactionListeners.add(listener);
-    }
-
-    @Override
-    public boolean removeCanvasInteractionListener(CanvasInteractionListener listener) {
-        return interactionListeners.remove(listener);
-    }
-
-    protected void fireObservers(BufferedImage committedImage, BufferedImage canvasImage) {
-        for (CanvasObserver thisObserver : observers) {
-            thisObserver.onCommit(this, committedImage, canvasImage);
+    protected void fireObservers(Canvas canvas, BufferedImage committedImage, BufferedImage canvasImage) {
+        for (CanvasCommitObserver thisObserver : observers) {
+            thisObserver.onCommit(canvas, committedImage, canvasImage);
         }
     }
 
     /**
      * Causes the Swing framework to redraw/refresh the Canvas by calling repaint on the Canvas's parent component.
      */
-    public void repaintCanvas() {
+    public void invalidateCanvas() {
         if (getParent() != null) {
             getParent().repaint();
         }
     }
 
-    @Override
-    public void setImageLocation(Point location) {
-        imageLocation = location;
-    }
 
-    @Override
-    public Point getImageLocation() {
-        return imageLocation;
-    }
 
-    @Override
-    public Provider<Double> getScaleProvider() {
-        return scale;
-    }
+    public void setSize(int width, int height) {
+        super.setSize(width, height);
 
-    @Override
-    public void setGridSpacing(int grid) {
-        this.gridSpacing.set(grid);
-    }
+        // Don't truncate image if canvas shrinks, but do grow it
+        if (width < getCanvasImage().getWidth()) {
+            width = getCanvasImage().getWidth();
+        }
 
-    @Override
-    public Provider<Integer> getGridSpacingProvider() {
-        return gridSpacing;
-    }
+        if (height < getCanvasImage().getHeight()) {
+            height = getCanvasImage().getHeight();
+        }
 
-    @Override
-    public void setScale(double scale) {
-        this.scale.set(scale);
-        repaintCanvas();
+        BufferedImage newScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics newScratchGraphics = newScratch.getGraphics();
+        newScratchGraphics.drawImage(getScratchImage(), 0, 0, null);
+        setScratchImage(newScratch);
+
+        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics newImageGraphics = newImage.getGraphics();
+        newImageGraphics.drawImage(getCanvasImage(), 0, 0, null);
+        setCanvasImage(newImage);
+
+        newScratchGraphics.dispose();
+        newImageGraphics.dispose();
+
+        invalidateCanvas();
     }
 
     private int translateX(int x) {
-        x = Geometry.round(x, (int) (gridSpacing.get() * scale.get()));
-        return (int) (getImageLocation().x / scale.get() + (x / scale.get()));
+        int gridSpacing = getGridSpacingProvider().get();
+        double scale = getScaleProvider().get();
+
+        x = Geometry.round(x, (int) (gridSpacing * scale));
+        return (int) (getImageLocation().x / scale + (x / scale));
     }
 
     private int translateY(int y) {
-        y = Geometry.round(y, (int) (gridSpacing.get() * scale.get()));
-        return (int) (getImageLocation().y / scale.get() + (y / scale.get()));
+        int gridSpacing = getGridSpacingProvider().get();
+        double scale = getScaleProvider().get();
+
+        y = Geometry.round(y, (int) (gridSpacing * scale));
+        return (int) (getImageLocation().y / scale + (y / scale));
     }
 
     /**
@@ -132,7 +128,7 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
         super.paintComponent(g);
 
         if (isVisible()) {
-            double scale = this.scale.get();
+            double scale = getScaleProvider().get();
             Point offset = getImageLocation();
 
             Graphics2D g2d = (Graphics2D) g;
@@ -145,71 +141,81 @@ public abstract class SwingCanvas extends JPanel implements Canvas, KeyListener,
     }
 
     @Override
+    public void addCanvasInteractionListener(CanvasInteractionObserver listener) {
+        interactionListeners.add(listener);
+    }
+
+    @Override
+    public boolean removeCanvasInteractionListener(CanvasInteractionObserver listener) {
+        return interactionListeners.remove(listener);
+    }
+
+    @Override
     public final void keyTyped(KeyEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.keyTyped(e);
         }
     }
 
     @Override
     public final void keyPressed(KeyEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.keyPressed(e);
         }
     }
 
     @Override
     public final void keyReleased(KeyEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.keyReleased(e);
         }
     }
 
     @Override
     public final void mouseClicked(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseClicked(e, translateX(e.getX()), translateY(e.getY()));
         }
     }
 
     @Override
     public final void mousePressed(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mousePressed(e, translateX(e.getX()), translateY(e.getY()));
         }
     }
 
     @Override
     public final void mouseReleased(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseReleased(e, translateX(e.getX()), translateY(e.getY()));
         }
     }
 
     @Override
     public final void mouseEntered(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseEntered(e, translateX(e.getX()), translateY(e.getY()));
         }
     }
 
     @Override
     public final void mouseExited(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseExited(e, translateX(e.getX()), translateY(e.getY()));
         }
     }
 
     @Override
     public final void mouseDragged(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseDragged(e, translateX(e.getX()), translateY(e.getY()));
         }
     }
 
     @Override
     public final void mouseMoved(MouseEvent e) {
-        for(CanvasInteractionListener thisListener : interactionListeners) {
+        for(CanvasInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseMoved(e, translateX(e.getX()), translateY(e.getY()));
         }
     }

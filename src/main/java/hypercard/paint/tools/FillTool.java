@@ -38,7 +38,7 @@ public class FillTool extends AbstractPaintTool {
         });
 
         getCanvas().commit();
-        getCanvas().repaintCanvas();
+        getCanvas().invalidateCanvas();
     }
 
     private int getFillPixel(int x, int y, Paint paint) {

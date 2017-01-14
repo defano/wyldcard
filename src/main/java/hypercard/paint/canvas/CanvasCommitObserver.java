@@ -2,7 +2,7 @@ package hypercard.paint.canvas;
 
 import java.awt.image.BufferedImage;
 
-public interface CanvasObserver {
+public interface CanvasCommitObserver {
     /**
      * Fires when an new shape or image is committed from scratch onto the canvas.
      *

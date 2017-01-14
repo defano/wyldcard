@@ -11,7 +11,7 @@ package hypercard.parts;
 import hypercard.context.PartsTable;
 import hypercard.context.ToolsContext;
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.canvas.CanvasObserver;
+import hypercard.paint.canvas.CanvasCommitObserver;
 import hypercard.paint.canvas.UndoableCanvas;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
@@ -24,7 +24,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
-public class CardPart extends JLayeredPane implements ComponentListener, CanvasObserver {
+public class CardPart extends JLayeredPane implements ComponentListener, CanvasCommitObserver {
 
     private final static int BACKGROUND_CANVAS_LAYER = 0;
     private final static int BACKGROUND_PARTS_LAYER = 1;

@@ -2,7 +2,7 @@ package hypercard.paint.canvas;
 
 import java.awt.event.*;
 
-public interface CanvasInteractionListener extends KeyListener {
+public interface CanvasInteractionObserver extends KeyListener {
 
     /**
      * Invoked when the mouse button has been clicked (pressed

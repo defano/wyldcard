@@ -1,9 +1,15 @@
 package hypercard.paint.canvas;
 
+import hypercard.paint.model.Provider;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class BasicCanvas extends SwingCanvas {
+public class BasicCanvas extends AbstractSwingCanvas implements Canvas {
+
+    private Point imageLocation = new Point(0, 0);
+    private Provider<Double> scale = new Provider<>(1.0);
+    private Provider<Integer> gridSpacing = new Provider<>(1);
 
     private BufferedImage image;
     private BufferedImage scratch;
@@ -15,56 +21,19 @@ public abstract class BasicCanvas extends SwingCanvas {
     public BasicCanvas(BufferedImage initialImage) {
 
         if (initialImage == null) {
-            image = newTransparentImage(1,1);
+            image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         } else {
             image = initialImage;
         }
 
-        scratch = newTransparentImage(image.getWidth(), image.getHeight());
-
-        setOpaque(false);
-        setEnabled(true);
-        setFocusable(true);
-        setLayout(null);
-    }
-
-    public void setSize(int width, int height) {
-        super.setSize(width, height);
-
-        // Don't truncate image if canvas shrinks, but do grow it
-        if (width < image.getWidth()) {
-            width = image.getWidth();
-        }
-
-        if (height < image.getHeight()) {
-            height = image.getHeight();
-        }
-
-        BufferedImage newScratch = newTransparentImage(width, height);
-        Graphics newScratchGraphics = newScratch.getGraphics();
-        newScratchGraphics.drawImage(getScratchImage(), 0, 0, null);
-        scratch = newScratch;
-
-        BufferedImage newImage = newTransparentImage(width, height);
-        Graphics newImageGraphics = newImage.getGraphics();
-        newImageGraphics.drawImage(getCanvasImage(), 0, 0, null);
-        image = newImage;
-
-        newScratchGraphics.dispose();
-        newImageGraphics.dispose();
-
-        repaintCanvas();
+        scratch = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 
     public void clearCanvas() {
-        Graphics2D g2 = (Graphics2D) getScratchGraphics();
+        Graphics2D g2 = (Graphics2D) getScratchImage().getGraphics();
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, getWidth(), getHeight());
         commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
-    }
-
-    public BufferedImage getCanvasImage() {
-        return image;
     }
 
     protected void overlayImage(int x, int y, BufferedImage source, BufferedImage destination, AlphaComposite composite) {
@@ -75,12 +44,22 @@ public abstract class BasicCanvas extends SwingCanvas {
         g2d.dispose();
     }
 
-    private BufferedImage newTransparentImage(int width, int height) {
-        return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    public BufferedImage getCanvasImage() {
+        return image;
     }
 
     public BufferedImage getScratchImage() {
         return scratch;
+    }
+
+    @Override
+    public void setCanvasImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    @Override
+    public void setScratchImage(BufferedImage image) {
+        this.scratch = image;
     }
 
     public void commit() {
@@ -95,32 +74,48 @@ public abstract class BasicCanvas extends SwingCanvas {
         BufferedImage canvasImage = getCanvasImage();
 
         overlayImage(0, 0, scratchImage, canvasImage, composite);
-        fireObservers(scratchImage, canvasImage);
+        fireObservers(this, scratchImage, canvasImage);
 
         clearScratch();
-        repaintCanvas();
+        invalidateCanvas();
     }
 
     /**
      * Creates a clean scratch buffer (replacing all pixels in the graphics context with transparent pixels).
      */
     public void clearScratch() {
-        scratch = newTransparentImage(getWidth(), getHeight());
+        scratch = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 
-    /**
-     * Gets the Graphics context associated with the scratch buffer. Paint tools should "draw" into this temporary
-     * context, then, once the user is ready to accept the change, invoke {@link #commit()} to apply changes to this
-     * context to the Canvas.
-     *
-     * This design allows paint tools to draw on-screen temporarily without modifying the underline graphic. For example,
-     * to show "marching ants" as part of a selection tool, or to let the user drag-size a shape and apply only the
-     * desired size shape to the Canvas when they release the mouse.
-     *
-     * @return The scratch Graphics context.
-     */
-    public Graphics getScratchGraphics() {
-        return getScratchImage().getGraphics();
+    @Override
+    public void setImageLocation(Point location) {
+        imageLocation = location;
+    }
+
+    @Override
+    public Point getImageLocation() {
+        return imageLocation;
+    }
+
+    @Override
+    public Provider<Double> getScaleProvider() {
+        return scale;
+    }
+
+    @Override
+    public void setGridSpacing(int grid) {
+        this.gridSpacing.set(grid);
+    }
+
+    @Override
+    public Provider<Integer> getGridSpacingProvider() {
+        return gridSpacing;
+    }
+
+    @Override
+    public void setScale(double scale) {
+        this.scale.set(scale);
+        invalidateCanvas();
     }
 
 }

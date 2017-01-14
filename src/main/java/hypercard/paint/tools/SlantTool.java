@@ -1,6 +1,6 @@
 package hypercard.paint.tools;
 
-import hypercard.paint.Transform;
+import hypercard.paint.utils.Transform;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.tools.base.AbstractTransformTool;
 import hypercard.paint.utils.FlexQuadrilateral;

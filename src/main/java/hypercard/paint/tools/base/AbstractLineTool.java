@@ -32,11 +32,11 @@ public abstract class AbstractLineTool extends AbstractPaintTool {
             currentLoc = Geometry.snapLineToNearestAngle(initialPoint, currentLoc, snapToDegrees);
         }
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
         drawLine(g2d, getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
         g2d.dispose();
 
-        getCanvas().repaintCanvas();
+        getCanvas().invalidateCanvas();
     }
 
     @Override

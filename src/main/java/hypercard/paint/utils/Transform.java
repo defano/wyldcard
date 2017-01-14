@@ -1,4 +1,4 @@
-package hypercard.paint;
+package hypercard.paint.utils;
 
 import hypercard.paint.utils.FlexQuadrilateral;
 import hypercard.paint.utils.Geometry;

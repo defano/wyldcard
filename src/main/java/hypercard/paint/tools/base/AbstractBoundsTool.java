@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractBoundsTool extends AbstractPaintTool {
 
-    private ImmutableProvider<Boolean> drawMultiple = new ImmutableProvider<>();
+    private ImmutableProvider<Boolean> drawMultiple = new ImmutableProvider<>(false);
 
     protected Point initialPoint;
     protected Point currentPoint;
@@ -46,7 +46,7 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
                 Geometry.squareAtAnchor(initialPoint, currentPoint) :
                 Geometry.rectangleFromPoints(initialPoint, currentPoint);
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
         if (getFillPaint() != null) {
             drawFill(g2d, getFillPaint(), bounds.x, bounds.y, bounds.width, bounds.height);
@@ -55,7 +55,7 @@ public abstract class AbstractBoundsTool extends AbstractPaintTool {
         drawBounds(g2d, getStroke(), getStrokePaint(), bounds.x, bounds.y, bounds.width, bounds.height);
 
         g2d.dispose();
-        getCanvas().repaintCanvas();
+        getCanvas().invalidateCanvas();
     }
 
     @Override

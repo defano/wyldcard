@@ -1,6 +1,6 @@
 package hypercard.paint.tools;
 
-import hypercard.paint.Transform;
+import hypercard.paint.utils.Transform;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.tools.base.AbstractSelectionTool;
 import hypercard.paint.utils.Geometry;
@@ -165,7 +165,7 @@ public class RotateTool extends AbstractSelectionTool {
         super.drawSelection();
 
         // Draw the drag handle on the selection
-        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
         g.setColor(Color.black);
         g.fill(dragHandle);
         g.dispose();

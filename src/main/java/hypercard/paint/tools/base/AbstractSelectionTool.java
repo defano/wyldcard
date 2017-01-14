@@ -1,6 +1,6 @@
 package hypercard.paint.tools.base;
 
-import hypercard.paint.Transform;
+import hypercard.paint.utils.Transform;
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
@@ -90,7 +90,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
 
             getCanvas().clearScratch();
             drawSelectionOutline();
-            getCanvas().repaintCanvas();
+            getCanvas().invalidateCanvas();
         }
     }
 
@@ -180,7 +180,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         resetSelection();
 
         getCanvas().clearScratch();
-        getCanvas().repaintCanvas();
+        getCanvas().invalidateCanvas();
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         getCanvas().clearScratch();
 
         // Clear image underneath selection
-        Graphics2D scratch = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D scratch = (Graphics2D) getCanvas().getScratchImage().getGraphics();
         scratch.setColor(Color.WHITE);
         scratch.fill(getSelectionOutline());
         scratch.dispose();
@@ -259,7 +259,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
         if (hasSelection()) {
             getCanvas().clearScratch();
 
-            Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+            Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
             g2d.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g2d.dispose();
 
@@ -274,13 +274,13 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
     protected void drawSelection() {
         getCanvas().clearScratch();
 
-        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
         g.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         g.dispose();
 
         drawSelectionOutline();
 
-        getCanvas().repaintCanvas();
+        getCanvas().invalidateCanvas();
     }
 
     /**
@@ -300,7 +300,7 @@ public abstract class AbstractSelectionTool extends AbstractPaintTool implements
      * Renders the selection outline (marching ants) on the canvas.
      */
     protected void drawSelectionOutline() {
-        Graphics2D g = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
         g.setStroke(MarchingAnts.getInstance().getMarchingAnts());
         g.setColor(Color.BLACK);

@@ -43,8 +43,8 @@ public class UndoableCanvas extends BasicCanvas {
 
         if (hasUndoableChanges()) {
             undoBufferPointer--;
-            fireObservers(null, getCanvasImage());
-            repaintCanvas();
+            fireObservers(this,null, getCanvasImage());
+            invalidateCanvas();
             return true;
         }
 
@@ -59,8 +59,8 @@ public class UndoableCanvas extends BasicCanvas {
 
         if (hasRedoableChanges()) {
             undoBufferPointer++;
-            fireObservers(null, getCanvasImage());
-            repaintCanvas();
+            fireObservers(this,null, getCanvasImage());
+            invalidateCanvas();
             return true;
         }
 
@@ -121,10 +121,10 @@ public class UndoableCanvas extends BasicCanvas {
         // Finally, move our pointer to the tail of the buffer
         undoBufferPointer = undoBuffer.size() - 1;
 
-        fireObservers(scratch, getCanvasImage());
+        fireObservers(this, scratch, getCanvasImage());
 
         clearScratch();
-        repaintCanvas();
+        invalidateCanvas();
     }
 
     /**

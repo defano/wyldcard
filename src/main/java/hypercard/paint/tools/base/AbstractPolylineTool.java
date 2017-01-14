@@ -47,11 +47,11 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
 
         getCanvas().clearScratch();
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
         drawPolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
-        getCanvas().repaintCanvas();
+        getCanvas().invalidateCanvas();
 
         points.remove(points.size() - 1);
     }
@@ -85,7 +85,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
         points.clear();
         currentPoint = null;
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
         if (getFillPaint() != null) {
             fillPolygon(g2d, getFillPaint(), xs, ys);
@@ -106,7 +106,7 @@ public abstract class AbstractPolylineTool extends AbstractPaintTool {
         points.clear();
         currentPoint = null;
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchGraphics();
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
         drawPolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 

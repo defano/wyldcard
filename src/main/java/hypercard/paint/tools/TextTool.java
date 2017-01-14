@@ -104,7 +104,7 @@ public class TextTool extends AbstractPaintTool implements Observer {
 
         // Don't commit if user hasn't entered any text
         if (textArea.getText().trim().length() > 0) {
-            Graphics g = getCanvas().getScratchGraphics();
+            Graphics g = getCanvas().getScratchImage().getGraphics();
             g.drawImage(renderTextImage(), textLocation.x, textLocation.y, null);
             g.dispose();
 
@@ -128,7 +128,7 @@ public class TextTool extends AbstractPaintTool implements Observer {
     }
 
     private int getFontAscent() {
-        Graphics g = getCanvas().getScratchGraphics();
+        Graphics g = getCanvas().getScratchImage().getGraphics();
         FontMetrics metrics = g.getFontMetrics(getFont());
         g.dispose();
 

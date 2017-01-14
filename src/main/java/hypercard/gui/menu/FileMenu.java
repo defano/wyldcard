@@ -97,13 +97,5 @@ public class FileMenu extends JMenu {
                 .named("Print Report...")
                 .disabled()
                 .build(this);
-
-        this.addSeparator();
-
-        MenuItemBuilder.ofDefaultType()
-                .named("Quit HyperCard")
-                .withAction(e -> System.exit(0))
-                .withShortcut('Q')
-                .build(this);
     }
 }

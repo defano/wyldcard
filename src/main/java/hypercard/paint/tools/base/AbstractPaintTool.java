@@ -1,18 +1,17 @@
 package hypercard.paint.tools.base;
 
 import hypercard.paint.canvas.Canvas;
-import hypercard.paint.canvas.CanvasInteractionListener;
-import hypercard.paint.canvas.CanvasObserver;
+import hypercard.paint.canvas.CanvasInteractionObserver;
+import hypercard.paint.canvas.CanvasCommitObserver;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractPaintTool implements CanvasInteractionListener, CanvasObserver {
+public abstract class AbstractPaintTool implements CanvasInteractionObserver, CanvasCommitObserver {
 
     private Canvas canvas;
     private final PaintToolType type;
