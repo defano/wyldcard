@@ -33,13 +33,10 @@ public class MarchingAnts {
     public void startMarching() {
         stopMarching();
 
-        antsAnimation = antsAnimator.scheduleAtFixedRate(() -> {
-            SwingUtilities.invokeLater(() -> {
-                antsPhase = antsPhase + 1 % 5;
-                fireMarchingAntsObservers();
-            });
-
-        }, 0, 20, TimeUnit.MILLISECONDS);
+        antsAnimation = antsAnimator.scheduleAtFixedRate(() -> SwingUtilities.invokeLater(() -> {
+            antsPhase = antsPhase + 1 % 5;
+            fireMarchingAntsObservers();
+        }), 0, 20, TimeUnit.MILLISECONDS);
     }
 
     public void stopMarching() {

@@ -36,11 +36,11 @@ public class BasicCanvas extends AbstractSwingCanvas implements Canvas {
         commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
     }
 
-    protected void overlayImage(int x, int y, BufferedImage source, BufferedImage destination, AlphaComposite composite) {
+    protected void overlayImage(BufferedImage source, BufferedImage destination, AlphaComposite composite) {
 
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
         g2d.setComposite(composite);
-        g2d.drawImage(source, x, y, null);
+        g2d.drawImage(source, 0,0, null);
         g2d.dispose();
     }
 
@@ -73,7 +73,7 @@ public class BasicCanvas extends AbstractSwingCanvas implements Canvas {
         BufferedImage scratchImage = getScratchImage();
         BufferedImage canvasImage = getCanvasImage();
 
-        overlayImage(0, 0, scratchImage, canvasImage, composite);
+        overlayImage(scratchImage, canvasImage, composite);
         fireObservers(this, scratchImage, canvasImage);
 
         clearScratch();

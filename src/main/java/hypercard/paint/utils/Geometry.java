@@ -5,17 +5,25 @@ import java.awt.*;
 public class Geometry {
 
     /**
-     * Rounds a given value to the nearest provided integer multiple. For example rounding 24.3 to the nearest 10
+     * Rounds a double value to the nearest provided integer multiple. For example rounding 24.3 to the nearest 10
      * yields 20.
      *
      * @param value The value to round
      * @param toNearest The nearest integer multiple.
-     * @return
+     * @return The nearest integer multiple
      */
     public static int round(Double value, int toNearest) {
         return (int) (toNearest * Math.round(value / toNearest));
     }
 
+    /**
+     * Rounds an integer value to the nearest provided integer multiple. For example rounding 24 to the nearest 10
+     * yields 20.
+     *
+     * @param value The value to round
+     * @param toNearest The nearest integer multiple.
+     * @return The nearest integer multiple
+     */
     public static int round(int value, int toNearest) {
         return toNearest * Math.round(value / toNearest);
     }
@@ -196,11 +204,11 @@ public class Geometry {
      * Draws a regular polygon (a shape) whose center is located at the provided location and containing a given number
      * of sides, length and rotation.
      *
-     * @param location
-     * @param sides
-     * @param length
-     * @param rotation
-     * @return
+     * @param location Desired centerpoint of the polygon
+     * @param sides The number of sides to be drawn
+     * @param length The longest dimension of the polygon
+     * @param rotation The angle of the polygon (in radians)
+     * @return The specified polygon
      */
     public static Polygon getRegularPolygon(Point location, int sides, double length, double rotation) {
         double angle = (2 * Math.PI) / sides;

@@ -5,7 +5,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.paint.patterns.BasicBrush;
-import hypertalk.ast.common.Tool;
 
 import javax.swing.*;
 import java.awt.*;

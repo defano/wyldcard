@@ -1,11 +1,7 @@
 package hypercard.paint.utils;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
-import java.util.ArrayList;
 
 public class FlexQuadrilateral {
 
@@ -57,6 +53,7 @@ public class FlexQuadrilateral {
     public Point[] getCorners() {
         return new Point[] {getTopLeft(), getTopRight(), getBottomRight(), getBottomLeft()};
     }
+
 
     public Point getCenter() {
         return new Point(getShape().getBounds().width / 2, getShape().getBounds().height / 2);

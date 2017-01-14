@@ -17,18 +17,13 @@ public abstract class AbstractPaintTool implements CanvasInteractionObserver, Ca
     private final PaintToolType type;
     private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 
-    private Stroke defaultStroke = new BasicStroke(2);
-    private Paint defaultStrokePaint = Color.BLACK;
-    private Paint defaultFillPaint = null;
-    private int defaultShapeSides = 5;
-    private Font defaultFont = new Font("Courier", Font.PLAIN, 14);
     private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 
-    private Provider<Stroke> strokeProvider = new Provider<>(defaultStroke);
-    private Provider<Paint> strokePaintProvider = new Provider<>(defaultStrokePaint);
-    private Provider<Paint> fillPaintProvider = new Provider<>(defaultFillPaint);
-    private Provider<Integer> shapeSidesProvider = new Provider<>(defaultShapeSides);
-    private Provider<Font> fontProvider = new Provider<>(defaultFont);
+    private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(2));
+    private Provider<Paint> strokePaintProvider = new Provider<>(Color.BLACK);
+    private Provider<Paint> fillPaintProvider = new Provider<>(null);
+    private Provider<Integer> shapeSidesProvider = new Provider<>(5);
+    private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
 
     public AbstractPaintTool(PaintToolType type) {
         this.type = type;

@@ -1,8 +1,5 @@
 package hypercard.paint.utils;
 
-import hypercard.paint.utils.FlexQuadrilateral;
-import hypercard.paint.utils.Geometry;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;

@@ -6,10 +6,6 @@ import java.util.function.Predicate;
 
 public class FloodFill {
 
-    public interface FillFunction {
-        void fill(Point p);
-    }
-
     public static void floodFill(int x, int y, Rectangle bounds, FillFunction fill, Predicate<Point> boundaryFunction) {
         final Stack<Point> fillPixels = new Stack<>();
         fillPixels.push(new Point(x, y));

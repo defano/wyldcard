@@ -7,10 +7,6 @@
 
 package hypertalk.ast.common;
 
-import hypertalk.exception.HtParseError;
-import hypertalk.exception.HtSemanticException;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -117,9 +117,7 @@ public class HyperCard implements StackModelObserver {
 
     @Override
     public void onCardOpening(CardPart newCard) {
-        SwingUtilities.invokeLater(() -> {
-            WindowManager.getStackWindow().setDisplayedCard(newCard);
-        });
+        SwingUtilities.invokeLater(() -> WindowManager.getStackWindow().setDisplayedCard(newCard));
     }
 
     @Override

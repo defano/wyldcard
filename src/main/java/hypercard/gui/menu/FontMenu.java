@@ -2,7 +2,6 @@ package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.Provider;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,7 @@ public class FontMenu extends JMenu {
             MenuItemBuilder.ofCheckType()
                     .named(thisFamily)
                     .withAction(e -> ToolsContext.getInstance().setFontFamily(thisFamily))
-                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), f -> ((Font)f).getFamily().equalsIgnoreCase(thisFamily)))
+                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), f -> f.getFamily().equalsIgnoreCase(thisFamily)))
                     .fontFamily(thisFamily)
                     .build(this);
         }

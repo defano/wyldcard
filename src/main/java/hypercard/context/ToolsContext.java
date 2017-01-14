@@ -1,7 +1,6 @@
 package hypercard.context;
 
 import hypercard.HyperCard;
-import hypercard.paint.canvas.AbstractSwingCanvas;
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
@@ -11,7 +10,7 @@ import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.tools.base.AbstractBoundsTool;
 import hypercard.paint.tools.base.AbstractPaintTool;
 import hypercard.paint.tools.base.AbstractSelectionTool;
-import hypercard.paint.utils.PaintToolBuilder;
+import hypercard.paint.tools.builder.PaintToolBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
 import hypertalk.ast.common.Tool;

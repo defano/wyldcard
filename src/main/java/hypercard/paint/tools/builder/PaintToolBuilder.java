@@ -1,4 +1,4 @@
-package hypercard.paint.utils;
+package hypercard.paint.tools.builder;
 
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.PaintToolType;
@@ -63,7 +63,7 @@ public class PaintToolBuilder {
     }
 
     public PaintToolBuilder withStrokePaint(Paint strokePaint) {
-        this.strokePaintProvider = new Provider<Paint>(strokePaint);
+        this.strokePaintProvider = new Provider<>(strokePaint);
         return this;
     }
 

@@ -118,12 +118,6 @@ public class MouseManager {
             mouseIsDown = false;
             fireOnMouseReleased();
         }
-        if (event.getID() == MouseEvent.MOUSE_ENTERED) {
-            // Nothing to do
-        }
-        if (event.getID() == MouseEvent.MOUSE_EXITED) {
-            // Nothing to do
-        }
     };
 
     private static void fireOnMousePressed() {

@@ -9,7 +9,6 @@ import hypertalk.ast.statements.*;
 import hypertalk.exception.HtParseError;
 import hypertalk.parser.HyperTalkBaseVisitor;
 import hypertalk.parser.HyperTalkParser;
-import hypertalk.parser.HyperTalkVisitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {

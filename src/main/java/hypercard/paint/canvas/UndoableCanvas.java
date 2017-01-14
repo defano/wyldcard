@@ -140,7 +140,7 @@ public class UndoableCanvas extends BasicCanvas {
         if (permanent == null) {
             permanent = commit.image;
         } else {
-            overlayImage(0, 0, commit.image, permanent, commit.composite);
+            overlayImage(commit.image, permanent, commit.composite);
         }
     }
 
@@ -155,11 +155,11 @@ public class UndoableCanvas extends BasicCanvas {
         BufferedImage visibleImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         if (permanent != null) {
-            overlayImage(0, 0, permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            overlayImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
 
         for (int index = 0; index <= undoBufferPointer; index++) {
-            overlayImage(0, 0, undoBuffer.get(index).image, visibleImage, undoBuffer.get(index).composite);
+            overlayImage(undoBuffer.get(index).image, visibleImage, undoBuffer.get(index).composite);
         }
 
         return visibleImage;
