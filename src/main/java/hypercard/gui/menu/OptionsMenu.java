@@ -94,9 +94,10 @@ public class OptionsMenu extends JMenu {
                 .withCheckmarkProvider(ToolsContext.getInstance().getShapesFilledProvider())
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Draw Centered")
-                .disabled()
+                .withAction(a -> ToolsContext.getInstance().toggleDrawCentered())
+                .withCheckmarkProvider(ToolsContext.getInstance().getDrawCenteredProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()

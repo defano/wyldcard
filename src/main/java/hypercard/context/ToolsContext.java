@@ -1,6 +1,7 @@
 package hypercard.context;
 
 import hypercard.HyperCard;
+import hypercard.paint.canvas.AbstractSwingCanvas;
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
@@ -38,6 +39,7 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
     private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private Provider<Boolean> drawMultiple = new Provider<>(false);
+    private Provider<Boolean> drawCentered = new Provider<>(false);
 
     private ToolsContext() {
         HyperCard.getRuntimeEnv().getStack().addObserver(this);
@@ -81,6 +83,7 @@ public class ToolsContext implements StackModelObserver {
 
         if (selectedTool instanceof AbstractBoundsTool) {
             ((AbstractBoundsTool)selectedTool).setDrawMultiple(drawMultiple);
+            ((AbstractBoundsTool)selectedTool).setDrawCentered(drawCentered);
         }
 
         toolProvider.set(selectedTool);
@@ -92,6 +95,14 @@ public class ToolsContext implements StackModelObserver {
 
     public Provider<BasicBrush> getSelectedBrushProvider() {
         return brushStrokeProvider;
+    }
+
+    public void toggleDrawCentered() {
+        drawCentered.set(!drawCentered.get());
+    }
+
+    public Provider<Boolean> getDrawCenteredProvider() {
+        return drawCentered;
     }
 
     public void toggleDrawMultiple() {

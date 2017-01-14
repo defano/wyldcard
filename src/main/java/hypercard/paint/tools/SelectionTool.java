@@ -2,6 +2,7 @@ package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.tools.base.AbstractSelectionTool;
+import hypercard.paint.utils.Geometry;
 
 import java.awt.*;
 
@@ -18,14 +19,9 @@ public class SelectionTool extends AbstractSelectionTool {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(currentPoint);
 
-        int width = selectionBounds.width;
-        int height = selectionBounds.height;
-
-        if (constrain) {
-            width = height = Math.max(width, height);
-        }
-
-        selectionBounds = new Rectangle(selectionBounds.x, selectionBounds.y, width, height);
+        selectionBounds = constrain ?
+                Geometry.squareAtAnchor(initialPoint, currentPoint) :
+                Geometry.rectangleFromPoints(initialPoint, currentPoint);
     }
 
     @Override
