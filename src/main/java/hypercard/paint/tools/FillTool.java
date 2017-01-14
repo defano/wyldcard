@@ -1,14 +1,14 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 import hypercard.paint.utils.FloodFill;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public class FillTool extends AbstractPaintTool {
+public class FillTool extends PaintTool {
 
     public FillTool() {
         super(PaintToolType.FILL);

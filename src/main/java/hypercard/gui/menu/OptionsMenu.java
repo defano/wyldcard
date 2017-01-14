@@ -4,7 +4,7 @@ import hypercard.HyperCard;
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.ImmutableProvider;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class OptionsMenu extends JMenu {
 
         // Show this menu only when a paint tool is active
         ToolsContext.getInstance().getPaintToolProvider().addObserver((oldValue, newValue) -> {
-            AbstractPaintTool selectedTool = (AbstractPaintTool) newValue;
+            PaintTool selectedTool = (PaintTool) newValue;
             OptionsMenu.this.setVisible(selectedTool.getToolType() != PaintToolType.ARROW);
         });
 

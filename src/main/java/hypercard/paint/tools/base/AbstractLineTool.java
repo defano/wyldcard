@@ -6,7 +6,7 @@ import hypercard.paint.utils.Geometry;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public abstract class AbstractLineTool extends AbstractPaintTool {
+public abstract class AbstractLineTool extends PaintTool {
 
     private int snapToDegrees = 15;
     private Point initialPoint;

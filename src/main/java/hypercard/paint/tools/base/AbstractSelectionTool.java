@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractSelectionTool extends AbstractPaintTool implements MarchingAntsObserver {
+public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver {
 
     private Provider<BufferedImage> selectedImage = new Provider<>();
     private Point initialPoint, lastPoint;

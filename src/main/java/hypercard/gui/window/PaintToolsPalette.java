@@ -7,7 +7,7 @@ import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;
@@ -135,8 +135,8 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
     @Override
     public void update(Observable o, Object newValue) {
 
-        if (newValue instanceof AbstractPaintTool) {
-            AbstractPaintTool selectedTool = (AbstractPaintTool) newValue;
+        if (newValue instanceof PaintTool) {
+            PaintTool selectedTool = (PaintTool) newValue;
 
             // Special case; "pseudo-tools" re-enable all HyperCard paint tools
             if (selectedTool.getToolType() == PaintToolType.SLANT ||

@@ -11,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractPaintTool implements CanvasInteractionObserver, CanvasCommitObserver {
+public abstract class PaintTool implements CanvasInteractionObserver, CanvasCommitObserver {
 
     private Canvas canvas;
     private final PaintToolType type;
@@ -25,7 +25,7 @@ public abstract class AbstractPaintTool implements CanvasInteractionObserver, Ca
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
 
-    public AbstractPaintTool(PaintToolType type) {
+    public PaintTool(PaintToolType type) {
         this.type = type;
     }
 

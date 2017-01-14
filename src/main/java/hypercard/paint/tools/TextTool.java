@@ -3,7 +3,7 @@ package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 
-public class TextTool extends AbstractPaintTool implements Observer {
+public class TextTool extends PaintTool implements Observer {
 
     private final JTextArea textArea;
     private Point textLocation;

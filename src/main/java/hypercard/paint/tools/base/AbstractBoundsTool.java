@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
  * larger of the two dimensions defined by the mouse location.
  *
  */
-public abstract class AbstractBoundsTool extends AbstractPaintTool {
+public abstract class AbstractBoundsTool extends PaintTool {
 
     private Provider<Boolean> drawMultiple = new Provider<>(false);
     private Provider<Boolean> drawCentered = new Provider<>(false);

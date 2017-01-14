@@ -3,12 +3,12 @@ package hypercard.paint.tools;
 
 import hypercard.paint.canvas.Canvas;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class MagnifierTool extends AbstractPaintTool {
+public class MagnifierTool extends PaintTool {
 
     private double scale = 1.0;
     private double magnificationStep = 2;

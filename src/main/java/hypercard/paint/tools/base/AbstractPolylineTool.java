@@ -9,7 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractPolylineTool extends AbstractPaintTool {
+public abstract class AbstractPolylineTool extends PaintTool {
 
     private int snapToDegrees = 15;
     private List<Point> points = new ArrayList<>();

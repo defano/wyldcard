@@ -2,7 +2,7 @@ package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 import hypercard.parts.ButtonPart;
 import hypercard.parts.CardPart;
 import hypercard.parts.FieldPart;
@@ -18,7 +18,7 @@ public class ObjectsMenu extends JMenu {
 
         // Show this menu only when an object tool is active
         ToolsContext.getInstance().getPaintToolProvider().addObserver((oldValue, newValue) -> {
-            AbstractPaintTool selectedTool = (AbstractPaintTool) newValue;
+            PaintTool selectedTool = (PaintTool) newValue;
             ObjectsMenu.this.setVisible(selectedTool.getToolType() == PaintToolType.ARROW);
         });
 

@@ -1,10 +1,11 @@
 package hypercard.paint.tools.builder;
 
 import hypercard.paint.canvas.Canvas;
+import hypercard.paint.canvas.JFXCanvas;
 import hypercard.paint.model.PaintToolType;
 import hypercard.paint.model.Provider;
 import hypercard.paint.tools.*;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 
 import java.awt.*;
 
@@ -25,6 +26,11 @@ public class PaintToolBuilder {
 
     public static PaintToolBuilder create(PaintToolType toolType) {
         return new PaintToolBuilder(toolType);
+    }
+
+    public PaintToolBuilder makeActiveOnCanvas(JFXCanvas jfxCanvas) {
+        this.canvas = jfxCanvas.getPaintCanvas();
+        return this;
     }
 
     public PaintToolBuilder makeActiveOnCanvas(Canvas canvas) {
@@ -82,9 +88,9 @@ public class PaintToolBuilder {
         return this;
     }
 
-    public AbstractPaintTool build() {
+    public PaintTool build() {
 
-        AbstractPaintTool selectedTool;
+        PaintTool selectedTool;
 
         switch (type) {
             case PENCIL:

@@ -8,7 +8,7 @@ import hypercard.paint.model.Provider;
 import hypercard.paint.patterns.BasicBrush;
 import hypercard.paint.patterns.HyperCardPatternFactory;
 import hypercard.paint.tools.base.AbstractBoundsTool;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 import hypercard.paint.tools.base.AbstractSelectionTool;
 import hypercard.paint.tools.builder.PaintToolBuilder;
 import hypercard.parts.CardPart;
@@ -36,7 +36,7 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Integer> fillPatternProvider = new Provider<>(0);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
-    private Provider<AbstractPaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private Provider<PaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private Provider<Boolean> drawMultiple = new Provider<>(false);
     private Provider<Boolean> drawCentered = new Provider<>(false);
 
@@ -57,17 +57,18 @@ public class ToolsContext implements StackModelObserver {
         toolProvider.get().activate(canvas);
     }
 
-    public Provider<AbstractPaintTool> getPaintToolProvider() {
+    public Provider<PaintTool> getPaintToolProvider() {
         return toolProvider;
     }
 
-    public AbstractPaintTool getPaintTool() {
+    public PaintTool getPaintTool() {
         return toolProvider.get();
     }
 
     public void setSelectedToolType(PaintToolType selectedToolType) {
+
         toolProvider.get().deactivate();
-        AbstractPaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
+        PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))

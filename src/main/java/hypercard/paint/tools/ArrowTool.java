@@ -1,11 +1,11 @@
 package hypercard.paint.tools;
 
 import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.AbstractPaintTool;
+import hypercard.paint.tools.base.PaintTool;
 
 import java.awt.*;
 
-public class ArrowTool extends AbstractPaintTool {
+public class ArrowTool extends PaintTool {
 
     public ArrowTool() {
         super(PaintToolType.ARROW);
