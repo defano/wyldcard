@@ -4,7 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
-import hypercard.paint.patterns.HyperCardPatternFactory;
+import hypercard.patterns.HyperCardPatternFactory;
 
 import javax.swing.*;
 import java.awt.*;

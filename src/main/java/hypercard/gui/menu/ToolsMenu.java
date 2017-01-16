@@ -1,8 +1,8 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
-import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.PaintToolType;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.PaintToolType;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;

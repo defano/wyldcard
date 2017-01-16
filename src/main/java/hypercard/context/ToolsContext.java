@@ -1,16 +1,16 @@
 package hypercard.context;
 
 import hypercard.HyperCard;
-import hypercard.paint.canvas.Canvas;
-import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.PaintToolType;
-import hypercard.paint.model.Provider;
-import hypercard.paint.patterns.BasicBrush;
-import hypercard.paint.patterns.HyperCardPatternFactory;
-import hypercard.paint.tools.base.AbstractBoundsTool;
-import hypercard.paint.tools.base.PaintTool;
-import hypercard.paint.tools.base.AbstractSelectionTool;
-import hypercard.paint.tools.builder.PaintToolBuilder;
+import com.defano.jmonet.canvas.Canvas;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.model.Provider;
+import com.defano.jmonet.tools.brushes.BasicBrush;
+import hypercard.patterns.HyperCardPatternFactory;
+import com.defano.jmonet.tools.base.AbstractBoundsTool;
+import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
 import hypertalk.ast.common.Tool;

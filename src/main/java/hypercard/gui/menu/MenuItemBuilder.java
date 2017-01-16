@@ -1,6 +1,6 @@
 package hypercard.gui.menu;
 
-import hypercard.paint.model.ImmutableProvider;
+import com.defano.jmonet.model.ImmutableProvider;
 
 import javax.swing.*;
 import java.awt.*;

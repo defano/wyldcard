@@ -10,9 +10,9 @@ package hypercard.parts;
 
 import hypercard.context.PartsTable;
 import hypercard.context.ToolsContext;
-import hypercard.paint.canvas.Canvas;
-import hypercard.paint.canvas.CanvasCommitObserver;
-import hypercard.paint.canvas.UndoableCanvas;
+import com.defano.jmonet.canvas.Canvas;
+import com.defano.jmonet.canvas.CanvasCommitObserver;
+import com.defano.jmonet.canvas.UndoableCanvas;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.PartType;

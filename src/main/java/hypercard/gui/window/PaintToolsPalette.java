@@ -6,8 +6,8 @@ import hypercard.HyperCard;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
-import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.PaintTool;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.PaintTool;
 import hypercard.runtime.WindowManager;
 
 import javax.swing.*;

@@ -11,6 +11,7 @@ allprojects {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 configurations {
@@ -36,7 +37,8 @@ dependencies {
 
 	compile 'com.intellij:javac2:7.0.3'
 	compile 'com.google.code.gson:gson:2.7'
-	compile group: 'com.google.guava', name: 'guava', version: '19.0'
+	compile 'com.google.guava:guava:19.0'
+	compile 'com.defano:jmonet:0.0.1'
 
 	testCompile 'junit:junit:4.12'
 }

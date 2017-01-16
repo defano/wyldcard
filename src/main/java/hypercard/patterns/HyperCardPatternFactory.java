@@ -1,4 +1,4 @@
-package hypercard.paint.patterns;
+package hypercard.patterns;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

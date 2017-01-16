@@ -1,10 +1,10 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
-import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.PaintTool;
-import hypercard.paint.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import java.util.Objects;
