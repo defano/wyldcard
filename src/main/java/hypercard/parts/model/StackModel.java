@@ -9,6 +9,8 @@ public class StackModel {
     private String name;
     private int currentCard;
     private Stack<Integer> backStack;
+    private int width = 640;
+    private int height = 480;
 
     private final List<CardModel> cards;
     private final Map<Integer, BackgroundModel> backgrounds;
@@ -121,6 +123,14 @@ public class StackModel {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public BackgroundModel getBackground(int backgroundId) {

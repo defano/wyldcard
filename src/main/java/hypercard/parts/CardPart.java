@@ -8,11 +8,11 @@
 
 package hypercard.parts;
 
-import hypercard.context.PartsTable;
-import hypercard.context.ToolsContext;
 import com.defano.jmonet.canvas.Canvas;
 import com.defano.jmonet.canvas.CanvasCommitObserver;
 import com.defano.jmonet.canvas.UndoableCanvas;
+import hypercard.context.PartsTable;
+import hypercard.context.ToolsContext;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.PartType;
@@ -78,6 +78,13 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
 
         card.setLayer(card.backgroundCanvas, BACKGROUND_CANVAS_LAYER);
         card.add(card.backgroundCanvas);
+
+        card.foregroundCanvas.setSize(stack.getWidth(), stack.getHeight());
+        card.backgroundCanvas.setSize(stack.getWidth(), stack.getHeight());
+
+        card.setMaximumSize(new Dimension(stack.getWidth(), stack.getHeight()));
+
+        card.setSize(stack.getWidth(), stack.getHeight());
 
         ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, newValue) -> {
             ToolsContext.getInstance().reactivateTool(card.getCanvas());
@@ -152,8 +159,6 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
 
     @Override
     public void componentResized(ComponentEvent e) {
-        foregroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
-        backgroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
     }
 
     @Override
@@ -163,9 +168,6 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
 
     @Override
     public void componentShown(ComponentEvent e) {
-        foregroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
-        backgroundCanvas.setSize(e.getComponent().getWidth(), e.getComponent().getHeight());
-
         stack.fireOnCardOpened(this);
     }
 
