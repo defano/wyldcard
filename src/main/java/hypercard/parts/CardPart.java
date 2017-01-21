@@ -24,6 +24,8 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
+import java.util.Observer;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
@@ -90,11 +92,13 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.add(card.backgroundCanvas);
 
         card.setMaximumSize(new Dimension(stack.getWidth(), stack.getHeight()));
-
         card.setSize(stack.getWidth(), stack.getHeight());
 
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, newValue) -> {
-            card.foregroundCanvas.setVisible(!(boolean)newValue);
+        card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((double) arg) == 1.0));
+        card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((double) arg) == 1.0));
+
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
+            card.setForegroundVisible(!(boolean)isEditingBackground);
         });
 
         return card;
@@ -135,6 +139,18 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
     public UndoablePaintCanvas getCanvas() {
         return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
+    }
+
+    public void setForegroundVisible(boolean isVisible) {
+        foregroundCanvas.setVisible(isVisible);
+
+        for (Component thisComponent : getComponentsInLayer(FOREGROUND_PARTS_LAYER)) {
+            thisComponent.setVisible(isVisible);
+        }
+    }
+
+    public void setBackgroundVisible(boolean isVisible) {
+        backgroundCanvas.setVisible(isVisible);
     }
 
     public BackgroundModel getCardBackground() {

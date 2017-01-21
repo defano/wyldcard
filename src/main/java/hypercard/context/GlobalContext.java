@@ -98,7 +98,7 @@ public class GlobalContext {
     }
 
     public CardPart getCard () {
-        return HyperCard.getRuntimeEnv().getCard();
+        return HyperCard.getInstance().getCard();
     }
 
     public void sendMessage (PartSpecifier ps, String message) 
@@ -110,7 +110,7 @@ public class GlobalContext {
     public void put (Value mutator, Preposition p, ContainerMsgBox d) throws HtSemanticException {
 
         Chunk chunk = d.chunk();
-        Value destValue = new Value(HyperCard.getRuntimeEnv().getMsgBoxText());
+        Value destValue = new Value(HyperCard.getInstance().getMsgBoxText());
         
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -118,7 +118,7 @@ public class GlobalContext {
         else
             destValue = Value.setValue(destValue, p, mutator);
         
-        HyperCard.getRuntimeEnv().setMsgBoxText(destValue);
+        HyperCard.getInstance().setMsgBoxText(destValue);
         setIt(destValue);
     }
     

@@ -12,7 +12,7 @@ public class GoMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goBack())
+                .withAction(e -> HyperCard.getInstance().getStack().goBack())
                 .withShortcut('~')
                 .build(this);
 
@@ -38,25 +38,25 @@ public class GoMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goFirstCard())
+                .withAction(e -> HyperCard.getInstance().getStack().goFirstCard())
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goPrevCard())
+                .withAction(e -> HyperCard.getInstance().getStack().goPrevCard())
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goNextCard())
+                .withAction(e -> HyperCard.getInstance().getStack().goNextCard())
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> HyperCard.getRuntimeEnv().getStack().goLastCard())
+                .withAction(e -> HyperCard.getInstance().getStack().goLastCard())
                 .withShortcut('4')
                 .build(this);
 

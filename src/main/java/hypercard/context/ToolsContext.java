@@ -41,11 +41,11 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Boolean> drawCentered = new Provider<>(false);
 
     private ToolsContext() {
-        HyperCard.getRuntimeEnv().getStack().addObserver(this);
+        HyperCard.getInstance().getStack().addObserver(this);
 
         // Re-activate tool whenever background visibility changes
         isEditingBackground.addObserver((oldValue, newValue) -> {
-            ToolsContext.getInstance().reactivateTool(HyperCard.getRuntimeEnv().getCard().getCanvas());
+            ToolsContext.getInstance().reactivateTool(HyperCard.getInstance().getCard().getCanvas());
         });
     }
 
@@ -79,7 +79,7 @@ public class ToolsContext implements StackModelObserver {
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
                 .withFontProvider(fontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
-                .makeActiveOnCanvas(HyperCard.getRuntimeEnv().getCard().getCanvas())
+                .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
                 .build();
 
         if (selectedTool instanceof AbstractSelectionTool) {

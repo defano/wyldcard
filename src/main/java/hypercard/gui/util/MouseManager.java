@@ -43,8 +43,8 @@ public class MouseManager {
 
     public static void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        SwingUtilities.convertPointToScreen(p1, HyperCard.getRuntimeEnv().getCard());
-        SwingUtilities.convertPointToScreen(p2, HyperCard.getRuntimeEnv().getCard());
+        SwingUtilities.convertPointToScreen(p1, HyperCard.getInstance().getCard());
+        SwingUtilities.convertPointToScreen(p2, HyperCard.getInstance().getCard());
 
         try {
             Robot r = new Robot();
@@ -72,7 +72,7 @@ public class MouseManager {
 
     public static void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        SwingUtilities.convertPointToScreen(p, HyperCard.getRuntimeEnv().getCard());
+        SwingUtilities.convertPointToScreen(p, HyperCard.getInstance().getCard());
 
         try {
             Robot r = new Robot();

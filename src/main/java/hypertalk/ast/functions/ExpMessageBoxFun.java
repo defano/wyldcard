@@ -9,6 +9,6 @@ public class ExpMessageBoxFun extends Expression {
 
     @Override
     public Value evaluate() throws HtSemanticException {
-        return new Value(HyperCard.getRuntimeEnv().getMsgBoxText());
+        return new Value(HyperCard.getInstance().getMsgBoxText());
     }
 }

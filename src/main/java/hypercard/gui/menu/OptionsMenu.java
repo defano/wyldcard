@@ -22,32 +22,32 @@ public class OptionsMenu extends JMenu {
 
         JMenuItem grid = MenuItemBuilder.ofHeirarchicalType()
                 .named("Grid")
-                .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(1))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t != 1))
+                .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(1))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t != 1))
                 .build(this);
 
                 MenuItemBuilder.ofCheckType()
                         .named("2 px")
-                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 2 ? 1 : 2))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 2))
+                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 2 ? 1 : 2))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 2))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
                         .named("5 px")
-                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 5 ? 1 : 5))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 5))
+                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 5 ? 1 : 5))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 5))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
                         .named("10 px")
-                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 10 ? 1 : 10))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 10))
+                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 10 ? 1 : 10))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 10))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
                         .named("20 px")
-                        .withAction(a -> HyperCard.getRuntimeEnv().getCard().getCanvas().setGridSpacing(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider().get() == 20 ? 1 : 20))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getRuntimeEnv().getCard().getCanvas().getGridSpacingProvider(), t -> t == 20))
+                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 20 ? 1 : 20))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 20))
                         .build(grid);
 
         MenuItemBuilder.ofCheckType()

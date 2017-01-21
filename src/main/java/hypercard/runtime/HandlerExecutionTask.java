@@ -26,7 +26,7 @@ public class HandlerExecutionTask implements Runnable {
 
             handler.execute();
         } catch (HtException e) {
-            HyperCard.getRuntimeEnv().dialogSyntaxError(e);
+            HyperCard.getInstance().dialogSyntaxError(e);
         }
     }
 

@@ -23,6 +23,7 @@ public class StackWindow extends HyperCardWindow {
         cardPanel.add(card);
         cardPanel.setPreferredSize(card.getSize());
         cardPanel.revalidate();
+        cardPanel.repaint();
 
         ToolsContext.getInstance().reactivateTool(card.getCanvas());
     }

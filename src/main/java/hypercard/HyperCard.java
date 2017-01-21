@@ -66,7 +66,7 @@ public class HyperCard implements StackModelObserver {
         });
     }
 
-    public static HyperCard getRuntimeEnv() {
+    public static HyperCard getInstance() {
         return _instance;
     }
 
@@ -97,10 +97,10 @@ public class HyperCard implements StackModelObserver {
             try {
                 if (!getMsgBoxText().trim().isEmpty()) {
                     Interpreter.executeString(null, getMsgBoxText()).get();
-                    HyperCard.getRuntimeEnv().setMsgBoxText(GlobalContext.getContext().getIt());
+                    HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
                 }
             } catch (Exception e) {
-                HyperCard.getRuntimeEnv().dialogSyntaxError(e);
+                HyperCard.getInstance().dialogSyntaxError(e);
             }
         });
     }

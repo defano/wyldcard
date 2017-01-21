@@ -23,7 +23,7 @@ public class FunctionExecutionTask implements Callable<Value> {
         this.me = me;
 
         if (function.parameters.list.size() != arguments.getArgumentCount())
-            HyperCard.getRuntimeEnv().dialogSyntaxError(new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + arguments.getArgumentCount() + "."));
+            HyperCard.getInstance().dialogSyntaxError(new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + arguments.getArgumentCount() + "."));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class FunctionExecutionTask implements Callable<Value> {
             function.statements.execute();
         
         } catch (HtSemanticException e) {
-            HyperCard.getRuntimeEnv().dialogSyntaxError(e);
+            HyperCard.getInstance().dialogSyntaxError(e);
         }
 
         Value returnValue = GlobalContext.getContext().getReturnValue();

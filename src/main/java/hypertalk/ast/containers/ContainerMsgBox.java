@@ -36,7 +36,7 @@ public class ContainerMsgBox extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = new Value(HyperCard.getRuntimeEnv().getMsgBoxText());
+        Value value = new Value(HyperCard.getInstance().getMsgBoxText());
         return chunkOf(value, this.chunk());
     }
 

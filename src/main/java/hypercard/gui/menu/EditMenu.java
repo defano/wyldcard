@@ -51,7 +51,7 @@ public class EditMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> HyperCard.getRuntimeEnv().getStack().newCard())
+                .withAction(e -> HyperCard.getInstance().getStack().newCard())
                 .withShortcut('N')
                 .build(this);
 

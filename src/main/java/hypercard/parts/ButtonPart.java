@@ -233,7 +233,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
                     try {
                         compile();
                     } catch (HtSemanticException e) {
-                        HyperCard.getRuntimeEnv().dialogSyntaxError(e);
+                        HyperCard.getInstance().dialogSyntaxError(e);
                     }
                     break;
                 case ButtonModel.PROP_TITLE:

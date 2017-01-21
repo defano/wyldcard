@@ -15,7 +15,7 @@ public class FileMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> HyperCard.getRuntimeEnv().setStack(StackModel.newStack("Untitled")))
+                .withAction(e -> HyperCard.getInstance().setStack(StackModel.newStack("Untitled")))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -25,7 +25,7 @@ public class FileMenu extends JMenu {
                     chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                     if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                         StackModel model = Serializer.deserialize(chooser.getSelectedFile(), StackModel.class);
-                        HyperCard.getRuntimeEnv().setStack(model);
+                        HyperCard.getInstance().setStack(model);
                     }
                 })
                 .withShortcut('O')
@@ -44,7 +44,7 @@ public class FileMenu extends JMenu {
                         JFileChooser chooser = new JFileChooser();
                         chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            Serializer.serialize(chooser.getSelectedFile(), HyperCard.getRuntimeEnv().getStack());
+                            Serializer.serialize(chooser.getSelectedFile(), HyperCard.getInstance().getStack());
                         }
                     } catch (IOException e1) {
                         e1.printStackTrace();

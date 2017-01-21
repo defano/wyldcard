@@ -17,24 +17,24 @@ public class StatGoCmd extends Statement {
     public void execute() throws HtException {
         if (destination.ordinal != null) {
             if (destination.ordinal == Ordinal.FIRST) {
-                HyperCard.getRuntimeEnv().getStack().goFirstCard();
+                HyperCard.getInstance().getStack().goFirstCard();
             } else if (destination.ordinal == Ordinal.LAST) {
-                HyperCard.getRuntimeEnv().getStack().goLastCard();
+                HyperCard.getInstance().getStack().goLastCard();
             } else {
-                HyperCard.getRuntimeEnv().getStack().goCard(destination.ordinal.intValue() - 1);
+                HyperCard.getInstance().getStack().goCard(destination.ordinal.intValue() - 1);
             }
         }
 
         else if (destination.position != null) {
             if (destination.position == Position.NEXT) {
-                HyperCard.getRuntimeEnv().getStack().goNextCard();
+                HyperCard.getInstance().getStack().goNextCard();
             } else {
-                HyperCard.getRuntimeEnv().getStack().goPrevCard();
+                HyperCard.getInstance().getStack().goPrevCard();
             }
         }
 
         else if (destination.expression != null) {
-            HyperCard.getRuntimeEnv().getStack().goCard(destination.expression.evaluate().integerValue() - 1);
+            HyperCard.getInstance().getStack().goCard(destination.expression.evaluate().integerValue() - 1);
         }
     }
 }

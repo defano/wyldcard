@@ -267,7 +267,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
                     try {
                         compile();
                     } catch (HtSemanticException e) {
-                        HyperCard.getRuntimeEnv().dialogSyntaxError(e);
+                        HyperCard.getInstance().dialogSyntaxError(e);
                     }
                     break;
                 case FieldModel.PROP_TEXT:

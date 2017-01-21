@@ -67,7 +67,7 @@ public class ObjectsMenu extends JMenu {
                 .named("New Button")
                 .withAction(e -> {
                     try {
-                        CardPart currentCard = HyperCard.getRuntimeEnv().getStack().getCurrentCard();
+                        CardPart currentCard = HyperCard.getInstance().getStack().getCurrentCard();
                         currentCard.addButton(ButtonPart.newButton(currentCard));
                     } catch (PartException ex) {
                         throw new RuntimeException(ex);
@@ -79,7 +79,7 @@ public class ObjectsMenu extends JMenu {
                 .named("New Field")
                 .withAction(e -> {
                     try {
-                        CardPart currentCard = HyperCard.getRuntimeEnv().getStack().getCurrentCard();
+                        CardPart currentCard = HyperCard.getInstance().getStack().getCurrentCard();
                         currentCard.addField(FieldPart.newField(currentCard));
                     } catch (PartException ex) {
                         throw new RuntimeException(ex);

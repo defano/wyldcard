@@ -45,7 +45,7 @@ public class MessageWindow extends HyperCardWindow {
     }
 
     private void executeMessageBox() {
-        HyperCard.getRuntimeEnv().doMsgBoxText();
+        HyperCard.getInstance().doMsgBoxText();
     }
 
     {
