@@ -8,9 +8,10 @@
 
 package hypercard.parts;
 
-import com.defano.jmonet.canvas.Canvas;
-import com.defano.jmonet.canvas.CanvasCommitObserver;
-import com.defano.jmonet.canvas.UndoableCanvas;
+import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.UndoablePaintCanvas;
+import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import hypercard.context.PartsTable;
 import hypercard.context.ToolsContext;
 import hypercard.parts.model.*;
@@ -20,11 +21,11 @@ import hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
-public class CardPart extends JLayeredPane implements ComponentListener, CanvasCommitObserver {
+public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
     private final static int BACKGROUND_CANVAS_LAYER = 0;
     private final static int BACKGROUND_PARTS_LAYER = 1;
@@ -36,8 +37,8 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
     private PartsTable<FieldPart> fields = new PartsTable<>();
     private PartsTable<ButtonPart> buttons = new PartsTable<>();
 
-    private UndoableCanvas foregroundCanvas;
-    private UndoableCanvas backgroundCanvas;
+    private UndoablePaintCanvas foregroundCanvas;
+    private UndoablePaintCanvas backgroundCanvas;
 
     private transient StackModel stack;
 
@@ -45,7 +46,13 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
         super();
 
         this.setLayout(null);
-        this.addComponentListener(this);
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                stack.fireOnCardOpened(CardPart.this);
+            }
+        });
     }
 
     public static CardPart fromModel (CardModel model, StackModel stack) throws Exception {
@@ -68,10 +75,13 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
             }
         }
 
-        card.foregroundCanvas = new UndoableCanvas(model.getCardImage());
-        card.foregroundCanvas.addObserver(card);
-        card.backgroundCanvas = new UndoableCanvas(card.getCardBackground().getBackgroundImage());
-        card.backgroundCanvas.addObserver(card);
+        card.foregroundCanvas = new UndoablePaintCanvas(model.getCardImage());
+        card.foregroundCanvas.addCanvasCommitObserver(card);
+        card.backgroundCanvas = new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage());
+        card.backgroundCanvas.addCanvasCommitObserver(card);
+
+        card.foregroundCanvas.setSize(stack.getWidth(), stack.getHeight());
+        card.backgroundCanvas.setSize(stack.getWidth(), stack.getHeight());
 
         card.setLayer(card.foregroundCanvas, FOREGROUND_CANVAS_LAYER);
         card.add(card.foregroundCanvas);
@@ -79,15 +89,11 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
         card.setLayer(card.backgroundCanvas, BACKGROUND_CANVAS_LAYER);
         card.add(card.backgroundCanvas);
 
-        card.foregroundCanvas.setSize(stack.getWidth(), stack.getHeight());
-        card.backgroundCanvas.setSize(stack.getWidth(), stack.getHeight());
-
         card.setMaximumSize(new Dimension(stack.getWidth(), stack.getHeight()));
 
         card.setSize(stack.getWidth(), stack.getHeight());
 
         ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, newValue) -> {
-            ToolsContext.getInstance().reactivateTool(card.getCanvas());
             card.foregroundCanvas.setVisible(!(boolean)newValue);
         });
 
@@ -127,7 +133,7 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
             throw new RuntimeException("Unhandled part type");
     }
 
-    public UndoableCanvas getCanvas() {
+    public UndoablePaintCanvas getCanvas() {
         return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
     }
 
@@ -158,26 +164,7 @@ public class CardPart extends JLayeredPane implements ComponentListener, CanvasC
     }
 
     @Override
-    public void componentResized(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent e) {
-
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-        stack.fireOnCardOpened(this);
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent e) {
-
-    }
-
-    @Override
-    public void onCommit(Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
             getCardBackground().setBackgroundImage(canvasImage);
         } else {

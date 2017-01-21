@@ -1,5 +1,6 @@
 package hypercard.parts.model;
 
+import hypercard.context.ToolsContext;
 import hypercard.parts.CardPart;
 
 import java.util.*;
@@ -105,6 +106,9 @@ public class StackModel {
         if (card == currentCard || card < 0 || card >= cards.size()) {
             return getCurrentCard();
         }
+
+        // Stop editing background when card changes
+        ToolsContext.getInstance().setIsEditingBackground(false);
 
         fireOnCardClosing(currentCardPart);
 

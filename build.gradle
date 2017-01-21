@@ -38,7 +38,7 @@ dependencies {
 	compile 'com.intellij:javac2:7.0.3'
 	compile 'com.google.code.gson:gson:2.7'
 	compile 'com.google.guava:guava:19.0'
-	compile 'com.defano:jmonet:0.0.1'
+	compile ('com.defano.jmonet:jmonet:0.0.1') {changing = true}
 
 	testCompile 'junit:junit:4.12'
 }
@@ -49,4 +49,4 @@ generateGrammarSource {
 	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "hypertalk.parser"]
 }
 
-mainClassName="hypercard.runtime.RuntimeEnv"
+mainClassName="hypercard.HyperCard"

@@ -1,5 +1,6 @@
 package hypercard.gui.window;
 
+import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.parts.CardPart;
 
@@ -21,6 +22,9 @@ public class StackWindow extends HyperCardWindow {
         cardPanel.removeAll();
         cardPanel.add(card);
         cardPanel.setPreferredSize(card.getSize());
+        cardPanel.revalidate();
+
+        ToolsContext.getInstance().reactivateTool(card.getCanvas());
     }
 
     @Override
