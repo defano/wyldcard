@@ -1,5 +1,6 @@
 package hypercard.parts.model;
 
+import hypercard.context.ToolsContext;
 import hypercard.parts.CardPart;
 
 import java.util.*;
@@ -9,6 +10,8 @@ public class StackModel {
     private String name;
     private int currentCard;
     private Stack<Integer> backStack;
+    private int width = 640;
+    private int height = 480;
 
     private final List<CardModel> cards;
     private final Map<Integer, BackgroundModel> backgrounds;
@@ -104,6 +107,9 @@ public class StackModel {
             return getCurrentCard();
         }
 
+        // Stop editing background when card changes
+        ToolsContext.getInstance().setIsEditingBackground(false);
+
         fireOnCardClosing(currentCardPart);
 
         // When requested, push the current card onto the backstack
@@ -121,6 +127,14 @@ public class StackModel {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public BackgroundModel getBackground(int backgroundId) {

@@ -1,18 +1,18 @@
 package hypercard.context;
 
+import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.model.Provider;
+import com.defano.jmonet.tools.base.AbstractBoundsTool;
+import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.brushes.BasicBrush;
+import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import hypercard.HyperCard;
-import hypercard.paint.canvas.Canvas;
-import hypercard.paint.model.ImmutableProvider;
-import hypercard.paint.model.PaintToolType;
-import hypercard.paint.model.Provider;
-import hypercard.paint.patterns.BasicBrush;
-import hypercard.paint.patterns.HyperCardPatternFactory;
-import hypercard.paint.tools.base.AbstractBoundsTool;
-import hypercard.paint.tools.base.PaintTool;
-import hypercard.paint.tools.base.AbstractSelectionTool;
-import hypercard.paint.tools.builder.PaintToolBuilder;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModelObserver;
+import hypercard.patterns.HyperCardPatternFactory;
 import hypertalk.ast.common.Tool;
 
 import java.awt.*;
@@ -42,6 +42,11 @@ public class ToolsContext implements StackModelObserver {
 
     private ToolsContext() {
         HyperCard.getRuntimeEnv().getStack().addObserver(this);
+
+        // Re-activate tool whenever background visibility changes
+        isEditingBackground.addObserver((oldValue, newValue) -> {
+            ToolsContext.getInstance().reactivateTool(HyperCard.getRuntimeEnv().getCard().getCanvas());
+        });
     }
 
     public static ToolsContext getInstance() {
@@ -52,7 +57,7 @@ public class ToolsContext implements StackModelObserver {
         return lineStrokeProvider;
     }
 
-    public void reactivateTool(Canvas canvas) {
+    public void reactivateTool(PaintCanvas canvas) {
         toolProvider.get().deactivate();
         toolProvider.get().activate(canvas);
     }
@@ -173,6 +178,10 @@ public class ToolsContext implements StackModelObserver {
 
     public void toggleIsEditingBackground() {
         isEditingBackground.set(!isEditingBackground.get());
+    }
+
+    public void setIsEditingBackground(boolean isEditingBackground) {
+        this.isEditingBackground.set(isEditingBackground);
     }
 
     public boolean isShapesFilled() {

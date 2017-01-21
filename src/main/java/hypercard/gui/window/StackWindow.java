@@ -1,7 +1,6 @@
 package hypercard.gui.window;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
+import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.parts.CardPart;
 
@@ -11,9 +10,7 @@ import java.awt.*;
 public class StackWindow extends HyperCardWindow {
 
     private CardPart card;
-
     private JPanel cardPanel;
-    private JPanel stackWindow;
 
     public CardPart getDisplayedCard() {
         return card;
@@ -21,20 +18,17 @@ public class StackWindow extends HyperCardWindow {
 
     public void setDisplayedCard(CardPart card) {
         this.card = card;
+
         cardPanel.removeAll();
         cardPanel.add(card);
+        cardPanel.setPreferredSize(card.getSize());
+        cardPanel.revalidate();
 
-        stackWindow.invalidate();
-        stackWindow.validate();
-        stackWindow.repaint();
+        ToolsContext.getInstance().reactivateTool(card.getCanvas());
     }
 
     @Override
     public JPanel getWindowPanel() {
-        return stackWindow;
-    }
-
-    public JPanel getCardPanel() {
         return cardPanel;
     }
 
@@ -62,17 +56,14 @@ public class StackWindow extends HyperCardWindow {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        stackWindow = new JPanel();
-        stackWindow.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout(0, 0));
-        stackWindow.add(cardPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(640, 480), null, 0, false));
     }
 
     /**
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
-        return stackWindow;
+        return cardPanel;
     }
 }

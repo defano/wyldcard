@@ -1,6 +1,6 @@
 package hypercard.gui;
 
-import hypercard.paint.model.Provider;
+import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
 import java.awt.event.WindowAdapter;

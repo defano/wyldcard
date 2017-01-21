@@ -13,7 +13,7 @@ import hypercard.context.GlobalContext;
 import hypercard.context.ToolsContext;
 import hypercard.gui.util.ModifierKeyListener;
 import hypercard.gui.util.MouseManager;
-import hypercard.paint.model.PaintToolType;
+import com.defano.jmonet.model.PaintToolType;
 import hypercard.parts.CardPart;
 import hypercard.parts.model.StackModel;
 import hypercard.parts.model.StackModelObserver;
@@ -117,7 +117,7 @@ public class HyperCard implements StackModelObserver {
 
     @Override
     public void onCardOpening(CardPart newCard) {
-        SwingUtilities.invokeLater(() -> WindowManager.getStackWindow().setDisplayedCard(newCard));
+        WindowManager.getStackWindow().setDisplayedCard(newCard);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package hypercard.gui.menu;
 
 import hypercard.context.ToolsContext;
-import hypercard.paint.model.PaintToolType;
-import hypercard.paint.tools.base.PaintTool;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.PaintTool;
 import hypercard.parts.ButtonPart;
 import hypercard.parts.CardPart;
 import hypercard.parts.FieldPart;
