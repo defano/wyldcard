@@ -60,7 +60,6 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         this.model = (AbstractPartModel) data;
 
         buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-//        buttonTitle.setText(model.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
         buttonId.setText(model.getKnownProperty(ButtonModel.PROP_ID).stringValue());
         buttonTop.setText(model.getKnownProperty(ButtonModel.PROP_TOP).stringValue());
         buttonLeft.setText(model.getKnownProperty(ButtonModel.PROP_LEFT).stringValue());
@@ -69,12 +68,11 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
         isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue());
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
-        style.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
+        style.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
     }
 
     private void updateProperties() {
         model.setKnownProperty(ButtonModel.PROP_NAME, new Value(buttonName.getText()));
-//        model.setKnownProperty(ButtonModel.PROP_TITLE, new Value(buttonTitle.getText()));
         model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getText()));
         model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getText()));
         model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getText()));
