@@ -10,6 +10,7 @@ package hypercard.gui.menu.context;
 
 import hypercard.context.GlobalContext;
 import hypercard.parts.ButtonPart;
+import hypercard.parts.PartResizer;
 
 import javax.swing.*;
 
@@ -61,7 +62,7 @@ public class ButtonContextMenu extends JPopupMenu {
     }
 
     private void jMenuItemResizeActionPerformed() {
-        button.resize();
+        button.resize(PartResizer.QUADRANT_BOTTOMRIGHT);
     }
 
     private void jMenuItemDeleteActionPerformed() {

@@ -8,7 +8,7 @@
 
 package hypercard.parts;
 
-import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.KeyboardManager;
 import hypercard.gui.util.MouseManager;
 import hypercard.parts.model.AbstractPartModel;
 import hypertalk.ast.common.Value;
@@ -21,30 +21,39 @@ import java.util.concurrent.TimeUnit;
 
 public class PartResizer {
 
-    public final int SNAP_TO_GRID_SIZE = 10;
-    public final int RESIZER_REFRESH_MS = 10;
-    public final int MIN_WIDTH = 20;
-    public final int MIN_HEIGHT = 20;
+    public final static int QUADRANT_TOPRIGHT = 1;
+    public final static int QUADRANT_TOPLEFT = 2;
+    public final static int QUADRANT_BOTTOMLEFT = 3;
+    public final static int QUADRANT_BOTTOMRIGHT = 4;
+
+    private final static int SNAP_TO_GRID_SIZE = 10;
+    private final static int RESIZER_REFRESH_MS = 10;
+    private final static int MIN_WIDTH = 20;
+    private final static int MIN_HEIGHT = 20;
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     private Part part;
     private Component within;
     private boolean done = false;
+    private int fromQuadrant;
+    private Rectangle originalBounds;
     
     private class ResizerTask implements Runnable {
         public void run () {        
             Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
             SwingUtilities.convertPointFromScreen(mouseLoc, within);
-                        
-            Point partLoc = part.getComponent().getLocation();
-            int newWidth = ModifierKeyListener.isShiftDown ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.x : mouseLoc.x - partLoc.x;
-            int newHeight = ModifierKeyListener.isShiftDown ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.y : mouseLoc.y - partLoc.y;
+            Point partLoc = originalBounds.getLocation();
+
+            int newWidth = KeyboardManager.isShiftDown ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.x : mouseLoc.x - partLoc.x;
+            int newHeight = KeyboardManager.isShiftDown ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.y : mouseLoc.y - partLoc.y;
+
+
 
             try {
                 if (newWidth >= MIN_WIDTH)
                     part.setProperty(AbstractPartModel.PROP_WIDTH, new Value(newWidth));
-                
+
                 if (newHeight >= MIN_HEIGHT)
                     part.setProperty(AbstractPartModel.PROP_HEIGHT, new Value(newHeight));
 
@@ -57,10 +66,22 @@ public class PartResizer {
             }
         }
     }
-    
+
+    public PartResizer (Part part, Component within, int fromQuadrant) {
+        this.part = part;
+        this.within = within;
+        this.fromQuadrant = fromQuadrant;
+        this.originalBounds = new Rectangle(part.getRect());
+
+        MouseManager.notifyOnMouseReleased(() -> done = true);
+        executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
+    }
+
     public PartResizer (Part part, Component within) {
         this.part = part;
         this.within = within;
+        this.fromQuadrant = QUADRANT_BOTTOMRIGHT;
+        this.originalBounds = part.getRect();
 
         MouseManager.notifyOnMousePressed(() -> done = true);
 

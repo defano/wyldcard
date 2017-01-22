@@ -9,10 +9,14 @@
 
 package hypercard.parts;
 
+import hypercard.context.ToolMode;
+import hypercard.context.ToolsContext;
 import hypercard.gui.menu.context.ButtonContextMenu;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
+import hypercard.parts.buttons.ButtonStyle;
+import hypercard.parts.buttons.HyperCardButton;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
@@ -33,7 +37,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ButtonPart extends JButton implements Part, MouseListener, PropertyChangeObserver {
+public class ButtonPart extends HyperCardButton implements Part, MouseListener, PropertyChangeObserver {
 
     public static final int DEFAULT_WIDTH = 160;
     public static final int DEFAULT_HEIGHT = 40;
@@ -42,13 +46,11 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     private ButtonModel partModel;
     private CardPart parent;
 
-    private ButtonPart(CardPart parent) {
-        super();
+    private ButtonPart(ButtonStyle style, CardPart parent) {
+        super(style);
 
         this.parent = parent;
         this.script = new Script();
-
-        initComponents();
     }
 
     public static ButtonPart newButton(CardPart parent) {
@@ -56,28 +58,29 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
     }
 
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
-        ButtonPart button = new ButtonPart(parent);
+        ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent);
 
         button.initProperties(geometry);
-        button.setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
 
         return button;
     }
 
     public static ButtonPart fromModel(CardPart parent, ButtonModel partModel) throws Exception {
-        ButtonPart button = new ButtonPart(parent);
+        ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
+        ButtonPart button = new ButtonPart(style, parent);
 
         button.partModel = partModel;
         button.partModel.addPropertyChangedObserver(button);
         button.script = Interpreter.compile(partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).stringValue());
-        button.setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
 
         return button;
     }
 
     @Override
     public void partOpened() {
-        this.setComponentPopupMenu(new ButtonContextMenu(this));
+        this.getButtonComponent().setComponentPopupMenu(new ButtonContextMenu(this));
     }
 
     @Override
@@ -92,25 +95,35 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
         partModel.addPropertyChangedObserver(this);
     }
 
-    private void initComponents() {
-        this.addMouseListener(this);
-        this.setComponentPopupMenu(new ButtonContextMenu(this));
-    }
-
     public void editProperties() {
         WindowBuilder.make(new ButtonPropertyEditor())
-                .withTitle("Button PartModel")
+                .withTitle("Button Editor")
                 .withModel(partModel)
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .build();
     }
 
     public void move() {
-        new PartMover(this, parent);
+        new PartMover(this, parent, true);
     }
 
-    public void resize() {
-        new PartResizer(this, parent);
+    public void resize(int fromQuadrant) {
+        new PartResizer(this, parent, fromQuadrant);
+    }
+
+    public void delete() {
+        parent.removeButton(this);
+    }
+
+    /**
+     * Indicates that the Swing component associated with this {@link ButtonPart} has changed and that the button's
+     * parent (i.e., card or background) should update itself accordingly.
+     *
+     * @param oldButtonComponent The former component associated with this part
+     * @param newButtonComponent The new component
+     */
+    public void invalidateButtonComponent(Component oldButtonComponent, Component newButtonComponent) {
+        parent.invalidateButtonComponent(this, oldButtonComponent, newButtonComponent);
     }
 
     public void editScript() {
@@ -120,6 +133,11 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(true)
                 .build();
+    }
+
+    @Override
+    public AbstractPartModel getModel() {
+        return partModel;
     }
 
     @Override
@@ -139,7 +157,7 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
     @Override
     public JComponent getComponent() {
-        return this;
+        return this.getButtonComponent();
     }
 
     @Override
@@ -198,6 +216,8 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
     @Override
     public void mousePressed(MouseEvent e) {
+        super.mousePressed(e);
+
         if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
@@ -205,23 +225,34 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        super.mouseReleased(e);
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseUp");
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        sendMessage("mouseEnter");
+        super.mouseEntered(e);
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            sendMessage("mouseEnter");
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        sendMessage("mouseExit");
+        super.mouseExited(e);
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            sendMessage("mouseExit");
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        super.mouseClicked(e);
     }
 
     @Override
@@ -229,6 +260,9 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
 
         SwingUtilities.invokeLater(() -> {
             switch (property) {
+                case ButtonModel.PROP_STYLE:
+                    setButtonStyle(ButtonStyle.fromName(newValue.stringValue()));
+                    break;
                 case ButtonModel.PROP_SCRIPT:
                     try {
                         compile();
@@ -237,27 +271,27 @@ public class ButtonPart extends JButton implements Part, MouseListener, Property
                     }
                     break;
                 case ButtonModel.PROP_TITLE:
-                    setText(newValue.toString());
+                    getButtonComponent().setText(newValue.toString());
                     break;
                 case ButtonModel.PROP_TOP:
                 case ButtonModel.PROP_LEFT:
                 case ButtonModel.PROP_WIDTH:
                 case ButtonModel.PROP_HEIGHT:
-                    setBounds(partModel.getRect());
-                    validate();
-                    repaint();
+                    getButtonComponent().setBounds(partModel.getRect());
+                    getButtonComponent().validate();
+                    getButtonComponent().repaint();
                     break;
                 case ButtonModel.PROP_VISIBLE:
-                    setVisible(newValue.booleanValue());
+                    getButtonComponent().setVisible(newValue.booleanValue());
                     break;
                 case ButtonModel.PROP_ENABLED:
-                    setEnabled(newValue.booleanValue());
+                    getButtonComponent().setEnabled(newValue.booleanValue());
                     break;
                 case ButtonModel.PROP_SHOWTITLE:
                     if (newValue.booleanValue())
-                        setText(partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+                        getButtonComponent().setText(partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
                     else
-                        setText("");
+                        getButtonComponent().setText("");
                     break;
             }
         });

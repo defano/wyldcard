@@ -29,6 +29,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
     private JCheckBox isEnabled;
     private JLabel buttonId;
     private JPanel buttonEditor;
+    private JComboBox style;
 
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -59,7 +60,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         this.model = (AbstractPartModel) data;
 
         buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-        buttonTitle.setText(model.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+//        buttonTitle.setText(model.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
         buttonId.setText(model.getKnownProperty(ButtonModel.PROP_ID).stringValue());
         buttonTop.setText(model.getKnownProperty(ButtonModel.PROP_TOP).stringValue());
         buttonLeft.setText(model.getKnownProperty(ButtonModel.PROP_LEFT).stringValue());
@@ -68,11 +69,12 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
         isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWTITLE).booleanValue());
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
+        style.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
     }
 
     private void updateProperties() {
         model.setKnownProperty(ButtonModel.PROP_NAME, new Value(buttonName.getText()));
-        model.setKnownProperty(ButtonModel.PROP_TITLE, new Value(buttonTitle.getText()));
+//        model.setKnownProperty(ButtonModel.PROP_TITLE, new Value(buttonTitle.getText()));
         model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getText()));
         model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getText()));
         model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getText()));
@@ -80,6 +82,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.getSelectedObjects() != null));
         model.setKnownProperty(ButtonModel.PROP_SHOWTITLE, new Value(isShowTitle.getSelectedObjects() != null));
         model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
+        model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
     }
 
     {
@@ -101,7 +104,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         buttonEditor.setLayout(new GridLayoutManager(3, 1, new Insets(10, 10, 10, 10), -1, -1));
         buttonEditor.setMaximumSize(new Dimension(587, 257));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
         buttonEditor.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Identification"));
         final JLabel label1 = new JLabel();
@@ -114,54 +117,55 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         label2.setHorizontalAlignment(2);
         label2.setInheritsPopupMenu(false);
         label2.setText("ID:");
-        panel1.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(label2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonId = new JLabel();
         buttonId.setText("id");
-        panel1.add(buttonId, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(buttonId, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(3, 7, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setLayout(new GridLayoutManager(2, 7, new Insets(0, 0, 0, 0), -1, -1));
         buttonEditor.add(panel2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Properties"));
         final JLabel label3 = new JLabel();
-        label3.setHorizontalAlignment(4);
-        label3.setHorizontalTextPosition(4);
-        label3.setText("Button Title:");
-        panel2.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(90, -1), new Dimension(90, -1), new Dimension(90, -1), 0, false));
-        buttonTitle = new JTextField();
-        panel2.add(buttonTitle, new GridConstraints(0, 1, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, -1), null, 0, false));
+        label3.setText("Height:");
+        panel2.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label4 = new JLabel();
-        label4.setText("Height:");
+        label4.setText("Width:");
         panel2.add(label4, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label5 = new JLabel();
-        label5.setText("Width:");
-        panel2.add(label5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonHeight = new JTextField();
-        panel2.add(buttonHeight, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
+        panel2.add(buttonHeight, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         buttonWidth = new JTextField();
-        panel2.add(buttonWidth, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
+        panel2.add(buttonWidth, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setText("Top:");
+        panel2.add(label5, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
-        label6.setText("Top:");
+        label6.setText("Left:");
         panel2.add(label6, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label7 = new JLabel();
-        label7.setText("Left:");
-        panel2.add(label7, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonTop = new JTextField();
-        panel2.add(buttonTop, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
+        panel2.add(buttonTop, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         buttonLeft = new JTextField();
-        panel2.add(buttonLeft, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
+        panel2.add(buttonLeft, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         isVisible = new JCheckBox();
         isVisible.setText("Visible");
-        panel2.add(isVisible, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(isVisible, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isShowTitle = new JCheckBox();
         isShowTitle.setText("Show Title");
-        panel2.add(isShowTitle, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(isShowTitle, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isEnabled = new JCheckBox();
         isEnabled.setText("Enabled");
-        panel2.add(isEnabled, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(isEnabled, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panel2.add(spacer1, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, new Dimension(102, 11), null, 0, false));
+        panel2.add(spacer1, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, new Dimension(102, 11), null, 0, false));
         final Spacer spacer2 = new Spacer();
-        panel2.add(spacer2, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(102, 11), null, 0, false));
+        panel2.add(spacer2, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(102, 11), null, 0, false));
+        style = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("Default");
+        defaultComboBoxModel1.addElement("Radio");
+        defaultComboBoxModel1.addElement("Checkbox");
+        defaultComboBoxModel1.addElement("Menu");
+        style.setModel(defaultComboBoxModel1);
+        panel2.add(style, new GridConstraints(1, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
         buttonEditor.add(panel3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

@@ -1,11 +1,17 @@
 package hypercard.parts.model;
 
+import hypercard.parts.buttons.ButtonStyle;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 
 import java.awt.*;
 
 public class ButtonModel extends AbstractPartModel {
+
+    public static final String PROP_STYLE = "style";
+    public static final String PROP_FAMILY = "family";
+    public static final String PROP_HILITE = "hilite";
+    public static final String PROP_AUTOHILIGHT = "autohilite";
 
     public static final String PROP_TITLE = "title";
     public static final String PROP_SHOWTITLE = "showtitle";
@@ -30,6 +36,10 @@ public class ButtonModel extends AbstractPartModel {
         partModel.defineProperty(PROP_SHOWTITLE, new Value(true), false);
         partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
         partModel.defineProperty(PROP_ENABLED, new Value(true), false);
+        partModel.defineProperty(PROP_STYLE, new Value(ButtonStyle.DEFAULT.getName()), false);
+        partModel.defineProperty(PROP_FAMILY, new Value(), false);
+        partModel.defineProperty(PROP_HILITE, new Value(false), false);
+        partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
 
         return partModel;
     }

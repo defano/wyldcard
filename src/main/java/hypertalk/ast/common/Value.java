@@ -36,10 +36,14 @@ public class Value {
         this(p.x + "," + p.y);
     }
 
+    public Value (Rectangle r) {
+        this(r.x + "," + r.y + "," + r.x + r.width + "," + r.y + r.height);
+    }
+
     public Value (Object v) {
         this(String.valueOf(v));
     }
-    
+
     public Value (long v) {
         this(String.valueOf(v));
     }
