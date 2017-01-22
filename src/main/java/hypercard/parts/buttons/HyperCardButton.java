@@ -1,5 +1,7 @@
 package hypercard.parts.buttons;
 
+import hypercard.parts.ToolEditablePart;
+
 import javax.swing.*;
 import java.awt.*;
 

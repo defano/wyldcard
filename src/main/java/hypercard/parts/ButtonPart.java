@@ -61,7 +61,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent);
 
         button.initProperties(geometry);
-        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
 
         return button;
     }
@@ -73,7 +73,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         button.partModel = partModel;
         button.partModel.addPropertyChangedObserver(button);
         button.script = Interpreter.compile(partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).stringValue());
-        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
 
         return button;
     }
@@ -177,7 +177,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
     @Override
     public void setValue(Value value) {
         try {
-            partModel.setProperty(ButtonModel.PROP_TITLE, value);
+            partModel.setProperty(ButtonModel.PROP_NAME, value);
         } catch (Exception e) {
             throw new RuntimeException("Button's text property cannot be set");
         }
@@ -185,7 +185,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
 
     @Override
     public Value getValue() {
-        return partModel.getKnownProperty(ButtonModel.PROP_TITLE);
+        return partModel.getKnownProperty(ButtonModel.PROP_NAME);
     }
 
     private void compile() throws HtSemanticException {
@@ -270,7 +270,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                         HyperCard.getInstance().dialogSyntaxError(e);
                     }
                     break;
-                case ButtonModel.PROP_TITLE:
+                case ButtonModel.PROP_NAME:
                     getButtonComponent().setText(newValue.toString());
                     break;
                 case ButtonModel.PROP_TOP:
@@ -287,9 +287,9 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                 case ButtonModel.PROP_ENABLED:
                     getButtonComponent().setEnabled(newValue.booleanValue());
                     break;
-                case ButtonModel.PROP_SHOWTITLE:
+                case ButtonModel.PROP_SHOWNAME:
                     if (newValue.booleanValue())
-                        getButtonComponent().setText(partModel.getKnownProperty(ButtonModel.PROP_TITLE).stringValue());
+                        getButtonComponent().setText(partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
                     else
                         getButtonComponent().setText("");
                     break;

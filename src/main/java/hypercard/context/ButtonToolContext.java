@@ -2,7 +2,7 @@ package hypercard.context;
 
 import hypercard.HyperCard;
 import hypercard.parts.ButtonPart;
-import hypercard.parts.buttons.ToolEditablePart;
+import hypercard.parts.ToolEditablePart;
 
 import java.util.Observable;
 import java.util.Observer;

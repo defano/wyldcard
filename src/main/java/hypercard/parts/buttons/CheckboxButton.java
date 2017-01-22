@@ -1,6 +1,7 @@
 package hypercard.parts.buttons;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
+import hypercard.parts.ToolEditablePart;
 
 import javax.swing.*;
 import java.awt.*;

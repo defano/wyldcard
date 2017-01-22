@@ -1,8 +1,7 @@
-package hypercard.parts.buttons;
+package hypercard.parts;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.ButtonToolContext;
-import hypercard.parts.PartResizer;
 import hypercard.parts.model.AbstractPartModel;
 import hypertalk.ast.common.Value;
 
@@ -96,9 +95,7 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
     default void mouseExited(MouseEvent e) {}
 
     @Override
-    default void keyTyped(KeyEvent e) {
-
-    }
+    default void keyTyped(KeyEvent e) {}
 
     @Override
     default void keyPressed(KeyEvent e) {
@@ -132,7 +129,5 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
     }
 
     @Override
-    default void keyReleased(KeyEvent e) {
-
-    }
+    default void keyReleased(KeyEvent e) {}
 }
