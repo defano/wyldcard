@@ -22,11 +22,7 @@ public class CheckboxButton extends JCheckBox {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        if (toolEditablePart.isSelected()) {
-            ((Graphics2D) g).setStroke(MarchingAnts.getInstance().getMarchingAnts());
-            g.drawRect(0, 0, getWidth(), getHeight());
-        }
+        toolEditablePart.drawSelectionRectange(g);
     }
 
 }
