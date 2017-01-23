@@ -42,6 +42,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
     public static final int DEFAULT_WIDTH = 160;
     public static final int DEFAULT_HEIGHT = 40;
 
+    private final PartMover mover;
     private Script script;
     private ButtonModel partModel;
     private CardPart parent;
@@ -51,6 +52,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
 
         this.parent = parent;
         this.script = new Script();
+        this.mover = new PartMover(this, parent, true);
     }
 
     public static ButtonPart newButton(CardPart parent) {
@@ -61,7 +63,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent);
 
         button.initProperties(geometry);
-        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
+        button.setName(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
 
         return button;
     }
@@ -73,7 +75,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         button.partModel = partModel;
         button.partModel.addPropertyChangedObserver(button);
         button.script = Interpreter.compile(partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).stringValue());
-        button.getButtonComponent().setText(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
+        button.setName(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
 
         return button;
     }
@@ -95,6 +97,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         partModel.addPropertyChangedObserver(this);
     }
 
+    @Override
     public void editProperties() {
         WindowBuilder.make(new ButtonPropertyEditor())
                 .withTitle("Button Editor")
@@ -103,14 +106,19 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                 .build();
     }
 
+    @Override
     public void move() {
-        new PartMover(this, parent, true);
+        if (!mover.isMoving()) {
+            mover.startMoving();
+        }
     }
 
+    @Override
     public void resize(int fromQuadrant) {
         new PartResizer(this, parent, fromQuadrant);
     }
 
+    @Override
     public void delete() {
         parent.removeButton(this);
     }
@@ -271,7 +279,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                     }
                     break;
                 case ButtonModel.PROP_NAME:
-                    getButtonComponent().setText(newValue.toString());
+                    setName(newValue.toString());
                     break;
                 case ButtonModel.PROP_TOP:
                 case ButtonModel.PROP_LEFT:
@@ -289,9 +297,9 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                     break;
                 case ButtonModel.PROP_SHOWNAME:
                     if (newValue.booleanValue())
-                        getButtonComponent().setText(partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
+                        setName(partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
                     else
-                        getButtonComponent().setText("");
+                        setName("");
                     break;
             }
         });

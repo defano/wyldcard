@@ -17,12 +17,14 @@ public class CheckboxButton extends JCheckBox {
         super.addActionListener(toolEditablePart);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
+
+        toolEditablePart.addTextChangeObserver(super::setText);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        toolEditablePart.drawSelectionRectange(g);
+        toolEditablePart.drawSelectionRectangle(g);
     }
 
 }

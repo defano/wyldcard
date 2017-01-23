@@ -28,8 +28,9 @@ public class PartMover {
 
     private Part part;
     private Component within;
-    private boolean done = false;
+    private boolean done = true;
     private Point mouseLocInPart;
+    private final boolean untilReleased;
 
     private class MoverTask implements Runnable {
         public void run () {        
@@ -55,21 +56,33 @@ public class PartMover {
     public PartMover(Part part, Component within, boolean untilReleased) {
         this.part = part;
         this.within = within;
-
-        Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-        SwingUtilities.convertPointFromScreen(mouseLoc, part.getComponent());
-        this.mouseLocInPart = new Point(mouseLoc.x, mouseLoc.y);
-
-        if (untilReleased) {
-            MouseManager.notifyOnMouseReleased(() -> done = true);
-        } else {
-            MouseManager.notifyOnMousePressed(() -> done = true);
-        }
-
-        executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
+        this.untilReleased = untilReleased;
     }
 
     public PartMover (Part part, Component within) {
         this(part, within, false);
+        startMoving();
+    }
+
+    public boolean isMoving() {
+        return !done;
+    }
+
+    public void startMoving() {
+        if (!isMoving()) {
+            done = false;
+
+            Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(mouseLoc, part.getComponent());
+            this.mouseLocInPart = new Point(mouseLoc.x, mouseLoc.y);
+
+            if (untilReleased) {
+                MouseManager.notifyOnMouseReleased(() -> done = true);
+            } else {
+                MouseManager.notifyOnMousePressed(() -> done = true);
+            }
+
+            executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
+        }
     }
 }

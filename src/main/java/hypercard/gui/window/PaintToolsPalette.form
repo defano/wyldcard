@@ -18,7 +18,7 @@
           <iconTextGap value="0"/>
           <margin top="0" left="0" bottom="0" right="0"/>
           <opaque value="true"/>
-          <selected value="false"/>
+          <beingEdited value="false"/>
           <text value=""/>
           <visible value="true"/>
         </properties>

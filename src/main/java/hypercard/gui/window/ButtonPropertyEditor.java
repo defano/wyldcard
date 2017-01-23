@@ -4,6 +4,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
+import hypercard.parts.buttons.ButtonStyle;
 import hypercard.parts.model.ButtonModel;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.runtime.WindowManager;
@@ -49,6 +50,11 @@ public class ButtonPropertyEditor extends HyperCardWindow {
             dispose();
         });
 
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for (ButtonStyle thisStyle : ButtonStyle.values()) {
+            model.addElement(thisStyle.getName());
+        }
+        style.setModel(model);
     }
 
     @Override
@@ -159,10 +165,6 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Style"));
         style = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
-        defaultComboBoxModel1.addElement("Default");
-        defaultComboBoxModel1.addElement("Radio");
-        defaultComboBoxModel1.addElement("Checkbox");
-        defaultComboBoxModel1.addElement("Menu");
         style.setModel(defaultComboBoxModel1);
         panel4.add(style, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         family = new JComboBox();

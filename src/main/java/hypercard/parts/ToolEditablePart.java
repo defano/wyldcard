@@ -10,11 +10,13 @@ import java.awt.event.*;
 
 public interface ToolEditablePart extends KeyListener, MouseListener, ActionListener {
 
-    void setSelected(boolean selected);
-    boolean isSelected();
+    void addTextChangeObserver(PartTextChangeObserver observer);
+    void setBeingEdited(boolean beingEdited);
+    boolean isBeingEdited();
     void move();
     void resize(int fromQuadrant);
     void delete();
+    String getName();
     void editProperties();
     AbstractPartModel getModel();
     Component getComponent();
@@ -39,10 +41,10 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
         return new Rectangle(getComponent().getWidth() - getDragHandleSize(), getComponent().getHeight() - getDragHandleSize(), getDragHandleSize(), getDragHandleSize());
     }
 
-    default void drawSelectionRectange(Graphics g) {
+    default void drawSelectionRectangle(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        if (isSelected()) {
+        if (isBeingEdited()) {
             g2d.setPaint(Color.BLACK);
 
             // TODO: Add resizer support for dragging from any corner
@@ -58,7 +60,7 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
 
     @Override
     default void mousePressed(MouseEvent e) {
-        if (isSelected()) {
+        if (isBeingEdited()) {
             if (getTopLeftDragHandle().contains(e.getPoint())) {
                 resize(PartResizer.QUADRANT_TOPLEFT);
             } else if (getTopRightDragHandle().contains(e.getPoint())) {
@@ -74,33 +76,21 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
     }
 
     @Override
-    default void actionPerformed(ActionEvent e) {
-        ButtonToolContext.getInstance().setSelectedButton(this);
-    }
+    default void actionPerformed(ActionEvent e) {}
 
     @Override
     default void mouseClicked(MouseEvent e) {
-        if (isSelected() && e.getClickCount() == 2) {
+        if (isBeingEdited() && e.getClickCount() == 2) {
             editProperties();
+        } else {
+            ButtonToolContext.getInstance().setSelectedButton(this);
         }
     }
 
     @Override
-    default void mouseReleased(MouseEvent e) {}
-
-    @Override
-    default void mouseEntered(MouseEvent e) {}
-
-    @Override
-    default void mouseExited(MouseEvent e) {}
-
-    @Override
-    default void keyTyped(KeyEvent e) {}
-
-    @Override
     default void keyPressed(KeyEvent e) {
 
-        if (isSelected()) {
+        if (isBeingEdited()) {
             int top = getModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(1).integerValue();
             int left = getModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(0).integerValue();
 
@@ -130,4 +120,16 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
 
     @Override
     default void keyReleased(KeyEvent e) {}
+
+    @Override
+    default void mouseReleased(MouseEvent e) {}
+
+    @Override
+    default void mouseEntered(MouseEvent e) {}
+
+    @Override
+    default void mouseExited(MouseEvent e) {}
+
+    @Override
+    default void keyTyped(KeyEvent e) {}
 }

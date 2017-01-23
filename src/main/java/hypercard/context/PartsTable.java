@@ -47,13 +47,10 @@ public class PartsTable<T extends Part> {
         
         try {            
             Integer partId = p.getProperty("id").integerValue();
-            String partName = p.getProperty("name").toString();
-            
+
             // Check for duplicate id or name
             if (partExists(new PartIdSpecifier(p.getType(), partId)))
                 throw new RuntimeException("Duplicate part id");
-            if (partExists(new PartNameSpecifier(p.getType(), partName)))
-                throw new PartException("A part with the name " + partName + " already exists");
 
             idhash.put(partId, p);
 

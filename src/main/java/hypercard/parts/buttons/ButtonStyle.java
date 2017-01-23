@@ -1,10 +1,12 @@
 package hypercard.parts.buttons;
 
 public enum ButtonStyle {
-    DEFAULT("default"),
-    CHECKBOX("checkbox"),
-    RADIO("radio"),
-    MENU("menu");
+    DEFAULT("Default"),
+    CHECKBOX("Checkbox"),
+    RADIO("Radio"),
+    MENU("Menu"),
+    RECTANGULAR("Rectangular"),
+    TRANSPARENT("Transparent");
 
     private final String name;
 

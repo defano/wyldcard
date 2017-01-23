@@ -157,12 +157,9 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
             // Special case; "pseudo-tools" re-enable all HyperCard paint tools
             if (selectedTool.getToolType() == PaintToolType.SLANT ||
                     selectedTool.getToolType() == PaintToolType.ROTATE ||
-                    selectedTool.getToolType() == PaintToolType.MAGNIFIER)
-            {
+                    selectedTool.getToolType() == PaintToolType.MAGNIFIER) {
                 enableAllTools();
-            }
-
-            else {
+            } else {
                 JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
 
                 if (selectedToolButton != null) {
@@ -196,7 +193,6 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         selection.setIconTextGap(0);
         selection.setMargin(new Insets(0, 0, 0, 0));
         selection.setOpaque(true);
-        selection.setSelected(false);
         selection.setText("");
         selection.setVisible(true);
         palettePanel.add(selection, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

@@ -32,13 +32,13 @@ public class ButtonToolContext {
         if (ToolsContext.getInstance().getToolModeProvider().get() == ToolMode.BUTTON) {
             selectedButton = button;
             deselectAllButtons();
-            selectedButton.setSelected(true);
+            selectedButton.setBeingEdited(true);
         }
     }
 
     public void deselectAllButtons() {
         for (ButtonPart thisButton : HyperCard.getInstance().getCard().getButtons().getParts()) {
-            thisButton.setSelected(false);
+            thisButton.setBeingEdited(false);
         }
     }
 
