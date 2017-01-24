@@ -96,8 +96,13 @@ public class HyperCard implements StackModelObserver {
         messageBoxExecutor.submit(() -> {
             try {
                 if (!getMsgBoxText().trim().isEmpty()) {
-                    Interpreter.executeString(null, getMsgBoxText()).get();
-                    HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
+                    String messageText = getMsgBoxText();
+                    Interpreter.executeString(null, messageText).get();
+
+                    // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
+                    if (Interpreter.isExpressionStatement(messageText)) {
+                        HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
+                    }
                 }
             } catch (Exception e) {
                 HyperCard.getInstance().dialogSyntaxError(e);

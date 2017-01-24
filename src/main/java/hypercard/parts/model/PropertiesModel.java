@@ -224,8 +224,14 @@ public class PropertiesModel {
      */
     public void addPropertyChangedObserver(PropertyChangeObserver listener) {
         listeners.add(listener);
+        refirePropertyChanges(listener);
     }
 
+    private void refirePropertyChanges(PropertyChangeObserver observer) {
+        for (String thisProperty : properties.keySet()) {
+            observer.onPropertyChanged(thisProperty, properties.get(thisProperty), properties.get(thisProperty));
+        }
+    }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
         for (PropertyChangeObserver listener : listeners) {

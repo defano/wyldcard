@@ -12,13 +12,17 @@ public class ButtonModel extends AbstractPartModel {
     public static final String PROP_FAMILY = "family";
     public static final String PROP_HILITE = "hilite";
     public static final String PROP_AUTOHILIGHT = "autohilite";
-
     public static final String PROP_SHOWNAME = "showname";
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_ENABLED = "enabled";
+    public static final String PROP_CONTENTS = "contents";
 
     private ButtonModel() {
         super(PartType.BUTTON);
+    }
+
+    public static ButtonModel emptyModel() {
+        return newButtonModel(0, new Rectangle(0,0,1,1));
     }
 
     public static ButtonModel newButtonModel(Integer id, Rectangle geometry) {
@@ -38,6 +42,7 @@ public class ButtonModel extends AbstractPartModel {
         partModel.defineProperty(PROP_FAMILY, new Value(), false);
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
+        partModel.defineProperty(PROP_CONTENTS, new Value(), false);
 
         return partModel;
     }

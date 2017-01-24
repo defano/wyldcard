@@ -3,23 +3,20 @@ package hypercard.parts;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.ButtonToolContext;
 import hypercard.parts.model.AbstractPartModel;
+import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
 import java.awt.*;
 import java.awt.event.*;
 
-public interface ToolEditablePart extends KeyListener, MouseListener, ActionListener {
+public interface ToolEditablePart extends Part, KeyListener, MouseListener, ActionListener {
 
-    void addTextChangeObserver(PartTextChangeObserver observer);
     void setBeingEdited(boolean beingEdited);
     boolean isBeingEdited();
     void move();
     void resize(int fromQuadrant);
     void delete();
-    String getName();
     void editProperties();
-    AbstractPartModel getModel();
-    Component getComponent();
 
     default int getDragHandleSize() {
         return 8;
@@ -53,9 +50,16 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
             //  g2d.fill(getTopRightDragHandle());
             g2d.fill(getBottomRightDragHandle());
 
+            g2d.setPaint(Color.WHITE);
+            g2d.drawRect(0,0, getComponent().getWidth() - 1, getComponent().getHeight() - 1);
+            g2d.setPaint(Color.BLACK);
             g2d.setStroke(MarchingAnts.getInstance().getMarchingAnts());
-            g2d.drawRect(0, 0, getComponent().getWidth(), getComponent().getHeight());
+            g2d.drawRect(0, 0, getComponent().getWidth() -1 , getComponent().getHeight() - 1);
         }
+    }
+
+    default boolean isAutoHilited() {
+        return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
     @Override
@@ -76,9 +80,6 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
     }
 
     @Override
-    default void actionPerformed(ActionEvent e) {}
-
-    @Override
     default void mouseClicked(MouseEvent e) {
         if (isBeingEdited() && e.getClickCount() == 2) {
             editProperties();
@@ -91,8 +92,8 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
     default void keyPressed(KeyEvent e) {
 
         if (isBeingEdited()) {
-            int top = getModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(1).integerValue();
-            int left = getModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(0).integerValue();
+            int top = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(1).integerValue();
+            int left = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(0).integerValue();
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
@@ -100,19 +101,19 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
                     delete();
 
                 case KeyEvent.VK_LEFT:
-                    getModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
+                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
                     break;
 
                 case KeyEvent.VK_RIGHT:
-                    getModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(++left, top)));
+                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(++left, top)));
                     break;
 
                 case KeyEvent.VK_UP:
-                    getModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(left, --top)));
+                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(left, --top)));
                     break;
 
                 case KeyEvent.VK_DOWN:
-                    getModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(left, ++top)));
+                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(left, ++top)));
                     break;
             }
         }
@@ -132,4 +133,7 @@ public interface ToolEditablePart extends KeyListener, MouseListener, ActionList
 
     @Override
     default void keyTyped(KeyEvent e) {}
+
+    @Override
+    default void actionPerformed(ActionEvent e) {}
 }

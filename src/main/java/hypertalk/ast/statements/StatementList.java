@@ -13,7 +13,7 @@ import java.util.Vector;
 
 public class StatementList {
 
-    private Vector<Statement> list;
+    public final Vector<Statement> list;
     
     public StatementList () {
         list = new Vector<>();

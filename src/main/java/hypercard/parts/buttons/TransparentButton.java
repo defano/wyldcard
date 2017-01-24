@@ -1,52 +1,36 @@
 package hypercard.parts.buttons;
 
-import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.model.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
-public class TransparentButton extends JLabel {
-
-    private final ToolEditablePart toolEditablePart;
-    private boolean isHilited = false;
+public class TransparentButton extends AbstractLabelButton {
 
     public TransparentButton(ToolEditablePart toolEditablePart) {
-        super("", SwingConstants.CENTER);
-        setBackground(Color.BLACK);
-
-        this.toolEditablePart = toolEditablePart;
-        super.setEnabled(true);
-
-        MarchingAnts.getInstance().addObserver(this::repaint);
-        super.addMouseListener(toolEditablePart);
-        super.addKeyListener(toolEditablePart);
-
-        // Draw the button highlight as the property changes
-        toolEditablePart.getModel().addPropertyChangedObserver((property, oldValue, newValue) -> {
-            if (property.equalsIgnoreCase(hypercard.parts.model.ButtonModel.PROP_HILITE)) {
-                isHilited = newValue.booleanValue();
-                setOpaque(isHilited);
-                setForeground(isHilited ? Color.WHITE : Color.BLACK);
-            }
-        });
-
-        toolEditablePart.addTextChangeObserver(super::setText);
+        super(toolEditablePart);
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
+    protected void drawBorder(boolean isDisabled, Graphics2D g) {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON) {
-            g.drawRect(1, 1, getWidth() -2 , getHeight() -2);
+            g.setPaint(Color.GRAY);
+            g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }
+    }
 
-        toolEditablePart.drawSelectionRectangle(g);
+    @Override
+    protected void setName(boolean isDisabled, String name) {
+        setForeground(textColor(isDisabled));
+        TransparentButton.super.setText(name);
+    }
+
+    @Override
+    protected void setHilite(boolean isDisabled, boolean isHilited) {
+        if (!isDisabled) {
+            setOpaque(isHilited);
+            setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
+        }
     }
 }

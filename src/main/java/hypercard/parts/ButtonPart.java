@@ -16,7 +16,7 @@ import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.buttons.ButtonStyle;
-import hypercard.parts.buttons.HyperCardButton;
+import hypercard.parts.buttons.AbstractButton;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
@@ -37,7 +37,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ButtonPart extends HyperCardButton implements Part, MouseListener, PropertyChangeObserver {
+public class ButtonPart extends AbstractButton implements MouseListener, PropertyChangeObserver {
 
     public static final int DEFAULT_WIDTH = 160;
     public static final int DEFAULT_HEIGHT = 40;
@@ -61,10 +61,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
 
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
         ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent);
-
         button.initProperties(geometry);
-        button.setName(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-
         return button;
     }
 
@@ -75,7 +72,6 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         button.partModel = partModel;
         button.partModel.addPropertyChangedObserver(button);
         button.script = Interpreter.compile(partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).stringValue());
-        button.setName(button.partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
 
         return button;
     }
@@ -144,11 +140,6 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
     }
 
     @Override
-    public AbstractPartModel getModel() {
-        return partModel;
-    }
-
-    @Override
     public PartType getType() {
         return PartType.BUTTON;
     }
@@ -185,7 +176,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
     @Override
     public void setValue(Value value) {
         try {
-            partModel.setProperty(ButtonModel.PROP_NAME, value);
+            partModel.setProperty(ButtonModel.PROP_CONTENTS, value);
         } catch (Exception e) {
             throw new RuntimeException("Button's text property cannot be set");
         }
@@ -193,7 +184,7 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
 
     @Override
     public Value getValue() {
-        return partModel.getKnownProperty(ButtonModel.PROP_NAME);
+        return partModel.getKnownProperty(ButtonModel.PROP_CONTENTS);
     }
 
     private void compile() throws HtSemanticException {
@@ -258,6 +249,10 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
         }
     }
 
+    public CardPart getCard() {
+        return parent;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
@@ -278,9 +273,6 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                         HyperCard.getInstance().dialogSyntaxError(e);
                     }
                     break;
-                case ButtonModel.PROP_NAME:
-                    setName(newValue.toString());
-                    break;
                 case ButtonModel.PROP_TOP:
                 case ButtonModel.PROP_LEFT:
                 case ButtonModel.PROP_WIDTH:
@@ -294,12 +286,6 @@ public class ButtonPart extends HyperCardButton implements Part, MouseListener, 
                     break;
                 case ButtonModel.PROP_ENABLED:
                     getButtonComponent().setEnabled(newValue.booleanValue());
-                    break;
-                case ButtonModel.PROP_SHOWNAME:
-                    if (newValue.booleanValue())
-                        setName(partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-                    else
-                        setName("");
                     break;
             }
         });

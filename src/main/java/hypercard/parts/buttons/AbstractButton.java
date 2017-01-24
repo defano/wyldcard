@@ -1,17 +1,17 @@
 package hypercard.parts.buttons;
 
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.PartTextChangeObserver;
-import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
-public abstract class HyperCardButton implements ToolEditablePart {
+public abstract class AbstractButton implements ToolEditablePart {
+
+    private ButtonComponent buttonComponent;
+    private boolean isBeingEdited = false;
 
     public abstract void move();
 
@@ -19,17 +19,12 @@ public abstract class HyperCardButton implements ToolEditablePart {
 
     public abstract void invalidateButtonComponent(Component oldButtonComponent, Component newButtonComponent);
 
-    private JComponent buttonComponent;
-    private boolean isBeingEdited = false;
-    private String name = "";
-    private ArrayList<PartTextChangeObserver> textChangeObservers = new ArrayList();
-
-    public HyperCardButton(ButtonStyle style) {
+    public AbstractButton(ButtonStyle style) {
         buttonComponent = getComponentForStyle(style);
     }
 
     public JComponent getButtonComponent() {
-        return buttonComponent;
+        return (JComponent) buttonComponent;
     }
 
     public boolean isBeingEdited() {
@@ -43,11 +38,12 @@ public abstract class HyperCardButton implements ToolEditablePart {
     public void setButtonStyle(ButtonStyle style) {
         Component oldComponent = getButtonComponent();
         buttonComponent = getComponentForStyle(style);
-        invalidateButtonComponent(oldComponent, buttonComponent);
-        fireTextChangeObservers(getName());
+        invalidateButtonComponent(oldComponent, (JComponent) buttonComponent);
+
+        getPartModel().addPropertyChangedObserver(buttonComponent);
     }
 
-    private JComponent getComponentForStyle(ButtonStyle style) {
+    private ButtonComponent getComponentForStyle(ButtonStyle style) {
         switch (style) {
             case CHECKBOX:
                 return new CheckboxButton(this);
@@ -61,6 +57,10 @@ public abstract class HyperCardButton implements ToolEditablePart {
                 return new RectangularButton(this);
             case TRANSPARENT:
                 return new TransparentButton(this);
+            case OVAL:
+                return new OvalButton(this);
+            case CLASSIC:
+                return new ClassicButton(this);
 
             default:
                 throw new IllegalArgumentException("Bug! Unimplemented button style.");
@@ -72,7 +72,9 @@ public abstract class HyperCardButton implements ToolEditablePart {
         ToolEditablePart.super.mousePressed(e);
 
         if (isAutoHilited()) {
-            getModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
+            if (!buttonComponent.hasSharedHilite()) {
+                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
+            }
         }
     }
 
@@ -80,33 +82,10 @@ public abstract class HyperCardButton implements ToolEditablePart {
     public void mouseReleased(MouseEvent e) {
         ToolEditablePart.super.mouseReleased(e);
 
-        if (isAutoHilited()) {
-            getModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
-        }
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String text) {
-        this.name = text;
-        fireTextChangeObservers(text);
-    }
-
-    @Override
-    public void addTextChangeObserver(PartTextChangeObserver observer) {
-        textChangeObservers.add(observer);
-    }
-
-    private boolean isAutoHilited() {
-        return getModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
-    }
-
-    private void fireTextChangeObservers(String newText) {
-        for (PartTextChangeObserver thisObserver : textChangeObservers) {
-            thisObserver.onTextChanged(newText);
+        if (!isBeingEdited() && isAutoHilited()) {
+            if (!buttonComponent.hasSharedHilite()) {
+                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
+            }
         }
     }
 }
