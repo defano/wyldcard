@@ -9,9 +9,9 @@
 
 package hypercard.parts;
 
+import hypercard.context.PartToolContext;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
-import hypercard.gui.menu.context.ButtonContextMenu;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
@@ -56,7 +56,13 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
     }
 
     public static ButtonPart newButton(CardPart parent) {
-        return fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+
+        // When a new button is created, make the button tool active and select the newly created button
+        ToolsContext.getInstance().setToolMode(ToolMode.BUTTON);
+        PartToolContext.getInstance().setSelectedPart(newButton);
+
+        return newButton;
     }
 
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
@@ -78,7 +84,6 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
     @Override
     public void partOpened() {
-        this.getButtonComponent().setComponentPopupMenu(new ButtonContextMenu(this));
     }
 
     @Override
@@ -126,8 +131,8 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
      * @param oldButtonComponent The former component associated with this part
      * @param newButtonComponent The new component
      */
-    public void invalidateButtonComponent(Component oldButtonComponent, Component newButtonComponent) {
-        parent.invalidateButtonComponent(this, oldButtonComponent, newButtonComponent);
+    public void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
+        parent.invalidateSwingComponent(this, oldButtonComponent, newButtonComponent);
     }
 
     public void editScript() {

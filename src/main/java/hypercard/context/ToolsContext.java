@@ -15,8 +15,13 @@ import hypercard.parts.model.StackModelObserver;
 import hypercard.patterns.HyperCardPatternFactory;
 import hypertalk.ast.common.Tool;
 
+import javax.swing.text.AttributeSet;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -164,7 +169,6 @@ public class ToolsContext implements StackModelObserver {
         int currentStyle = fontProvider.get().getStyle();
 
         fontProvider.set(new Font(currentFamily, currentStyle, size));
-
     }
 
     public void setFontStyle(int style) {

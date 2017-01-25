@@ -2,7 +2,6 @@ package hypercard.parts.buttons;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
@@ -57,10 +56,5 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonCompon
 
     protected Color textColor(boolean isDisabled) {
         return isDisabled ? Color.GRAY : Color.BLACK;
-    }
-
-    @Override
-    public boolean hasSharedHilite() {
-        return false;
     }
 }

@@ -36,9 +36,4 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
             repaint();
         }
     }
-
-    @Override
-    public boolean hasSharedHilite() {
-        return false;
-    }
 }

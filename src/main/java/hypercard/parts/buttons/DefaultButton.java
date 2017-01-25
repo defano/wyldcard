@@ -42,9 +42,4 @@ public class DefaultButton extends JButton implements ButtonComponent {
         }
 
     }
-
-    @Override
-    public boolean hasSharedHilite() {
-        return false;
-    }
 }

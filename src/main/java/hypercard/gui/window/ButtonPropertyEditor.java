@@ -20,7 +20,6 @@ public class ButtonPropertyEditor extends HyperCardWindow {
     private JButton cancelButton;
     private JButton editScriptButton;
     private JTextField buttonName;
-    private JTextField buttonTitle;
     private JTextField buttonHeight;
     private JTextField buttonWidth;
     private JTextField buttonTop;
@@ -33,6 +32,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
     private JComboBox style;
     private JComboBox family;
     private JButton contents;
+    private JCheckBox autoHilite;
 
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -78,6 +78,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
         style.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
         family.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
+        autoHilite.setSelected(model.getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue());
     }
 
     private void updateProperties() {
@@ -91,6 +92,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
         model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
         model.setKnownProperty(ButtonModel.PROP_FAMILY, new Value(family.getSelectedItem().toString()));
+        model.setKnownProperty(ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
     }
 
     private void createUIComponents() {
@@ -167,7 +169,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         cancelButton.setText("Cancel");
         panel3.add(cancelButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
+        panel4.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(panel4, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Style"));
         style = new JComboBox();
@@ -209,6 +211,9 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         isEnabled = new JCheckBox();
         isEnabled.setText("Enabled");
         panel4.add(isEnabled, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        autoHilite = new JCheckBox();
+        autoHilite.setText("Auto Hilight");
+        panel4.add(autoHilite, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         buttonEditor.add(spacer1, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();

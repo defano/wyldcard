@@ -27,8 +27,7 @@ public class MenuButton extends JComboBox implements ButtonComponent {
             thisComponent.addMouseListener(toolEditablePart);
         }
 
-        setEnabled(false);
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> setEnabled(ToolMode.BUTTON != arg));
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> setEnabled(ToolMode.BUTTON != arg));
 
         setModel(menuItems);
     }
@@ -49,10 +48,5 @@ public class MenuButton extends JComboBox implements ButtonComponent {
                 }
                 break;
         }
-    }
-
-    @Override
-    public boolean hasSharedHilite() {
-        return false;
     }
 }

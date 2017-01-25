@@ -2,7 +2,6 @@ package hypercard.parts.buttons;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ButtonPart;
-import hypercard.parts.SharedHiliteDelegate;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
@@ -12,7 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CheckboxButton extends JCheckBox implements ButtonComponent, ActionListener {
+public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonComponent, ActionListener {
 
     private final ToolEditablePart toolEditablePart;
 
@@ -43,24 +42,20 @@ public class CheckboxButton extends JCheckBox implements ButtonComponent, Action
             case ButtonModel.PROP_HILITE:
                 CheckboxButton.super.setSelected(newValue.booleanValue());
                 break;
+
+            case ButtonModel.PROP_ENABLED:
+                CheckboxButton.super.setEnabled(newValue.booleanValue());
         }
-    }
-
-
-
-    @Override
-    public boolean hasSharedHilite() {
-        return true;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Swing automatically change the selection state of the component for us; we need to un-do this change when
+        // Swing automatically changes the selection state of the component for us; we need to un-do this change when
         // not in auto hilite mode.
         if (!toolEditablePart.isAutoHilited()) {
             setSelected(!isSelected());
         } else {
-            SharedHiliteDelegate.changeHilite((ButtonPart) toolEditablePart, isSelected());
+            setSharedHilite((ButtonPart) toolEditablePart, isSelected());
         }
     }
 }

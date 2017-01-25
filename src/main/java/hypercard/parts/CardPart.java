@@ -14,6 +14,7 @@ import com.defano.jmonet.canvas.UndoablePaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import hypercard.context.PartsTable;
 import hypercard.context.ToolsContext;
+import hypercard.parts.fields.FieldComponent;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.PartType;
@@ -23,7 +24,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
@@ -70,7 +74,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
                 case FIELD:
                     FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
                     card.fields.addPart(field);
-                    card.addSwingComponent(field, field.getRect());
+                    card.addSwingComponent(field.getComponent(), field.getRect());
                     default:
             }
         }
@@ -105,13 +109,13 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
     public void addField(FieldPart field) throws PartException {
         model.addPart(field);
         fields.addPart(field);
-        addSwingComponent(field, field.getRect());
+        addSwingComponent(field.getComponent(), field.getRect());
     }
 
     public void removeField(FieldPart field) {
         model.removePart(field);
         fields.removePart(field);
-        removeSwingComponent(field);
+        removeSwingComponent(field.getComponent());
     }
 
     public void addButton(ButtonPart button) throws PartException {
@@ -135,8 +139,12 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
             throw new RuntimeException("Unhandled part type");
     }
 
-    public PartsTable<ButtonPart> getButtons() {
-        return buttons;
+    public Collection<ButtonPart> getButtons() {
+        return buttons.getParts();
+    }
+
+    public Collection<FieldPart> getFields() {
+        return fields.getParts();
     }
 
     public UndoablePaintCanvas getCanvas() {
@@ -159,9 +167,9 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         return stack.getBackground(model.getBackgroundId());
     }
 
-    public void invalidateButtonComponent(ButtonPart forButton, Component oldButtonComponent, Component newButtonComponent) {
+    public void invalidateSwingComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
         removeSwingComponent(oldButtonComponent);
-        addSwingComponent(newButtonComponent, forButton.getRect());
+        addSwingComponent(newButtonComponent, forPart.getRect());
     }
 
     private void removeSwingComponent (Component component) {

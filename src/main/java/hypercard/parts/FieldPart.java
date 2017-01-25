@@ -9,53 +9,47 @@
 
 package hypercard.parts;
 
-import hypercard.gui.menu.context.FieldContextMenu;
+import hypercard.HyperCard;
 import hypercard.gui.window.FieldPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
-import hypercard.parts.model.FieldModel;
+import hypercard.parts.fields.AbstractField;
+import hypercard.parts.fields.FieldStyle;
 import hypercard.parts.model.AbstractPartModel;
+import hypercard.parts.model.FieldModel;
+import hypercard.parts.model.PropertyChangeObserver;
 import hypercard.runtime.Interpreter;
-import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
+import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
-import hypertalk.ast.common.ExpressionList;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
-import hypercard.parts.model.PropertyChangeObserver;
 
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-
-public class FieldPart extends JScrollPane implements Part, MouseListener, PropertyChangeObserver, KeyListener {
+public class FieldPart extends AbstractField implements Part, MouseListener, PropertyChangeObserver, KeyListener {
 
     public static final int DEFAULT_WIDTH = 250;
     public static final int DEFAULT_HEIGHT = 100;
 
-    private JTextArea text;
     private Script script;
     private FieldModel partModel;
     private CardPart parent;
+    private PartMover mover;
 
-    private FieldPart(CardPart parent) {
-        super();
+    private FieldPart(FieldStyle style, CardPart parent) {
+        super(style);
 
+        this.mover = new PartMover(this, parent, true);
         this.parent = parent;
         this.script = new Script();
-        initComponents();
     }
 
     public static FieldPart newField(CardPart parent) {
@@ -64,7 +58,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     }
 
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
-        FieldPart field = new FieldPart(parent);
+        FieldPart field = new FieldPart(FieldStyle.OPAQUE, parent);
 
         field.initProperties(geometry);
 
@@ -72,12 +66,11 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     }
 
     public static FieldPart fromModel(CardPart parent, FieldModel model) throws Exception {
-        FieldPart field = new FieldPart(parent);
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
 
         field.partModel = model;
         field.partModel.addPropertyChangedObserver(field);
 
-        field.text.setText(model.getKnownProperty(FieldModel.PROP_TEXT).stringValue());
         field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
 
         return field;
@@ -85,7 +78,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
     @Override
     public void partOpened() {
-        this.setComponentPopupMenu(new FieldContextMenu(this));
+
     }
 
     @Override
@@ -100,17 +93,6 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         partModel.addPropertyChangedObserver(this);
     }
 
-    private void initComponents() {
-        text = new JTextArea();
-        text.setTabSize(4);
-        text.setComponentPopupMenu(new FieldContextMenu(this));
-        text.setWrapStyleWord(true);
-        text.setLineWrap(true);
-        text.addMouseListener(this);
-        text.addKeyListener(this);
-        this.setViewportView(text);
-    }
-
     public void editProperties() {
         WindowBuilder.make(new FieldPropertyEditor())
                 .withTitle("Properties of field " + getName())
@@ -121,11 +103,24 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
     }
 
     public void move() {
-        new PartMover(this, parent);
+        if (!mover.isMoving()) {
+            mover.startMoving();
+        }
     }
 
-    public void resize() {
+    @Override
+    public void resize(int fromQuadrant) {
         new PartResizer(this, parent);
+    }
+
+    @Override
+    public void delete() {
+        parent.removeField(this);
+    }
+
+    @Override
+    public void invalidateSwingComponent(Component oldComponent, Component newComponent) {
+        parent.invalidateSwingComponent(this, oldComponent, newComponent);
     }
 
     public void editScript() {
@@ -154,7 +149,7 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
     @Override
     public JComponent getComponent() {
-        return text;
+        return this.getFieldComponent();
     }
 
     @Override
@@ -210,12 +205,10 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
         return new PartIdSpecifier(PartType.FIELD, getId());
     }
 
-    public JTextArea getTextArea() {
-        return text;
-    }
-
     @Override
     public void mousePressed(MouseEvent e) {
+        super.mousePressed(e);
+
         if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
@@ -223,6 +216,8 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        super.mouseReleased(e);
+
         if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseUp");
         }
@@ -230,32 +225,38 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        super.mouseEntered(e);
         sendMessage("mouseEnter");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        super.mouseExited(e);
         sendMessage("mouseExit");
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
+        super.keyPressed(e);
         sendMessage("keyDown");
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        super.keyReleased(e);
         sendMessage("keyUp");
 
-        partModel.setKnownProperty(FieldModel.PROP_TEXT, new Value(getTextArea().getText()));
+        partModel.setKnownProperty(FieldModel.PROP_TEXT, new Value(getText()));
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        super.mouseClicked(e);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
+        super.keyTyped(e);
     }
 
     @Override
@@ -263,6 +264,9 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
 
         SwingUtilities.invokeLater(() -> {
             switch (property) {
+                case FieldModel.PROP_STYLE:
+                    setFieldStyle(FieldStyle.fromName(newValue.stringValue()));
+                    break;
                 case FieldModel.PROP_SCRIPT:
                     try {
                         compile();
@@ -270,27 +274,16 @@ public class FieldPart extends JScrollPane implements Part, MouseListener, Prope
                         HyperCard.getInstance().dialogSyntaxError(e);
                     }
                     break;
-                case FieldModel.PROP_TEXT:
-                    if (!newValue.toString().equals(text.getText())) {
-                        text.setText(newValue.toString());
-                    }
-                    break;
                 case FieldModel.PROP_TOP:
                 case FieldModel.PROP_LEFT:
                 case FieldModel.PROP_WIDTH:
                 case FieldModel.PROP_HEIGHT:
-                    setBounds(partModel.getRect());
-                    validate();
-                    repaint();
+                    getComponent().setBounds(partModel.getRect());
+                    getComponent().validate();
+                    getComponent().repaint();
                     break;
                 case FieldModel.PROP_VISIBLE:
-                    setVisible(newValue.booleanValue());
-                    break;
-                case FieldModel.PROP_WRAPTEXT:
-                    text.setLineWrap(newValue.booleanValue());
-                    break;
-                case FieldModel.PROP_LOCKTEXT:
-                    text.setEditable(!newValue.booleanValue());
+                    getComponent().setVisible(newValue.booleanValue());
                     break;
             }
         });

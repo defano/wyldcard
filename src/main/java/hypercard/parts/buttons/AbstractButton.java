@@ -17,7 +17,7 @@ public abstract class AbstractButton implements ToolEditablePart {
 
     public abstract void resize(int fromQuadrant);
 
-    public abstract void invalidateButtonComponent(Component oldButtonComponent, Component newButtonComponent);
+    public abstract void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent);
 
     public AbstractButton(ButtonStyle style) {
         buttonComponent = getComponentForStyle(style);
@@ -38,7 +38,7 @@ public abstract class AbstractButton implements ToolEditablePart {
     public void setButtonStyle(ButtonStyle style) {
         Component oldComponent = getButtonComponent();
         buttonComponent = getComponentForStyle(style);
-        invalidateButtonComponent(oldComponent, (JComponent) buttonComponent);
+        invalidateSwingComponent(oldComponent, (JComponent) buttonComponent);
 
         getPartModel().addPropertyChangedObserver(buttonComponent);
     }
@@ -72,7 +72,7 @@ public abstract class AbstractButton implements ToolEditablePart {
         ToolEditablePart.super.mousePressed(e);
 
         if (isAutoHilited()) {
-            if (!buttonComponent.hasSharedHilite()) {
+            if (! (buttonComponent instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
             }
         }
@@ -83,7 +83,7 @@ public abstract class AbstractButton implements ToolEditablePart {
         ToolEditablePart.super.mouseReleased(e);
 
         if (!isBeingEdited() && isAutoHilited()) {
-            if (!buttonComponent.hasSharedHilite()) {
+            if (! (buttonComponent instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
             }
         }

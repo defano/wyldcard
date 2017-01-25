@@ -1,5 +1,6 @@
 package hypercard.parts.model;
 
+import hypercard.parts.fields.FieldStyle;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 
@@ -11,6 +12,7 @@ public class FieldModel extends AbstractPartModel {
     public static final String PROP_WRAPTEXT = "wraptext";
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOCKTEXT = "locktext";
+    public static final String PROP_STYLE = "style";
 
     public FieldModel () {
         super(PartType.FIELD);
@@ -30,6 +32,7 @@ public class FieldModel extends AbstractPartModel {
         partModel.defineProperty(PROP_WRAPTEXT, new Value(true), false);
         partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
         partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
+        partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
 
         return partModel;
     }

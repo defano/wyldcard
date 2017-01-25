@@ -1,6 +1,7 @@
 package hypercard.parts.buttons;
 
 public enum ButtonStyle {
+
     DEFAULT("Default"),
     CLASSIC("Classic"),
     CHECKBOX("Checkbox"),
