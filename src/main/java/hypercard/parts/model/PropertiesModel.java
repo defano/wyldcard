@@ -9,37 +9,14 @@ import java.util.*;
 
 public class PropertiesModel {
 
-    public interface ComputedSetter {
-
-        /**
-         * Computes and sets the value of a property, either by modifying the provided value in some way, or by
-         * converting the set operation into constituent property writes (e.g., converting a rectangle into top, left
-         * height and width coordinates).
-         *
-         * @param model The {@link PropertiesModel} whose property is being set.
-         * @param propertyName The name of the property which is to be set.
-         * @param value The requested value to be set; this method is responsible for transforming this value as
-         *              required.
-         * @throws HtSemanticException Thrown to indicate the property cannot accept the given/computed value.
-         */
-        void setComputedValue(PropertiesModel model, String propertyName, Value value) throws HtSemanticException;
-    }
-
-    public interface ComputedGetter {
-
-        /**
-         * Retrieves the value of a requested property reading and modifying some other property or properties (e.g.,
-         * converting top, left, height and width coordinates into a top-left and bottom-right rectangle).
-         *
-         * @param model The {@link PropertiesModel} whose property is being set.
-         * @param propertyName The name of the property which is to be set.
-         * @return The value of the property to be returned to the requester.
-         */
-        Value getComputedValue(PropertiesModel model, String propertyName);
-    }
-
+    // Properties which can be read/set by HyperTalk
     private Map<String, Value> properties = new HashMap<>();
+
+    // Properties which are readable, but not writeable via HyperTalk (i.e., part id)
     private List<String> immutableProperties = new ArrayList<>();
+
+    // Information which is relevant to the model, but not exposed as a property (i.e., field DOM)
+    private Map<String,Object> data = new HashMap<>();
 
     // Transient fields will not be serialized and must be re-hydrated programmatically.
     private transient Map<String, String> propertyAliases;
@@ -53,6 +30,10 @@ public class PropertiesModel {
         propertyAliases = new HashMap<>();
         computerGetters = new HashMap<>();
         computerSetters = new HashMap<>();
+    }
+
+    public Map<String, Object> getData() {
+        return data;
     }
 
     /**

@@ -110,24 +110,28 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         model.addPart(field);
         fields.addPart(field);
         addSwingComponent(field.getComponent(), field.getRect());
+        field.partOpened();
     }
 
     public void removeField(FieldPart field) {
         model.removePart(field);
         fields.removePart(field);
         removeSwingComponent(field.getComponent());
+        field.partClosed();
     }
 
     public void addButton(ButtonPart button) throws PartException {
         model.addPart(button);
         buttons.addPart(button);
         addSwingComponent(button.getComponent(), button.getRect());
+        button.partOpened();
     }
 
     public void removeButton(ButtonPart button) {
         model.removePart(button);
         buttons.removePart(button);
         removeSwingComponent(button.getComponent());
+        button.partClosed();
     }
 
     public Part getPart(PartSpecifier ps) throws PartException {

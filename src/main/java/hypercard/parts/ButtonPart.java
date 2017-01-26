@@ -52,7 +52,7 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
         this.parent = parent;
         this.script = new Script();
-        this.mover = new PartMover(this, parent, true);
+        this.mover = new PartMover(this, parent);
     }
 
     public static ButtonPart newButton(CardPart parent) {
@@ -84,6 +84,11 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
     @Override
     public void partOpened() {
+    }
+
+    @Override
+    public void partClosed() {
+
     }
 
     @Override

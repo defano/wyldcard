@@ -10,13 +10,12 @@ import hypertalk.ast.common.Value;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractTextPaneField extends JScrollPane implements FieldComponent {
 
     protected final JTextPane textPane;
-    protected final DefaultStyledDocument doc;
-    protected StyleContext styleContext = new StyleContext();
-
     private ToolEditablePart toolEditablePart;
 
     public AbstractTextPaneField(ToolEditablePart toolEditablePart) {
@@ -24,9 +23,10 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
 
         MarchingAnts.getInstance().addObserver(this::repaint);
 
-        doc = new DefaultStyledDocument(styleContext);
-        textPane = new JTextPane(doc);
+        textPane = new JTextPane(new DefaultStyledDocument(new StyleContext()));
 
+        this.addMouseListener(toolEditablePart);
+        this.addKeyListener(toolEditablePart);
         textPane.addMouseListener(toolEditablePart);
         textPane.addKeyListener(toolEditablePart);
         this.setViewportView(textPane);
@@ -58,7 +58,7 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
         switch (property) {
             case FieldModel.PROP_TEXT:
                 if (!newValue.toString().equals(textPane.getText())) {
-                    textPane.setText(newValue.toString());
+                    replaceText(newValue.stringValue());
                 }
                 break;
 
@@ -69,6 +69,15 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
             case FieldModel.PROP_LOCKTEXT:
                 textPane.setEditable(!newValue.booleanValue());
                 break;
+        }
+    }
+
+    private void replaceText(String withText) {
+        Map<Span, AttributeSet> styleSpans = getStyleSpans();
+        textPane.setText(withText);
+
+        for (Span thisSpan : styleSpans.keySet()) {
+            textPane.getStyledDocument().setCharacterAttributes(thisSpan.start, thisSpan.end - thisSpan.start, styleSpans.get(thisSpan), true);
         }
     }
 
@@ -83,10 +92,44 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
         textPane.setEnabled(editable);
     }
 
+    @Override
+    public void partOpened() {
+    }
+
     private void setSelectedTextAttribute (Object attribute, Object value) {
         MutableAttributeSet attributeSet = new SimpleAttributeSet();
         attributeSet.addAttribute(attribute, value);
         textPane.setCharacterAttributes(attributeSet, false);
-        textPane.getStyledDocument().setCharacterAttributes(textPane.getSelectionStart(), textPane.getSelectionEnd() - textPane.getSelectionStart(), attributeSet, false);
+    }
+
+    private Map<Span,AttributeSet> getStyleSpans() {
+        int lastIndex = 0;
+        AttributeSet last = null;
+        AttributeSet attributeSet = new SimpleAttributeSet();
+
+        HashMap<Span,AttributeSet> map = new HashMap<>();
+
+        for (int index = 0; index < textPane.getText().length(); index++) {
+            attributeSet = textPane.getStyledDocument().getCharacterElement(index).getAttributes();
+
+            if (last != null && last != attributeSet) {
+                map.put(new Span(lastIndex, index), last);
+                lastIndex = index;
+            }
+
+            last = attributeSet;
+        }
+
+        map.put(new Span(lastIndex, textPane.getText().length()), attributeSet);
+        return map;
+    }
+
+    private class Span {
+        final int start, end;
+
+        Span(int start, int end) {
+            this.start = start;
+            this.end = end;
+        }
     }
 }

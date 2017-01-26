@@ -30,7 +30,6 @@ public class PartMover {
     private Component within;
     private boolean done = true;
     private Point mouseLocInPart;
-    private final boolean untilReleased;
 
     private class MoverTask implements Runnable {
         public void run () {        
@@ -53,15 +52,9 @@ public class PartMover {
         }
     }
 
-    public PartMover(Part part, Component within, boolean untilReleased) {
+    public PartMover(Part part, Component within) {
         this.part = part;
         this.within = within;
-        this.untilReleased = untilReleased;
-    }
-
-    public PartMover (Part part, Component within) {
-        this(part, within, false);
-        startMoving();
     }
 
     public boolean isMoving() {
@@ -76,12 +69,7 @@ public class PartMover {
             SwingUtilities.convertPointFromScreen(mouseLoc, part.getComponent());
             this.mouseLocInPart = new Point(mouseLoc.x, mouseLoc.y);
 
-            if (untilReleased) {
-                MouseManager.notifyOnMouseReleased(() -> done = true);
-            } else {
-                MouseManager.notifyOnMousePressed(() -> done = true);
-            }
-
+            MouseManager.notifyOnMouseReleased(() -> done = true);
             executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
         }
     }

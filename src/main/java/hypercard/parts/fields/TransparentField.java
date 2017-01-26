@@ -32,7 +32,7 @@ public class TransparentField extends AbstractTextPaneField {
 
         if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
             ((Graphics2D) g).setPaint(Color.GRAY);
-            ((Graphics2D) g).drawRect(0, 0, getWidth(), getHeight());
+            ((Graphics2D) g).drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }
     }
 }

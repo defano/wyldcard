@@ -10,6 +10,9 @@
 package hypercard.parts;
 
 import hypercard.HyperCard;
+import hypercard.context.PartToolContext;
+import hypercard.context.ToolMode;
+import hypercard.context.ToolsContext;
 import hypercard.gui.window.FieldPropertyEditor;
 import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
@@ -47,14 +50,19 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     private FieldPart(FieldStyle style, CardPart parent) {
         super(style);
 
-        this.mover = new PartMover(this, parent, true);
+        this.mover = new PartMover(this, parent);
         this.parent = parent;
         this.script = new Script();
     }
 
     public static FieldPart newField(CardPart parent) {
-        // Center new field in card
-        return fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        FieldPart newField = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+
+        // When a new field is created, make the field tool active and select the newly created part
+        ToolsContext.getInstance().setToolMode(ToolMode.FIELD);
+        PartToolContext.getInstance().setSelectedPart(newField);
+
+        return newField;
     }
 
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
@@ -68,17 +76,11 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     public static FieldPart fromModel(CardPart parent, FieldModel model) throws Exception {
         FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
 
+        field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
         field.partModel = model;
         field.partModel.addPropertyChangedObserver(field);
 
-        field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
-
         return field;
-    }
-
-    @Override
-    public void partOpened() {
-
     }
 
     @Override
@@ -110,7 +112,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
 
     @Override
     public void resize(int fromQuadrant) {
-        new PartResizer(this, parent);
+        new PartResizer(this, parent, fromQuadrant);
     }
 
     @Override
@@ -245,8 +247,6 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
         sendMessage("keyUp");
-
-        partModel.setKnownProperty(FieldModel.PROP_TEXT, new Value(getText()));
     }
 
     @Override

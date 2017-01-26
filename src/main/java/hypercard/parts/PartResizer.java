@@ -40,6 +40,8 @@ public class PartResizer {
     private Rectangle originalBounds;
     
     private class ResizerTask implements Runnable {
+
+        @Override
         public void run () {        
             Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
             SwingUtilities.convertPointFromScreen(mouseLoc, within);
@@ -47,8 +49,6 @@ public class PartResizer {
 
             int newWidth = KeyboardManager.isShiftDown ? ((mouseLoc.x / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.x : mouseLoc.x - partLoc.x;
             int newHeight = KeyboardManager.isShiftDown ? ((mouseLoc.y / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) - partLoc.y : mouseLoc.y - partLoc.y;
-
-
 
             try {
                 if (newWidth >= MIN_WIDTH)
@@ -74,17 +74,6 @@ public class PartResizer {
         this.originalBounds = new Rectangle(part.getRect());
 
         MouseManager.notifyOnMouseReleased(() -> done = true);
-        executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
-    }
-
-    public PartResizer (Part part, Component within) {
-        this.part = part;
-        this.within = within;
-        this.fromQuadrant = QUADRANT_BOTTOMRIGHT;
-        this.originalBounds = part.getRect();
-
-        MouseManager.notifyOnMousePressed(() -> done = true);
-
         executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
     }
 }
