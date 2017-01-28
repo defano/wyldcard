@@ -1,9 +1,14 @@
 package hypercard.parts.buttons;
 
 import hypercard.parts.ButtonPart;
+import hypercard.parts.buttons.styles.RadioButton;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
+/**
+ * A mixin providing resuable functionality for enabling shared hilite features (i.e., selecting radio buttons by
+ * group).
+ */
 public interface SharedHilight {
 
     default void setSharedHilite(ButtonPart button, boolean hilite) {

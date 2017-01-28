@@ -1,7 +1,8 @@
-package hypercard.parts.buttons;
+package hypercard.parts.buttons.styles;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.buttons.ButtonComponent;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 

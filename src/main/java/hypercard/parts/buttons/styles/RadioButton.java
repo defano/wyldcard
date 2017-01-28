@@ -1,8 +1,10 @@
-package hypercard.parts.buttons;
+package hypercard.parts.buttons.styles;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ButtonPart;
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.buttons.ButtonComponent;
+import hypercard.parts.buttons.SharedHilight;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
@@ -11,11 +13,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonComponent, ActionListener {
+public class RadioButton extends JRadioButton implements SharedHilight, ButtonComponent, ActionListener {
 
     private final ToolEditablePart toolEditablePart;
 
-    public CheckboxButton(ToolEditablePart toolEditablePart) {
+    public RadioButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
         MarchingAnts.getInstance().addObserver(this::repaint);
@@ -36,15 +38,15 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonCo
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue();
-                CheckboxButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
+                RadioButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
                 break;
 
             case ButtonModel.PROP_HILITE:
-                CheckboxButton.super.setSelected(newValue.booleanValue());
+                RadioButton.super.setSelected(newValue.booleanValue());
                 break;
 
             case ButtonModel.PROP_ENABLED:
-                CheckboxButton.super.setEnabled(newValue.booleanValue());
+                RadioButton.super.setEnabled(newValue.booleanValue());
         }
     }
 

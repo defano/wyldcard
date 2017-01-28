@@ -1,7 +1,8 @@
-package hypercard.parts.buttons;
+package hypercard.parts.buttons.styles;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.buttons.ButtonComponent;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
@@ -11,7 +12,7 @@ import java.awt.*;
 public abstract class AbstractLabelButton extends JLabel implements ButtonComponent {
 
     protected final ToolEditablePart toolEditablePart;
-    protected boolean isDisabled = false;
+    protected boolean drawnDisabled = false;
 
     protected abstract void drawBorder(boolean isDisabled, Graphics2D g);
     protected abstract void setName(boolean isDisabled, String name);
@@ -31,7 +32,7 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonCompon
 
     @Override
     public void paintComponent(Graphics g) {
-        drawBorder(isDisabled, (Graphics2D) g);
+        drawBorder(drawnDisabled, (Graphics2D) g);
         super.paintComponent(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
@@ -42,14 +43,14 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonCompon
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue();
-                setName(isDisabled, showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
+                setName(drawnDisabled, showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
 
             case ButtonModel.PROP_HILITE:
-                setHilite(isDisabled, newValue.booleanValue());
+                setHilite(drawnDisabled, newValue.booleanValue());
                 break;
 
             case ButtonModel.PROP_ENABLED:
-                isDisabled = !newValue.booleanValue();
+                drawnDisabled = !newValue.booleanValue();
                 break;
         }
     }

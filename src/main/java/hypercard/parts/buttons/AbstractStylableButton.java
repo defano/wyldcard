@@ -2,6 +2,7 @@ package hypercard.parts.buttons;
 
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.buttons.styles.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
@@ -9,7 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public abstract class AbstractButton implements ToolEditablePart {
+/**
+ * Provides common functionality for "stylable" button parts (that is, a single button part whose style determines
+ * which Swing component is drawn on the card).
+ */
+public abstract class AbstractStylableButton implements ToolEditablePart {
 
     private ButtonComponent buttonComponent;
     private boolean isBeingEdited = false;
@@ -20,7 +25,7 @@ public abstract class AbstractButton implements ToolEditablePart {
 
     public abstract void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent);
 
-    public AbstractButton(ButtonStyle style) {
+    public AbstractStylableButton(ButtonStyle style) {
         buttonComponent = getComponentForStyle(style);
     }
 
@@ -99,6 +104,6 @@ public abstract class AbstractButton implements ToolEditablePart {
 
     @Override
     public void partClosed() {
-
+        // Nothing to do
     }
 }

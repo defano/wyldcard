@@ -1,9 +1,10 @@
-package hypercard.parts.fields;
+package hypercard.parts.fields.styles;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.fields.FieldComponent;
 import hypercard.parts.model.FieldModel;
 import hypertalk.ast.common.Value;
 

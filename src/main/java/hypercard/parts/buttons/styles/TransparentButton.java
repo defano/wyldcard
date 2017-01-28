@@ -1,4 +1,4 @@
-package hypercard.parts.buttons;
+package hypercard.parts.buttons.styles;
 
 import hypercard.parts.ToolEditablePart;
 

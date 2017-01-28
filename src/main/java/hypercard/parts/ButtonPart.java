@@ -15,7 +15,7 @@ import hypercard.context.ToolsContext;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.buttons.ButtonStyle;
-import hypercard.parts.buttons.AbstractButton;
+import hypercard.parts.buttons.AbstractStylableButton;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
@@ -35,7 +35,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ButtonPart extends AbstractButton implements MouseListener, PropertyChangeObserver {
+public class ButtonPart extends AbstractStylableButton implements MouseListener, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 160;
     private static final int DEFAULT_HEIGHT = 40;

@@ -2,11 +2,13 @@ package hypercard.parts.fields;
 
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.fields.styles.OpaqueField;
+import hypercard.parts.fields.styles.TransparentField;
 
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class AbstractField implements ToolEditablePart {
+public abstract class AbstractStylableField implements ToolEditablePart {
 
     private FieldComponent fieldComponent;
     private boolean isBeingEdited;
@@ -17,7 +19,7 @@ public abstract class AbstractField implements ToolEditablePart {
 
     public abstract void invalidateSwingComponent(Component oldComponent, Component newComponent);
 
-    public AbstractField(FieldStyle style) {
+    public AbstractStylableField(FieldStyle style) {
         fieldComponent = getComponentForStyle(style);
     }
 

@@ -1,5 +1,8 @@
 package hypercard.parts.buttons;
 
+/**
+ * An enumeration of button styles available to the user.
+ */
 public enum ButtonStyle {
 
     DEFAULT("Default"),
