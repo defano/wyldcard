@@ -48,13 +48,12 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     private CardPart parent;
     private PartMover mover;
 
-    private FieldPart(FieldModel model, FieldStyle style, CardPart parent) {
-        super(model, style);
+    private FieldPart(FieldStyle style, CardPart parent) {
+        super(style);
 
         this.mover = new PartMover(this, parent);
         this.parent = parent;
         this.script = new Script();
-        this.partModel = model;
     }
 
     public static FieldPart newField(CardPart parent) {
@@ -68,7 +67,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     }
 
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
-        FieldPart field = new FieldPart(FieldModel.newFieldModel(0, new Rectangle()), FieldStyle.OPAQUE, parent);
+        FieldPart field = new FieldPart(FieldStyle.OPAQUE, parent);
 
         field.initProperties(geometry);
 
@@ -76,7 +75,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     }
 
     public static FieldPart fromModel(CardPart parent, FieldModel model) throws Exception {
-        FieldPart field = new FieldPart(model, FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
 
         field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
         field.partModel = model;

@@ -17,7 +17,7 @@ public abstract class AbstractField implements ToolEditablePart {
 
     public abstract void invalidateSwingComponent(Component oldComponent, Component newComponent);
 
-    public AbstractField(FieldModel model, FieldStyle style) {
+    public AbstractField(FieldStyle style) {
         fieldComponent = getComponentForStyle(style);
     }
 
@@ -35,7 +35,10 @@ public abstract class AbstractField implements ToolEditablePart {
     public void setFieldStyle(FieldStyle style) {
         Component oldComponent = getFieldComponent();
         fieldComponent = getComponentForStyle(style);
+
+        partClosed();
         invalidateSwingComponent(oldComponent, (JComponent) fieldComponent);
+        partOpened();
     }
 
     private FieldComponent getComponentForStyle(FieldStyle style) {
