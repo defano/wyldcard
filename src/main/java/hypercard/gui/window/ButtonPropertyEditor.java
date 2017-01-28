@@ -45,6 +45,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         });
 
         cancelButton.addActionListener(e -> dispose());
+        contents.addActionListener(e -> showContentsEditor());
 
         saveButton.addActionListener(e -> {
             updateProperties();
@@ -93,6 +94,22 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
         model.setKnownProperty(ButtonModel.PROP_FAMILY, new Value(family.getSelectedItem().toString()));
         model.setKnownProperty(ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
+    }
+
+    private void showContentsEditor() {
+        String result = (String) JOptionPane.showInputDialog(
+                getWindowPanel(),
+                "Edit the contents of this button.",
+                "Contents",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                model.getKnownProperty(ButtonModel.PROP_CONTENTS).stringValue());
+
+        if (result != null) {
+            model.setKnownProperty(ButtonModel.PROP_CONTENTS, new Value(result));
+        }
+
     }
 
     private void createUIComponents() {
