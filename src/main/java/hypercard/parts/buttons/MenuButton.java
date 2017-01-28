@@ -5,7 +5,6 @@ import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.model.ButtonModel;
-import hypercard.parts.model.PropertyChangeObserver;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;

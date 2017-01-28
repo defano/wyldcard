@@ -1,7 +1,6 @@
 package hypercard.parts.fields;
 
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.model.FieldModel;
 
 import javax.swing.*;
 import java.awt.*;

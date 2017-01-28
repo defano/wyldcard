@@ -42,4 +42,5 @@ public class DefaultButton extends JButton implements ButtonComponent {
         }
 
     }
+
 }

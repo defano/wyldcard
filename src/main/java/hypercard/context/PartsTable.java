@@ -10,14 +10,14 @@ package hypercard.context;
 
 import hypercard.parts.Part;
 import hypercard.parts.PartException;
-import hypercard.parts.model.PropertyChangeObserver;
-import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.ast.containers.PartNameSpecifier;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.exception.NoSuchPropertyException;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PartsTable<T extends Part> {
 

@@ -198,7 +198,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
     }
@@ -207,7 +207,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseUp");
         }
     }
@@ -215,25 +215,37 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        sendMessage("mouseEnter");
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            sendMessage("mouseEnter");
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        sendMessage("mouseExit");
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            sendMessage("mouseExit");
+        }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
-        sendMessage("keyDown");
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            sendMessage("keyDown");
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
-        sendMessage("keyUp");
+
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            sendMessage("keyUp");
+        }
     }
 
     @Override
@@ -248,30 +260,28 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
 
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
-        SwingUtilities.invokeLater(() -> {
-            switch (property) {
-                case FieldModel.PROP_STYLE:
-                    setFieldStyle(FieldStyle.fromName(newValue.stringValue()));
-                    break;
-                case FieldModel.PROP_SCRIPT:
-                    try {
-                        compile();
-                    } catch (HtSemanticException e) {
-                        HyperCard.getInstance().dialogSyntaxError(e);
-                    }
-                    break;
-                case FieldModel.PROP_TOP:
-                case FieldModel.PROP_LEFT:
-                case FieldModel.PROP_WIDTH:
-                case FieldModel.PROP_HEIGHT:
-                    getComponent().setBounds(partModel.getRect());
-                    getComponent().validate();
-                    getComponent().repaint();
-                    break;
-                case FieldModel.PROP_VISIBLE:
-                    getComponent().setVisible(newValue.booleanValue());
-                    break;
-            }
-        });
+        switch (property) {
+            case FieldModel.PROP_STYLE:
+                setFieldStyle(FieldStyle.fromName(newValue.stringValue()));
+                break;
+            case FieldModel.PROP_SCRIPT:
+                try {
+                    compile();
+                } catch (HtSemanticException e) {
+                    HyperCard.getInstance().dialogSyntaxError(e);
+                }
+                break;
+            case FieldModel.PROP_TOP:
+            case FieldModel.PROP_LEFT:
+            case FieldModel.PROP_WIDTH:
+            case FieldModel.PROP_HEIGHT:
+                getComponent().setBounds(partModel.getRect());
+                getComponent().validate();
+                getComponent().repaint();
+                break;
+            case FieldModel.PROP_VISIBLE:
+                getComponent().setVisible(newValue.booleanValue());
+                break;
+        }
     }
 }

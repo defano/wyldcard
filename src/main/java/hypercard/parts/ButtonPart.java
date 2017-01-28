@@ -84,10 +84,12 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
     @Override
     public void partOpened() {
+        super.partOpened();
     }
 
     @Override
     public void partClosed() {
+        super.partClosed();
     }
 
     @Override
@@ -210,7 +212,7 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
     }

@@ -58,4 +58,5 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonCo
             setSharedHilite((ButtonPart) toolEditablePart, isSelected());
         }
     }
+
 }

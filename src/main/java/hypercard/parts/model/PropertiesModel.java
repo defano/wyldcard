@@ -5,6 +5,7 @@ import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 
+import javax.swing.*;
 import java.util.*;
 
 public class PropertiesModel {
@@ -212,13 +213,23 @@ public class PropertiesModel {
         listeners.add(listener);
     }
 
+    public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
+        SwingUtilities.invokeLater(() -> {
+            for (String property : properties.keySet()) {
+                listener.onPropertyChanged(property, properties.get(property), properties.get(property));
+            }
+        });
+    }
+
     public boolean removePropertyChangedObserver(PropertyChangeObserver listener) {
         return listeners.remove(listener);
     }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
-        for (PropertyChangeObserver listener : listeners) {
-            listener.onPropertyChanged(property, oldValue, value);
-        }
+        SwingUtilities.invokeLater(() -> {
+            for (PropertyChangeObserver listener : listeners) {
+                listener.onPropertyChanged(property, oldValue, value);
+            }
+        });
     }
 }

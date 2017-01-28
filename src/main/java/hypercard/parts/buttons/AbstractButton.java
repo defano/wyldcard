@@ -41,6 +41,7 @@ public abstract class AbstractButton implements ToolEditablePart {
         invalidateSwingComponent(oldComponent, (JComponent) buttonComponent);
 
         getPartModel().addPropertyChangedObserver(buttonComponent);
+        partOpened();
     }
 
     private ButtonComponent getComponentForStyle(ButtonStyle style) {
@@ -87,5 +88,15 @@ public abstract class AbstractButton implements ToolEditablePart {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
             }
         }
+    }
+
+    @Override
+    public void partOpened() {
+        getPartModel().notifyPropertyChangedObserver(buttonComponent);
+    }
+
+    @Override
+    public void partClosed() {
+
     }
 }
