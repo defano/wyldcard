@@ -1,7 +1,5 @@
 package hypercard.parts.buttons;
 
-import hypercard.context.ToolMode;
-import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
@@ -14,7 +12,7 @@ public class TransparentButton extends AbstractLabelButton {
 
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON) {
+        if (toolEditablePart.isPartToolActive()) {
             g.setPaint(Color.GRAY);
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }
@@ -33,4 +31,5 @@ public class TransparentButton extends AbstractLabelButton {
             setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
         }
     }
+
 }

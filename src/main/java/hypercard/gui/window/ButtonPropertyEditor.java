@@ -87,9 +87,9 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getText()));
         model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getText()));
         model.setKnownProperty(ButtonModel.PROP_WIDTH, new Value(buttonWidth.getText()));
-        model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.getSelectedObjects() != null));
-        model.setKnownProperty(ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.getSelectedObjects() != null));
-        model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
+        model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
+        model.setKnownProperty(ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
+        model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
         model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
         model.setKnownProperty(ButtonModel.PROP_FAMILY, new Value(family.getSelectedItem().toString()));
         model.setKnownProperty(ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));

@@ -1,5 +1,6 @@
 package hypercard.parts.fields;
 
+import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
 
 import javax.swing.*;
@@ -63,6 +64,8 @@ public abstract class AbstractField implements ToolEditablePart {
     @Override
     public void partOpened() {
         getPartModel().addPropertyChangedObserver(fieldComponent);
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
+
         fieldComponent.partOpened();
     }
 

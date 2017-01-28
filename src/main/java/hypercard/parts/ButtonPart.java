@@ -209,6 +209,11 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
     }
 
     @Override
+    public boolean isPartToolActive() {
+        return ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON;
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
@@ -255,34 +260,32 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+        switch (property) {
+            case ButtonModel.PROP_STYLE:
+                setButtonStyle(ButtonStyle.fromName(newValue.stringValue()));
+                break;
+            case ButtonModel.PROP_SCRIPT:
+                try {
+                    compile();
+                } catch (HtSemanticException e) {
+                    HyperCard.getInstance().dialogSyntaxError(e);
+                }
+                break;
+            case ButtonModel.PROP_TOP:
+            case ButtonModel.PROP_LEFT:
+            case ButtonModel.PROP_WIDTH:
+            case ButtonModel.PROP_HEIGHT:
+                getButtonComponent().setBounds(partModel.getRect());
+                getButtonComponent().validate();
+                getButtonComponent().repaint();
+                break;
+            case ButtonModel.PROP_ENABLED:
+                getButtonComponent().setEnabled(newValue.booleanValue());
+                break;
+            case ButtonModel.PROP_VISIBLE:
+                setVisibleOnCard(newValue.booleanValue());
+                break;
 
-        SwingUtilities.invokeLater(() -> {
-            switch (property) {
-                case ButtonModel.PROP_STYLE:
-                    setButtonStyle(ButtonStyle.fromName(newValue.stringValue()));
-                    break;
-                case ButtonModel.PROP_SCRIPT:
-                    try {
-                        compile();
-                    } catch (HtSemanticException e) {
-                        HyperCard.getInstance().dialogSyntaxError(e);
-                    }
-                    break;
-                case ButtonModel.PROP_TOP:
-                case ButtonModel.PROP_LEFT:
-                case ButtonModel.PROP_WIDTH:
-                case ButtonModel.PROP_HEIGHT:
-                    getButtonComponent().setBounds(partModel.getRect());
-                    getButtonComponent().validate();
-                    getButtonComponent().repaint();
-                    break;
-                case ButtonModel.PROP_VISIBLE:
-                    getButtonComponent().setVisible(newValue.booleanValue());
-                    break;
-                case ButtonModel.PROP_ENABLED:
-                    getButtonComponent().setEnabled(newValue.booleanValue());
-                    break;
-            }
-        });
+        }
     }
 }

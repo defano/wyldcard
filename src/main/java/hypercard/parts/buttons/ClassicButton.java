@@ -1,10 +1,13 @@
 package hypercard.parts.buttons;
 
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.model.ButtonModel;
 
 import java.awt.*;
 
 public class ClassicButton extends AbstractLabelButton implements ButtonComponent {
+
+    private final static int OUTLINE_SROKE = 2;
 
     private boolean isHilited = false;
 
@@ -15,10 +18,11 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
         g.setPaint(textColor(isDisabled));
-        g.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
+        g.setStroke(new BasicStroke(OUTLINE_SROKE));
+        g.drawRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, 10, 10);
 
         if (isHilited) {
-            g.fillRoundRect(0,0,getWidth() - 1, getHeight() - 1, 10, 10);
+            g.fillRoundRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, 10, 10);
         }
     }
 
@@ -30,10 +34,11 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
 
     @Override
     protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled) {
+        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
             this.isHilited = isHilited;
             setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
             repaint();
         }
     }
+
 }

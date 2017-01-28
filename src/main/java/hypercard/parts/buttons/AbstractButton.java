@@ -1,5 +1,6 @@
 package hypercard.parts.buttons;
 
+import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
@@ -93,6 +94,7 @@ public abstract class AbstractButton implements ToolEditablePart {
     @Override
     public void partOpened() {
         getPartModel().notifyPropertyChangedObserver(buttonComponent);
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
     }
 
     @Override

@@ -226,6 +226,10 @@ public class PropertiesModel {
     }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
+
+        // Make local copy to prevent concurrent change exceptions
+        final Set<PropertyChangeObserver> listeners = new HashSet<>(this.listeners);
+
         SwingUtilities.invokeLater(() -> {
             for (PropertyChangeObserver listener : listeners) {
                 listener.onPropertyChanged(property, oldValue, value);

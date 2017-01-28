@@ -1,6 +1,7 @@
 package hypercard.parts.buttons;
 
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.model.ButtonModel;
 
 import java.awt.*;
 

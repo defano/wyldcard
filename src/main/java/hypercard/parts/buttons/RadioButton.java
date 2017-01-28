@@ -58,4 +58,5 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonCo
             setSharedHilite((ButtonPart) toolEditablePart, isSelected());
         }
     }
+
 }

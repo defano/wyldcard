@@ -1,6 +1,7 @@
 package hypercard.parts.buttons;
 
 import hypercard.parts.ToolEditablePart;
+import hypercard.parts.model.ButtonModel;
 
 import java.awt.*;
 
@@ -29,4 +30,5 @@ public class RectangularButton extends AbstractLabelButton {
             setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
         }
     }
+
 }

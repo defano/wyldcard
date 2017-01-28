@@ -17,6 +17,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
 
     void setBeingEdited(boolean beingEdited);
     boolean isBeingEdited();
+    boolean isPartToolActive();
     void move();
     void resize(int fromQuadrant);
     void delete();
@@ -60,6 +61,19 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
             g2d.setStroke(MarchingAnts.getInstance().getMarchingAnts());
             g2d.drawRect(0, 0, getComponent().getWidth() -1 , getComponent().getHeight() - 1);
         }
+    }
+
+    default void onToolModeChanged() {
+        getComponent().setVisible(isVisibleOnCard() || isPartToolActive());
+    }
+
+    default boolean isVisibleOnCard() {
+        return getPartModel().getKnownProperty(AbstractPartModel.PROP_VISIBLE).booleanValue();
+    }
+
+    default void setVisibleOnCard(boolean visibleOnCard) {
+        getPartModel().setKnownProperty(AbstractPartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
+        getComponent().setVisible(visibleOnCard || isPartToolActive());
     }
 
     default boolean isAutoHilited() {

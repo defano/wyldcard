@@ -10,8 +10,8 @@ import java.awt.*;
 
 public abstract class AbstractLabelButton extends JLabel implements ButtonComponent {
 
-    private final ToolEditablePart toolEditablePart;
-    private boolean isDisabled = false;
+    protected final ToolEditablePart toolEditablePart;
+    protected boolean isDisabled = false;
 
     protected abstract void drawBorder(boolean isDisabled, Graphics2D g);
     protected abstract void setName(boolean isDisabled, String name);

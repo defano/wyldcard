@@ -10,7 +10,6 @@ public class FieldModel extends AbstractPartModel {
 
     public static final String PROP_TEXT = "text";
     public static final String PROP_WRAPTEXT = "wraptext";
-    public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOCKTEXT = "locktext";
     public static final String PROP_STYLE = "style";
 

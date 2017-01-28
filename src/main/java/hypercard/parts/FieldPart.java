@@ -171,6 +171,11 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     }
 
     @Override
+    public boolean isPartToolActive() {
+        return ToolsContext.getInstance().getToolMode() == ToolMode.FIELD;
+    }
+
+    @Override
     public Value getValue() {
         return partModel.getKnownProperty(FieldModel.PROP_TEXT);
     }
@@ -281,6 +286,8 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
                 break;
             case FieldModel.PROP_VISIBLE:
                 getComponent().setVisible(newValue.booleanValue());
+                getComponent().validate();
+                getComponent().repaint();
                 break;
         }
     }
