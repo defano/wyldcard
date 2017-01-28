@@ -5,9 +5,6 @@ import hypercard.parts.ButtonPart;
 import hypercard.parts.FieldPart;
 import hypercard.parts.ToolEditablePart;
 
-import java.util.Observable;
-import java.util.Observer;
-
 public class PartToolContext {
 
     private final static PartToolContext instance = new PartToolContext();

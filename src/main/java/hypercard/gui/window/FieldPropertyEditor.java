@@ -4,7 +4,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import hypercard.gui.HyperCardWindow;
-import hypercard.parts.buttons.ButtonStyle;
 import hypercard.parts.fields.FieldStyle;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.parts.model.FieldModel;

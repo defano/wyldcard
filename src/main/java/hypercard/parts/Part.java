@@ -9,7 +9,6 @@ package hypercard.parts;
 
 import javax.swing.JComponent;
 
-import hypercard.parts.model.PropertiesModel;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.common.ExpressionList;

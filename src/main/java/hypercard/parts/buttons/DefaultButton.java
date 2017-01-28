@@ -1,16 +1,12 @@
 package hypercard.parts.buttons;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
-import hypercard.context.ToolMode;
-import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
 public class DefaultButton extends JButton implements ButtonComponent {
 
