@@ -150,6 +150,11 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
     }
 
     @Override
+    public JTextComponent getTextComponent() {
+        return textPane;
+    }
+
+    @Override
     public void setEditable(boolean editable) {
         super.setEnabled(editable);
         textPane.setEnabled(editable);

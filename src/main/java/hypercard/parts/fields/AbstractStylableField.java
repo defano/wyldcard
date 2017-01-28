@@ -7,6 +7,7 @@ import hypercard.parts.fields.styles.OpaqueField;
 import hypercard.parts.fields.styles.TransparentField;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 
 public abstract class AbstractStylableField implements ToolEditablePart {
@@ -26,7 +27,7 @@ public abstract class AbstractStylableField implements ToolEditablePart {
 
     @Override
     public boolean isBeingEdited() {
-        return isBeingEdited;
+        return SwingUtilities.getWindowAncestor(getFieldComponent()).isActive() && isBeingEdited;
     }
 
     @Override
@@ -56,8 +57,18 @@ public abstract class AbstractStylableField implements ToolEditablePart {
         }
     }
 
+    /**
+     * Gets the Swing component representing the field as a whole; this is typically a JTextComponent plus some other
+     * hierarchy (like a scroll pane).
+     *
+     * @return
+     */
     public JComponent getFieldComponent() {
         return (JComponent) fieldComponent;
+    }
+
+    public JTextComponent getTextComponent() {
+        return fieldComponent.getTextComponent();
     }
 
     public String getText() {

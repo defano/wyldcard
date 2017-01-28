@@ -239,7 +239,7 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && getTextComponent().hasFocus()) {
             sendMessage("keyDown");
         }
     }
@@ -248,7 +248,7 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && getTextComponent().hasFocus()) {
             sendMessage("keyUp");
         }
     }

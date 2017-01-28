@@ -35,7 +35,7 @@ public abstract class AbstractStylableButton implements ToolEditablePart {
     }
 
     public boolean isBeingEdited() {
-        return isBeingEdited;
+        return SwingUtilities.getWindowAncestor(getButtonComponent()).isActive() && isBeingEdited;
     }
 
     public void setBeingEdited(boolean beingEdited) {
