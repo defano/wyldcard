@@ -23,6 +23,9 @@ public class ToolsContext implements StackModelObserver {
 
     private final static ToolsContext instance = new ToolsContext();
 
+    // Tool mode properties
+    private Provider<ToolMode> toolModeProvider = new Provider<>(ToolMode.BROWSE);
+
     // Properties that the tools provide to us...
     private ImmutableProvider<BufferedImage> selectedImageProvider = new ImmutableProvider<>();
 
@@ -36,7 +39,7 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Integer> fillPatternProvider = new Provider<>(0);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
-    private Provider<PaintTool> toolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private Provider<Boolean> drawMultiple = new Provider<>(false);
     private Provider<Boolean> drawCentered = new Provider<>(false);
 
@@ -58,21 +61,37 @@ public class ToolsContext implements StackModelObserver {
     }
 
     public void reactivateTool(PaintCanvas canvas) {
-        toolProvider.get().deactivate();
-        toolProvider.get().activate(canvas);
+        paintToolProvider.get().deactivate();
+        paintToolProvider.get().activate(canvas);
     }
 
     public Provider<PaintTool> getPaintToolProvider() {
-        return toolProvider;
+        return paintToolProvider;
+    }
+
+    public void setToolMode(ToolMode mode) {
+        if (mode != ToolMode.PAINT) {
+            selectPaintTool(PaintToolType.ARROW);
+        }
+
+        toolModeProvider.set(mode);
+    }
+
+    public Provider<ToolMode> getToolModeProvider() {
+        return toolModeProvider;
+    }
+
+    public ToolMode getToolMode() {
+        return toolModeProvider.get();
     }
 
     public PaintTool getPaintTool() {
-        return toolProvider.get();
+        return paintToolProvider.get();
     }
 
-    public void setSelectedToolType(PaintToolType selectedToolType) {
+    public void selectPaintTool(PaintToolType selectedToolType) {
 
-        toolProvider.get().deactivate();
+        paintToolProvider.get().deactivate();
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
@@ -91,7 +110,11 @@ public class ToolsContext implements StackModelObserver {
             ((AbstractBoundsTool)selectedTool).setDrawCentered(drawCentered);
         }
 
-        toolProvider.set(selectedTool);
+        if (selectedToolType != PaintToolType.ARROW) {
+            setToolMode(ToolMode.PAINT);
+        }
+
+        paintToolProvider.set(selectedTool);
     }
 
     public void setSelectedBrush(BasicBrush brush) {
@@ -139,7 +162,6 @@ public class ToolsContext implements StackModelObserver {
         int currentStyle = fontProvider.get().getStyle();
 
         fontProvider.set(new Font(currentFamily, currentStyle, size));
-
     }
 
     public void setFontStyle(int style) {
@@ -190,7 +212,7 @@ public class ToolsContext implements StackModelObserver {
 
     public void toggleShapesFilled() {
         shapesFilled.set(!shapesFilled.get());
-        setSelectedToolType(toolProvider.get().getToolType());
+        selectPaintTool(paintToolProvider.get().getToolType());
     }
 
     public Provider<Boolean> getShapesFilledProvider() {
@@ -200,65 +222,65 @@ public class ToolsContext implements StackModelObserver {
     public void setSelectedTool (Tool tool) {
         switch (tool) {
             case BROWSE:
-                setSelectedToolType(PaintToolType.ARROW);
+                setToolMode(ToolMode.BROWSE);
                 break;
             case OVAL:
-                setSelectedToolType(PaintToolType.OVAL);
+                selectPaintTool(PaintToolType.OVAL);
                 break;
             case BRUSH:
-                setSelectedToolType(PaintToolType.PAINTBRUSH);
+                selectPaintTool(PaintToolType.PAINTBRUSH);
                 break;
             case PENCIL:
-                setSelectedToolType(PaintToolType.PENCIL);
+                selectPaintTool(PaintToolType.PENCIL);
                 break;
             case BUCKET:
-                setSelectedToolType(PaintToolType.FILL);
+                selectPaintTool(PaintToolType.FILL);
                 break;
             case POLYGON:
-                setSelectedToolType(PaintToolType.POLYGON);
+                selectPaintTool(PaintToolType.POLYGON);
                 break;
             case BUTTON:
-                // TODO: Not implemented
+                toolModeProvider.set(ToolMode.BUTTON);
                 break;
             case RECTANGLE:
-                setSelectedToolType(PaintToolType.RECTANGLE);
+                selectPaintTool(PaintToolType.RECTANGLE);
                 break;
             case CURVE:
-                setSelectedToolType(PaintToolType.CURVE);
+                selectPaintTool(PaintToolType.CURVE);
                 break;
             case SHAPE:
-                setSelectedToolType(PaintToolType.SHAPE);
+                selectPaintTool(PaintToolType.SHAPE);
                 break;
             case ERASER:
-                setSelectedToolType(PaintToolType.ERASER);
+                selectPaintTool(PaintToolType.ERASER);
                 break;
             case ROUNDRECT:
-                setSelectedToolType(PaintToolType.ROUND_RECTANGLE);
+                selectPaintTool(PaintToolType.ROUND_RECTANGLE);
                 break;
             case FIELD:
-                // TODO: Not implemented
+                toolModeProvider.set(ToolMode.FIELD);
                 break;
             case SELECT:
-                setSelectedToolType(PaintToolType.SELECTION);
+                selectPaintTool(PaintToolType.SELECTION);
                 break;
             case LASSO:
-                setSelectedToolType(PaintToolType.LASSO);
+                selectPaintTool(PaintToolType.LASSO);
                 break;
             case SPRAY:
-                setSelectedToolType(PaintToolType.AIRBRUSH);
+                selectPaintTool(PaintToolType.AIRBRUSH);
                 break;
             case LINE:
-                setSelectedToolType(PaintToolType.LINE);
+                selectPaintTool(PaintToolType.LINE);
                 break;
             case TEXT:
-                setSelectedToolType(PaintToolType.TEXT);
+                selectPaintTool(PaintToolType.TEXT);
                 break;
         }
     }
 
     @Override
     public void onCardClosing(CardPart oldCard) {
-        toolProvider.get().deactivate();
+        paintToolProvider.get().deactivate();
     }
 
     @Override
@@ -267,7 +289,7 @@ public class ToolsContext implements StackModelObserver {
 
     @Override
     public void onCardOpened(CardPart newCard) {
-        toolProvider.get().activate(newCard.getCanvas());
+        paintToolProvider.get().activate(newCard.getCanvas());
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {

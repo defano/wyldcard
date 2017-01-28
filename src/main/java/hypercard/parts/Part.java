@@ -37,5 +37,6 @@ public interface Part {
     Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException;
     
     void partOpened();
+    void partClosed();
     Rectangle getRect();
 }

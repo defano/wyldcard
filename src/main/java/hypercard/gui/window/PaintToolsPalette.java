@@ -3,6 +3,7 @@ package hypercard.gui.window;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.HyperCard;
+import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.gui.HyperCardWindow;
 import hypercard.gui.util.DoubleClickListener;
@@ -43,7 +44,10 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
         // Single click actions
-        finger.addActionListener(e -> toolSelected(PaintToolType.ARROW));
+        finger.addActionListener(e -> ToolsContext.getInstance().setToolMode(ToolMode.BROWSE));
+        button.addActionListener(e -> ToolsContext.getInstance().setToolMode(ToolMode.BUTTON));
+        field.addActionListener(e -> ToolsContext.getInstance().setToolMode(ToolMode.FIELD));
+
         pencil.addActionListener(e -> toolSelected(PaintToolType.PENCIL));
         paintbrush.addActionListener(e -> toolSelected(PaintToolType.PAINTBRUSH));
         eraser.addActionListener(e -> toolSelected(PaintToolType.ERASER));
@@ -68,6 +72,18 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         spraypaint.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
 
         ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
+        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
+            if (arg == ToolMode.BROWSE) {
+                enableAllTools();
+                finger.setEnabled(false);
+            } else if (arg == ToolMode.BUTTON) {
+                enableAllTools();
+                button.setEnabled(false);
+            } else if (arg == ToolMode.FIELD) {
+                enableAllTools();
+                field.setEnabled(false);
+            }
+        });
     }
 
     @Override
@@ -81,7 +97,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
     }
 
     private void toolSelected(PaintToolType toolType) {
-        ToolsContext.getInstance().setSelectedToolType(toolType);
+        ToolsContext.getInstance().selectPaintTool(toolType);
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {
@@ -141,12 +157,9 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
             // Special case; "pseudo-tools" re-enable all HyperCard paint tools
             if (selectedTool.getToolType() == PaintToolType.SLANT ||
                     selectedTool.getToolType() == PaintToolType.ROTATE ||
-                    selectedTool.getToolType() == PaintToolType.MAGNIFIER)
-            {
+                    selectedTool.getToolType() == PaintToolType.MAGNIFIER) {
                 enableAllTools();
-            }
-
-            else {
+            } else {
                 JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
 
                 if (selectedToolButton != null) {
@@ -180,7 +193,6 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         selection.setIconTextGap(0);
         selection.setMargin(new Insets(0, 0, 0, 0));
         selection.setOpaque(true);
-        selection.setSelected(false);
         selection.setText("");
         selection.setVisible(true);
         palettePanel.add(selection, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

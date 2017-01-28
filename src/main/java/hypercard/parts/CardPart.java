@@ -24,8 +24,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.Collection;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
@@ -67,12 +66,14 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
                 case BUTTON:
                     ButtonPart button = ButtonPart.fromModel(card, (ButtonModel) thisPart);
                     card.buttons.addPart(button);
-                    card.addSwingComponent(button, button.getRect());
+                    card.addSwingComponent(button.getComponent(), button.getRect());
+                    button.partOpened();
                     break;
                 case FIELD:
                     FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
                     card.fields.addPart(field);
-                    card.addSwingComponent(field, field.getRect());
+                    card.addSwingComponent(field.getComponent(), field.getRect());
+                    field.partOpened();
                     default:
             }
         }
@@ -107,25 +108,29 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
     public void addField(FieldPart field) throws PartException {
         model.addPart(field);
         fields.addPart(field);
-        addSwingComponent(field, field.getRect());
+        addSwingComponent(field.getComponent(), field.getRect());
+        field.partOpened();
     }
 
     public void removeField(FieldPart field) {
         model.removePart(field);
         fields.removePart(field);
-        removeSwingComponent(field);
+        removeSwingComponent(field.getComponent());
+        field.partClosed();
     }
 
     public void addButton(ButtonPart button) throws PartException {
         model.addPart(button);
         buttons.addPart(button);
-        addSwingComponent(button, button.getRect());
+        addSwingComponent(button.getComponent(), button.getRect());
+        button.partOpened();
     }
 
     public void removeButton(ButtonPart button) {
         model.removePart(button);
         buttons.removePart(button);
-        removeSwingComponent(button);
+        removeSwingComponent(button.getComponent());
+        button.partClosed();
     }
 
     public Part getPart(PartSpecifier ps) throws PartException {
@@ -135,6 +140,14 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
             return buttons.getPart(ps);
         else
             throw new RuntimeException("Unhandled part type");
+    }
+
+    public Collection<ButtonPart> getButtons() {
+        return buttons.getParts();
+    }
+
+    public Collection<FieldPart> getFields() {
+        return fields.getParts();
     }
 
     public UndoablePaintCanvas getCanvas() {
@@ -155,6 +168,11 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
     public BackgroundModel getCardBackground() {
         return stack.getBackground(model.getBackgroundId());
+    }
+
+    public void invalidateSwingComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
+        removeSwingComponent(oldButtonComponent);
+        addSwingComponent(newButtonComponent, forPart.getRect());
     }
 
     private void removeSwingComponent (Component component) {

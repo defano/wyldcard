@@ -17,6 +17,7 @@ import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.UserFunction;
+import hypertalk.ast.statements.StatExp;
 import hypertalk.ast.statements.StatementList;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtParseError;
@@ -59,7 +60,11 @@ public class Interpreter {
             throw new HtSyntaxException(e.getMessage(), e.lineNumber, e.columnNumber);
         }
     }
-    
+
+    public static boolean isExpressionStatement(String statement) throws HtException {
+        return compile(statement).getStatements().list.get(0) instanceof StatExp;
+    }
+
     public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
         return executeStatementList(me, compile(statementList).getStatements(), true);
     }

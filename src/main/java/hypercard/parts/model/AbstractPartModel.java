@@ -28,6 +28,7 @@ public abstract class AbstractPartModel extends PropertiesModel {
     public static final String PROP_RECTANGLE = "rectangle";
     public static final String PROP_TOPLEFT = "topleft";
     public static final String PROP_BOTTOMRIGHT = "bottomright";
+    public static final String PROP_VISIBLE = "visible";
 
     private PartType type;
 
@@ -85,6 +86,7 @@ public abstract class AbstractPartModel extends PropertiesModel {
         );
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
+        defineProperty(PROP_VISIBLE, new Value(true), false);
     }
 
     public PartType getType () {

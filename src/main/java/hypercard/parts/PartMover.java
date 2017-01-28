@@ -8,7 +8,7 @@
 
 package hypercard.parts;
 
-import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.KeyboardManager;
 import hypercard.gui.util.MouseManager;
 import hypercard.parts.model.AbstractPartModel;
 import hypertalk.ast.common.Value;
@@ -28,18 +28,16 @@ public class PartMover {
 
     private Part part;
     private Component within;
-    private boolean done = false;
-    
+    private boolean done = true;
+    private Point mouseLocInPart;
+
     private class MoverTask implements Runnable {
         public void run () {        
             Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
             SwingUtilities.convertPointFromScreen(mouseLoc, within);
 
-            int horizCenter = part.getComponent().getWidth() / 2;
-            int vertCenter = part.getComponent().getHeight() / 2;
-
-            int newTop = ModifierKeyListener.isShiftDown ? (((mouseLoc.y - vertCenter) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - vertCenter;
-            int newLeft = ModifierKeyListener.isShiftDown ? (((mouseLoc.x - horizCenter) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - horizCenter;
+            int newTop = KeyboardManager.isShiftDown ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
+            int newLeft = KeyboardManager.isShiftDown ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
 
             try {
                 part.setProperty(AbstractPartModel.PROP_TOP, new Value(newTop));
@@ -53,13 +51,26 @@ public class PartMover {
             }
         }
     }
-    
-    public PartMover (Part part, Component within) {
+
+    public PartMover(Part part, Component within) {
         this.part = part;
         this.within = within;
+    }
 
-        MouseManager.notifyOnMousePressed(() -> done = true);
+    public boolean isMoving() {
+        return !done;
+    }
 
-        executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
+    public void startMoving() {
+        if (!isMoving()) {
+            done = false;
+
+            Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+            SwingUtilities.convertPointFromScreen(mouseLoc, part.getComponent());
+            this.mouseLocInPart = new Point(mouseLoc.x, mouseLoc.y);
+
+            MouseManager.notifyOnMouseReleased(() -> done = true);
+            executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
+        }
     }
 }

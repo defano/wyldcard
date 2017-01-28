@@ -9,7 +9,7 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
-import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.KeyboardManager;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.constructs.RepeatCount;
 import hypertalk.ast.constructs.RepeatDuration;
@@ -110,7 +110,7 @@ public class StatRepeat extends Statement {
     }
 
     private void rest() throws HtException {
-        if (ModifierKeyListener.isBreakSequence) {
+        if (KeyboardManager.isBreakSequence) {
             throw new HtSemanticException("Script aborted.");
         } else {
             try {

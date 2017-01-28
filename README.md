@@ -213,7 +213,7 @@ Property    | Description
 ------------|------------
 `script`    | Retrieves or replaces the current script of the part
 `id`        | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
-`name`      | Returns or sets the script-addressable name of the part
+`name`      | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
 `left`      | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
 `top`	      | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
 `width`     | Returns or sets the width of the part (in pixels)
@@ -222,16 +222,14 @@ Property    | Description
 `topLeft`   | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
-`showtitle` | Returns or sets the visibility of the button's title (a Boolean value). When not true, the button is drawn without a name.
 `enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
 
 A button has these additional properties:
 
 Property    | Description
 ------------|------------
-`title`     | Returns or sets the title of this button (in Apple's HyperCard there was no `title` attribute; the name visible to the user and the name used to identify the button to scripts was one in the same property, `name`).
 `visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
-`showtitle` | Returns or sets the visibility of the button's title (a Boolean value). When not true, the button is drawn without a name.
+`showname`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
 `enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
 
 A field has these properties:

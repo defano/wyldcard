@@ -52,7 +52,7 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
-                .withAction(a -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.MAGNIFIER))
+                .withAction(a -> ToolsContext.getInstance().selectPaintTool(PaintToolType.MAGNIFIER))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.MAGNIFIER))
                 .build(this);
 
@@ -110,13 +110,13 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Rotate")
-                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.ROTATE))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.ROTATE))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ROTATE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Slant")
-                .withAction(e -> ToolsContext.getInstance().setSelectedToolType(PaintToolType.SLANT))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.SLANT))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SLANT))
                 .build(this);
 

@@ -11,7 +11,7 @@ package hypercard;
 
 import hypercard.context.GlobalContext;
 import hypercard.context.ToolsContext;
-import hypercard.gui.util.ModifierKeyListener;
+import hypercard.gui.util.KeyboardManager;
 import hypercard.gui.util.MouseManager;
 import com.defano.jmonet.model.PaintToolType;
 import hypercard.parts.CardPart;
@@ -55,14 +55,14 @@ public class HyperCard implements StackModelObserver {
         stack.addObserver(this);
 
         // Fire up the key and mouse listeners
-        ModifierKeyListener.start();
+        KeyboardManager.start();
         MouseManager.start();
 
         // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
         // directly from the constructor
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
-            ToolsContext.getInstance().setSelectedToolType(PaintToolType.ARROW);
+            ToolsContext.getInstance().selectPaintTool(PaintToolType.ARROW);
         });
     }
 
@@ -96,8 +96,13 @@ public class HyperCard implements StackModelObserver {
         messageBoxExecutor.submit(() -> {
             try {
                 if (!getMsgBoxText().trim().isEmpty()) {
-                    Interpreter.executeString(null, getMsgBoxText()).get();
-                    HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
+                    String messageText = getMsgBoxText();
+                    Interpreter.executeString(null, messageText).get();
+
+                    // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
+                    if (Interpreter.isExpressionStatement(messageText)) {
+                        HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
+                    }
                 }
             } catch (Exception e) {
                 HyperCard.getInstance().dialogSyntaxError(e);

@@ -36,10 +36,14 @@ public class Value {
         this(p.x + "," + p.y);
     }
 
+    public Value (Rectangle r) {
+        this(r.x + "," + r.y + "," + r.x + r.width + "," + r.y + r.height);
+    }
+
     public Value (Object v) {
         this(String.valueOf(v));
     }
-    
+
     public Value (long v) {
         this(String.valueOf(v));
     }
@@ -64,7 +68,7 @@ public class Value {
         this.value = value;
 
         // Special case: empty string is a valid int and float
-        if (value.trim().equals("")) {
+        if (value == null || value.trim().equals("")) {
             longValue = 0L;
             floatValue = 0.0;
             booleanValue = null;

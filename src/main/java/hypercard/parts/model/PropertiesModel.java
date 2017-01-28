@@ -5,40 +5,15 @@ import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 
+import javax.swing.*;
 import java.util.*;
 
 public class PropertiesModel {
 
-    public interface ComputedSetter {
-
-        /**
-         * Computes and sets the value of a property, either by modifying the provided value in some way, or by
-         * converting the set operation into constituent property writes (e.g., converting a rectangle into top, left
-         * height and width coordinates).
-         *
-         * @param model The {@link PropertiesModel} whose property is being set.
-         * @param propertyName The name of the property which is to be set.
-         * @param value The requested value to be set; this method is responsible for transforming this value as
-         *              required.
-         * @throws HtSemanticException Thrown to indicate the property cannot accept the given/computed value.
-         */
-        void setComputedValue(PropertiesModel model, String propertyName, Value value) throws HtSemanticException;
-    }
-
-    public interface ComputedGetter {
-
-        /**
-         * Retrieves the value of a requested property reading and modifying some other property or properties (e.g.,
-         * converting top, left, height and width coordinates into a top-left and bottom-right rectangle).
-         *
-         * @param model The {@link PropertiesModel} whose property is being set.
-         * @param propertyName The name of the property which is to be set.
-         * @return The value of the property to be returned to the requester.
-         */
-        Value getComputedValue(PropertiesModel model, String propertyName);
-    }
-
+    // Properties which can be read/set by HyperTalk
     private Map<String, Value> properties = new HashMap<>();
+
+    // Properties which are readable, but not writeable via HyperTalk (i.e., part id)
     private List<String> immutableProperties = new ArrayList<>();
 
     // Transient fields will not be serialized and must be re-hydrated programmatically.
@@ -123,6 +98,12 @@ public class PropertiesModel {
     public void setProperty (String propertyName, Value value)
             throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
     {
+        setProperty(propertyName, value, false);
+    }
+
+    public void setProperty (String propertyName, Value value, boolean quietly)
+            throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
+    {
         propertyName = propertyName.toLowerCase();
 
         if (!propertyExists(propertyName)) {
@@ -146,7 +127,9 @@ public class PropertiesModel {
             properties.put(propertyName, value);
         }
 
-        fireOnPropertyChanged(propertyName, oldValue, value);
+        if (!quietly) {
+            fireOnPropertyChanged(propertyName, oldValue, value);
+        }
     }
 
     /**
@@ -156,8 +139,12 @@ public class PropertiesModel {
      * @param value The value to set
      */
     public void setKnownProperty (String property, Value value) {
+        setKnownProperty(property, value, false);
+    }
+
+    public void setKnownProperty(String property, Value value, boolean quietly) {
         try {
-            setProperty(property, value);
+            setProperty(property, value, quietly);
         } catch (NoSuchPropertyException | PropertyPermissionException | HtSemanticException e) {
             throw new RuntimeException("Can't set known property.", e);
         }
@@ -226,10 +213,27 @@ public class PropertiesModel {
         listeners.add(listener);
     }
 
+    public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
+        SwingUtilities.invokeLater(() -> {
+            for (String property : properties.keySet()) {
+                listener.onPropertyChanged(property, properties.get(property), properties.get(property));
+            }
+        });
+    }
+
+    public boolean removePropertyChangedObserver(PropertyChangeObserver listener) {
+        return listeners.remove(listener);
+    }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
-        for (PropertyChangeObserver listener : listeners) {
-            listener.onPropertyChanged(property, oldValue, value);
-        }
+
+        // Make local copy to prevent concurrent change exceptions
+        final Set<PropertyChangeObserver> listeners = new HashSet<>(this.listeners);
+
+        SwingUtilities.invokeLater(() -> {
+            for (PropertyChangeObserver listener : listeners) {
+                listener.onPropertyChanged(property, oldValue, value);
+            }
+        });
     }
 }
