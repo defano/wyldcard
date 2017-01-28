@@ -17,14 +17,16 @@ public abstract class AbstractField implements ToolEditablePart {
 
     public abstract void invalidateSwingComponent(Component oldComponent, Component newComponent);
 
-    public AbstractField(FieldStyle style) {
+    public AbstractField(FieldModel model, FieldStyle style) {
         fieldComponent = getComponentForStyle(style);
     }
 
+    @Override
     public boolean isBeingEdited() {
         return isBeingEdited;
     }
 
+    @Override
     public void setBeingEdited(boolean beingEdited) {
         fieldComponent.setEditable(!beingEdited);
         isBeingEdited = beingEdited;
@@ -34,8 +36,6 @@ public abstract class AbstractField implements ToolEditablePart {
         Component oldComponent = getFieldComponent();
         fieldComponent = getComponentForStyle(style);
         invalidateSwingComponent(oldComponent, (JComponent) fieldComponent);
-
-        getPartModel().addPropertyChangedObserver(fieldComponent);
     }
 
     private FieldComponent getComponentForStyle(FieldStyle style) {
@@ -60,11 +60,13 @@ public abstract class AbstractField implements ToolEditablePart {
 
     @Override
     public void partOpened() {
+        getPartModel().addPropertyChangedObserver(fieldComponent);
         fieldComponent.partOpened();
     }
 
     @Override
     public void partClosed() {
-
+        getPartModel().removePropertyChangedObserver(fieldComponent);
     }
+
 }

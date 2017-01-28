@@ -15,6 +15,7 @@ public class Serializer {
     private final static Gson gson = new GsonBuilder()
             .registerTypeAdapter(Value.class, new ValueSerializer())
             .registerTypeAdapter(byte[].class, new ImageSerializer())
+            .enableComplexMapKeySerialization()
             .setPrettyPrinting()
             .create();
 

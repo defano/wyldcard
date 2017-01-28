@@ -15,9 +15,6 @@ public class PropertiesModel {
     // Properties which are readable, but not writeable via HyperTalk (i.e., part id)
     private List<String> immutableProperties = new ArrayList<>();
 
-    // Information which is relevant to the model, but not exposed as a property (i.e., field DOM)
-    private Map<String,Object> data = new HashMap<>();
-
     // Transient fields will not be serialized and must be re-hydrated programmatically.
     private transient Map<String, String> propertyAliases;
     private transient Set<PropertyChangeObserver> listeners;
@@ -30,10 +27,6 @@ public class PropertiesModel {
         propertyAliases = new HashMap<>();
         computerGetters = new HashMap<>();
         computerSetters = new HashMap<>();
-    }
-
-    public Map<String, Object> getData() {
-        return data;
     }
 
     /**
@@ -104,6 +97,12 @@ public class PropertiesModel {
     public void setProperty (String propertyName, Value value)
             throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
     {
+        setProperty(propertyName, value, false);
+    }
+
+    public void setProperty (String propertyName, Value value, boolean quietly)
+            throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
+    {
         propertyName = propertyName.toLowerCase();
 
         if (!propertyExists(propertyName)) {
@@ -127,7 +126,9 @@ public class PropertiesModel {
             properties.put(propertyName, value);
         }
 
-        fireOnPropertyChanged(propertyName, oldValue, value);
+        if (!quietly) {
+            fireOnPropertyChanged(propertyName, oldValue, value);
+        }
     }
 
     /**
@@ -137,8 +138,12 @@ public class PropertiesModel {
      * @param value The value to set
      */
     public void setKnownProperty (String property, Value value) {
+        setKnownProperty(property, value, false);
+    }
+
+    public void setKnownProperty(String property, Value value, boolean quietly) {
         try {
-            setProperty(property, value);
+            setProperty(property, value, quietly);
         } catch (NoSuchPropertyException | PropertyPermissionException | HtSemanticException e) {
             throw new RuntimeException("Can't set known property.", e);
         }
@@ -205,13 +210,10 @@ public class PropertiesModel {
      */
     public void addPropertyChangedObserver(PropertyChangeObserver listener) {
         listeners.add(listener);
-        refirePropertyChanges(listener);
     }
 
-    private void refirePropertyChanges(PropertyChangeObserver observer) {
-        for (String thisProperty : properties.keySet()) {
-            observer.onPropertyChanged(thisProperty, properties.get(thisProperty), properties.get(thisProperty));
-        }
+    public boolean removePropertyChangedObserver(PropertyChangeObserver listener) {
+        return listeners.remove(listener);
     }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {

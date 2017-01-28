@@ -39,8 +39,8 @@ import java.awt.event.MouseListener;
 
 public class ButtonPart extends AbstractButton implements MouseListener, PropertyChangeObserver {
 
-    public static final int DEFAULT_WIDTH = 160;
-    public static final int DEFAULT_HEIGHT = 40;
+    private static final int DEFAULT_WIDTH = 160;
+    private static final int DEFAULT_HEIGHT = 40;
 
     private final PartMover mover;
     private Script script;
@@ -88,7 +88,6 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
     @Override
     public void partClosed() {
-
     }
 
     @Override
@@ -114,9 +113,7 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
 
     @Override
     public void move() {
-        if (!mover.isMoving()) {
-            mover.startMoving();
-        }
+        mover.startMoving();
     }
 
     @Override
@@ -136,17 +133,9 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
      * @param oldButtonComponent The former component associated with this part
      * @param newButtonComponent The new component
      */
+    @Override
     public void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
         parent.invalidateSwingComponent(this, oldButtonComponent, newButtonComponent);
-    }
-
-    public void editScript() {
-        WindowBuilder.make(new ScriptEditor())
-                .withTitle("HyperTalk Script Editor")
-                .withModel(partModel)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
-                .resizeable(true)
-                .build();
     }
 
     @Override
@@ -200,27 +189,21 @@ public class ButtonPart extends AbstractButton implements MouseListener, Propert
     private void compile() throws HtSemanticException {
 
         try {
-            String scriptText = partModel.getProperty(ButtonModel.PROP_SCRIPT).toString();
+            String scriptText = partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).toString();
             script = Interpreter.compile(scriptText);
-        } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("Button doesn't contain a script");
         } catch (Exception e) {
             throw new HtSemanticException(e.getMessage());
         }
     }
 
-    public PartSpecifier getMe() {
-        return new PartIdSpecifier(PartType.BUTTON, getId());
-    }
-
     @Override
     public void sendMessage(String message) {
-        Interpreter.executeHandler(getMe(), script, message);
+        Interpreter.executeHandler(new PartIdSpecifier(PartType.BUTTON, getId()), script, message);
     }
 
     @Override
     public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(getMe(), script.getFunction(function), arguments);
+        return Interpreter.executeFunction(new PartIdSpecifier(PartType.BUTTON, getId()), script.getFunction(function), arguments);
     }
 
     @Override

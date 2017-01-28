@@ -14,7 +14,6 @@ import hypercard.context.PartToolContext;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.gui.window.FieldPropertyEditor;
-import hypercard.gui.window.ScriptEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.fields.AbstractField;
 import hypercard.parts.fields.FieldStyle;
@@ -28,31 +27,34 @@ import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartIdSpecifier;
-import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.exception.NoSuchPropertyException;
 import hypertalk.exception.PropertyPermissionException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class FieldPart extends AbstractField implements Part, MouseListener, PropertyChangeObserver, KeyListener {
 
-    public static final int DEFAULT_WIDTH = 250;
-    public static final int DEFAULT_HEIGHT = 100;
+    private static final int DEFAULT_WIDTH = 250;
+    private static final int DEFAULT_HEIGHT = 100;
 
     private Script script;
     private FieldModel partModel;
     private CardPart parent;
     private PartMover mover;
 
-    private FieldPart(FieldStyle style, CardPart parent) {
-        super(style);
+    private FieldPart(FieldModel model, FieldStyle style, CardPart parent) {
+        super(model, style);
 
         this.mover = new PartMover(this, parent);
         this.parent = parent;
         this.script = new Script();
+        this.partModel = model;
     }
 
     public static FieldPart newField(CardPart parent) {
@@ -66,7 +68,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     }
 
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
-        FieldPart field = new FieldPart(FieldStyle.OPAQUE, parent);
+        FieldPart field = new FieldPart(FieldModel.newFieldModel(0, new Rectangle()), FieldStyle.OPAQUE, parent);
 
         field.initProperties(geometry);
 
@@ -74,7 +76,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     }
 
     public static FieldPart fromModel(CardPart parent, FieldModel model) throws Exception {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
+        FieldPart field = new FieldPart(model, FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
 
         field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
         field.partModel = model;
@@ -95,6 +97,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
         partModel.addPropertyChangedObserver(this);
     }
 
+    @Override
     public void editProperties() {
         WindowBuilder.make(new FieldPropertyEditor())
                 .withTitle("Properties of field " + getName())
@@ -104,10 +107,9 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
                 .build();
     }
 
+    @Override
     public void move() {
-        if (!mover.isMoving()) {
-            mover.startMoving();
-        }
+        mover.startMoving();
     }
 
     @Override
@@ -123,15 +125,6 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     @Override
     public void invalidateSwingComponent(Component oldComponent, Component newComponent) {
         parent.invalidateSwingComponent(this, oldComponent, newComponent);
-    }
-
-    public void editScript() {
-        WindowBuilder.make(new ScriptEditor())
-                .withTitle("Script of field " + getName())
-                .withModel(partModel)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
-                .resizeable(true)
-                .build();
     }
 
     @Override
@@ -164,6 +157,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
         return partModel.getProperty(property);
     }
 
+    @Override
     public AbstractPartModel getPartModel() {
         return partModel;
     }
@@ -185,9 +179,7 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
     private void compile() throws HtSemanticException {
 
         try {
-            script = Interpreter.compile(partModel.getProperty(FieldModel.PROP_SCRIPT).toString());
-        } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("Field doesn't contain a script");
+            script = Interpreter.compile(partModel.getKnownProperty(FieldModel.PROP_SCRIPT).toString());
         } catch (Exception e) {
             throw new HtSemanticException(e.getMessage());
         }
@@ -195,16 +187,12 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
 
     @Override
     public void sendMessage(String message) {
-        Interpreter.executeHandler(getMe(), script, message);
+        Interpreter.executeHandler(new PartIdSpecifier(PartType.FIELD, getId()), script, message);
     }
 
     @Override
     public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(getMe(), script.getFunction(function), arguments);
-    }
-
-    public PartSpecifier getMe() {
-        return new PartIdSpecifier(PartType.FIELD, getId());
+        return Interpreter.executeFunction(new PartIdSpecifier(PartType.FIELD, getId()), script.getFunction(function), arguments);
     }
 
     @Override
@@ -261,7 +249,6 @@ public class FieldPart extends AbstractField implements Part, MouseListener, Pro
 
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
-
         SwingUtilities.invokeLater(() -> {
             switch (property) {
                 case FieldModel.PROP_STYLE:

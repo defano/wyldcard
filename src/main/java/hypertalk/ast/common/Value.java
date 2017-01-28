@@ -68,7 +68,7 @@ public class Value {
         this.value = value;
 
         // Special case: empty string is a valid int and float
-        if (value.trim().equals("")) {
+        if (value == null || value.trim().equals("")) {
             longValue = 0L;
             floatValue = 0.0;
             booleanValue = null;
