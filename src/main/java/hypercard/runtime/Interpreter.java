@@ -58,6 +58,8 @@ public class Interpreter {
 
         } catch (HtParseError e) {
             throw new HtSyntaxException(e.getMessage(), e.lineNumber, e.columnNumber);
+        } catch (Exception e) {
+            throw new HtException(e.getMessage());
         }
     }
 

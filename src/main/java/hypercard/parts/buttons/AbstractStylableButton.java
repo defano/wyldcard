@@ -1,6 +1,7 @@
 package hypercard.parts.buttons;
 
 import hypercard.context.ToolsContext;
+import hypercard.gui.util.*;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.styles.*;
 import hypercard.parts.model.ButtonModel;
@@ -100,10 +101,11 @@ public abstract class AbstractStylableButton implements ToolEditablePart {
     public void partOpened() {
         getPartModel().notifyPropertyChangedObserver(buttonComponent);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
+        KeyboardManager.addGlobalKeyListener(this);
     }
 
     @Override
     public void partClosed() {
-        // Nothing to do
+        KeyboardManager.removeGlobalKeyListener(this);
     }
 }

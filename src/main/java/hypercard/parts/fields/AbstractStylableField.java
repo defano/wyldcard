@@ -1,6 +1,7 @@
 package hypercard.parts.fields;
 
 import hypercard.context.ToolsContext;
+import hypercard.gui.util.*;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.fields.styles.OpaqueField;
 import hypercard.parts.fields.styles.TransparentField;
@@ -67,6 +68,7 @@ public abstract class AbstractStylableField implements ToolEditablePart {
     public void partOpened() {
         getPartModel().addPropertyChangedObserver(fieldComponent);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
+        KeyboardManager.addGlobalKeyListener(this);
 
         fieldComponent.partOpened();
     }
@@ -74,6 +76,7 @@ public abstract class AbstractStylableField implements ToolEditablePart {
     @Override
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(fieldComponent);
+        KeyboardManager.removeGlobalKeyListener(this);
     }
 
 }
