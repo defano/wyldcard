@@ -27,7 +27,8 @@ public abstract class AbstractStylableField implements ToolEditablePart {
 
     @Override
     public boolean isBeingEdited() {
-        return SwingUtilities.getWindowAncestor(getFieldComponent()).isActive() && isBeingEdited;
+        Window ancestorWindow = SwingUtilities.getWindowAncestor(getFieldComponent());
+        return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
     @Override

@@ -22,6 +22,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     void resize(int fromQuadrant);
     void delete();
     void editProperties();
+    Part getPart();
 
     default int getDragHandleSize() {
         return 8;
@@ -78,6 +79,18 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
 
     default boolean isAutoHilited() {
         return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
+    }
+
+    default void bringCloser() {
+        getPart().setZorder(getZOrder() - 1);
+    }
+
+    default void sendFurther() {
+        getPart().setZorder(getZOrder() + 1);
+    }
+
+    default int getZOrder() {
+        return getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue();
     }
 
     @Override

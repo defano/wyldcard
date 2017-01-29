@@ -24,7 +24,8 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.util.Collection;
+import java.util.*;
+import java.util.List;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
@@ -67,13 +68,11 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
                     ButtonPart button = ButtonPart.fromModel(card, (ButtonModel) thisPart);
                     card.buttons.addPart(button);
                     card.addSwingComponent(button.getComponent(), button.getRect());
-                    button.partOpened();
                     break;
                 case FIELD:
                     FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
                     card.fields.addPart(field);
                     card.addSwingComponent(field.getComponent(), field.getRect());
-                    field.partOpened();
                     default:
             }
         }
@@ -98,9 +97,15 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((double) arg) == 1.0));
         card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((double) arg) == 1.0));
 
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
-            card.setForegroundVisible(!(boolean)isEditingBackground);
-        });
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> card.setForegroundVisible(!(boolean)isEditingBackground));
+
+        for (ButtonPart thisButton : card.buttons.getParts()) {
+            thisButton.getPartModel().notifyPropertyChangedObserver(thisButton);
+        }
+
+        for (FieldPart thisField : card.fields.getParts()) {
+            thisField.getPartModel().notifyPropertyChangedObserver(thisField);
+        }
 
         return card;
     }
@@ -150,6 +155,19 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         return fields.getParts();
     }
 
+    public List<Part> getPartsInZOrder() {
+        ArrayList<Part> joined = new ArrayList<>();
+        joined.addAll(getButtons());
+        joined.addAll(getFields());
+
+        Comparator<Part> zOrderComparator = (o1, o2) -> new Integer(o1.getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue())
+                .compareTo(o2.getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue());
+
+        joined.sort(zOrderComparator);
+
+        return joined;
+    }
+
     public UndoablePaintCanvas getCanvas() {
         return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
     }
@@ -185,9 +203,11 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         component.setBounds(bounds);
         setLayer(component, FOREGROUND_PARTS_LAYER);
         add(component);
+        moveToFront(component);
         revalidate();
         repaint();
     }
+
 
     public int nextFieldId () {
         return fields.getNextId();
@@ -195,6 +215,14 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
     public int nextButtonId () {
         return buttons.getNextId();
+    }
+
+    public void onZOrderChanged() {
+        SwingUtilities.invokeLater(() -> {
+            for (Part thisPart : getPartsInZOrder()) {
+                moveToBack(thisPart.getComponent());
+            }
+        });
     }
 
     @Override

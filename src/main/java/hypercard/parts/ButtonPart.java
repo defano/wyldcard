@@ -112,6 +112,16 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
     }
 
     @Override
+    public CardPart getParentCard() {
+        return parent;
+    }
+
+    @Override
+    public Part getPart() {
+        return this;
+    }
+
+    @Override
     public void move() {
         mover.startMoving();
     }
@@ -247,10 +257,6 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
         }
     }
 
-    public CardPart getCard() {
-        return parent;
-    }
-
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
@@ -283,7 +289,9 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
             case ButtonModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());
                 break;
-
+            case AbstractPartModel.PROP_ZORDER:
+                getParentCard().onZOrderChanged();
+                break;
         }
     }
 }

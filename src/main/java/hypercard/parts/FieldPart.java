@@ -147,6 +147,11 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     }
 
     @Override
+    public Part getPart() {
+        return this;
+    }
+
+    @Override
     public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException {
         partModel.setProperty(property, value);
     }
@@ -178,6 +183,11 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     @Override
     public Value getValue() {
         return partModel.getKnownProperty(FieldModel.PROP_TEXT);
+    }
+
+    @Override
+    public CardPart getParentCard() {
+        return parent;
     }
 
     private void compile() throws HtSemanticException {
@@ -288,6 +298,9 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
                 getComponent().setVisible(newValue.booleanValue());
                 getComponent().validate();
                 getComponent().repaint();
+                break;
+            case AbstractPartModel.PROP_ZORDER:
+                getParentCard().onZOrderChanged();
                 break;
         }
     }

@@ -1,12 +1,12 @@
 package hypercard.gui.menu;
 
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.ProviderTransform;
+import hypercard.context.PartToolContext;
 import hypercard.context.ToolsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
-import hypercard.parts.ButtonPart;
-import hypercard.parts.CardPart;
-import hypercard.parts.FieldPart;
-import hypercard.parts.PartException;
+import hypercard.parts.*;
 import hypercard.HyperCard;
 
 import javax.swing.*;
@@ -24,12 +24,14 @@ public class ObjectsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")
-                .disabled()
+                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> !(value instanceof ButtonPart)))
+                .withAction(a -> PartToolContext.getInstance().getSelectedPartProvider().get().editProperties())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Field Info...")
-                .disabled()
+                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> !(value instanceof FieldPart)))
+                .withAction(a -> PartToolContext.getInstance().getSelectedPartProvider().get().editProperties())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -51,13 +53,15 @@ public class ObjectsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Bring Closer")
-                .disabled()
+                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> value == null))
+                .withAction(a -> PartToolContext.getInstance().bringCloser())
                 .withShortcut('+')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Send Further")
-                .disabled()
+                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> value == null))
+                .withAction(a -> PartToolContext.getInstance().sendFurther())
                 .withShortcut('-')
                 .build(this);
 

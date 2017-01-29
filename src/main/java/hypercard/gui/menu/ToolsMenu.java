@@ -1,5 +1,7 @@
 package hypercard.gui.menu;
 
+import com.defano.jmonet.model.ProviderTransform;
+import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
@@ -43,21 +45,25 @@ public class ToolsMenu extends JMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Finger")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/finger.png")))
-                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.ARROW))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ARROW))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.BROWSE))
+                .withAction(a -> ToolsContext.getInstance().setToolMode(ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Button")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/button.png")))
-                .disabled()
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.BUTTON))
+                .withAction(a -> ToolsContext.getInstance().setToolMode(ToolMode.BUTTON))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Field")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/field.png")))
-                .disabled()
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.FIELD))
+                .withAction(a -> ToolsContext.getInstance().setToolMode(ToolMode.FIELD))
                 .build(this);
+
+        this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Selection")

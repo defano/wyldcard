@@ -27,12 +27,6 @@ public class PartsTable<T extends Part> {
         idhash = new HashMap<>();
     }
     
-    public void sendPartOpened () {
-        for (Integer integer : idhash.keySet()) {
-            idhash.get(integer).partOpened();
-        }
-    }
-
     public void removePart (T p) {
         
         try {

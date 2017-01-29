@@ -19,6 +19,7 @@ public abstract class AbstractPartModel extends PropertiesModel {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
+    public static final String PROP_ZORDER = "zorder";
     public static final String PROP_NAME = "name";
     public static final String PROP_LEFT = "left";
     public static final String PROP_TOP = "top";
@@ -87,6 +88,7 @@ public abstract class AbstractPartModel extends PropertiesModel {
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
         defineProperty(PROP_VISIBLE, new Value(true), false);
+        defineProperty(PROP_ZORDER, new Value(0), false);
     }
 
     public PartType getType () {

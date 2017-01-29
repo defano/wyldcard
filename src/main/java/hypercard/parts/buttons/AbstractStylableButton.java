@@ -5,6 +5,7 @@ import hypercard.gui.util.*;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.styles.*;
 import hypercard.parts.model.ButtonModel;
+import hypercard.parts.model.PropertyChangeObserver;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ import java.awt.event.MouseEvent;
  * Provides common functionality for "stylable" button parts (that is, a single button part whose style determines
  * which Swing component is drawn on the card).
  */
-public abstract class AbstractStylableButton implements ToolEditablePart {
+public abstract class AbstractStylableButton implements ToolEditablePart, PropertyChangeObserver {
 
     private ButtonComponent buttonComponent;
     private boolean isBeingEdited = false;
@@ -35,7 +36,8 @@ public abstract class AbstractStylableButton implements ToolEditablePart {
     }
 
     public boolean isBeingEdited() {
-        return SwingUtilities.getWindowAncestor(getButtonComponent()).isActive() && isBeingEdited;
+        Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonComponent());
+        return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
     public void setBeingEdited(boolean beingEdited) {
