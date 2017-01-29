@@ -21,14 +21,10 @@ import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
 import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
-import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
-import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.exception.HtSemanticException;
-import hypertalk.exception.NoSuchPropertyException;
-import hypertalk.exception.PropertyPermissionException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,11 +86,6 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
         super.partClosed();
     }
 
-    @Override
-    public Rectangle getRect() {
-        return partModel.getRect();
-    }
-
     private void initProperties(Rectangle geometry) {
         int id = parent.nextButtonId();
 
@@ -112,7 +103,7 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
     }
 
     @Override
-    public CardPart getParentCard() {
+    public CardPart getCard() {
         return parent;
     }
 
@@ -154,46 +145,23 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
     }
 
     @Override
-    public String getName() {
-        return partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue();
-    }
-
-    @Override
-    public int getId() {
-        return partModel.getKnownProperty(ButtonModel.PROP_ID).integerValue();
-    }
-
-    @Override
     public JComponent getComponent() {
         return this.getButtonComponent();
     }
 
     @Override
-    public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException {
-        partModel.setProperty(property, value);
-    }
-
-    @Override
-    public Value getProperty(String property) throws NoSuchPropertyException {
-        return partModel.getProperty(property);
-    }
-
     public AbstractPartModel getPartModel() {
         return partModel;
     }
 
     @Override
-    public void setValue(Value value) {
-        try {
-            partModel.setProperty(ButtonModel.PROP_CONTENTS, value);
-        } catch (Exception e) {
-            throw new RuntimeException("Button's text property cannot be set");
-        }
+    public String getValueProperty() {
+        return ButtonModel.PROP_CONTENTS;
     }
 
     @Override
-    public Value getValue() {
-        return partModel.getKnownProperty(ButtonModel.PROP_CONTENTS);
+    public Script getScript() {
+        return script;
     }
 
     private void compile() throws HtSemanticException {
@@ -204,21 +172,6 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
         } catch (Exception e) {
             throw new HtSemanticException(e.getMessage());
         }
-    }
-
-    @Override
-    public void sendMessage(String message) {
-        Interpreter.executeHandler(new PartIdSpecifier(PartType.BUTTON, getId()), script, message);
-    }
-
-    @Override
-    public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(new PartIdSpecifier(PartType.BUTTON, getId()), script.getFunction(function), arguments);
-    }
-
-    @Override
-    public boolean isPartToolActive() {
-        return ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON;
     }
 
     @Override
@@ -290,7 +243,7 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
                 setVisibleOnCard(newValue.booleanValue());
                 break;
             case AbstractPartModel.PROP_ZORDER:
-                getParentCard().onZOrderChanged();
+                getCard().onZOrderChanged();
                 break;
         }
     }

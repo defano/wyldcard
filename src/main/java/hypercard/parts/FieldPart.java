@@ -17,19 +17,13 @@ import hypercard.gui.window.FieldPropertyEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.fields.AbstractStylableField;
 import hypercard.parts.fields.FieldStyle;
-import hypercard.parts.model.AbstractPartModel;
-import hypercard.parts.model.FieldModel;
-import hypercard.parts.model.PropertyChangeObserver;
+import hypercard.parts.model.*;
 import hypercard.runtime.Interpreter;
 import hypercard.runtime.WindowManager;
-import hypertalk.ast.common.ExpressionList;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
 import hypertalk.ast.common.Value;
-import hypertalk.ast.containers.PartIdSpecifier;
 import hypertalk.exception.HtSemanticException;
-import hypertalk.exception.NoSuchPropertyException;
-import hypertalk.exception.PropertyPermissionException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,11 +78,6 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
         return field;
     }
 
-    @Override
-    public Rectangle getRect() {
-        return partModel.getRect();
-    }
-
     private void initProperties(Rectangle geometry) {
         int id = parent.nextFieldId();
 
@@ -132,16 +121,6 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     }
 
     @Override
-    public String getName() {
-        return partModel.getKnownProperty(FieldModel.PROP_NAME).stringValue();
-    }
-
-    @Override
-    public int getId() {
-        return partModel.getKnownProperty(FieldModel.PROP_ID).integerValue();
-    }
-
-    @Override
     public JComponent getComponent() {
         return this.getFieldComponent();
     }
@@ -152,13 +131,8 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     }
 
     @Override
-    public void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException {
-        partModel.setProperty(property, value);
-    }
-
-    @Override
-    public Value getProperty(String property) throws NoSuchPropertyException {
-        return partModel.getProperty(property);
+    public Script getScript() {
+        return script;
     }
 
     @Override
@@ -176,6 +150,11 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     }
 
     @Override
+    public String getValueProperty() {
+        return hypercard.parts.model.ButtonModel.PROP_CONTENTS;
+    }
+
+    @Override
     public boolean isPartToolActive() {
         return ToolsContext.getInstance().getToolMode() == ToolMode.FIELD;
     }
@@ -186,7 +165,7 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
     }
 
     @Override
-    public CardPart getParentCard() {
+    public CardPart getCard() {
         return parent;
     }
 
@@ -197,16 +176,6 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
         } catch (Exception e) {
             throw new HtSemanticException(e.getMessage());
         }
-    }
-
-    @Override
-    public void sendMessage(String message) {
-        Interpreter.executeHandler(new PartIdSpecifier(PartType.FIELD, getId()), script, message);
-    }
-
-    @Override
-    public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(new PartIdSpecifier(PartType.FIELD, getId()), script.getFunction(function), arguments);
     }
 
     @Override
@@ -300,7 +269,7 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
                 getComponent().repaint();
                 break;
             case AbstractPartModel.PROP_ZORDER:
-                getParentCard().onZOrderChanged();
+                getCard().onZOrderChanged();
                 break;
         }
     }

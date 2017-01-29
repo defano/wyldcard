@@ -52,7 +52,6 @@ public class PartToolContext {
         }
     }
 
-
     public Provider<ToolEditablePart> getSelectedPartProvider() {
         return selectedPart;
     }

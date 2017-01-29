@@ -17,7 +17,6 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
 
     void setBeingEdited(boolean beingEdited);
     boolean isBeingEdited();
-    boolean isPartToolActive();
     void move();
     void resize(int fromQuadrant);
     void delete();

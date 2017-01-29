@@ -22,7 +22,7 @@ public interface SharedHilight {
 
         if (isSharingHilite(button)) {
 
-            for (ButtonPart thisButton : button.getParentCard().getButtons()) {
+            for (ButtonPart thisButton : button.getCard().getButtons()) {
 
                 if (thisButton.getId() == button.getId()) {
                     continue;
