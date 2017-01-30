@@ -6,6 +6,7 @@ import java.awt.*;
 
 public class OvalButton extends AbstractLabelButton {
 
+    private final static int OUTLINE_SROKE = 2;
     private boolean isHilited = false;
 
     public OvalButton(ToolEditablePart toolEditablePart) {
@@ -15,10 +16,12 @@ public class OvalButton extends AbstractLabelButton {
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
         g.setPaint(textColor(isDisabled));
-        g.drawOval(0, 0, getWidth() - 1, getHeight() - 1);
+
+        g.setStroke(new BasicStroke(OUTLINE_SROKE));
+        g.drawOval(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
 
         if (isHilited) {
-            g.fillOval(0,0,getWidth() - 1, getHeight() - 1);
+            g.fillOval(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE);
         }
     }
 

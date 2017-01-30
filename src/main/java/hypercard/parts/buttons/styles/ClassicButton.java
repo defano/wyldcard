@@ -8,6 +8,7 @@ import java.awt.*;
 public class ClassicButton extends AbstractLabelButton implements ButtonComponent {
 
     private final static int OUTLINE_SROKE = 2;
+    private final static int ARC_SIZE = 10;
 
     private boolean isHilited = false;
 
@@ -19,10 +20,10 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
         g.setPaint(textColor(isDisabled));
         g.setStroke(new BasicStroke(OUTLINE_SROKE));
-        g.drawRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, 10, 10);
+        g.drawRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
 
         if (isHilited) {
-            g.fillRoundRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, 10, 10);
+            g.fillRoundRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
         }
     }
 

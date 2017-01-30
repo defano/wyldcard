@@ -6,6 +6,9 @@ import java.awt.*;
 
 public class RectangularButton extends AbstractLabelButton {
 
+    private final static int OUTLINE_SROKE = 2;
+    private boolean isHilited = false;
+
     public RectangularButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
     }
@@ -13,7 +16,13 @@ public class RectangularButton extends AbstractLabelButton {
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
         g.setPaint(textColor(isDisabled));
-        g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+
+        g.setStroke(new BasicStroke(OUTLINE_SROKE));
+        g.drawRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
+
+        if (isHilited) {
+            g.fillRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE);
+        }
     }
 
     @Override
@@ -24,9 +33,10 @@ public class RectangularButton extends AbstractLabelButton {
 
     @Override
     protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled) {
-            setOpaque(isHilited);
+        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
+            this.isHilited = isHilited;
             setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
+            repaint();
         }
     }
 

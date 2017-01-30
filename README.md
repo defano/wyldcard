@@ -199,7 +199,7 @@ Parts do not need to implement a handler for every message they might receive. M
 
 ## Parts and their properties
 
-A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, but for simplicity, this version supports only two parts: simple push buttons and scrollable text fields. In HyperCard, these parts live within a document called a _card_ (somewhat analogous to a window).
+A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, this implementation provides a similar (but not identical) set of styled parts.
 
 In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background, which are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
 
@@ -209,28 +209,55 @@ In addition to containing scripts, a part also maintains a set of _properties_. 
 
 All parts have these properties:
 
-Property    | Description
-------------|------------
-`script`    | Retrieves or replaces the current script of the part
-`id`        | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
-`name`      | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
-`left`      | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
-`top`	      | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
-`width`     | Returns or sets the width of the part (in pixels)
-`height`    | Returns or sets the height of the part (in pixels)
-`rect`      | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rectangle`.
-`topLeft`   | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+Property      | Description
+--------------|------------
+`script`      | Retrieves or replaces the current script of the part
+`id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
+`name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
+`left`        | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
+`top`	        | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
+`width`       | Returns or sets the width of the part (in pixels)
+`height`      | Returns or sets the height of the part (in pixels)
+`rect`        | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rectangle`.
+`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
-`visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
-`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
+`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
+`enabled`     | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
 
-A button has these additional properties:
+### Buttons
+
+In HyperCard, buttons come in a variety of _styles_ which affects their look-and-feel as well as their behavior. This implementation supports the following button styles:
+
+Style                                    | Name          | Notes
+-----------------------------------------|---------------|------------
+![Default](doc/images/default.png)       | `default`     | A typical push button whose style matches that of the operating system.
+![Default](doc/images/classic.png)       | `classic`     | A push button drawn in the style of Mac OS Classic.
+![Default](doc/images/oval.png) | `oval` | A push button drawn with an oval border.
+![Default](doc/images/rectangular.png)   | `rectangular` | A push button drawn with a rectangular border.
+![Default](doc/images/transparent.png)   | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
+![Default](doc/images/checkbox.png)      | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Default](doc/images/radio.png)         | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Default](doc/images/menu.png)          | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
+
+In addition to the properties common to all parts, a button has these additional properties:
 
 Property    | Description
 ------------|------------
-`visible`   | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
+`style`     | Sets or retrieves the button style. Button styles are described in the table above.
+`contents`  | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
 `showname`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
-`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
+`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that disabled buttons continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`.
+`hilite`    | (Sic) Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
+`autohilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autohilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
+
+### Fields
+
+Fields in this version come in two flavors, transparent and opaque:
+
+Style                                        | Name          | Notes
+---------------------------------------------|---------------|------------
+![Opaque](doc/images/opaque_field.png)       | `opaque`      | An opaque, etched-border editable text field that can be filled with formatted text.
+![Default](doc/images/transparent_field.png) | `transparent` | Functionally identical to an opaque field, but whose background and border is transparent.
 
 A field has these properties:
 
@@ -238,7 +265,6 @@ Property   | Description
 -----------|------------
 `text`     | Returns or sets the text contained within this field
 `visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
-`wraptext` | Returns or sets whether the text contained by the field will automatically wrap at end of line.
 `locktext` | Returns or sets whether the text contained by the field can be edited by the user.
 
 Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are read using the `get` command, and modified with the `set` command. For example:
