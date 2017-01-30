@@ -2,5 +2,5 @@ package hypercard.parts.buttons;
 
 import hypercard.parts.model.PropertyChangeObserver;
 
-public interface ButtonComponent extends PropertyChangeObserver {
+public interface ButtonView extends PropertyChangeObserver {
 }

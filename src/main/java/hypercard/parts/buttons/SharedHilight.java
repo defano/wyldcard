@@ -6,7 +6,7 @@ import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
 /**
- * A mixin providing resuable functionality for enabling shared hilite features (i.e., selecting radio buttons by
+ * A mixin providing reusable functionality for enabling shared highlight features (i.e., selecting radio buttons by
  * group).
  */
 public interface SharedHilight {

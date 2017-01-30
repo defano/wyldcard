@@ -4,7 +4,7 @@ import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.buttons.ButtonComponent;
+import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
@@ -12,7 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class MenuButton extends JComboBox implements ButtonComponent {
+public class MenuButton extends JComboBox implements ButtonView {
 
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel();

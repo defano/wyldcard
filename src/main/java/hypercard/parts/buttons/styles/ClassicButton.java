@@ -1,11 +1,11 @@
 package hypercard.parts.buttons.styles;
 
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.buttons.ButtonComponent;
+import hypercard.parts.buttons.ButtonView;
 
 import java.awt.*;
 
-public class ClassicButton extends AbstractLabelButton implements ButtonComponent {
+public class ClassicButton extends AbstractLabelButton implements ButtonView {
 
     private final static int OUTLINE_SROKE = 2;
     private final static int ARC_SIZE = 10;

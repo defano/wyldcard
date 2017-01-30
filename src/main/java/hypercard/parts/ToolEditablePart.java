@@ -4,8 +4,8 @@ import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.PartToolContext;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
-import hypercard.parts.buttons.ButtonComponent;
-import hypercard.parts.fields.FieldComponent;
+import hypercard.parts.buttons.ButtonView;
+import hypercard.parts.fields.FieldView;
 import hypercard.parts.model.AbstractPartModel;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
@@ -114,9 +114,9 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
         if (isBeingEdited() && e.getClickCount() == 2) {
             editProperties();
         } else {
-            if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
+            if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonView) {
                 PartToolContext.getInstance().setSelectedPart(this);
-            } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {
+            } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldView) {
                 PartToolContext.getInstance().setSelectedPart(this);
             }
         }

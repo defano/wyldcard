@@ -15,7 +15,7 @@ import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.gui.window.FieldPropertyEditor;
 import hypercard.gui.window.WindowBuilder;
-import hypercard.parts.fields.AbstractStylableField;
+import hypercard.parts.fields.AbstractFieldView;
 import hypercard.parts.fields.FieldStyle;
 import hypercard.parts.model.*;
 import hypercard.runtime.Interpreter;
@@ -32,7 +32,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class FieldPart extends AbstractStylableField implements Part, MouseListener, PropertyChangeObserver, KeyListener {
+public class FieldPart extends AbstractFieldView implements Part, MouseListener, PropertyChangeObserver, KeyListener {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -122,7 +122,7 @@ public class FieldPart extends AbstractStylableField implements Part, MouseListe
 
     @Override
     public JComponent getComponent() {
-        return this.getFieldComponent();
+        return this.getFieldView();
     }
 
     @Override

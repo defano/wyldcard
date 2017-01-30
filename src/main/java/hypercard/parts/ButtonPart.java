@@ -15,7 +15,7 @@ import hypercard.context.ToolsContext;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.buttons.ButtonStyle;
-import hypercard.parts.buttons.AbstractStylableButton;
+import hypercard.parts.buttons.AbstractButtonView;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypercard.runtime.Interpreter;
@@ -31,7 +31,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ButtonPart extends AbstractStylableButton implements MouseListener, PropertyChangeObserver {
+public class ButtonPart extends AbstractButtonView implements MouseListener, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 160;
     private static final int DEFAULT_HEIGHT = 40;
@@ -146,7 +146,7 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
 
     @Override
     public JComponent getComponent() {
-        return this.getButtonComponent();
+        return this.getButtonView();
     }
 
     @Override
@@ -232,12 +232,12 @@ public class ButtonPart extends AbstractStylableButton implements MouseListener,
             case ButtonModel.PROP_LEFT:
             case ButtonModel.PROP_WIDTH:
             case ButtonModel.PROP_HEIGHT:
-                getButtonComponent().setBounds(partModel.getRect());
-                getButtonComponent().validate();
-                getButtonComponent().repaint();
+                getButtonView().setBounds(partModel.getRect());
+                getButtonView().validate();
+                getButtonView().repaint();
                 break;
             case ButtonModel.PROP_ENABLED:
-                getButtonComponent().setEnabled(newValue.booleanValue());
+                getButtonView().setEnabled(newValue.booleanValue());
                 break;
             case ButtonModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());

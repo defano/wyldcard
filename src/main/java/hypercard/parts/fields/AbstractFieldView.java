@@ -10,9 +10,9 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 
-public abstract class AbstractStylableField implements ToolEditablePart {
+public abstract class AbstractFieldView implements ToolEditablePart {
 
-    private FieldComponent fieldComponent;
+    private FieldView fieldView;
     private boolean isBeingEdited;
 
     public abstract void move();
@@ -21,32 +21,32 @@ public abstract class AbstractStylableField implements ToolEditablePart {
 
     public abstract void invalidateSwingComponent(Component oldComponent, Component newComponent);
 
-    public AbstractStylableField(FieldStyle style) {
-        fieldComponent = getComponentForStyle(style);
+    public AbstractFieldView(FieldStyle style) {
+        fieldView = getComponentForStyle(style);
     }
 
     @Override
     public boolean isBeingEdited() {
-        Window ancestorWindow = SwingUtilities.getWindowAncestor(getFieldComponent());
+        Window ancestorWindow = SwingUtilities.getWindowAncestor(getFieldView());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
     @Override
     public void setBeingEdited(boolean beingEdited) {
-        fieldComponent.setEditable(!beingEdited);
+        fieldView.setEditable(!beingEdited);
         isBeingEdited = beingEdited;
     }
 
     public void setFieldStyle(FieldStyle style) {
-        Component oldComponent = getFieldComponent();
-        fieldComponent = getComponentForStyle(style);
+        Component oldComponent = getFieldView();
+        fieldView = getComponentForStyle(style);
 
         partClosed();
-        invalidateSwingComponent(oldComponent, (JComponent) fieldComponent);
+        invalidateSwingComponent(oldComponent, (JComponent) fieldView);
         partOpened();
     }
 
-    private FieldComponent getComponentForStyle(FieldStyle style) {
+    private FieldView getComponentForStyle(FieldStyle style) {
         switch (style) {
             case TRANSPARENT:
                 return new TransparentField(this);
@@ -64,30 +64,30 @@ public abstract class AbstractStylableField implements ToolEditablePart {
      *
      * @return
      */
-    public JComponent getFieldComponent() {
-        return (JComponent) fieldComponent;
+    public JComponent getFieldView() {
+        return (JComponent) fieldView;
     }
 
     public JTextComponent getTextComponent() {
-        return fieldComponent.getTextComponent();
+        return fieldView.getTextComponent();
     }
 
     public String getText() {
-        return fieldComponent.getText();
+        return fieldView.getText();
     }
 
     @Override
     public void partOpened() {
-        getPartModel().addPropertyChangedObserver(fieldComponent);
+        getPartModel().addPropertyChangedObserver(fieldView);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
         KeyboardManager.addGlobalKeyListener(this);
 
-        fieldComponent.partOpened();
+        fieldView.partOpened();
     }
 
     @Override
     public void partClosed() {
-        getPartModel().removePropertyChangedObserver(fieldComponent);
+        getPartModel().removePropertyChangedObserver(fieldView);
         KeyboardManager.removeGlobalKeyListener(this);
     }
 

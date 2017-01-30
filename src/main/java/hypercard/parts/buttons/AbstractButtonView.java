@@ -16,9 +16,9 @@ import java.awt.event.MouseEvent;
  * Provides common functionality for "stylable" button parts (that is, a single button part whose style determines
  * which Swing component is drawn on the card).
  */
-public abstract class AbstractStylableButton implements ToolEditablePart, PropertyChangeObserver {
+public abstract class AbstractButtonView implements ToolEditablePart, PropertyChangeObserver {
 
-    private ButtonComponent buttonComponent;
+    private ButtonView buttonView;
     private boolean isBeingEdited = false;
 
     public abstract void move();
@@ -27,16 +27,16 @@ public abstract class AbstractStylableButton implements ToolEditablePart, Proper
 
     public abstract void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent);
 
-    public AbstractStylableButton(ButtonStyle style) {
-        buttonComponent = getComponentForStyle(style);
+    public AbstractButtonView(ButtonStyle style) {
+        buttonView = getComponentForStyle(style);
     }
 
-    public JComponent getButtonComponent() {
-        return (JComponent) buttonComponent;
+    public JComponent getButtonView() {
+        return (JComponent) buttonView;
     }
 
     public boolean isBeingEdited() {
-        Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonComponent());
+        Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonView());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
@@ -45,15 +45,15 @@ public abstract class AbstractStylableButton implements ToolEditablePart, Proper
     }
 
     public void setButtonStyle(ButtonStyle style) {
-        Component oldComponent = getButtonComponent();
-        buttonComponent = getComponentForStyle(style);
-        invalidateSwingComponent(oldComponent, (JComponent) buttonComponent);
+        Component oldComponent = getButtonView();
+        buttonView = getComponentForStyle(style);
+        invalidateSwingComponent(oldComponent, (JComponent) buttonView);
 
-        getPartModel().addPropertyChangedObserver(buttonComponent);
+        getPartModel().addPropertyChangedObserver(buttonView);
         partOpened();
     }
 
-    private ButtonComponent getComponentForStyle(ButtonStyle style) {
+    private ButtonView getComponentForStyle(ButtonStyle style) {
         switch (style) {
             case CHECKBOX:
                 return new CheckboxButton(this);
@@ -82,7 +82,7 @@ public abstract class AbstractStylableButton implements ToolEditablePart, Proper
         ToolEditablePart.super.mousePressed(e);
 
         if (isAutoHilited()) {
-            if (! (buttonComponent instanceof SharedHilight)) {
+            if (! (buttonView instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
             }
         }
@@ -93,7 +93,7 @@ public abstract class AbstractStylableButton implements ToolEditablePart, Proper
         ToolEditablePart.super.mouseReleased(e);
 
         if (!isBeingEdited() && isAutoHilited()) {
-            if (! (buttonComponent instanceof SharedHilight)) {
+            if (! (buttonView instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
             }
         }
@@ -101,7 +101,8 @@ public abstract class AbstractStylableButton implements ToolEditablePart, Proper
 
     @Override
     public void partOpened() {
-        getPartModel().notifyPropertyChangedObserver(buttonComponent);
+        getPartModel().addPropertyChangedObserver(buttonView);
+        getPartModel().notifyPropertyChangedObserver(buttonView);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
         KeyboardManager.addGlobalKeyListener(this);
     }

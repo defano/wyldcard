@@ -2,14 +2,14 @@ package hypercard.parts.buttons.styles;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.buttons.ButtonComponent;
+import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class DefaultButton extends JButton implements ButtonComponent {
+public class DefaultButton extends JButton implements ButtonView {
 
     private final ToolEditablePart toolEditablePart;
 

@@ -2,14 +2,15 @@ package hypercard.parts.buttons.styles;
 
 import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.buttons.ButtonComponent;
+import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
-public abstract class AbstractLabelButton extends JLabel implements ButtonComponent {
+public abstract class AbstractLabelButton extends JLabel implements ButtonView {
 
     protected final ToolEditablePart toolEditablePart;
     protected boolean drawnDisabled = false;

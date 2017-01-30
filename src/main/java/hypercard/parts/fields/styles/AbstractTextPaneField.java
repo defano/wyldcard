@@ -4,7 +4,7 @@ import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
-import hypercard.parts.fields.FieldComponent;
+import hypercard.parts.fields.FieldView;
 import hypercard.parts.model.FieldModel;
 import hypertalk.ast.common.Value;
 
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractTextPaneField extends JScrollPane implements FieldComponent, DocumentListener {
+public abstract class AbstractTextPaneField extends JScrollPane implements FieldView, DocumentListener {
 
     protected final JTextPane textPane;
     private ToolEditablePart toolEditablePart;

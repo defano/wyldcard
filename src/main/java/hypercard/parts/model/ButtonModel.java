@@ -20,10 +20,6 @@ public class ButtonModel extends AbstractPartModel {
         super(PartType.BUTTON);
     }
 
-    public static ButtonModel emptyModel() {
-        return newButtonModel(0, new Rectangle(0,0,1,1));
-    }
-
     public static ButtonModel newButtonModel(Integer id, Rectangle geometry) {
         ButtonModel partModel = new ButtonModel();
 
