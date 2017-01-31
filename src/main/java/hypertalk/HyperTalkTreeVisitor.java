@@ -12,7 +12,6 @@ import hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
-//public class HyperTalkTreeVisitor extends HyperTalkVisitor<Object> {
 
     @Override
     public Object visitHandlerScript(HyperTalkParser.HandlerScriptContext ctx) {
@@ -89,6 +88,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPropertyDest(HyperTalkParser.PropertyDestContext ctx) {
         return new ContainerProperty((PropertySpecifier) visit(ctx.propertySpec()));
+    }
+
+    @Override
+    public Object visitChunkPropertyDest(HyperTalkParser.ChunkPropertyDestContext ctx) {
+        return new ContainerProperty((PropertySpecifier) visit(ctx.propertySpec()), (Chunk)visit(ctx.chunk()));
     }
 
     @Override
@@ -535,8 +539,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitSetCmd(HyperTalkParser.SetCmdContext ctx) {
-
+    public Object visitSetPropertyCmd(HyperTalkParser.SetPropertyCmdContext ctx) {
         return new StatSetCmd((PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.expression()));
     }
 

@@ -90,7 +90,7 @@ putCmd				: 'put' expression container                    # putIntoCmd
 getCmd				: 'get' expression
                     ;
 
-setCmd				: 'set' propertySpec 'to' expression
+setCmd				: 'set' propertySpec 'to' expression            # setPropertyCmd
                     ;
 
 sendCmd				: 'send' expression 'to' part
@@ -197,6 +197,7 @@ container			: ID                                            # variableDest
                     | chunk part                                    # chunkPartDest
                     | chunk                                         # chunkDest
                     | propertySpec                                  # propertyDest
+                    | chunk propertySpec                            # chunkPropertyDest
                     |                                               # defaultDest
                     ;
 

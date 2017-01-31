@@ -8,6 +8,8 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
+import hypertalk.ast.containers.ContainerVariable;
+import hypertalk.ast.containers.Preposition;
 import hypertalk.ast.containers.PropertySpecifier;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
@@ -24,7 +26,7 @@ public class StatSetCmd extends Statement {
     
     public void execute () throws HtSemanticException {
         try {
-
+            
             // Setting the property of HyperCard
             if (propertySpec.isGlobalPropertySpecifier()) {
                 GlobalContext.getContext().setGlobalProperty(propertySpec.property, expression.evaluate());
@@ -32,10 +34,13 @@ public class StatSetCmd extends Statement {
 
             // Setting the property of a part
             else {
-                GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), expression.evaluate());
+                GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
             }
+
         } catch (Exception e) {
-            throw new HtSemanticException(e);
+
+            // When all else fails, set the value of a container
+            GlobalContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));
         }
     }
 }

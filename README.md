@@ -2,17 +2,17 @@
 
 A toy implementation of Apple's HyperCard written in Java. Originally created as a class project for a graduate-level compiler design course at DePaul University, Chicago.
 
-## What is (was) HyperCard?
+## What's HyperCard?
 
-HyperCard was released in 1987 as part of Apple's System Software 6. It was an application that largely defied classification; part database, part programming language, part "paint" program. HyperCard represented something entirely new. Other "educational" programming languages of the time made it possible to write console-mode programs, but with HyperCard, a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
+HyperCard was born in 1987 as part of Apple's System Software 6. It was an application that largely defied classification: part database, part programming language, part "paint" program. HyperCard was something entirely new. Other "teaching" languages of the time made it possible to write dull, console-mode programs, but with HyperCard, a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
 
 [Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987.
 
-#### I want to run the _real_ HyperCard on modern machines
+### I want to run the _real_ HyperCard
 
 Use the SheepShaver emulator to run Macintosh System Software on newer Macs or Windows machines. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
-#### I'm an attorney and I'd like to sue
+### I'd like to sue
 
 This project represents a homework assignment and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
@@ -26,7 +26,7 @@ Much of the HyperTalk language has been implemented including parts, attributes,
 
 This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
 
-It won't import your old stacks and it's missing too many foundational aspects of the real software to be useful to anybody other than hobbyists and academics. Among its limitations, this implementation lacks support for backgrounds; user levels; card, background or stack-level scripts; externals (XCMDs/XFCNs) and home stack script inheritance.
+It won't import your old stacks and it's missing many foundational aspects of the real software. Among its limitations, this implementation lacks support for multiple backgrounds; user levels; card, background or stack-level scripts; externals (XCMDs/XFCNs) and home stack script inheritance.
 
 # Building the application
 
@@ -37,7 +37,7 @@ Task | Description
 `run`   | Build, test and run the application
 `generateGrammarSource`  | Re-generate the HyperTalk parser using Antlr4 (executes automatically as part of the `gradle build` task)
 
-The project uses Antlr4 as the parser generator, and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the do command).
+The project uses Antlr4 as the parser generator and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the `do` command).
 
 Note that this project was originally implemented with the JCup/JFlex LALR parser generator tools and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
 
@@ -47,19 +47,19 @@ Execute the `gradle run` task to build and start the program, or simply execute 
 
 *	Begin adding your own user interface elements by choosing "New Button" or "New Field" from the "Objects" menu.
 * Use the paint tools (choose "Tools Palette" from the "Tools" menu) to draw on the card.
-*	Open a previously saved stack document ("File" -> "Open Stack..."). I've included a few example cards in the "Examples" folder to experiment with.
+*	Open a previously saved stack document ("File" -> "Open Stack...").
 *	Enter a statement or expression in the message box. Press enter to execute or evaluate your message.
 
 To start scripting:
 
-1.	Create a new button or field, or select an existing one.
-2.	Right-click on the part and choose "Edit Script..." or "Edit Part Properties..." Both buttons and fields have several user-editable properties that can be inspected and modified within the GUI.
+1.	Create a new button or field, or, choose the button tool or field tool from the tools palette, then select an existing one.
+2.	Double-click on the selected part to show the part's property editor, then click the "Script..." button.
 
 ### Modifying the UI components
 
-The UI forms were generated using the GUI Designer built into IntelliJ's IDEA 15 (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
+The UI forms were generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
 
-Be aware that by default IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is most elegant, it produces source code that is incomplete and which cannot be built with other tools.
+Be aware that by default IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is quite elegant, it produces source code that is incomplete and which cannot be imported and built with other tools.
 
 To correct this, you need to configure IntelliJ to generate its GUI boilerplate code in Java source files, not in the `.class` files:
 
@@ -72,7 +72,7 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 
 HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements called `parts` and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime.
 
-HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, Boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
+HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -93,7 +93,9 @@ end mouseUp
 
 ```
 
-Note that comments are preceded by `--` and, unlike C or Java, newlines have meaning in the syntax (although indentation does not). Newlines are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot break across multiple lines. For example, this is legal:
+Note that comments are preceded by `--` and, unlike C or Java, newlines have meaning in the syntax (although other whitespace does not). Newlines are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot break across multiple lines.
+
+For example, this is legal:
 
 ```
 if x < y then
@@ -124,9 +126,9 @@ Apple's HyperCard supported a newline character (_logical negation_ symbol, [Uni
 
 As you enter script text into the script editor, this implementation will flag syntax errors as you type by underlining the offending text with a red squiggle. A (typically useless) error message from the Antlr parser will also appear at the bottom of the editor.
 
-## Cards & Stacks
+## Stacks of Cards
 
-A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window. When the current card changes as result of navigating away, the contents of the new card appear in place of the old card. While cards can be "pushed" and "popped" from view, one should not confuse HyperCard's concept of a stack with the data structure known in Computer Science.
+A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window. When the current card changes as result of navigating away, the contents of the new card appear in the window in place of the old card. While cards can be "pushed" and "popped" from view, one should not confuse HyperCard's concept of a stack with the data structure known in Computer Science. (A student of Computer Science would model HyperCard's collection of cards as an ordered list; not a stack.)
 
 The `go` command is used to navigate between cards:
 
@@ -160,9 +162,11 @@ go to the previous card
 go to the prev card
 ```
 
-## Script handlers
+## Scripts and Handlers
 
-A script consists of zero or more handlers and function definitions. A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it. A _function definition_, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements and optionally returns a single value.
+A script consists of zero or more handlers and/or function definitions.
+
+A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it (you'll note [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk)'s influence, here). A _function definition_, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements and optionally returns a single value.
 
 For example, a button might contain the script:
 
@@ -172,7 +176,7 @@ on mouseUp
 end mouseUp
 ```
 
-When the user clicks the button containing this script, the action of the mouse button being released over the part causes the HyperCard runtime environment to send the message `mouseUp` to the affected button. Upon receipt of this message, the button executes its `mouseUp` handler. (In our example, this generates a "hello world" dialog box).
+In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes the HyperCard runtime environment to send the message `mouseUp` to the affected button. Upon receipt of this message, the button executes its `mouseUp` handler. (In our example, this generates a "hello world" dialog box).
 
 This HyperCard implementation automatically sends the following event messages:
 
@@ -197,105 +201,11 @@ send keyDown to me
 
 Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
 
-## Parts and their properties
+## Containers
 
-A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles, this implementation provides a similar (but not identical) set of styled parts.
+A _container_ is any entity in HyperCard that can hold a value; all parts, variables, properties and the message box are containers.
 
-In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background, which are grouped together in a document called a _stack_ (like a stack of index cards). Each card had an individual foreground, but the background could be shared between cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
-
-For simplification, this implementation does not allow scripting of cards, stacks or backgrounds. Currently, this implementation supports a single background shared across all cards but only for the purpose of graphics (parts cannot yet be added to the background--coming soon).
-
-In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
-
-All parts have these properties:
-
-Property      | Description
---------------|------------
-`script`      | Retrieves or replaces the current script of the part
-`id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
-`name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
-`left`        | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
-`top`	        | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
-`width`       | Returns or sets the width of the part (in pixels)
-`height`      | Returns or sets the height of the part (in pixels)
-`rect`        | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rectangle`.
-`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
-`bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
-`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
-`enabled`     | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that it continues to receive user interface generated messages.
-
-### Buttons
-
-In HyperCard, buttons come in a variety of _styles_ which affects their look-and-feel as well as their behavior. This implementation supports the following button styles:
-
-Style                                    | Name          | Notes
------------------------------------------|---------------|------------
-![Default](doc/images/default.png)       | `default`     | A typical push button whose style matches that of the operating system.
-![Default](doc/images/classic.png)       | `classic`     | A push button drawn in the style of Mac OS Classic.
-![Default](doc/images/oval.png) | `oval` | A push button drawn with an oval border.
-![Default](doc/images/rectangular.png)   | `rectangular` | A push button drawn with a rectangular border.
-![Default](doc/images/transparent.png)   | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
-![Default](doc/images/checkbox.png)      | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/radio.png)         | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/menu.png)          | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
-
-In addition to the properties common to all parts, a button has these additional properties:
-
-Property    | Description
-------------|------------
-`style`     | Sets or retrieves the button style. Button styles are described in the table above.
-`contents`  | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
-`showname`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
-`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that disabled buttons continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`.
-`hilite`    | (Sic) Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
-`autohilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autohilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
-
-### Fields
-
-Fields in this version come in two flavors, transparent and opaque:
-
-Style                                        | Name          | Notes
----------------------------------------------|---------------|------------
-![Opaque](doc/images/opaque_field.png)       | `opaque`      | An opaque, etched-border editable text field that can be filled with formatted text.
-![Default](doc/images/transparent_field.png) | `transparent` | Functionally identical to an opaque field, but whose background and border is transparent.
-
-A field has these properties:
-
-Property   | Description
------------|------------
-`text`     | Returns or sets the text contained within this field
-`visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
-`locktext` | Returns or sets whether the text contained by the field can be edited by the user.
-
-Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are read using the `get` command, and modified with the `set` command. For example:
-
-```
-set the visible of me to true
-set the left of button myButton to item 1 of the mouseLoc
-get the name of button id 0
-set the rect of button "Hi" to "10,10,100,100"
-```
-
-### Global Properties
-
-Some properties apply to HyperCard at large instead of an individual part. The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
-
-```
-set the itemDelimiter to ","
-get the itemDelimiter
-```
-
-This implementation supports only a single global property:
-
-Global Property | Description
-----------------|---------------
-`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
-
-## Variables and containers
-
-A _container_ is any entity in HyperCard that can hold a value; all parts, variables and the message box are containers.
-
-Local variables in HyperTalk are lexically scoped and implicitly declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
+Local variables in HyperTalk are lexically scoped and implicitly declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such with the `global` keyword. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
 
 HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers.
 For example:
@@ -323,22 +233,126 @@ function y
 end y
 ```
 
-Like variables, parts and the message box can also be used to store value. For example:
+Like variables, parts, properties and the message box can also be used to store value. When placing a value into a field, the text contents of the field are changed. When placing a value into a button, the button's `contents` property is changed (the contents property does not affect the button's appearance in any way).
+
+For example:
 
 ```
-put 35 + 27 into field id 12
-put the text of button myButton into the message box
+put 35 + 27 into field id 12          -- Changes the text of this field to "62"
+put 35 + 26 into button "My Button"   -- Changes the contents of this button to "62"
+put the name of button myButton into the message box
+put "Button " && buttonTitle into the name of button id 1
 ```
 
-Note that HyperTalk contains an implicit variable named `it`; most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard). For example:
+Note that HyperTalk contains an implicit variable named `it`; most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard).
+
+For example:
 
 ```
 on mouseUp
 	ask "How are you, fine sir?"
-	put it into responseVar  -- ‘it' contains the user's input
-	put the result into responseVar -- same effect as previous line
+	put it into responseVar            -- ‘it' contains the user's input
+	put the result into responseVar    -- same effect as previous line
 end mouseUp
 ```
+
+## Parts and Properties
+
+A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles. This implementation provides a similar (but not identical) set of styled parts.
+
+In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background. Each card has an individual foreground, but the background could be shared between cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
+
+For simplification, this implementation does not allow scripting of cards, stacks or backgrounds. Currently, this implementation supports a single background shared across all cards but only for the purpose of graphics (button or field parts cannot yet be added to the background--coming soon).
+
+In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
+
+Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are treated as "first class" containers in HyperTalk and may be read with the `get` command, or mutated using the `set` or `put` commands.
+
+For example:
+
+```
+set the visible of me to true
+set the left of button myButton to item 1 of the mouseLoc
+get the name of button id 0      -- puts the name into the implicit variable, 'it'
+set the rect of button "Hi" to "10,10,100,100"
+```
+
+Note that part names need not be unique and this fact may lead to ambiguity when addressing a part by name. If more than one part exists with the addressed name, one of the parts will be accessed (which one is indeterminate).
+
+All parts have these properties:
+
+Property      | Description
+--------------|------------
+`script`      | Retrieves or replaces the current script of the part
+`id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
+`name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
+`left`        | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
+`top`	        | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
+`width`       | Returns or sets the width of the part (in pixels)
+`height`      | Returns or sets the height of the part (in pixels)
+`rect`        | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rectangle`.
+`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
+`enabled`     | Returns or sets whether the part is enabled (a Boolean value). When disabled, the part appears "grayed out", but note that it continues to receive HyperCard-generated messages (like `mouseEnter`).
+
+### Buttons
+
+Buttons come in a variety of _styles_ which affects their look-and-feel as well as their behavior. This implementation supports the following button styles:
+
+Style                                    | Name          | Notes
+-----------------------------------------|---------------|------------
+![Default](doc/images/default.png)       | `default`     | A typical push button whose style matches that of the operating system.
+![Default](doc/images/classic.png)       | `classic`     | A push button drawn in the style of Mac OS Classic.
+![Default](doc/images/oval.png) | `oval` | A push button drawn with an oval border.
+![Default](doc/images/rectangular.png)   | `rectangular` | A push button drawn with a rectangular border.
+![Default](doc/images/transparent.png)   | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
+![Default](doc/images/checkbox.png)      | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Default](doc/images/radio.png)         | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Default](doc/images/menu.png)          | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
+
+In addition to the properties common to all parts, a button has these additional properties:
+
+Property    | Description
+------------|------------
+`style`     | Sets or retrieves the button style. Button styles are described in the table above.
+`contents`  | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
+`showname`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
+`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that disabled buttons continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`.
+`hilite`    | (Sic) Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
+`autohilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autohilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
+
+### Fields
+
+Fields in this version come in two flavors, transparent and opaque. This implementation provides no ability to show lines or prevent text-wrapping.
+
+Style                                        | Name          | Notes
+---------------------------------------------|---------------|------------
+![Opaque](doc/images/opaque_field.png)       | `opaque`      | An opaque, etched-border editable text field that can be filled with formatted text.
+![Default](doc/images/transparent_field.png) | `transparent` | Functionally identical to an opaque field, but whose background and border is transparent.
+
+A field has these properties:
+
+Property   | Description
+-----------|------------
+`text`     | Returns or sets the text contained within this field
+`visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
+`locktext` | Returns or sets whether the text contained by the field can be edited by the user.
+
+### Global Properties
+
+Some properties apply to HyperCard at large instead of an individual part. The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
+
+```
+set the itemDelimiter to ","
+get the itemDelimiter
+```
+
+This implementation supports only a single global property:
+
+Global Property | Description
+----------------|---------------
+`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 
 ## Chunk Expressions
 
@@ -377,7 +391,7 @@ put "blah" after the third character of the middle item of myVar
 put 29 before the message box
 ```
 
-Most impressively, HyperTalk allows you to modify a chunk-of-a-chunk of text within a container. For example:
+Want to impress your friends? HyperTalk lets you to modify a chunk-of-a-chunk of text within a container. For example:
 
 ```
 put x into the second character of the third word of the fourth line of field id 1
@@ -386,7 +400,7 @@ put the first char of the second word of x into the middle item of the last line
 
 ## Arithmetic and Logical Expressions
 
-In addition to chunk expressions, HyperTalk supports a typical suite of math, string and logical operators, including the following (all operators are binary, excepted where otherwise noted):
+In addition to chunk expressions, HyperTalk supports a standard suite of mathematical, text and logical operators, including the following (all operators are binary, excepted where otherwise noted):
 
 Precedence  | Operator   | Description
 ------------| -----------|-------------
@@ -415,17 +429,19 @@ Precedence  | Operator   | Description
 
 HyperCard uses the following order (top to bottom) to evaluate factors and terms in an expression:
 
-Term                    | Description
-------------------------|------------
-`empty`                 | Keyword expression representing the empty string (e.g., `if x is empty`)
-_Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
-_User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
-_Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
-_Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
-_Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
-_Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+Precedence  | Term                    | Description
+------------|------------------------|------------
+1 (highest) | `empty`                 | Keyword expression representing the empty string (e.g., `if x is empty`)
+2           | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
+3           | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
+4           | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
+5           | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
+6           | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
+7           | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
 
-This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as real HyperTalk.  Valid expressions include:
+This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as real HyperTalk.  
+
+Valid expressions include:
 
 ```
 item 1 of the mouseloc < 100 -- true if the mouse is towards the left of the card
@@ -446,7 +462,7 @@ Command	   | Description
 -----------|------------
 `put`      | Places a value into a container or a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as a default container.
 `get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`)
+`set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `wait`     | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
 `answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.

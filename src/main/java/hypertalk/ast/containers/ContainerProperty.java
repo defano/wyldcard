@@ -9,14 +9,20 @@ import hypertalk.exception.HtSemanticException;
 public class ContainerProperty extends Container {
 
     public final PropertySpecifier propertySpec;
+    public final Chunk chunk;
 
     public ContainerProperty(PropertySpecifier propertySpec) {
         this.propertySpec = propertySpec;
+        this.chunk = null;
+    }
+
+    public ContainerProperty(PropertySpecifier propertySpec, Chunk chunk) {
+        this.propertySpec = propertySpec;
+        this.chunk = chunk;
     }
 
     public Chunk chunk() {
-        // Properties cannot be mutated by chunk
-        return null;
+        return chunk;
     }
 
     @Override
@@ -27,7 +33,7 @@ public class ContainerProperty extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), value);
+        GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), preposition, chunk, value);
     }
 
     public PartSpecifier getPartSpecifier() throws HtSemanticException {

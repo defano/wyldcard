@@ -166,10 +166,18 @@ public class GlobalContext {
         return getCard().getPart(ps).getProperty(property);
     }
 
-    public void set (String property, PartSpecifier ps, Value value) 
+    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value)
     throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSemanticException
     {
-        getCard().getPart(ps).setProperty(property, value);
+        Value mutable = getCard().getPart(ps).getProperty(property);
+
+        if (chunk != null) {
+            mutable = Value.setChunk(mutable, preposition, chunk, value);
+        } else {
+            mutable = Value.setValue(mutable, preposition, value);
+        }
+
+        getCard().getPart(ps).setProperty(property, mutable);
     }
     
     public void setIt (Object value) {
