@@ -942,7 +942,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitWaitForCountCmd(HyperTalkParser.WaitForCountCmdContext ctx) {
-        return new StatWaitCmd((Expression) visit(ctx.factor()), true);
+        return new StatWaitCmd((Expression) visit(ctx.factor()), (TimeUnit) visit(ctx.timeUnit()));
     }
 
     @Override
