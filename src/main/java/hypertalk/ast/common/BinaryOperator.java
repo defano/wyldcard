@@ -28,7 +28,8 @@ public enum BinaryOperator {
     CONTAINS("contains"),
     IS_IN("is in"),
     IS_NOT_IN("is not in"),
-    CONCAT("&", "&&");
+    AMP("&"),
+    AMPAMP("&&");
 
     private List<String> tokens;
 

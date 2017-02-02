@@ -180,14 +180,15 @@ In this example, when the user clicks the button containing this script, the act
 
 This HyperCard implementation automatically sends the following event messages:
 
- Event Message | Description
----------------|-----------------------------------------------------------------------------
- `mouseUp`     | Sent when the mouse is pressed and released over a part
- `mouseDown`   | Sent when the mouse is pressed over a part
- `mouseEnter`  | Sent when the cursor enters the region of a part
- `mouseExit`   | Sent when the cursor leaves the region of a part
- `keyDown`     | Sent only to in-focus fields when the user presses a key
- `keyUp`       | Sent only to in-focus fields when the user presses then releases a key
+ Event Message      | Description
+--------------------|-----------------------------------------------------------------------------
+ `mouseUp`          | Sent when the mouse is pressed and released over a part
+ `mouseDown`        | Sent when the mouse is pressed over a part
+ `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
+ `mouseEnter`       | Sent when the cursor enters the region of a part
+ `mouseLeave`       | Sent when the cursor leaves the region of a part
+ `keyDown`          | Sent only to in-focus fields when the user presses a key
+ `keyUp`            | Sent only to in-focus fields when the user presses then releases a key
 
 Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Moreover, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the scripter's own creation.
 
@@ -414,7 +415,7 @@ Precedence  | Operator   | Description
             | `mod`	     | Modulus division for numbers; returns the remainder
 5           | `+`        | Addition for numbers
             | `-`        | Subtraction for numbers
-6           | `&`, `&&`  | Text concatenation; & and && are synonymous
+6           | `&`, `&&`  | Text concatenation; `&&` adds a space between operands; `&` does not
 7           | `>`        | Greater than comparison for numbers and text
             | `<`        | Less than comparison for numbers and text
             | `<=`       | Less than or equal to comparison for numbers and text

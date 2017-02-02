@@ -57,7 +57,9 @@ public interface Part {
     }
 
     default void sendMessage(String message) {
-        Interpreter.executeHandler(new PartIdSpecifier(getType(), getId()), getScript(), message);
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+            Interpreter.executeHandler(new PartIdSpecifier(getType(), getId()), getScript(), message);
+        }
     }
 
     default Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {

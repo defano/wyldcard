@@ -932,7 +932,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitConcatExp(HyperTalkParser.ConcatExpContext ctx) {
-        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.CONCAT, (Expression) visit(ctx.expression(1)));
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
     }
 
     @Override

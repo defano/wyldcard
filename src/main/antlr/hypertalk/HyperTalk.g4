@@ -241,7 +241,7 @@ expression          : 'empty'                                                   
                     | expression '^' expression                                         # caratExp
                     | expression op=('mod'|'div'|'/'|'*') expression                    # multiplicationExp
                     | expression op=('+'|'-') expression                                # additionExp
-                    | expression ('&&'|'&') expression                                  # concatExp
+                    | expression op=('&&'|'&') expression                               # concatExp
                     | expression op=('>='|'<='|'<'|'>'|'contains'|'is in') expression   # equalityExp
                     | expression op=('='|'is not'|'is'|'<>'|'is not in') expression     # comparisonExp
                     | expression 'and' expression                                       # andExp

@@ -182,7 +182,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
     }
@@ -191,7 +191,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseUp");
         }
     }
@@ -199,26 +199,20 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-            sendMessage("mouseEnter");
-        }
+        sendMessage("mouseEnter");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-            sendMessage("mouseExit");
-        }
+        sendMessage("mouseLeave");
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && getTextComponent().hasFocus()) {
+        if (getTextComponent().hasFocus()) {
             sendMessage("keyDown");
         }
     }
@@ -227,7 +221,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && getTextComponent().hasFocus()) {
+        if (getTextComponent().hasFocus()) {
             sendMessage("keyUp");
         }
     }
@@ -235,6 +229,9 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
+        if (e.getClickCount() == 2) {
+            sendMessage("mouseDoubleClick");
+        }
     }
 
     @Override

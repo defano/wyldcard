@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
+import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
@@ -42,6 +43,8 @@ public class ToolsContext implements StackModelObserver {
     private Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private Provider<Boolean> drawMultiple = new Provider<>(false);
     private Provider<Boolean> drawCentered = new Provider<>(false);
+
+    private PaintToolType lastToolType;
 
     private ToolsContext() {
         HyperCard.getInstance().getStack().addObserver(this);
@@ -91,7 +94,9 @@ public class ToolsContext implements StackModelObserver {
 
     public void selectPaintTool(PaintToolType selectedToolType) {
 
+        lastToolType = paintToolProvider.get().getToolType();
         paintToolProvider.get().deactivate();
+
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
@@ -155,6 +160,15 @@ public class ToolsContext implements StackModelObserver {
 
     public Provider<Integer> getFillPatternProvider() {
         return fillPatternProvider;
+    }
+
+    public void toggleMagnifier() {
+        if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
+            HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
+            selectPaintTool(lastToolType);
+        } else {
+            selectPaintTool(PaintToolType.MAGNIFIER);
+        }
     }
 
     public void setFontSize(int size) {

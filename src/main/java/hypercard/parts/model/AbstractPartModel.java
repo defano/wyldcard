@@ -1,10 +1,11 @@
 /**
  * AbstractPartModel.java
+ *
  * @author matt.defano@gmail.com
- * 
+ * <p>
  * Implements a table of model associated with a partSpecifier object. Provides
  * methods for defining, getting and setting model, as well as notifying
- * listeners of changes. 
+ * listeners of changes.
  */
 
 package hypercard.parts.model;
@@ -30,6 +31,8 @@ public abstract class AbstractPartModel extends PropertiesModel {
     public static final String PROP_TOPLEFT = "topleft";
     public static final String PROP_BOTTOMRIGHT = "bottomright";
     public static final String PROP_VISIBLE = "visible";
+    public static final String PROP_LOC = "loc";
+    public static final String PROP_LOCATION = "location";
 
     private PartType type;
 
@@ -86,12 +89,28 @@ public abstract class AbstractPartModel extends PropertiesModel {
                 )
         );
 
+        definePropertyAlias(PROP_LOCATION, PROP_LOC);
+        defineComputedGetterProperty(PROP_LOCATION, (model, propertyName) ->
+                new Value(
+                        model.getKnownProperty(PROP_LEFT).integerValue() + model.getKnownProperty(PROP_WIDTH).integerValue() / 2,
+                        model.getKnownProperty(PROP_TOP).integerValue() + model.getKnownProperty(PROP_HEIGHT).integerValue() / 2
+                )
+        );
+        defineComputedSetterProperty(PROP_LOCATION, (model, propertyName, value) -> {
+            if (value.isPoint()) {
+                model.setKnownProperty(PROP_LEFT, new Value(value.listItemAt(0).longValue() - model.getKnownProperty(PROP_WIDTH).longValue() / 2));
+                model.setKnownProperty(PROP_TOP, new Value(value.listItemAt(1).longValue() - model.getKnownProperty(PROP_HEIGHT).longValue() / 2));
+            } else {
+                throw new HtSemanticException("Expected a point but got " + value.stringValue());
+            }
+        });
+
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
         defineProperty(PROP_VISIBLE, new Value(true), false);
         defineProperty(PROP_ZORDER, new Value(0), false);
     }
 
-    public PartType getType () {
+    public PartType getType() {
         return type;
     }
 

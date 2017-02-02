@@ -12,6 +12,7 @@ package hypercard.parts;
 import hypercard.context.PartToolContext;
 import hypercard.context.ToolMode;
 import hypercard.context.ToolsContext;
+import hypercard.gui.util.MouseManager;
 import hypercard.gui.window.ButtonPropertyEditor;
 import hypercard.gui.window.WindowBuilder;
 import hypercard.parts.buttons.ButtonStyle;
@@ -23,6 +24,7 @@ import hypercard.HyperCard;
 import hypercard.runtime.WindowManager;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Script;
+import hypertalk.ast.common.Tool;
 import hypertalk.ast.common.Value;
 import hypertalk.exception.HtSemanticException;
 
@@ -178,7 +180,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
     }
@@ -187,7 +189,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
 
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseUp");
         }
     }
@@ -195,24 +197,21 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-            sendMessage("mouseEnter");
-        }
+        sendMessage("mouseEnter");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-            sendMessage("mouseExit");
-        }
+        sendMessage("mouseLeave");
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
+        if (e.getClickCount() == 2) {
+            sendMessage("mouseDoubleClick");
+        }
     }
 
     @Override
