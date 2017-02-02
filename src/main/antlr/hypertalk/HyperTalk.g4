@@ -110,8 +110,8 @@ timeUnit            : 'ticks'                                       # ticksTimeU
                     | 'second'                                      # secondTimeUnit
                     ;
 
-position            : NEXT                                          # nextPosition
-                    | PREV                                          # prevPosition
+position            : 'the'? 'next'                                 # nextPosition
+                    | 'the'? ('prev' | 'previous')                  # prevPosition
                     ;
 
 destination         : destinationType expression                    # cardNumber
@@ -175,34 +175,34 @@ preposition			: 'before'                                      # beforePrepositio
                     ;
 
 chunk               : chunk chunk                                   # compositeChunk
-                    | ordinal CHAR OF_IN                            # ordinalCharChunk
-                    | CHAR expression 'to' expression OF_IN         # rangeCharChunk
-                    | CHAR expression OF_IN                         # charCharChunk
-                    | ordinal WORD OF_IN                            # ordinalWordChunk
-                    | WORD expression 'to' expression OF_IN         # rangeWordChunk
-                    | WORD expression OF_IN                         # wordWordChunk
-                    | ordinal ITEM OF_IN                            # ordinalItemChunk
-                    | ITEM expression 'to' expression OF_IN         # rangeItemChunk
-                    | ITEM expression OF_IN                         # itemItemChunk
-                    | ordinal LINE OF_IN                            # ordinalLineChunk
-                    | LINE expression 'to' expression OF_IN         # rangeLineChunk
-                    | LINE expression OF_IN                         # lineLineChunk
+                    | ordinal CHAR ('of' | 'in')                    # ordinalCharChunk
+                    | CHAR expression 'to' expression ('of' | 'in') # rangeCharChunk
+                    | CHAR expression ('of' | 'in')                 # charCharChunk
+                    | ordinal WORD ('of' | 'in')                    # ordinalWordChunk
+                    | WORD expression 'to' expression ('of' | 'in') # rangeWordChunk
+                    | WORD expression ('of' | 'in')                 # wordWordChunk
+                    | ordinal ITEM ('of' | 'in')                    # ordinalItemChunk
+                    | ITEM expression 'to' expression ('of' | 'in') # rangeItemChunk
+                    | ITEM expression ('of' | 'in')                 # itemItemChunk
+                    | ordinal LINE ('of' | 'in')                    # ordinalLineChunk
+                    | LINE expression 'to' expression ('of' | 'in') # rangeLineChunk
+                    | LINE expression ('of' | 'in')                 # lineLineChunk
                     ;
 
-container			: ID                                            # variableDest
-                    | 'the'? MESSAGE                                # messageDest
-                    | chunk 'the'? MESSAGE                          # chunkMessageDest
-                    | chunk ID                                      # chunkVariableDest
-                    | part                                          # partDest
-                    | chunk part                                    # chunkPartDest
-                    | chunk                                         # chunkDest
-                    | propertySpec                                  # propertyDest
-                    | chunk propertySpec                            # chunkPropertyDest
-                    |                                               # defaultDest
+container			: ID                                                                # variableDest
+                    | 'the'? ('message' | 'message' 'box' | 'message' 'window')         # messageDest
+                    | chunk 'the'? ('message' | 'message' 'box' | 'message' 'window')   # chunkMessageDest
+                    | chunk ID                                                          # chunkVariableDest
+                    | part                                                              # partDest
+                    | chunk part                                                        # chunkPartDest
+                    | chunk                                                             # chunkDest
+                    | propertySpec                                                      # propertyDest
+                    | chunk propertySpec                                                # chunkPropertyDest
+                    |                                                                   # defaultDest
                     ;
 
 propertySpec        : 'the'? ID                                     # propertySpecGlobal
-                    | 'the'? ID OF_IN part                          # propertySpecPart
+                    | 'the'? ID ('of' | 'in') part                  # propertySpecPart
                     ;
 
 part                : FIELD factor                                  # fieldPart
@@ -217,18 +217,18 @@ part                : FIELD factor                                  # fieldPart
 ordinal             : 'the'? ordinalValue                           # theOrdinalVal
                     ;
 
-ordinalValue        : FIRST                                         # firstOrd
-                    | SECOND                                        # secondOrd
-                    | THIRD                                         # thirdOrd
-                    | FOURTH                                        # fourthOrd
-                    | FIFTH                                         # fifthOrd
-                    | SIXTH                                         # sixthOrd
-                    | SEVENTH                                       # seventhOrd
-                    | EIGTH                                         # eigthOrd
-                    | NINTH                                         # ninthOrd
-                    | TENTH                                         # tenthOrd
-                    | MIDDLE                                        # midOrd
-                    | LAST                                          # lastOrd
+ordinalValue        : 'first'                                       # firstOrd
+                    | 'second'                                      # secondOrd
+                    | 'third'                                       # thirdOrd
+                    | 'fourth'                                      # fourthOrd
+                    | 'fifth'                                       # fifthOrd
+                    | 'sixth'                                       # sixthOrd
+                    | 'seventh'                                     # seventhOrd
+                    | 'eigth'                                       # eigthOrd
+                    | 'ninth'                                       # ninthOrd
+                    | 'tenth'                                       # tenthOrd
+                    | ('mid' | 'middle')                            # midOrd
+                    | 'last'                                        # lastOrd
                     ;
 
 expression          : 'empty'                                                           # emptyExp
@@ -255,7 +255,7 @@ factor				: literal                                       # literalFactor
                     | propertySpec                                  # idOfPartFactor
                     ;
 
-builtinFunc         : 'the'? oneArgFunc OF_IN factor                # builtinFuncOneArgs
+builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor        # builtinFuncOneArgs
                     | 'the' noArgFunc                               # builtinFuncNoArg
                     | oneArgFunc '(' expressionList ')'             # builtinFuncArgList
                     ;
@@ -263,21 +263,21 @@ builtinFunc         : 'the'? oneArgFunc OF_IN factor                # builtinFun
 oneArgFunc          : 'average'                                     # averageFunc
                     | 'min'                                         # minFunc
                     | 'max'                                         # maxFunc
-                    | 'number' OF_IN CHAR                           # numberOfCharsFunc
-                    | 'number' OF_IN WORD                           # numberOfWordsFunc
-                    | 'number' OF_IN ITEM                           # numberOfItemsFunc
-                    | 'number' OF_IN LINE                           # numberOfLinesFunc
+                    | 'number' ('of' | 'in') CHAR                   # numberOfCharsFunc
+                    | 'number' ('of' | 'in') WORD                   # numberOfWordsFunc
+                    | 'number' ('of' | 'in') ITEM                   # numberOfItemsFunc
+                    | 'number' ('of' | 'in') LINE                   # numberOfLinesFunc
                     | 'random'                                      # randomFunc
                     ;
 
-noArgFunc           : 'mouse'                                       # mouseFunc
-                    | 'mouseloc'                                    # mouseLocFunc
-                    | 'result'                                      # resultFunc
-                    | MESSAGE                                       # messageFunc
-                    | 'ticks'                                       # ticksFunc
-                    | 'seconds'                                     # secondsFunc
-                    | dateFormat 'date'                             # dateFormatFunc
-                    | dateFormat 'time'                             # timeFormatFunc
+noArgFunc           : 'mouse'                                               # mouseFunc
+                    | 'mouseloc'                                            # mouseLocFunc
+                    | 'result'                                              # resultFunc
+                    | ('message' | 'message' 'box' | 'message' 'window')    # messageFunc
+                    | 'ticks'                                               # ticksFunc
+                    | 'seconds'                                             # secondsFunc
+                    | dateFormat 'date'                                     # dateFormatFunc
+                    | dateFormat 'time'                                     # timeFormatFunc
                     ;
 
 dateFormat          : 'long'                                        # longDateFormat
@@ -295,7 +295,6 @@ literal				: STRING_LITERAL                                # stringLiteral
                     ;
 
 THEN				: NEWLINE 'then' | 'then';
-OF_IN               : 'of' | 'in';
 
 FIELD               : 'field'  | 'card field';
 BUTTON              : 'button' | 'card button';
@@ -303,24 +302,6 @@ CHAR                : 'char'   | 'character' | 'chars' | 'characters' ;
 WORD                : 'word'   | 'words';
 ITEM                : 'item'   | 'items';
 LINE                : 'line'   | 'lines';
-
-PREV                : 'prev' | 'previous' | 'the prev' | 'the previous';
-NEXT                : 'next' | 'the next';
-
-MESSAGE				: 'message' | 'message box' | 'message window';
-
-FIRST               : 'first';
-SECOND              : 'second';
-THIRD               : 'third';
-FOURTH              : 'fourth';
-FIFTH               : 'fifth';
-SIXTH               : 'sixth';
-SEVENTH             : 'seventh';
-EIGTH               : 'eigth';
-NINTH               : 'ninth';
-TENTH               : 'tenth';
-MIDDLE              : 'mid' | 'middle';
-LAST                : 'last';
 
 ID                  : POINT | RECT | (ALPHA (ALPHA | DIGIT)*) ;
 
