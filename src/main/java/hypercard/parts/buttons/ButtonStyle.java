@@ -12,7 +12,8 @@ public enum ButtonStyle {
     MENU("Menu"),
     RECTANGULAR("Rectangular"),
     OVAL("Oval"),
-    TRANSPARENT("Transparent");
+    TRANSPARENT("Transparent"),
+    SHADOW("Shadow");
 
     private final String name;
 

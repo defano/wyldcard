@@ -71,6 +71,8 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
                 return new OvalButton(this);
             case CLASSIC:
                 return new ClassicButton(this);
+            case SHADOW:
+                return new ShadowButton(this);
 
             default:
                 throw new IllegalArgumentException("Bug! Unimplemented button style.");

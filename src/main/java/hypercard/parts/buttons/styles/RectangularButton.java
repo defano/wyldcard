@@ -15,8 +15,10 @@ public class RectangularButton extends AbstractLabelButton {
 
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        g.setPaint(textColor(isDisabled));
+        g.setPaint(Color.WHITE);
+        g.fillRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
 
+        g.setPaint(textColor(isDisabled));
         g.setStroke(new BasicStroke(OUTLINE_SROKE));
         g.drawRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
 

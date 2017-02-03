@@ -15,12 +15,17 @@ public class OvalButton extends AbstractLabelButton {
 
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        g.setPaint(textColor(isDisabled));
+        g.setPaint(Color.WHITE);
+        g.fillOval(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
 
+        g.setPaint(textColor(isDisabled));
         g.setStroke(new BasicStroke(OUTLINE_SROKE));
         g.drawOval(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
 
         if (isHilited) {
+            g.fillOval(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE);
+        } else {
+            g.setPaint(Color.WHITE);
             g.fillOval(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE);
         }
     }

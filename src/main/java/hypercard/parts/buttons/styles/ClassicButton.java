@@ -18,6 +18,9 @@ public class ClassicButton extends AbstractLabelButton implements ButtonView {
 
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
+        g.setPaint(Color.WHITE);
+        g.fillRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
+
         g.setPaint(textColor(isDisabled));
         g.setStroke(new BasicStroke(OUTLINE_SROKE));
         g.drawRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
