@@ -58,7 +58,7 @@ public class RangeUtils {
         try {
             return new Range(matcher.start(), matcher.end());
         } catch (IllegalStateException e) {
-            return new Range(0, 0);
+            return new Range(value.length(), value.length());
         }
     }
 

@@ -15,6 +15,9 @@ public class TestChunkUtils {
         assertEquals("L1\n\nx\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 2, 0, "x"));
         assertEquals("L1\n\nL3\nx\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 3, 0, "x"));
         assertEquals("L1\n\nL3\nL4\nx", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 4, 0, "x"));
+
+        // Non-existent chunk
+        assertEquals("L1\n\nL3\nL4\n\n\n\n\n\nx", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 9, 0, "x"));
     }
 
 
@@ -24,6 +27,9 @@ public class TestChunkUtils {
         assertEquals("L1\nx\n\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 2, 0, "x"));
         assertEquals("L1\n\nx\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 3, 0, "x"));
         assertEquals("L1\n\nL3\nx\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 4, 0, "x"));
+
+        // Non-existent chunk
+        assertEquals("L1\n\nL3\nL4\n\n\n\n\nx\n", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 9, 0, "x"));
     }
 
     @Test
@@ -32,6 +38,9 @@ public class TestChunkUtils {
         assertEquals("L1\nx\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 2, 0, "x"));
         assertEquals("L1\n\nx\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 3, 0, "x"));
         assertEquals("L1\n\nL3\nx", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 4, 0, "x"));
+
+        // Non-existent chunk
+        assertEquals("L1\n\nL3\nL4\n\n\n\n\nx", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 9, 0, "x"));
     }
 
     @Test
@@ -40,6 +49,9 @@ public class TestChunkUtils {
         assertEquals("1, 2,x,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 2, 0, "x"));
         assertEquals("1, 2,\n3,x,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 3, 0, "x"));
         assertEquals("1, 2,\n3,\t4,x", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 4, 0, "x"));
+
+        // Non-existent chunk
+        assertEquals("1, 2,\n3,\t4,,,,,,x", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 9, 0, "x"));
     }
 
     @Test
@@ -48,6 +60,9 @@ public class TestChunkUtils {
         assertEquals("1,x, 2,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 2, 0, "x"));
         assertEquals("1, 2,x,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 3, 0, "x"));
         assertEquals("1, 2,\n3,x,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 4, 0, "x"));
+
+        // Non-existent chunk
+        assertEquals("1, 2,\n3,\t4,,,,,x,", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 9, 0, "x"));
     }
 
     @Test
@@ -57,6 +72,9 @@ public class TestChunkUtils {
         assertEquals("1, 2,x,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4", 3, 0, "x"));
         assertEquals("1, 2,\n3,x", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4", 4, 0, "x"));
         assertEquals("1, 2,\n3,\t4,x", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4,", 5, 0, "x"));
+
+        // Non-existent chunk
+        assertEquals("1, 2,\n3,\t4,,,,,x", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4", 9, 0, "x"));
     }
 
     @Test

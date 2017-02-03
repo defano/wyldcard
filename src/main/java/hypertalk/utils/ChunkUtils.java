@@ -65,6 +65,23 @@ public class ChunkUtils {
      * @see #putCompositeChunk(CompositeChunk, Preposition, String, String)
      */
     public static String putChunk(ChunkType chunkType, Preposition preposition, String mutableString, int chunkNumber, int endChunkNumber, String mutatorString) {
+
+        if (chunkNumber != Ordinal.LAST.intValue() && chunkNumber != Ordinal.MIDDLE.intValue()) {
+
+            int chunksInContainer = getCount(chunkType, mutableString);
+
+            // Disallow mutating non-existent word/character chunks (lines/items are okay)
+            if ((chunkType == ChunkType.WORD || chunkType == ChunkType.CHAR) && chunksInContainer < chunkNumber) {
+                throw new IllegalArgumentException("Cannot set " + chunkType + " " + chunksInContainer + " because it doesn't exist.");
+            }
+
+            // If necessary, add as many lines/items as are needed to assure the value can be mutated
+            String separator = getSeparatorForChunkType(chunkType);
+            for (int index = chunksInContainer; index < chunkNumber; index++) {
+                mutableString = mutableString + separator;
+            }
+        }
+
         if (chunkType.isRange()) {
             return putChunkRange(chunkType, preposition, mutableString, chunkNumber, endChunkNumber, mutatorString);
         } else {
@@ -215,7 +232,7 @@ public class ChunkUtils {
         return matchCount;
     }
 
-    private static String putSingleChunk (ChunkType c, Preposition p, String value, int start, String replacement) {
+    private static String putSingleChunk(ChunkType c, Preposition p, String value, int start, String replacement) {
         switch (p) {
             case BEFORE:
                 return insertBefore(value, c, start, replacement);
