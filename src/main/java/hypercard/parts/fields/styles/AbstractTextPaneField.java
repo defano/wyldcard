@@ -112,8 +112,9 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
     }
 
     private void replaceText(String withText) {
+
         StyledDocument styledDocument = textPane.getStyledDocument();
-        List<StyleSpan> styleSpans = getStyleSpans();
+        List<StyleSpan> styleSpans = getStyleSpans(styledDocument);
 
         // Do not fire listeners during this operation
         styledDocument.removeDocumentListener(this);
@@ -122,15 +123,15 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
             // Remove current text
             styledDocument.remove(0, getText().length());
 
+            // Remove all styles
+            Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+
             // Insert new text
-            styledDocument.insertString(0, withText, new SimpleAttributeSet());
+            styledDocument.insertString(0, withText, defaultStyle);
 
-            // Reapply old style to new text
-            for (StyleSpan thisSpan : styleSpans) {
-                styledDocument.setCharacterAttributes(thisSpan.start, thisSpan.end - thisSpan.start, thisSpan.styleSet, false);
-            }
+            applyStyleSpans(styledDocument, styleSpans);
 
-            ((FieldModel)toolEditablePart.getPartModel()).setStyleData(getRtf());
+            ((FieldModel) toolEditablePart.getPartModel()).setStyleData(getRtf());
 
         } catch (BadLocationException e) {
             throw new RuntimeException("An error occurred when replacing field text.", e);
@@ -207,36 +208,41 @@ public abstract class AbstractTextPaneField extends JScrollPane implements Field
         }
     }
 
-    private List<StyleSpan> getStyleSpans() {
+    private List<StyleSpan> getStyleSpans(StyledDocument styledDocument) {
 
         int lastIndex = 0;
         AttributeSet lastAttribute = null, thisAttribute = null;
         List<StyleSpan> styleSpans = new ArrayList<>();
+        String text = getText();
 
-        for (int index = 0; index < getText().length(); index++) {
-            thisAttribute = textPane.getStyledDocument().getCharacterElement(index).getAttributes();
+        for (int index = 0; index < text.length(); index++) {
+            thisAttribute = styledDocument.getCharacterElement(index).getAttributes();
 
             if (lastAttribute != null && lastAttribute != thisAttribute) {
-                styleSpans.add(new StyleSpan(lastIndex, index, lastAttribute));
-                lastIndex = index;
+                StyleSpan thisSpan = new StyleSpan(text, lastIndex, index, lastAttribute);
+                if (thisSpan.getSpanLength(text) > 0) {
+                    styleSpans.add(thisSpan);
+                    lastIndex = index;
+                }
             }
 
             lastAttribute = thisAttribute;
         }
 
-        styleSpans.add(new StyleSpan(lastIndex, getText().length(), thisAttribute));
+        styleSpans.add(new StyleSpan(text, lastIndex, text.length(), thisAttribute));
 
         return styleSpans;
     }
 
-    private class StyleSpan {
-        private final AttributeSet styleSet;
-        private final int start, end;
+    private void applyStyleSpans(StyledDocument styledDocument, List<StyleSpan> styleSpans) {
 
-        StyleSpan(int start, int end, AttributeSet styleSet) {
-            this.start = start;
-            this.end = end;
-            this.styleSet = styleSet;
+        // Reapply old style to new text
+        for (StyleSpan thisSpan : styleSpans) {
+            int startChar = thisSpan.getStartOfSpan(getText());
+            int endChar = thisSpan.getEndOfSpan(getText());
+
+            styledDocument.setCharacterAttributes(startChar, endChar - startChar, thisSpan.getStyleSet(), true);
         }
     }
+
 }
