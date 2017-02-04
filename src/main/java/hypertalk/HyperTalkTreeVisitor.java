@@ -130,6 +130,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitStatementListScript(HyperTalkParser.StatementListScriptContext ctx) {
+        Script script = new Script();
+        script.defineStatementList((StatementList) visit(ctx.statementList()));
+        return script;
+    }
+
+    @Override
     public Object visitWhitespaceScript(HyperTalkParser.WhitespaceScriptContext ctx) {
         return new Script();
     }

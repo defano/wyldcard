@@ -6,6 +6,7 @@ import hypercard.context.ToolsContext;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.model.ButtonModel;
+import hypercard.utils.FontUtils;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -46,6 +47,18 @@ public class MenuButton extends JComboBox implements ButtonView {
                 for (String thisItem : newValue.stringValue().split("\n")) {
                     menuItems.addElement(thisItem);
                 }
+                break;
+
+            case ButtonModel.PROP_TEXTSIZE:
+                setFont(new Font(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                break;
+
+            case ButtonModel.PROP_TEXTFONT:
+                setFont(new Font(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                break;
+
+            case ButtonModel.PROP_TEXTSTYLE:
+                setFont(new Font(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
         }
     }

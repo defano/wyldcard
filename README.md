@@ -296,6 +296,10 @@ Property      | Description
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
 `enabled`     | Returns or sets whether the part is enabled (a Boolean value). When disabled, the part appears "grayed out", but note that it continues to receive HyperCard-generated messages (like `mouseEnter`).
+`textSize`    | Returns or sets the size (in points) of the part's text.
+`textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
+`textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
+`textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic`. Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
 
 ### Buttons
 
@@ -305,9 +309,11 @@ Style                                    | Name          | Notes
 -----------------------------------------|---------------|------------
 ![Default](doc/images/default.png)       | `default`     | A typical push button whose style matches that of the operating system.
 ![Default](doc/images/classic.png)       | `classic`     | A push button drawn in the style of Mac OS Classic.
+![Default](doc/images/shadow.png)        | `shadow`      | A push button drawn with a drop-shadow decoration.
 ![Default](doc/images/oval.png) | `oval` | A push button drawn with an oval border.
 ![Default](doc/images/rectangular.png)   | `rectangular` | A push button drawn with a rectangular border.
 ![Default](doc/images/transparent.png)   | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
+![Opaque](doc/images/opaque.png)         | `opaque`      | A rectangular push button drawn without a border.
 ![Default](doc/images/checkbox.png)      | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
 ![Default](doc/images/radio.png)         | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
 ![Default](doc/images/menu.png)          | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.

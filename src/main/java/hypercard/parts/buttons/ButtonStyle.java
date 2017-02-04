@@ -13,6 +13,7 @@ public enum ButtonStyle {
     RECTANGULAR("Rectangular"),
     OVAL("Oval"),
     TRANSPARENT("Transparent"),
+    OPAQUE("Opaque"),
     SHADOW("Shadow");
 
     private final String name;

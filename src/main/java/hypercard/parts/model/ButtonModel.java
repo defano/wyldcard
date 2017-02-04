@@ -4,6 +4,7 @@ import hypercard.parts.buttons.ButtonStyle;
 import hypertalk.ast.common.PartType;
 import hypertalk.ast.common.Value;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class ButtonModel extends AbstractPartModel {
@@ -15,6 +16,10 @@ public class ButtonModel extends AbstractPartModel {
     public static final String PROP_SHOWNAME = "showname";
     public static final String PROP_ENABLED = "enabled";
     public static final String PROP_CONTENTS = "contents";
+    public static final String PROP_TEXTSIZE = "textsize";
+    public static final String PROP_TEXTFONT = "textfont";
+    public static final String PROP_TEXTSTYLE = "textstyle";
+    public static final String PROP_TEXTALIGN = "textalign";
 
     private ButtonModel() {
         super(PartType.BUTTON);
@@ -37,6 +42,10 @@ public class ButtonModel extends AbstractPartModel {
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
         partModel.defineProperty(PROP_CONTENTS, new Value(), false);
+        partModel.defineProperty(PROP_TEXTSIZE, new Value(((Font)UIManager.get("Button.font")).getSize()), false);
+        partModel.defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getName()), false);
+        partModel.defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
+        partModel.defineProperty(PROP_TEXTALIGN, new Value("center"), false);
 
         return partModel;
     }

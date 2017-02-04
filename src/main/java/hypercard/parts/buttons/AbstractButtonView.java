@@ -67,6 +67,8 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
                 return new RectangularButton(this);
             case TRANSPARENT:
                 return new TransparentButton(this);
+            case OPAQUE:
+                return new OpaqueButton(this);
             case OVAL:
                 return new OvalButton(this);
             case CLASSIC:

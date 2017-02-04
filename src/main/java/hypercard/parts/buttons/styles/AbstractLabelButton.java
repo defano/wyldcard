@@ -4,6 +4,7 @@ import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.model.ButtonModel;
+import hypercard.utils.FontUtils;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -53,10 +54,27 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonView {
             case ButtonModel.PROP_ENABLED:
                 drawnDisabled = !newValue.booleanValue();
                 break;
+
+            case ButtonModel.PROP_TEXTSIZE:
+                setFont(new Font(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                break;
+
+            case ButtonModel.PROP_TEXTFONT:
+                setFont(new Font(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                break;
+
+            case ButtonModel.PROP_TEXTSTYLE:
+                setFont(new Font(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                break;
+
+            case ButtonModel.PROP_TEXTALIGN:
+                setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
+                break;
         }
     }
 
     protected Color textColor(boolean isDisabled) {
         return isDisabled ? Color.GRAY : Color.BLACK;
     }
+
 }

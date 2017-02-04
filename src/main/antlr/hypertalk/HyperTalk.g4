@@ -5,6 +5,7 @@ script				: handler                                       # handlerScript
                     | function                                      # functionScript
                     | script function                               # scriptFunctionScript
                     | nonEmptyStmnt                                 # statementScript
+                    | statementList                                 # statementListScript
                     | COMMENT                                       # commentScript
                     | NEWLINE                                       # whitespaceScript
                     | <EOF>                                         # eofScript

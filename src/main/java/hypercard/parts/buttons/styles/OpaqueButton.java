@@ -4,31 +4,32 @@ import hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
 
-public class TransparentButton extends AbstractLabelButton {
+public class OpaqueButton extends AbstractLabelButton {
 
-    public TransparentButton(ToolEditablePart toolEditablePart) {
+    private boolean isHilited;
+
+    public OpaqueButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
     }
 
     @Override
     protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        if (toolEditablePart.isPartToolActive()) {
-            g.setPaint(Color.GRAY);
-            g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-        }
+        g.setPaint(isHilited ? Color.BLACK : Color.WHITE);
+        g.fillRect(0,0, getWidth(), getHeight());
     }
 
     @Override
     protected void setName(boolean isDisabled, String name) {
         setForeground(textColor(isDisabled));
-        TransparentButton.super.setText(name);
+        OpaqueButton.super.setText(name);
     }
 
     @Override
     protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled) {
-            setOpaque(isHilited);
+        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
+            this.isHilited = isHilited;
             setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
+            repaint();
         }
     }
 
