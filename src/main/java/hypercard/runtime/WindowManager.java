@@ -5,6 +5,7 @@ import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.*;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class WindowManager {
 
@@ -15,6 +16,7 @@ public class WindowManager {
     private final static LinesPalette linesPalette = new LinesPalette();
     private final static PatternPalette patternsPalette = new PatternPalette();
     private final static BrushesPalette brushesPalette = new BrushesPalette();
+    private final static ColorPalette colorPalette = new ColorPalette();
 
     private WindowManager() {
         start();
@@ -40,16 +42,16 @@ public class WindowManager {
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
-                .asPalette(stackWindow)
                 .resizeable(false)
+                .asPalette()
                 .withTitle("")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(stackFrame)
                 .build();
 
         WindowBuilder.make(shapesPalette)
-                .asPalette(stackWindow)
                 .resizeable(false)
+                .asPalette()
                 .withTitle("Shapes")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
@@ -57,8 +59,8 @@ public class WindowManager {
                 .build();
 
         WindowBuilder.make(linesPalette)
-                .asPalette(stackWindow)
                 .resizeable(false)
+                .asPalette()
                 .withTitle("Lines")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
@@ -66,23 +68,28 @@ public class WindowManager {
                 .build();
 
         WindowBuilder.make(brushesPalette)
-                .asPalette(stackWindow)
                 .resizeable(false)
+                .asPalette()
                 .withTitle("")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
                 .build();
 
-
         WindowBuilder.make(patternsPalette)
-                .asPalette(stackWindow)
                 .resizeable(false)
+                .asPalette()
                 .withTitle("")
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(paintToolsPalette.getWindowFrame())
                 .build();
 
+        WindowBuilder.make(colorPalette)
+                .resizeable(false)
+                .withTitle("Colors")
+                .notInitiallyVisible()
+                .withMenuBar(HyperCardMenuBar.instance)
+                .build();
     }
 
     public static StackWindow getStackWindow() {
@@ -111,5 +118,9 @@ public class WindowManager {
 
     public static BrushesPalette getBrushesPalette() {
         return brushesPalette;
+    }
+
+    public static ColorPalette getColorPalette() {
+        return colorPalette;
     }
 }

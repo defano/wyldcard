@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
+import com.defano.jmonet.model.ProviderTransform;
 import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
@@ -18,6 +19,8 @@ import hypertalk.ast.common.Tool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Observable;
+import java.util.Observer;
 
 
 public class ToolsContext implements StackModelObserver {
@@ -44,6 +47,9 @@ public class ToolsContext implements StackModelObserver {
     private Provider<Boolean> drawMultiple = new Provider<>(false);
     private Provider<Boolean> drawCentered = new Provider<>(false);
 
+    private Provider<Color> foregroundColorProvider = new Provider<>(Color.BLACK);
+    private Provider<Color> backgroundColorProvider = new Provider<>(Color.WHITE);
+
     private PaintToolType lastToolType;
 
     private ToolsContext() {
@@ -61,6 +67,14 @@ public class ToolsContext implements StackModelObserver {
 
     public Provider<Stroke> getLineStrokeProvider() {
         return lineStrokeProvider;
+    }
+
+    public Provider<Paint> getLinePaintProvider() {
+        return linePaintProvider;
+    }
+
+    public void setLinePaint(Paint p) {
+        linePaintProvider.set(p);
     }
 
     public void reactivateTool(PaintCanvas canvas) {
@@ -120,6 +134,30 @@ public class ToolsContext implements StackModelObserver {
         }
 
         paintToolProvider.set(selectedTool);
+    }
+
+    public void setForegroundColor(Color color) {
+        foregroundColorProvider.set(color);
+    }
+
+    public void setBackgroundColor(Color color) {
+        backgroundColorProvider.set(color);
+    }
+
+    public Color getForegroundColor() {
+        return foregroundColorProvider.get();
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColorProvider.get();
+    }
+
+    public Provider<Color> getBackgroundColorProvider() {
+        return backgroundColorProvider;
+    }
+
+    public Provider<Color> getForegroundColorProvider() {
+        return foregroundColorProvider;
     }
 
     public void setSelectedBrush(BasicBrush brush) {

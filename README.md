@@ -18,7 +18,7 @@ This project represents a homework assignment and is in no way associated with A
 
 ## What can I do with this?
 
-You can create stacks of cards containing graphics, buttons and fields. Buttons and fields are scriptable, and the full suite of HyperCard paint tools (and patterns) are available.
+You can create stacks of cards containing graphics, buttons and fields. Buttons and fields are scriptable, and the full suite of HyperCard paint tools and patterns (with color!) are available.
 
 Much of the HyperTalk language has been implemented including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
 

@@ -1,5 +1,7 @@
 package hypercard.patterns;
 
+import hypercard.context.ToolsContext;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -28,6 +30,17 @@ public class HyperCardPatternFactory {
         try {
             BufferedImage spriteSheet = ImageIO.read(HyperCardPatternFactory.class.getResource("/patterns/patterns.png"));
             BufferedImage sprite = spriteSheet.getSubimage(xOffset, yOffset, PATTERN_WIDTH, PATTERN_HEIGHT);
+
+            for (int x = 0; x < sprite.getWidth(); x++) {
+                for (int y = 0; y < sprite.getHeight(); y++) {
+                    if (sprite.getRGB(x, y) == 0xffffffff) {
+                        sprite.setRGB(x, y, ToolsContext.getInstance().getBackgroundColor().getRGB());
+                    } else if (sprite.getRGB(x, y) == 0xff000000) {
+                        sprite.setRGB(x, y, ToolsContext.getInstance().getForegroundColor().getRGB());
+                    }
+                }
+            }
+
             return new TexturePaint(sprite, new Rectangle(0,0,sprite.getWidth(),sprite.getHeight()));
         } catch (IOException e) {
             throw new RuntimeException("Failed to read patterns.", e);

@@ -17,6 +17,7 @@ public class PatternPalette extends HyperCardWindow implements Observer {
     private final int PATTERN_WIDTH = 30;
     private final int PATTERN_HEIGHT = 20;
 
+    private int selectedPattern;
     private JPanel palettePanel;
 
     private JButton button1;
@@ -71,14 +72,11 @@ public class PatternPalette extends HyperCardWindow implements Observer {
                 button40
         };
 
-        for (int index = 0; index < allPatterns.length; index++) {
-            final int i = index;        // For use in lambda
-
-            allPatterns[index].setIcon(new ImageIcon(createIconForButton(PATTERN_WIDTH, PATTERN_HEIGHT, i)));
-            allPatterns[index].addActionListener(e -> ToolsContext.getInstance().setPattern(i));
-        }
+        redrawPatternButtons();
 
         ToolsContext.getInstance().getFillPatternProvider().addObserverAndUpdate(this);
+        ToolsContext.getInstance().getBackgroundColorProvider().addObserverAndUpdate(this);
+        ToolsContext.getInstance().getForegroundColorProvider().addObserverAndUpdate(this);
     }
 
     @Override
@@ -89,6 +87,18 @@ public class PatternPalette extends HyperCardWindow implements Observer {
     @Override
     public void bindModel(Object data) {
         // Nothing to do
+    }
+
+    private void redrawPatternButtons() {
+        for (int index = 0; index < allPatterns.length; index++) {
+            final int i = index;        // For use in lambda
+
+            allPatterns[index].setIcon(new ImageIcon(createIconForButton(PATTERN_WIDTH, PATTERN_HEIGHT, i)));
+            allPatterns[index].addActionListener(e -> {
+                selectedPattern = i;
+                ToolsContext.getInstance().setPattern(selectedPattern);
+            });
+        }
     }
 
     private BufferedImage createIconForButton(int width, int height, int patternId) {
@@ -109,6 +119,11 @@ public class PatternPalette extends HyperCardWindow implements Observer {
             }
 
             allPatterns[(int) newValue].setEnabled(false);
+        }
+
+        else if (newValue instanceof Color) {
+            redrawPatternButtons();
+            ToolsContext.getInstance().setPattern(selectedPattern);
         }
     }
 

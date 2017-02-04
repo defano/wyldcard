@@ -47,8 +47,9 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder asPalette(HyperCardWindow overWindow) {
+    public WindowBuilder asPalette() {
         frame.setAlwaysOnTop(true);
+        frame.setAutoRequestFocus(true);
         frame.setFocusableWindowState(false);
 
         return this;

@@ -15,12 +15,10 @@ public class ToolsMenu extends JMenu {
         super("Tools");
 
         MenuItemBuilder.ofCheckType()
-                .named("Tools Palette")
+                .named("Tools")
                 .withAction(e -> WindowManager.getPaintToolsPalette().toggleVisible())
                 .withCheckmarkProvider(WindowManager.getPaintToolsPalette().getWindowVisibleProvider())
                 .build(this);
-
-        this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Patterns")
@@ -29,9 +27,23 @@ public class ToolsMenu extends JMenu {
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
+                .named("Colors")
+                .withAction(e -> WindowManager.getColorPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getColorPalette().getWindowVisibleProvider())
+                .build(this);
+
+        this.addSeparator();
+
+        MenuItemBuilder.ofCheckType()
                 .named("Shapes")
                 .withAction(e -> WindowManager.getShapesPalette().toggleVisible())
                 .withCheckmarkProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
+                .named("Brushes")
+                .withAction(e -> WindowManager.getBrushesPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
@@ -62,8 +74,6 @@ public class ToolsMenu extends JMenu {
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.FIELD))
                 .withAction(a -> ToolsContext.getInstance().setToolMode(ToolMode.FIELD))
                 .build(this);
-
-        this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Selection")
