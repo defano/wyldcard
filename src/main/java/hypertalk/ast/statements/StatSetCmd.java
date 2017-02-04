@@ -39,8 +39,12 @@ public class StatSetCmd extends Statement {
 
         } catch (Exception e) {
 
-            // When all else fails, set the value of a container
-            GlobalContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));
+            if (propertySpec.partExp != null) {
+                throw new HtSemanticException("Cannot set the '" + propertySpec.property + "' of this part.");
+            } else {
+                // When all else fails, set the value of a container
+                GlobalContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));
+            }
         }
     }
 }

@@ -33,7 +33,7 @@ public class ExpProperty extends Expression {
                 return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
             }
         } catch (Exception e) {
-            throw new HtSemanticException(e.getMessage());
+            throw new HtSemanticException("The property '" + propertySpecifier.property + "' does not exist on this part.");
         }
     }    
 }
