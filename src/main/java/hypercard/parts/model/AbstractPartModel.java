@@ -24,6 +24,8 @@ public abstract class AbstractPartModel extends PropertiesModel {
     public static final String PROP_NAME = "name";
     public static final String PROP_LEFT = "left";
     public static final String PROP_TOP = "top";
+    public static final String PROP_RIGHT = "right";
+    public static final String PROP_BOTTOM = "bottom";
     public static final String PROP_WIDTH = "width";
     public static final String PROP_HEIGHT = "height";
     public static final String PROP_RECT = "rect";
@@ -59,6 +61,22 @@ public abstract class AbstractPartModel extends PropertiesModel {
 
             return new Value(left.integerValue(), top.integerValue(), left.integerValue() + width.integerValue(), top.integerValue() + height.integerValue());
         });
+
+        defineComputedGetterProperty(PROP_RIGHT, (model, propertyName) ->
+                new Value(model.getKnownProperty(PROP_LEFT).integerValue() + model.getKnownProperty(PROP_WIDTH).integerValue())
+        );
+
+        defineComputedSetterProperty(PROP_RIGHT, (model, propertyName, value) ->
+                model.setKnownProperty(PROP_LEFT, new Value(value.integerValue() - model.getKnownProperty(PROP_WIDTH).integerValue()))
+        );
+
+        defineComputedGetterProperty(PROP_BOTTOM, (model, propertyName) ->
+                new Value(model.getKnownProperty(PROP_TOP).integerValue() + model.getKnownProperty(PROP_HEIGHT).integerValue())
+        );
+
+        defineComputedSetterProperty(PROP_BOTTOM, (model, propertyName, value) ->
+                model.setKnownProperty(PROP_TOP, new Value(value.integerValue() - model.getKnownProperty(PROP_HEIGHT).integerValue()))
+        );
 
         defineComputedSetterProperty(PROP_TOPLEFT, (model, propertyName, value) -> {
             if (value.isPoint()) {

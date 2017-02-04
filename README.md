@@ -288,13 +288,15 @@ Property      | Description
 `id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
 `name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
 `location`    | Returns or sets the center point of the part. Also available as the `loc` property.
-`left`        | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
-`top`	        | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
-`width`       | Returns or sets the width of the part (in pixels)
-`height`      | Returns or sets the height of the part (in pixels)
-`rect`        | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rectangle`.
+`left`        | Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.
+`right`       | Returns or sets the right-most border of the part's location, moving the part horizontally but not affecting its width.
+`top`	        | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
+`bottom`      | Returns or sets the bottom-most border of the part's location, moving the part vertically but not affecting its height.
 `topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`width`       | Returns or sets the width of the part (in pixels)
+`height`      | Returns or sets the height of the part (in pixels)
+`rectangle`   | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rect`.
 `visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
 `enabled`     | Returns or sets whether the part is enabled (a Boolean value). When disabled, the part appears "grayed out", but note that it continues to receive HyperCard-generated messages (like `mouseEnter`).
 `textSize`    | Returns or sets the size (in points) of the part's text.
