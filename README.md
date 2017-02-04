@@ -287,6 +287,7 @@ Property      | Description
 `script`      | Retrieves or replaces the current script of the part
 `id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
 `name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
+`location`    | Returns or sets the center point of the part. Also available as the `loc` property.
 `left`        | Returns or sets the left-most border of the part's location (i.e., the part's x-coordinate on the card)
 `top`	        | Returns or sets the top-most border of the part's location (i.e, the part's y-coordinate on the card)
 `width`       | Returns or sets the width of the part (in pixels)

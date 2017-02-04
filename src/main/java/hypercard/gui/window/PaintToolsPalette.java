@@ -70,6 +70,22 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setShown(true));
         paintbrush.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
         spraypaint.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
+        rectangle.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
+        roundRectangle.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
+        oval.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
+        curve.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
+        polygon.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
+
+        ToolsContext.getInstance().getShapesFilledProvider().addObserverAndUpdate((o, filled) -> {
+            boolean isFilled = (Boolean) filled;
+
+            rectangle.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
+            roundRectangle.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
+            oval.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/oval_filled.png" : "/icons/oval.png")));
+            curve.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/curve_filled.png" : "/icons/curve.png")));
+            shape.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/shape_filled.png" : "/icons/shape.png")));
+            polygon.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/polygon_filled.png" : "/icons/polygon.png")));
+        });
 
         ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {

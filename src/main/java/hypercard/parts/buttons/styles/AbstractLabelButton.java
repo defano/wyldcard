@@ -9,7 +9,6 @@ import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 
 public abstract class AbstractLabelButton extends JLabel implements ButtonView {
 
