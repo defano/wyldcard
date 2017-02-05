@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 
 public class HyperCard implements StackModelObserver {
 
-    private static HyperCard _instance;
+    private static HyperCard instance;
     private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
 
     private StackModel stack;
@@ -38,7 +38,7 @@ public class HyperCard implements StackModelObserver {
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
         System.setProperty("apple.awt.application.name", "HyperCard");
 
-        _instance = new HyperCard();
+        instance = new HyperCard();
     }
 
     private HyperCard() {
@@ -67,7 +67,7 @@ public class HyperCard implements StackModelObserver {
     }
 
     public static HyperCard getInstance() {
-        return _instance;
+        return instance;
     }
 
     public StackModel getStack () { return stack; }

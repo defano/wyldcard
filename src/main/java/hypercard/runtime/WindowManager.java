@@ -5,7 +5,6 @@ import hypercard.gui.menu.HyperCardMenuBar;
 import hypercard.gui.window.*;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class WindowManager {
 

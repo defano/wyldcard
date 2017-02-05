@@ -2,6 +2,8 @@ package hypercard.gui.menu;
 
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.model.ProviderTransform;
+import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
 import hypercard.HyperCard;
 import hypercard.context.ToolsContext;
@@ -110,13 +112,15 @@ public class OptionsMenu extends JMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Rotate")
-                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.ROTATE))
+                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.ROTATE))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ROTATE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Slant")
-                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.SLANT))
+                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.SLANT))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SLANT))
                 .build(this);
 

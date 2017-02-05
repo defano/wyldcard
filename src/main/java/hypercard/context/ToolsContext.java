@@ -65,6 +65,23 @@ public class ToolsContext implements StackModelObserver {
         return instance;
     }
 
+    public void morphSelection(PaintToolType newToolType) {
+        if (getPaintTool() instanceof AbstractSelectionTool && ((AbstractSelectionTool) getPaintTool()).hasSelectionBounds()) {
+            AbstractSelectionTool selectionTool = (AbstractSelectionTool) getPaintTool();
+            Shape selection = selectionTool.getSelectionOutline();
+
+            PaintTool newTool = selectPaintTool(newToolType);
+            if (newTool instanceof AbstractSelectionTool) {
+                ((AbstractSelectionTool) newTool).createSelection(selection.getBounds());
+            } else {
+                throw new IllegalArgumentException("Morph tool type must be a selection tool.");
+            }
+
+        } else {
+            selectPaintTool(newToolType);
+        }
+    }
+
     public Provider<Stroke> getLineStrokeProvider() {
         return lineStrokeProvider;
     }
@@ -106,7 +123,7 @@ public class ToolsContext implements StackModelObserver {
         return paintToolProvider.get();
     }
 
-    public void selectPaintTool(PaintToolType selectedToolType) {
+    public PaintTool selectPaintTool(PaintToolType selectedToolType) {
 
         lastToolType = paintToolProvider.get().getToolType();
         paintToolProvider.get().deactivate();
@@ -134,6 +151,7 @@ public class ToolsContext implements StackModelObserver {
         }
 
         paintToolProvider.set(selectedTool);
+        return selectedTool;
     }
 
     public void setForegroundColor(Color color) {
