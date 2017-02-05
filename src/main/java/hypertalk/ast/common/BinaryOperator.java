@@ -29,7 +29,9 @@ public enum BinaryOperator {
     IS_IN("is in"),
     IS_NOT_IN("is not in"),
     AMP("&"),
-    AMPAMP("&&");
+    AMPAMP("&&"),
+    IS_WITHIN("is within"),
+    IS_NOT_WITHIN("is not within");
 
     private List<String> tokens;
 

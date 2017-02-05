@@ -245,6 +245,7 @@ expression          : 'empty'                                                   
                     | expression op=('&&'|'&') expression                               # concatExp
                     | expression op=('>='|'<='|'<'|'>'|'contains'|'is in') expression   # equalityExp
                     | expression op=('='|'is not'|'is'|'<>'|'is not in') expression     # comparisonExp
+                    | expression op=('is within' | 'is not within') expression          # withinExp
                     | expression 'and' expression                                       # andExp
                     | expression 'or' expression                                        # orExp
                     ;

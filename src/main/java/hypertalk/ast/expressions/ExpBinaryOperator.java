@@ -47,6 +47,8 @@ public class ExpBinaryOperator extends Expression {
         case IS_NOT_IN: return new Value(!rhs.contains(lhs));
         case AMP: return lhs.concat(rhs);
         case AMPAMP: return lhs.concat(new Value(" ").concat(rhs));
+        case IS_WITHIN: return lhs.within(rhs);
+        case IS_NOT_WITHIN: return new Value(!lhs.within(rhs).booleanValue());
         default: throw new HtSemanticException("Unhandled binary operator in evaluation " + operator);
         }
     }    

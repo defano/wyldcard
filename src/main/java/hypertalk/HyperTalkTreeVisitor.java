@@ -778,6 +778,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWithinExp(HyperTalkParser.WithinExpContext ctx) {
+        return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
     public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
         return new ExpChunk((Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
     }

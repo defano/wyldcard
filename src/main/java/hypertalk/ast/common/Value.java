@@ -165,7 +165,31 @@ public class Value {
         else
             return false;
     }
-            
+
+    public Rectangle rectangleValue() {
+        if (isRect()) {
+            int left = listItemAt(0).integerValue();
+            int top = listItemAt(1).integerValue();
+            int height = listItemAt(3).integerValue() - listItemAt(1).integerValue();
+            int width = listItemAt(2).integerValue() - listItemAt(0).integerValue();
+
+            return new Rectangle(left, top, width, height);
+        }
+
+        return new Rectangle();
+    }
+
+    public Point pointValue() {
+        if (isPoint()) {
+            int left = listItemAt(0).integerValue();
+            int top = listItemAt(1).integerValue();
+
+            return new Point(left, top);
+        }
+
+        return new Point();
+    }
+
     public List<Value> listValue () {
         List<Value> list = new Vector<>();
         
@@ -441,6 +465,17 @@ public class Value {
 
     public Value concat (Value val) {
         return new Value(value + val.toString());
+    }
+
+    public Value within(Value val) throws HtSemanticException {
+        if (!isPoint()) {
+            throw new HtSemanticException("Cannot determine if " + value + " is within " + val.stringValue() + " because it is not a point value.");
+        }
+        if (!val.isRect()) {
+            throw new HtSemanticException("Cannot determine if " + value + " is within " + val.stringValue() + " because it is not a rectangle value.");
+        }
+
+        return new Value(val.rectangleValue().contains(pointValue()));
     }
     
     public boolean contains (Object v) {

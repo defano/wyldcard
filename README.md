@@ -412,30 +412,32 @@ put the first char of the second word of x into the middle item of the last line
 
 In addition to chunk expressions, HyperTalk supports a standard suite of mathematical, text and logical operators, including the following (all operators are binary, excepted where otherwise noted):
 
-Precedence  | Operator   | Description
-------------| -----------|-------------
-1 (highest) | `( )`      | Grouping
-2           | `-`        | Negation for numbers (unary)
-            | `not`	     | Negation for boolean values (unary)
-3           | `^`        | Exponentiation for numbers
-4           | `*`        | Multiplication for numbers
-            | `/`        | Division for numbers
-            | `div`	     | Division for numbers
-            | `mod`	     | Modulus division for numbers; returns the remainder
-5           | `+`        | Addition for numbers
-            | `-`        | Subtraction for numbers
-6           | `&`, `&&`  | Text concatenation; `&&` adds a space between operands; `&` does not
-7           | `>`        | Greater than comparison for numbers and text
-            | `<`        | Less than comparison for numbers and text
-            | `<=`       | Less than or equal to comparison for numbers and text
-            | `>=`       | Greater than or equal to comparison for numbers and text
-            | `contains` | Substring comparison for text
-8           | `=`        | Equality comparison for text
-            | `is`       | Equality comparison for text
-            | `is not`   | Negative equality comparison for text
-            | `<>`	     | Synonym for is not
-9           | `and`      | Logical AND for boolean values
-10 (lowest) |  `or`      | Logical OR for boolean values
+Precedence  | Operator        | Description
+------------| ----------------|-------------
+1 (highest) | `( )`           | Grouping
+2           | `-`             | Negation for numbers (unary)
+            | `not`	          | Negation for boolean values (unary)
+3           | `^`             | Exponentiation for numbers
+4           | `*`             | Multiplication for numbers
+            | `/`             | Division for numbers
+            | `div`	          | Division for numbers
+            | `mod`	          | Modulus division for numbers; returns the remainder
+5           | `+`             | Addition for numbers
+            | `-`             | Subtraction for numbers
+6           | `&`, `&&`       | Text concatenation; `&&` adds a space between operands; `&` does not
+7           | `>`             | Greater than comparison for numbers and text
+            | `<`             | Less than comparison for numbers and text
+            | `<=`            | Less than or equal to comparison for numbers and text
+            | `>=`            | Greater than or equal to comparison for numbers and text
+            | `contains`      | Substring comparison for text
+8           | `=`             | Equality comparison for text
+            | `is`            | Equality comparison for text
+            | `is not`        | Negative equality comparison for text
+            | `<>`	          | Synonym for is not
+9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
+            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
+10          | `and`           | Logical AND for boolean values
+11 (lowest) |  `or`           | Logical OR for boolean values
 
 HyperCard uses the following order (top to bottom) to evaluate factors and terms in an expression:
 
@@ -447,7 +449,7 @@ Precedence  | Term                    | Description
 4           | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
 5           | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
 6           | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
-7           | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+7 (lowest)  | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
 
 This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as real HyperTalk.  
 
