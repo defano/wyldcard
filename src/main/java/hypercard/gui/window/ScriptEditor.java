@@ -21,6 +21,27 @@ import java.awt.*;
 public class ScriptEditor extends HyperCardWindow {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
+    private final static String DEFAULT_SCRIPT = new StringBuilder()
+            .append("on mouseUp\n")
+            .append("    -- Fires whenever the mouse is clicked and released over this part.\n")
+            .append("end mouseUp\n")
+            .append("\n")
+            .append("on mouseDown\n")
+            .append("    -- Fires whenever the mouse is clicked over this part.\n")
+            .append("end mouseDown\n")
+            .append("\n")
+            .append("on mouseDoubleClick\n")
+            .append("    -- Fires whenever the mouse is double-clicked over this part.\n")
+            .append("end mouseDoubleClick\n")
+            .append("\n")
+            .append("on mouseEnter\n")
+            .append("    -- Fires whenever the mouse is moved over this part.\n")
+            .append("end mouseEnter\n")
+            .append("\n")
+            .append("on mouseLeave\n")
+            .append("    -- Fires whenever the mouse is moved away from this part.\n")
+            .append("end mouseLeave\n")
+            .toString();
 
     private AbstractPartModel model;
 
@@ -28,7 +49,6 @@ public class ScriptEditor extends HyperCardWindow {
     private JButton cancelButton;
     private JButton saveButton;
     private JTextArea scriptField;
-    private JLabel errorText;
 
     public ScriptEditor() {
 
@@ -58,21 +78,32 @@ public class ScriptEditor extends HyperCardWindow {
         try {
             Interpreter.compile(scriptField.getText());
             scriptField.getHighlighter().removeAllHighlights();
-            errorText.setText("");
         } catch (HtSyntaxException e1) {
-            errorText.setText(e1.getMessage());
             setHighlightedLine(e1.lineNumber - 1);
         } catch (HtException e1) {
-            errorText.setText(e1.getMessage());
+            setHilightedLine();
+        }
+    }
+
+    private void setHilightedLine() {
+        try {
+            setHighlightedLine(scriptField.getLineOfOffset(scriptField.getCaretPosition()));
+        } catch (BadLocationException e) {
+            // Nothing to do
+        }
+    }
+
+    private void setHilightedSelection(int start, int end) {
+        try {
+            scriptField.getHighlighter().addHighlight(start, end, ERROR_HIGHLIGHTER);
+        } catch (BadLocationException e) {
+            // Nothing to do
         }
     }
 
     private void setHighlightedLine(int line) {
         try {
-            int lineStart = scriptField.getLineStartOffset(line);
-            int lineEnd = scriptField.getLineEndOffset(line);
-
-            scriptField.getHighlighter().addHighlight(lineStart, lineEnd, ERROR_HIGHLIGHTER);
+            setHilightedSelection(scriptField.getLineStartOffset(line), scriptField.getLineEndOffset(line));
         } catch (BadLocationException e) {
             // Nothing to do
         }
@@ -87,13 +118,14 @@ public class ScriptEditor extends HyperCardWindow {
     public void bindModel(Object properties) {
         if (properties instanceof AbstractPartModel) {
             this.model = (AbstractPartModel) properties;
-            scriptField.setText(this.model.getKnownProperty("script").stringValue());
+            String script = this.model.getKnownProperty("script").stringValue();
+            scriptField.setText(script.trim().isEmpty() ? DEFAULT_SCRIPT : script);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + properties);
         }
     }
 
-    public void updateProperties() {
+    private void updateProperties() {
         model.setKnownProperty("script", new Value(scriptField.getText()));
     }
 
@@ -113,7 +145,7 @@ public class ScriptEditor extends HyperCardWindow {
      */
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
-        scriptEditor.setLayout(new GridLayoutManager(2, 4, new Insets(10, 10, 10, 10), -1, -1));
+        scriptEditor.setLayout(new GridLayoutManager(2, 4, new Insets(10, 10, 10, 10), 0, -1));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
         saveButton = new JButton();
         saveButton.setHideActionText(false);
@@ -122,9 +154,6 @@ public class ScriptEditor extends HyperCardWindow {
         saveButton.setOpaque(true);
         saveButton.setText("Save");
         scriptEditor.add(saveButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        errorText = new JLabel();
-        errorText.setText("");
-        scriptEditor.add(errorText, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();

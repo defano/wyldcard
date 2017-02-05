@@ -40,6 +40,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
                     .withModel(model)
+                    .resizeable(true)
                     .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                     .build();
         });
