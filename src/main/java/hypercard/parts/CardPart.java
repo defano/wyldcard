@@ -14,6 +14,8 @@ import com.defano.jmonet.canvas.UndoablePaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import hypercard.context.PartsTable;
 import hypercard.context.ToolsContext;
+import hypercard.gui.util.FileDrop;
+import hypercard.gui.util.ImageImporter;
 import hypercard.parts.model.*;
 import hypercard.parts.model.ButtonModel;
 import hypertalk.ast.common.PartType;
@@ -24,6 +26,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -106,6 +109,9 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         for (FieldPart thisField : card.fields.getParts()) {
             thisField.getPartModel().notifyPropertyChangedObserver(thisField);
         }
+
+        // Import image files that are dropped onto the card
+        new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
 
         return card;
     }
