@@ -270,6 +270,17 @@ oneArgFunc          : 'average'                                     # averageFun
                     | 'number' ('of' | 'in') ITEM                   # numberOfItemsFunc
                     | 'number' ('of' | 'in') LINE                   # numberOfLinesFunc
                     | 'random'                                      # randomFunc
+                    | 'sqrt'                                        # sqrtFunc
+                    | 'sin'                                         # sinFunc
+                    | 'cos'                                         # cosFunc
+                    | 'tan'                                         # tanFunc
+                    | 'atan'                                        # atanFunc
+                    | 'exp'                                         # expFunc
+                    | 'exp1'                                        # exp1Func
+                    | 'exp2'                                        # exp2Func
+                    | 'ln'                                          # lnFunc
+                    | 'ln1'                                         # ln1Func
+                    | 'log2'                                        # log2Func
                     ;
 
 noArgFunc           : 'mouse'                                               # mouseFunc
@@ -290,8 +301,10 @@ dateFormat          : 'long'                                        # longDateFo
                     ;
 
 literal				: STRING_LITERAL                                # stringLiteral
+                    | '-' INTEGER_LITERAL                           # negNumberLiteral
                     | INTEGER_LITERAL                               # numberLiteral
                     | '.' INTEGER_LITERAL                           # dotNumberLiteral
+                    | '-' '.' INTEGER_LITERAL                       # negDotNumberLiteral
                     | INTEGER_LITERAL '.'                           # numberDotLiteral
                     | INTEGER_LITERAL '.' INTEGER_LITERAL           # numberDotNumberLiteral
                     ;

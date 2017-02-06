@@ -519,6 +519,17 @@ Function | Description
 `seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
 `random` | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
+`sqrt` | Returns the square root of the given argument or `NaN` of the argument is negative.
+`sin` | Returns the trigonometric sine of the given argument, represented in radians.
+`cos` | Returns the trigonometric cosine of the given argument, represented in radians.
+`tan` | Returns the trigonometric tangent of the given argument, represented in radians.
+`atan` | Returns the trigonometric arctangent of the given argument, represented in radians.
+`exp` | Returns the value of _e_ raised to the power of the given argument.
+`exp1` | Returns the value of _1-e_ raised to the number of the given argument.
+`exp2` | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.
+`ln` | Returns the natural logarithm of the given argument.
+`ln1` | Returns the natural logarithm of the given argument plus one.
+`log2` | Returns the base-2 logarithm of the given argument.
 
 ### User-defined Functions
 

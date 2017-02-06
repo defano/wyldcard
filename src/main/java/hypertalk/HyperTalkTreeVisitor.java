@@ -993,6 +993,19 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_LINES: return new ExpNumberOfFun(ChunkType.LINE, (Expression) visit(ctx.factor()));
             case NUMBER_WORDS: return new ExpNumberOfFun(ChunkType.WORD, (Expression) visit(ctx.factor()));
             case RANDOM: return new ExpRandomFun((Expression) visit(ctx.factor()));
+            case SQRT:
+            case SIN:
+            case COS:
+            case TAN:
+            case ATAN:
+            case EXP:
+            case EXP1:
+            case EXP2:
+            case LN:
+            case LN1:
+            case LOG2:
+                return new ExpMathFun((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.factor()));
+
             default: throw new RuntimeException("Bug! Unimplemented case.");
         }
     }
@@ -1068,6 +1081,61 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSqrtFunc(HyperTalkParser.SqrtFuncContext ctx) {
+        return BuiltInFunction.SQRT;
+    }
+
+    @Override
+    public Object visitSinFunc(HyperTalkParser.SinFuncContext ctx) {
+        return BuiltInFunction.SIN;
+    }
+
+    @Override
+    public Object visitCosFunc(HyperTalkParser.CosFuncContext ctx) {
+        return BuiltInFunction.COS;
+    }
+
+    @Override
+    public Object visitTanFunc(HyperTalkParser.TanFuncContext ctx) {
+        return BuiltInFunction.TAN;
+    }
+
+    @Override
+    public Object visitAtanFunc(HyperTalkParser.AtanFuncContext ctx) {
+        return BuiltInFunction.ATAN;
+    }
+
+    @Override
+    public Object visitExpFunc(HyperTalkParser.ExpFuncContext ctx) {
+        return BuiltInFunction.EXP;
+    }
+
+    @Override
+    public Object visitExp1Func(HyperTalkParser.Exp1FuncContext ctx) {
+        return BuiltInFunction.EXP1;
+    }
+
+    @Override
+    public Object visitExp2Func(HyperTalkParser.Exp2FuncContext ctx) {
+        return BuiltInFunction.EXP2;
+    }
+
+    @Override
+    public Object visitLnFunc(HyperTalkParser.LnFuncContext ctx) {
+        return BuiltInFunction.LN;
+    }
+
+    @Override
+    public Object visitLn1Func(HyperTalkParser.Ln1FuncContext ctx) {
+        return BuiltInFunction.LN1;
+    }
+
+    @Override
+    public Object visitLog2Func(HyperTalkParser.Log2FuncContext ctx) {
+        return BuiltInFunction.LOG2;
+    }
+
+    @Override
     public Object visitStringLiteral(HyperTalkParser.StringLiteralContext ctx) {
         String quotedLiteral = ctx.getText();
 
@@ -1079,9 +1147,19 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNegNumberLiteral(HyperTalkParser.NegNumberLiteralContext ctx) {
+        return new Value("-" + ctx.INTEGER_LITERAL().getText());
+    }
+
+    @Override
     public Object visitDotNumberLiteral(HyperTalkParser.DotNumberLiteralContext ctx) {
         Object fractional = ctx.INTEGER_LITERAL().getText();
         return new Value("0." + String.valueOf(fractional));
+    }
+
+    @Override
+    public Object visitNegDotNumberLiteral(HyperTalkParser.NegDotNumberLiteralContext ctx) {
+        return new Value("-0." + ctx.INTEGER_LITERAL().getText());
     }
 
     @Override

@@ -20,5 +20,16 @@ public enum BuiltInFunction {
     NUMBER_WORDS,
     NUMBER_LINES,
     NUMBER_ITEMS,
-    RANDOM
+    RANDOM,
+    SQRT,
+    SIN,
+    COS,
+    TAN,
+    ATAN,
+    EXP,
+    EXP1,
+    EXP2,
+    LN,
+    LN1,
+    LOG2
 }
