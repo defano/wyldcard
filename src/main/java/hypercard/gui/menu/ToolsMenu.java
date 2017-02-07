@@ -154,7 +154,7 @@ public class ToolsMenu extends JMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Curve")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/curve.png")))
-                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.CURVE))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.FREEFORM))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.CURVE))
                 .build(this);
 

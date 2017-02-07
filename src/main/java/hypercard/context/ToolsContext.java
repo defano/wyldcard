@@ -4,8 +4,6 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
-import com.defano.jmonet.model.ProviderTransform;
-import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
@@ -19,8 +17,6 @@ import hypertalk.ast.common.Tool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Observable;
-import java.util.Observer;
 
 
 public class ToolsContext implements StackModelObserver {
@@ -316,7 +312,7 @@ public class ToolsContext implements StackModelObserver {
                 selectPaintTool(PaintToolType.RECTANGLE);
                 break;
             case CURVE:
-                selectPaintTool(PaintToolType.CURVE);
+                selectPaintTool(PaintToolType.FREEFORM);
                 break;
             case SHAPE:
                 selectPaintTool(PaintToolType.SHAPE);

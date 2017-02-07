@@ -61,7 +61,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
         fill.addActionListener(e -> toolSelected(PaintToolType.FILL));
         spraypaint.addActionListener(e -> toolSelected(PaintToolType.AIRBRUSH));
-        curve.addActionListener(e -> toolSelected(PaintToolType.CURVE));
+        curve.addActionListener(e -> toolSelected(PaintToolType.FREEFORM));
         lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
 
         // Double-click actions
