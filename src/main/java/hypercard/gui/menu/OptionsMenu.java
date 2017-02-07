@@ -111,6 +111,13 @@ public class OptionsMenu extends JMenu {
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
+                .named("Scale")
+                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.SCALE))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SCALE))
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
                 .named("Rotate")
                 .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.ROTATE))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
