@@ -126,8 +126,8 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     default void keyPressed(KeyEvent e) {
 
         if (isBeingEdited()) {
-            int top = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(1).integerValue();
-            int left = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).listValue().get(0).integerValue();
+            int top = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
+            int left = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:

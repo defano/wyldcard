@@ -218,7 +218,10 @@ public class ToolsContext implements StackModelObserver {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
             HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
             selectPaintTool(lastToolType);
-        } else {
+        } else if (HyperCard.getInstance().getCard().getCanvas().getScale() != 1.0) {
+            HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
+        }
+        else {
             selectPaintTool(PaintToolType.MAGNIFIER);
         }
     }

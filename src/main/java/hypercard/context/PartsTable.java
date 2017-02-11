@@ -56,7 +56,7 @@ public class PartsTable<T extends Part> {
     public T getPart (PartSpecifier ps) throws PartException {
         
         if (!partExists(ps))
-            throw new PartException(ps + " doesn't exist");
+            throw new PartException("Sorry, " + ps.toString().toLowerCase() + " doesn't exist.");
         if (ps instanceof PartIdSpecifier)
             return idhash.get(ps.value());
         else if (ps instanceof PartNameSpecifier)

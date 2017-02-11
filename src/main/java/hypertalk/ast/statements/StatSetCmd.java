@@ -8,6 +8,7 @@
 package hypertalk.ast.statements;
 
 import hypercard.context.GlobalContext;
+import hypercard.parts.PartException;
 import hypertalk.ast.containers.ContainerVariable;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.ast.containers.PropertySpecifier;

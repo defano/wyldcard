@@ -51,10 +51,10 @@ public class StatDragCmd extends Statement {
             throw new HtSemanticException(to.stringValue() + " is not a valid location.");
         }
 
-        int x1 = from.listValue().get(0).integerValue();
-        int y1 = from.listValue().get(1).integerValue();
-        int x2 = to.listValue().get(0).integerValue();
-        int y2 = to.listValue().get(1).integerValue();
+        int x1 = from.getItems().get(0).integerValue();
+        int y1 = from.getItems().get(1).integerValue();
+        int x2 = to.getItems().get(0).integerValue();
+        int y2 = to.getItems().get(1).integerValue();
 
         MouseManager.dragFrom(new Point(x1, y1), new Point(x2, y2), withShift, withOption, withCommand);
     }

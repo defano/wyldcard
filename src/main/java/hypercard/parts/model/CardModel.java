@@ -55,7 +55,7 @@ public class CardModel {
                 fieldModels.add((FieldModel) part.getPartModel());
                 break;
             default:
-                throw new PartException("Unsupported part type: " + part.getType());
+                throw new PartException("Bug! Unsupported part type: " + part.getType());
         }
     }
 

@@ -40,8 +40,8 @@ public class StatClickCmd extends Statement {
         Value clickLoc = this.clickLoc.evaluate();
 
         if (clickLoc.isPoint()) {
-            int xLoc = clickLoc.listValue().get(0).integerValue();
-            int yLoc = clickLoc.listValue().get(1).integerValue();
+            int xLoc = clickLoc.getItems().get(0).integerValue();
+            int yLoc = clickLoc.getItems().get(1).integerValue();
 
             MouseManager.clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
         } else {

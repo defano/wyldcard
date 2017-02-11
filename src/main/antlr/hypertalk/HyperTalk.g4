@@ -61,6 +61,7 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | setCmd                                        # setCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
                     | waitCmd                                       # waitCmdStmnt
+                    | sortCmd                                       # sortCmdStmnt
                     | 'go' 'to'? destination                        # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt
@@ -101,6 +102,20 @@ waitCmd             : 'wait' factor timeUnit                        # waitCountC
                     | 'wait for' factor timeUnit                    # waitForCountCmd
                     | 'wait until' expression                       # waitUntilCmd
                     | 'wait while' expression                       # waitWhileCmd
+                    ;
+
+sortCmd             : 'sort' sortChunkType container sortDirection      # sortDirectionCmd
+                    | 'sort' sortChunkType container 'by' expression    # sortExpressionCmd
+                    ;
+
+sortDirection       : 'ascending'                                   # sortDirectionAsc
+                    | 'descending'                                  # sortDirectionDesc
+                    |                                               # sortDirectionDefault
+                    ;
+
+sortChunkType       : 'the'? LINE ('of' | 'in')                     # sortChunkLines
+                    | 'the'? ITEM ('of' | 'in')                     # sortChunkItems
+                    |                                               # sortChunkDefault
                     ;
 
 // Can't use a lexer rule for synonyms here because it creates ambiguity with ordinals and built-in function names. :(

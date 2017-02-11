@@ -41,6 +41,46 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSortDirectionCmd(HyperTalkParser.SortDirectionCmdContext ctx) {
+        return new StatSortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (SortDirection) visit(ctx.sortDirection()));
+    }
+
+    @Override
+    public Object visitSortExpressionCmd(HyperTalkParser.SortExpressionCmdContext ctx) {
+        return new StatSortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitSortDirectionAsc(HyperTalkParser.SortDirectionAscContext ctx) {
+        return SortDirection.ASCENDING;
+    }
+
+    @Override
+    public Object visitSortDirectionDesc(HyperTalkParser.SortDirectionDescContext ctx) {
+        return SortDirection.DESCENDING;
+    }
+
+    @Override
+    public Object visitSortDirectionDefault(HyperTalkParser.SortDirectionDefaultContext ctx) {
+        return SortDirection.ASCENDING;
+    }
+
+    @Override
+    public Object visitSortChunkLines(HyperTalkParser.SortChunkLinesContext ctx) {
+        return ChunkType.LINE;
+    }
+
+    @Override
+    public Object visitSortChunkItems(HyperTalkParser.SortChunkItemsContext ctx) {
+        return ChunkType.ITEM;
+    }
+
+    @Override
+    public Object visitSortChunkDefault(HyperTalkParser.SortChunkDefaultContext ctx) {
+        return ChunkType.LINE;
+    }
+
+    @Override
     public Object visitTicksTimeUnit(HyperTalkParser.TicksTimeUnitContext ctx) {
         return TimeUnit.TICKS;
     }

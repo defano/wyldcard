@@ -12,6 +12,7 @@
 package hypertalk.ast.common;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -19,7 +20,7 @@ import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
 
-public class Value {
+public class Value implements Comparable<Value> {
 
     private final String value;
 
@@ -27,7 +28,35 @@ public class Value {
     private Long longValue;
     private Double floatValue;
     private Boolean booleanValue;
-    
+
+    public static Value ofLines(List<Value> lines) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int index = 0; index < lines.size(); index++) {
+            builder.append(lines.get(index));
+
+            if (index < lines.size() - 1) {
+                builder.append("\n");
+            }
+        }
+
+        return new Value(builder.toString());
+    }
+
+    public static Value ofItems(List<Value> items) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int index = 0; index < items.size(); index++) {
+            builder.append(items.get(index));
+
+            if (index < items.size() - 1) {
+                builder.append(",");
+            }
+        }
+
+        return new Value(builder.toString());
+    }
+
     public Value () {
         this("");
     }
@@ -116,7 +145,7 @@ public class Value {
     }
 
     public boolean isPoint () {
-        List<Value> listValue = listValue();
+        List<Value> listValue = getItems();
 
         return listValue.size() == 2 &&
                 new Value(listValue.get(0)).isInteger() &&
@@ -124,7 +153,7 @@ public class Value {
     }
 
     public boolean isRect () {
-        List<Value> listValue = listValue();
+        List<Value> listValue = getItems();
 
         return listValue.size() == 4 &&
                 new Value(listValue.get(0)).isInteger() &&
@@ -168,10 +197,10 @@ public class Value {
 
     public Rectangle rectangleValue() {
         if (isRect()) {
-            int left = listItemAt(0).integerValue();
-            int top = listItemAt(1).integerValue();
-            int height = listItemAt(3).integerValue() - listItemAt(1).integerValue();
-            int width = listItemAt(2).integerValue() - listItemAt(0).integerValue();
+            int left = getItemAt(0).integerValue();
+            int top = getItemAt(1).integerValue();
+            int height = getItemAt(3).integerValue() - getItemAt(1).integerValue();
+            int width = getItemAt(2).integerValue() - getItemAt(0).integerValue();
 
             return new Rectangle(left, top, width, height);
         }
@@ -181,8 +210,8 @@ public class Value {
 
     public Point pointValue() {
         if (isPoint()) {
-            int left = listItemAt(0).integerValue();
-            int top = listItemAt(1).integerValue();
+            int left = getItemAt(0).integerValue();
+            int top = getItemAt(1).integerValue();
 
             return new Point(left, top);
         }
@@ -190,7 +219,7 @@ public class Value {
         return new Point();
     }
 
-    public List<Value> listValue () {
+    public List<Value> getItems() {
         List<Value> list = new Vector<>();
         
         for (String item : value.split(","))
@@ -199,12 +228,22 @@ public class Value {
         return list;
     }
 
-    public Value listItemAt(int index) {
-        if (listValue().size() > index) {
-            return new Value(listValue().get(index));
+    public Value getItemAt(int index) {
+        if (getItems().size() > index) {
+            return new Value(getItems().get(index));
         } else {
             return new Value();
         }
+    }
+
+    public List<Value> getLines() {
+        List<Value> list = new ArrayList<>();
+
+        for (String thisLine : value.split("\n")) {
+            list.add(new Value(thisLine));
+        }
+
+        return list;
     }
 
     public int itemCount () {
@@ -502,11 +541,21 @@ public class Value {
         } else {
             return this.stringValue().equalsIgnoreCase(otherValue.stringValue());
         }
-
     }
 
     @Override
     public int hashCode() {
         return value.hashCode();
+    }
+
+    @Override
+    public int compareTo(Value o) {
+        if (this.isInteger() && o.isInteger()) {
+            return new Integer(this.integerValue()).compareTo(new Integer(o.integerValue()));
+        } else if (this.isFloat() && o.isFloat()) {
+            return new Double(this.doubleValue()).compareTo(new Double(o.doubleValue()));
+        } else {
+            return this.stringValue().toLowerCase().trim().compareTo(o.stringValue().toLowerCase().trim());
+        }
     }
 }

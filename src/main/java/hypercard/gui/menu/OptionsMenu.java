@@ -55,7 +55,7 @@ public class OptionsMenu extends JMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
                 .withAction(a -> ToolsContext.getInstance().toggleMagnifier())
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.MAGNIFIER))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getScaleProvider(), value -> value > 1.0))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

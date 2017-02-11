@@ -24,7 +24,7 @@ public abstract class ArgListFunction extends Expression {
 
     public List<Value> evaluateArgumentList() throws HtSemanticException {
         if (expression != null) {
-            return expression.evaluate().listValue();
+            return expression.evaluate().getItems();
         } else {
             return argumentList.evaluate();
         }

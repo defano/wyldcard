@@ -23,7 +23,7 @@ public class FontUtils {
     public static int getStyleForValue(Value v) {
         int style = Font.PLAIN;
 
-        for (Value thisValue : v.listValue()) {
+        for (Value thisValue : v.getItems()) {
             switch (thisValue.stringValue().trim().toLowerCase()) {
                 case "plain":
                     style = Font.PLAIN;
