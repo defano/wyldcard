@@ -1,5 +1,7 @@
 package hypercard.parts.buttons;
 
+import com.defano.jmonet.tools.util.MarchingAnts;
+import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import hypercard.context.ToolsContext;
 import hypercard.gui.util.*;
 import hypercard.parts.ToolEditablePart;
@@ -16,7 +18,7 @@ import java.awt.event.MouseEvent;
  * Provides common functionality for "stylable" button parts (that is, a single button part whose style determines
  * which Swing component is drawn on the card).
  */
-public abstract class AbstractButtonView implements ToolEditablePart, PropertyChangeObserver {
+public abstract class AbstractButtonView implements ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
 
     private ButtonView buttonView;
     private boolean isBeingEdited = false;
@@ -42,6 +44,14 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
 
     public void setBeingEdited(boolean beingEdited) {
         isBeingEdited = beingEdited;
+
+        if (isBeingEdited()) {
+            MarchingAnts.getInstance().addObserver(this);
+        } else {
+            MarchingAnts.getInstance().removeObserver(this);
+        }
+
+        getComponent().repaint();
     }
 
     public void setButtonStyle(ButtonStyle style) {
@@ -86,7 +96,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
         ToolEditablePart.super.mousePressed(e);
 
         if (isAutoHilited()) {
-            if (! (buttonView instanceof SharedHilight)) {
+            if (!(buttonView instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
             }
         }
@@ -97,7 +107,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
         ToolEditablePart.super.mouseReleased(e);
 
         if (!isBeingEdited() && isAutoHilited()) {
-            if (! (buttonView instanceof SharedHilight)) {
+            if (!(buttonView instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
             }
         }
@@ -114,5 +124,10 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
     @Override
     public void partClosed() {
         KeyboardManager.removeGlobalKeyListener(this);
+    }
+
+    @Override
+    public void onAntsMoved() {
+        getComponent().repaint();
     }
 }

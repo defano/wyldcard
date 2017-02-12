@@ -12,6 +12,8 @@ import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.UndoablePaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
+import hypercard.HyperCard;
+import hypercard.context.PartToolContext;
 import hypercard.context.PartsTable;
 import hypercard.context.ToolsContext;
 import hypercard.gui.util.FileDrop;
@@ -60,7 +62,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         });
     }
 
-    public static CardPart fromModel (CardModel model, StackModel stack) throws Exception {
+    public static CardPart fromModel(CardModel model, StackModel stack) throws Exception {
         CardPart card = new CardPart();
         card.model = model;
         card.stack = stack;
@@ -76,7 +78,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
                     FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
                     card.fields.addPart(field);
                     card.addSwingComponent(field.getComponent(), field.getRect());
-                    default:
+                default:
             }
         }
 
@@ -100,7 +102,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((double) arg) == 1.0));
         card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((double) arg) == 1.0));
 
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> card.setForegroundVisible(!(boolean)isEditingBackground));
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> card.setForegroundVisible(!(boolean) isEditingBackground));
 
         for (ButtonPart thisButton : card.buttons.getParts()) {
             thisButton.getPartModel().notifyPropertyChangedObserver(thisButton);
@@ -142,6 +144,26 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         buttons.removePart(button);
         removeSwingComponent(button.getComponent());
         button.partClosed();
+    }
+
+    public void newButton() {
+        try {
+            ButtonPart newButton = ButtonPart.newButton(this);
+            addButton(newButton);
+            PartToolContext.getInstance().setSelectedPart(newButton);
+        } catch (PartException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public void newField() {
+        try {
+            FieldPart newField = FieldPart.newField(this);
+            addField(newField);
+            PartToolContext.getInstance().setSelectedPart(newField);
+        } catch (PartException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public Part getPart(PartSpecifier ps) throws PartException {
@@ -199,13 +221,13 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         addSwingComponent(newButtonComponent, forPart.getRect());
     }
 
-    private void removeSwingComponent (Component component) {
+    private void removeSwingComponent(Component component) {
         remove(component);
         revalidate();
         repaint();
     }
 
-    private void addSwingComponent (Component component, Rectangle bounds) {
+    private void addSwingComponent(Component component, Rectangle bounds) {
         component.setBounds(bounds);
         setLayer(component, FOREGROUND_PARTS_LAYER);
         add(component);
@@ -215,11 +237,11 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
     }
 
 
-    public int nextFieldId () {
+    public int nextFieldId() {
         return fields.getNextId();
     }
 
-    public int nextButtonId () {
+    public int nextButtonId() {
         return buttons.getNextId();
     }
 

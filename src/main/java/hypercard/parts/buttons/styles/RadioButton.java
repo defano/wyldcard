@@ -21,7 +21,6 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonVi
     public RadioButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        MarchingAnts.getInstance().addObserver(this::repaint);
         super.addActionListener(this);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);

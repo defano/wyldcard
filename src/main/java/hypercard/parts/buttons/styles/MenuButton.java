@@ -21,7 +21,6 @@ public class MenuButton extends JComboBox implements ButtonView {
     public MenuButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        MarchingAnts.getInstance().addObserver(this::repaint);
         super.addActionListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
         for (Component thisComponent : super.getComponents()) {

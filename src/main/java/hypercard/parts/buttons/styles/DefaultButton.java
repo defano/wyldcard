@@ -1,6 +1,5 @@
 package hypercard.parts.buttons.styles;
 
-import com.defano.jmonet.tools.util.MarchingAnts;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.model.ButtonModel;
@@ -17,7 +16,6 @@ public class DefaultButton extends JButton implements ButtonView {
     public DefaultButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        MarchingAnts.getInstance().addObserver(this::repaint);
         super.addActionListener(toolEditablePart);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);

@@ -21,7 +21,6 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonVi
     public CheckboxButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        MarchingAnts.getInstance().addObserver(this::repaint);
         super.addActionListener(this);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);

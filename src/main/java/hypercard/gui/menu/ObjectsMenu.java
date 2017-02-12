@@ -10,6 +10,8 @@ import hypercard.parts.*;
 import hypercard.HyperCard;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ObjectsMenu extends JMenu {
 
@@ -69,26 +71,12 @@ public class ObjectsMenu extends JMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Button")
-                .withAction(e -> {
-                    try {
-                        CardPart currentCard = HyperCard.getInstance().getStack().getCurrentCard();
-                        currentCard.addButton(ButtonPart.newButton(currentCard));
-                    } catch (PartException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                })
+                .withAction(e -> HyperCard.getInstance().getCard().newButton())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Field")
-                .withAction(e -> {
-                    try {
-                        CardPart currentCard = HyperCard.getInstance().getStack().getCurrentCard();
-                        currentCard.addField(FieldPart.newField(currentCard));
-                    } catch (PartException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                })
+                .withAction(e -> HyperCard.getInstance().getCard().newField())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

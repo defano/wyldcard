@@ -26,7 +26,6 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonView {
         this.toolEditablePart = toolEditablePart;
         super.setEnabled(true);
 
-        MarchingAnts.getInstance().addObserver(this::repaint);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
     }

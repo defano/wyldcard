@@ -1,5 +1,7 @@
 package hypercard.parts.fields;
 
+import com.defano.jmonet.tools.util.MarchingAnts;
+import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import hypercard.context.ToolsContext;
 import hypercard.gui.util.*;
 import hypercard.parts.ToolEditablePart;
@@ -10,7 +12,7 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 
-public abstract class AbstractFieldView implements ToolEditablePart {
+public abstract class AbstractFieldView implements ToolEditablePart, MarchingAntsObserver {
 
     private FieldView fieldView;
     private boolean isBeingEdited;
@@ -35,6 +37,16 @@ public abstract class AbstractFieldView implements ToolEditablePart {
     public void setBeingEdited(boolean beingEdited) {
         fieldView.setEditable(!beingEdited);
         isBeingEdited = beingEdited;
+
+        isBeingEdited = beingEdited;
+
+        if (isBeingEdited()) {
+            MarchingAnts.getInstance().addObserver(this);
+        } else {
+            MarchingAnts.getInstance().removeObserver(this);
+        }
+
+        getComponent().repaint();
     }
 
     public void setFieldStyle(FieldStyle style) {
@@ -91,4 +103,8 @@ public abstract class AbstractFieldView implements ToolEditablePart {
         KeyboardManager.removeGlobalKeyListener(this);
     }
 
+    @Override
+    public void onAntsMoved() {
+        getComponent().repaint();
+    }
 }
