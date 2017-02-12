@@ -4,8 +4,8 @@ import hypertalk.ast.common.DateFormat;
 import hypertalk.ast.common.Value;
 import hypertalk.ast.expressions.Expression;
 import hypertalk.exception.HtSemanticException;
+import hypertalk.utils.DateUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ExpDateFun extends Expression {
@@ -18,15 +18,7 @@ public class ExpDateFun extends Expression {
 
     @Override
     public Value evaluate() throws HtSemanticException {
-        switch (dateFormat) {
-            case LONG:
-                return new Value(new SimpleDateFormat("EEEEE, MMMMM dd, yyyy").format(new Date()));
-            case SHORT:
-                return new Value(new SimpleDateFormat("MM/dd/yy").format(new Date()));
-            case ABBREVIATED:
-                return new Value(new SimpleDateFormat("EEE, MMM dd, yyyy").format(new Date()));
-            default:
-                throw new HtSemanticException("Unsupported date format.");
-        }
+        return DateUtils.valueOf(new Date(), dateFormat);
     }
+
 }

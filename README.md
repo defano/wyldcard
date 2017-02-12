@@ -430,6 +430,8 @@ Precedence  | Operator        | Description
             | `<=`            | Less than or equal to comparison for numbers and text
             | `>=`            | Greater than or equal to comparison for numbers and text
             | `contains`      | Substring comparison for text
+            | `is a`, `is an` | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
+            | `is not a`, `is not an` | The logical inverse of `is a`, `is an`
 8           | `=`             | Equality comparison for text
             | `is`            | Equality comparison for text
             | `is not`        | Negative equality comparison for text

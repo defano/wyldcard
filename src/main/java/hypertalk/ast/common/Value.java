@@ -19,6 +19,7 @@ import java.util.Vector;
 import hypertalk.ast.containers.Preposition;
 import hypertalk.exception.HtSemanticException;
 import hypertalk.utils.ChunkUtils;
+import hypertalk.utils.DateUtils;
 
 public class Value implements Comparable<Value> {
 
@@ -516,7 +517,21 @@ public class Value implements Comparable<Value> {
 
         return new Value(val.rectangleValue().contains(pointValue()));
     }
-    
+
+    public Value isA(Value val) throws HtSemanticException {
+        KnownType type = KnownType.getTypeByName(val.toString());
+        switch (type) {
+            case NUMBER: return new Value(this.isNumber());
+            case INTEGER: return new Value(this.isInteger());
+            case POINT: return new Value(this.isPoint());
+            case RECT: return new Value(this.isRect());
+            case DATE: return new Value(DateUtils.dateOf(this) != null);
+            case LOGICAL: return new Value(this.isBoolean());
+
+            default: throw new HtSemanticException("Bug! Unimplemented type comparison for: " + type);
+        }
+    }
+
     public boolean contains (Object v) {
         return value.contains(v.toString());
     }

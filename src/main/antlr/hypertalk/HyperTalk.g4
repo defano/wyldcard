@@ -258,7 +258,7 @@ expression          : 'empty'                                                   
                     | expression op=('mod'|'div'|'/'|'*') expression                    # multiplicationExp
                     | expression op=('+'|'-') expression                                # additionExp
                     | expression op=('&&'|'&') expression                               # concatExp
-                    | expression op=('>='|'<='|'<'|'>'|'contains'|'is in') expression   # equalityExp
+                    | expression op=('>='|'<='|'<'|'>'|'contains'|'is in'|'is a' | 'is an' | 'is not a' | 'is not an') expression   # equalityExp
                     | expression op=('='|'is not'|'is'|'<>'|'is not in') expression     # comparisonExp
                     | expression op=('is within' | 'is not within') expression          # withinExp
                     | expression 'and' expression                                       # andExp
@@ -280,10 +280,10 @@ builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor        # builtinFun
 oneArgFunc          : 'average'                                     # averageFunc
                     | 'min'                                         # minFunc
                     | 'max'                                         # maxFunc
-                    | 'number' ('of' | 'in') CHAR                   # numberOfCharsFunc
-                    | 'number' ('of' | 'in') WORD                   # numberOfWordsFunc
-                    | 'number' ('of' | 'in') ITEM                   # numberOfItemsFunc
-                    | 'number' ('of' | 'in') LINE                   # numberOfLinesFunc
+                    | 'number of' CHAR                              # numberOfCharsFunc
+                    | 'number of' WORD                              # numberOfWordsFunc
+                    | 'number of' ITEM                              # numberOfItemsFunc
+                    | 'number of' LINE                              # numberOfLinesFunc
                     | 'random'                                      # randomFunc
                     | 'sqrt'                                        # sqrtFunc
                     | 'sin'                                         # sinFunc
@@ -304,15 +304,12 @@ noArgFunc           : 'mouse'                                               # mo
                     | ('message' | 'message' 'box' | 'message' 'window')    # messageFunc
                     | 'ticks'                                               # ticksFunc
                     | 'seconds'                                             # secondsFunc
-                    | dateFormat 'date'                                     # dateFormatFunc
-                    | dateFormat 'time'                                     # timeFormatFunc
-                    ;
-
-dateFormat          : 'long'                                        # longDateFormat
-                    | 'short'                                       # shortDateFormat
-                    | 'abbrev'                                      # abbrevDateFormat
-                    | 'abbreviated'                                 # abbreviatedDateFormat
-                    |                                               # defaultDateFormat
+                    | 'long date'                                           # longDateFormatFunc
+                    | 'short date'                                          # shortDateFormatFunc
+                    | ('abbrev date' | 'abbreviated date')                  # abbrevDateFormatFunc
+                    | 'long time'                                           # longTimeFormatFunc
+                    | 'short time'                                          # shortTimeFormatFunc
+                    | ('abbrev time' | 'abbreviated time')                  # abbrevTimeFormatFunc
                     ;
 
 literal				: STRING_LITERAL                                # stringLiteral

@@ -908,48 +908,33 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitDateFormatFunc(HyperTalkParser.DateFormatFuncContext ctx) {
-        switch ((DateFormat) visit(ctx.dateFormat())) {
-            case LONG: return BuiltInFunction.LONG_DATE;
-            case SHORT: return BuiltInFunction.SHORT_DATE;
-            case ABBREVIATED: return BuiltInFunction.ABBREV_DATE;
-            default: throw new RuntimeException("Bug! Unimplemented case.");
-        }
+    public Object visitLongDateFormatFunc(HyperTalkParser.LongDateFormatFuncContext ctx) {
+        return BuiltInFunction.LONG_DATE;
     }
 
     @Override
-    public Object visitTimeFormatFunc(HyperTalkParser.TimeFormatFuncContext ctx) {
-        switch ((DateFormat) visit(ctx.dateFormat())){
-            case LONG: return BuiltInFunction.LONG_TIME;
-            case SHORT: return BuiltInFunction.SHORT_TIME;
-            case ABBREVIATED: return BuiltInFunction.ABBREV_TIME;
-            default: throw new RuntimeException("Bug! Unimplemented case.");
-        }
+    public Object visitShortTimeFormatFunc(HyperTalkParser.ShortTimeFormatFuncContext ctx) {
+        return BuiltInFunction.SHORT_TIME;
     }
 
     @Override
-    public Object visitLongDateFormat(HyperTalkParser.LongDateFormatContext ctx) {
-        return DateFormat.LONG;
+    public Object visitAbbrevTimeFormatFunc(HyperTalkParser.AbbrevTimeFormatFuncContext ctx) {
+        return BuiltInFunction.ABBREV_TIME;
     }
 
     @Override
-    public Object visitShortDateFormat(HyperTalkParser.ShortDateFormatContext ctx) {
-        return DateFormat.SHORT;
+    public Object visitLongTimeFormatFunc(HyperTalkParser.LongTimeFormatFuncContext ctx) {
+        return BuiltInFunction.LONG_TIME;
     }
 
     @Override
-    public Object visitAbbrevDateFormat(HyperTalkParser.AbbrevDateFormatContext ctx) {
-        return DateFormat.ABBREVIATED;
+    public Object visitAbbrevDateFormatFunc(HyperTalkParser.AbbrevDateFormatFuncContext ctx) {
+        return BuiltInFunction.ABBREV_DATE;
     }
 
     @Override
-    public Object visitAbbreviatedDateFormat(HyperTalkParser.AbbreviatedDateFormatContext ctx) {
-        return DateFormat.ABBREVIATED;
-    }
-
-    @Override
-    public Object visitDefaultDateFormat(HyperTalkParser.DefaultDateFormatContext ctx) {
-        return DateFormat.SHORT;
+    public Object visitShortDateFormatFunc(HyperTalkParser.ShortDateFormatFuncContext ctx) {
+        return BuiltInFunction.SHORT_DATE;
     }
 
     @Override

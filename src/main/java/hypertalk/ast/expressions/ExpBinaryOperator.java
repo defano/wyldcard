@@ -1,7 +1,7 @@
 /**
  * ExpBinaryOperator.java
  * @author matt.defano@gmail.com
- * 
+ *
  * Encapsulation of a binary expression, for example "1 + 2"
  */
 
@@ -16,17 +16,17 @@ public class ExpBinaryOperator extends Expression {
     public final BinaryOperator operator;
     public final Expression lhs;
     public final Expression rhs;
-    
+
     public ExpBinaryOperator (Expression lhs, BinaryOperator op, Expression rhs) {
         this.lhs = lhs;
         this.operator = op;
         this.rhs = rhs;
     }
-    
+
     public Value evaluate () throws HtSemanticException {
         Value lhs = this.lhs.evaluate();
         Value rhs = this.rhs.evaluate();
-        
+
         switch (operator) {
         case EQUALS: return new Value(lhs.equals(rhs));
         case NOTEQUALS: return new Value(!lhs.equals(rhs));
@@ -49,7 +49,10 @@ public class ExpBinaryOperator extends Expression {
         case AMPAMP: return lhs.concat(new Value(" ").concat(rhs));
         case IS_WITHIN: return lhs.within(rhs);
         case IS_NOT_WITHIN: return new Value(!lhs.within(rhs).booleanValue());
+        case IS_A: return new Value(lhs.isA(rhs));
+        case IS_NOT_A: return new Value(!lhs.isA(rhs).booleanValue());
+
         default: throw new HtSemanticException("Unhandled binary operator in evaluation " + operator);
         }
-    }    
+    }
 }
