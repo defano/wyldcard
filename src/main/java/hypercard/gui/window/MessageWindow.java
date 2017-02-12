@@ -4,13 +4,20 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import hypercard.gui.HyperCardWindow;
 import hypercard.HyperCard;
+import hypercard.gui.util.SquigglePainter;
+import hypercard.runtime.Interpreter;
+import hypertalk.exception.HtException;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 public class MessageWindow extends HyperCardWindow {
+
+    private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 
     private JTextField messageBox;
     private JPanel messageWindow;
@@ -21,9 +28,28 @@ public class MessageWindow extends HyperCardWindow {
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == '\n') {
                     executeMessageBox();
+                } else {
+                    checkSyntax();
                 }
             }
         });
+    }
+
+    private void checkSyntax() {
+        try {
+            Interpreter.compile(messageBox.getText());
+            messageBox.getHighlighter().removeAllHighlights();
+        } catch (HtException e) {
+            squiggleHighlight();
+        }
+    }
+
+    private void squiggleHighlight() {
+        try {
+            messageBox.getHighlighter().addHighlight(0, messageBox.getText().length(), ERROR_HIGHLIGHTER);
+        } catch (BadLocationException e1) {
+            // Nothing to do
+        }
     }
 
     @Override
