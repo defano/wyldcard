@@ -29,7 +29,7 @@ public class MessageWindow extends HyperCardWindow {
                 if (e.getKeyChar() == '\n') {
                     executeMessageBox();
                 } else {
-                    checkSyntax();
+                    SwingUtilities.invokeLater(() -> checkSyntax());
                 }
             }
         });
