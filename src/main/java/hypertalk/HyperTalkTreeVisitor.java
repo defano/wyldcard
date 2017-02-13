@@ -963,6 +963,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitTruncFunc(HyperTalkParser.TruncFuncContext ctx) {
+        return BuiltInFunction.TRUNC;
+    }
+
+    @Override
     public Object visitEmptyExp(HyperTalkParser.EmptyExpContext ctx) {
         return new ExpLiteral("");
     }
@@ -1014,6 +1019,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_WORDS: return new ExpNumberOfFun(ChunkType.WORD, (Expression) visit(ctx.factor()));
             case RANDOM: return new ExpRandomFun((Expression) visit(ctx.factor()));
             case SQRT:
+            case TRUNC:
             case SIN:
             case COS:
             case TAN:

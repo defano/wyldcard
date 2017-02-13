@@ -284,6 +284,7 @@ oneArgFunc          : 'average'                                     # averageFun
                     | 'number of' LINE                              # numberOfLinesFunc
                     | 'random'                                      # randomFunc
                     | 'sqrt'                                        # sqrtFunc
+                    | 'trunc'                                       # truncFunc
                     | 'sin'                                         # sinFunc
                     | 'cos'                                         # cosFunc
                     | 'tan'                                         # tanFunc

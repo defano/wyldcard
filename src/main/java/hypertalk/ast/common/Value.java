@@ -515,6 +515,16 @@ public class Value implements Comparable<Value> {
         return new Value(val.rectangleValue().contains(pointValue()));
     }
 
+    public Value trunc() throws HtSemanticException {
+        if (isInteger()) {
+            return new Value(integerValue());
+        } else if (isFloat()) {
+            return new Value((int) doubleValue());
+        }
+
+        throw new HtSemanticException("Cannot trunc the value: " + stringValue() + " because it is not a number.");
+    }
+
     public Value isA(Value val) throws HtSemanticException {
         KnownType type = KnownType.getTypeByName(val.toString());
         switch (type) {

@@ -474,7 +474,7 @@ This version of HyperCard implements the following set of commands:
 
 Command	   | Description
 -----------|------------
-`put`      | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseloc into item 1 of the location of me`. 
+`put`      | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseloc into item 1 of the location of me`.
 `get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
@@ -533,6 +533,7 @@ Function | Description
 `ln` | Returns the natural logarithm of the given argument.
 `ln1` | Returns the natural logarithm of the given argument plus one.
 `log2` | Returns the base-2 logarithm of the given argument.
+`trunc` | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 
 ### User-defined Functions
 

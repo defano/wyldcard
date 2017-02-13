@@ -22,6 +22,7 @@ public enum BuiltInFunction {
     NUMBER_ITEMS,
     RANDOM,
     SQRT,
+    TRUNC,
     SIN,
     COS,
     TAN,
