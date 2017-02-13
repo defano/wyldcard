@@ -400,10 +400,7 @@ public class Value implements Comparable<Value> {
             throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
 
         try {
-            if (isInteger() && v.isInteger())
-                return new Value(longValue() / v.longValue());
-            else
-                return new Value(doubleValue() / v.doubleValue());
+            return new Value(doubleValue() / v.doubleValue());
         } catch (ArithmeticException e) {
             throw new HtSemanticException("Cannot divide " + stringValue() + " by zero");
         }

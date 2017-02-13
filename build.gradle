@@ -33,7 +33,7 @@ idea {
 }
 
 dependencies {
-	antlr "org.antlr:antlr4:4.5"
+	antlr "org.antlr:antlr4:4.6"
 
 	compile 'com.intellij:javac2:7.0.3'
 	compile 'com.google.code.gson:gson:2.7'

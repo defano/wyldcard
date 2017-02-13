@@ -8,7 +8,7 @@ script				: handler                                       # handlerScript
                     | statementList                                 # statementListScript
                     | COMMENT                                       # commentScript
                     | NEWLINE                                       # whitespaceScript
-                    | <EOF>                                         # eofScript
+                    | EOF                                           # eofScript
                     | script NEWLINE                                # scriptNewlineScript
                     ;
 
@@ -36,16 +36,14 @@ statementList		: statementList nonEmptyStmnt                   # multiStmntList
                     | NEWLINE                                       # newlineStmntList
                     ;
 
-nonEmptyStmnt		: commandStmnt stmntTerminator                  # nonEmptyCommandStmnt
-                    | globalStmnt stmntTerminator                   # nonEmptyGlobalStmnt
-                    | ifStatement stmntTerminator                   # nonEmptyIfStmnt
-                    | repeatStatement stmntTerminator               # nonEmptyRepeatStmnt
-                    | doStmnt stmntTerminator                       # nonEmptyDoStmnt
-                    | returnStmnt stmntTerminator                   # nonEmptyReturnStmnt
-                    | expression stmntTerminator                    # nonEmptyExpStmnt
+nonEmptyStmnt		: commandStmnt (NEWLINE | EOF)                # nonEmptyCommandStmnt
+                    | globalStmnt (NEWLINE | EOF)                 # nonEmptyGlobalStmnt
+                    | ifStatement (NEWLINE | EOF)                 # nonEmptyIfStmnt
+                    | repeatStatement (NEWLINE | EOF)             # nonEmptyRepeatStmnt
+                    | doStmnt (NEWLINE | EOF)                     # nonEmptyDoStmnt
+                    | returnStmnt (NEWLINE | EOF)                 # nonEmptyReturnStmnt
+                    | expression (NEWLINE | EOF)                  # nonEmptyExpStmnt
                     ;
-
-stmntTerminator     : NEWLINE | <EOF>;
 
 returnStmnt			: 'return' expression                           # eprReturnStmnt
                     | 'return'                                      # voidReturnStmnt
@@ -85,7 +83,7 @@ askCmd				: 'ask' expression 'with' expression            # askExpWithCmd
                     | 'ask' expression                              # askExpCmd
                     ;
 
-putCmd				: 'put' expression container                    # putIntoCmd
+putCmd				: 'put' expression                              # putIntoCmd
                     | 'put' expression preposition container        # putPrepositionCmd
                     ;
 

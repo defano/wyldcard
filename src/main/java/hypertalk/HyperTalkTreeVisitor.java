@@ -572,7 +572,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPutIntoCmd(HyperTalkParser.PutIntoCmdContext ctx) {
-        return new StatPutCmd((Expression) visit(ctx.expression()), Preposition.INTO, (Container) visit(ctx.container()));
+        return new StatPutCmd((Expression) visit(ctx.expression()), Preposition.INTO, new ContainerMsgBox());
     }
 
     @Override
@@ -970,11 +970,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitConcatExp(HyperTalkParser.ConcatExpContext ctx) {
         return new ExpBinaryOperator((Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitStmntTerminator(HyperTalkParser.StmntTerminatorContext ctx) {
-        return visit(ctx.NEWLINE());
     }
 
     @Override
