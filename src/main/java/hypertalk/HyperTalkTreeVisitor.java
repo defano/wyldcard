@@ -26,6 +26,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSortCmdStmnt(HyperTalkParser.SortCmdStmntContext ctx) {
+        return visit(ctx.sortCmd());
+    }
+
+    @Override
     public Object visitWaitCountCmd(HyperTalkParser.WaitCountCmdContext ctx) {
         return new StatWaitCmd((Expression) visit(ctx.factor()), (TimeUnit) visit(ctx.timeUnit()));
     }
@@ -179,16 +184,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitWhitespaceScript(HyperTalkParser.WhitespaceScriptContext ctx) {
         return new Script();
-    }
-
-    @Override
-    public Object visitEofScript(HyperTalkParser.EofScriptContext ctx) {
-        return new Script();
-    }
-
-    @Override
-    public Object visitScriptNewlineScript(HyperTalkParser.ScriptNewlineScriptContext ctx) {
-        return visit(ctx.script());
     }
 
     @Override

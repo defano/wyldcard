@@ -1,15 +1,13 @@
 grammar HyperTalk;
 
-script				: handler                                       # handlerScript
-                    | script handler                                # scriptHandlerScript
-                    | function                                      # functionScript
-                    | script function                               # scriptFunctionScript
-                    | nonEmptyStmnt                                 # statementScript
-                    | statementList                                 # statementListScript
+script			    : handler (NEWLINE+ | EOF)                      # handlerScript
+                    | script handler (NEWLINE+ | EOF)               # scriptHandlerScript
+                    | function (NEWLINE+ | EOF)                     # functionScript
+                    | script function (NEWLINE+ | EOF)              # scriptFunctionScript
+                    | nonEmptyStmnt (NEWLINE+ | EOF)                # statementScript
+                    | statementList (NEWLINE+ | EOF)                # statementListScript
+                    | (NEWLINE+ | EOF)                              # whitespaceScript
                     | COMMENT                                       # commentScript
-                    | NEWLINE                                       # whitespaceScript
-                    | EOF                                           # eofScript
-                    | script NEWLINE                                # scriptNewlineScript
                     ;
 
 handler				: 'on' ID NEWLINE statementList 'end' ID        # populatedHandler
@@ -30,19 +28,19 @@ parameterList		: ID                                            # singleParamList
                     |                                               # emptyParamList
                     ;
 
-statementList		: statementList nonEmptyStmnt                   # multiStmntList
-                    | nonEmptyStmnt                                 # singleStmntList
+statementList		: statementList nonEmptyStmnt NEWLINE           # multiStmntList
+                    | nonEmptyStmnt NEWLINE                         # singleStmntList
                     | statementList NEWLINE                         # stmntListNewlineStmntList
                     | NEWLINE                                       # newlineStmntList
                     ;
 
-nonEmptyStmnt		: commandStmnt (NEWLINE | EOF)                # nonEmptyCommandStmnt
-                    | globalStmnt (NEWLINE | EOF)                 # nonEmptyGlobalStmnt
-                    | ifStatement (NEWLINE | EOF)                 # nonEmptyIfStmnt
-                    | repeatStatement (NEWLINE | EOF)             # nonEmptyRepeatStmnt
-                    | doStmnt (NEWLINE | EOF)                     # nonEmptyDoStmnt
-                    | returnStmnt (NEWLINE | EOF)                 # nonEmptyReturnStmnt
-                    | expression (NEWLINE | EOF)                  # nonEmptyExpStmnt
+nonEmptyStmnt		: commandStmnt                                  # nonEmptyCommandStmnt
+                    | globalStmnt                                   # nonEmptyGlobalStmnt
+                    | ifStatement                                   # nonEmptyIfStmnt
+                    | repeatStatement                               # nonEmptyRepeatStmnt
+                    | doStmnt                                       # nonEmptyDoStmnt
+                    | returnStmnt                                   # nonEmptyReturnStmnt
+                    | expression                                    # nonEmptyExpStmnt
                     ;
 
 returnStmnt			: 'return' expression                           # eprReturnStmnt
@@ -143,7 +141,7 @@ ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
 
 singleThen			: nonEmptyStmnt NEWLINE elseBlock               # singleThenNewlineElse
                     | nonEmptyStmnt elseBlock                       # singleThenElse
-                    | nonEmptyStmnt NEWLINE                         # singleThenNoElse
+                    | nonEmptyStmnt                                 # singleThenNoElse
                     ;
 
 multiThen			: statementList 'end if'                        # emptyElse
