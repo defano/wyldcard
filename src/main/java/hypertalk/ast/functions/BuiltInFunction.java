@@ -32,5 +32,8 @@ public enum BuiltInFunction {
     EXP2,
     LN,
     LN1,
-    LOG2
+    LOG2,
+    ABS,
+    NUM_TO_CHAR,
+    CHAR_TO_NUM
 }

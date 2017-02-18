@@ -94,6 +94,10 @@ public class Value implements Comparable<Value> {
         this(String.valueOf(x1) + "," + String.valueOf(y1) + "," + String.valueOf(x2) + "," + String.valueOf(y2));
     }
 
+    public Value (char c) {
+        this(String.valueOf(c));
+    }
+
     public Value (String value) {
         this.value = value;
 

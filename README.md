@@ -534,6 +534,9 @@ Function | Description
 `ln1` | Returns the natural logarithm of the given argument plus one.
 `log2` | Returns the base-2 logarithm of the given argument.
 `trunc` | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
+`abs` | Returns the absolute value of the given numerical argument.
+`numToChar` | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
+`charToNum` | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
 
 ### User-defined Functions
 

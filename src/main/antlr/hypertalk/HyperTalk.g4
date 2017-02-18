@@ -293,6 +293,9 @@ oneArgFunc          : 'average'                                     # averageFun
                     | 'ln'                                          # lnFunc
                     | 'ln1'                                         # ln1Func
                     | 'log2'                                        # log2Func
+                    | 'abs'                                         # absFunc
+                    | 'charToNum'                                   # charToNumFunc
+                    | 'numToChar'                                   # numToCharFunc
                     ;
 
 noArgFunc           : 'mouse'                                               # mouseFunc

@@ -1025,7 +1025,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case LN:
             case LN1:
             case LOG2:
+            case ABS:
+            case NUM_TO_CHAR:
                 return new ExpMathFun((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.factor()));
+            case CHAR_TO_NUM:
+                return new ExpCharToNum((Expression) visit(ctx.factor()));
 
             default: throw new RuntimeException("Bug! Unimplemented case.");
         }
@@ -1154,6 +1158,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitLog2Func(HyperTalkParser.Log2FuncContext ctx) {
         return BuiltInFunction.LOG2;
+    }
+
+    @Override
+    public Object visitNumToCharFunc(HyperTalkParser.NumToCharFuncContext ctx) {
+        return BuiltInFunction.NUM_TO_CHAR;
+    }
+
+    @Override
+    public Object visitCharToNumFunc(HyperTalkParser.CharToNumFuncContext ctx) {
+        return BuiltInFunction.CHAR_TO_NUM;
+    }
+
+    @Override
+    public Object visitAbsFunc(HyperTalkParser.AbsFuncContext ctx) {
+        return BuiltInFunction.ABS;
     }
 
     @Override

@@ -43,6 +43,8 @@ public class ExpMathFun extends Expression {
             case LN1: return new Value(Math.log1p(operand.doubleValue()));
             case LOG2: return new Value(Math.log(operand.doubleValue()) / Math.log(2.0));
             case TRUNC: return operand.trunc();
+            case ABS: return operand.isInteger() ? new Value(Math.abs(operand.integerValue())) : new Value(Math.abs(operand.doubleValue()));
+            case NUM_TO_CHAR: return new Value((char)operand.integerValue());
         }
 
         throw new IllegalArgumentException("Bug! Unimplemented mathematical function: " + function);
