@@ -301,6 +301,9 @@ oneArgFunc          : 'average'                                     # averageFun
 noArgFunc           : 'mouse'                                               # mouseFunc
                     | 'mouseloc'                                            # mouseLocFunc
                     | 'result'                                              # resultFunc
+                    | ('commandKey' | 'cmdKey')                             # commandKeyFunc
+                    | 'shiftKey'                                            # shiftKeyFunc
+                    | 'optionKey'                                           # optionKeyFunc
                     | ('message' | 'message' 'box' | 'message' 'window')    # messageFunc
                     | 'ticks'                                               # ticksFunc
                     | 'seconds'                                             # secondsFunc

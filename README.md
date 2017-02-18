@@ -511,6 +511,9 @@ Function | Description
 `average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
 `mouse` | Returns the current state of the left mouse button; either "up" or "down"
 `mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
+`shiftKey` | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
+`commandKey` | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
+`optionKey` | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
 `number of words` <br> `number of chars` <br> `number of lines` <br> `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
 `result` | Returns the current value of the implicit variable `it`, for example: `the result`
 `message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`

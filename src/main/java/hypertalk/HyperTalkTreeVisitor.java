@@ -888,6 +888,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitOptionKeyFunc(HyperTalkParser.OptionKeyFuncContext ctx) {
+        return BuiltInFunction.OPTION_KEY;
+    }
+
+    @Override
+    public Object visitShiftKeyFunc(HyperTalkParser.ShiftKeyFuncContext ctx) {
+        return BuiltInFunction.SHIFT_KEY;
+    }
+
+    @Override
+    public Object visitCommandKeyFunc(HyperTalkParser.CommandKeyFuncContext ctx) {
+        return BuiltInFunction.COMMAND_KEY;
+    }
+
+    @Override
     public Object visitMessageFunc(HyperTalkParser.MessageFuncContext ctx) {
         return BuiltInFunction.MESSAGE;
     }
@@ -1028,10 +1043,9 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case ABS:
             case NUM_TO_CHAR:
                 return new ExpMathFun((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.factor()));
-            case CHAR_TO_NUM:
-                return new ExpCharToNum((Expression) visit(ctx.factor()));
+            case CHAR_TO_NUM: return new ExpCharToNum((Expression) visit(ctx.factor()));
 
-            default: throw new RuntimeException("Bug! Unimplemented case.");
+            default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.oneArgFunc().getText());
         }
     }
 
@@ -1050,7 +1064,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case ABBREV_TIME: return new ExpTimeFun(DateFormat.ABBREVIATED);
             case LONG_TIME: return new ExpTimeFun(DateFormat.LONG);
             case SHORT_TIME: return new ExpTimeFun(DateFormat.SHORT);
-            default: throw new RuntimeException("Bug! Unimplemented case.");
+            case OPTION_KEY: return new ExpModifierKeyFun(ModifierKey.OPTION);
+            case COMMAND_KEY: return new ExpModifierKeyFun(ModifierKey.COMMAND);
+            case SHIFT_KEY: return new ExpModifierKeyFun(ModifierKey.SHIFT);
+
+            default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
         }
     }
 
@@ -1061,7 +1079,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case MAX: return new ExpMaxFun((ExpressionList) visit(ctx.expressionList()));
             case AVERAGE: return new ExpAverageFun((ExpressionList) visit(ctx.expressionList()));
             case RANDOM: return new ExpRandomFun((ExpressionList) visit(ctx.expressionList()));
-            default: throw new RuntimeException("Bug! Unimplemented case.");
+            default: throw new RuntimeException("Bug! Unimplemented arg-list function: " + ctx.oneArgFunc().getText());
         }
     }
 

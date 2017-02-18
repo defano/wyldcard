@@ -9,6 +9,8 @@ import java.util.Set;
 public class KeyboardManager {
 
     public static boolean isShiftDown;
+    public static boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)
+    public static boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac
     public static boolean isBreakSequence;
 
     private final static Set<KeyListener> observers = new HashSet<>();
@@ -16,7 +18,10 @@ public class KeyboardManager {
     public static void start() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
             isShiftDown = e.isShiftDown();
-            isBreakSequence = e.getKeyCode() == KeyEvent.VK_PERIOD && (e.isMetaDown() || e.isControlDown());
+            isAltOptionDown = e.isAltDown();
+            isCtrlCommandDown = e.isMetaDown() || e.isControlDown();
+
+            isBreakSequence = e.getKeyCode() == KeyEvent.VK_PERIOD && isCtrlCommandDown;
 
             fireGlobalKeyListeners(e);
 

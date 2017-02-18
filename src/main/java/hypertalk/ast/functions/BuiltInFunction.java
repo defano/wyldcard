@@ -35,5 +35,8 @@ public enum BuiltInFunction {
     LOG2,
     ABS,
     NUM_TO_CHAR,
-    CHAR_TO_NUM
+    CHAR_TO_NUM,
+    SHIFT_KEY,
+    OPTION_KEY,
+    COMMAND_KEY
 }
