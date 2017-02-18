@@ -933,6 +933,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitToolFunc(HyperTalkParser.ToolFuncContext ctx) {
+        return BuiltInFunction.TOOL;
+    }
+
+    @Override
     public Object visitLongTimeFormatFunc(HyperTalkParser.LongTimeFormatFuncContext ctx) {
         return BuiltInFunction.LONG_TIME;
     }
@@ -1067,6 +1072,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case OPTION_KEY: return new ExpModifierKeyFun(ModifierKey.OPTION);
             case COMMAND_KEY: return new ExpModifierKeyFun(ModifierKey.COMMAND);
             case SHIFT_KEY: return new ExpModifierKeyFun(ModifierKey.SHIFT);
+            case TOOL: return new ExpToolFun();
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
         }

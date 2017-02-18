@@ -147,6 +147,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
             case AIRBRUSH:
                 return spraypaint;
             case CURVE:
+            case FREEFORM:
                 return curve;
             case LASSO:
                 return lasso;

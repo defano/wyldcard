@@ -313,6 +313,7 @@ noArgFunc           : 'mouse'                                               # mo
                     | 'long time'                                           # longTimeFormatFunc
                     | 'short time'                                          # shortTimeFormatFunc
                     | ('abbrev time' | 'abbreviated time')                  # abbrevTimeFormatFunc
+                    | 'tool'                                                # toolFunc
                     ;
 
 literal				: STRING_LITERAL                                # stringLiteral

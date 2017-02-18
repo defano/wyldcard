@@ -1,6 +1,9 @@
 package hypertalk.ast.common;
 
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.PaintTool;
 import com.google.common.collect.Lists;
+import hypercard.context.ToolMode;
 import hypertalk.exception.HtSemanticException;
 
 import java.util.List;
@@ -32,6 +35,44 @@ public enum Tool {
     Tool(int toolNumber, String... names) {
         this.toolNumber = toolNumber;
         this.toolNames = Lists.newArrayList(names);
+    }
+
+    public static Tool fromToolMode(ToolMode mode, PaintToolType paintTool) {
+        switch (mode) {
+            case BROWSE: return BROWSE;
+            case FIELD: return FIELD;
+            case PAINT: return fromPaintTool(paintTool);
+        }
+
+        throw new IllegalArgumentException("Bug! Unimplemented tool mode: " + mode);
+    }
+
+    public static Tool fromPaintTool(PaintToolType paintTool) {
+        switch (paintTool) {
+            case ARROW: return BROWSE;
+            case PENCIL: return PENCIL;
+            case RECTANGLE: return RECTANGLE;
+            case ROUND_RECTANGLE: return ROUNDRECT;
+            case OVAL: return OVAL;
+            case PAINTBRUSH: return BRUSH;
+            case ERASER: return ERASER;
+            case LINE: return LINE;
+            case POLYGON: return POLYGON;
+            case SHAPE: return SHAPE;
+            case FREEFORM: return CURVE;
+            case SELECTION: return SELECT;
+            case LASSO: return LASSO;
+            case TEXT: return TEXT;
+            case FILL: return BUCKET;
+            case AIRBRUSH: return SPRAY;
+            case CURVE: return CURVE;
+            case SLANT: return SELECT;
+            case ROTATE: return SELECT;
+            case SCALE: return SELECT;
+            case MAGNIFIER: return SELECT;
+        }
+
+        throw new IllegalArgumentException("Bug! Unimplemented paint tool: " + paintTool);
     }
 
     public static Tool byName(String toolName) throws HtSemanticException {

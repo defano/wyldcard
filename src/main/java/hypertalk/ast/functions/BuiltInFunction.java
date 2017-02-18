@@ -38,5 +38,6 @@ public enum BuiltInFunction {
     CHAR_TO_NUM,
     SHIFT_KEY,
     OPTION_KEY,
-    COMMAND_KEY
+    COMMAND_KEY,
+    TOOL
 }

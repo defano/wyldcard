@@ -347,6 +347,10 @@ public class ToolsContext implements StackModelObserver {
         }
     }
 
+    public Tool getSelectedTool() {
+        return Tool.fromToolMode(getToolMode(), getPaintTool().getToolType());
+    }
+
     @Override
     public void onCardClosing(CardPart oldCard) {
         paintToolProvider.get().deactivate();
