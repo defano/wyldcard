@@ -1215,6 +1215,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNegNumberDotLiteral(HyperTalkParser.NegNumberDotLiteralContext ctx) {
+        return new Value("-" + ctx.INTEGER_LITERAL().getText());
+    }
+
+    @Override
+    public Object visitNegNumberDotNumberLiteral(HyperTalkParser.NegNumberDotNumberLiteralContext ctx) {
+        return new Value("-" + ctx.INTEGER_LITERAL(0).getText() + "." + ctx.INTEGER_LITERAL(1).getText());
+    }
+
+    @Override
     public Object visitNumberLiteral(HyperTalkParser.NumberLiteralContext ctx) {
         return new Value(ctx.getText());
     }

@@ -313,12 +313,14 @@ noArgFunc           : 'mouse'                                               # mo
                     ;
 
 literal				: STRING_LITERAL                                # stringLiteral
-                    | '-' INTEGER_LITERAL                           # negNumberLiteral
                     | INTEGER_LITERAL                               # numberLiteral
+                    | '-' INTEGER_LITERAL                           # negNumberLiteral
                     | '.' INTEGER_LITERAL                           # dotNumberLiteral
                     | '-' '.' INTEGER_LITERAL                       # negDotNumberLiteral
                     | INTEGER_LITERAL '.'                           # numberDotLiteral
+                    | '-' INTEGER_LITERAL '.'                       # negNumberDotLiteral
                     | INTEGER_LITERAL '.' INTEGER_LITERAL           # numberDotNumberLiteral
+                    | '-' INTEGER_LITERAL '.' INTEGER_LITERAL       # negNumberDotNumberLiteral
                     ;
 
 THEN				: NEWLINE 'then' | 'then';
