@@ -511,6 +511,7 @@ Function | Description
 `average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
 `mouse` | Returns the current state of the left mouse button; either "up" or "down"
 `mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
+`tool` | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "You chose the paint brush!"`
 `shiftKey` | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
 `commandKey` | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
 `optionKey` | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
@@ -540,6 +541,7 @@ Function | Description
 `abs` | Returns the absolute value of the given numerical argument.
 `numToChar` | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
 `charToNum` | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
+`value` | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12. 
 
 ### User-defined Functions
 

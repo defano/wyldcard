@@ -18,6 +18,7 @@ import hypertalk.ast.common.Value;
 import hypertalk.ast.containers.PartSpecifier;
 import hypertalk.ast.functions.UserFunction;
 import hypertalk.ast.statements.StatExp;
+import hypertalk.ast.statements.Statement;
 import hypertalk.ast.statements.StatementList;
 import hypertalk.exception.HtException;
 import hypertalk.exception.HtParseError;
@@ -61,6 +62,17 @@ public class Interpreter {
         } catch (Exception e) {
             throw new HtException(e.getMessage());
         }
+    }
+
+    public static Value evaluate(String expression) {
+        try {
+            Statement statement = compile(expression).getStatements().list.get(0);
+            if (statement instanceof StatExp) {
+                return ((StatExp) statement).expression.evaluate();
+            }
+        } catch (Exception e) {}
+
+        return new Value(expression);
     }
 
     public static boolean isExpressionStatement(String statement) throws HtException {

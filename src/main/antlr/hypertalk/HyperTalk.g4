@@ -296,6 +296,7 @@ oneArgFunc          : 'average'                                     # averageFun
                     | 'abs'                                         # absFunc
                     | 'charToNum'                                   # charToNumFunc
                     | 'numToChar'                                   # numToCharFunc
+                    | 'value'                                       # valueFunc
                     ;
 
 noArgFunc           : 'mouse'                                               # mouseFunc

@@ -39,5 +39,6 @@ public enum BuiltInFunction {
     SHIFT_KEY,
     OPTION_KEY,
     COMMAND_KEY,
-    TOOL
+    TOOL,
+    VALUE
 }
