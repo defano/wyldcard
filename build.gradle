@@ -46,7 +46,7 @@ dependencies {
 generateGrammarSource {
 	outputDirectory = file("generated-src/main/java/hypertalk/parser")
 	maxHeapSize = "64m"
-	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "hypertalk.parser"]
+	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "com.defano.hypertalk.parser"]
 }
 
-mainClassName="hypercard.HyperCard"
+mainClassName="com.defano.hypercard.HyperCard"

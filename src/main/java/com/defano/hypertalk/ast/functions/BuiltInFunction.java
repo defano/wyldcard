@@ -1,0 +1,53 @@
+/*
+ * BuiltInFunction
+ * hypertalk-java
+ *
+ * Created by Matt DeFano on 2/19/17 3:11 PM.
+ * Copyright © 2017 Matt DeFano. All rights reserved.
+ */
+
+package com.defano.hypertalk.ast.functions;
+
+public enum BuiltInFunction {
+    AVERAGE,
+    MIN,
+    MAX,
+    MOUSE,
+    MOUSELOC,
+    RESULT,
+    MESSAGE,
+    TICKS,
+    SECONDS,
+    SHORT_DATE,
+    LONG_DATE,
+    ABBREV_DATE,
+    SHORT_TIME,
+    LONG_TIME,
+    ABBREV_TIME,
+    NUMBER_CHARS,
+    NUMBER_WORDS,
+    NUMBER_LINES,
+    NUMBER_ITEMS,
+    RANDOM,
+    SQRT,
+    TRUNC,
+    SIN,
+    COS,
+    TAN,
+    ATAN,
+    EXP,
+    EXP1,
+    EXP2,
+    LN,
+    LN1,
+    LOG2,
+    ABS,
+    NUM_TO_CHAR,
+    CHAR_TO_NUM,
+    SHIFT_KEY,
+    OPTION_KEY,
+    COMMAND_KEY,
+    TOOL,
+    VALUE,
+    LENGTH
+}
