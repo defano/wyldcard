@@ -40,5 +40,6 @@ public enum BuiltInFunction {
     OPTION_KEY,
     COMMAND_KEY,
     TOOL,
-    VALUE
+    VALUE,
+    LENGTH
 }

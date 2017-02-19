@@ -541,7 +541,8 @@ Function | Description
 `abs` | Returns the absolute value of the given numerical argument.
 `numToChar` | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
 `charToNum` | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
-`value` | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12. 
+`value` | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12.
+`length` | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields 12.
 
 ### User-defined Functions
 

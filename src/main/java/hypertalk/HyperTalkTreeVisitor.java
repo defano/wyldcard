@@ -1050,6 +1050,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
                 return new ExpMathFun((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.factor()));
             case CHAR_TO_NUM: return new ExpCharToNum((Expression) visit(ctx.factor()));
             case VALUE: return new ExpValueFun((Expression) visit(ctx.factor()));
+            case LENGTH: return new ExpNumberOfFun(ChunkType.CHAR, (Expression) visit(ctx.factor()));
 
             default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.oneArgFunc().getText());
         }
@@ -1193,6 +1194,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitValueFunc(HyperTalkParser.ValueFuncContext ctx) {
         return BuiltInFunction.VALUE;
+    }
+
+    @Override
+    public Object visitLengthFunc(HyperTalkParser.LengthFuncContext ctx) {
+        return BuiltInFunction.LENGTH;
     }
 
     @Override
