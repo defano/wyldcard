@@ -1,12 +1,12 @@
 package hypercard.parts.buttons.styles;
 
-import com.defano.jmonet.tools.util.MarchingAnts;
+import hypercard.fonts.HyperCardFont;
 import hypercard.parts.ButtonPart;
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.ButtonView;
 import hypercard.parts.buttons.SharedHilight;
 import hypercard.parts.model.ButtonModel;
-import hypercard.utils.FontUtils;
+import hypercard.fonts.FontUtils;
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -49,15 +49,15 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonVi
                 RadioButton.super.setEnabled(newValue.booleanValue());
 
             case ButtonModel.PROP_TEXTSIZE:
-                setFont(new Font(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(new Font(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(new Font(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:

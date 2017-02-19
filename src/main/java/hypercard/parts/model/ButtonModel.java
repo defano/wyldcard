@@ -43,7 +43,7 @@ public class ButtonModel extends AbstractPartModel {
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
         partModel.defineProperty(PROP_CONTENTS, new Value(), false);
         partModel.defineProperty(PROP_TEXTSIZE, new Value(((Font)UIManager.get("Button.font")).getSize()), false);
-        partModel.defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getName()), false);
+        partModel.defineProperty(PROP_TEXTFONT, new Value("Chicago"), false);
         partModel.defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
         partModel.defineProperty(PROP_TEXTALIGN, new Value("center"), false);
 

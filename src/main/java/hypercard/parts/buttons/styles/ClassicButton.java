@@ -2,6 +2,7 @@ package hypercard.parts.buttons.styles;
 
 import hypercard.parts.ToolEditablePart;
 import hypercard.parts.buttons.ButtonView;
+import hypercard.fonts.FontUtils;
 
 import java.awt.*;
 

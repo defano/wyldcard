@@ -1,9 +1,11 @@
-package hypercard.utils;
+package hypercard.fonts;
 
 import hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class FontUtils {
 
