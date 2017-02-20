@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.menu;
 
+import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
@@ -16,17 +17,18 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 
-public class PaintMenu extends JMenu {
+public class PaintMenu extends HyperCardMenu {
 
-    public PaintMenu() {
+    public final static PaintMenu instance = new PaintMenu();
+
+    private PaintMenu() {
         super("Paint");
 
         // Show this menu only when a paint tool is active
-        ToolsContext.getInstance().getPaintToolProvider().addObserver((oldValue, newValue) -> {
-            PaintTool selectedTool = (PaintTool) newValue;
-            PaintMenu.this.setVisible(selectedTool.getToolType() != PaintToolType.ARROW);
-        });
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> PaintMenu.this.setVisible(ToolMode.PAINT == arg));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Select")

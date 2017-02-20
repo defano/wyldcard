@@ -13,9 +13,11 @@ import com.defano.hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 
-public class GoMenu extends JMenu {
+public class GoMenu extends HyperCardMenu {
 
-    public GoMenu() {
+    public final static GoMenu instance = new GoMenu();
+
+    private GoMenu() {
         super("Go");
 
         MenuItemBuilder.ofDefaultType()

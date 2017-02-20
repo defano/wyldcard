@@ -43,7 +43,7 @@ public class ExpAverageFun extends ArgListFunction {
         for (Value item : list) {
 
             if (!item.isNumber()) {
-                throw new HtSemanticException("Can't take the average of a non-numerical list");
+                throw new HtSemanticException("All arguments to average must be numbers.");
             }
                 
             sum += item.doubleValue();

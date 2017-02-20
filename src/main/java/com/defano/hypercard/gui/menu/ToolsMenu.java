@@ -16,9 +16,11 @@ import com.defano.hypercard.runtime.WindowManager;
 
 import javax.swing.*;
 
-public class ToolsMenu extends JMenu {
+public class ToolsMenu extends HyperCardMenu {
 
-    public ToolsMenu() {
+    public final static ToolsMenu instance = new ToolsMenu();
+
+    private ToolsMenu() {
         super("Tools");
 
         MenuItemBuilder.ofCheckType()

@@ -147,7 +147,7 @@ public class GlobalContext {
             setIt(destValue);
             
         } catch (PartException e) {
-            throw new HtSemanticException(e.getMessage());
+            throw new HtSemanticException("Can't put into that part.");
         }
     }
     

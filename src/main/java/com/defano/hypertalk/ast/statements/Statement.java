@@ -25,6 +25,6 @@ public class Statement {
     public boolean breakExecution = false;
     
     public void execute() throws HtException {
-        throw new HtSemanticException("Unimplemented execution for statement");
+        throw new HtSemanticException("Bug! Unimplemented execute() for statement.");
     }
 }

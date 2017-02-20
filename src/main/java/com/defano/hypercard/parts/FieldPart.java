@@ -182,7 +182,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         try {
             script = Interpreter.compile(partModel.getKnownProperty(FieldModel.PROP_SCRIPT).toString());
         } catch (Exception e) {
-            throw new HtSemanticException(e.getMessage());
+            throw new HtSemanticException("Didn't understand that.");
         }
     }
 

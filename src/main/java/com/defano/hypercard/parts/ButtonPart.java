@@ -179,7 +179,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
             String scriptText = partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).toString();
             script = Interpreter.compile(scriptText);
         } catch (Exception e) {
-            throw new HtSemanticException(e.getMessage());
+            throw new HtSemanticException("Didn't understand that.");
         }
     }
 

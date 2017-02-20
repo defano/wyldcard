@@ -289,9 +289,9 @@ public class Value implements Comparable<Value> {
             endVal = c.end.evaluate();
                         
         if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
-            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
+            throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
         if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
-            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
+            throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
 
         if (startVal != null)
             startIdx = startVal.integerValue();
@@ -329,9 +329,9 @@ public class Value implements Comparable<Value> {
             endVal = c.end.evaluate();
         
         if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
-            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
+            throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
         if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
-            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
+            throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
         
         if (startVal != null)
             startIdx = startVal.integerValue();
@@ -390,9 +390,9 @@ public class Value implements Comparable<Value> {
     public Value multiply (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be multiplied because it is not a number");
+            throw new HtSemanticException(value + " cannot be multiplied because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be multiplied by the text expression: " + v);
+            throw new HtSemanticException(value + " cannot be multiplied by the text expression: " + v + ".");
 
         try {
             if (isInteger() && v.isInteger())
@@ -400,30 +400,30 @@ public class Value implements Comparable<Value> {
             else
                 return new Value(doubleValue() * v.doubleValue());
         } catch (ArithmeticException e) {
-            throw new HtSemanticException("Overflow when trying to multiply " + stringValue() + " by " + v.stringValue());
+            throw new HtSemanticException("Overflow when trying to multiply " + stringValue() + " by " + v.stringValue() + ".");
         }
     }
     
     public Value divide (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be divided because it is not a number");
+            throw new HtSemanticException(value + " cannot be divided because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
+            throw new HtSemanticException(value + " cannot be divided by " + v + '.');
 
         try {
             return new Value(doubleValue() / v.doubleValue());
         } catch (ArithmeticException e) {
-            throw new HtSemanticException("Cannot divide " + stringValue() + " by zero");
+            throw new HtSemanticException("Cannot divide " + stringValue() + " by zero.");
         }
     }
 
     public Value add (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be added because it is not a number");
+            throw new HtSemanticException(value + " cannot be added because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be added to the text expression: " + v);
+            throw new HtSemanticException(value + " cannot be added to the text expression: " + v + ".");
 
         try {
             if (isInteger() && v.isInteger())
@@ -431,16 +431,16 @@ public class Value implements Comparable<Value> {
             else
                 return new Value(doubleValue() + v.doubleValue());
         } catch (ArithmeticException e) {
-            throw new HtSemanticException("Overflow when trying to add " + stringValue() + " to " + v.stringValue());
+            throw new HtSemanticException("Overflow when trying to add " + stringValue() + " to " + v.stringValue() + ".");
         }
     }
     
     public Value subtract (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException("'" + value + "' cannot be subtracted because it is not a number");
+            throw new HtSemanticException("'" + value + "' cannot be subtracted because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException("'" + value + "' cannot be subtracted by the text expression: " + v);
+            throw new HtSemanticException("'" + value + "' cannot be subtracted by the text expression: " + v + ".");
 
         try {
             if (isInteger() && v.isInteger())
@@ -448,16 +448,16 @@ public class Value implements Comparable<Value> {
             else
                 return new Value(doubleValue() - v.doubleValue());
         } catch (ArithmeticException e) {
-            throw new HtSemanticException("Overflow when trying to subtract " + v.stringValue() + " from " + stringValue());
+            throw new HtSemanticException("Overflow when trying to subtract " + v.stringValue() + " from " + stringValue() + ".");
         }
     }
     
     public Value exponentiate (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be raised to a power because it is not a number");
+            throw new HtSemanticException(value + " cannot be raised to a power because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be raised to the power of the text expression: " + v);
+            throw new HtSemanticException(value + " cannot be raised to " + v + " because it is not a number.");
 
         return new Value(Math.pow(doubleValue(), v.doubleValue()));
     }
@@ -465,9 +465,9 @@ public class Value implements Comparable<Value> {
     public Value mod (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber())
-            throw new HtSemanticException(value + " cannot be divided because it is not a number");
+            throw new HtSemanticException(value + " cannot be divided because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be divided by the text expression: " + v);
+            throw new HtSemanticException(value + " cannot be divided by the text expression: " + v + ".");
         
         if (isInteger() && v.isInteger())
             return new Value(longValue() % v.longValue());
@@ -477,7 +477,7 @@ public class Value implements Comparable<Value> {
     
     public Value not () throws HtSemanticException {
         if (!isBoolean())
-            throw new HtSemanticException(value + " cannot be logically negated because it is not boolean");
+            throw new HtSemanticException(value + " cannot be logically negated because it is not boolean.");
         
         return new Value(!booleanValue());
     }
@@ -488,16 +488,16 @@ public class Value implements Comparable<Value> {
         else if (isFloat())
             return new Value(doubleValue() * -1);
         else {
-            throw new HtSemanticException(value + " cannot be negated because it is not a number");
+            throw new HtSemanticException(value + " cannot be negated because it is not a number.");
         }
     }
 
     public Value and (Value val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isBoolean())
-            throw new HtSemanticException(value + " cannot be and'ed because it is not boolean");
+            throw new HtSemanticException(value + " cannot be and'ed because it is not boolean.");
         if (!v.isBoolean())
-            throw new HtSemanticException(value + " cannot be and'ed with text value " + v);
+            throw new HtSemanticException(value + " cannot be and'ed with text value " + v + ".");
         
         return new Value(booleanValue() && v.booleanValue());
     }
@@ -505,9 +505,9 @@ public class Value implements Comparable<Value> {
     public Value or (Value val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isBoolean())
-            throw new HtSemanticException(value + " cannot be or'ed because it is not boolean");
+            throw new HtSemanticException(value + " cannot be or'd because it is not boolean.");
         if (!v.isBoolean())
-            throw new HtSemanticException(value + " cannot be or'ed with text value " + v);
+            throw new HtSemanticException(value + " cannot be or'd with value " + v + " because it is not boolean.");
         
         return new Value(booleanValue() || v.booleanValue());
     }

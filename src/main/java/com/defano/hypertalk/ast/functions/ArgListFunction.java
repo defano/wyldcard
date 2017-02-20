@@ -46,7 +46,7 @@ public abstract class ArgListFunction extends Expression {
             if (evaluatedList.size() == 1) {
                 return evaluatedList.get(0);
             } else {
-                throw new HtSemanticException("Expected a single argument but got " + evaluatedList.size());
+                throw new HtSemanticException("Expected a single argument, but got " + evaluatedList.size() + " arguments.");
             }
         }
     }

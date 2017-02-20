@@ -29,7 +29,7 @@ public class ExpMaxFun extends ArgListFunction {
 
         for (Value thisValue : evaluateArgumentList()) {
             if (!thisValue.isNumber()) {
-                throw new HtSemanticException("All arguments to max() must be numbers.");
+                throw new HtSemanticException("All arguments to max must be numbers.");
             }
 
             if (thisValue.doubleValue() > max.doubleValue()) {

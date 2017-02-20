@@ -38,7 +38,7 @@ public class ExpPartId extends ExpPart {
             PartSpecifier part = new PartIdSpecifier(type, id.evaluate().integerValue());
             return GlobalContext.getContext().get(part).getValue();
         } catch (PartException e) {
-            throw new HtSemanticException(e.getMessage());
+            throw new HtSemanticException("Can't get that part.");
         }
     }
     

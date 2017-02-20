@@ -9,25 +9,24 @@
 package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
-import com.defano.jmonet.tools.base.PaintTool;
 
 import javax.swing.*;
 
-public class OptionsMenu extends JMenu {
+public class OptionsMenu extends HyperCardMenu {
 
-    public OptionsMenu() {
+    public final static OptionsMenu instance = new OptionsMenu();
+
+    private OptionsMenu() {
         super("Options");
 
         // Show this menu only when a paint tool is active
-        ToolsContext.getInstance().getPaintToolProvider().addObserver((oldValue, newValue) -> {
-            PaintTool selectedTool = (PaintTool) newValue;
-            OptionsMenu.this.setVisible(selectedTool.getToolType() != PaintToolType.ARROW);
-        });
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> OptionsMenu.this.setVisible(ToolMode.PAINT == arg));
 
         JMenuItem grid = MenuItemBuilder.ofHeirarchicalType()
                 .named("Grid")

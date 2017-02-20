@@ -33,7 +33,7 @@ public class ExpTimeFun extends Expression {
             case ABBREVIATED:
                 return new Value(new SimpleDateFormat("h:mm a").format(new Date()));
             default:
-                throw new HtSemanticException("Unsupported time format.");
+                throw new HtSemanticException("Bug! Unimplemented time format.");
         }
     }
 }

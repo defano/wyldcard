@@ -14,9 +14,11 @@ import com.defano.jmonet.model.ImmutableProvider;
 import javax.swing.*;
 import java.awt.*;
 
-public class FontMenu extends JMenu {
+public class FontMenu extends HyperCardMenu {
 
-    public FontMenu() {
+    public final static FontMenu instance = new FontMenu();
+
+    private FontMenu() {
         super("Font");
 
         for (String thisFamily : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {

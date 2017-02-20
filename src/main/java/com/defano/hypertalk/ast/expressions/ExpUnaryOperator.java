@@ -35,7 +35,7 @@ public class ExpUnaryOperator extends Expression {
         switch (operator) {
         case NOT: return rhs.not();
         case NEGATE: return rhs.negate();
-        default: throw new HtSemanticException("Unhandled unary operator in evaluation: " + operator);
+        default: throw new HtSemanticException("Bug! Unimplemented unary operator in evaluation: " + operator);
         }
     }
 }

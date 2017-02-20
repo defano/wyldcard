@@ -120,7 +120,6 @@ public class HyperCard implements StackModelObserver {
 
     public void dialogSyntaxError(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
-        e.printStackTrace();
     }
 
     @Override

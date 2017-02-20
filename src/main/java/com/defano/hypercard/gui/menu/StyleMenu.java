@@ -14,9 +14,11 @@ import com.defano.jmonet.model.ImmutableProvider;
 import javax.swing.*;
 import java.awt.*;
 
-public class StyleMenu extends JMenu {
+public class StyleMenu extends HyperCardMenu {
 
-    public StyleMenu() {
+    public final static StyleMenu instance = new StyleMenu();
+
+    private StyleMenu() {
         super("Style");
 
         MenuItemBuilder.ofCheckType()

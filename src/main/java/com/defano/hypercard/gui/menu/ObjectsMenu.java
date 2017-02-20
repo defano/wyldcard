@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.menu;
 
+import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.FieldPart;
 import com.defano.jmonet.model.ImmutableProvider;
@@ -19,16 +20,16 @@ import com.defano.hypercard.HyperCard;
 
 import javax.swing.*;
 
-public class ObjectsMenu extends JMenu {
+public class ObjectsMenu extends HyperCardMenu {
 
-    public ObjectsMenu() {
+    public final static ObjectsMenu instance = new ObjectsMenu();
+
+    private ObjectsMenu() {
         super("Objects");
 
         // Show this menu only when an object tool is active
-        ToolsContext.getInstance().getPaintToolProvider().addObserver((oldValue, newValue) -> {
-            PaintTool selectedTool = (PaintTool) newValue;
-            ObjectsMenu.this.setVisible(selectedTool.getToolType() == PaintToolType.ARROW);
-        });
+        // Show this menu only when a paint tool is active
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> ObjectsMenu.this.setVisible(ToolMode.PAINT != arg));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")

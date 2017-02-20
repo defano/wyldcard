@@ -14,9 +14,11 @@ import com.defano.hypercard.context.ToolsContext;
 
 import javax.swing.*;
 
-public class EditMenu extends JMenu {
-    
-    public EditMenu () {
+public class EditMenu extends HyperCardMenu {
+
+    public final static EditMenu instance = new EditMenu();
+
+    private EditMenu () {
         super("Edit");
 
         MenuItemBuilder.ofDefaultType()

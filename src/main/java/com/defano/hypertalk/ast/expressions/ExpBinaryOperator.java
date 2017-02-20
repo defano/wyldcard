@@ -60,7 +60,7 @@ public class ExpBinaryOperator extends Expression {
         case IS_A: return new Value(lhs.isA(rhs));
         case IS_NOT_A: return new Value(!lhs.isA(rhs).booleanValue());
 
-        default: throw new HtSemanticException("Unhandled binary operator in evaluation " + operator);
+        default: throw new HtSemanticException("Bug! Unimplemented binary operator in evaluation " + operator);
         }
     }
 }

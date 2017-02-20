@@ -89,7 +89,7 @@ public enum Tool {
             }
         }
 
-        throw new HtSemanticException("No such tool named " + toolName);
+        throw new HtSemanticException("No tool named " + toolName);
     }
 
     public static Tool byNumber(int toolNumber) throws HtSemanticException {
@@ -99,6 +99,6 @@ public enum Tool {
             }
         }
 
-        throw new HtSemanticException("No tool number " + toolNumber +". Tools are numbered 1-18.");
+        throw new HtSemanticException("No tool number " + toolNumber +". (Tools are numbered 1-18.)");
     }
 }

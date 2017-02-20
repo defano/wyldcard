@@ -16,9 +16,11 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-public class FileMenu extends JMenu {
-    
-    public FileMenu() {
+public class FileMenu extends HyperCardMenu {
+
+    public final static FileMenu instance = new FileMenu();
+
+    private FileMenu() {
         super("File");
 
         MenuItemBuilder.ofDefaultType()

@@ -25,7 +25,7 @@ public class ExpCharToNum extends Expression {
         Value evaluated = expression.evaluate();
 
         if (evaluated.stringValue().length() == 0) {
-            throw new HtSemanticException("Expected a string value here.");
+            throw new HtSemanticException("charToNum expects a string value here, but got: " + evaluated.stringValue());
         }
 
         return new Value((int)evaluated.stringValue().charAt(0));

@@ -66,9 +66,9 @@ public class Interpreter {
             return (Script) new HyperTalkTreeVisitor().visit(tree);
 
         } catch (HtParseError e) {
-            throw new HtSyntaxException(e.getMessage(), e.lineNumber, e.columnNumber);
-        } catch (Exception e) {
-            throw new HtException(e.getMessage());
+            throw new HtSyntaxException("Didn't understand that.", e.lineNumber, e.columnNumber);
+        } catch (Throwable e) {
+            throw new HtException("Didn't understand that.");
         }
     }
 
@@ -80,6 +80,7 @@ public class Interpreter {
             }
         } catch (Exception e) {}
 
+        // Value of a non-expression is itself
         return new Value(expression);
     }
 

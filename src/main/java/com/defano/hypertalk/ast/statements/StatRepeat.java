@@ -94,7 +94,7 @@ public class StatRepeat extends Statement {
             if (range.polarity == RepeatRange.POLARITY_UPTO) {
 
                 if (from > to)
-                    throw new HtSemanticException("Start of repeat range is greater then end: " + from + " > " + to);
+                    throw new HtSemanticException("Start of repeat range is greater than end: " + from + " > " + to);
 
                 for (int index = from; index <= to; index++) {
                     GlobalContext.getContext().set(symbol, new Value(index));
@@ -105,7 +105,7 @@ public class StatRepeat extends Statement {
 
             else if (range.polarity == RepeatRange.POLARITY_DOWNTO) {
                 if (to > from)
-                    throw new HtSemanticException("End of repeat range is less then start: " + to + " > " + from);
+                    throw new HtSemanticException("End of repeat range is less than start: " + to + " > " + from);
 
                 for (int index = from; index >= to; index--) {
                     GlobalContext.getContext().set(symbol, new Value(index));

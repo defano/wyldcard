@@ -44,7 +44,7 @@ dependencies {
 }
 
 generateGrammarSource {
-	outputDirectory = file("generated-src/main/java/hypertalk/parser")
+	outputDirectory = file("generated-src/main/java/com/defano/hypertalk/parser")
 	maxHeapSize = "64m"
 	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "com.defano.hypertalk.parser"]
 }

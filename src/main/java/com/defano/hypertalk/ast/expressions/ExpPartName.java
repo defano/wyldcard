@@ -37,7 +37,7 @@ public class ExpPartName extends ExpPart {
             PartSpecifier part = new PartNameSpecifier(type, name.evaluate().stringValue());
             return GlobalContext.getContext().get(part).getValue();
         } catch (Exception e) {
-            throw new HtSemanticException(e.getMessage());
+            throw new HtSemanticException("Can't get that part.");
         }
     }
     

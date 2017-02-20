@@ -30,7 +30,7 @@ public class ExpMinFun extends ArgListFunction {
         for (Value thisValue : evaluateArgumentList()) {
 
             if (!thisValue.isNumber()) {
-                throw new HtSemanticException("All arguments to min() must be numbers.");
+                throw new HtSemanticException("All arguments to min must be numbers.");
             }
 
             if (thisValue.doubleValue() < min.doubleValue()) {
