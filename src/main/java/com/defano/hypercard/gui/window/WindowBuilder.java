@@ -12,7 +12,6 @@ import com.defano.hypercard.gui.HyperCardWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 
@@ -22,27 +21,27 @@ public class WindowBuilder {
     private final HyperCardWindow window;
     private Point location = null;
     private boolean initiallyVisible = true;
+    private boolean resizable = false;
 
-    private WindowBuilder (HyperCardWindow window) {
+    private WindowBuilder(HyperCardWindow window) {
         this.window = window;
         this.frame = new JFrame();
 
         frame.setContentPane(window.getWindowPanel());
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setResizable(false);
     }
 
-    public static WindowBuilder make (HyperCardWindow window) {
+    public static WindowBuilder make(HyperCardWindow window) {
         return new WindowBuilder(window);
     }
 
-    public WindowBuilder withTitle (String title) {
+    public WindowBuilder withTitle(String title) {
         frame.setTitle(title);
         return this;
     }
 
     public WindowBuilder resizeable(boolean resizable) {
-        frame.setResizable(resizable);
+        this.resizable = resizable;
         return this;
     }
 
@@ -64,7 +63,7 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder withMenuBar (JMenuBar menuBar) {
+    public WindowBuilder withMenuBar(JMenuBar menuBar) {
 
         // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
         // menubar each time the window comes into focus.
@@ -75,13 +74,14 @@ public class WindowBuilder {
             }
 
             @Override
-            public void windowLostFocus(WindowEvent e) {}
+            public void windowLostFocus(WindowEvent e) {
+            }
         });
 
         return this;
     }
 
-    public WindowBuilder withLocationUnderneath (Component component) {
+    public WindowBuilder withLocationUnderneath(Component component) {
         frame.pack();
 
         int targetY = (int) component.getLocation().getY() + component.getHeight() + 10;
@@ -91,7 +91,7 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder withLocationLeftOf (Component component) {
+    public WindowBuilder withLocationLeftOf(Component component) {
         frame.pack();
 
         int targetY = (int) component.getLocation().getY();
@@ -106,12 +106,12 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder notInitiallyVisible () {
+    public WindowBuilder notInitiallyVisible() {
         this.initiallyVisible = false;
         return this;
     }
 
-    public JFrame build () {
+    public JFrame build() {
         frame.pack();
 
         if (location == null) {
@@ -122,6 +122,12 @@ public class WindowBuilder {
 
         window.setWindowFrame(frame);
         window.setShown(initiallyVisible);
+
+        // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
+        // otherwise, the frame will "automagically" move to the lower left of the screen.
+        // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
+
+        frame.setResizable(resizable);
 
         return frame;
     }

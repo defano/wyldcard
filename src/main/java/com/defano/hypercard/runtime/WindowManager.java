@@ -25,10 +25,6 @@ public class WindowManager {
     private final static BrushesPalette brushesPalette = new BrushesPalette();
     private final static ColorPalette colorPalette = new ColorPalette();
 
-    private WindowManager() {
-        start();
-    }
-
     public static void start() {
 
         // Create the main window, center it on the screen and display it
