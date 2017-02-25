@@ -58,6 +58,8 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
                     | waitCmd                                       # waitCmdStmnt
                     | sortCmd                                       # sortCmdStmnt
+                    | 'hide' part                                   # hideCmdStmnt
+                    | 'show' part                                   # showCmdStmnt
                     | 'go' 'to'? destination                        # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt

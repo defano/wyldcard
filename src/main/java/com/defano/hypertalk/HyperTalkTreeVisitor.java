@@ -39,6 +39,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
+        return new StatHideCmd((ExpPart) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
+        return new StatShowCmd((ExpPart) visit(ctx.part()));
+    }
+
+    @Override
     public Object visitWaitCountCmd(HyperTalkParser.WaitCountCmdContext ctx) {
         return new StatWaitCmd((Expression) visit(ctx.factor()), (TimeUnit) visit(ctx.timeUnit()));
     }
