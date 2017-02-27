@@ -14,8 +14,10 @@ import com.defano.hypertalk.ast.common.Value;
 public class GlobalProperties extends PropertiesModel {
 
     public final static String PROP_ITEMDELIMITER = "itemDelimiter";
+    public final static String PROP_SELECTEDTEXT = "selectedText";
 
     public GlobalProperties() {
         defineProperty(PROP_ITEMDELIMITER, new Value(","), false);
+        defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
     }
 }

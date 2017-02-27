@@ -43,6 +43,7 @@ public abstract class AbstractPartModel extends PropertiesModel {
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOC = "loc";
     public static final String PROP_LOCATION = "location";
+    public static final String PROP_SELECTEDTEXT = "selectedtext";
 
     private PartType type;
 
@@ -134,6 +135,7 @@ public abstract class AbstractPartModel extends PropertiesModel {
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
         defineProperty(PROP_VISIBLE, new Value(true), false);
         defineProperty(PROP_ZORDER, new Value(0), false);
+        defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
     }
 
     public PartType getType() {

@@ -214,6 +214,14 @@ public class GlobalContext {
         globalProperties.setProperty(property, value);
     }
 
+    public void setSelectedText(Value selectedText) {
+        globalProperties.defineProperty(GlobalProperties.PROP_SELECTEDTEXT, selectedText, true);
+    }
+
+    public Value getSelectedText() {
+        return globalProperties.getKnownProperty(GlobalProperties.PROP_SELECTEDTEXT);
+    }
+
     public Value getGlobalProperty(String property) throws NoSuchPropertyException, HtSemanticException {
         return globalProperties.getProperty(property);
     }

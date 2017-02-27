@@ -8,14 +8,18 @@
 
 package com.defano.hypercard.parts.fields.styles;
 
+import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
+import com.defano.hypercard.parts.model.AbstractPartModel;
 import com.defano.hypercard.parts.model.FieldModel;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
@@ -68,6 +72,10 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
 
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
+
+        // Listen for changes to the field's selected text
+        textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(AbstractPartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
+        textPane.addCaretListener(e -> GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText())));
     }
 
     @Override
