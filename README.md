@@ -74,6 +74,8 @@ HyperCard's native language, called HyperTalk, is an event-driven scripting lang
 
 HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
 
+Apple's HyperTalk was case insensitive; keywords in this version are not. Thus, `the mouseLoc` returns the coordinates of the mouse, but `the MOUSELOC` yeilds an error.
+
 A simple script to prompt the user to enter their name then greet them might look like:
 
 ```
@@ -460,7 +462,7 @@ This implementation supports nearly the full expression language (all of the afo
 Valid expressions include:
 
 ```
-item 1 of the mouseloc < 100 -- true if the mouse is towards the left of the card
+item 1 of the mouseLoc < 100 -- true if the mouse is towards the left of the card
 4 * (2 + 3) -- yields 20
 "hello" contains "el" and "goodbye" contains "bye" -- true
 3 * 5 is not 15 -- false
@@ -476,7 +478,7 @@ This version of HyperCard implements the following set of commands:
 
 Command	   | Description
 -----------|------------
-`put`      | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseloc into item 1 of the location of me`.
+`put`      | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
 `get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`

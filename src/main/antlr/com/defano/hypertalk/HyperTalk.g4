@@ -303,7 +303,7 @@ oneArgFunc          : 'average'                                     # averageFun
                     ;
 
 noArgFunc           : 'mouse'                                               # mouseFunc
-                    | 'mouseloc'                                            # mouseLocFunc
+                    | 'mouseLoc'                                            # mouseLocFunc
                     | 'result'                                              # resultFunc
                     | ('commandKey' | 'cmdKey')                             # commandKeyFunc
                     | 'shiftKey'                                            # shiftKeyFunc

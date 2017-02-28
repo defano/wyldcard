@@ -570,7 +570,7 @@ public class Value implements Comparable<Value> {
             return this.booleanValue() == otherValue.booleanValue();
         } else if (isInteger() && otherValue.isInteger()) {
             return this.integerValue() == otherValue.integerValue();
-        } else if (isInteger() || isFloat()) {
+        } else if ((isInteger() || isFloat()) && (otherValue.isInteger() || otherValue.isFloat())) {
             return this.doubleValue() == otherValue.doubleValue();
         } else {
             return this.stringValue().equalsIgnoreCase(otherValue.stringValue());
