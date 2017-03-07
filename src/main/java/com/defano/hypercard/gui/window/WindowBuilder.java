@@ -12,8 +12,7 @@ import com.defano.hypercard.gui.HyperCardWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
 
 public class WindowBuilder {
 
@@ -22,6 +21,7 @@ public class WindowBuilder {
     private Point location = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
+    private HyperCardWindow dock;
 
     private WindowBuilder(HyperCardWindow window) {
         this.window = window;
@@ -60,6 +60,11 @@ public class WindowBuilder {
         frame.setAutoRequestFocus(true);
         frame.setFocusableWindowState(false);
 
+        return this;
+    }
+
+    public WindowBuilder dockTo(HyperCardWindow window) {
+        this.dock = window;
         return this;
     }
 
@@ -128,6 +133,27 @@ public class WindowBuilder {
         // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
 
         frame.setResizable(resizable);
+
+        if (dock != null) {
+            dock.getWindowFrame().addComponentListener(new ComponentAdapter() {
+                private Point lastLocation;
+
+                @Override
+                public void componentMoved(ComponentEvent e) {
+                    super.componentMoved(e);
+                    Point location = e.getComponent().getLocation();
+
+                    if (lastLocation != null) {
+                        int deltaX = location.x - lastLocation.x;
+                        int deltaY = location.y - lastLocation.y;
+
+                        frame.setLocation(frame.getLocation().x + deltaX, frame.getLocation().y + deltaY);
+                    }
+
+                    lastLocation = location;
+                }
+            });
+        }
 
         return frame;
     }

@@ -40,6 +40,7 @@ public class WindowManager {
                 .withTitle("Message")
                 .resizeable(false)
                 .withLocationUnderneath(stackFrame)
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .notInitiallyVisible()
                 .build();
@@ -48,6 +49,7 @@ public class WindowManager {
                 .resizeable(false)
                 .asPalette()
                 .withTitle("")
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(stackFrame)
                 .build();
@@ -56,6 +58,7 @@ public class WindowManager {
                 .resizeable(false)
                 .asPalette()
                 .withTitle("Shapes")
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
@@ -65,6 +68,7 @@ public class WindowManager {
                 .resizeable(false)
                 .asPalette()
                 .withTitle("Lines")
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
@@ -74,6 +78,7 @@ public class WindowManager {
                 .resizeable(false)
                 .asPalette()
                 .withTitle("")
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindowFrame())
                 .notInitiallyVisible()
@@ -83,6 +88,7 @@ public class WindowManager {
                 .resizeable(false)
                 .asPalette()
                 .withTitle("")
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(paintToolsPalette.getWindowFrame())
                 .build();
@@ -91,6 +97,7 @@ public class WindowManager {
                 .resizeable(false)
                 .withTitle("Colors")
                 .notInitiallyVisible()
+                .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .build();
     }
