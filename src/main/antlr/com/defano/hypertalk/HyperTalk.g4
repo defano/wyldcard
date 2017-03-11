@@ -111,8 +111,8 @@ sortDirection       : 'ascending'                                   # sortDirect
                     |                                               # sortDirectionDefault
                     ;
 
-sortChunkType       : 'the'? LINE ('of' | 'in')                     # sortChunkLines
-                    | 'the'? ITEM ('of' | 'in')                     # sortChunkItems
+sortChunkType       : 'the'? ('line' | 'lines') ('of' | 'in')       # sortChunkLines
+                    | 'the'? ('item' | 'items') ('of' | 'in')       # sortChunkItems
                     |                                               # sortChunkDefault
                     ;
 
@@ -188,19 +188,19 @@ preposition			: 'before'                                      # beforePrepositio
                     | 'into'                                        # intoPreposition
                     ;
 
-chunk               : chunk chunk                                   # compositeChunk
-                    | ordinal CHAR ('of' | 'in')                    # ordinalCharChunk
-                    | CHAR expression 'to' expression ('of' | 'in') # rangeCharChunk
-                    | CHAR expression ('of' | 'in')                 # charCharChunk
-                    | ordinal WORD ('of' | 'in')                    # ordinalWordChunk
-                    | WORD expression 'to' expression ('of' | 'in') # rangeWordChunk
-                    | WORD expression ('of' | 'in')                 # wordWordChunk
-                    | ordinal ITEM ('of' | 'in')                    # ordinalItemChunk
-                    | ITEM expression 'to' expression ('of' | 'in') # rangeItemChunk
-                    | ITEM expression ('of' | 'in')                 # itemItemChunk
-                    | ordinal LINE ('of' | 'in')                    # ordinalLineChunk
-                    | LINE expression 'to' expression ('of' | 'in') # rangeLineChunk
-                    | LINE expression ('of' | 'in')                 # lineLineChunk
+chunk               : chunk chunk                                                                               # compositeChunk
+                    | ordinal ('char' | 'character' | 'chars' | 'characters') ('of' | 'in')                     # ordinalCharChunk
+                    | ('char' | 'character' | 'chars' | 'characters') expression 'to' expression ('of' | 'in')  # rangeCharChunk
+                    | ('char' | 'character' | 'chars' | 'characters') expression ('of' | 'in')                  # charCharChunk
+                    | ordinal ('word' | 'words') ('of' | 'in')                                                  # ordinalWordChunk
+                    | ('word' | 'words') expression 'to' expression ('of' | 'in')                               # rangeWordChunk
+                    | ('word' | 'words') expression ('of' | 'in')                                               # wordWordChunk
+                    | ordinal ('item' | 'items') ('of' | 'in')                                                  # ordinalItemChunk
+                    | ('item' | 'items') expression 'to' expression ('of' | 'in')                               # rangeItemChunk
+                    | ('item' | 'items') expression ('of' | 'in')                                               # itemItemChunk
+                    | ordinal ('line' | 'lines') ('of' | 'in')                                                  # ordinalLineChunk
+                    | ('line' | 'lines') expression 'to' expression ('of' | 'in')                               # rangeLineChunk
+                    | ('line' | 'lines') expression ('of' | 'in')                                               # lineLineChunk
                     ;
 
 container			: ID                                                                # variableDest
@@ -219,10 +219,10 @@ propertySpec        : 'the'? ID                                     # propertySp
                     | 'the'? ID ('of' | 'in') part                  # propertySpecPart
                     ;
 
-part                : FIELD factor                                  # fieldPart
-                    | FIELD 'id' factor                             # fieldIdPart
-                    | BUTTON factor                                 # buttonPart
-                    | BUTTON 'id' factor                            # buttonIdPart
+part                : ('field'  | 'card field') factor              # fieldPart
+                    | ('field'  | 'card field') 'id' factor         # fieldIdPart
+                    | ('button' | 'card button') factor             # buttonPart
+                    | ('button' | 'card button') 'id' factor        # buttonIdPart
                     | 'card' factor                                 # cardPart
                     | 'card' 'id' factor                            # cardIdPart
                     | 'me'                                          # mePart
@@ -263,82 +263,75 @@ expression          : 'empty'                                                   
                     | expression 'or' expression                                        # orExp
                     ;
 
-factor				: literal                                       # literalFactor
-                    | ID                                            # idFactor
-                    | part                                          # partFactor
-                    | '(' expression ')'                            # expressionFactor
-                    | propertySpec                                  # idOfPartFactor
+factor				: literal                                                       # literalFactor
+                    | ID                                                            # idFactor
+                    | part                                                          # partFactor
+                    | '(' expression ')'                                            # expressionFactor
+                    | propertySpec                                                  # idOfPartFactor
                     ;
 
-builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor        # builtinFuncOneArgs
-                    | 'the' noArgFunc                               # builtinFuncNoArg
-                    | oneArgFunc '(' expressionList ')'             # builtinFuncArgList
+builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor                        # builtinFuncOneArgs
+                    | 'the' noArgFunc                                               # builtinFuncNoArg
+                    | oneArgFunc '(' expressionList ')'                             # builtinFuncArgList
                     ;
 
-oneArgFunc          : 'average'                                     # averageFunc
-                    | 'min'                                         # minFunc
-                    | 'max'                                         # maxFunc
-                    | 'number of' CHAR                              # numberOfCharsFunc
-                    | 'number of' WORD                              # numberOfWordsFunc
-                    | 'number of' ITEM                              # numberOfItemsFunc
-                    | 'number of' LINE                              # numberOfLinesFunc
-                    | 'random'                                      # randomFunc
-                    | 'sqrt'                                        # sqrtFunc
-                    | 'trunc'                                       # truncFunc
-                    | 'sin'                                         # sinFunc
-                    | 'cos'                                         # cosFunc
-                    | 'tan'                                         # tanFunc
-                    | 'atan'                                        # atanFunc
-                    | 'exp'                                         # expFunc
-                    | 'exp1'                                        # exp1Func
-                    | 'exp2'                                        # exp2Func
-                    | 'ln'                                          # lnFunc
-                    | 'ln1'                                         # ln1Func
-                    | 'log2'                                        # log2Func
-                    | 'abs'                                         # absFunc
-                    | 'charToNum'                                   # charToNumFunc
-                    | 'numToChar'                                   # numToCharFunc
-                    | 'value'                                       # valueFunc
-                    | 'length'                                      # lengthFunc
+oneArgFunc          : 'average'                                                     # averageFunc
+                    | 'min'                                                         # minFunc
+                    | 'max'                                                         # maxFunc
+                    | 'number of' ('char' | 'character' | 'chars' | 'characters')   # numberOfCharsFunc
+                    | 'number of' ('word' | 'words')                                # numberOfWordsFunc
+                    | 'number of' ('item' | 'items')                                # numberOfItemsFunc
+                    | 'number of' ('line' | 'lines')                                # numberOfLinesFunc
+                    | 'random'                                                      # randomFunc
+                    | 'sqrt'                                                        # sqrtFunc
+                    | 'trunc'                                                       # truncFunc
+                    | 'sin'                                                         # sinFunc
+                    | 'cos'                                                         # cosFunc
+                    | 'tan'                                                         # tanFunc
+                    | 'atan'                                                        # atanFunc
+                    | 'exp'                                                         # expFunc
+                    | 'exp1'                                                        # exp1Func
+                    | 'exp2'                                                        # exp2Func
+                    | 'ln'                                                          # lnFunc
+                    | 'ln1'                                                         # ln1Func
+                    | 'log2'                                                        # log2Func
+                    | 'abs'                                                         # absFunc
+                    | 'charToNum'                                                   # charToNumFunc
+                    | 'numToChar'                                                   # numToCharFunc
+                    | 'value'                                                       # valueFunc
+                    | 'length'                                                      # lengthFunc
                     ;
 
-noArgFunc           : 'mouse'                                               # mouseFunc
-                    | 'mouseLoc'                                            # mouseLocFunc
-                    | 'result'                                              # resultFunc
-                    | ('commandKey' | 'cmdKey')                             # commandKeyFunc
-                    | 'shiftKey'                                            # shiftKeyFunc
-                    | 'optionKey'                                           # optionKeyFunc
-                    | ('message' | 'message' 'box' | 'message' 'window')    # messageFunc
-                    | 'ticks'                                               # ticksFunc
-                    | 'seconds'                                             # secondsFunc
-                    | 'long date'                                           # longDateFormatFunc
-                    | 'short date'                                          # shortDateFormatFunc
-                    | ('abbrev date' | 'abbreviated date')                  # abbrevDateFormatFunc
-                    | 'long time'                                           # longTimeFormatFunc
-                    | 'short time'                                          # shortTimeFormatFunc
-                    | ('abbrev time' | 'abbreviated time')                  # abbrevTimeFormatFunc
-                    | 'tool'                                                # toolFunc
+noArgFunc           : 'mouse'                                                       # mouseFunc
+                    | 'mouseLoc'                                                    # mouseLocFunc
+                    | 'result'                                                      # resultFunc
+                    | ('commandKey' | 'cmdKey')                                     # commandKeyFunc
+                    | 'shiftKey'                                                    # shiftKeyFunc
+                    | 'optionKey'                                                   # optionKeyFunc
+                    | ('message' | 'message' 'box' | 'message' 'window')            # messageFunc
+                    | 'ticks'                                                       # ticksFunc
+                    | 'seconds'                                                     # secondsFunc
+                    | 'long date'                                                   # longDateFormatFunc
+                    | 'short date'                                                  # shortDateFormatFunc
+                    | ('abbrev date' | 'abbreviated date')                          # abbrevDateFormatFunc
+                    | 'long time'                                                   # longTimeFormatFunc
+                    | 'short time'                                                  # shortTimeFormatFunc
+                    | ('abbrev time' | 'abbreviated time')                          # abbrevTimeFormatFunc
+                    | 'tool'                                                        # toolFunc
                     ;
 
-literal				: STRING_LITERAL                                # stringLiteral
-                    | INTEGER_LITERAL                               # numberLiteral
-                    | '-' INTEGER_LITERAL                           # negNumberLiteral
-                    | '.' INTEGER_LITERAL                           # dotNumberLiteral
-                    | '-' '.' INTEGER_LITERAL                       # negDotNumberLiteral
-                    | INTEGER_LITERAL '.'                           # numberDotLiteral
-                    | '-' INTEGER_LITERAL '.'                       # negNumberDotLiteral
-                    | INTEGER_LITERAL '.' INTEGER_LITERAL           # numberDotNumberLiteral
-                    | '-' INTEGER_LITERAL '.' INTEGER_LITERAL       # negNumberDotNumberLiteral
+literal				: STRING_LITERAL                                                # stringLiteral
+                    | INTEGER_LITERAL                                               # numberLiteral
+                    | '-' INTEGER_LITERAL                                           # negNumberLiteral
+                    | '.' INTEGER_LITERAL                                           # dotNumberLiteral
+                    | '-' '.' INTEGER_LITERAL                                       # negDotNumberLiteral
+                    | INTEGER_LITERAL '.'                                           # numberDotLiteral
+                    | '-' INTEGER_LITERAL '.'                                       # negNumberDotLiteral
+                    | INTEGER_LITERAL '.' INTEGER_LITERAL                           # numberDotNumberLiteral
+                    | '-' INTEGER_LITERAL '.' INTEGER_LITERAL                       # negNumberDotNumberLiteral
                     ;
 
 THEN				: NEWLINE 'then' | 'then';
-
-FIELD               : 'field'  | 'card field';
-BUTTON              : 'button' | 'card button';
-CHAR                : 'char'   | 'character' | 'chars' | 'characters' ;
-WORD                : 'word'   | 'words';
-ITEM                : 'item'   | 'items';
-LINE                : 'line'   | 'lines';
 
 ID                  : POINT | RECT | (ALPHA (ALPHA | DIGIT)*) ;
 
@@ -353,3 +346,5 @@ RECT                : (DIGIT ',' DIGIT ',' DIGIT ',' DIGIT);
 COMMENT             : '--' ~('\r' | '\n')* -> skip;
 NEWLINE             : ('\n' | '\r')+;
 WHITESPACE          : (' ' | '\t')+ -> skip;
+
+UNLEXED_CHAR        : . ;

@@ -8,29 +8,24 @@
 
 package com.defano.hypercard.parts.buttons.styles;
 
-import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolMode;
+import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
-import com.defano.hypercard.parts.buttons.ButtonView;
-import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
+import com.defano.hypercard.parts.buttons.ButtonView;
 import com.defano.hypercard.parts.model.AbstractPartModel;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 
-public class MenuButton extends JComboBox implements ButtonView {
+public class MenuButton extends JComboBox<String> implements ButtonView {
 
     private final ToolEditablePart toolEditablePart;
-    private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel();
+    private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();
 
     public MenuButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
