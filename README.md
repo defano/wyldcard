@@ -32,9 +32,9 @@ It won't import your old stacks and it's missing many foundational aspects of th
 
 The project is built with Gradle (and should import easily into any IDE with Gradle integration like Eclipse or IntelliJ). The following Gradle tasks are defined by the project's build file:
 
-Task | Description
---------|----------------------------
-`run`   | Build, test and run the application
+Task                     | Description
+-------------------------|----------------------------
+`run`                    | Build, test and run the application
 `generateGrammarSource`  | Re-generate the HyperTalk parser using Antlr4 (executes automatically as part of the `gradle build` task)
 
 The project uses Antlr4 as the parser generator and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the `do` command).
@@ -54,6 +54,15 @@ To start scripting:
 
 1.	Create a new button or field, or, choose the button tool or field tool from the tools palette, then select an existing one.
 2.	Double-click on the selected part to show the part's property editor, then click the "Script..." button.
+
+### Modifying the HyperTalk language
+
+Changes made to the HyperTalk grammar file (`HyperTalk.g4`) require the parser to be regenerated. The can be accomplished by:
+
+* Re-running the `gradle generateGrammarSource` target, or
+* If using InteliJ with the Antlr plugin and you wish to automatically regenerate the parser each time you modify the grammar then right-click inside the `.g4` file, choose "Configure ANTLR..."; set the "Output directory where all output is generated" to `hypertalk-java/generated-src/` and check the "generate parse tree visitor" option.
+
+Once the parser has been regenerated, you're free to make corresponding changes to the `HyperTalkTreeVisitor` class.
 
 ### Modifying the UI components
 
@@ -504,7 +513,7 @@ HyperCard provides both a suite of built-in functions as well as the ability for
 
 ### Built-in Functions
 
-There are several equivalent syntax forms that can be used when invoking a built in function:
+There are several equivalent syntax forms that can be used when invoking a built-in function:
 
 * For built-in functions that accept a single argument, use `[the] <function> { of | in } <argument>` or `<function> ( <argument> )`
 * For built-in functions that don't accept any arguments, use `[the] <function>`. Note that you cannot invoke a no-argument built-in as `<function>()` as you might in C or Java.
