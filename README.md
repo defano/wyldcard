@@ -4,15 +4,15 @@ A toy implementation of Apple's HyperCard written in Java. Originally created as
 
 ## What's HyperCard?
 
-HyperCard was born in 1987 as part of Apple's System Software 6. It was an application that largely defied classification: part database, part programming language, part "paint" program. HyperCard was something entirely new. Other "teaching" languages of the time made it possible to write dull, console-mode programs, but with HyperCard, a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked natural language. Apple called it "programming for the rest of us."
+HyperCard was born in 1987 as part of Apple's System Software 6. It was an application that largely defied classification: part database, part programming language, part "paint" program. Whatever it was, it was something entirely new. "Teaching" languages of the time made it possible to write dull, console-mode programs, but with HyperCard a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked the English language. Apple called it "programming for the rest of us."
 
-[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987.
+[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch a screencast tutorial, [here](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
 
-### I want to run the _real_ HyperCard
+#### Fine, but I want to run the _real_ HyperCard
 
 Use the SheepShaver emulator to run Macintosh System Software on newer Macs or Windows machines. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
-### I'd like to sue
+#### Who can I sue?
 
 This project represents a homework assignment and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
@@ -26,29 +26,29 @@ Much of the HyperTalk language has been implemented including parts, attributes,
 
 This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
 
-It won't import your old stacks and it's missing many foundational aspects of the real software. Among its limitations, this implementation lacks support for multiple backgrounds; user levels; card, background or stack-level scripts; externals (XCMDs/XFCNs) and home stack script inheritance.
+It won't import your old stacks and it's missing many foundational aspects of the real software. Among its limitations, this implementation lacks support for multiple backgrounds; user levels; card, background or stack-level scripts; visual effects; externals (XCMDs/XFCNs) and home stack script inheritance.
 
 # Building the application
 
-The project is built with Gradle (and should import easily into any IDE with Gradle integration like Eclipse or IntelliJ). The following Gradle tasks are defined by the project's build file:
+The project is built with Gradle and should import easily into any IDE with Gradle integration such as Eclipse or IntelliJ. Note that the project makes use of generated source code. The application will not compile (or import correctly into Eclipse) until these sources are generated via `gradle generateGrammarSource`.
+
+The following Gradle tasks are defined by the project's build file:
 
 Task                     | Description
 -------------------------|----------------------------
 `run`                    | Build, test and run the application
 `generateGrammarSource`  | Re-generate the HyperTalk parser using Antlr4 (executes automatically as part of the `gradle build` task)
 
-The project uses Antlr4 as the parser generator and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). With this implementation you can create buttons and fields in the UI and attach scripts to them for controlling their presentation and behavior. About 95% of the HyperTalk's expression language is implemented, as is the ability for one object to send messages to another, or to dynamically execute or evaluate code (i.e., any string of text can be executed as a script using the `do` command).
-
-Note that this project was originally implemented with the JCup/JFlex LALR parser generator tools and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
+The project uses Antlr4 as the parser generator and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). It was originally implemented using JCup/JFlex and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
 
 ### Running the program
 
-Execute the `gradle run` task to build and start the program, or simply execute the `HyperCard` class. Once the program is running, you'll be presented with the application's main window. From here you may:
+Execute the `gradle run` task to build and start the program or simply execute the `HyperCard` class. Once the program is running, you'll be presented with the application's main window. From here you may:
 
 *	Begin adding your own user interface elements by choosing "New Button" or "New Field" from the "Objects" menu.
 * Use the paint tools (choose "Tools Palette" from the "Tools" menu) to draw on the card.
 *	Open a previously saved stack document ("File" -> "Open Stack...").
-*	Enter a statement or expression in the message box. Press enter to execute or evaluate your message.
+*	Enter a statement or expression in the message box ("Go" -> "Message"). Press enter to execute or evaluate your message.
 
 To start scripting:
 
@@ -57,20 +57,22 @@ To start scripting:
 
 ### Modifying the HyperTalk language
 
+HyperTalk Java uses Antrl 4 as its parser generator and utilizes the Antlr *tree visitor* pattern to convert  Antlr's parse tree into a HyperTalk abstract syntax tree (a simple example [can be found on Stack Overflow](http://stackoverflow.com/questions/23092081/antlr4-visitor-pattern-on-simple-arithmetic-example)). The HyperTalk grammar is defined in `HyperTalk.g4` and the tree visitor (responsible for producing nodes in the abstract syntax tree) is `HyperTalkTreeVisitor.java`. When adding new grammar rules, note that the value to the right of the `#` symbol defines the name of the visitor method associated with that rule. (For example, the AST node associated with `'show' part # showCmdStmnt` is created by the visitor method `visitShowCmdStmnt`.)
+
 Changes made to the HyperTalk grammar file (`HyperTalk.g4`) require the parser to be regenerated. The can be accomplished by:
 
 * Re-running the `gradle generateGrammarSource` target, or
 * If using InteliJ with the Antlr plugin and you wish to automatically regenerate the parser each time you modify the grammar then right-click inside the `.g4` file, choose "Configure ANTLR..."; set the "Output directory where all output is generated" to `hypertalk-java/generated-src/` and check the "generate parse tree visitor" option.
 
-Once the parser has been regenerated, you're free to make corresponding changes to the `HyperTalkTreeVisitor` class.
+Once the parser has been regenerated, you're free to make corresponding changes to the tree visitor class ( `HyperTalkTreeVisitor`).
 
 ### Modifying the UI components
 
-The UI forms were generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
+The UI forms are generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
 
-Be aware that by default IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is quite elegant, it produces source code that is incomplete and which cannot be imported and built with other tools.
+By default, IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is quite elegant, it produces source code that is incomplete and which cannot be successfully built by other tools.
 
-To correct this, you need to configure IntelliJ to generate its GUI boilerplate code in Java source files, not in the `.class` files:
+To correct this, you need to configure IntelliJ to generate its GUI boilerplate code in Java source:
 
 1. From IntelliJ IDEA menu, choose "Preferences..."
 2. Navigate to "Editor" -> GUI Designer
@@ -79,11 +81,11 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 
 # The HyperTalk Language
 
-HyperCard's native language, called HyperTalk, is an event-driven scripting language. Scripts are associated with user interface elements called `parts` and are triggered by user actions called `events`. There is no singular "main" script that executes at runtime.
+HyperCard's native language, called _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. There is no singular "main" script that executes at runtime.
 
-HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, boolean, or list depending on the context of its use. Unlike Perl, however, HyperCard does not allow nonsensical conversions; adding 5 to "hello," for example, produces a syntax error.
+HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, boolean, or list depending on the context of its use. Unlike Perl, HyperCard does not allow nonsensical conversions. Adding `5` to `hello` for example, produces a syntax error.
 
-Apple's HyperTalk was case insensitive; keywords in this version are not. Thus, `the mouseLoc` returns the coordinates of the mouse, but `the MOUSELOC` yeilds an error.
+Apple's HyperTalk was case insensitive, but keywords in this version are not. Thus, `the mouseLoc` returns the coordinates of the mouse, but `the MOUSELOC` yields an error. Comments are preceded by `--`.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -104,28 +106,15 @@ end mouseUp
 
 ```
 
-Note that comments are preceded by `--` and, unlike C or Java, newlines have meaning in the syntax (although other whitespace does not). Newlines are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot break across multiple lines.
+Although indentation and most whitespace is ignored, newlines have meaning in the syntax (unlike Java or C). Newlines are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot break across multiple lines.
 
 For example, this is legal:
 
 ```
-if x < y then
-  put x
-else
-  put y
-end if
+answer "How are you today" with "Pretty good" or "Stinky!"
 ```
 
 ... but this is not:
-
-```
-if x < 10 then
-  put x
-else put y
-end if
-```
-
-... nor is this:
 
 ```
 answer "How are you today" with
@@ -135,11 +124,11 @@ answer "How are you today" with
 
 Apple's HyperCard supported a newline character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)) that could be used to break a long statement across multiple lines; this implementation does not.
 
-As you enter script text into the script editor, this implementation will flag syntax errors as you type by underlining the offending text with a red squiggle. A (typically useless) error message from the Antlr parser will also appear at the bottom of the editor.
+As you enter script text into the script editor, this implementation will flag syntax errors as you type by underlining the offending text with a red squiggle.
 
 ## Stacks of Cards
 
-A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window. When the current card changes as result of navigating away, the contents of the new card appear in the window in place of the old card. While cards can be "pushed" and "popped" from view, one should not confuse HyperCard's concept of a stack with the data structure known in Computer Science. (A student of Computer Science would model HyperCard's collection of cards as an ordered list; not a stack.)
+A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window and when the current card changes as result of navigating away, the contents of the new card appear in place of the old card.
 
 The `go` command is used to navigate between cards:
 
@@ -175,9 +164,9 @@ go to the prev card
 
 ## Scripts and Handlers
 
-A script consists of zero or more handlers and/or function definitions.
+A script consists of zero or more _handlers_ and/or _function definitions_.
 
-A _handler_ is a list of statements that execute when the handler's name is passed as a message to the part containing it (you'll note [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk)'s influence, here). A _function definition_, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements and optionally returns a single value.
+A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it (you'll note [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk)'s influence, here). A function definition, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements, and optionally returns a single value.
 
 For example, a button might contain the script:
 
@@ -187,7 +176,7 @@ on mouseUp
 end mouseUp
 ```
 
-In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes the HyperCard runtime environment to send the message `mouseUp` to the affected button. Upon receipt of this message, the button executes its `mouseUp` handler. (In our example, this generates a "hello world" dialog box).
+In this example, when the user clicks the button containing this script the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in this example, this generates a "hello world" dialog box).
 
 This HyperCard implementation automatically sends the following event messages:
 
@@ -219,7 +208,7 @@ A _container_ is any entity in HyperCard that can hold a value; all parts, varia
 
 Local variables in HyperTalk are lexically scoped and implicitly declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such with the `global` keyword. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
 
-HyperTalk uses `--` to initiate a single-line comment (there are no multi-line comments). Comments can appear on their own line, or following a statement inline. It's also legal for comments to appear outside of function definitions and handlers.
+HyperTalk uses `--` to initiate a single-line comment (there is no multi-line comment syntax). Comments can appear on their own line or following a statement, inline. It's also legal for comments to appear outside of function definitions and handlers.
 For example:
 
 ```
@@ -245,7 +234,7 @@ function y
 end y
 ```
 
-Like variables, parts, properties and the message box can also be used to store value. When placing a value into a field, the text contents of the field are changed. When placing a value into a button, the button's `contents` property is changed (the contents property does not affect the button's appearance in any way).
+Parts, properties and the message box can also be used to store value. When placing a value into a field, the text of the field is changed. When placing a value into a button, the button's `contents` property is changed (the `contents` property does not affect the button's appearance in any way).
 
 For example:
 
@@ -256,7 +245,7 @@ put the name of button myButton into the message box
 put "Button " && buttonTitle into the name of button id 1
 ```
 
-Note that HyperTalk contains an implicit variable named `it`; most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard).
+Note that HyperTalk contains an implicit variable named `it`. Most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard).
 
 For example:
 
@@ -272,13 +261,13 @@ end mouseUp
 
 A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles. This implementation provides a similar (but not identical) set of styled parts.
 
-In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background. Each card has an individual foreground, but the background could be shared between cards. Each of these elements--backgrounds, cards, stacks, etc--could contain their own scripts and act upon event messages from HyperCard.
+In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background. Each card has an individual foreground, but the background can be shared between cards. Each of these elements--backgrounds, cards, and stacks--could contain their own scripts and act upon event messages from HyperCard.
 
-For simplification, this implementation does not allow scripting of cards, stacks or backgrounds. Currently, this implementation supports a single background shared across all cards but only for the purpose of graphics (button or field parts cannot yet be added to the background--coming soon).
+This implementation does not allow scripting of cards, stacks or backgrounds and currently supports only a single background shared across all cards, but only for the purpose of graphics (button or field parts cannot yet be added to the background).
 
 In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
 
-Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are treated as "first class" containers in HyperTalk and may be read with the `get` command, or mutated using the `set` or `put` commands.
+Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are treated as "first class" containers in this implementation of HyperTalk and may be read with the `get` command, or mutated using the `set` or `put` commands (this is not quite true in Apple's HyperCard).
 
 For example:
 
@@ -318,7 +307,7 @@ Property      | Description
 
 ### Buttons
 
-Buttons come in a variety of _styles_ which affects their look-and-feel as well as their behavior. This implementation supports the following button styles:
+Buttons come in a variety of _styles_ which affect their look-and-feel as well as their behavior. This implementation supports the following button styles:
 
 Style                                    | Name          | Notes
 -----------------------------------------|---------------|------------
@@ -346,7 +335,7 @@ Property    | Description
 
 ### Fields
 
-Fields in this version come in two flavors, transparent and opaque. This implementation provides no ability to show lines or prevent text-wrapping.
+In this implementation, fields come in only two flavors: transparent and opaque. This implementation provides no ability to show lines or prevent text-wrapping.
 
 Style                                        | Name          | Notes
 ---------------------------------------------|---------------|------------
@@ -363,7 +352,7 @@ Property   | Description
 
 ### Global Properties
 
-Some properties apply to HyperCard at large instead of an individual part. The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
+Some properties apply to HyperCard at large (instead of just an individual part). The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
 
 ```
 set the itemDelimiter to ","
@@ -379,7 +368,7 @@ Global Property | Description
 
 ## Chunk Expressions
 
-HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can access or mutate a range of words, characters, lines, or comma-delimited items in a value. Chunks may be specified numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
+HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can fetch or mutate a range of words, characters, lines, or comma-delimited items in a value (called a _chunk_). Chunks may be specified numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
 
 Chunk expressions follow the form:
 
@@ -423,7 +412,7 @@ put the first char of the second word of x into the middle item of the last line
 
 ## Arithmetic and Logical Expressions
 
-In addition to chunk expressions, HyperTalk supports a standard suite of mathematical, text and logical operators, including the following (all operators are binary, excepted where otherwise noted):
+HyperTalk supports a standard suite of mathematical, text and logical operators, including the following (all operators are binary, excepted where otherwise noted):
 
 |Precedence  | Operator        | Description
 |------------| ----------------|-------------
@@ -466,7 +455,7 @@ Precedence  | Term                    | Description
 6           | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
 7 (lowest)  | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
 
-This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as real HyperTalk.  
+This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as Apple's HyperTalk.  
 
 Valid expressions include:
 
@@ -561,7 +550,7 @@ Function | Description
 
 ### User-defined Functions
 
-A user may define a function of their own creation anywhere inside of a script. Note that user-defined functions cannot be nested; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
+A user may define a function inside of a script, but user-defined functions cannot be nested inside of other functions or handlers; cannot be accessed outside of the script in which they're defined; and cannot be invoked using the `[the] <function> of ...` syntax.
 
 There is no distinction between a function that returns a value and one that does not (there is no requirement that a function call `return`). If a user-defined function does not invoke `return`, the empty string is implicitly returned.
 
