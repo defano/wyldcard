@@ -9,12 +9,12 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.util.SquigglePainter;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.exception.HtException;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -22,6 +22,7 @@ import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class MessageWindow extends HyperCardWindow {
 
@@ -29,16 +30,45 @@ public class MessageWindow extends HyperCardWindow {
 
     private JTextField messageBox;
     private JPanel messageWindow;
+    private ArrayList<String> messageStack = new ArrayList<>();
+    private int messageStackIndex = -1;
 
     public MessageWindow() {
+
+        // Handle syntax checking and message execution key typed events
         messageBox.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == '\n') {
-                    executeMessageBox();
+                    messageStack.add(messageBox.getText());
+                    messageStackIndex = messageStack.size();
+
+                    HyperCard.getInstance().doMsgBoxText();
                 } else {
                     SwingUtilities.invokeLater(() -> checkSyntax());
                 }
+            }
+        });
+
+        // Handle message stack key press events
+        messageBox.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_UP:
+                        if (messageStackIndex > 0) {
+                            messageBox.setText(messageStack.get(--messageStackIndex));
+                        }
+                        break;
+
+                    case KeyEvent.VK_DOWN:
+                        if (messageStackIndex < messageStack.size() - 1) {
+                            messageBox.setText(messageStack.get(++messageStackIndex));
+                        }
+                        break;
+                }
+
+                SwingUtilities.invokeLater(() -> checkSyntax());
             }
         });
     }
@@ -76,10 +106,6 @@ public class MessageWindow extends HyperCardWindow {
 
     public String getMsgBoxText() {
         return messageBox.getText();
-    }
-
-    private void executeMessageBox() {
-        HyperCard.getInstance().doMsgBoxText();
     }
 
     {
