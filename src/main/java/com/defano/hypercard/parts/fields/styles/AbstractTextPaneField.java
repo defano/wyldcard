@@ -14,12 +14,11 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.model.AbstractPartModel;
 import com.defano.hypercard.parts.model.FieldModel;
-import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.jmonet.tools.util.MarchingAnts;
+import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
@@ -28,13 +27,14 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public abstract class AbstractTextPaneField extends JScrollPane implements com.defano.hypercard.parts.fields.FieldView, DocumentListener {
 
     protected final JTextPane textPane;
+
     private ToolEditablePart toolEditablePart;
+    private MutableAttributeSet currentStyle = new SimpleAttributeSet();
 
     public AbstractTextPaneField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
@@ -56,10 +56,13 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
         // Get notified when font styles change
         ToolsContext.getInstance().getFontProvider().addObserverAndUpdate((o, arg) -> {
             Font font = (Font) arg;
-            setSelectedTextAttribute(StyleConstants.FontFamily, font.getFamily());
-            setSelectedTextAttribute(StyleConstants.Size, font.getSize());
-            setSelectedTextAttribute(StyleConstants.Bold, font.isBold());
-            setSelectedTextAttribute(StyleConstants.Italic, font.isItalic());
+
+            currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
+            currentStyle.addAttribute(StyleConstants.Size, font.getSize());
+            currentStyle.addAttribute(StyleConstants.Bold, font.isBold());
+            currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
+
+            textPane.setCharacterAttributes(currentStyle, true);
         });
 
         // Get notified when field tool is selected
@@ -126,33 +129,52 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
         });
     }
 
-    private void replaceText(String withText) {
+    /**
+     * Replace's the field's text with the given value, attempting (as best as possible) to intelligently
+     * maintain the field's existing style.
+     *
+     * It is not possible to correctly restyle the next text in every case. This is a result of the {@link FieldModel}
+     * not being able to notify us of insert/delete operations.
+     *
+     * This method invokes Google's DiffMatchPatch utility to generate a change set, then attempts to apply each change
+     * independently to best preserve formatting.
+     *
+     * TODO: Change much infrastructure to allow model to report inserts and deletes instead of using this "cheat".
+     *
+     * @param newText The text with which to replace the field's existing contents.
+     */
+    private void replaceText(String newText) {
 
-        StyledDocument styledDocument = textPane.getStyledDocument();
-        List<StyleSpan> styleSpans = getStyleSpans(styledDocument);
+        int changePosition = 0;
+        String existingText = getText();
+        StyledDocument document = textPane.getStyledDocument();
+        AttributeSet style = currentStyle;
 
-        // Do not fire listeners during this operation
-        styledDocument.removeDocumentListener(this);
+        // Do not perform incremental model update while we update
+        document.removeDocumentListener(this);
 
         try {
-            // Remove current text
-            styledDocument.remove(0, getText().length());
-
-            // Remove all styles
-            Style defaultStyle = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-
-            // Insert new text
-            styledDocument.insertString(0, withText, defaultStyle);
-
-            applyStyleSpans(styledDocument, styleSpans);
-
-            ((FieldModel) toolEditablePart.getPartModel()).setStyleData(getRtf());
-
+            for (DiffMatchPatch.Diff thisDiff : getTextDifferences(existingText, newText)) {
+                switch (thisDiff.operation) {
+                    case EQUAL:
+                        style = document.getCharacterElement(changePosition).getAttributes();
+                        changePosition += thisDiff.text.length();
+                        break;
+                    case DELETE:
+                        style = document.getCharacterElement(changePosition).getAttributes();
+                        document.remove(changePosition, thisDiff.text.length());
+                        break;
+                    case INSERT:
+                        document.insertString(changePosition, thisDiff.text, style);
+                        changePosition += thisDiff.text.length();
+                        break;
+                }
+            }
         } catch (BadLocationException e) {
-            throw new RuntimeException("An error occurred when replacing field text.", e);
-        } finally {
-            styledDocument.addDocumentListener(this);
+            throw new RuntimeException("An error occurred updating field text.", e);
         }
+
+        document.addDocumentListener(this);
     }
 
     @Override
@@ -181,10 +203,13 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
         setRtf(((FieldModel) toolEditablePart.getPartModel()).getStyleData());
     }
 
-    private void setSelectedTextAttribute(Object attribute, Object value) {
-        MutableAttributeSet attributeSet = new SimpleAttributeSet();
-        attributeSet.addAttribute(attribute, value);
-        textPane.setCharacterAttributes(attributeSet, false);
+    private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
+        DiffMatchPatch dmp = new DiffMatchPatch();
+
+        LinkedList<DiffMatchPatch.Diff> diffs = dmp.diffMain(existing, replacement);
+        dmp.diffCleanupSemantic(diffs);
+
+        return diffs;
     }
 
     private void setRtf(byte[] rtfData) {
@@ -220,43 +245,6 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
 
         } catch (IOException | BadLocationException e) {
             throw new RuntimeException("An error occurred while saving field contents.", e);
-        }
-    }
-
-    private List<StyleSpan> getStyleSpans(StyledDocument styledDocument) {
-
-        int lastIndex = 0;
-        AttributeSet lastAttribute = null, thisAttribute = null;
-        List<StyleSpan> styleSpans = new ArrayList<>();
-        String text = getText();
-
-        for (int index = 0; index < text.length(); index++) {
-            thisAttribute = styledDocument.getCharacterElement(index).getAttributes();
-
-            if (lastAttribute != null && lastAttribute != thisAttribute) {
-                StyleSpan thisSpan = new StyleSpan(text, lastIndex, index, lastAttribute);
-                if (thisSpan.getSpanLength(text) > 0) {
-                    styleSpans.add(thisSpan);
-                    lastIndex = index;
-                }
-            }
-
-            lastAttribute = thisAttribute;
-        }
-
-        styleSpans.add(new StyleSpan(text, lastIndex, text.length(), thisAttribute));
-
-        return styleSpans;
-    }
-
-    private void applyStyleSpans(StyledDocument styledDocument, List<StyleSpan> styleSpans) {
-
-        // Reapply old style to new text
-        for (StyleSpan thisSpan : styleSpans) {
-            int startChar = thisSpan.getStartOfSpan(getText());
-            int endChar = thisSpan.getEndOfSpan(getText());
-
-            styledDocument.setCharacterAttributes(startChar, endChar - startChar, thisSpan.getStyleSet(), true);
         }
     }
 
