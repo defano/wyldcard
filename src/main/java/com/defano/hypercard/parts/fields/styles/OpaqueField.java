@@ -10,7 +10,7 @@ package com.defano.hypercard.parts.fields.styles;
 
 import com.defano.hypercard.parts.ToolEditablePart;
 
-public class OpaqueField extends AbstractTextPaneField {
+public class OpaqueField extends AbstractTextField {
 
     public OpaqueField(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);

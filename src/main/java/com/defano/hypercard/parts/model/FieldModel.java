@@ -17,8 +17,9 @@ import java.awt.*;
 public class FieldModel extends AbstractPartModel {
 
     public static final String PROP_TEXT = "text";
-    public static final String PROP_WRAPTEXT = "wraptext";
+    public static final String PROP_DONTWRAP = "dontwrap";
     public static final String PROP_LOCKTEXT = "locktext";
+    public static final String PROP_SHOWLINES = "showlines";
     public static final String PROP_STYLE = "style";
 
     private byte[] styleData;
@@ -37,9 +38,10 @@ public class FieldModel extends AbstractPartModel {
         partModel.defineProperty(PROP_TOP, new Value(geometry.y), false);
         partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
         partModel.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
-        partModel.defineProperty(PROP_WRAPTEXT, new Value(true), false);
+        partModel.defineProperty(PROP_DONTWRAP, new Value(false), false);
         partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
         partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
+        partModel.defineProperty(PROP_SHOWLINES, new Value(false), false);
         partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.OPAQUE.getName()), false);
         partModel.defineProperty(PROP_TEXT, new Value(""), false);
 

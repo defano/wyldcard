@@ -335,7 +335,7 @@ Property    | Description
 
 ### Fields
 
-In this implementation, fields come in only two flavors: transparent and opaque. This implementation provides no ability to show lines or prevent text-wrapping.
+In this implementation, fields come in only two flavors: transparent and opaque:
 
 Style                                        | Name          | Notes
 ---------------------------------------------|---------------|------------
@@ -349,6 +349,8 @@ Property   | Description
 `text`     | Returns or sets the text contained within this field
 `visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
 `locktext` | Returns or sets whether the text contained by the field can be edited by the user.
+`showlines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
+`dontwrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached. 
 
 ### Global Properties
 

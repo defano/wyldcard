@@ -29,21 +29,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 
-public abstract class AbstractTextPaneField extends JScrollPane implements com.defano.hypercard.parts.fields.FieldView, DocumentListener {
+public abstract class AbstractTextField extends JScrollPane implements com.defano.hypercard.parts.fields.FieldView, DocumentListener {
 
-    protected final JTextPane textPane;
+    protected final HyperCardJTextPane textPane;
 
     private ToolEditablePart toolEditablePart;
     private MutableAttributeSet currentStyle = new SimpleAttributeSet();
 
-    public AbstractTextPaneField(ToolEditablePart toolEditablePart) {
+    public AbstractTextField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
         // And listen for ants to march
         MarchingAnts.getInstance().addObserver(this::repaint);
 
         // Create the editor component
-        textPane = new JTextPane(new DefaultStyledDocument());
+        textPane = new HyperCardJTextPane(new DefaultStyledDocument());
         textPane.setEditorKit(new RTFEditorKit());
         this.setViewportView(textPane);
 
@@ -79,6 +79,10 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
         // Listen for changes to the field's selected text
         textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(AbstractPartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
         textPane.addCaretListener(e -> GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText())));
+
+        SwingUtilities.invokeLater(() -> {
+            toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
+        });
     }
 
     @Override
@@ -111,6 +115,7 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         SwingUtilities.invokeLater(() -> {
+
             switch (property) {
                 case FieldModel.PROP_TEXT:
                     if (!newValue.toString().equals(getText())) {
@@ -118,22 +123,26 @@ public abstract class AbstractTextPaneField extends JScrollPane implements com.d
                     }
                     break;
 
-                case FieldModel.PROP_WRAPTEXT:
-//                text.setLineWrap(newValue.booleanValue());
+                case FieldModel.PROP_DONTWRAP:
+                    textPane.setWrapText(!newValue.booleanValue());
                     break;
 
                 case FieldModel.PROP_LOCKTEXT:
                     textPane.setEditable(!newValue.booleanValue());
+                    break;
+
+                case FieldModel.PROP_SHOWLINES:
+                    textPane.setShowLines(newValue.booleanValue());
                     break;
             }
         });
     }
 
     /**
-     * Replace's the field's text with the given value, attempting (as best as possible) to intelligently
+     * Replaces the field's text with the given value, attempting as best as possible to intelligently
      * maintain the field's existing style.
      *
-     * It is not possible to correctly restyle the next text in every case. This is a result of the {@link FieldModel}
+     * It is not possible to correctly restyle the new text in every case. This is a result of the {@link FieldModel}
      * not being able to notify us of insert/delete operations.
      *
      * This method invokes Google's DiffMatchPatch utility to generate a change set, then attempts to apply each change

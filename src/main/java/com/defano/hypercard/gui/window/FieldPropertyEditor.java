@@ -39,6 +39,7 @@ public class FieldPropertyEditor extends HyperCardWindow {
     private JButton cancelButton;
     private JButton editScriptButton;
     private JComboBox style;
+    private JCheckBox showLines;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -52,8 +53,8 @@ public class FieldPropertyEditor extends HyperCardWindow {
         });
         cancelButton.addActionListener(e -> dispose());
         saveButton.addActionListener(e -> {
-            dispose();
             updateProperties();
+            dispose();
         });
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
@@ -82,22 +83,24 @@ public class FieldPropertyEditor extends HyperCardWindow {
             fieldWidth.setText(model.getKnownProperty(FieldModel.PROP_WIDTH).stringValue());
             isLockText.setSelected(model.getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
             isVisible.setSelected(model.getKnownProperty(FieldModel.PROP_VISIBLE).booleanValue());
-            isWrapText.setSelected(model.getKnownProperty(FieldModel.PROP_WRAPTEXT).booleanValue());
+            isWrapText.setSelected(model.getKnownProperty(FieldModel.PROP_DONTWRAP).booleanValue());
+            showLines.setSelected(model.getKnownProperty(FieldModel.PROP_SHOWLINES).booleanValue());
             style.setSelectedItem(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue());
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + model);
         }
     }
 
-    public void updateProperties() {
+    private void updateProperties() {
         model.setKnownProperty(FieldModel.PROP_NAME, new Value(fieldName.getText()));
         model.setKnownProperty(FieldModel.PROP_TOP, new Value(fieldTop.getText()));
         model.setKnownProperty(FieldModel.PROP_LEFT, new Value(fieldLeft.getText()));
         model.setKnownProperty(FieldModel.PROP_HEIGHT, new Value(fieldHeight.getText()));
         model.setKnownProperty(FieldModel.PROP_WIDTH, new Value(fieldWidth.getText()));
-        model.setKnownProperty(FieldModel.PROP_LOCKTEXT, new Value(isLockText.getSelectedObjects() != null));
-        model.setKnownProperty(FieldModel.PROP_VISIBLE, new Value(isVisible.getSelectedObjects() != null));
-        model.setKnownProperty(FieldModel.PROP_WRAPTEXT, new Value(isWrapText.getSelectedObjects() != null));
+        model.setKnownProperty(FieldModel.PROP_LOCKTEXT, new Value(isLockText.isSelected()));
+        model.setKnownProperty(FieldModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
+        model.setKnownProperty(FieldModel.PROP_DONTWRAP, new Value(isWrapText.isSelected()));
+        model.setKnownProperty(FieldModel.PROP_SHOWLINES, new Value(showLines.isSelected()));
         model.setKnownProperty(FieldModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
     }
 
@@ -176,14 +179,14 @@ public class FieldPropertyEditor extends HyperCardWindow {
         final Spacer spacer1 = new Spacer();
         panel4.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
+        panel5.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
         fieldEditor.add(panel5, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Style"));
         isVisible = new JCheckBox();
         isVisible.setText("Visible");
         panel5.add(isVisible, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isWrapText = new JCheckBox();
-        isWrapText.setText("Wrap Text");
+        isWrapText.setText("Don't Wrap");
         panel5.add(isWrapText, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isLockText = new JCheckBox();
         isLockText.setText("Lock Text");
@@ -195,6 +198,9 @@ public class FieldPropertyEditor extends HyperCardWindow {
         final JLabel label7 = new JLabel();
         label7.setText("Style");
         panel5.add(label7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showLines = new JCheckBox();
+        showLines.setText("Show Lines");
+        panel5.add(showLines, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
