@@ -9,6 +9,7 @@
 package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 
 import javax.swing.*;
@@ -112,9 +113,13 @@ public class StyleMenu extends HyperCardMenu {
 
         this.addSeparator();
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofCheckType()
                 .named("Other...")
-                .disabled()
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() != 9 && e.getSize() != 10 && e.getSize() != 12 && e.getSize() != 14 && e.getSize() != 18 && e.getSize() != 24))
+                .withAction(e -> {
+                    WindowManager.getFontSizePicker().bindModel(ToolsContext.getInstance().getFontProvider().get().getSize());
+                    WindowManager.getFontSizePicker().setShown(true);
+                })
                 .build(this);
     }
 }

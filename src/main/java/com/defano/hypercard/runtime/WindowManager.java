@@ -24,6 +24,7 @@ public class WindowManager {
     private final static PatternPalette patternsPalette = new PatternPalette();
     private final static BrushesPalette brushesPalette = new BrushesPalette();
     private final static ColorPalette colorPalette = new ColorPalette();
+    private final static FontSizePicker fontSizePicker = new FontSizePicker();
 
     public static void start() {
 
@@ -100,6 +101,14 @@ public class WindowManager {
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .build();
+
+        WindowBuilder.make(fontSizePicker)
+                .resizeable(false)
+                .withTitle("Font Size")
+                .notInitiallyVisible()
+                .dockTo(stackWindow)
+                .withMenuBar(HyperCardMenuBar.instance)
+                .build();
     }
 
     public static StackWindow getStackWindow() {
@@ -132,5 +141,9 @@ public class WindowManager {
 
     public static ColorPalette getColorPalette() {
         return colorPalette;
+    }
+
+    public static FontSizePicker getFontSizePicker() {
+        return fontSizePicker;
     }
 }
