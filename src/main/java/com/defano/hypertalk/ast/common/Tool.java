@@ -76,6 +76,9 @@ public enum Tool {
             case SLANT: return SELECT;
             case ROTATE: return SELECT;
             case SCALE: return SELECT;
+            case PROJECTION: return SELECT;
+            case PERSPECTIVE: return SELECT;
+            case RUBBERSHEET: return SELECT;
             case MAGNIFIER: return SELECT;
         }
 
