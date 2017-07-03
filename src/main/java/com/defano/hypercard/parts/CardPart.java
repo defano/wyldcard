@@ -22,19 +22,22 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.FileDrop;
 import com.defano.hypercard.gui.util.ImageImporter;
 import com.defano.hypercard.parts.model.*;
+import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.UndoablePaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
@@ -207,10 +210,15 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
     public void setForegroundVisible(boolean isVisible) {
         foregroundCanvas.setVisible(isVisible);
+        WindowManager.getStackWindow().setShowEditingBackgroundIndicator(!isVisible);
 
         for (Component thisComponent : getComponentsInLayer(FOREGROUND_PARTS_LAYER)) {
             thisComponent.setVisible(isVisible);
         }
+    }
+
+    public StackModel getStackModel() {
+        return stack;
     }
 
     public void setBackgroundVisible(boolean isVisible) {

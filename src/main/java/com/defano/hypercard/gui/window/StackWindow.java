@@ -36,6 +36,16 @@ public class StackWindow extends HyperCardWindow {
         ToolsContext.getInstance().reactivateTool(card.getCanvas());
     }
 
+    public void setShowEditingBackgroundIndicator(boolean isEditingBackground) {
+        String stackName = card.getStackModel().getStackName();
+
+        if (isEditingBackground) {
+            getWindowFrame().setTitle(stackName + " (Background)");
+        } else {
+            getWindowFrame().setTitle(stackName);
+        }
+    }
+
     @Override
     public JPanel getWindowPanel() {
         return cardPanel;
