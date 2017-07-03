@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.fields.styles;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.Utilities;
@@ -58,15 +59,23 @@ public class HyperCardJTextPane extends JTextPane {
         super.paintComponent(g);
 
         if (showLines) {
+            int lastLineHeight = getHeightForAttributes(g, getCharacterAttributes());
             int dottedLineY = 0;
             int lineCount = getWrappedLineCount();
 
-            Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{1}, 0);
+            Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
+            ((Graphics2D) g).setStroke(dottedLine);
 
-            for (int line = 1; line <= (lineCount == 0 ? 1 : lineCount); line++) {
-                dottedLineY += getLineHeight(g, line);
+            // Draw dotted line under all lines with text
+            for (int line = 0; line < lineCount; line++) {
+                lastLineHeight = getLineHeight(g, line);
+                dottedLineY += lastLineHeight;
+                g.drawLine(0, dottedLineY, getWidth(), dottedLineY);
+            }
 
-                ((Graphics2D) g).setStroke(dottedLine);
+            // Interpolate dotted lines under unused lines
+            while (dottedLineY < getHeight()) {
+                dottedLineY += lastLineHeight;
                 g.drawLine(0, dottedLineY, getWidth(), dottedLineY);
             }
         }
@@ -76,12 +85,11 @@ public class HyperCardJTextPane extends JTextPane {
         int maxHeight = 0;
 
         if (line > getWrappedLineCount()) {
-            return g.getFontMetrics(getStyledDocument().getFont(getCharacterAttributes())).getHeight();
+            return getHeightForAttributes(g, getCharacterAttributes());
         }
 
         for (int index = getLineStartOffset(line); index <= getLineEndOffset(line); index++) {
-            Font f = getStyledDocument().getFont(getStyledDocument().getCharacterElement(index).getAttributes());
-            int height = g.getFontMetrics(f).getHeight();
+            int height = getHeightForAttributes(g, getStyledDocument().getCharacterElement(index).getAttributes());
 
             if (height > maxHeight) {
                 maxHeight = height;
@@ -89,6 +97,10 @@ public class HyperCardJTextPane extends JTextPane {
         }
 
         return maxHeight;
+    }
+
+    private int getHeightForAttributes(Graphics g, AttributeSet attributes) {
+        return g.getFontMetrics(getStyledDocument().getFont(attributes)).getHeight();
     }
 
     private int getLineEndOffset(int line) {

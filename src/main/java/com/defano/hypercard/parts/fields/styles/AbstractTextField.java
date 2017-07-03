@@ -28,19 +28,19 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Observable;
+import java.util.Observer;
 
-public abstract class AbstractTextField extends JScrollPane implements com.defano.hypercard.parts.fields.FieldView, DocumentListener {
+public abstract class AbstractTextField extends JScrollPane implements com.defano.hypercard.parts.fields.FieldView, DocumentListener, Observer {
 
     protected final HyperCardJTextPane textPane;
 
     private ToolEditablePart toolEditablePart;
     private MutableAttributeSet currentStyle = new SimpleAttributeSet();
+    private boolean updatingFont = false;
 
     public AbstractTextField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
-
-        // And listen for ants to march
-        MarchingAnts.getInstance().addObserver(this::repaint);
 
         // Create the editor component
         textPane = new HyperCardJTextPane(new DefaultStyledDocument());
@@ -53,18 +53,6 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
         textPane.addMouseListener(toolEditablePart);
         textPane.addKeyListener(toolEditablePart);
 
-        // Get notified when font styles change
-        ToolsContext.getInstance().getFontProvider().addObserverAndUpdate((o, arg) -> {
-            Font font = (Font) arg;
-
-            currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
-            currentStyle.addAttribute(StyleConstants.Size, font.getSize());
-            currentStyle.addAttribute(StyleConstants.Bold, font.isBold());
-            currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
-
-            textPane.setCharacterAttributes(currentStyle, true);
-        });
-
         // Get notified when field tool is selected
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
             setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -73,12 +61,26 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
             setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
         });
 
+        // Listen for changes to the field's selected text (for the selectedText property)
+        textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(AbstractPartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
+        textPane.addCaretListener(e -> GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText())));
+
+        // Listen for caret location changes so that we can update the app font selection
+        textPane.addCaretListener(e -> {
+            ToolsContext.getInstance().getFontProvider().deleteObserver(AbstractTextField.this);
+            AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
+            ToolsContext.getInstance().getFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
+            ToolsContext.getInstance().getFontProvider().addObserver(AbstractTextField.this);
+        });
+
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
 
-        // Listen for changes to the field's selected text
-        textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(AbstractPartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
-        textPane.addCaretListener(e -> GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText())));
+        // Get notified when font styles change
+        ToolsContext.getInstance().getFontProvider().addObserverAndUpdate(this);
+
+        // And listen for ants to march
+        MarchingAnts.getInstance().addObserver(this::repaint);
 
         SwingUtilities.invokeLater(() -> {
             toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
@@ -257,4 +259,16 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        Font font = (Font) arg;
+
+        currentStyle = new SimpleAttributeSet();
+        currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
+        currentStyle.addAttribute(StyleConstants.Size, font.getSize());
+        currentStyle.addAttribute(StyleConstants.Bold, font.isBold());
+        currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
+
+        textPane.setCharacterAttributes(currentStyle, true);
+    }
 }
