@@ -3,7 +3,6 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.parts.model.StackObserver;
-import com.defano.hypertalk.ast.common.Tool;
 
 import java.util.ArrayList;
 import java.util.List;
