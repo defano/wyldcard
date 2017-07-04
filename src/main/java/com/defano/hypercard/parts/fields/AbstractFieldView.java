@@ -9,7 +9,7 @@
 package com.defano.hypercard.parts.fields;
 
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.util.*;
+import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.fields.styles.OpaqueField;
 import com.defano.hypercard.parts.fields.styles.TransparentField;

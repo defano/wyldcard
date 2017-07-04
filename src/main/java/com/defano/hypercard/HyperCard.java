@@ -20,10 +20,8 @@ package com.defano.hypercard;
 
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.gui.util.MouseManager;
-import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.parts.StackPart;
-import com.defano.jmonet.model.PaintToolType;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.runtime.Interpreter;
@@ -66,7 +64,7 @@ public class HyperCard {
         // directly from the constructor. This behaves like @PostConstruct
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
-            stackPart.open(StackModel.newStackModel("Untitled"));
+            openStack(StackModel.newStackModel("Untitled"));
         });
     }
 
@@ -78,7 +76,7 @@ public class HyperCard {
         return stackPart;
     }
 
-    public void setStack(StackModel model) {
+    public void openStack(StackModel model) {
         stackPart.open(model);
         stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex());
     }
@@ -87,33 +85,33 @@ public class HyperCard {
         return stackPart.getCurrentCard();
     }
 
-    public void setMsgBoxText(Object theMsg) {
+    public void setMessageBoxText(Object theMsg) {
         SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setMsgBoxText(theMsg.toString()));
     }
 
-    public String getMsgBoxText() {
+    public String getMessageBoxText() {
         return WindowManager.getMessageWindow().getMsgBoxText();
     }
 
-    public void doMsgBoxText() {
+    public void evaluateMessageBox() {
         messageBoxExecutor.submit(() -> {
             try {
-                if (!getMsgBoxText().trim().isEmpty()) {
-                    String messageText = getMsgBoxText();
+                if (!getMessageBoxText().trim().isEmpty()) {
+                    String messageText = getMessageBoxText();
                     Interpreter.executeString(null, messageText).get();
 
                     // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
                     if (Interpreter.isExpressionStatement(messageText)) {
-                        HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
+                        HyperCard.getInstance().setMessageBoxText(GlobalContext.getContext().getIt());
                     }
                 }
             } catch (Exception e) {
-                HyperCard.getInstance().dialogSyntaxError(e);
+                HyperCard.getInstance().showErrorDialog(e);
             }
         });
     }
 
-    public void dialogSyntaxError(Exception e) {
+    public void showErrorDialog(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
     }
 }

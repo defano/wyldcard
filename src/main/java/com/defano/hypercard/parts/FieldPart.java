@@ -257,7 +257,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
                 try {
                     compile();
                 } catch (HtSemanticException e) {
-                    HyperCard.getInstance().dialogSyntaxError(e);
+                    HyperCard.getInstance().showErrorDialog(e);
                 }
                 break;
             case FieldModel.PROP_TOP:

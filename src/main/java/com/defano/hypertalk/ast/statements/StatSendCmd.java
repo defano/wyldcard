@@ -34,7 +34,7 @@ public class StatSendCmd extends Statement {
         try {
             GlobalContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
         } catch (Exception e) {
-            HyperCard.getInstance().dialogSyntaxError(e);
+            HyperCard.getInstance().showErrorDialog(e);
         }
     }
 }

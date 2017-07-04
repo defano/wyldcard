@@ -34,7 +34,7 @@ public class HandlerExecutionTask implements Runnable {
 
             handler.execute();
         } catch (HtException e) {
-            HyperCard.getInstance().dialogSyntaxError(e);
+            HyperCard.getInstance().showErrorDialog(e);
         }
     }
 

@@ -12,8 +12,6 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolsContext;
 
-import javax.swing.*;
-
 public class EditMenu extends HyperCardMenu {
 
     public final static EditMenu instance = new EditMenu();

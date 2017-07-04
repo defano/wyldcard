@@ -9,7 +9,6 @@
 package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.StackPart;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
@@ -20,11 +19,8 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.model.StackObserver;
 import com.defano.hypertalk.ast.common.Tool;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

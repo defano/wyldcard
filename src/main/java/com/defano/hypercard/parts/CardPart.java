@@ -16,7 +16,6 @@
 
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
 import com.defano.hypercard.context.ToolsContext;
@@ -34,7 +33,9 @@ import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
@@ -63,6 +64,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.cardModel = stack.getCardModel(cardIndex);
         card.stackModel = stack;
 
+        // Add parts to this card
         for (AbstractPartModel thisPart : card.cardModel.getPartModels()) {
             switch (thisPart.getType()) {
                 case BUTTON:
@@ -78,6 +80,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
             }
         }
 
+        // Setup the paint canvases
         card.foregroundCanvas = new UndoablePaintCanvas(card.cardModel.getCardImage());
         card.foregroundCanvas.addCanvasCommitObserver(card);
         card.backgroundCanvas = new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage());
@@ -92,12 +95,14 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.setLayer(card.backgroundCanvas, BACKGROUND_CANVAS_LAYER);
         card.add(card.backgroundCanvas);
 
-        card.setMaximumSize(new Dimension(stack.getWidth(), stack.getHeight()));
+        // Resize Swing component
+        card.setMaximumSize(stack.getSize());
         card.setSize(stack.getWidth(), stack.getHeight());
 
         card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((Double) arg) == 1.0));
         card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((Double) arg) == 1.0));
 
+        // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
         for (ButtonPart thisButton : card.buttons.getParts()) {
             thisButton.getPartModel().notifyPropertyChangedObserver(thisButton);
         }
@@ -106,13 +111,15 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
             thisField.getPartModel().notifyPropertyChangedObserver(thisField);
         }
 
-        // Import image files that are dropped onto the card
+        // Listen for image files that are dropped onto the card
         new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
 
         // Tools context expects card to be fully initialized before listening to it
-        SwingUtilities.invokeLater(() -> ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
+//        SwingUtilities.invokeLater(() -> ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
             card.setForegroundVisible(!(boolean) isEditingBackground);
-        }));
+                });
+//        }));
 
         return card;
     }

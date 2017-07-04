@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.parts.buttons;
 
-import com.defano.hypercard.gui.util.*;
+import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.parts.buttons.styles.*;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.jmonet.tools.util.MarchingAnts;

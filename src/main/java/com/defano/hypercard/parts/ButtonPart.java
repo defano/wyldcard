@@ -231,7 +231,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
                 try {
                     compile();
                 } catch (HtSemanticException e) {
-                    HyperCard.getInstance().dialogSyntaxError(e);
+                    HyperCard.getInstance().showErrorDialog(e);
                 }
                 break;
             case ButtonModel.PROP_TOP:

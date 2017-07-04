@@ -43,7 +43,7 @@ public class MessageWindow extends HyperCardWindow {
                     messageStack.add(messageBox.getText());
                     messageStackIndex = messageStack.size();
 
-                    HyperCard.getInstance().doMsgBoxText();
+                    HyperCard.getInstance().evaluateMessageBox();
                 } else {
                     SwingUtilities.invokeLater(() -> checkSyntax());
                 }

@@ -14,7 +14,6 @@ import com.defano.hypercard.HyperCard;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 
 public class FileMenu extends HyperCardMenu {
 
@@ -25,17 +24,21 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> HyperCard.getInstance().setStack(StackModel.newStackModel("Untitled")))
+                .withAction(e -> HyperCard.getInstance().openStack(StackModel.newStackModel("Untitled")))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
                 .withAction(e -> {
-                    JFileChooser chooser = new JFileChooser();
-                    chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                        StackModel model = Serializer.deserialize(chooser.getSelectedFile(), StackModel.class);
-                        HyperCard.getInstance().setStack(model);
+                    try {
+                        JFileChooser chooser = new JFileChooser();
+                        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                            StackModel model = Serializer.deserialize(chooser.getSelectedFile(), StackModel.class);
+                            HyperCard.getInstance().openStack(model);
+                        }
+                    } catch (Exception exception) {
+                        HyperCard.getInstance().showErrorDialog(exception);
                     }
                 })
                 .withShortcut('O')
@@ -54,10 +57,10 @@ public class FileMenu extends HyperCardMenu {
                         JFileChooser chooser = new JFileChooser();
                         chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            Serializer.serialize(chooser.getSelectedFile(), HyperCard.getInstance().getStack());
+                            Serializer.serialize(chooser.getSelectedFile(), HyperCard.getInstance().getStack().getStackModel());
                         }
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                    } catch (Exception exception) {
+                        HyperCard.getInstance().showErrorDialog(exception);
                     }
                 })
                 .withShortcut('S')

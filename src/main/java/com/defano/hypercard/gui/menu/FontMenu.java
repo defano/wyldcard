@@ -11,7 +11,6 @@ package com.defano.hypercard.gui.menu;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.jmonet.model.ImmutableProvider;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class FontMenu extends HyperCardMenu {
