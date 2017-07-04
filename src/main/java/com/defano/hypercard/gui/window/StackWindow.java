@@ -73,6 +73,7 @@ public class StackWindow extends HyperCardWindow implements StackObserver {
         cardPanel.setPreferredSize(this.stack.getStackModel().getSize());
 
         displayCard(this.stack.getCurrentCard());
+        invalidateWindowTitle();
     }
 
     @Override

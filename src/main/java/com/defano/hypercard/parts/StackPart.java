@@ -98,10 +98,19 @@ public class StackPart {
         }
 
         try {
+            // Notify observers that current card is going away
             fireOnCardClosing(getCurrentCard());
+
+            // Change cards
             currentCard = getCard(cardIndex);
             stackModel.setCurrentCardIndex(cardIndex);
+
+            // Notify observers of new card
             fireOnCardOpened(currentCard);
+
+            // Reactive paint tool on new card's canvas
+            ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
+
             return currentCard;
 
         } catch (Exception e) {

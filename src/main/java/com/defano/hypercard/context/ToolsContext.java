@@ -29,7 +29,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 
-public class ToolsContext implements StackObserver {
+public class ToolsContext {
 
     private final static ToolsContext instance = new ToolsContext();
 
@@ -58,9 +58,7 @@ public class ToolsContext implements StackObserver {
 
     private PaintToolType lastToolType;
 
-    private ToolsContext() {
-        SwingUtilities.invokeLater(() -> HyperCard.getInstance().getStack().addObserver(ToolsContext.this));
-    }
+    private ToolsContext() {}
 
     public static ToolsContext getInstance() {
         return instance;
@@ -358,21 +356,6 @@ public class ToolsContext implements StackObserver {
 
     public Tool getSelectedTool() {
         return Tool.fromToolMode(getToolMode(), getPaintTool().getToolType());
-    }
-
-    @Override
-    public void onCardClosed(CardPart oldCard) {
-        getPaintTool().deactivate();
-    }
-
-    @Override
-    public void onCardOpened(CardPart newCard) {
-        reactivateTool(newCard.getCanvas());
-    }
-
-    @Override
-    public void onStackOpened(StackPart newStack) {
-        // Nothing to do
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {

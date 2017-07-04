@@ -63,11 +63,9 @@ public class HyperCard {
         MouseManager.start();
 
         // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
-        // directly from the constructor
+        // directly from the constructor. This behaves like @PostConstruct
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
-            ToolsContext.getInstance().selectPaintTool(PaintToolType.ARROW);
-
             stackPart.open(StackModel.newStackModel("Untitled"));
         });
     }
