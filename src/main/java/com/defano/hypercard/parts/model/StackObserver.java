@@ -9,9 +9,10 @@
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.CardPart;
+import com.defano.hypercard.parts.StackPart;
 
-public interface StackModelObserver {
-    void onCardClosing(CardPart oldCard);
-    void onCardOpening(CardPart newCard);
+public interface StackObserver {
+    void onStackOpened(StackPart newStack);
+    void onCardClosed(CardPart oldCard);
     void onCardOpened(CardPart newCard);
 }

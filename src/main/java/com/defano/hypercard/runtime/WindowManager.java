@@ -30,11 +30,11 @@ public class WindowManager {
 
         // Create the main window, center it on the screen and display it
         JFrame stackFrame = WindowBuilder.make(stackWindow)
-                .withTitle(HyperCard.getInstance().getStack().getStackName())
+                .withTitle(HyperCard.getInstance().getStack().getStackModel().getStackName())
                 .resizeable(false)
                 .quitOnClose()
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withModel(HyperCard.getInstance().getStack().getCurrentCard())
+                .withModel(HyperCard.getInstance().getStack())
                 .build();
 
         WindowBuilder.make(messageWindow)

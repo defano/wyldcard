@@ -8,8 +8,9 @@
 
 /**
  * HyperCard.java
+ *
  * @author matt.defano@gmail.com
- * 
+ * <p>
  * The HyperCard runtime environment; this is the program's main class and is
  * responsible for initializing the HyperCard window, tracking mouse changes
  * and reporting exceptions to the user.
@@ -21,10 +22,10 @@ import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
+import com.defano.hypercard.parts.StackPart;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.StackModel;
-import com.defano.hypercard.parts.model.StackModelObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
 
@@ -32,17 +33,16 @@ import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HyperCard implements StackModelObserver {
+public class HyperCard {
 
     private static HyperCard instance;
     private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
-
-    private StackModel stack;
+    private StackPart stackPart = StackPart.getInstance();
 
     public static void main(String argv[]) {
         // Display the frame's menu as the Mac OS menubar
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
+        System.setProperty("com.apple.macos.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
         System.setProperty("apple.awt.application.name", "HyperCard");
 
@@ -58,10 +58,6 @@ public class HyperCard implements StackModelObserver {
             // Nothing to do
         }
 
-        // Create a new stack to work on.
-        stack = StackModel.newStack("Untitled");
-        stack.addObserver(this);
-
         // Fire up the key and mouse listeners
         KeyboardManager.start();
         MouseManager.start();
@@ -71,6 +67,8 @@ public class HyperCard implements StackModelObserver {
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
             ToolsContext.getInstance().selectPaintTool(PaintToolType.ARROW);
+
+            stackPart.open(StackModel.newStackModel("Untitled"));
         });
     }
 
@@ -78,18 +76,17 @@ public class HyperCard implements StackModelObserver {
         return instance;
     }
 
-    public StackModel getStack () { return stack; }
-
-    public void setStack (StackModel model) {
-        SwingUtilities.invokeLater(() -> {
-            stack = model;
-            stack.addObserver(HyperCard.this);
-            WindowManager.getStackWindow().setDisplayedCard(stack.getCurrentCard());
-        });
+    public StackPart getStack() {
+        return stackPart;
     }
 
-    public CardPart getCard () {
-        return stack.getCurrentCard();
+    public void setStack(StackModel model) {
+        stackPart.open(model);
+        stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex());
+    }
+
+    public CardPart getCard() {
+        return stackPart.getCurrentCard();
     }
 
     public void setMsgBoxText(Object theMsg) {
@@ -120,20 +117,5 @@ public class HyperCard implements StackModelObserver {
 
     public void dialogSyntaxError(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
-    }
-
-    @Override
-    public void onCardClosing(CardPart oldCard) {
-        // Nothing to do
-    }
-
-    @Override
-    public void onCardOpening(CardPart newCard) {
-        WindowManager.getStackWindow().setDisplayedCard(newCard);
-    }
-
-    @Override
-    public void onCardOpened(CardPart newCard) {
-        // Nothing to do
     }
 }

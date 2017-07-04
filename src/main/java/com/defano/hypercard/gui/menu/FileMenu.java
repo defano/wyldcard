@@ -25,7 +25,7 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> HyperCard.getInstance().setStack(StackModel.newStack("Untitled")))
+                .withAction(e -> HyperCard.getInstance().setStack(StackModel.newStackModel("Untitled")))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

@@ -16,6 +16,7 @@
 
 package com.defano.hypercard.parts;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
 import com.defano.hypercard.context.ToolsContext;
@@ -32,12 +33,8 @@ import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 public class CardPart extends JLayeredPane implements CanvasCommitObserver {
@@ -47,7 +44,8 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
     private final static int FOREGROUND_CANVAS_LAYER = 2;
     private final static int FOREGROUND_PARTS_LAYER = 3;
 
-    private CardModel model;
+    private CardModel cardModel;
+    private StackModel stackModel;
 
     private PartsTable<FieldPart> fields = new PartsTable<>();
     private PartsTable<ButtonPart> buttons = new PartsTable<>();
@@ -55,27 +53,17 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
     private UndoablePaintCanvas foregroundCanvas;
     private UndoablePaintCanvas backgroundCanvas;
 
-    private transient StackModel stack;
-
     private CardPart() {
         super();
-
         this.setLayout(null);
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentShown(ComponentEvent e) {
-                super.componentShown(e);
-                stack.fireOnCardOpened(CardPart.this);
-            }
-        });
     }
 
-    public static CardPart fromModel(CardModel model, StackModel stack) throws Exception {
+    public static CardPart fromModel(int cardIndex, StackModel stack) throws Exception {
         CardPart card = new CardPart();
-        card.model = model;
-        card.stack = stack;
+        card.cardModel = stack.getCardModel(cardIndex);
+        card.stackModel = stack;
 
-        for (AbstractPartModel thisPart : model.getPartModels()) {
+        for (AbstractPartModel thisPart : card.cardModel.getPartModels()) {
             switch (thisPart.getType()) {
                 case BUTTON:
                     ButtonPart button = ButtonPart.fromModel(card, (com.defano.hypercard.parts.model.ButtonModel) thisPart);
@@ -90,7 +78,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
             }
         }
 
-        card.foregroundCanvas = new UndoablePaintCanvas(model.getCardImage());
+        card.foregroundCanvas = new UndoablePaintCanvas(card.cardModel.getCardImage());
         card.foregroundCanvas.addCanvasCommitObserver(card);
         card.backgroundCanvas = new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage());
         card.backgroundCanvas.addCanvasCommitObserver(card);
@@ -107,10 +95,8 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.setMaximumSize(new Dimension(stack.getWidth(), stack.getHeight()));
         card.setSize(stack.getWidth(), stack.getHeight());
 
-        card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((double) arg) == 1.0));
-        card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((double) arg) == 1.0));
-
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> card.setForegroundVisible(!(boolean) isEditingBackground));
+        card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((Double) arg) == 1.0));
+        card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((Double) arg) == 1.0));
 
         for (ButtonPart thisButton : card.buttons.getParts()) {
             thisButton.getPartModel().notifyPropertyChangedObserver(thisButton);
@@ -123,32 +109,37 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         // Import image files that are dropped onto the card
         new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
 
+        // Tools context expects card to be fully initialized before listening to it
+        SwingUtilities.invokeLater(() -> ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
+            card.setForegroundVisible(!(boolean) isEditingBackground);
+        }));
+
         return card;
     }
 
     public void addField(FieldPart field) throws PartException {
-        model.addPart(field);
+        cardModel.addPart(field);
         fields.addPart(field);
         addSwingComponent(field.getComponent(), field.getRect());
         field.partOpened();
     }
 
     public void removeField(FieldPart field) {
-        model.removePart(field);
+        cardModel.removePart(field);
         fields.removePart(field);
         removeSwingComponent(field.getComponent());
         field.partClosed();
     }
 
     public void addButton(ButtonPart button) throws PartException {
-        model.addPart(button);
+        cardModel.addPart(button);
         buttons.addPart(button);
         addSwingComponent(button.getComponent(), button.getRect());
         button.partOpened();
     }
 
     public void removeButton(ButtonPart button) {
-        model.removePart(button);
+        cardModel.removePart(button);
         buttons.removePart(button);
         removeSwingComponent(button.getComponent());
         button.partClosed();
@@ -204,29 +195,43 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         return joined;
     }
 
+    public CardModel getCardModel() {
+        return cardModel;
+    }
+
     public UndoablePaintCanvas getCanvas() {
         return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
     }
 
-    public void setForegroundVisible(boolean isVisible) {
+    private void setForegroundVisible(boolean isVisible) {
         foregroundCanvas.setVisible(isVisible);
-        WindowManager.getStackWindow().setShowEditingBackgroundIndicator(!isVisible);
 
         for (Component thisComponent : getComponentsInLayer(FOREGROUND_PARTS_LAYER)) {
             thisComponent.setVisible(isVisible);
         }
+
+        // Notify the window manager than background editing changed
+        WindowManager.getStackWindow().invalidateWindowTitle();
+    }
+
+    public boolean isForegroundVisible() {
+        return foregroundCanvas.isVisible();
+    }
+
+    public int getCardIndexInStack() {
+        return getStackModel().getIndexOfCard(this.getCardModel());
     }
 
     public StackModel getStackModel() {
-        return stack;
+        return stackModel;
     }
 
-    public void setBackgroundVisible(boolean isVisible) {
+    private void setBackgroundVisible(boolean isVisible) {
         backgroundCanvas.setVisible(isVisible);
     }
 
     public BackgroundModel getCardBackground() {
-        return stack.getBackground(model.getBackgroundId());
+        return stackModel.getBackground(cardModel.getBackgroundId());
     }
 
     public void invalidateSwingComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
@@ -249,7 +254,6 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         repaint();
     }
 
-
     public int nextFieldId() {
         return fields.getNextId();
     }
@@ -271,7 +275,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         if (ToolsContext.getInstance().isEditingBackground()) {
             getCardBackground().setBackgroundImage(canvasImage);
         } else {
-            model.setCardImage(canvasImage);
+            cardModel.setCardImage(canvasImage);
         }
     }
 }
