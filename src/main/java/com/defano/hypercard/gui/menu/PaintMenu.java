@@ -46,22 +46,26 @@ public class PaintMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Invert")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).invert())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Pickup")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).pickupSelection())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Darken")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustBrightness(-20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Lighten")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustBrightness(20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -96,13 +100,15 @@ public class PaintMenu extends HyperCardMenu {
         this.addSeparator();
 
         MenuItemBuilder.ofDefaultType()
-                .named("Opaque")
-                .disabled()
+                .named("More Opaque")
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustTransparency(20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Transparent")
-                .disabled()
+                .named("More Transparent")
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustTransparency(-20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         this.addSeparator();
