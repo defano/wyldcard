@@ -39,12 +39,13 @@ public class StackWindow extends HyperCardWindow implements StackObserver {
     public void invalidateWindowTitle() {
         String stackName = card.getStackModel().getStackName();
         int cardNumber = card.getCardIndexInStack() + 1;
+        int cardCount = stack.getCardCountProvider().get();
         boolean isEditingBackground = !card.isForegroundVisible();
 
         if (isEditingBackground) {
-            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " (Background)");
+            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
-            getWindowFrame().setTitle(stackName + " - Card " + cardNumber);
+            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
         }
     }
 
