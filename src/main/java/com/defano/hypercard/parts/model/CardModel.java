@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.Serializer;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 
@@ -98,5 +99,9 @@ public class CardModel {
                 throw new RuntimeException("An error occurred while reading the card image. The stack may be corrupted.", e);
             }
         }
+    }
+
+    public CardModel copyOf() {
+        return Serializer.deserialize(Serializer.serialize(this), CardModel.class);
     }
 }

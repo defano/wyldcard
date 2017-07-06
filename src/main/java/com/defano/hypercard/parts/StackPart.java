@@ -17,7 +17,7 @@ public class StackPart {
     private List<StackObserver> observers;
     private CardPart currentCard;
     private Provider<Integer> cardCountProvider = new Provider<>(0);
-
+    private Provider<CardPart> cardClipboardProvider = new Provider<>();
 
     private StackPart() {
         this.observers = new ArrayList<>();
@@ -95,6 +95,30 @@ public class StackPart {
         cardCountProvider.set(stackModel.getCardCount());
 
         return goNextCard();
+    }
+
+    public void cutCard() {
+        cardClipboardProvider.set(getCurrentCard());
+        cardCountProvider.set(stackModel.getCardCount());
+
+        deleteCard();
+    }
+
+    public void copyCard() {
+        cardClipboardProvider.set(getCurrentCard());
+    }
+
+    public void pasteCard() {
+        ToolsContext.getInstance().setIsEditingBackground(false);
+
+        stackModel.newCardModel(cardClipboardProvider.get().getCardModel().copyOf());
+        cardCountProvider.set(stackModel.getCardCount());
+
+        goNextCard();
+    }
+
+    public Provider<CardPart> getCardClipboardProvider() {
+        return cardClipboardProvider;
     }
 
     private CardPart go(int cardIndex, boolean addToBackstack) {

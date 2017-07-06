@@ -87,12 +87,19 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
-                .disabled()
+                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardCountProvider(), c -> c < 2))
+                .withAction(e -> HyperCard.getInstance().getStack().cutCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .disabled()
+                .withAction(e -> HyperCard.getInstance().getStack().copyCard())
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Paste Card")
+                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardClipboardProvider(), Objects::isNull))
+                .withAction(e -> HyperCard.getInstance().getStack().pasteCard())
                 .build(this);
 
         this.addSeparator();

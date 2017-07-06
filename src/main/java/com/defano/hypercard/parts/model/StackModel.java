@@ -45,8 +45,12 @@ public class StackModel {
         return stack;
     }
 
+    public void newCardModel(CardModel cardModel) {
+        cardModels.add(currentCardIndex + 1, cardModel);
+    }
+
     public void newCardModel() {
-        cardModels.add(currentCardIndex + 1, CardModel.emptyCardModel());
+        newCardModel(CardModel.emptyCardModel());
     }
 
     public void deleteCardModel() {
