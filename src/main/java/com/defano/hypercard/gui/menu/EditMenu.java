@@ -81,7 +81,7 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getStackModel().getCardCountProvider(), c -> c < 2))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardCountProvider(), c -> c < 2))
                 .withAction(e -> HyperCard.getInstance().getStack().deleteCard())
                 .build(this);
 

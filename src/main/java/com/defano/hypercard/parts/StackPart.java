@@ -3,6 +3,8 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.parts.model.StackObserver;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.Provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,8 @@ public class StackPart {
     private StackModel stackModel;
     private List<StackObserver> observers;
     private CardPart currentCard;
+    private Provider<Integer> cardCountProvider = new Provider<>(0);
+
 
     private StackPart() {
         this.observers = new ArrayList<>();
@@ -28,6 +32,8 @@ public class StackPart {
     public void open(StackModel model) {
         this.stackModel = model;
         this.currentCard = getCard(model.getCurrentCardIndex());
+        this.cardCountProvider.set(stackModel.getCardCount());
+
         goCard(model.getCurrentCardIndex());
         fireOnStackOpened();
     }
@@ -75,14 +81,19 @@ public class StackPart {
     public CardPart deleteCard() {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
+        int deletedCardIndex = stackModel.getCurrentCardIndex();
         stackModel.deleteCardModel();
-        return goPrevCard();
+        cardCountProvider.set(stackModel.getCardCount());
+
+        return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
     }
 
     public CardPart newCard() {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         stackModel.newCardModel();
+        cardCountProvider.set(stackModel.getCardCount());
+
         return goNextCard();
     }
 
@@ -104,9 +115,14 @@ public class StackPart {
             stackModel.getBackStack().push(stackModel.getCurrentCardIndex());
         }
 
+        // Notify observers that current card is going away
+        fireOnCardClosing(getCurrentCard());
+
+        return activateCard(cardIndex);
+    }
+
+    private CardPart activateCard (int cardIndex) {
         try {
-            // Notify observers that current card is going away
-            fireOnCardClosing(getCurrentCard());
 
             // Change cards
             currentCard = getCard(cardIndex);
@@ -131,6 +147,10 @@ public class StackPart {
         }
 
         return currentCard;
+    }
+
+    public ImmutableProvider<Integer> getCardCountProvider() {
+        return ImmutableProvider.from(cardCountProvider);
     }
 
     private CardPart getCard(int index) {
