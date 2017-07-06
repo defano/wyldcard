@@ -8,6 +8,9 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.Provider;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -23,6 +26,7 @@ public class StackModel {
     private int height = 480;
     private final List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
+    private final Provider<Integer> cardCountProvider = new Provider<>(0);
 
     public static StackModel getInstance() {
         return instance;
@@ -39,11 +43,18 @@ public class StackModel {
         stack.cardModels.add(CardModel.emptyCardModel());
         stack.backgroundModels.put(0, BackgroundModel.emptyBackground());
         stack.name = name;
+        stack.cardCountProvider.set(stack.cardModels.size());
         return stack;
     }
 
     public void newCardModel() {
         cardModels.add(currentCardIndex + 1, CardModel.emptyCardModel());
+        cardCountProvider.set(cardModels.size());
+    }
+
+    public void deleteCardModel() {
+        cardModels.remove(currentCardIndex);
+        cardCountProvider.set(cardModels.size());
     }
 
     public String getStackName() {
@@ -88,5 +99,9 @@ public class StackModel {
 
     public Stack<Integer> getBackStack() {
         return backStack;
+    }
+
+    public ImmutableProvider<Integer> getCardCountProvider() {
+        return ImmutableProvider.from(cardCountProvider);
     }
 }

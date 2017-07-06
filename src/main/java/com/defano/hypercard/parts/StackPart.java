@@ -72,6 +72,13 @@ public class StackPart {
         return go(stackModel.getCardCount() - 1, true);
     }
 
+    public CardPart deleteCard() {
+        ToolsContext.getInstance().setIsEditingBackground(false);
+
+        stackModel.deleteCardModel();
+        return goPrevCard();
+    }
+
     public CardPart newCard() {
         ToolsContext.getInstance().setIsEditingBackground(false);
 

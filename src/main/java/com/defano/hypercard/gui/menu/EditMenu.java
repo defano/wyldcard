@@ -11,6 +11,8 @@ package com.defano.hypercard.gui.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.model.ProviderTransform;
 
 public class EditMenu extends HyperCardMenu {
 
@@ -65,7 +67,8 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .disabled()
+                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getStackModel().getCardCountProvider(), c -> c < 2))
+                .withAction(e -> HyperCard.getInstance().getStack().deleteCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
