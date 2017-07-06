@@ -11,6 +11,13 @@ package com.defano.hypercard.gui.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
+import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.tools.base.AbstractSelectionTool;
+
+import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import java.util.Objects;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.ProviderTransform;
 
@@ -20,6 +27,9 @@ public class EditMenu extends HyperCardMenu {
 
     private EditMenu () {
         super("Edit");
+
+        // Routes cut/copy/paste actions to the correct canvas
+        CanvasClipboardActionListener actionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getCard().getCanvas());
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
@@ -34,27 +44,31 @@ public class EditMenu extends HyperCardMenu {
 
         this.addSeparator();
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofAction(new DefaultEditorKit.CutAction())
                 .named("Cut")
-                .disabled()
+                .withActionListener(actionListener)
+                .withActionCommand((String) TransferHandler.getCutAction().getValue(Action.NAME))
                 .withShortcut('X')
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofAction(new DefaultEditorKit.CopyAction())
                 .named("Copy")
-                .disabled()
+                .withActionListener(actionListener)
+                .withActionCommand((String) TransferHandler.getCopyAction().getValue(Action.NAME))
                 .withShortcut('C')
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofAction(new DefaultEditorKit.PasteAction())
                 .named("Paste")
-                .disabled()
+                .withActionListener(actionListener)
+                .withActionCommand((String) TransferHandler.getPasteAction().getValue(Action.NAME))
                 .withShortcut('V')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).deleteSelection())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         this.addSeparator();

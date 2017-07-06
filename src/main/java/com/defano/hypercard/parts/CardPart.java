@@ -29,6 +29,12 @@ import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.UndoablePaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
+import com.defano.jmonet.clipboard.CanvasTransferDelegate;
+import com.defano.jmonet.clipboard.CanvasTransferHandler;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.SelectionTool;
+import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.PaintTool;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +44,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-public class CardPart extends JLayeredPane implements CanvasCommitObserver {
+public class CardPart extends JLayeredPane implements CanvasCommitObserver, CanvasTransferDelegate {
 
     private final static int BACKGROUND_CANVAS_LAYER = 0;
     private final static int BACKGROUND_PARTS_LAYER = 1;
@@ -86,6 +92,9 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         card.backgroundCanvas = new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage());
         card.backgroundCanvas.addCanvasCommitObserver(card);
 
+        card.foregroundCanvas.setTransferHandler(new CanvasTransferHandler(card.foregroundCanvas, card));
+        card.backgroundCanvas.setTransferHandler(new CanvasTransferHandler(card.backgroundCanvas, card));
+
         card.foregroundCanvas.setSize(stack.getWidth(), stack.getHeight());
         card.backgroundCanvas.setSize(stack.getWidth(), stack.getHeight());
 
@@ -114,12 +123,9 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         // Listen for image files that are dropped onto the card
         new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
 
-        // Tools context expects card to be fully initialized before listening to it
-//        SwingUtilities.invokeLater(() -> ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
         ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
             card.setForegroundVisible(!(boolean) isEditingBackground);
-                });
-//        }));
+        });
 
         return card;
     }
@@ -210,6 +216,10 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
     }
 
+    public boolean isForegroundVisible() {
+        return foregroundCanvas.isVisible();
+    }
+
     private void setForegroundVisible(boolean isVisible) {
         foregroundCanvas.setVisible(isVisible);
 
@@ -219,10 +229,6 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
 
         // Notify the window manager than background editing changed
         WindowManager.getStackWindow().invalidateWindowTitle();
-    }
-
-    public boolean isForegroundVisible() {
-        return foregroundCanvas.isVisible();
     }
 
     public int getCardIndexInStack() {
@@ -284,5 +290,32 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver {
         } else {
             cardModel.setCardImage(canvasImage);
         }
+    }
+
+    @Override
+    public BufferedImage copySelection() {
+        PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
+        if (activeTool instanceof AbstractSelectionTool) {
+            return ((AbstractSelectionTool) activeTool).getSelectedImage();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void deleteSelection() {
+        PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
+        if (activeTool instanceof AbstractSelectionTool) {
+            ((AbstractSelectionTool) activeTool).deleteSelection();
+        }
+    }
+
+    @Override
+    public void pasteSelection(BufferedImage image) {
+        int cardCenterX = getWidth() / 2;
+        int cardCenterY = getHeight() / 2;
+
+        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION);
+        tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 }

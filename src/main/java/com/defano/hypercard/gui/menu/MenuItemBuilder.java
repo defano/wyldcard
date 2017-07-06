@@ -37,6 +37,10 @@ public class MenuItemBuilder {
         return new MenuItemBuilder(new JMenuItem());
     }
 
+    public static MenuItemBuilder ofAction(Action action) {
+        return new MenuItemBuilder(new JMenuItem(action));
+    }
+
     public static MenuItemBuilder ofHeirarchicalType() {
         return new MenuItemBuilder(new JMenu());
     }
@@ -90,6 +94,16 @@ public class MenuItemBuilder {
 
     public MenuItemBuilder withIcon(Icon icon) {
         this.item.setIcon(icon);
+        return this;
+    }
+
+    public MenuItemBuilder withActionListener(ActionListener actionListener) {
+        this.item.addActionListener(actionListener);
+        return this;
+    }
+
+    public MenuItemBuilder withActionCommand(String actionCommand) {
+        this.item.setActionCommand(actionCommand);
         return this;
     }
 
