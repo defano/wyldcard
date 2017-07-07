@@ -14,6 +14,7 @@ import com.defano.hypercard.parts.buttons.ButtonView;
 import com.defano.hypercard.parts.fields.FieldView;
 import com.defano.hypercard.parts.model.AbstractPartModel;
 import com.defano.hypercard.parts.model.ButtonModel;
+import com.defano.hypertalk.ast.common.Tool;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypertalk.ast.common.Value;
@@ -30,6 +31,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     void delete();
     void editProperties();
     Part getPart();
+    Tool getEditTool();
 
     default int getDragHandleSize() {
         return 8;

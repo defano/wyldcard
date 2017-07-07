@@ -30,6 +30,7 @@ import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Script;
+import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -116,6 +117,11 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     @Override
     public void delete() {
         parent.removeField(this);
+    }
+
+    @Override
+    public Tool getEditTool() {
+        return Tool.FIELD;
     }
 
     @Override

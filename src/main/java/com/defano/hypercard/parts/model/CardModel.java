@@ -102,6 +102,6 @@ public class CardModel {
     }
 
     public CardModel copyOf() {
-        return Serializer.deserialize(Serializer.serialize(this), CardModel.class);
+        return Serializer.copy(this);
     }
 }

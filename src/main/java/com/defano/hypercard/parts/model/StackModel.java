@@ -8,7 +8,6 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
 import java.awt.*;

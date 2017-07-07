@@ -16,14 +16,18 @@
 
 package com.defano.hypercard.parts;
 
+import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.FileDrop;
 import com.defano.hypercard.gui.util.ImageImporter;
+import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
+import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -86,6 +90,9 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
             }
         }
 
+        // Setup part cut, copy and paste
+        card.setTransferHandler(new CardPartTransferHandler(card));
+
         // Setup the paint canvases
         card.foregroundCanvas = new UndoablePaintCanvas(card.cardModel.getCardImage());
         card.foregroundCanvas.addCanvasCommitObserver(card);
@@ -130,6 +137,35 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
         return card;
     }
 
+    public Part importPart(Part part) throws Exception {
+
+        if (part instanceof ButtonPart) {
+            return importButton((ButtonPart) part);
+        } else if (part instanceof FieldPart) {
+            return importField((FieldPart) part);
+        } else {
+            throw new IllegalArgumentException("Bug! Unimplemented import of part type: " + part.getClass());
+        }
+    }
+
+    public ButtonPart importButton(ButtonPart part) throws Exception {
+        ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
+        model.defineProperty(AbstractPartModel.PROP_ID, new Value(buttons.getNextId()), true);
+
+        ButtonPart newButton = ButtonPart.fromModel(this, model);
+        addButton(newButton);
+        return newButton;
+    }
+
+    public FieldPart importField(FieldPart part) throws Exception {
+        FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
+        model.defineProperty(AbstractPartModel.PROP_ID, new Value(fields.getNextId()), true);
+
+        FieldPart newField = FieldPart.fromModel(this, model);
+        addField(newField);
+        return newField;
+    }
+
     public void addField(FieldPart field) throws PartException {
         cardModel.addPart(field);
         fields.addPart(field);
@@ -156,6 +192,14 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
         buttons.removePart(button);
         removeSwingComponent(button.getComponent());
         button.partClosed();
+    }
+
+    public void removePart(Part part) {
+        if (part instanceof ButtonPart) {
+            removeButton((ButtonPart) part);
+        } else if (part instanceof FieldPart) {
+            removeField((FieldPart) part);
+        }
     }
 
     public void newButton() {

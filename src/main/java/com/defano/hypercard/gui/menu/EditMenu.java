@@ -11,6 +11,7 @@ package com.defano.hypercard.gui.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.parts.clipboard.CardActionListener;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
@@ -29,7 +30,8 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener actionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getCard().getCanvas());
+        CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
@@ -46,21 +48,24 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofAction(new DefaultEditorKit.CutAction())
                 .named("Cut")
-                .withActionListener(actionListener)
+                .withActionListener(canvasActionListener)
+                .withActionListener(cardActionListener)
                 .withActionCommand((String) TransferHandler.getCutAction().getValue(Action.NAME))
                 .withShortcut('X')
                 .build(this);
 
         MenuItemBuilder.ofAction(new DefaultEditorKit.CopyAction())
                 .named("Copy")
-                .withActionListener(actionListener)
+                .withActionListener(canvasActionListener)
+                .withActionListener(cardActionListener)
                 .withActionCommand((String) TransferHandler.getCopyAction().getValue(Action.NAME))
                 .withShortcut('C')
                 .build(this);
 
         MenuItemBuilder.ofAction(new DefaultEditorKit.PasteAction())
                 .named("Paste")
-                .withActionListener(actionListener)
+                .withActionListener(canvasActionListener)
+                .withActionListener(cardActionListener)
                 .withActionCommand((String) TransferHandler.getPasteAction().getValue(Action.NAME))
                 .withShortcut('V')
                 .build(this);

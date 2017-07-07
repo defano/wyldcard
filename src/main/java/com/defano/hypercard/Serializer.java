@@ -27,6 +27,10 @@ public class Serializer {
             .setPrettyPrinting()
             .create();
 
+    public static <T> T copy(T t) {
+        return (T) deserialize(serialize(t), t.getClass());
+    }
+
     public static String serialize (Object object) {
         return gson.toJson(object);
     }

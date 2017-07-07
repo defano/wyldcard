@@ -32,6 +32,7 @@ import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Script;
+import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -134,6 +135,11 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public void delete() {
         parent.removeButton(this);
+    }
+
+    @Override
+    public Tool getEditTool() {
+        return Tool.BUTTON;
     }
 
     /**
