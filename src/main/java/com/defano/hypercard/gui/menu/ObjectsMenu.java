@@ -86,7 +86,7 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Background")
-                .disabled()
+                .withAction(e -> HyperCard.getInstance().getStack().newBackground())
                 .build(this);
     }
 }

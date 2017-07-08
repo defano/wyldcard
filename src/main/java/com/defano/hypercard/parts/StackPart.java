@@ -88,10 +88,19 @@ public class StackPart {
         return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
     }
 
+    public CardPart newBackground() {
+        ToolsContext.getInstance().setIsEditingBackground(false);
+
+        stackModel.newCardWithNewBackground();
+        cardCountProvider.set(stackModel.getCardCount());
+
+        return goNextCard();
+    }
+
     public CardPart newCard() {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
-        stackModel.newCardModel();
+        stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.set(stackModel.getCardCount());
 
         return goNextCard();
@@ -111,7 +120,7 @@ public class StackPart {
     public void pasteCard() {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
-        stackModel.newCardModel(cardClipboardProvider.get().getCardModel().copyOf());
+        stackModel.insertCard(cardClipboardProvider.get().getCardModel().copyOf());
         cardCountProvider.set(stackModel.getCardCount());
 
         goNextCard();

@@ -26,7 +26,7 @@ Much of the HyperTalk language has been implemented including parts, attributes,
 
 This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
 
-It won't import your old stacks and it's missing many foundational aspects of the real software. Among its limitations, this implementation lacks support for multiple backgrounds; user levels; card, background or stack-level scripts; visual effects; externals (XCMDs/XFCNs) and home stack script inheritance.
+It won't import your old stacks and it's missing many foundational aspects of the real software. Among its limitations, this implementation lacks support for user levels; card, background or stack-level scripts; visual effects; externals (XCMDs/XFCNs) and home stack script inheritance.
 
 # Building the application
 
@@ -263,7 +263,7 @@ A _part_ is a scriptable user interface element in HyperCard. Apple's implementa
 
 In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background. Each card has an individual foreground, but the background can be shared between cards. Each of these elements--backgrounds, cards, and stacks--could contain their own scripts and act upon event messages from HyperCard.
 
-This implementation does not allow scripting of cards, stacks or backgrounds and currently supports only a single background shared across all cards, but only for the purpose of graphics (button or field parts cannot yet be added to the background).
+This implementation does not allow scripting of cards, stacks or backgrounds and backgrounds can contain only graphics (button or field parts cannot yet be added to the background).
 
 In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
 
@@ -350,7 +350,7 @@ Property   | Description
 `visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
 `locktext` | Returns or sets whether the text contained by the field can be edited by the user.
 `showlines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
-`dontwrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached. 
+`dontwrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached.
 
 ### Global Properties
 

@@ -8,8 +8,7 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.jmonet.model.Provider;
-
+import javax.smartcardio.Card;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -38,18 +37,28 @@ public class StackModel {
 
     public static StackModel newStackModel(String name) {
         StackModel stack = new StackModel();
-        stack.cardModels.add(CardModel.emptyCardModel());
-        stack.backgroundModels.put(0, BackgroundModel.emptyBackground());
+        stack.cardModels.add(CardModel.emptyCardModel(stack.newBackgroundModel()));
         stack.name = name;
         return stack;
     }
 
-    public void newCardModel(CardModel cardModel) {
+    public int insertCard(CardModel cardModel) {
         cardModels.add(currentCardIndex + 1, cardModel);
+        return currentCardIndex + 1;
     }
 
-    public void newCardModel() {
-        newCardModel(CardModel.emptyCardModel());
+    public int newCard(int backgroundId) {
+        return insertCard(CardModel.emptyCardModel(backgroundId));
+    }
+
+    public int newCardWithNewBackground() {
+        return insertCard(CardModel.emptyCardModel(newBackgroundModel()));
+    }
+
+    private int newBackgroundModel() {
+        int newBackgroundId = backgroundModels.size() + 1;
+        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground());
+        return newBackgroundId;
     }
 
     public void deleteCardModel() {
