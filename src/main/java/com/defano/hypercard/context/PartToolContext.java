@@ -28,10 +28,10 @@ public class PartToolContext {
         return instance;
     }
 
-    public void setSelectedPart(ToolEditablePart button) {
+    public void setSelectedPart(ToolEditablePart part) {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON || ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
             deselectAllParts();
-            selectedPart.set(button);
+            selectedPart.set(part);
             selectedPart.get().setBeingEdited(true);
         }
     }
@@ -57,6 +57,13 @@ public class PartToolContext {
     public void sendFurther() {
         if (selectedPart.get() != null) {
             selectedPart.get().sendFurther();
+        }
+    }
+
+    public void deleteSelectedPart() {
+        ToolEditablePart selectedPart = this.selectedPart.get();
+        if (selectedPart != null) {
+            HyperCard.getInstance().getCard().removePart(selectedPart);
         }
     }
 

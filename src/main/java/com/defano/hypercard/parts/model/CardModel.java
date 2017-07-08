@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.Serializer;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 
@@ -27,13 +28,14 @@ public class CardModel {
     private Collection<FieldModel> fieldModels;
     private byte[] cardImage;
 
-    private CardModel () {
-        buttonModels = new ArrayList<>();
-        fieldModels = new ArrayList<>();
+    private CardModel (int backgroundId) {
+        this.buttonModels = new ArrayList<>();
+        this.fieldModels = new ArrayList<>();
+        this.backgroundId = backgroundId;
     }
 
-    public static CardModel emptyCardModel () {
-        return new CardModel();
+    public static CardModel emptyCardModel (int backgroundId) {
+        return new CardModel(backgroundId);
     }
 
     public Collection<AbstractPartModel> getPartModels() {
@@ -98,5 +100,9 @@ public class CardModel {
                 throw new RuntimeException("An error occurred while reading the card image. The stack may be corrupted.", e);
             }
         }
+    }
+
+    public CardModel copyOf() {
+        return Serializer.copy(this);
     }
 }

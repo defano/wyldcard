@@ -96,7 +96,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
         });
 
         ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> {
             if (arg == ToolMode.BROWSE) {
                 enableAllTools();
                 finger.setEnabled(false);

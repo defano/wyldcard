@@ -118,7 +118,7 @@ public class GlobalContext {
     public void put (Value mutator, Preposition p, ContainerMsgBox d) throws HtSemanticException {
 
         Chunk chunk = d.chunk();
-        Value destValue = new Value(HyperCard.getInstance().getMsgBoxText());
+        Value destValue = new Value(HyperCard.getInstance().getMessageBoxText());
         
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -126,7 +126,7 @@ public class GlobalContext {
         else
             destValue = Value.setValue(destValue, p, mutator);
         
-        HyperCard.getInstance().setMsgBoxText(destValue);
+        HyperCard.getInstance().setMessageBoxText(destValue);
         setIt(destValue);
     }
     

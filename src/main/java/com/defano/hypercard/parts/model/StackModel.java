@@ -8,133 +8,89 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.parts.CardPart;
-
+import javax.smartcardio.Card;
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class StackModel {
 
+    private final static StackModel instance = new StackModel();
+
     private String name;
-    private int currentCard;
-    private Stack<Integer> backStack;
+    private int currentCardIndex = 0;
+    private Stack<Integer> backStack = new Stack<>();
     private int width = 640;
     private int height = 480;
+    private final List<CardModel> cardModels;
+    private final Map<Integer, BackgroundModel> backgroundModels;
 
-    private final List<CardModel> cards;
-    private final Map<Integer, BackgroundModel> backgrounds;
+    public static StackModel getInstance() {
+        return instance;
+    }
 
-    private transient List<StackModelObserver> observers;
-    private transient CardPart currentCardPart;
-
-    private StackModel () {
-        this.observers = new ArrayList<>();
-        this.cards = new ArrayList<>();
-        this.backgrounds = new HashMap<>();
+    private StackModel() {
+        this.cardModels = new ArrayList<>();
+        this.backgroundModels = new HashMap<>();
         this.backStack = new Stack<>();
     }
 
-    public static StackModel newStack (String name) {
+    public static StackModel newStackModel(String name) {
         StackModel stack = new StackModel();
-        stack.cards.add(CardModel.emptyCardModel());
-        stack.backgrounds.put(0, BackgroundModel.emptyBackground());
+        stack.cardModels.add(CardModel.emptyCardModel(stack.newBackgroundModel()));
         stack.name = name;
         return stack;
     }
 
-    public void addObserver (StackModelObserver observer) {
-        observers.add(observer);
+    public int insertCard(CardModel cardModel) {
+        cardModels.add(currentCardIndex + 1, cardModel);
+        return currentCardIndex + 1;
+    }
+
+    public int newCard(int backgroundId) {
+        return insertCard(CardModel.emptyCardModel(backgroundId));
+    }
+
+    public int newCardWithNewBackground() {
+        return insertCard(CardModel.emptyCardModel(newBackgroundModel()));
+    }
+
+    private int newBackgroundModel() {
+        int newBackgroundId = backgroundModels.size() + 1;
+        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground());
+        return newBackgroundId;
+    }
+
+    public void deleteCardModel() {
+        cardModels.remove(currentCardIndex);
     }
 
     public String getStackName() {
         return this.name;
     }
 
+    public CardModel getCardModel(int index) {
+        return cardModels.get(index);
+    }
+
     public int getCardCount() {
-        return cards.size();
+        return cardModels.size();
     }
 
-    public CardPart getCurrentCard() {
-        if (currentCardPart != null) {
-            return currentCardPart;
-        }
-
-        try {
-            currentCardPart = CardPart.fromModel(cards.get(currentCard), this);
-            return currentCardPart;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create card.", e);
-        }
+    public int getCurrentCardIndex() {
+        return currentCardIndex;
     }
 
-    public CardPart goCard(int cardNumber) {
-        return setCurrentCard(cardNumber, true);
+    public void setCurrentCardIndex(int currentCard) {
+        this.currentCardIndex = currentCard;
     }
 
-    public CardPart goNextCard() {
-        if (currentCard + 1 < cards.size()) {
-            return setCurrentCard(currentCard + 1, true);
-        } else {
-            return null;
-        }
+    public int getIndexOfCard(CardModel card) {
+        return cardModels.indexOf(card);
     }
 
-    public CardPart goPrevCard() {
-        if (currentCard - 1 >= 0) {
-            return setCurrentCard(currentCard - 1, true);
-        } else {
-            return null;
-        }
-    }
-
-    public CardPart goBack() {
-        if (!backStack.isEmpty()) {
-            return setCurrentCard(backStack.pop(), false);
-        }
-
-        return null;
-    }
-
-    public CardPart goFirstCard() {
-        return setCurrentCard(0, true);
-    }
-
-    public CardPart goLastCard() {
-        return setCurrentCard(cards.size() - 1, true);
-    }
-
-    public CardPart newCard () {
-        cards.add(currentCard + 1, CardModel.emptyCardModel());
-        return setCurrentCard(currentCard + 1, true);
-    }
-
-    private CardPart setCurrentCard (int card, boolean push) {
-
-        // Nothing to do if navigating to current card
-        if (card == currentCard || card < 0 || card >= cards.size()) {
-            return getCurrentCard();
-        }
-
-        // Stop editing background when card changes
-        ToolsContext.getInstance().setIsEditingBackground(false);
-
-        fireOnCardClosing(currentCardPart);
-
-        // When requested, push the current card onto the backstack
-        if (push) {
-            backStack.push(currentCard);
-        }
-
-        try {
-            currentCard = card;
-            currentCardPart = CardPart.fromModel(cards.get(currentCard), this);
-
-            fireOnCardOpening(currentCardPart);
-
-            return currentCardPart;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create card.", e);
-        }
+    public Dimension getSize() {
+        return new Dimension(getWidth(), getHeight());
     }
 
     public int getWidth() {
@@ -146,25 +102,10 @@ public class StackModel {
     }
 
     public BackgroundModel getBackground(int backgroundId) {
-        return backgrounds.get(backgroundId);
+        return backgroundModels.get(backgroundId);
     }
 
-    private void fireOnCardClosing (CardPart closingCard) {
-        for (StackModelObserver observer : observers) {
-            observer.onCardOpening(closingCard);
-        }
+    public Stack<Integer> getBackStack() {
+        return backStack;
     }
-
-    private void fireOnCardOpening (CardPart openingCard) {
-        for (StackModelObserver observer : observers) {
-            observer.onCardOpening(openingCard);
-        }
-    }
-
-    public void fireOnCardOpened (CardPart openedCard) {
-        for (StackModelObserver observer : observers) {
-            observer.onCardOpening(openedCard);
-        }
-    }
-
 }

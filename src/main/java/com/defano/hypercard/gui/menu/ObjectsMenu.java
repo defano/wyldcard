@@ -14,11 +14,9 @@ import com.defano.hypercard.parts.FieldPart;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.hypercard.HyperCard;
 
-import javax.swing.*;
+import java.util.Objects;
 
 public class ObjectsMenu extends HyperCardMenu {
 
@@ -62,14 +60,14 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Bring Closer")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> value == null))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
                 .withAction(a -> PartToolContext.getInstance().bringCloser())
                 .withShortcut('+')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Send Further")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> value == null))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
                 .withAction(a -> PartToolContext.getInstance().sendFurther())
                 .withShortcut('-')
                 .build(this);
@@ -88,7 +86,7 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Background")
-                .disabled()
+                .withAction(e -> HyperCard.getInstance().getStack().newBackground())
                 .build(this);
     }
 }

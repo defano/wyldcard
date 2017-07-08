@@ -13,6 +13,7 @@ import com.defano.hypertalk.ast.common.Destination;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Position;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 public class StatGoCmd extends Statement {
 
@@ -29,7 +30,16 @@ public class StatGoCmd extends Statement {
             } else if (destination.ordinal == Ordinal.LAST) {
                 HyperCard.getInstance().getStack().goLastCard();
             } else {
-                HyperCard.getInstance().getStack().goCard(destination.ordinal.intValue() - 1);
+                int destCard = destination.ordinal.intValue();
+                if (destCard == Ordinal.MIDDLE.intValue()) {
+                    destCard = HyperCard.getInstance().getStack().getStackModel().getCardCount() / 2;
+                }
+
+                if (destCard < 0 || destCard > HyperCard.getInstance().getStack().getStackModel().getCardCount()) {
+                    throw new HtSemanticException("No card numbered " + destCard + " in this stack.");
+                }
+
+                HyperCard.getInstance().getStack().goCard(destCard);
             }
         }
 
@@ -42,7 +52,12 @@ public class StatGoCmd extends Statement {
         }
 
         else if (destination.expression != null) {
-            HyperCard.getInstance().getStack().goCard(destination.expression.evaluate().integerValue() - 1);
+            int destCard = destination.expression.evaluate().integerValue() - 1;
+            if (destCard < 0 || destCard >= HyperCard.getInstance().getStack().getStackModel().getCardCount()) {
+                throw new HtSemanticException("No card numbered " + (destCard + 1) + " in this stack.");
+            }
+
+            HyperCard.getInstance().getStack().goCard(destCard);
         }
     }
 }

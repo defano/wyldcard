@@ -11,14 +11,9 @@ package com.defano.hypercard.gui.menu;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.jmonet.model.ImmutableProvider;
-import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
-import javax.swing.*;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
 public class PaintMenu extends HyperCardMenu {
 
@@ -51,22 +46,26 @@ public class PaintMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Invert")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).invert())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Pickup")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).pickupSelection())
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Darken")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustBrightness(-20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Lighten")
-                .disabled()
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustBrightness(20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -101,13 +100,15 @@ public class PaintMenu extends HyperCardMenu {
         this.addSeparator();
 
         MenuItemBuilder.ofDefaultType()
-                .named("Opaque")
-                .disabled()
+                .named("More Opaque")
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustTransparency(20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Transparent")
-                .disabled()
+                .named("More Transparent")
+                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustTransparency(-20))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .build(this);
 
         this.addSeparator();

@@ -48,12 +48,12 @@ public class StatSortCmd extends Statement {
 
         // Sort by direction
         if (expression == null) {
-            Collections.sort(items, new ValueComparator(direction));
+            items.sort(new ValueComparator(direction));
         }
 
         // Sort by expression
         else {
-            Collections.sort(items, new ExpressionValueComparator(expression));
+            items.sort(new ExpressionValueComparator(expression));
         }
 
         putSortedItems(items);

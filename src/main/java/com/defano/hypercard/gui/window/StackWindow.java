@@ -8,15 +8,17 @@
 
 package com.defano.hypercard.gui.window;
 
-import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.parts.CardPart;
+import com.defano.hypercard.parts.StackPart;
+import com.defano.hypercard.parts.model.StackObserver;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class StackWindow extends HyperCardWindow {
+public class StackWindow extends HyperCardWindow implements StackObserver {
 
+    private StackPart stack;
     private CardPart card;
     private JPanel cardPanel;
 
@@ -24,7 +26,7 @@ public class StackWindow extends HyperCardWindow {
         return card;
     }
 
-    public void setDisplayedCard(CardPart card) {
+    private void displayCard(CardPart card) {
         this.card = card;
 
         cardPanel.removeAll();
@@ -32,17 +34,18 @@ public class StackWindow extends HyperCardWindow {
         cardPanel.setPreferredSize(card.getSize());
         cardPanel.revalidate();
         cardPanel.repaint();
-
-        ToolsContext.getInstance().reactivateTool(card.getCanvas());
     }
 
-    public void setShowEditingBackgroundIndicator(boolean isEditingBackground) {
+    public void invalidateWindowTitle() {
         String stackName = card.getStackModel().getStackName();
+        int cardNumber = card.getCardIndexInStack() + 1;
+        int cardCount = stack.getCardCountProvider().get();
+        boolean isEditingBackground = !card.isForegroundVisible();
 
         if (isEditingBackground) {
-            getWindowFrame().setTitle(stackName + " (Background)");
+            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
-            getWindowFrame().setTitle(stackName);
+            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
         }
     }
 
@@ -53,11 +56,36 @@ public class StackWindow extends HyperCardWindow {
 
     @Override
     public void bindModel(Object data) {
-        if (data instanceof CardPart) {
-            setDisplayedCard((CardPart) data);
+        if (data instanceof StackPart) {
+            this.stack = (StackPart) data;
+            this.card = this.stack.getCurrentCard();
+
+            this.getWindowPanel().setPreferredSize(this.stack.getStackModel().getSize());
+            this.stack.addObserver(this);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
         }
+    }
+
+    @Override
+    public void onStackOpened(StackPart newStack) {
+        this.stack = newStack;
+        this.card = this.stack.getCurrentCard();
+        cardPanel.setPreferredSize(this.stack.getStackModel().getSize());
+
+        displayCard(this.stack.getCurrentCard());
+        invalidateWindowTitle();
+    }
+
+    @Override
+    public void onCardClosed(CardPart oldCard) {
+        // Nothing to do
+    }
+
+    @Override
+    public void onCardOpened(CardPart newCard) {
+        displayCard(newCard);
+        invalidateWindowTitle();
     }
 
     {

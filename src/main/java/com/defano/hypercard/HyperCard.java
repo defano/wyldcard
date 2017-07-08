@@ -8,8 +8,9 @@
 
 /**
  * HyperCard.java
+ *
  * @author matt.defano@gmail.com
- * 
+ * <p>
  * The HyperCard runtime environment; this is the program's main class and is
  * responsible for initializing the HyperCard window, tracking mouse changes
  * and reporting exceptions to the user.
@@ -19,12 +20,10 @@ package com.defano.hypercard;
 
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.gui.util.MouseManager;
-import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
-import com.defano.jmonet.model.PaintToolType;
+import com.defano.hypercard.parts.StackPart;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.StackModel;
-import com.defano.hypercard.parts.model.StackModelObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
 
@@ -32,17 +31,16 @@ import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class HyperCard implements StackModelObserver {
+public class HyperCard {
 
     private static HyperCard instance;
     private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
-
-    private StackModel stack;
+    private StackPart stackPart = StackPart.getInstance();
 
     public static void main(String argv[]) {
         // Display the frame's menu as the Mac OS menubar
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.macos.useScreenMenuBar", "true" );
+        System.setProperty("com.apple.macos.useScreenMenuBar", "true");
         System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
         System.setProperty("apple.awt.application.name", "HyperCard");
 
@@ -58,19 +56,15 @@ public class HyperCard implements StackModelObserver {
             // Nothing to do
         }
 
-        // Create a new stack to work on.
-        stack = StackModel.newStack("Untitled");
-        stack.addObserver(this);
-
         // Fire up the key and mouse listeners
         KeyboardManager.start();
         MouseManager.start();
 
         // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
-        // directly from the constructor
+        // directly from the constructor. This behaves like @PostConstruct
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
-            ToolsContext.getInstance().selectPaintTool(PaintToolType.ARROW);
+            openStack(StackModel.newStackModel("Untitled"));
         });
     }
 
@@ -78,62 +72,46 @@ public class HyperCard implements StackModelObserver {
         return instance;
     }
 
-    public StackModel getStack () { return stack; }
-
-    public void setStack (StackModel model) {
-        SwingUtilities.invokeLater(() -> {
-            stack = model;
-            stack.addObserver(HyperCard.this);
-            WindowManager.getStackWindow().setDisplayedCard(stack.getCurrentCard());
-        });
+    public StackPart getStack() {
+        return stackPart;
     }
 
-    public CardPart getCard () {
-        return stack.getCurrentCard();
+    public void openStack(StackModel model) {
+        stackPart.open(model);
+        stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex());
     }
 
-    public void setMsgBoxText(Object theMsg) {
+    public CardPart getCard() {
+        return stackPart.getCurrentCard();
+    }
+
+    public void setMessageBoxText(Object theMsg) {
         SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setMsgBoxText(theMsg.toString()));
     }
 
-    public String getMsgBoxText() {
+    public String getMessageBoxText() {
         return WindowManager.getMessageWindow().getMsgBoxText();
     }
 
-    public void doMsgBoxText() {
+    public void evaluateMessageBox() {
         messageBoxExecutor.submit(() -> {
             try {
-                if (!getMsgBoxText().trim().isEmpty()) {
-                    String messageText = getMsgBoxText();
+                if (!getMessageBoxText().trim().isEmpty()) {
+                    String messageText = getMessageBoxText();
                     Interpreter.executeString(null, messageText).get();
 
                     // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
                     if (Interpreter.isExpressionStatement(messageText)) {
-                        HyperCard.getInstance().setMsgBoxText(GlobalContext.getContext().getIt());
+                        HyperCard.getInstance().setMessageBoxText(GlobalContext.getContext().getIt());
                     }
                 }
             } catch (Exception e) {
-                HyperCard.getInstance().dialogSyntaxError(e);
+                HyperCard.getInstance().showErrorDialog(e);
             }
         });
     }
 
-    public void dialogSyntaxError(Exception e) {
+    public void showErrorDialog(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
-    }
-
-    @Override
-    public void onCardClosing(CardPart oldCard) {
-        // Nothing to do
-    }
-
-    @Override
-    public void onCardOpening(CardPart newCard) {
-        WindowManager.getStackWindow().setDisplayedCard(newCard);
-    }
-
-    @Override
-    public void onCardOpened(CardPart newCard) {
-        // Nothing to do
     }
 }

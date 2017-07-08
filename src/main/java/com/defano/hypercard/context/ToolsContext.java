@@ -19,15 +19,13 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.model.StackModelObserver;
 import com.defano.hypertalk.ast.common.Tool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 
-public class ToolsContext implements StackModelObserver {
+public class ToolsContext {
 
     private final static ToolsContext instance = new ToolsContext();
 
@@ -56,14 +54,7 @@ public class ToolsContext implements StackModelObserver {
 
     private PaintToolType lastToolType;
 
-    private ToolsContext() {
-        HyperCard.getInstance().getStack().addObserver(this);
-
-        // Re-activate tool whenever background visibility changes
-        isEditingBackground.addObserver((oldValue, newValue) -> {
-            ToolsContext.getInstance().reactivateTool(HyperCard.getInstance().getCard().getCanvas());
-        });
-    }
+    private ToolsContext() {}
 
     public static ToolsContext getInstance() {
         return instance;
@@ -271,16 +262,20 @@ public class ToolsContext implements StackModelObserver {
         return isEditingBackground.get();
     }
 
-    public Provider<Boolean> isEditingBackgroundProvider() {
-        return isEditingBackground;
+    public ImmutableProvider<Boolean> isEditingBackgroundProvider() {
+        return ImmutableProvider.from(isEditingBackground);
     }
 
     public void toggleIsEditingBackground() {
+        getPaintTool().deactivate();
         isEditingBackground.set(!isEditingBackground.get());
+        reactivateTool(HyperCard.getInstance().getCard().getCanvas());
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {
+        getPaintTool().deactivate();
         this.isEditingBackground.set(isEditingBackground);
+        reactivateTool(HyperCard.getInstance().getCard().getCanvas());
     }
 
     public boolean isShapesFilled() {
@@ -357,20 +352,6 @@ public class ToolsContext implements StackModelObserver {
 
     public Tool getSelectedTool() {
         return Tool.fromToolMode(getToolMode(), getPaintTool().getToolType());
-    }
-
-    @Override
-    public void onCardClosing(CardPart oldCard) {
-        paintToolProvider.get().deactivate();
-    }
-
-    @Override
-    public void onCardOpening(CardPart newCard) {
-    }
-
-    @Override
-    public void onCardOpened(CardPart newCard) {
-        paintToolProvider.get().activate(newCard.getCanvas());
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {
