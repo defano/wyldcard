@@ -8,15 +8,11 @@
 
 package com.defano.hypercard.gui.menu;
 
-import com.defano.hypercard.Serializer;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.HyperCard;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import com.defano.hypercard.runtime.print.PrintActionDelegate;
+import com.defano.hypercard.runtime.print.PrintCardAction;
+import com.defano.hypercard.runtime.print.PrintStackAction;
 
 public class FileMenu extends HyperCardMenu {
 
@@ -78,14 +74,15 @@ public class FileMenu extends HyperCardMenu {
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Print Card")
+                .named("Print Card...")
                 .withShortcut('P')
-                .disabled()
+                .withAction(new PrintCardAction())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Print Stack...")
-                .disabled()
+                .withShiftShortcut('P')
+                .withAction(new PrintStackAction())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

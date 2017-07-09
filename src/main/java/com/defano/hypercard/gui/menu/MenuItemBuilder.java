@@ -14,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 public class MenuItemBuilder {
 
@@ -86,9 +87,20 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public MenuItemBuilder withShortcut (char shortcut) {
+    public MenuItemBuilder withShiftShortcut (char shortcut) {
         this.item.setMnemonic(shortcut);
-        this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, KeyEvent.SHIFT_MASK + Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        return this;
+    }
+
+    public MenuItemBuilder withShortcut (char shortcut) {
+        if (shortcut == '+') {
+            this.item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        } else {
+            this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        }
+
+        this.item.setMnemonic(shortcut);
         return this;
     }
 
