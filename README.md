@@ -37,7 +37,9 @@ The following Gradle tasks are defined by the project's build file:
 Task                     | Description
 -------------------------|----------------------------
 `run`                    | Build, test and run the application
-`generateGrammarSource`  | Re-generate the HyperTalk parser using Antlr4 (executes automatically as part of the `gradle build` task)
+`generateGrammarSource`  | Re-generate the HyperTalk parser with Antlr4 (executes automatically as part of the `gradle build` task)
+`generateBundle`         | Generates installation packages for the current OS (i.e., a `.dmg` disk image and `.pkg` installer on macOS), plus an executable JAR file and JNLP (network launch) files.
+`clean`                  | Removes generated Antlr source and install bundles created by the `generateGrammarSource` and `generateBundle` tasks.
 
 The project uses Antlr4 as the parser generator and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). It was originally implemented using JCup/JFlex and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
 

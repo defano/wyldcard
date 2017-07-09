@@ -3,6 +3,7 @@ apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
 
+
 allprojects {
 	apply plugin: 'java'
 	sourceCompatibility = 1.8
@@ -14,12 +15,17 @@ repositories {
 	mavenLocal()
 }
 
+ext {
+	jdk = System.env.'JAVA_HOME'
+}
+
 configurations {
 	antlr
 }
 
 clean {
     delete "generated-src/"
+	delete "bundles/"
 }
 
 sourceSets {
@@ -48,6 +54,34 @@ generateGrammarSource {
 	outputDirectory = file("generated-src/main/java/")
 	maxHeapSize = "64m"
 	arguments += ["-long-messages", "-no-listener", "-visitor", "-package", "com.defano.hypertalk.parser"]
+}
+
+jar {
+	exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+
+	from {
+		(configurations.runtime).collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+
+	manifest {
+		attributes 'Main-Class': 'com.defano.hypercard.HyperCard'
+	}
+}
+
+task generateBundle(type: Exec) {
+	dependsOn build
+	workingDir "${project.projectDir.absolutePath}"
+	commandLine "${jdk}/bin/javapackager",
+			"-deploy",
+			"-native",
+			"-outdir", ".",
+			"-outfile", "HyperTalk-Java.app",
+			"-srcfiles", "./build/libs/hypertalk-java.jar",
+            "-appclass", "com.defano.hypercard.HyperCard",
+			"-name", "HyperTalk Java",
+			"-title", "HyperTalk Java"
 }
 
 mainClassName="com.defano.hypercard.HyperCard"

@@ -8,3 +8,9 @@ generated-src/
 bin/
 *.iml
 out/
+bundles/
+HyperTalk-Java.app.html
+
+HyperTalk-Java.app.jnlp
+
+hypertalk-java.jar
