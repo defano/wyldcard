@@ -6,15 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * FieldPart.java
- *
- * @author matt.defano@motorola.com
- * <p>
- * Implements a HyperCard field part user interface by extending the Swing
- * scroll panel.
- */
-
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
@@ -32,6 +23,7 @@ import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -41,6 +33,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * The view object associated with a field on the card. See {@link FieldModel} for the model object associated with this
+ * view.
+ *
+ * Note that this is a bit of a deviation from the typical MVC architectural pattern in that a field can take on
+ * different "styles" that may change dynamically. Thus, this object--while representing the view--only holds a
+ * reference to the Swing component that represents its view in the Java world. See {@link #getFieldView()}.
+ */
 public class FieldPart extends AbstractFieldView implements Part, MouseListener, PropertyChangeObserver, KeyListener {
 
     private static final int DEFAULT_WIDTH = 250;
@@ -59,6 +59,11 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         this.script = new Script();
     }
 
+    /**
+     * Creates a new field with default attributes on the given card.
+     * @param parent The card in which the field should be generated.
+     * @return The newly created FieldPart
+     */
     public static FieldPart newField(CardPart parent) {
         FieldPart newField = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
@@ -69,6 +74,12 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         return newField;
     }
 
+    /**
+     * Creates a new field of the given size and location on the provided card.
+     * @param parent The card in which to create the field.
+     * @param geometry The size and location of the field.
+     * @return The newly created field.
+     */
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
         FieldPart field = new FieldPart(FieldStyle.OPAQUE, parent);
 
@@ -77,7 +88,15 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         return field;
     }
 
-    public static FieldPart fromModel(CardPart parent, FieldModel model) throws Exception {
+    /**
+     * Creates a new field from an existing field data model.
+     *
+     * @param parent The card in which the field should be created.
+     * @param model The data model of the field to be created.
+     * @return The newly created field.
+     * @throws HtException Thrown if an error occurs instantiating this field on the card.
+     */
+    public static FieldPart fromModel(CardPart parent, FieldModel model) throws HtException {
         FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
 
         field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
@@ -85,13 +104,6 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         field.partModel.addPropertyChangedObserver(field);
 
         return field;
-    }
-
-    private void initProperties(Rectangle geometry) {
-        int id = parent.nextFieldId();
-
-        partModel = FieldModel.newFieldModel(id, geometry);
-        partModel.addPropertyChangedObserver(this);
     }
 
     @Override
@@ -126,7 +138,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
 
     @Override
     public void invalidateSwingComponent(Component oldComponent, Component newComponent) {
-        parent.invalidateSwingComponent(this, oldComponent, newComponent);
+        parent.replaceSwingComponent(this, oldComponent, newComponent);
     }
 
     @Override
@@ -181,15 +193,6 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     @Override
     public CardPart getCard() {
         return parent;
-    }
-
-    private void compile() throws HtSemanticException {
-
-        try {
-            script = Interpreter.compile(partModel.getKnownProperty(FieldModel.PROP_SCRIPT).toString());
-        } catch (Exception e) {
-            throw new HtSemanticException("Didn't understand that.");
-        }
     }
 
     @Override
@@ -284,4 +287,21 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
                 break;
         }
     }
+
+    private void initProperties(Rectangle geometry) {
+        int id = parent.nextFieldId();
+
+        partModel = FieldModel.newFieldModel(id, geometry);
+        partModel.addPropertyChangedObserver(this);
+    }
+
+    private void compile() throws HtSemanticException {
+
+        try {
+            script = Interpreter.compile(partModel.getKnownProperty(FieldModel.PROP_SCRIPT).toString());
+        } catch (Exception e) {
+            throw new HtSemanticException("Didn't understand that.");
+        }
+    }
+
 }

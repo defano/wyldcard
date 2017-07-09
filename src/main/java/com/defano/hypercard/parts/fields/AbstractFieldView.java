@@ -36,19 +36,19 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
     }
 
     @Override
-    public boolean isBeingEdited() {
+    public boolean isSelectedForEditing() {
         Window ancestorWindow = SwingUtilities.getWindowAncestor(getFieldView());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
     @Override
-    public void setBeingEdited(boolean beingEdited) {
+    public void setIsSelectedForEditing(boolean beingEdited) {
         fieldView.setEditable(!beingEdited);
         isBeingEdited = beingEdited;
 
         isBeingEdited = beingEdited;
 
-        if (isBeingEdited()) {
+        if (isSelectedForEditing()) {
             MarchingAnts.getInstance().addObserver(this);
         } else {
             MarchingAnts.getInstance().removeObserver(this);

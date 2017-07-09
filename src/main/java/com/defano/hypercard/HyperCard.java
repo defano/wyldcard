@@ -6,16 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * HyperCard.java
- *
- * @author matt.defano@gmail.com
- * <p>
- * The HyperCard runtime environment; this is the program's main class and is
- * responsible for initializing the HyperCard window, tracking mouse changes
- * and reporting exceptions to the user.
- */
-
 package com.defano.hypercard;
 
 import com.defano.hypercard.context.GlobalContext;
@@ -31,6 +21,11 @@ import javax.swing.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The HyperCard runtime environment; this is the program's main class and is
+ * responsible for initializing the HyperCard window, tracking mouse changes
+ * and reporting exceptions to the user.
+ */
 public class HyperCard {
 
     private static HyperCard instance;

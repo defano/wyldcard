@@ -6,14 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * PartResizer.java
- * @author matt.defano@motorola.com
- * 
- * Provides the ability for the user to resize a part within the card panel
- * of the main window. (Not nearly as trivial as one might assume.)
- */
-
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.gui.util.MouseManager;
@@ -27,6 +19,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Provides the ability for the user to resize a part within the card panel of the stack window.
+ */
 public class PartResizer {
 
     public final static int QUADRANT_TOPRIGHT = 1;

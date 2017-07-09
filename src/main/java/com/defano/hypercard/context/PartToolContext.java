@@ -32,17 +32,17 @@ public class PartToolContext {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON || ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
             deselectAllParts();
             selectedPart.set(part);
-            selectedPart.get().setBeingEdited(true);
+            selectedPart.get().setIsSelectedForEditing(true);
         }
     }
 
     public void deselectAllParts() {
         for (ButtonPart thisButton : HyperCard.getInstance().getCard().getButtons()) {
-            thisButton.setBeingEdited(false);
+            thisButton.setIsSelectedForEditing(false);
         }
 
         for (FieldPart thisField : HyperCard.getInstance().getCard().getFields()) {
-            thisField.setBeingEdited(false);
+            thisField.setIsSelectedForEditing(false);
         }
 
         selectedPart.set(null);

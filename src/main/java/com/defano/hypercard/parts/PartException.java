@@ -6,18 +6,13 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * PartException.java
- * @author matt.defano@gmail.com
- * 
- * Exception to be thrown when a request is made for a part that doesn't exist
- * or otherwise cannot handle the request.
- */
-
 package com.defano.hypercard.parts;
 
 import com.defano.hypertalk.exception.HtException;
 
+/**
+ * Represents an error that occurs when creating, removing or modifying a part.
+ */
 public class PartException extends HtException {
     public PartException(String message) {
         super(message);

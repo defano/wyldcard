@@ -18,6 +18,16 @@ package com.defano.hypercard.parts.model;
 
 import com.defano.hypertalk.ast.common.Value;
 
+/**
+ * An observer of changes to attributes in a {@link PropertiesModel}.
+ */
 public interface PropertyChangeObserver {
+    /**
+     * Fired to indicate the value of an attribute was changed.
+     *
+     * @param property The name of the property (attribute) that changed.
+     * @param oldValue The attribute's previous value
+     * @param newValue The attribute's new value
+     */
     void onPropertyChanged(String property, Value oldValue, Value newValue);
 }

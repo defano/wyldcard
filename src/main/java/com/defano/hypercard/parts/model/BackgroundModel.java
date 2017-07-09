@@ -14,6 +14,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * A data model representing a card background. There is no view associated with this model; rather this data is
+ * incorporated into the {@link com.defano.hypercard.parts.CardPart} view object when rendered.
+ */
 public class BackgroundModel {
     private byte[] backgroundImage;
 

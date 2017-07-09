@@ -16,6 +16,9 @@ import com.defano.hypertalk.exception.PropertyPermissionException;
 import javax.swing.*;
 import java.util.*;
 
+/**
+ * A model of HyperTalk properties providing observability, derived getters and setters, and read-only attributes.
+ */
 public class PropertiesModel {
 
     // Properties which can be read/set by HyperTalk
@@ -221,6 +224,13 @@ public class PropertiesModel {
         listeners.add(listener);
     }
 
+    /**
+     * Invokes the {@link PropertyChangeObserver#onPropertyChanged(String, Value, Value)} method for all properties on
+     * the provided observer. Useful for listeners that wish to initialize themselves with the current state of the
+     * mode.
+     *
+     * @param listener This listener to be notified.
+     */
     public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
         SwingUtilities.invokeLater(() -> {
             for (String property : properties.keySet()) {

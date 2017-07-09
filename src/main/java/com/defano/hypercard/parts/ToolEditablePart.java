@@ -22,41 +22,114 @@ import com.defano.hypertalk.ast.common.Value;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * An interface defining actions common to all tool-editable parts (i.e., buttons and fields that can be edited
+ * using the button tool or field tool).
+ */
 public interface ToolEditablePart extends Part, KeyListener, MouseListener, ActionListener {
 
-    void setBeingEdited(boolean beingEdited);
-    boolean isBeingEdited();
+    /**
+     * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
+     * should be highlighted with marching ants).
+     *
+     * @param beingEdited True if selected; false otherwise.
+     */
+    void setIsSelectedForEditing(boolean beingEdited);
+
+    /**
+     * Determines if the part is currently selected for editing.
+     *
+     * @return True if selected; false otherwise
+     */
+    boolean isSelectedForEditing();
+
+    /**
+     * Begin moving the part; implies that the user has clicked the part and is beginning to drag it around the
+     * card.
+     */
     void move();
+
+    /**
+     * Begin resizing the part; implies that the user has clicked a resize drag handle and is beginning to drag a corner
+     * of the part.
+     * @param fromQuadrant Indicates which corner/quadrant has been dragged. See {@link PartResizer} for constants.
+     */
     void resize(int fromQuadrant);
+
+    /**
+     * Delete the part from the card; implies that the part has been selected and the user has requested it be
+     * deleted (i.e. via DELETE or BACKSPACE)
+     */
     void delete();
+
+    /**
+     * Show the property editor for this part; implies the user has selected and double-clicked the part, or chosen
+     * the appropriate command from the Objects menu.
+     */
     void editProperties();
+
+    /**
+     * Gets the Part object associated with this ToolEditablePart.
+     * @return The associated Part
+     */
     Part getPart();
+
+    /**
+     * Determines the tool that is used to edit parts of this type (i.e., ButtonTool or FieldTool).
+     * @return The appropriate edit tool.
+     */
     Tool getEditTool();
 
+    /**
+     * Returns the size of the drag handle square to be rendered in the marching ants.
+     * @return The size, in pixels, of the handle
+     */
     default int getDragHandleSize() {
         return 8;
     }
 
+    /**
+     * Returns a rectangle representing the bounds of the top-left drag handle for this part.
+     * @return The drag handle bounds.
+     */
     default Rectangle getTopLeftDragHandle() {
         return new Rectangle(0, 0, getDragHandleSize(), getDragHandleSize());
     }
 
+    /**
+     * Returns a rectangle representing the bounds of the bottom-left drag handle for this part.
+     * @return The drag handle bounds.
+     */
     default Rectangle getBottomLeftDragHandle() {
         return new Rectangle(0, getComponent().getHeight() - getDragHandleSize(), getDragHandleSize(), getDragHandleSize());
     }
 
+    /**
+     * Returns a rectangle representing the bounds of the top-right drag handle for this part.
+     * @return The drag handle bounds.
+     */
     default Rectangle getTopRightDragHandle() {
         return new Rectangle(getComponent().getWidth() - getDragHandleSize(), 0, getDragHandleSize(), getDragHandleSize());
     }
 
+    /**
+     * Returns a rectangle representing the bounds of the bottom-right drag handle for this part.
+     * @return The drag handle bounds.
+     */
     default Rectangle getBottomRightDragHandle() {
         return new Rectangle(getComponent().getWidth() - getDragHandleSize(), getComponent().getHeight() - getDragHandleSize(), getDragHandleSize(), getDragHandleSize());
     }
 
+    /**
+     * Draws the selection rectangle (marching ants), plus the drag handles for this part when it's been selected
+     * for editing.
+     *
+     * @param g The graphics context in which to draw.
+     */
     default void drawSelectionRectangle(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        if (isBeingEdited()) {
+        if (isSelectedForEditing()) {
             g2d.setPaint(Color.BLACK);
 
             // TODO: Add resizer support for dragging from any corner
@@ -73,38 +146,67 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
         }
     }
 
+    /**
+     * Invoke to indicate that the selected tool has been changed by the user.
+     */
     default void onToolModeChanged() {
         getComponent().setVisible(isVisibleOnCard() || isPartToolActive());
     }
 
+    /**
+     * Determines if this part is presently visible on the card (as determined by its "visible" property).
+     * @return True if visible; false otherwise.
+     */
     default boolean isVisibleOnCard() {
         return getPartModel().getKnownProperty(AbstractPartModel.PROP_VISIBLE).booleanValue();
     }
 
+    /**
+     * Sets whether this part should be visible on the card (mutates its "visible" property). Used to temporarily make
+     * an invisible part visible while it's being edited.
+     *
+     * @param visibleOnCard True to make it visible; false otherwise
+     */
     default void setVisibleOnCard(boolean visibleOnCard) {
         getPartModel().setKnownProperty(AbstractPartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
         getComponent().setVisible(visibleOnCard || isPartToolActive());
     }
 
+    /**
+     * Indicates whether the hilite of this part is automatically managed by HyperCard, or whether it is controlled
+     * by the user (via HyperTalk).
+     *
+     * @return True if managed by the system; false otherwise.
+     */
     default boolean isAutoHilited() {
         return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
+    /**
+     * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
+     */
     default void bringCloser() {
         getPart().setZorder(getZOrder() - 1);
     }
 
+    /**
+     * Adjust the z-order of this part, moving it one part further from the front of the part stack.
+     */
     default void sendFurther() {
         getPart().setZorder(getZOrder() + 1);
     }
 
+    /**
+     * Determines the z-order of this part.
+     * @return The relative front-to-back position of this part to others drawn on the card.
+     */
     default int getZOrder() {
         return getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue();
     }
 
     @Override
     default void mousePressed(MouseEvent e) {
-        if (isBeingEdited()) {
+        if (isSelectedForEditing()) {
             if (getTopLeftDragHandle().contains(e.getPoint())) {
                 resize(PartResizer.QUADRANT_TOPLEFT);
             } else if (getTopRightDragHandle().contains(e.getPoint())) {
@@ -121,7 +223,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
 
     @Override
     default void mouseClicked(MouseEvent e) {
-        if (isBeingEdited() && e.getClickCount() == 2) {
+        if (isSelectedForEditing() && e.getClickCount() == 2) {
             editProperties();
         } else {
             if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonView) {
@@ -135,7 +237,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     @Override
     default void keyPressed(KeyEvent e) {
 
-        if (isBeingEdited()) {
+        if (isSelectedForEditing()) {
             int top = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
             int left = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
 

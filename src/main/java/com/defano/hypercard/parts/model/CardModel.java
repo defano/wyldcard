@@ -21,6 +21,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * A data model representing a card in a stack. See {@link com.defano.hypercard.parts.CardPart} for the associated
+ * view object.
+ */
 public class CardModel {
 
     private int backgroundId = 0;
@@ -34,6 +38,13 @@ public class CardModel {
         this.backgroundId = backgroundId;
     }
 
+    /**
+     * Returns a new CardModel containing no parts and and empty foreground canvas but which inherits the
+     * specified background.
+     *
+     * @param backgroundId The ID of the background this card should inherit.
+     * @return The new CardModel
+     */
     public static CardModel emptyCardModel (int backgroundId) {
         return new CardModel(backgroundId);
     }
@@ -45,6 +56,10 @@ public class CardModel {
         return partModels;
     }
 
+    /**
+     * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
+     * @param part The part to remove from this card.
+     */
     public void removePart (Part part) {
         switch (part.getType()) {
             case BUTTON:
@@ -56,6 +71,12 @@ public class CardModel {
         }
     }
 
+    /**
+     * Adds a part (button or field) to this card.
+     *
+     * @param part The part to add.
+     * @throws PartException Thrown if part type is unsupported.
+     */
     public void addPart (Part part) throws PartException {
         switch (part.getType()) {
             case BUTTON:
@@ -69,14 +90,20 @@ public class CardModel {
         }
     }
 
+    /**
+     * Gets the background ID of this card.
+     *
+     * @return The ID of this card's background.
+     */
     public int getBackgroundId() {
         return backgroundId;
     }
 
-    public void setBackgroundId(int backgroundId) {
-        this.backgroundId = backgroundId;
-    }
-
+    /**
+     * Sets the image representing this card's foreground graphics.
+     *
+     * @param image The card image.
+     */
     public void setCardImage(BufferedImage image) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -89,6 +116,11 @@ public class CardModel {
         }
     }
 
+    /**
+     * Returns the image of this card's foreground.
+     *
+     * @return The foreground image.
+     */
     public BufferedImage getCardImage() {
         if (cardImage == null || cardImage.length == 0) {
             return new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
@@ -102,6 +134,10 @@ public class CardModel {
         }
     }
 
+    /**
+     * Create's a deep copy of this card.
+     * @return A copy of this card.
+     */
     public CardModel copyOf() {
         return Serializer.copy(this);
     }

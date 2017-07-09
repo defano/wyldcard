@@ -9,6 +9,7 @@
 package com.defano.hypercard.parts.buttons;
 
 import com.defano.hypercard.gui.util.KeyboardManager;
+import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.buttons.styles.*;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.jmonet.tools.util.MarchingAnts;
@@ -35,7 +36,16 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
 
     public abstract void resize(int fromQuadrant);
 
-    public abstract void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent);
+    /**
+     * Indicates that the Swing component associated with this {@link ButtonPart} has changed and that the button's
+     * parent (i.e., card or background) should update itself accordingly. This is the primary means by which
+     * HyperCard can swap one button style for another (in which different buttons styles are represented by
+     * different Swing components).
+     *
+     * @param oldButtonComponent The former component associated with this part
+     * @param newButtonComponent The new component
+     */
+    public abstract void replaceSwingComponent(Component oldButtonComponent, Component newButtonComponent);
 
     public AbstractButtonView(ButtonStyle style) {
         buttonView = getComponentForStyle(style);
@@ -45,15 +55,15 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
         return (JComponent) buttonView;
     }
 
-    public boolean isBeingEdited() {
+    public boolean isSelectedForEditing() {
         Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonView());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
-    public void setBeingEdited(boolean beingEdited) {
+    public void setIsSelectedForEditing(boolean beingEdited) {
         isBeingEdited = beingEdited;
 
-        if (isBeingEdited()) {
+        if (isSelectedForEditing()) {
             MarchingAnts.getInstance().addObserver(this);
         } else {
             MarchingAnts.getInstance().removeObserver(this);
@@ -65,7 +75,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
     public void setButtonStyle(ButtonStyle style) {
         Component oldComponent = getButtonView();
         buttonView = getComponentForStyle(style);
-        invalidateSwingComponent(oldComponent, (JComponent) buttonView);
+        replaceSwingComponent(oldComponent, (JComponent) buttonView);
 
         getPartModel().addPropertyChangedObserver(buttonView);
         partOpened();
@@ -114,7 +124,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
     public void mouseReleased(MouseEvent e) {
         ToolEditablePart.super.mouseReleased(e);
 
-        if (!isBeingEdited() && isAutoHilited()) {
+        if (!isSelectedForEditing() && isAutoHilited()) {
             if (!(buttonView instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
             }

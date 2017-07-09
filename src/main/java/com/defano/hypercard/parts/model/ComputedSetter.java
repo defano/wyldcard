@@ -11,6 +11,9 @@ package com.defano.hypercard.parts.model;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
+/**
+ * Represents a writable attribute whose value is computationally derived from one or more other attributes.
+ */
 public interface ComputedSetter {
 
     /**

@@ -34,6 +34,7 @@ import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -41,6 +42,13 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * The view object associated with a button on a card.
+ *
+ * Note that this is a bit of a deviation from the typical MVC architectural pattern in that a button can take on
+ * different "styles" that may change dynamically. Thus, this object--while representing the view--only holds a
+ * reference to the Swing component that represents its view in the Java world. See {@link #getButtonView()}.
+ */
 public class ButtonPart extends AbstractButtonView implements MouseListener, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 160;
@@ -59,6 +67,12 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
         this.mover = new PartMover(this, parent);
     }
 
+    /**
+     * Creates a new button on the given card with default size and position.
+     *
+     * @param parent The card that this button will belong to.
+     * @return The new button.
+     */
     public static ButtonPart newButton(CardPart parent) {
         ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
@@ -69,13 +83,28 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
         return newButton;
     }
 
+    /**
+     * Creates a new button on the given card with the provided geometry.
+     *
+     * @param parent The card that this button will belong to.
+     * @param geometry The bounding rectangle of the new button.
+     * @return The new button.
+     */
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
         ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent);
         button.initProperties(geometry);
         return button;
     }
 
-    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel) throws Exception {
+    /**
+     * Creates a new button view from an existing button data model.
+     *
+     * @param parent The card that this button will belong to.
+     * @param partModel The data model representing this button.
+     * @return The new button.
+     * @throws Exception Thrown if an error occurs instantiating the button.
+     */
+    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel) throws HtException {
         ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
         ButtonPart button = new ButtonPart(style, parent);
 
@@ -94,13 +123,6 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public void partClosed() {
         super.partClosed();
-    }
-
-    private void initProperties(Rectangle geometry) {
-        int id = parent.nextButtonId();
-
-        partModel = ButtonModel.newButtonModel(id, geometry);
-        partModel.addPropertyChangedObserver(this);
     }
 
     @Override
@@ -142,16 +164,9 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
         return Tool.BUTTON;
     }
 
-    /**
-     * Indicates that the Swing component associated with this {@link ButtonPart} has changed and that the button's
-     * parent (i.e., card or background) should update itself accordingly.
-     *
-     * @param oldButtonComponent The former component associated with this part
-     * @param newButtonComponent The new component
-     */
     @Override
-    public void invalidateSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
-        parent.invalidateSwingComponent(this, oldButtonComponent, newButtonComponent);
+    public void replaceSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
+        parent.replaceSwingComponent(this, oldButtonComponent, newButtonComponent);
     }
 
     @Override
@@ -177,16 +192,6 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public Script getScript() {
         return script;
-    }
-
-    private void compile() throws HtSemanticException {
-
-        try {
-            String scriptText = partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).toString();
-            script = Interpreter.compile(scriptText);
-        } catch (Exception e) {
-            throw new HtSemanticException("Didn't understand that.");
-        }
     }
 
     @Override
@@ -258,5 +263,25 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
                 getCard().onZOrderChanged();
                 break;
         }
+    }
+
+    /**
+     * Compiles the script associated with this button and stores the AST in the script property.
+     * @throws HtSemanticException Thrown if a syntax or semantic error occurs.
+     */
+    private void compile() throws HtSemanticException {
+        try {
+            String scriptText = partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).toString();
+            script = Interpreter.compile(scriptText);
+        } catch (Exception e) {
+            throw new HtSemanticException("Didn't understand that.");
+        }
+    }
+
+    private void initProperties(Rectangle geometry) {
+        int id = parent.nextButtonId();
+
+        partModel = ButtonModel.newButtonModel(id, geometry);
+        partModel.addPropertyChangedObserver(this);
     }
 }

@@ -8,12 +8,11 @@
 
 package com.defano.hypercard.parts.model;
 
-import javax.smartcardio.Card;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class StackModel {
+public class StackModel extends PropertiesModel {
 
     private final static StackModel instance = new StackModel();
 

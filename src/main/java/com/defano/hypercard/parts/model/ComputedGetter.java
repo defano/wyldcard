@@ -10,6 +10,9 @@ package com.defano.hypercard.parts.model;
 
 import com.defano.hypertalk.ast.common.Value;
 
+/**
+ * Represents a readable attribute whose value is computationally derived from one or more other attributes.
+ */
 public interface ComputedGetter {
 
     /**

@@ -13,6 +13,9 @@ import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.HyperCard;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
 public class FileMenu extends HyperCardMenu {
@@ -29,18 +32,7 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
-                .withAction(e -> {
-                    try {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            StackModel model = Serializer.deserialize(chooser.getSelectedFile(), StackModel.class);
-                            HyperCard.getInstance().openStack(model);
-                        }
-                    } catch (Exception exception) {
-                        HyperCard.getInstance().showErrorDialog(exception);
-                    }
-                })
+                .withAction(e -> HyperCard.getInstance().getStack().open())
                 .withShortcut('O')
                 .build(this);
 
@@ -52,17 +44,7 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack...")
-                .withAction(e -> {
-                    try {
-                        JFileChooser chooser = new JFileChooser();
-                        chooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                            Serializer.serialize(chooser.getSelectedFile(), HyperCard.getInstance().getStack().getStackModel());
-                        }
-                    } catch (Exception exception) {
-                        HyperCard.getInstance().showErrorDialog(exception);
-                    }
-                })
+                .withAction(e -> HyperCard.getInstance().getStack().save())
                 .withShortcut('S')
                 .build(this);
 

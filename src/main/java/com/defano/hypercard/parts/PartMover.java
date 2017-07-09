@@ -27,10 +27,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A utility allowing users to drag parts around the card. Provides threading the mouse handling.
+ */
 public class PartMover {
 
-    public final int MOVER_REFRESH_MS = 10;
-    public final int SNAP_TO_GRID_SIZE = 10;
+    private static final int MOVER_REFRESH_MS = 10;
+    private static final int SNAP_TO_GRID_SIZE = 10;
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -60,15 +63,27 @@ public class PartMover {
         }
     }
 
+    /**
+     * Create a PartMover for moving a given part within a given component.
+     * @param part The part to move
+     * @param within The parent component in which it should be moved.
+     */
     public PartMover(Part part, Component within) {
         this.part = part;
         this.within = within;
     }
 
+    /**
+     * Determines if the part is moving (i.e., the user is presently dragging it)
+     * @return True if moving; false otherwise
+     */
     public boolean isMoving() {
         return !done;
     }
 
+    /**
+     * Begin moving the part; should be invoked when the user has clicked the mouse over the part.
+     */
     public void startMoving() {
         if (!isMoving()) {
             done = false;

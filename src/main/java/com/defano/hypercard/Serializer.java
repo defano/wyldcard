@@ -47,7 +47,7 @@ public class Serializer {
         try {
             return deserialize(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8), clazz);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to open card.");
+            throw new RuntimeException("Failed to open card.", e);
         }
     }
 

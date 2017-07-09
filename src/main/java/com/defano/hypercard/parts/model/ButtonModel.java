@@ -15,6 +15,10 @@ import com.defano.hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A data model representing a button part on a card. See {@link com.defano.hypercard.parts.ButtonPart} for the
+ * associated view object.
+ */
 public class ButtonModel extends AbstractPartModel {
 
     public static final String PROP_STYLE = "style";

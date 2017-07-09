@@ -88,7 +88,7 @@ public class MenuItemBuilder {
 
     public MenuItemBuilder withShortcut (char shortcut) {
         this.item.setMnemonic(shortcut);
-        this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, InputEvent.META_MASK));
+        this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         return this;
     }
 

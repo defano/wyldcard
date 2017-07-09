@@ -6,16 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * AbstractPartModel.java
- *
- * @author matt.defano@gmail.com
- * <p>
- * Implements a table of model associated with a partSpecifier object. Provides
- * methods for defining, getting and setting model, as well as notifying
- * listeners of changes.
- */
-
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypertalk.ast.common.PartType;
@@ -24,6 +14,10 @@ import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 
+/**
+ * Implements a table of model associated with a partSpecifier object. Provides methods for defining, getting and
+ * setting model, as well as notifying listeners of changes.
+ */
 public abstract class AbstractPartModel extends PropertiesModel {
 
     public static final String PROP_SCRIPT = "script";
