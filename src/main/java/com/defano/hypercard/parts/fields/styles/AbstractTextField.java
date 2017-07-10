@@ -37,7 +37,6 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
 
     private ToolEditablePart toolEditablePart;
     private MutableAttributeSet currentStyle = new SimpleAttributeSet();
-    private boolean updatingFont = false;
 
     public AbstractTextField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;

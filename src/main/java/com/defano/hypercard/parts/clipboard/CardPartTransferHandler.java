@@ -1,18 +1,14 @@
 package com.defano.hypercard.parts.clipboard;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.*;
-import com.defano.hypertalk.ast.common.Tool;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class CardPartTransferHandler extends TransferHandler {
@@ -46,7 +42,8 @@ public class CardPartTransferHandler extends TransferHandler {
     public boolean importData(TransferHandler.TransferSupport info) {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
-            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importPart(part);
+            CardLayer layer = HyperCard.getInstance().getCard().getActivePartLayer();
+            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importPart(part, layer);
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

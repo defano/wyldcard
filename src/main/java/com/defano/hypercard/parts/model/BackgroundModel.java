@@ -13,15 +13,23 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link com.defano.hypercard.parts.CardPart} view object when rendered.
  */
 public class BackgroundModel {
-    private byte[] backgroundImage;
 
-    private BackgroundModel() {}
+    private byte[] backgroundImage;
+    private Collection<ButtonModel> buttonModels;
+    private Collection<FieldModel> fieldModels;
+
+    private BackgroundModel() {
+        buttonModels = new ArrayList<>();
+        fieldModels = new ArrayList<>();
+    }
 
     public static BackgroundModel emptyBackground() {
         return new BackgroundModel();
