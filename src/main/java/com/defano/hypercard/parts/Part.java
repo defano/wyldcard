@@ -10,7 +10,7 @@ package com.defano.hypercard.parts;
 
 import javax.swing.*;
 
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.Interpreter;
@@ -53,7 +53,7 @@ public interface Part {
      * Gets the data model associated with this part.
      * @return The part model.
      */
-    AbstractPartModel getPartModel();
+    PartModel getPartModel();
 
     /**
      * Gets the name of the property that is read or written when a value is placed into the part (i.e., 'the contents'
@@ -77,6 +77,25 @@ public interface Part {
      * Invoked when the part is closed (removed) from a card.
      */
     void partClosed();
+
+    /**
+     * Determines the layer of the card on which this part exists.
+     * @return The layer of the card the part is on or null if indeterminate
+     */
+    default CardLayer getCardLayer() {
+        return getCard().getCardLayer(getComponent());
+    }
+
+    /**
+     * Determines the currently active part layer, either {@link CardLayer#BACKGROUND_PARTS} or
+     * {@link CardLayer#CARD_PARTS} depending on whether the user is presently editing the background.
+     *
+     * @return The part layer currently being edited.
+     */
+    static CardLayer getActivePartLayer() {
+        return ToolsContext.getInstance().isEditingBackground() ? CardLayer.BACKGROUND_PARTS : CardLayer.CARD_PARTS;
+    }
+
 
     /**
      * Sets the property of the part.
@@ -154,7 +173,7 @@ public interface Part {
      * @return The part id.
      */
     default int getId() {
-        return getPartModel().getKnownProperty(AbstractPartModel.PROP_ID).integerValue();
+        return getPartModel().getKnownProperty(PartModel.PROP_ID).integerValue();
     }
 
     /**
@@ -162,7 +181,7 @@ public interface Part {
      * @return The part name.
      */
     default String getName() {
-        return getPartModel().getKnownProperty(AbstractPartModel.PROP_NAME).stringValue();
+        return getPartModel().getKnownProperty(PartModel.PROP_NAME).stringValue();
     }
 
     /**
@@ -193,7 +212,7 @@ public interface Part {
 
         for (int index = 0; index < parts.size(); index++) {
             Part thisPart = parts.get(index);
-            thisPart.getPartModel().setKnownProperty(AbstractPartModel.PROP_ZORDER, new Value(index), true);
+            thisPart.getPartModel().setKnownProperty(PartModel.PROP_ZORDER, new Value(index), true);
         }
 
         card.onZOrderChanged();

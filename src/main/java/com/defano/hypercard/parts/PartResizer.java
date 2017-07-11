@@ -9,7 +9,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.gui.util.MouseManager;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;
 
@@ -55,10 +55,10 @@ public class PartResizer {
 
             try {
                 if (newWidth >= MIN_WIDTH)
-                    part.setProperty(AbstractPartModel.PROP_WIDTH, new Value(newWidth));
+                    part.setProperty(PartModel.PROP_WIDTH, new Value(newWidth));
 
                 if (newHeight >= MIN_HEIGHT)
-                    part.setProperty(AbstractPartModel.PROP_HEIGHT, new Value(newHeight));
+                    part.setProperty(PartModel.PROP_HEIGHT, new Value(newHeight));
 
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());

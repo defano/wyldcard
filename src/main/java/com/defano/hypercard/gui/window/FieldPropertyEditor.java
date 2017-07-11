@@ -9,7 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.parts.fields.FieldStyle;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.FieldModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -23,7 +23,7 @@ import java.awt.*;
 
 public class FieldPropertyEditor extends HyperCardWindow {
 
-    private AbstractPartModel model;
+    private PartModel model;
 
     private JPanel fieldEditor;
     private JTextField fieldName;
@@ -72,8 +72,8 @@ public class FieldPropertyEditor extends HyperCardWindow {
 
     @Override
     public void bindModel(Object data) {
-        if (data instanceof AbstractPartModel) {
-            this.model = (AbstractPartModel) data;
+        if (data instanceof PartModel) {
+            this.model = (PartModel) data;
 
             fieldName.setText(model.getKnownProperty(FieldModel.PROP_NAME).stringValue());
             fieldId.setText(model.getKnownProperty(FieldModel.PROP_ID).stringValue());

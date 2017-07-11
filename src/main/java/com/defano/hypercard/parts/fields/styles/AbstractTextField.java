@@ -12,7 +12,7 @@ import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.FieldModel;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
@@ -61,7 +61,7 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
         });
 
         // Listen for changes to the field's selected text (for the selectedText property)
-        textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(AbstractPartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
+        textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
         textPane.addCaretListener(e -> GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText())));
 
         // Listen for caret location changes so that we can update the app font selection

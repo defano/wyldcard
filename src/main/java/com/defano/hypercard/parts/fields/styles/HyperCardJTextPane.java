@@ -19,6 +19,9 @@ public class HyperCardJTextPane extends JTextPane {
 
     public HyperCardJTextPane(StyledDocument doc) {
         super(doc);
+
+        // Bit of a cheat; prevents cursor flickering when in the background layer but never displays text cursor.
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     @Override

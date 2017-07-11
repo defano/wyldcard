@@ -23,7 +23,7 @@ import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.ButtonPropertyEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.buttons.AbstractButtonView;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.buttons.ButtonStyle;
@@ -180,7 +180,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     }
 
     @Override
-    public AbstractPartModel getPartModel() {
+    public PartModel getPartModel() {
         return partModel;
     }
 
@@ -259,7 +259,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
             case ButtonModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());
                 break;
-            case AbstractPartModel.PROP_ZORDER:
+            case PartModel.PROP_ZORDER:
                 getCard().onZOrderChanged();
                 break;
         }
@@ -279,7 +279,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.nextButtonId();
+        int id = parent.getStackModel().getNextButtonId();
 
         partModel = ButtonModel.newButtonModel(id, geometry);
         partModel.addPropertyChangedObserver(this);

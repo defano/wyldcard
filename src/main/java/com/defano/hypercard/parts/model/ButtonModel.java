@@ -19,7 +19,7 @@ import java.awt.*;
  * A data model representing a button part on a card. See {@link com.defano.hypercard.parts.ButtonPart} for the
  * associated view object.
  */
-public class ButtonModel extends AbstractPartModel {
+public class ButtonModel extends PartModel {
 
     public static final String PROP_STYLE = "style";
     public static final String PROP_FAMILY = "family";

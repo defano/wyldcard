@@ -17,7 +17,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.gui.util.MouseManager;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;
 
@@ -51,8 +51,8 @@ public class PartMover {
             int newLeft = KeyboardManager.isShiftDown ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
 
             try {
-                part.setProperty(AbstractPartModel.PROP_TOP, new Value(newTop));
-                part.setProperty(AbstractPartModel.PROP_LEFT, new Value(newLeft));
+                part.setProperty(PartModel.PROP_TOP, new Value(newTop));
+                part.setProperty(PartModel.PROP_LEFT, new Value(newLeft));
             } catch (Exception e) {
                 throw new RuntimeException (e);
             }

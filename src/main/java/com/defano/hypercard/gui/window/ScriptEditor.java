@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.gui.window;
 
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -51,7 +51,7 @@ public class ScriptEditor extends HyperCardWindow {
             .append("end mouseLeave\n")
             .toString();
 
-    private AbstractPartModel model;
+    private PartModel model;
 
     private JPanel scriptEditor;
     private JButton cancelButton;
@@ -124,8 +124,8 @@ public class ScriptEditor extends HyperCardWindow {
 
     @Override
     public void bindModel(Object properties) {
-        if (properties instanceof AbstractPartModel) {
-            this.model = (AbstractPartModel) properties;
+        if (properties instanceof PartModel) {
+            this.model = (PartModel) properties;
             String script = this.model.getKnownProperty("script").stringValue();
             scriptField.setText(script.trim().isEmpty() ? DEFAULT_SCRIPT : script);
         } else {

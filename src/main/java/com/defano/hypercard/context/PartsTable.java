@@ -52,7 +52,7 @@ public class PartsTable<T extends Part> {
 
             // Check for duplicate id or name
             if (partExists(new PartIdSpecifier(p.getType(), partId)))
-                throw new RuntimeException("Duplicate part id");
+                throw new RuntimeException("Duplicate part id: " + partId);
 
             idhash.put(partId, p);
 
@@ -84,14 +84,6 @@ public class PartsTable<T extends Part> {
     
     public Collection<T> getParts() {
         return idhash.values();
-    }
-
-    public int getNextId () {
-        for (int nextId = 0; ; nextId++) {
-            if (!idhash.containsKey(nextId)) {
-                return nextId;
-            }
-        }
     }
 
     private T partByName(String name) {

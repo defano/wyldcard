@@ -27,15 +27,17 @@ import java.util.List;
  */
 public class CardModel {
 
+    private int cardId = 0;
     private int backgroundId = 0;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
     private byte[] cardImage;
 
-    private CardModel (int backgroundId) {
+    private CardModel (int cardId, int backgroundId) {
         this.buttonModels = new ArrayList<>();
         this.fieldModels = new ArrayList<>();
         this.backgroundId = backgroundId;
+        this.cardId = cardId;
     }
 
     /**
@@ -45,12 +47,12 @@ public class CardModel {
      * @param backgroundId The ID of the background this card should inherit.
      * @return The new CardModel
      */
-    public static CardModel emptyCardModel (int backgroundId) {
-        return new CardModel(backgroundId);
+    public static CardModel emptyCardModel (int cardId, int backgroundId) {
+        return new CardModel(cardId, backgroundId);
     }
 
-    public Collection<AbstractPartModel> getPartModels() {
-        List<AbstractPartModel> partModels = new ArrayList<>();
+    public Collection<PartModel> getPartModels() {
+        List<PartModel> partModels = new ArrayList<>();
         partModels.addAll(buttonModels);
         partModels.addAll(fieldModels);
         return partModels;

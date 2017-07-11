@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.ExpPart;
 import com.defano.hypertalk.exception.HtException;
@@ -16,6 +16,6 @@ public class StatShowCmd extends Statement {
 
     @Override
     public void execute() throws HtException {
-        HyperCard.getInstance().getCard().getPart(part.evaluateAsSpecifier()).getPartModel().setKnownProperty(AbstractPartModel.PROP_VISIBLE, new Value(true));
+        HyperCard.getInstance().getCard().getPart(part.evaluateAsSpecifier()).getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(true));
     }
 }

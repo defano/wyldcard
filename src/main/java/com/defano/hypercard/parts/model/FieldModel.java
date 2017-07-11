@@ -18,7 +18,7 @@ import java.awt.*;
  * A data model representing a field part on a card. See {@link com.defano.hypercard.parts.FieldPart} for the associated
  * view object.
  */
-public class FieldModel extends AbstractPartModel {
+public class FieldModel extends PartModel {
 
     public static final String PROP_TEXT = "text";
     public static final String PROP_DONTWRAP = "dontwrap";

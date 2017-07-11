@@ -35,6 +35,22 @@ public class BackgroundModel {
         return new BackgroundModel();
     }
 
+    public Collection<PartModel> getPartModels() {
+        Collection<PartModel> models = new ArrayList<>();
+        models.addAll(buttonModels);
+        models.addAll(fieldModels);
+
+        return models;
+    }
+
+    public void addFieldModel(FieldModel model) {
+        this.fieldModels.add(model);
+    }
+
+    public void addButtonModel(ButtonModel model) {
+        this.buttonModels.add(model);
+    }
+
     public void setBackgroundImage(BufferedImage image) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

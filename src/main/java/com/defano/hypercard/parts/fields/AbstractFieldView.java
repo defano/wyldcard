@@ -29,7 +29,7 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
 
     public abstract void resize(int fromQuadrant);
 
-    public abstract void invalidateSwingComponent(Component oldComponent, Component newComponent);
+    public abstract void replaceSwingComponent(Component oldComponent, Component newComponent);
 
     public AbstractFieldView(FieldStyle style) {
         fieldView = getComponentForStyle(style);
@@ -62,7 +62,7 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
         fieldView = getComponentForStyle(style);
 
         partClosed();
-        invalidateSwingComponent(oldComponent, (JComponent) fieldView);
+        replaceSwingComponent(oldComponent, (JComponent) fieldView);
         partOpened();
     }
 

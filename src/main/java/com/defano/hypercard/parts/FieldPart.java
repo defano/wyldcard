@@ -137,7 +137,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     }
 
     @Override
-    public void invalidateSwingComponent(Component oldComponent, Component newComponent) {
+    public void replaceSwingComponent(Component oldComponent, Component newComponent) {
         parent.replaceSwingComponent(this, oldComponent, newComponent);
     }
 
@@ -162,7 +162,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     }
 
     @Override
-    public AbstractPartModel getPartModel() {
+    public PartModel getPartModel() {
         return partModel;
     }
 
@@ -278,18 +278,16 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
                 getComponent().repaint();
                 break;
             case FieldModel.PROP_VISIBLE:
-                getComponent().setVisible(newValue.booleanValue());
-                getComponent().validate();
-                getComponent().repaint();
+                setVisibleOnCard(newValue.booleanValue());
                 break;
-            case AbstractPartModel.PROP_ZORDER:
+            case PartModel.PROP_ZORDER:
                 getCard().onZOrderChanged();
                 break;
         }
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.nextFieldId();
+        int id = parent.getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry);
         partModel.addPropertyChangedObserver(this);
