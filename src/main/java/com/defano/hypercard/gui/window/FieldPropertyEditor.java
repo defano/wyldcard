@@ -8,6 +8,10 @@
 
 package com.defano.hypercard.gui.window;
 
+import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.ButtonPart;
+import com.defano.hypercard.parts.FieldPart;
+import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.fields.FieldStyle;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.FieldModel;
@@ -27,7 +31,7 @@ public class FieldPropertyEditor extends HyperCardWindow {
 
     private JPanel fieldEditor;
     private JTextField fieldName;
-    private JLabel fieldId;
+    private JLabel idLabelValue;
     private JTextField fieldHeight;
     private JTextField fieldWidth;
     private JTextField fieldTop;
@@ -40,6 +44,10 @@ public class FieldPropertyEditor extends HyperCardWindow {
     private JButton editScriptButton;
     private JComboBox style;
     private JCheckBox showLines;
+    private JLabel fieldLabel;
+    private JLabel partLabel;
+    private JLabel partLabelValue;
+    private JLabel fieldLabelValue;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -75,8 +83,22 @@ public class FieldPropertyEditor extends HyperCardWindow {
         if (data instanceof PartModel) {
             this.model = (PartModel) data;
 
+            Part part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+            long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
+            long buttonNumber = HyperCard.getInstance().getCard().getFieldNumber((FieldPart) part);
+            long buttonCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getCardLayer());
+            long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getCardLayer());
+            String layer = part.getCardLayer().friendlyName;
+
+            fieldLabel.setText(layer + " Field:");
+            fieldLabelValue.setText(buttonNumber + " of " + buttonCount);
+
+            partLabel.setText(layer + " Part:");
+            partLabelValue.setText(partNumber + " of " + partCount);
+            idLabelValue.setText(String.valueOf(part.getId()));
+
             fieldName.setText(model.getKnownProperty(FieldModel.PROP_NAME).stringValue());
-            fieldId.setText(model.getKnownProperty(FieldModel.PROP_ID).stringValue());
+            idLabelValue.setText(model.getKnownProperty(FieldModel.PROP_ID).stringValue());
             fieldTop.setText(model.getKnownProperty(FieldModel.PROP_TOP).stringValue());
             fieldLeft.setText(model.getKnownProperty(FieldModel.PROP_LEFT).stringValue());
             fieldHeight.setText(model.getKnownProperty(FieldModel.PROP_HEIGHT).stringValue());
@@ -126,7 +148,7 @@ public class FieldPropertyEditor extends HyperCardWindow {
         fieldEditor.setMaximumSize(new Dimension(587, 257));
         panel1.add(fieldEditor, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(1, 4, new Insets(5, 5, 5, 5), -1, -1));
+        panel2.setLayout(new GridLayoutManager(4, 2, new Insets(5, 5, 5, 5), -1, -1));
         fieldEditor.add(panel2, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Identification"));
         final JLabel label1 = new JLabel();
@@ -135,16 +157,28 @@ public class FieldPropertyEditor extends HyperCardWindow {
         panel2.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(90, -1), null, new Dimension(90, -1), 0, false));
         fieldName = new JTextField();
         panel2.add(fieldName, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        fieldLabel = new JLabel();
+        fieldLabel.setText("Card Field:");
+        panel2.add(fieldLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        partLabel = new JLabel();
+        partLabel.setText("Card Part:");
+        panel2.add(partLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setHorizontalAlignment(2);
         label2.setInheritsPopupMenu(false);
         label2.setText("ID:");
-        panel2.add(label2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        fieldId = new JLabel();
-        fieldId.setText("id");
-        panel2.add(fieldId, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(label2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        idLabelValue = new JLabel();
+        idLabelValue.setText("Label");
+        panel2.add(idLabelValue, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        partLabelValue = new JLabel();
+        partLabelValue.setText("Label");
+        panel2.add(partLabelValue, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        fieldLabelValue = new JLabel();
+        fieldLabelValue.setText("Label");
+        panel2.add(fieldLabelValue, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(2, 4, new Insets(5, 5, 5, 5), -1, -1));
+        panel3.setLayout(new GridLayoutManager(3, 4, new Insets(5, 5, 5, 5), -1, -1));
         fieldEditor.add(panel3, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel3.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Location"));
         final JLabel label3 = new JLabel();
@@ -167,17 +201,19 @@ public class FieldPropertyEditor extends HyperCardWindow {
         panel3.add(fieldTop, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         fieldLeft = new JTextField();
         panel3.add(fieldLeft, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel3.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         fieldEditor.add(panel4, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
-        panel4.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel4.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
         cancelButton = new JButton();
         cancelButton.setText("Cancel");
-        panel4.add(cancelButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        panel4.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel4.add(cancelButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel4.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
         fieldEditor.add(panel5, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -203,8 +239,8 @@ public class FieldPropertyEditor extends HyperCardWindow {
         panel5.add(showLines, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
-        fieldEditor.add(editScriptButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer2 = new Spacer();
-        fieldEditor.add(spacer2, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        fieldEditor.add(editScriptButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        fieldEditor.add(spacer3, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 }

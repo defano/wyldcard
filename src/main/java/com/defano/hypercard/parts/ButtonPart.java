@@ -128,7 +128,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public void editProperties() {
         WindowBuilder.make(new ButtonPropertyEditor())
-                .withTitle("Button Editor")
+                .withTitle(getName())
                 .withModel(partModel)
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .build();
@@ -156,7 +156,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public void delete() {
-        parent.removeButton(this);
+        parent.removePart(this);
     }
 
     @Override

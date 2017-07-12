@@ -45,7 +45,7 @@ public class FieldModel extends PartModel {
         partModel.defineProperty(PROP_DONTWRAP, new Value(false), false);
         partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
         partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
-        partModel.defineProperty(PROP_SHOWLINES, new Value(false), false);
+        partModel.defineProperty(PROP_SHOWLINES, new Value(true), false);
         partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.OPAQUE.getName()), false);
         partModel.defineProperty(PROP_TEXT, new Value(""), false);
 

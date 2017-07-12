@@ -9,6 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.CardLayer;
 import com.defano.hypercard.parts.Part;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -39,13 +40,17 @@ public class ButtonPropertyEditor extends HyperCardWindow {
     private JCheckBox isVisible;
     private JCheckBox isShowTitle;
     private JCheckBox isEnabled;
-    private JLabel buttonId;
     private JPanel buttonEditor;
     private JComboBox style;
     private JComboBox family;
     private JButton contents;
     private JCheckBox autoHilite;
     private JPanel coordinatePanel;
+    private JLabel buttonLabel;
+    private JLabel partLabel;
+    private JLabel buttonLabelValue;
+    private JLabel partLabelValue;
+    private JLabel idLabelValue;
 
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -83,14 +88,20 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         this.model = (PartModel) data;
 
         Part part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-        long buttonNumber = HyperCard.getInstance().getCard().getPartNumber(part);
+        long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
+        long buttonNumber = HyperCard.getInstance().getCard().getButtonNumber((ButtonPart) part);
         long buttonCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getCardLayer());
-        String layer = part.getCardLayer() == CardLayer.BACKGROUND_PARTS ? "Background Button " : "Card Button ";
+        long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getCardLayer());
+        String layer = part.getCardLayer().friendlyName;
 
-        coordinatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), layer + buttonNumber + " of " + buttonCount));
+        buttonLabel.setText(layer + " Button:");
+        buttonLabelValue.setText(buttonNumber + " of " + buttonCount);
+
+        partLabel.setText(layer + " Part:");
+        partLabelValue.setText(partNumber + " of " + partCount);
+        idLabelValue.setText(String.valueOf(part.getId()));
 
         buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-        buttonId.setText(model.getKnownProperty(ButtonModel.PROP_ID).stringValue());
         buttonTop.setText(model.getKnownProperty(ButtonModel.PROP_TOP).stringValue());
         buttonLeft.setText(model.getKnownProperty(ButtonModel.PROP_LEFT).stringValue());
         buttonHeight.setText(model.getKnownProperty(ButtonModel.PROP_HEIGHT).stringValue());
@@ -118,19 +129,10 @@ public class ButtonPropertyEditor extends HyperCardWindow {
     }
 
     private void showContentsEditor() {
-        String result = (String) JOptionPane.showInputDialog(
-                getWindowPanel(),
-                "Edit the contents of this button.",
-                "Contents",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                model.getKnownProperty(ButtonModel.PROP_CONTENTS).stringValue());
-
-        if (result != null) {
-            model.setKnownProperty(ButtonModel.PROP_CONTENTS, new Value(result));
+        String contents = PartContentsEditor.editContents(model.getKnownProperty(ButtonModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        if (contents != null) {
+            model.setKnownProperty(ButtonModel.PROP_CONTENTS, new Value(contents));
         }
-
     }
 
     private void createUIComponents() {
@@ -156,7 +158,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         buttonEditor.setLayout(new GridLayoutManager(3, 5, new Insets(10, 10, 10, 10), -1, -1));
         buttonEditor.setMaximumSize(new Dimension(587, 257));
         coordinatePanel = new JPanel();
-        coordinatePanel.setLayout(new GridLayoutManager(1, 4, new Insets(5, 5, 5, 5), -1, -1));
+        coordinatePanel.setLayout(new GridLayoutManager(4, 2, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(coordinatePanel, new GridConstraints(0, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         coordinatePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Identification"));
         final JLabel label1 = new JLabel();
@@ -165,16 +167,26 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         coordinatePanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(90, -1), null, new Dimension(90, -1), 0, false));
         buttonName = new JTextField();
         coordinatePanel.add(buttonName, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        buttonLabel = new JLabel();
+        buttonLabel.setText("Card Button:");
+        coordinatePanel.add(buttonLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonLabelValue = new JLabel();
+        buttonLabelValue.setText("Label");
+        coordinatePanel.add(buttonLabelValue, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        partLabel = new JLabel();
+        partLabel.setText("Card Part:");
+        coordinatePanel.add(partLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        partLabelValue = new JLabel();
+        partLabelValue.setText("Label");
+        coordinatePanel.add(partLabelValue, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
-        label2.setHorizontalAlignment(2);
-        label2.setInheritsPopupMenu(false);
         label2.setText("ID:");
-        coordinatePanel.add(label2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        buttonId = new JLabel();
-        buttonId.setText("id");
-        coordinatePanel.add(buttonId, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        coordinatePanel.add(label2, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        idLabelValue = new JLabel();
+        idLabelValue.setText("Label");
+        coordinatePanel.add(idLabelValue, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 5, new Insets(5, 5, 5, 5), -1, -1));
+        panel1.setLayout(new GridLayoutManager(3, 5, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(panel1, new GridConstraints(1, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Location"));
         final JLabel label3 = new JLabel();
@@ -197,15 +209,17 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         final JLabel label6 = new JLabel();
         label6.setText("Height:");
         panel1.add(label6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 0, 0));
         buttonEditor.add(panel2, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
-        panel2.add(saveButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(saveButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
         cancelButton = new JButton();
         cancelButton.setText("Cancel");
-        panel2.add(cancelButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.add(cancelButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
         buttonEditor.add(panel3, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -252,16 +266,16 @@ public class ButtonPropertyEditor extends HyperCardWindow {
         autoHilite = new JCheckBox();
         autoHilite.setText("Auto Hilight");
         panel3.add(autoHilite, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        buttonEditor.add(spacer1, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        buttonEditor.add(spacer2, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        buttonEditor.add(spacer2, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        buttonEditor.add(spacer3, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
-        buttonEditor.add(editScriptButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(editScriptButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
         contents = new JButton();
         contents.setText("Contents...");
-        buttonEditor.add(contents, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        buttonEditor.add(contents, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
     }
 
     /**

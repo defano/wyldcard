@@ -6,7 +6,6 @@ import com.defano.jmonet.canvas.UndoablePaintCanvas;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collection;
 
 public abstract class CardLayeredPane extends JLayeredPane {
 
@@ -28,7 +27,12 @@ public abstract class CardLayeredPane extends JLayeredPane {
     }
 
     public CardLayer getCardLayer(Component component) {
-        return CardLayer.fromPaneLayer(getLayer(component));
+        int layer = getLayer(component);
+        if (layer == DEFAULT_LAYER) {
+            throw new IllegalArgumentException("Component does not exist on this card.");
+        }
+
+        return CardLayer.fromPaneLayer(layer);
     }
 
     public void addToCardLayer(Component component, CardLayer layer) {

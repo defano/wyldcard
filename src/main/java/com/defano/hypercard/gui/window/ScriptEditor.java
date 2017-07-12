@@ -161,7 +161,7 @@ public class ScriptEditor extends HyperCardWindow {
         saveButton.setMargin(new Insets(0, 0, 0, 0));
         saveButton.setOpaque(true);
         saveButton.setText("Save");
-        scriptEditor.add(saveButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptEditor.add(saveButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
@@ -175,7 +175,7 @@ public class ScriptEditor extends HyperCardWindow {
         cancelButton.setHorizontalAlignment(4);
         cancelButton.setMargin(new Insets(0, 0, 0, 0));
         cancelButton.setText("Cancel");
-        scriptEditor.add(cancelButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptEditor.add(cancelButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(-1, 33), null, null, 0, false));
     }
 
     /**

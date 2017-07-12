@@ -109,7 +109,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     @Override
     public void editProperties() {
         WindowBuilder.make(new FieldPropertyEditor())
-                .withTitle("Properties of field " + getName())
+                .withTitle(getName())
                 .withModel(partModel)
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(false)
@@ -128,7 +128,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
 
     @Override
     public void delete() {
-        parent.removeField(this);
+        parent.removePart(this);
     }
 
     @Override
