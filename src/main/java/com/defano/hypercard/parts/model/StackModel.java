@@ -17,8 +17,7 @@ public class StackModel extends PropertiesModel {
     private final static StackModel instance = new StackModel();
 
     private String name;
-    private int nextButtonId = 0;
-    private int nextFieldId = 0;
+    private int nextPartId = 0;
     private int nextCardId = 0;
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
@@ -113,11 +112,11 @@ public class StackModel extends PropertiesModel {
     }
 
     public int getNextButtonId() {
-        return nextButtonId++;
+        return nextPartId++;
     }
 
     public int getNextFieldId() {
-        return nextFieldId++;
+        return nextPartId++;
     }
 
     public int getNextCardId() {

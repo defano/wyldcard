@@ -85,13 +85,13 @@ public class FieldPropertyEditor extends HyperCardWindow {
 
             Part part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
             long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
-            long buttonNumber = HyperCard.getInstance().getCard().getFieldNumber((FieldPart) part);
-            long buttonCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getCardLayer());
+            long fieldNumber = HyperCard.getInstance().getCard().getFieldNumber((FieldPart) part);
+            long fieldCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getCardLayer());
             long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getCardLayer());
             String layer = part.getCardLayer().friendlyName;
 
             fieldLabel.setText(layer + " Field:");
-            fieldLabelValue.setText(buttonNumber + " of " + buttonCount);
+            fieldLabelValue.setText(fieldNumber + " of " + fieldCount);
 
             partLabel.setText(layer + " Part:");
             partLabelValue.setText(partNumber + " of " + partCount);
