@@ -31,11 +31,6 @@ public interface PartContainer {
      */
     CardLayer getCardLayer(Component component);
 
-    default Comparator<Part> getZOrderComparator() {
-        return (o1, o2) -> new Integer(o1.getPartModel().getKnownProperty(PartModel.PROP_ZORDER).integerValue())
-                .compareTo(o2.getPartModel().getKnownProperty(PartModel.PROP_ZORDER).integerValue());
-    }
-
     /**
      * Gets a list of parts (buttons and field) that appear on this card, listed in their z-order (that is, the order
      * in which one is drawn atop another).
@@ -44,11 +39,11 @@ public interface PartContainer {
     default List<Part> getPartsInZOrder() {
         ArrayList<Part> cardParts = new ArrayList<>();
         cardParts.addAll(getPartsInZOrder(CardLayer.CARD_PARTS));
-        cardParts.sort(getZOrderComparator());
+        cardParts.sort(new ZOrderComparator());
 
         ArrayList<Part> bkgndParts = new ArrayList<>();
         bkgndParts.addAll(getPartsInZOrder(CardLayer.BACKGROUND_PARTS));
-        bkgndParts.sort(getZOrderComparator());
+        bkgndParts.sort(new ZOrderComparator());
 
         cardParts.addAll(bkgndParts);
         return cardParts;

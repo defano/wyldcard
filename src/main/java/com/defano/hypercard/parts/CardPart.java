@@ -192,12 +192,21 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * @throws PartException Thrown if no such part exists on this card.
      */
     public Part getPart(PartSpecifier ps) throws PartException {
-        if (ps.type() == PartType.FIELD)
+        if (ps.type() == PartType.FIELD) {
             return fields.getPart(ps);
-        else if (ps.type() == PartType.BUTTON)
+        } else if (ps.type() == PartType.BUTTON) {
             return buttons.getPart(ps);
-        else
+        } else if (ps.type() == null) {
+            if (fields.partExists(ps)) {
+                return fields.getPart(ps);
+            } else if (buttons.partExists(ps)) {
+                return buttons.getPart(ps);
+            } else {
+                throw new PartException("No such part.");
+            }
+        } else {
             throw new RuntimeException("Bug! Unhandled part type.");
+        }
     }
 
     /**

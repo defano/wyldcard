@@ -14,10 +14,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Script;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.containers.PartIdSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -145,7 +142,7 @@ public interface Part {
      */
     default void sendMessage(String message) {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-            Interpreter.executeHandler(new PartIdSpecifier(getType(), getId()), getScript(), message);
+            Interpreter.executeHandler(new PartIdSpecifier(getCardLayer().asPartLayer(), getType(), getId()), getScript(), message);
         }
     }
 
@@ -157,7 +154,7 @@ public interface Part {
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
     default Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(new PartIdSpecifier(getType(), getId()), getScript().getFunction(function), arguments);
+        return Interpreter.executeFunction(new PartIdSpecifier(getCardLayer().asPartLayer(), getType(), getId()), getScript().getFunction(function), arguments);
     }
 
     /**

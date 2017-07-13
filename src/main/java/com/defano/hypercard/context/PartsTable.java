@@ -16,16 +16,18 @@
 
 package com.defano.hypercard.context;
 
-import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.Part;
+import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.ZOrderComparator;
+import com.defano.hypertalk.ast.common.PartLayer;
 import com.defano.hypertalk.ast.containers.PartIdSpecifier;
 import com.defano.hypertalk.ast.containers.PartNameSpecifier;
+import com.defano.hypertalk.ast.containers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PartsTable<T extends Part> {
 
@@ -51,7 +53,7 @@ public class PartsTable<T extends Part> {
             Integer partId = p.getProperty("id").integerValue();
 
             // Check for duplicate id or name
-            if (partExists(new PartIdSpecifier(p.getType(), partId)))
+            if (partExists(new PartIdSpecifier(null, p.getType(), partId)))
                 throw new RuntimeException("Duplicate part id: " + partId);
 
             idhash.put(partId, p);
@@ -60,28 +62,63 @@ public class PartsTable<T extends Part> {
             throw new RuntimeException("All parts must have a valid name and id");
         }                
     }
-    
+
     public T getPart (PartSpecifier ps) throws PartException {
-        
-        if (!partExists(ps))
+
+        T foundPart = getPartOrNull(ps);
+
+        if (foundPart == null || (ps.layer() != null && foundPart.getCardLayer().asPartLayer() != ps.layer())) {
             throw new PartException("Sorry, " + ps.toString().toLowerCase() + " doesn't exist.");
-        if (ps instanceof PartIdSpecifier)
-            return idhash.get(ps.value());
-        else if (ps instanceof PartNameSpecifier)
-            return partByName(String.valueOf(ps.value()));
-        else
-            throw new RuntimeException("Unhandled part specifier type");
+        }
+
+        return foundPart;
+    }
+    
+    private T getPartOrNull (PartSpecifier ps) {
+
+        try {
+            if (ps instanceof PartIdSpecifier) {
+                return idhash.get(((PartIdSpecifier) ps).value());
+            } else if (ps instanceof PartNameSpecifier) {
+                return partByName(String.valueOf(ps.value()));
+            } else if (ps instanceof PartNumberSpecifier) {
+                List<T> parts = new ArrayList<>(getParts());
+                parts.sort(new ZOrderComparator());
+                return parts.get(((PartNumberSpecifier) ps).number - 1);
+            }
+        } catch (Throwable t) {
+            return null;
+        }
+
+        return null;
     }
 
     public boolean partExists (PartSpecifier ps) {
-        if (ps instanceof PartIdSpecifier)
-            return idhash.containsKey(ps.value());
-        else if (ps instanceof PartNameSpecifier)
+
+        if (ps instanceof PartIdSpecifier) {
+            return idhash.containsKey(((PartIdSpecifier) ps).value());
+        }
+
+        else if (ps instanceof PartNumberSpecifier) {
+            return idhash.keySet().size() >= ((PartNumberSpecifier)ps).number;
+        }
+
+        else if (ps instanceof PartNameSpecifier) {
             return partByName(String.valueOf(ps.value())) != null;
-        else
+        }
+
+        else {
             throw new RuntimeException("Unhandled part specifier type");
+        }
     }
-    
+
+    public Collection<T> getPart(PartLayer layer) {
+        return idhash.values()
+                .stream()
+                .filter(p -> p.getCardLayer().asPartLayer() == layer)
+                .collect(Collectors.toList());
+    }
+
     public Collection<T> getParts() {
         return idhash.values();
     }
