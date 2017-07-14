@@ -2,11 +2,13 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.containers.PartIdSpecifier;
+import com.defano.hypertalk.ast.containers.PartNameSpecifier;
+import com.defano.hypertalk.ast.containers.PartNumberSpecifier;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,45 +16,56 @@ public interface PartContainer {
 
     /**
      * Gets all buttons on the card (foreground and background) in no specific order.
+     *
      * @return All buttons on the card.
      */
     Collection<ButtonPart> getButtons();
 
     /**
      * Gets all fields on the card (foreground and background) in no specific order.
+     *
      * @return All fields on the card.
      */
     Collection<FieldPart> getFields();
 
     /**
-     * Given a Swing component, gets the card layer in which its present
-     * @param component
+     * Given a Swing component, gets the card layer in which its present.
+     *
+     * @param component The component whose card layer should be determined
      * @return
      */
     CardLayer getCardLayer(Component component);
 
+    default Collection<Part> getParts() {
+        Collection<Part> parts = new ArrayList<>();
+        parts.addAll(getButtons());
+        parts.addAll(getFields());
+        return parts;
+    }
+
     /**
      * Gets a list of parts (buttons and field) that appear on this card, listed in their z-order (that is, the order
      * in which one is drawn atop another).
+     *
      * @return The z-ordered list of parts on this card.
      */
     default List<Part> getPartsInZOrder() {
-        ArrayList<Part> cardParts = new ArrayList<>();
-        cardParts.addAll(getPartsInZOrder(CardLayer.CARD_PARTS));
-        cardParts.sort(new ZOrderComparator());
-
         ArrayList<Part> bkgndParts = new ArrayList<>();
         bkgndParts.addAll(getPartsInZOrder(CardLayer.BACKGROUND_PARTS));
         bkgndParts.sort(new ZOrderComparator());
 
-        cardParts.addAll(bkgndParts);
-        return cardParts;
-    }
+        ArrayList<Part> cardParts = new ArrayList<>();
+        cardParts.addAll(getPartsInZOrder(CardLayer.CARD_PARTS));
+        cardParts.sort(new ZOrderComparator());
 
+        bkgndParts.addAll(cardParts);
+        return bkgndParts;
+    }
 
     /**
      * Gets a list of parts (buttons and field) that appear on the given layer of this card, listed in their z-order
      * (that is, the order in which one is drawn atop another).
+     *
      * @param layer The layer of parts to be returned
      * @return The z-ordered list of parts in the given layer of this card.
      */
@@ -69,6 +82,7 @@ public interface PartContainer {
                 .filter(p -> getCardLayer(p.getComponent()) == layer)
                 .collect(Collectors.toList()));
 
+        parts.sort(new ZOrderComparator());
         return parts;
     }
 
@@ -84,6 +98,89 @@ public interface PartContainer {
                 .stream()
                 .filter(p -> p.getType() == type && p.getPartModel().getKnownProperty(PartModel.PROP_ID).integerValue() == id).findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Returns the part (button or field) represented by a given a HyperTalk part specifier.
+     *
+     * @param ps The part specifier representing the part to fetch
+     * @return The specified part
+     * @throws PartException Thrown if no such part exists on this card.
+     */
+    default Part findPart(PartSpecifier ps) throws PartException {
+        if (ps instanceof PartIdSpecifier) {
+            return findPartById((PartIdSpecifier) ps);
+        } else if (ps instanceof PartNameSpecifier) {
+            return findPartByName((PartNameSpecifier) ps);
+        } else if (ps instanceof PartNumberSpecifier) {
+            return findPartByNumber((PartNumberSpecifier) ps);
+        }
+
+        throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
+    }
+
+    /**
+     * Returns the part (button or field) identified by the given specifier.
+     *
+     * @param ps The specification of the part to find.
+     * @return The specified part.
+     * @throws PartException Thrown if no part can be found matching the specifier.
+     */
+    default Part findPartById(PartIdSpecifier ps) throws PartException {
+        Optional<Part> foundPart = getParts().stream()
+                .filter(p -> ps.type() == null || p.getType() == ps.type())
+                .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
+                .filter(p -> p.getId() == ps.id)
+                .findFirst();
+
+        if (foundPart.isPresent()) {
+            return foundPart.get();
+        } else {
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this card.");
+        }
+    }
+
+    /**
+     * Returns the part (button or field) identified by the given specifier.
+     *
+     * @param ps The specification of the part to find.
+     * @return The specified part.
+     * @throws PartException Thrown if no part can be found matching the specifier.
+     */
+    default Part findPartByName(PartNameSpecifier ps) throws PartException {
+        Optional<Part> foundPart = getParts().stream()
+                .filter(p -> ps.type() == null || p.getType() == ps.type())
+                .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
+                .filter(p -> p.getName().equalsIgnoreCase(ps.value()))
+                .findFirst();
+
+        if (foundPart.isPresent()) {
+            return foundPart.get();
+        } else {
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this card.");
+        }
+    }
+
+    /**
+     * Returns the part (button or field) identified by the given specifier.
+     *
+     * @param ps The specification of the part to find.
+     * @return The specified part.
+     * @throws PartException Thrown if no part can be found matching the specifier.
+     */
+    default Part findPartByNumber(PartNumberSpecifier ps) throws PartException {
+        List<Part> foundParts = getPartsInZOrder().stream()
+                .filter(p -> ps.type() == null || p.getType() == ps.type())
+                .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
+                .collect(Collectors.toList());
+
+        int partIndex = ps.number - 1;
+
+        if (partIndex >= foundParts.size() || partIndex < 0) {
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this card.");
+        } else {
+            return foundParts.get(partIndex);
+        }
     }
 
     /**

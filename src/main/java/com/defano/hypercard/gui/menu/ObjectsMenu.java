@@ -9,13 +9,20 @@
 package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.context.ToolMode;
+import com.defano.hypercard.gui.window.BackgroundPropertyEditor;
+import com.defano.hypercard.gui.window.ButtonPropertyEditor;
+import com.defano.hypercard.gui.window.CardPropertyEditor;
+import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.FieldPart;
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.HyperCard;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class ObjectsMenu extends HyperCardMenu {
@@ -43,12 +50,20 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Card Info...")
-                .disabled()
+                .withAction(e -> WindowBuilder.make(new CardPropertyEditor())
+                        .withTitle("Card Properties")
+                        .withModel(HyperCard.getInstance().getCard())
+                        .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                        .build())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Background Info...")
-                .disabled()
+                .withAction(e -> WindowBuilder.make(new BackgroundPropertyEditor())
+                        .withTitle("Background Properties")
+                        .withModel(HyperCard.getInstance().getCard())
+                        .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                        .build())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

@@ -22,6 +22,8 @@ import java.util.Collection;
  */
 public class BackgroundModel {
 
+    private String name = "";
+    private boolean cantDelete = false;
     private byte[] backgroundImage;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
@@ -76,4 +78,19 @@ public class BackgroundModel {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isCantDelete() {
+        return cantDelete;
+    }
+
+    public void setCantDelete(boolean cantDelete) {
+        this.cantDelete = cantDelete;
+    }
 }

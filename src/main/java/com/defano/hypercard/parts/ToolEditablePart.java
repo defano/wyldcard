@@ -226,6 +226,10 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
             } else {
                 move();
             }
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonView) {
+            PartToolContext.getInstance().setSelectedPart(this);
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldView) {
+            PartToolContext.getInstance().setSelectedPart(this);
         }
     }
 

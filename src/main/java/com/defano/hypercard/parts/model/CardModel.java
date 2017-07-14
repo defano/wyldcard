@@ -28,6 +28,9 @@ import java.util.List;
 public class CardModel {
 
     private int cardId = 0;
+    private boolean marked = false;
+    private boolean cantDelete = false;
+    private String cardName = "";
     private int backgroundId = 0;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
@@ -136,6 +139,34 @@ public class CardModel {
         }
     }
 
+    public String getCardName() {
+        return cardName;
+    }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+
+    public boolean isMarked() {
+        return marked;
+    }
+
+    public void setMarked(boolean marked) {
+        this.marked = marked;
+    }
+
+    public boolean isCantDelete() {
+        return cantDelete;
+    }
+
+    public void setCantDelete(boolean cantDelete) {
+        this.cantDelete = cantDelete;
+    }
+
+    public int getCardId() {
+        return cardId;
+    }
+
     /**
      * Create's a deep copy of this card.
      * @return A copy of this card.
@@ -143,4 +174,6 @@ public class CardModel {
     public CardModel copyOf() {
         return Serializer.copy(this);
     }
+
+
 }

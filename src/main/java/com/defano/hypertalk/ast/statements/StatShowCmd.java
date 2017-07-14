@@ -16,6 +16,6 @@ public class StatShowCmd extends Statement {
 
     @Override
     public void execute() throws HtException {
-        HyperCard.getInstance().getCard().getPart(part.evaluateAsSpecifier()).getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(true));
+        HyperCard.getInstance().getCard().findPart(part.evaluateAsSpecifier()).getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(true));
     }
 }

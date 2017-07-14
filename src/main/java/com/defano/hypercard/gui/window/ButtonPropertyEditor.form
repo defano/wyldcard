@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.hypercard.gui.window.ButtonPropertyEditor">
-  <grid id="27dc6" binding="buttonEditor" layout-manager="GridLayoutManager" row-count="3" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="buttonEditor" layout-manager="GridLayoutManager" row-count="4" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="693" height="382"/>
+      <xy x="20" y="20" width="693" height="364"/>
     </constraints>
     <properties>
       <maximumSize width="587" height="257"/>
     </properties>
     <border type="none"/>
     <children>
-      <grid id="5c34" binding="coordinatePanel" layout-manager="GridLayoutManager" row-count="3" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="5c34" binding="coordinatePanel" layout-manager="GridLayoutManager" row-count="3" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="5" left="5" bottom="5" right="5"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -32,7 +32,7 @@
           </component>
           <component id="e2e68" class="javax.swing.JTextField" binding="buttonName">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="0" column="1" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -72,23 +72,23 @@
           </component>
           <hspacer id="70eae">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
           </hspacer>
-          <component id="f59f4" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Button ID:"/>
-            </properties>
-          </component>
           <component id="d33b6" class="javax.swing.JLabel" binding="idLabelValue">
             <constraints>
-              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Label"/>
+            </properties>
+          </component>
+          <component id="f59f4" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Button ID:"/>
             </properties>
           </component>
         </children>
@@ -179,7 +179,7 @@
       <grid id="db033" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -270,6 +270,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Auto Hilite"/>
+              <toolTipText value="When selected the system will automatically hilite the button when the mouse is pressed over it. Deselect to control this behavior in script."/>
             </properties>
           </component>
           <component id="c3985" class="javax.swing.JCheckBox" binding="isVisible">
@@ -279,6 +280,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Visible"/>
+              <toolTipText value="When selected the button will be visible on the card (note that buttons are always visible when the button tool is selected)."/>
             </properties>
           </component>
           <component id="57746" class="javax.swing.JCheckBox" binding="isShowTitle">
@@ -288,6 +290,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Show Name"/>
+              <toolTipText value="When selected the button's name will be drawn on the button."/>
             </properties>
           </component>
           <hspacer id="ec6d2">
@@ -302,37 +305,46 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Enabled"/>
+              <toolTipText value="When selected, button will appear enabled (not &quot;greyed out&quot;). Note that buttons continue to receive HyperTalk messages even when they're disabled."/>
             </properties>
           </component>
         </children>
       </grid>
       <hspacer id="b7829">
         <constraints>
-          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <hspacer id="fd7bb">
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <component id="bd33d" class="javax.swing.JButton" binding="editScriptButton" default-binding="true">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="-1" height="32"/>
-          </grid>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <margin top="0" left="0" bottom="0" right="0"/>
           <text value="Edit Script..."/>
+          <toolTipText value=""/>
+        </properties>
+      </component>
+      <component id="f1895" class="javax.swing.JButton" binding="textStyle">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <margin top="0" left="0" bottom="0" right="0"/>
+          <text value="Text Style..."/>
         </properties>
       </component>
       <component id="7210c" class="javax.swing.JButton" binding="contents">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <minimum-size width="-1" height="32"/>
-          </grid>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <margin top="0" left="0" bottom="0" right="0"/>
           <text value="Contents..."/>
         </properties>
       </component>

@@ -6,14 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * CardPart.java
- *
- * @author matt.defano@motorola.com
- * <p>
- * Implements a card part by extending the Swing panel object.
- */
-
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.Serializer;
@@ -26,10 +18,7 @@ import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.runtime.WindowManager;
-import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartNumberSpecifier;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -64,14 +53,14 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
     }
 
     /**
-     * Creates a new card in a given stack at a given location from a card data model.
+     * Instantiates the CardPart at a specified location in a specified stack.
      *
-     * @param cardIndex The location in the stack where the card should be added.
-     * @param stack The stack in which the card should be added.
-     * @return The newly created card.
+     * @param cardIndex The location in the stack whose card should be returned.
+     * @param stack The stack data model containing the card to return
+     * @return The CardPart.
      * @throws HtException Thrown if an error occurs creating the card.
      */
-    public static CardPart fromModel(int cardIndex, StackModel stack) throws HtException {
+    public static CardPart fromLocationInStack(int cardIndex, StackModel stack) throws HtException {
         CardPart card = new CardPart();
         card.cardModel = stack.getCardModel(cardIndex);
         card.stackModel = stack;
@@ -183,30 +172,6 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
             PartToolContext.getInstance().setSelectedPart(newField);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! Shouldn't be possible.", ex);
-        }
-    }
-
-    /**
-     * Returns the part (button or field) represented by a given a HyperTalk part specifier.
-     * @param ps The part specifier representing the part to fetch
-     * @return The specified part
-     * @throws PartException Thrown if no such part exists on this card.
-     */
-    public Part getPart(PartSpecifier ps) throws PartException {
-        if (ps.type() == PartType.FIELD) {
-            return fields.getPart(ps);
-        } else if (ps.type() == PartType.BUTTON) {
-            return buttons.getPart(ps);
-        } else if (ps.type() == null) {
-            if (fields.partExists(ps)) {
-                return fields.getPart(ps);
-            } else if (buttons.partExists(ps)) {
-                return buttons.getPart(ps);
-            } else {
-                throw new PartException("No such part.");
-            }
-        } else {
-            throw new RuntimeException("Bug! Unhandled part type.");
         }
     }
 

@@ -71,6 +71,10 @@ public class StackModel extends PropertiesModel {
         return this.name;
     }
 
+    public List<CardModel> getCardModels() {
+        return cardModels;
+    }
+
     public CardModel getCardModel(int index) {
         return cardModels.get(index);
     }
