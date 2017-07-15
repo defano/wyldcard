@@ -14,7 +14,7 @@ import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.buttons.ButtonView;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypertalk.ast.common.Value;
 
@@ -39,7 +39,7 @@ public class MenuButton extends JComboBox<String> implements ButtonView {
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> setEnabled(ToolMode.BUTTON != arg));
 
         setModel(menuItems);
-        addItemListener(e -> toolEditablePart.getPartModel().defineProperty(AbstractPartModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
+        addItemListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
     }
 
     @Override

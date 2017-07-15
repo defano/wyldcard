@@ -112,7 +112,7 @@ public class GlobalContext {
     public void sendMessage (PartSpecifier ps, String message) 
     throws HtSemanticException, PartException
     {
-        getCard().getPart(ps).sendMessage(message);
+        getCard().findPart(ps).sendMessage(message);
     }
     
     public void put (Value mutator, Preposition p, ContainerMsgBox d) throws HtSemanticException {
@@ -167,17 +167,17 @@ public class GlobalContext {
     }
 
     public Part get (PartSpecifier ps) throws PartException {
-        return getCard().getPart(ps);
+        return getCard().findPart(ps);
     }
     
     public Value get (String property, PartSpecifier ps) throws NoSuchPropertyException, PartException, HtSemanticException {
-        return getCard().getPart(ps).getProperty(property);
+        return getCard().findPart(ps).getProperty(property);
     }
 
     public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value)
     throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSemanticException
     {
-        Value mutable = getCard().getPart(ps).getProperty(property);
+        Value mutable = getCard().findPart(ps).getProperty(property);
 
         if (chunk != null) {
             mutable = Value.setChunk(mutable, preposition, chunk, value);
@@ -185,7 +185,7 @@ public class GlobalContext {
             mutable = Value.setValue(mutable, preposition, value);
         }
 
-        getCard().getPart(ps).setProperty(property, mutable);
+        getCard().findPart(ps).setProperty(property, mutable);
     }
     
     public void setIt (Object value) {

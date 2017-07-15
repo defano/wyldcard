@@ -48,7 +48,7 @@ public class StatSetCmd extends Statement {
         } catch (Exception e) {
 
             if (propertySpec.partExp != null) {
-                throw new HtSemanticException("Cannot set the '" + propertySpec.property + "' of this part.");
+                throw new HtSemanticException("Cannot set the '" + propertySpec.property + "' of this part.", e);
             } else {
                 // When all else fails, set the value of a container
                 GlobalContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));

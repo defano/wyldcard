@@ -19,6 +19,9 @@ public class HyperCardJTextPane extends JTextPane {
 
     public HyperCardJTextPane(StyledDocument doc) {
         super(doc);
+
+        // Bit of a cheat; prevents cursor flickering when in the background layer but never displays text cursor.
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     @Override
@@ -55,8 +58,8 @@ public class HyperCardJTextPane extends JTextPane {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
 
         if (showLines) {
             int lastLineHeight = getHeightForAttributes(g, getCharacterAttributes());

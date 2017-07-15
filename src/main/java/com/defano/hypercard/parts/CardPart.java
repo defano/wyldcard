@@ -6,14 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * CardPart.java
- *
- * @author matt.defano@motorola.com
- * <p>
- * Implements a card part by extending the Swing panel object.
- */
-
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.Serializer;
@@ -26,9 +18,7 @@ import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.runtime.WindowManager;
-import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -44,20 +34,12 @@ import com.defano.jmonet.tools.base.PaintTool;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * A view object representing a card in the stack; extends the Swing JLayeredPane component.
  */
-public class CardPart extends JLayeredPane implements CanvasCommitObserver, CanvasTransferDelegate {
-
-    private final static int BACKGROUND_CANVAS_LAYER = 0;
-    private final static int BACKGROUND_PARTS_LAYER = 1;
-    private final static int FOREGROUND_CANVAS_LAYER = 2;
-    private final static int FOREGROUND_PARTS_LAYER = 3;
+public class CardPart extends CardLayeredPane implements PartContainer, CanvasCommitObserver, CanvasTransferDelegate {
 
     private CardModel cardModel;
     private StackModel stackModel;
@@ -65,70 +47,54 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
     private PartsTable<FieldPart> fields = new PartsTable<>();
     private PartsTable<ButtonPart> buttons = new PartsTable<>();
 
-    private UndoablePaintCanvas foregroundCanvas;
-    private UndoablePaintCanvas backgroundCanvas;
-
     private CardPart() {
         super();
         this.setLayout(null);
     }
 
     /**
-     * Creates a new card in a given stack at a given location from a card data model.
+     * Instantiates the CardPart at a specified location in a specified stack.
      *
-     * @param cardIndex The location in the stack where the card should be added.
-     * @param stack The stack in which the card should be added.
-     * @return The newly created card.
+     * @param cardIndex The location in the stack whose card should be returned.
+     * @param stack The stack data model containing the card to return
+     * @return The CardPart.
      * @throws HtException Thrown if an error occurs creating the card.
      */
-    public static CardPart fromModel(int cardIndex, StackModel stack) throws HtException {
+    public static CardPart fromLocationInStack(int cardIndex, StackModel stack) throws HtException {
         CardPart card = new CardPart();
         card.cardModel = stack.getCardModel(cardIndex);
         card.stackModel = stack;
 
-        // Add parts to this card
-        for (AbstractPartModel thisPart : card.cardModel.getPartModels()) {
-            switch (thisPart.getType()) {
-                case BUTTON:
-                    ButtonPart button = ButtonPart.fromModel(card, (ButtonModel) thisPart);
-                    card.buttons.addPart(button);
-                    card.addSwingComponent(button.getComponent(), button.getRect());
-                    break;
-                case FIELD:
-                    FieldPart field = FieldPart.fromModel(card, (FieldModel) thisPart);
-                    card.fields.addPart(field);
-                    card.addSwingComponent(field.getComponent(), field.getRect());
-                default:
-            }
+        // Add card parts to this card
+        for (PartModel thisPart : card.cardModel.getPartModels()) {
+            card.addPartFromModel(thisPart, CardLayer.CARD_PARTS);
+        }
+
+        // Add background parts to this card
+        for (PartModel thisPart : card.getCardBackground().getPartModels()) {
+            card.addPartFromModel(thisPart, CardLayer.BACKGROUND_PARTS);
         }
 
         // Setup part cut, copy and paste
         card.setTransferHandler(new CardPartTransferHandler(card));
 
-        // Setup the paint canvases
-        card.foregroundCanvas = new UndoablePaintCanvas(card.cardModel.getCardImage());
-        card.foregroundCanvas.addCanvasCommitObserver(card);
-        card.backgroundCanvas = new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage());
-        card.backgroundCanvas.addCanvasCommitObserver(card);
+        // Setup the foreground paint canvas
+        card.setForegroundCanvas(new UndoablePaintCanvas(card.cardModel.getCardImage()));
+        card.getForegroundCanvas().addCanvasCommitObserver(card);
+        card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
+        card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
+        card.getForegroundCanvas().getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((Double) arg) == 1.0));
 
-        card.foregroundCanvas.setTransferHandler(new CanvasTransferHandler(card.foregroundCanvas, card));
-        card.backgroundCanvas.setTransferHandler(new CanvasTransferHandler(card.backgroundCanvas, card));
-
-        card.foregroundCanvas.setSize(stack.getWidth(), stack.getHeight());
-        card.backgroundCanvas.setSize(stack.getWidth(), stack.getHeight());
-
-        card.setLayer(card.foregroundCanvas, FOREGROUND_CANVAS_LAYER);
-        card.add(card.foregroundCanvas);
-
-        card.setLayer(card.backgroundCanvas, BACKGROUND_CANVAS_LAYER);
-        card.add(card.backgroundCanvas);
+        // Setup the background paint canvas
+        card.setBackgroundCanvas(new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage()));
+        card.getBackgroundCanvas().addCanvasCommitObserver(card);
+        card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
+        card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
+        card.getBackgroundCanvas().getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((Double) arg) == 1.0));
 
         // Resize Swing component
         card.setMaximumSize(stack.getSize());
         card.setSize(stack.getWidth(), stack.getHeight());
-
-        card.foregroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((Double) arg) == 1.0));
-        card.backgroundCanvas.getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((Double) arg) == 1.0));
 
         // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
         for (ButtonPart thisButton : card.buttons.getParts()) {
@@ -142,6 +108,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
         // Listen for image files that are dropped onto the card
         new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
 
+        // Hide the foreground layer whenever the background is being edited
         ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
             card.setForegroundVisible(!(boolean) isEditingBackground);
         });
@@ -150,105 +117,22 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
     }
 
     /**
-     * Imports an existing part (button or field) into this card. Note that this differs from {@link #addField(FieldPart)}
-     * or {@link #addButton(ButtonPart)} in that a new ID for the part is generated before it is added to the card. This
+     * Imports an existing part (button or field) into this card. Note that this differs from {@link #addField(FieldPart, CardLayer)}
+     * or {@link #addButton(ButtonPart, CardLayer)} in that a new ID for the part is generated before it is added to the card. This
      * method is typically used to "paste" a copied part from another card onto this card.
      *
      * @param part The part to be imported.
      * @return The newly imported part (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
      */
-    public Part importPart(Part part) throws HtException {
-
+    public Part importExistingPart(Part part, CardLayer layer) throws HtException {
         if (part instanceof ButtonPart) {
-            return importButton((ButtonPart) part);
+            return importButton((ButtonPart) part, layer);
         } else if (part instanceof FieldPart) {
-            return importField((FieldPart) part);
+            return importField((FieldPart) part, layer);
         } else {
             throw new IllegalArgumentException("Bug! Unimplemented import of part type: " + part.getClass());
         }
-    }
-
-    /**
-     * Imports an existing button into this card. Note that this differs from {@link #addButton(ButtonPart)} in that a
-     * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
-     * copied button from another card onto this card.
-     *
-     * @param part The button to be imported.
-     * @return The newly imported button (identical to the given part, but with a new ID)
-     * @throws HtException Thrown if an error occurs importing the part.
-     */
-    public ButtonPart importButton(ButtonPart part) throws HtException {
-        ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(AbstractPartModel.PROP_ID, new Value(buttons.getNextId()), true);
-
-        ButtonPart newButton = ButtonPart.fromModel(this, model);
-        addButton(newButton);
-        return newButton;
-    }
-
-    /**
-     * Imports an existing field into this card. Note that this differs from {@link #addField(FieldPart)} in that a
-     * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
-     * copied field from another card onto this card.
-     *
-     * @param part The field to be imported.
-     * @return The newly imported field (identical to the given part, but with a new ID)
-     * @throws HtException Thrown if an error occurs importing the part.
-     */
-    public FieldPart importField(FieldPart part) throws HtException {
-        FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(AbstractPartModel.PROP_ID, new Value(fields.getNextId()), true);
-
-        FieldPart newField = FieldPart.fromModel(this, model);
-        addField(newField);
-        return newField;
-    }
-
-    /**
-     * Adds a field to this card. Assumes that the field has a unique ID.
-     * @param field The field to add to this card.
-     * @throws PartException Thrown if an error occurs adding the field.
-     */
-    public void addField(FieldPart field) throws PartException {
-        cardModel.addPart(field);
-        fields.addPart(field);
-        addSwingComponent(field.getComponent(), field.getRect());
-        field.partOpened();
-    }
-
-    /**
-     * Removes a field from this card. Has no effect if the field does not exist on the card.
-     * @param field The field to be removed.
-     */
-    public void removeField(FieldPart field) {
-        cardModel.removePart(field);
-        fields.removePart(field);
-        removeSwingComponent(field.getComponent());
-        field.partClosed();
-    }
-
-    /**
-     * Adds a button to this card. Assumes the button has a unique ID.
-     * @param button The button to be added.
-     * @throws PartException Thrown if an error occurs adding this button to the card.
-     */
-    public void addButton(ButtonPart button) throws PartException {
-        cardModel.addPart(button);
-        buttons.addPart(button);
-        addSwingComponent(button.getComponent(), button.getRect());
-        button.partOpened();
-    }
-
-    /**
-     * Removes a button from this card. Has no effect if the button does not exist on the card.
-     * @param button The button to be removed.
-     */
-    public void removeButton(ButtonPart button) {
-        cardModel.removePart(button);
-        buttons.removePart(button);
-        removeSwingComponent(button.getComponent());
-        button.partClosed();
     }
 
     /**
@@ -270,7 +154,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
     public void newButton() {
         try {
             ButtonPart newButton = ButtonPart.newButton(this);
-            addButton(newButton);
+            addButton(newButton, Part.getActivePartLayer());
             PartToolContext.getInstance().setSelectedPart(newButton);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! Shouldn't be possible.", ex);
@@ -284,7 +168,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
     public void newField() {
         try {
             FieldPart newField = FieldPart.newField(this);
-            addField(newField);
+            addField(newField, Part.getActivePartLayer());
             PartToolContext.getInstance().setSelectedPart(newField);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! Shouldn't be possible.", ex);
@@ -292,52 +176,44 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
     }
 
     /**
-     * Returns the part (button or field) represented by a given a HyperTalk part specifier.
-     * @param ps The part specifier representing the part to fetch
-     * @return The specified part
-     * @throws PartException Thrown if no such part exists on this card.
-     */
-    public Part getPart(PartSpecifier ps) throws PartException {
-        if (ps.type() == PartType.FIELD)
-            return fields.getPart(ps);
-        else if (ps.type() == PartType.BUTTON)
-            return buttons.getPart(ps);
-        else
-            throw new RuntimeException("Bug! Unhandled part type.");
-    }
-
-    /**
-     * Gets an unordered collection of buttons that exist on this card.
+     * Gets an unordered collection of buttons that exist on this card in the active layer.
      * @return The buttons on this card.
      */
+    @Override
     public Collection<ButtonPart> getButtons() {
         return buttons.getParts();
     }
 
     /**
-     * Gets an unordered collection of fields that exist on this card.
+     * Gets an unordered collection of fields that exist on this card in the active layer.
      * @return The fields on this card.
      */
+    @Override
     public Collection<FieldPart> getFields() {
         return fields.getParts();
     }
 
     /**
-     * Gets a list of parts (buttons and field) that appear on this card, listed in their z-order (that is, the order
-     * in which one is drawn atop another).
-     * @return The z-ordered list of parts on this card.
+     * Adds a part to a specfied layer on this card based on its model.
+     * @param thisPart The data model of the part to be added.
+     * @param layer The layer of this card on which the part should be added.
+     * @throws HtException Thrown if an error occurs adding the part.
      */
-    public List<Part> getPartsInZOrder() {
-        ArrayList<Part> joined = new ArrayList<>();
-        joined.addAll(getButtons());
-        joined.addAll(getFields());
-
-        Comparator<Part> zOrderComparator = (o1, o2) -> new Integer(o1.getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue())
-                .compareTo(o2.getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue());
-
-        joined.sort(zOrderComparator);
-
-        return joined;
+    private void addPartFromModel(PartModel thisPart, CardLayer layer) throws HtException {
+        switch (thisPart.getType()) {
+            case BUTTON:
+                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
+                buttons.addPart(button);
+                addSwingComponent(button.getComponent(), button.getRect(), layer);
+                break;
+            case FIELD:
+                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
+                fields.addPart(field);
+                addSwingComponent(field.getComponent(), field.getRect(), layer);
+                break;
+            default:
+                throw new IllegalStateException("Bug! Unimplemented part model: " + thisPart);
+        }
     }
 
     /**
@@ -354,28 +230,16 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
      * @return The active paint canvas for this card.
      */
     public UndoablePaintCanvas getCanvas() {
-        return ToolsContext.getInstance().isEditingBackground() ? backgroundCanvas : foregroundCanvas;
-    }
-
-    /**
-     * Determines if the foreground is presently visible. The foreground may be hidden when editing the background
-     * or when certain scale operations are active.
-     * @return True if the foreground is visible; false otherwise.
-     */
-    public boolean isForegroundVisible() {
-        return foregroundCanvas.isVisible();
+        return ToolsContext.getInstance().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
     }
 
     /**
      * Hides or shows the card foreground.
      * @param isVisible Shows the foreground when true; hides it otherwise.
      */
-    private void setForegroundVisible(boolean isVisible) {
-        foregroundCanvas.setVisible(isVisible);
-
-        for (Component thisComponent : getComponentsInLayer(FOREGROUND_PARTS_LAYER)) {
-            thisComponent.setVisible(isVisible);
-        }
+    @Override
+    public void setForegroundVisible(boolean isVisible) {
+        super.setForegroundVisible(isVisible);
 
         // Notify the window manager than background editing changed
         WindowManager.getStackWindow().invalidateWindowTitle();
@@ -402,7 +266,7 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
      * @param isVisible True to show the background; false to hide it.
      */
     private void setBackgroundVisible(boolean isVisible) {
-        backgroundCanvas.setVisible(isVisible);
+        getBackgroundCanvas().setVisible(isVisible);
     }
 
     /**
@@ -423,50 +287,9 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
      * @param newButtonComponent The new Swing component to be used.
      */
     public void replaceSwingComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
+        CardLayer partLayer = getCardLayer(oldButtonComponent);
         removeSwingComponent(oldButtonComponent);
-        addSwingComponent(newButtonComponent, forPart.getRect());
-    }
-
-    /**
-     * Removes a Swing component from this card's JLayeredPane.
-     * @param component The component to remove.
-     */
-    private void removeSwingComponent(Component component) {
-        remove(component);
-        revalidate();
-        repaint();
-    }
-
-    /**
-     * Adds a Swing component to this card's JLayeredPane.
-     * @param component The component to add.
-     * @param bounds The component's desired location and size.
-     */
-    private void addSwingComponent(Component component, Rectangle bounds) {
-        component.setBounds(bounds);
-        setLayer(component, FOREGROUND_PARTS_LAYER);
-        add(component);
-        moveToFront(component);
-        revalidate();
-        repaint();
-    }
-
-    /**
-     * The next available ID for a field on this card.
-     * TODO: IDs should be global across the stack; not relative to the card.
-     * @return The next available ID.
-     */
-    public int nextFieldId() {
-        return fields.getNextId();
-    }
-
-    /**
-     * The next available ID for a button on this card.
-     * TODO: IDs should be global across the stack; not relative to the card.
-     * @return The next available ID.
-     */
-    public int nextButtonId() {
-        return buttons.getNextId();
+        addSwingComponent(newButtonComponent, forPart.getRect(), partLayer);
     }
 
     /**
@@ -516,4 +339,119 @@ public class CardPart extends JLayeredPane implements CanvasCommitObserver, Canv
         SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
+
+    /**
+     * Imports an existing button into this card. Note that this differs from {@link #addButton(ButtonPart, CardLayer)} in that a
+     * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
+     * copied button from another card onto this card.
+     *
+     * @param part The button to be imported.
+     * @return The newly imported button (identical to the given part, but with a new ID)
+     * @throws HtException Thrown if an error occurs importing the part.
+     */
+    private ButtonPart importButton(ButtonPart part, CardLayer layer) throws HtException {
+        ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
+        model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextButtonId()), true);
+
+        ButtonPart newButton = ButtonPart.fromModel(this, model);
+        addButton(newButton, layer);
+        return newButton;
+    }
+
+    /**
+     * Imports an existing field into this card. Note that this differs from {@link #addField(FieldPart, CardLayer)} in that a
+     * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
+     * copied field from another card onto this card.
+     *
+     * @param part The field to be imported.
+     * @return The newly imported field (identical to the given part, but with a new ID)
+     * @throws HtException Thrown if an error occurs importing the part.
+     */
+    private FieldPart importField(FieldPart part, CardLayer layer) throws HtException {
+        FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
+        model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextFieldId()), true);
+
+        FieldPart newField = FieldPart.fromModel(this, model);
+        addField(newField, layer);
+        return newField;
+    }
+
+    /**
+     * Adds a field to this card. Assumes that the field has a unique ID.
+     * @param field The field to add to this card.
+     * @throws PartException Thrown if an error occurs adding the field.
+     */
+    private void addField(FieldPart field, CardLayer layer) throws PartException {
+        if (layer == CardLayer.CARD_PARTS) {
+            cardModel.addPart(field);
+        } else if (layer == CardLayer.BACKGROUND_PARTS) {
+            getCardBackground().addFieldModel((FieldModel) field.getPartModel());
+        }
+
+        fields.addPart(field);
+        addSwingComponent(field.getComponent(), field.getRect(), layer);
+        field.partOpened();
+    }
+
+    /**
+     * Removes a field from this card. Has no effect if the field does not exist on the card.
+     * @param field The field to be removed.
+     */
+    private void removeField(FieldPart field) {
+        cardModel.removePart(field);
+        fields.removePart(field);
+        removeSwingComponent(field.getComponent());
+        field.partClosed();
+    }
+
+    /**
+     * Adds a button to this card. Assumes the button has a unique ID.
+     * @param button The button to be added.
+     * @throws PartException Thrown if an error occurs adding this button to the card.
+     */
+    private void addButton(ButtonPart button, CardLayer layer) throws PartException {
+        if (layer == CardLayer.CARD_PARTS) {
+            cardModel.addPart(button);
+        } else if (layer == CardLayer.BACKGROUND_PARTS) {
+            getCardBackground().addButtonModel((ButtonModel) button.getPartModel());
+        }
+
+        buttons.addPart(button);
+        addSwingComponent(button.getComponent(), button.getRect(), layer);
+        button.partOpened();
+    }
+
+    /**
+     * Removes a button from this card. Has no effect if the button does not exist on the card.
+     * @param button The button to be removed.
+     */
+    private void removeButton(ButtonPart button) {
+        cardModel.removePart(button);
+        buttons.removePart(button);
+        removeSwingComponent(button.getComponent());
+        button.partClosed();
+    }
+
+    /**
+     * Removes a Swing component from this card's JLayeredPane.
+     * @param component The component to remove.
+     */
+    private void removeSwingComponent(Component component) {
+        remove(component);
+        revalidate(); repaint();
+    }
+
+    /**
+     * Adds a Swing component to this card's JLayeredPane.
+     * @param component The component to add.
+     * @param bounds The component's desired location and size.
+     */
+    private void addSwingComponent(Component component, Rectangle bounds, CardLayer layer) {
+        component.setBounds(bounds);
+        addToCardLayer(component, layer);
+        moveToFront(component);
+
+        revalidate(); repaint();
+    }
+
 }

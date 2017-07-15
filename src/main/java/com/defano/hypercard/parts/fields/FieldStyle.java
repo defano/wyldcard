@@ -10,7 +10,9 @@ package com.defano.hypercard.parts.fields;
 
 public enum FieldStyle {
     TRANSPARENT("Transparent"),
-    OPAQUE("Opaque");
+    OPAQUE("Opaque"),
+    SHADOW("Shadow"),
+    RECTANGLE("Rectangle");
 
     private final String name;
 

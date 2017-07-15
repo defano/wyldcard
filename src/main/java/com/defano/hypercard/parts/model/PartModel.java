@@ -8,17 +8,21 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.fonts.FontUtils;
+import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.parts.CardLayer;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
  * Implements a table of model associated with a partSpecifier object. Provides methods for defining, getting and
  * setting model, as well as notifying listeners of changes.
  */
-public abstract class AbstractPartModel extends PropertiesModel {
+public abstract class PartModel extends PropertiesModel {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -38,10 +42,14 @@ public abstract class AbstractPartModel extends PropertiesModel {
     public static final String PROP_LOC = "loc";
     public static final String PROP_LOCATION = "location";
     public static final String PROP_SELECTEDTEXT = "selectedtext";
+    public static final String PROP_TEXTSIZE = "textsize";
+    public static final String PROP_TEXTFONT = "textfont";
+    public static final String PROP_TEXTSTYLE = "textstyle";
+    public static final String PROP_TEXTALIGN = "textalign";
 
-    private PartType type;
+    private final PartType type;
 
-    protected AbstractPartModel(PartType type) {
+    protected PartModel(PartType type) {
         this.type = type;
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
@@ -130,10 +138,24 @@ public abstract class AbstractPartModel extends PropertiesModel {
         defineProperty(PROP_VISIBLE, new Value(true), false);
         defineProperty(PROP_ZORDER, new Value(0), false);
         defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
+        defineProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
+        defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getFamily()), false);
+        defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
+        defineProperty(PROP_TEXTALIGN, new Value("center"), false);
     }
 
-    public PartType getType() {
-        return type;
+    public Font getFont() {
+        String family = getKnownProperty(PROP_TEXTFONT).stringValue();
+        int style = FontUtils.getStyleForValue(getKnownProperty(PROP_TEXTSTYLE));
+        int size = getKnownProperty(PROP_TEXTSIZE).integerValue();
+
+        return HyperCardFont.byNameStyleSize(family, style, size);
+    }
+
+    public void setFont(Font font) {
+        setKnownProperty(PROP_TEXTSIZE, new Value(font.getSize()));
+        setKnownProperty(PROP_TEXTFONT, new Value(font.getFamily()));
+        setKnownProperty(PROP_TEXTSTYLE, FontUtils.getValueForStyle(font.getStyle()));
     }
 
     public Rectangle getRect() {
@@ -148,5 +170,9 @@ public abstract class AbstractPartModel extends PropertiesModel {
         } catch (Exception e) {
             throw new RuntimeException("Couldn't get geometry for part model.");
         }
+    }
+
+    public PartType getType() {
+        return type;
     }
 }

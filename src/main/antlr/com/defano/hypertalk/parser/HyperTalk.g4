@@ -219,13 +219,17 @@ propertySpec        : 'the'? ID                                     # propertySp
                     | 'the'? ID ('of' | 'in') part                  # propertySpecPart
                     ;
 
-part                : ('field'  | 'card field') factor              # fieldPart
-                    | ('field'  | 'card field') 'id' factor         # fieldIdPart
-                    | ('button' | 'card button') factor             # buttonPart
-                    | ('button' | 'card button') 'id' factor        # buttonIdPart
-                    | 'card' factor                                 # cardPart
-                    | 'card' 'id' factor                            # cardIdPart
-                    | 'me'                                          # mePart
+part                : ('background' | 'bkgnd')? 'field' factor        # bkgndFieldPart
+                    | ('background' | 'bkgnd')? 'field' 'id' factor   # bkgndFieldIdPart
+                    | ('background' | 'bkgnd')? 'button' factor       # bkgndButtonPart
+                    | ('background' | 'bkgnd')? 'button' 'id' factor  # bkgndButtonIdPart
+                    | ('card' | 'cd')? 'field' factor                 # cardFieldPart
+                    | ('card' | 'cd')? 'field' 'id' factor            # cardFieldIdPart
+                    | ('card' | 'cd')? 'button' factor                # cardButtonPart
+                    | ('card' | 'cd')? 'button' 'id' factor           # cardButtonIdPart
+                    | ('card' | 'cd') 'part' factor                   # cardPartNumberPart
+                    | ('background' | 'bkgnd') 'part' factor          # bkgndPartNumberPart
+                    | 'me'                                            # mePart
                     ;
 
 ordinal             : 'the'? ordinalValue                           # theOrdinalVal

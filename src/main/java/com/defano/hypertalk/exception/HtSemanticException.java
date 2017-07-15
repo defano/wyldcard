@@ -24,4 +24,8 @@ public class HtSemanticException extends HtException {
     public HtSemanticException(String message) {
         super(message);
     }
+
+    public HtSemanticException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

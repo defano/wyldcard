@@ -12,6 +12,8 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.fields.styles.OpaqueField;
+import com.defano.hypercard.parts.fields.styles.RectangleField;
+import com.defano.hypercard.parts.fields.styles.ShadowField;
 import com.defano.hypercard.parts.fields.styles.TransparentField;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
@@ -29,7 +31,7 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
 
     public abstract void resize(int fromQuadrant);
 
-    public abstract void invalidateSwingComponent(Component oldComponent, Component newComponent);
+    public abstract void replaceSwingComponent(Component oldComponent, Component newComponent);
 
     public AbstractFieldView(FieldStyle style) {
         fieldView = getComponentForStyle(style);
@@ -62,7 +64,7 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
         fieldView = getComponentForStyle(style);
 
         partClosed();
-        invalidateSwingComponent(oldComponent, (JComponent) fieldView);
+        replaceSwingComponent(oldComponent, (JComponent) fieldView);
         partOpened();
     }
 
@@ -72,6 +74,10 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
                 return new TransparentField(this);
             case OPAQUE:
                 return new OpaqueField(this);
+            case SHADOW:
+                return new ShadowField(this);
+            case RECTANGLE:
+                return new RectangleField(this);
 
             default:
                 throw new IllegalArgumentException("No such field style: " + style);
@@ -109,6 +115,8 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(fieldView);
         KeyboardManager.removeGlobalKeyListener(this);
+
+        fieldView.partClosed();
     }
 
     @Override

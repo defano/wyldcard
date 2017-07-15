@@ -17,6 +17,9 @@ public class StackModel extends PropertiesModel {
     private final static StackModel instance = new StackModel();
 
     private String name;
+    private int nextPartId = 0;
+    private int nextCardId = 0;
+    private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
     private Stack<Integer> backStack = new Stack<>();
     private int width = 640;
@@ -36,7 +39,7 @@ public class StackModel extends PropertiesModel {
 
     public static StackModel newStackModel(String name) {
         StackModel stack = new StackModel();
-        stack.cardModels.add(CardModel.emptyCardModel(stack.newBackgroundModel()));
+        stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel()));
         stack.name = name;
         return stack;
     }
@@ -47,15 +50,15 @@ public class StackModel extends PropertiesModel {
     }
 
     public int newCard(int backgroundId) {
-        return insertCard(CardModel.emptyCardModel(backgroundId));
+        return insertCard(CardModel.emptyCardModel(getNextCardId(), backgroundId));
     }
 
     public int newCardWithNewBackground() {
-        return insertCard(CardModel.emptyCardModel(newBackgroundModel()));
+        return insertCard(CardModel.emptyCardModel(getNextCardId(), newBackgroundModel()));
     }
 
     private int newBackgroundModel() {
-        int newBackgroundId = backgroundModels.size() + 1;
+        int newBackgroundId = getNextBackgroundId();
         backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground());
         return newBackgroundId;
     }
@@ -66,6 +69,14 @@ public class StackModel extends PropertiesModel {
 
     public String getStackName() {
         return this.name;
+    }
+
+    public void setStackName(String name) {
+        this.name = name;
+    }
+
+    public List<CardModel> getCardModels() {
+        return cardModels;
     }
 
     public CardModel getCardModel(int index) {
@@ -106,5 +117,25 @@ public class StackModel extends PropertiesModel {
 
     public Stack<Integer> getBackStack() {
         return backStack;
+    }
+
+    public int getNextButtonId() {
+        return nextPartId++;
+    }
+
+    public int getNextFieldId() {
+        return nextPartId++;
+    }
+
+    public int getNextCardId() {
+        return nextCardId++;
+    }
+
+    public int getNextBackgroundId() {
+        return nextBackgroundId++;
+    }
+
+    public int getBackgroundCount() {
+        return backgroundModels.size();
     }
 }

@@ -681,23 +681,53 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitFieldPart(HyperTalkParser.FieldPartContext ctx) {
-        return new ExpPartName(PartType.FIELD, (Expression) visit(ctx.factor()));
+    public Object visitBkgndFieldPart(HyperTalkParser.BkgndFieldPartContext ctx) {
+        return new ExpPartName(PartLayer.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
     }
 
     @Override
-    public Object visitFieldIdPart(HyperTalkParser.FieldIdPartContext ctx) {
-        return new ExpPartId(PartType.FIELD, (Expression) visit(ctx.factor()));
+    public Object visitBkgndFieldIdPart(HyperTalkParser.BkgndFieldIdPartContext ctx) {
+        return new ExpPartId(PartLayer.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
     }
 
     @Override
-    public Object visitButtonPart(HyperTalkParser.ButtonPartContext ctx) {
-        return new ExpPartName(PartType.BUTTON, (Expression) visit(ctx.factor()));
+    public Object visitBkgndButtonPart(HyperTalkParser.BkgndButtonPartContext ctx) {
+        return new ExpPartName(PartLayer.BACKGROUND, PartType.BUTTON, (Expression)visit(ctx.factor()));
     }
 
     @Override
-    public Object visitButtonIdPart(HyperTalkParser.ButtonIdPartContext ctx) {
-        return new ExpPartId(PartType.BUTTON, (Expression) visit(ctx.factor()));
+    public Object visitBkgndButtonIdPart(HyperTalkParser.BkgndButtonIdPartContext ctx) {
+        return new ExpPartId(PartLayer.BACKGROUND, PartType.BUTTON, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardFieldPart(HyperTalkParser.CardFieldPartContext ctx) {
+        return new ExpPartName(PartLayer.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardFieldIdPart(HyperTalkParser.CardFieldIdPartContext ctx) {
+        return new ExpPartId(PartLayer.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardButtonPart(HyperTalkParser.CardButtonPartContext ctx) {
+        return new ExpPartName(PartLayer.CARD, PartType.BUTTON, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardButtonIdPart(HyperTalkParser.CardButtonIdPartContext ctx) {
+        return new ExpPartId(PartLayer.CARD, PartType.BUTTON, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardPartNumberPart(HyperTalkParser.CardPartNumberPartContext ctx) {
+        return new ExpPartNumber(PartLayer.CARD, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndPartNumberPart(HyperTalkParser.BkgndPartNumberPartContext ctx) {
+        return new ExpPartNumber(PartLayer.BACKGROUND, (Expression)visit(ctx.factor()));
     }
 
     @Override

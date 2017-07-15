@@ -15,11 +15,11 @@
 
 package com.defano.hypertalk.ast.containers;
 
+import com.defano.hypertalk.ast.common.PartLayer;
 import com.defano.hypertalk.ast.common.PartType;
-
 
 public interface PartSpecifier {
     Object value();
+    PartLayer layer();
     PartType type();
-    String toString();
 }

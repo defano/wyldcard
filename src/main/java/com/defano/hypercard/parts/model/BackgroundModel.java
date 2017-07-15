@@ -13,18 +13,44 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link com.defano.hypercard.parts.CardPart} view object when rendered.
  */
 public class BackgroundModel {
-    private byte[] backgroundImage;
 
-    private BackgroundModel() {}
+    private String name = "";
+    private boolean cantDelete = false;
+    private byte[] backgroundImage;
+    private Collection<ButtonModel> buttonModels;
+    private Collection<FieldModel> fieldModels;
+
+    private BackgroundModel() {
+        buttonModels = new ArrayList<>();
+        fieldModels = new ArrayList<>();
+    }
 
     public static BackgroundModel emptyBackground() {
         return new BackgroundModel();
+    }
+
+    public Collection<PartModel> getPartModels() {
+        Collection<PartModel> models = new ArrayList<>();
+        models.addAll(buttonModels);
+        models.addAll(fieldModels);
+
+        return models;
+    }
+
+    public void addFieldModel(FieldModel model) {
+        this.fieldModels.add(model);
+    }
+
+    public void addButtonModel(ButtonModel model) {
+        this.buttonModels.add(model);
     }
 
     public void setBackgroundImage(BufferedImage image) {
@@ -52,4 +78,19 @@ public class BackgroundModel {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isCantDelete() {
+        return cantDelete;
+    }
+
+    public void setCantDelete(boolean cantDelete) {
+        this.cantDelete = cantDelete;
+    }
 }

@@ -18,7 +18,7 @@ import java.awt.*;
  * A data model representing a field part on a card. See {@link com.defano.hypercard.parts.FieldPart} for the associated
  * view object.
  */
-public class FieldModel extends AbstractPartModel {
+public class FieldModel extends PartModel {
 
     public static final String PROP_TEXT = "text";
     public static final String PROP_DONTWRAP = "dontwrap";
@@ -45,9 +45,10 @@ public class FieldModel extends AbstractPartModel {
         partModel.defineProperty(PROP_DONTWRAP, new Value(false), false);
         partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
         partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
-        partModel.defineProperty(PROP_SHOWLINES, new Value(false), false);
-        partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.OPAQUE.getName()), false);
+        partModel.defineProperty(PROP_SHOWLINES, new Value(true), false);
+        partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.RECTANGLE.getName()), false);
         partModel.defineProperty(PROP_TEXT, new Value(""), false);
+        partModel.defineProperty(PROP_TEXTALIGN, new Value("left"), false);
 
         return partModel;
     }

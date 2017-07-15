@@ -12,7 +12,7 @@ import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.parts.buttons.ButtonView;
 import com.defano.hypercard.parts.fields.FieldView;
-import com.defano.hypercard.parts.model.AbstractPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypertalk.ast.common.Tool;
 import com.defano.jmonet.tools.util.MarchingAnts;
@@ -150,26 +150,34 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
      * Invoke to indicate that the selected tool has been changed by the user.
      */
     default void onToolModeChanged() {
-        getComponent().setVisible(isVisibleOnCard() || isPartToolActive());
+        setVisibleOnCard(!isHidden());
     }
 
     /**
      * Determines if this part is presently visible on the card (as determined by its "visible" property).
      * @return True if visible; false otherwise.
      */
-    default boolean isVisibleOnCard() {
-        return getPartModel().getKnownProperty(AbstractPartModel.PROP_VISIBLE).booleanValue();
+    default boolean isHidden() {
+        return !getPartModel().getKnownProperty(PartModel.PROP_VISIBLE).booleanValue();
     }
 
     /**
-     * Sets whether this part should be visible on the card (mutates its "visible" property). Used to temporarily make
-     * an invisible part visible while it's being edited.
+     * Sets whether this part should be visible on the card (mutating its "visible" HyperTalk property), but this actual
+     * visibility of the Swing component may be overridden by tool context (i.e., hidden parts will be visible when
+     * the part tool is active; visible parts in the foreground may be hidden when editing the background).
      *
      * @param visibleOnCard True to make it visible; false otherwise
      */
     default void setVisibleOnCard(boolean visibleOnCard) {
-        getPartModel().setKnownProperty(AbstractPartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
-        getComponent().setVisible(visibleOnCard || isPartToolActive());
+        getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
+
+        // Force hide when part is in foreground and foreground is hidden
+        boolean forceHidden = getCardLayer() == CardLayer.CARD_PARTS && !getCard().isForegroundVisible();
+
+        // Force show when part tool is active and part is in the editing part layer
+        boolean forceVisible = isPartToolActive() && getCardLayer() == Part.getActivePartLayer();
+
+        getComponent().setVisible((visibleOnCard && !forceHidden) || forceVisible);
     }
 
     /**
@@ -201,7 +209,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
      * @return The relative front-to-back position of this part to others drawn on the card.
      */
     default int getZOrder() {
-        return getPartModel().getKnownProperty(AbstractPartModel.PROP_ZORDER).integerValue();
+        return getPartModel().getKnownProperty(PartModel.PROP_ZORDER).integerValue();
     }
 
     @Override
@@ -218,6 +226,10 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
             } else {
                 move();
             }
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonView) {
+            PartToolContext.getInstance().setSelectedPart(this);
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldView) {
+            PartToolContext.getInstance().setSelectedPart(this);
         }
     }
 
@@ -238,8 +250,8 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     default void keyPressed(KeyEvent e) {
 
         if (isSelectedForEditing()) {
-            int top = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
-            int left = getPartModel().getKnownProperty(AbstractPartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
+            int top = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
+            int left = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
@@ -247,19 +259,19 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
                     delete();
 
                 case KeyEvent.VK_LEFT:
-                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
+                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
                     break;
 
                 case KeyEvent.VK_RIGHT:
-                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(++left, top)));
+                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(++left, top)));
                     break;
 
                 case KeyEvent.VK_UP:
-                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(left, --top)));
+                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(left, --top)));
                     break;
 
                 case KeyEvent.VK_DOWN:
-                    getPartModel().setKnownProperty(AbstractPartModel.PROP_TOPLEFT, new Value(new Point(left, ++top)));
+                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(left, ++top)));
                     break;
             }
         }

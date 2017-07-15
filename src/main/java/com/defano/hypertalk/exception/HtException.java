@@ -17,4 +17,9 @@ public class HtException extends Exception {
     public HtException(String message) {
         super(message);
     }
+
+    public HtException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

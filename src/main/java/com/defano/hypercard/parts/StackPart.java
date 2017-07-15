@@ -292,7 +292,7 @@ public class StackPart {
 
     private CardPart getCard(int index) {
         try {
-            return CardPart.fromModel(index, stackModel);
+            return CardPart.fromLocationInStack(index, stackModel);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
