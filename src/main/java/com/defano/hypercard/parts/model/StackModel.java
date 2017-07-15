@@ -8,6 +8,9 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.HyperCard;
+import com.defano.hypertalk.ast.common.Value;
+
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -16,14 +19,15 @@ public class StackModel extends PropertiesModel {
 
     private final static StackModel instance = new StackModel();
 
-    private String name;
+    public final static String PROP_NAME = "name";
+    public final static String PROP_WIDTH = "width";
+    public final static String PROP_HEIGHT = "height";
+
     private int nextPartId = 0;
     private int nextCardId = 0;
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
     private Stack<Integer> backStack = new Stack<>();
-    private int width = 640;
-    private int height = 480;
     private final List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
 
@@ -35,12 +39,15 @@ public class StackModel extends PropertiesModel {
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.backStack = new Stack<>();
+
+        defineProperty(PROP_NAME, new Value("Untitled"), false);
+        defineProperty(PROP_WIDTH, new Value(640), false);
+        defineProperty(PROP_HEIGHT, new Value(480), false);
     }
 
     public static StackModel newStackModel(String name) {
         StackModel stack = new StackModel();
         stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel()));
-        stack.name = name;
         return stack;
     }
 
@@ -68,11 +75,11 @@ public class StackModel extends PropertiesModel {
     }
 
     public String getStackName() {
-        return this.name;
+        return getKnownProperty(PROP_NAME).stringValue();
     }
 
     public void setStackName(String name) {
-        this.name = name;
+        setKnownProperty(PROP_NAME, new Value(name));
     }
 
     public List<CardModel> getCardModels() {
@@ -104,11 +111,20 @@ public class StackModel extends PropertiesModel {
     }
 
     public int getWidth() {
-        return width;
+        return getKnownProperty(PROP_WIDTH).integerValue();
     }
 
     public int getHeight() {
-        return height;
+        return getKnownProperty(PROP_HEIGHT).integerValue();
+    }
+
+    public Dimension getDimension() {
+        return new Dimension(getWidth(), getHeight());
+    }
+
+    public void setDimension(Dimension dimension) {
+        setKnownProperty(PROP_WIDTH, new Value(dimension.width));
+        setKnownProperty(PROP_HEIGHT, new Value(dimension.height));
     }
 
     public BackgroundModel getBackground(int backgroundId) {

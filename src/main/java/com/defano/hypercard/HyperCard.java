@@ -30,7 +30,7 @@ public class HyperCard {
 
     private static HyperCard instance;
     private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
-    private StackPart stackPart = StackPart.getInstance();
+    private StackPart stackPart;
 
     public static void main(String argv[]) {
         // Display the frame's menu as the Mac OS menubar
@@ -51,6 +51,8 @@ public class HyperCard {
             // Nothing to do
         }
 
+        stackPart = StackPart.fromStackModel(StackModel.newStackModel("Untitled"));
+
         // Fire up the key and mouse listeners
         KeyboardManager.start();
         MouseManager.start();
@@ -59,7 +61,7 @@ public class HyperCard {
         // directly from the constructor. This behaves like @PostConstruct
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
-            openStack(StackModel.newStackModel("Untitled"));
+            stackPart.open(stackPart.getStackModel());
         });
     }
 

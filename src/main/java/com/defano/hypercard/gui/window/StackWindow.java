@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.window;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.StackPart;
@@ -31,7 +32,6 @@ public class StackWindow extends HyperCardWindow implements StackObserver {
 
         cardPanel.removeAll();
         cardPanel.add(card);
-        cardPanel.setPreferredSize(card.getSize());
         cardPanel.revalidate();
         cardPanel.repaint();
     }
@@ -85,6 +85,17 @@ public class StackWindow extends HyperCardWindow implements StackObserver {
     @Override
     public void onCardOpened(CardPart newCard) {
         displayCard(newCard);
+        invalidateWindowTitle();
+    }
+
+    @Override
+    public void onCardDimensionChanged(Dimension newDimension) {
+        getWindowPanel().setPreferredSize(newDimension);
+        getWindowFrame().pack();
+    }
+
+    @Override
+    public void onStackNameChanged(String newName) {
         invalidateWindowTitle();
     }
 

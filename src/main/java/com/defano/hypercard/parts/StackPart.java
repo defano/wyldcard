@@ -3,9 +3,11 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.parts.model.StackObserver;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
@@ -20,24 +22,21 @@ import java.util.List;
  * Note that while this class represents a view, it has no specific Swing component associated with it. Instead, it
  * represents a stack of cards; the current card is the Swing component which represents the stack's view.
  */
-public class StackPart {
-
-    private final static StackPart instance = new StackPart();
+public class StackPart implements PropertyChangeObserver {
 
     private StackModel stackModel;
-    private List<StackObserver> observers;
+    private List<StackObserver> observers = new ArrayList<>();
     private CardPart currentCard;
     private Provider<Integer> cardCountProvider = new Provider<>(0);
     private Provider<CardPart> cardClipboardProvider = new Provider<>();
 
-    private StackPart() {
-        this.observers = new ArrayList<>();
-        this.stackModel = StackModel.newStackModel("Untitled");
-        this.currentCard = getCard(0);
-    }
+    private StackPart() {}
 
-    public static StackPart getInstance() {
-        return instance;
+    public static StackPart fromStackModel(StackModel model) {
+        StackPart stackPart = new StackPart();
+        stackPart.stackModel = model;
+
+        return stackPart;
     }
 
     /**
@@ -62,8 +61,12 @@ public class StackPart {
         this.currentCard = getCard(model.getCurrentCardIndex());
         this.cardCountProvider.set(stackModel.getCardCount());
 
+        this.stackModel.addPropertyChangedObserver(this);
+
         goCard(model.getCurrentCardIndex());
         fireOnStackOpened();
+        fireOnCardDimensionChanged(model.getDimension());
+        ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
 
     /**
@@ -272,6 +275,24 @@ public class StackPart {
         observers.add(observer);
     }
 
+    @Override
+    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+        switch (property) {
+            case StackModel.PROP_NAME:
+                fireOnStackNameChanged(newValue.stringValue());
+                break;
+
+            case StackModel.PROP_HEIGHT:
+            case StackModel.PROP_WIDTH:
+                // Resize the window
+                fireOnCardDimensionChanged(getStackModel().getDimension());
+
+                // Re-load the card model into the size
+                activateCard(stackModel.getCurrentCardIndex());
+                break;
+        }
+    }
+
     private void fireOnStackOpened () {
         for (StackObserver observer : observers) {
             observer.onStackOpened(this);
@@ -287,6 +308,18 @@ public class StackPart {
     private void fireOnCardOpened (CardPart openedCard) {
         for (StackObserver observer : observers) {
             observer.onCardOpened(openedCard);
+        }
+    }
+
+    private void fireOnCardDimensionChanged(Dimension newDimension) {
+        for (StackObserver observer : observers) {
+            observer.onCardDimensionChanged(newDimension);
+        }
+    }
+
+    private void fireOnStackNameChanged(String newName) {
+        for (StackObserver observer : observers) {
+            observer.onStackNameChanged(newName);
         }
     }
 
@@ -341,4 +374,5 @@ public class StackPart {
             throw new RuntimeException("Failed to create card.", e);
         }
     }
+
 }

@@ -11,6 +11,8 @@ package com.defano.hypercard.parts.model;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.StackPart;
 
+import java.awt.*;
+
 /**
  * An observer of changes to the stack model.
  */
@@ -33,4 +35,12 @@ public interface StackObserver {
      * @param newCard The card has been opened.
      */
     void onCardOpened(CardPart newCard);
+
+    /**
+     * Fired to indicate the card size has changed and the stack should be resized accordingly.
+     * @param newDimension The new dimensions of the stack.
+     */
+    void onCardDimensionChanged(Dimension newDimension);
+
+    void onStackNameChanged(String newName);
 }

@@ -43,7 +43,7 @@ Lucky for you, an executable will be available for download soon.
 
 Glad to have you aboard! Have a look at [the build instructions](doc/BUILDING.md).
 
-#### I don't care about your dumb homework assignment. I want to run the real HyperCard?
+#### I don't care about your dumb homework assignment. I want to run the real HyperCard.
 
 Use the SheepShaver emulator to run Macintosh System Software on newer Macs and PCs. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
@@ -266,6 +266,11 @@ set the name of background part 9 to "Number 9"   -- might be a card or a field
 #### Part names
 
 Every part has a name which can be edited by the user or changed via script. Parts do not need to have unique names, but note that when referring to a part by name the part with the lowest number will be assumed if there are multiple parts with requested name.
+
+```
+get the height of background button "My Neat Button"
+put "2 * 2 = 4" after card field "Math"
+```
 
 ### Properties common to all parts
 

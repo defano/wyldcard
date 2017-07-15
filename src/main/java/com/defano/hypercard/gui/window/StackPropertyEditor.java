@@ -8,6 +8,8 @@ import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class StackPropertyEditor extends HyperCardWindow {
     private StackModel model;
@@ -28,6 +30,8 @@ public class StackPropertyEditor extends HyperCardWindow {
         });
 
         cancelButton.addActionListener(e -> dispose());
+
+        resizeButton.addActionListener(e -> model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel())));
     }
 
     @Override
@@ -107,7 +111,7 @@ public class StackPropertyEditor extends HyperCardWindow {
         editScriptButton.setToolTipText("Not implemented");
         propertiesPanel.add(editScriptButton, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         resizeButton = new JButton();
-        resizeButton.setEnabled(false);
+        resizeButton.setEnabled(true);
         resizeButton.setText("Resize...");
         propertiesPanel.add(resizeButton, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
