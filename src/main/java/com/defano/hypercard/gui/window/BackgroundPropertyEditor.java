@@ -48,11 +48,7 @@ public class BackgroundPropertyEditor extends HyperCardWindow {
         backgroundName.setText(cardPart.getCardBackground().getName());
         cantDeleteBkgndCheckBox.setSelected(cardPart.getCardBackground().isCantDelete());
 
-        long cardCount = cardPart.getStackModel().getCardModels()
-                .stream()
-                .filter(c -> c.getBackgroundId() == backgroundId)
-                .count();
-
+        long cardCount = cardPart.getStackModel().getCardCountInBackground(backgroundId);
         long fieldCount = cardPart.getPartCount(PartType.FIELD, CardLayer.BACKGROUND_PARTS);
         long buttonCount = cardPart.getPartCount(PartType.BUTTON, CardLayer.BACKGROUND_PARTS);
 

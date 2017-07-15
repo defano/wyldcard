@@ -154,4 +154,12 @@ public class StackModel extends PropertiesModel {
     public int getBackgroundCount() {
         return backgroundModels.size();
     }
+
+    public long getCardCountInBackground(int backgroundId) {
+        return getCardModels()
+                .stream()
+                .filter(c -> c.getBackgroundId() == backgroundId)
+                .count();
+    }
 }
+

@@ -163,7 +163,8 @@ public class StackPart implements PropertyChangeObserver {
      * @return The card now visible in the stack window, or null if the current card could not be deleted.
      */
     public CardPart deleteCard() {
-        if (stackModel.getCardCount() > 1) {
+
+        if (canDeleteCard()) {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
             int deletedCardIndex = stackModel.getCurrentCardIndex();
@@ -173,6 +174,7 @@ public class StackPart implements PropertyChangeObserver {
             return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
         }
 
+        HyperCard.getInstance().showErrorDialog(new IllegalStateException("This card cannot be deleted because it or its background is marked as \"Can't Delete\"."));
         return null;
     }
 
@@ -373,6 +375,14 @@ public class StackPart implements PropertyChangeObserver {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
+    }
+
+    private boolean canDeleteCard() {
+        long cardCountInBackground = stackModel.getCardCountInBackground(getCurrentCard().getCardModel().getBackgroundId());
+
+        return stackModel.getCardCount() > 1 &&
+                !getCurrentCard().getCardModel().isCantDelete() &&
+                (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().isCantDelete());
     }
 
 }

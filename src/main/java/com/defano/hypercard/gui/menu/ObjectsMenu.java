@@ -18,8 +18,6 @@ import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.HyperCard;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class ObjectsMenu extends HyperCardMenu {
@@ -77,14 +75,14 @@ public class ObjectsMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Bring Closer")
                 .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
-                .withAction(a -> PartToolContext.getInstance().bringCloser())
+                .withAction(a -> PartToolContext.getInstance().bringSelectedPartCloser())
                 .withShortcut('+')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Send Further")
                 .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
-                .withAction(a -> PartToolContext.getInstance().sendFurther())
+                .withAction(a -> PartToolContext.getInstance().sendSelectedPartFurther())
                 .withShortcut('-')
                 .build(this);
 

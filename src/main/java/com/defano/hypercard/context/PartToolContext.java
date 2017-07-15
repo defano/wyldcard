@@ -48,13 +48,13 @@ public class PartToolContext {
         selectedPart.set(null);
     }
 
-    public void bringCloser() {
+    public void bringSelectedPartCloser() {
         if (selectedPart.get() != null) {
             selectedPart.get().bringCloser();
         }
     }
 
-    public void sendFurther() {
+    public void sendSelectedPartFurther() {
         if (selectedPart.get() != null) {
             selectedPart.get().sendFurther();
         }
