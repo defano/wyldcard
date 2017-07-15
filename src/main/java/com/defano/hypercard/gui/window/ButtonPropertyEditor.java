@@ -76,19 +76,7 @@ public class ButtonPropertyEditor extends HyperCardWindow {
             dispose();
         });
 
-        textStyle.addActionListener(e -> {
-            Font currentFont = HyperCardFont.byNameStyleSize(
-                    model.getKnownProperty(ButtonModel.PROP_TEXTFONT).stringValue(),
-                    model.getKnownProperty(ButtonModel.PROP_TEXTSTYLE).integerValue(),
-                    model.getKnownProperty(ButtonModel.PROP_TEXTSIZE).integerValue()
-            );
-
-            Font newFont = JFontChooser.showDialog(getWindowPanel(), "Choose Font", currentFont);
-
-            model.setKnownProperty(ButtonModel.PROP_TEXTFONT, new Value(newFont.getFamily()));
-            model.setKnownProperty(ButtonModel.PROP_TEXTSIZE, new Value(newFont.getSize()));
-            model.setKnownProperty(ButtonModel.PROP_TEXTSTYLE, new Value(newFont.getStyle()));
-        });
+        textStyle.addActionListener(e -> model.setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getFont())));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ButtonStyle thisStyle : ButtonStyle.values()) {

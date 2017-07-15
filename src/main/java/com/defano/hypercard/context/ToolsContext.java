@@ -225,6 +225,10 @@ public class ToolsContext {
         }
     }
 
+    public void setFont(Font font) {
+        fontProvider.set(font);
+    }
+
     public void setFontSize(int size) {
         String currentFamily = fontProvider.get().getFamily();
         int currentStyle = fontProvider.get().getStyle();

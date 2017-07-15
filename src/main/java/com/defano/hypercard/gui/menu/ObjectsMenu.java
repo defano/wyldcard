@@ -9,10 +9,7 @@
 package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.gui.window.BackgroundPropertyEditor;
-import com.defano.hypercard.gui.window.ButtonPropertyEditor;
-import com.defano.hypercard.gui.window.CardPropertyEditor;
-import com.defano.hypercard.gui.window.WindowBuilder;
+import com.defano.hypercard.gui.window.*;
 import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.FieldPart;
 import com.defano.hypercard.runtime.WindowManager;
@@ -68,7 +65,11 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Stack Info...")
-                .disabled()
+                .withAction(e -> WindowBuilder.make(new StackPropertyEditor())
+                        .withTitle("Stack Properties")
+                        .withModel(HyperCard.getInstance().getStack().getStackModel())
+                        .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                        .build())
                 .build(this);
 
         this.addSeparator();

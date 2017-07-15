@@ -21,9 +21,12 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
+import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FieldPropertyEditor extends HyperCardWindow {
 
@@ -48,6 +51,7 @@ public class FieldPropertyEditor extends HyperCardWindow {
     private JLabel partLabel;
     private JLabel partLabelValue;
     private JLabel fieldLabelValue;
+    private JButton textStyleButton;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -59,11 +63,15 @@ public class FieldPropertyEditor extends HyperCardWindow {
                     .resizeable(true)
                     .build();
         });
+
         cancelButton.addActionListener(e -> dispose());
+
         saveButton.addActionListener(e -> {
             updateProperties();
             dispose();
         });
+
+        textStyleButton.addActionListener(e -> model.setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getFont())));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (FieldStyle thisStyle : FieldStyle.values()) {
@@ -144,7 +152,7 @@ public class FieldPropertyEditor extends HyperCardWindow {
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         fieldEditor = new JPanel();
-        fieldEditor.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
+        fieldEditor.setLayout(new GridLayoutManager(4, 3, new Insets(10, 10, 10, 10), -1, -1));
         fieldEditor.setMaximumSize(new Dimension(587, 257));
         panel1.add(fieldEditor, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
@@ -207,7 +215,7 @@ public class FieldPropertyEditor extends HyperCardWindow {
         panel3.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
-        fieldEditor.add(panel4, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        fieldEditor.add(panel4, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
         panel4.add(saveButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -241,8 +249,12 @@ public class FieldPropertyEditor extends HyperCardWindow {
         panel5.add(showLines, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
-        fieldEditor.add(editScriptButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        fieldEditor.add(editScriptButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
-        fieldEditor.add(spacer4, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        fieldEditor.add(spacer4, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        textStyleButton = new JButton();
+        textStyleButton.setEnabled(false);
+        textStyleButton.setText("Text Style...");
+        fieldEditor.add(textStyleButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 }

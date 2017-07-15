@@ -12,8 +12,9 @@ import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.fields.FieldView;
 import com.defano.hypercard.parts.model.FieldModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
@@ -31,7 +32,7 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
-public abstract class AbstractTextField extends JScrollPane implements com.defano.hypercard.parts.fields.FieldView, DocumentListener, Observer {
+public abstract class AbstractTextField extends JScrollPane implements FieldView, DocumentListener, Observer {
 
     protected final HyperCardJTextPane textPane;
 
@@ -75,8 +76,8 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
 
-        // Get notified when font styles change
-        ToolsContext.getInstance().getFontProvider().addObserverAndUpdate(this);
+//        // Get notified when font styles change
+//        ToolsContext.getInstance().getFontProvider().addObserver(this);
 
         // And listen for ants to march
         MarchingAnts.getInstance().addObserver(this::repaint);
@@ -135,6 +136,12 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
                 case FieldModel.PROP_SHOWLINES:
                     textPane.setShowLines(newValue.booleanValue());
                     break;
+
+                case FieldModel.PROP_TEXTSIZE:
+                case FieldModel.PROP_TEXTSTYLE:
+                case FieldModel.PROP_TEXTFONT:
+                    updateActiveFieldStyle(toolEditablePart.getPartModel().getFont());
+                    break;
             }
         });
     }
@@ -182,9 +189,9 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
             }
         } catch (BadLocationException e) {
             throw new RuntimeException("An error occurred updating field text.", e);
+        } finally {
+            document.addDocumentListener(this);
         }
-
-        document.addDocumentListener(this);
     }
 
     @Override
@@ -211,6 +218,18 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
     @Override
     public void partOpened() {
         setRtf(((FieldModel) toolEditablePart.getPartModel()).getStyleData());
+    }
+
+    @Override
+    public void partClosed() {
+        ToolsContext.getInstance().getFontProvider().deleteObserver(this);
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(this);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        // User changed global font selection from the menubar
+        toolEditablePart.getPartModel().setFont((Font) arg);
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
@@ -258,10 +277,7 @@ public abstract class AbstractTextField extends JScrollPane implements com.defan
         }
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        Font font = (Font) arg;
-
+    private void updateActiveFieldStyle(Font font) {
         currentStyle = new SimpleAttributeSet();
         currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
         currentStyle.addAttribute(StyleConstants.Size, font.getSize());

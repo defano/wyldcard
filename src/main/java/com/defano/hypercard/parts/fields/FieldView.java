@@ -17,4 +17,5 @@ public interface FieldView extends PropertyChangeObserver {
     JTextComponent getTextComponent();
     void setEditable(boolean editable);
     void partOpened();
+    void partClosed();
 }

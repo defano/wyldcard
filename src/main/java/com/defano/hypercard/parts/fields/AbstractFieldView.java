@@ -109,6 +109,8 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(fieldView);
         KeyboardManager.removeGlobalKeyListener(this);
+
+        fieldView.partClosed();
     }
 
     @Override

@@ -71,6 +71,10 @@ public class StackModel extends PropertiesModel {
         return this.name;
     }
 
+    public void setStackName(String name) {
+        this.name = name;
+    }
+
     public List<CardModel> getCardModels() {
         return cardModels;
     }
@@ -129,5 +133,9 @@ public class StackModel extends PropertiesModel {
 
     public int getNextBackgroundId() {
         return nextBackgroundId++;
+    }
+
+    public int getBackgroundCount() {
+        return backgroundModels.size();
     }
 }
