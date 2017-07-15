@@ -1,85 +1,55 @@
 # HyperTalk Java
 
-A toy implementation of Apple's HyperCard written in Java. Originally created as a class project for a graduate-level compiler design course at DePaul University, Chicago.
+A toy implementation of Apple's HyperCard written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University, Chicago.
 
-## What's HyperCard?
+#### What's HyperCard?
 
-HyperCard was born in 1987 as part of Apple's System Software 6. It was an application that largely defied classification: part database, part programming language, part "paint" program. Whatever it was, it was something entirely new. "Teaching" languages of the time made it possible to write dull, console-mode programs, but with HyperCard a novice could draw a graphical user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts using an expressive syntax that mimicked the English language. Apple called it "programming for the rest of us."
+Released in 1987 and included in the box with every Macintosh sold in the late 80's and 90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors to it using an expressive syntax that mimicked the English language.
+
+Apple called it "programming for the rest of us."
 
 [Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch a screencast tutorial, [here](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
 
-#### Fine, but I want to run the _real_ HyperCard
+## Features
 
-Use the SheepShaver emulator to run Macintosh System Software on newer Macs or Windows machines. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
+HyperTalk Java is attempt to recreate HyperCard's functionality in Java. It presently supports these features:
 
-#### Who can I sue?
+* Create, save and open stacks of cards containing graphics, buttons and text fields. Cards support a foreground and background layer; buttons come in a variety of styles similar to HyperCard's (including radio buttons, checkboxes and combo-box menus); text fields can contain rich (formatted) text.
+* Buttons and fields are scriptable in the HyperTalk language.
+* The full suite of original MacPaint-like tools, patterns, and 2D transforms (i.e., perspective, distort, rotate, invert); integrates with the system clipboard to provide cut-and-paste between applications.
+* Much of the HyperTalk language has been implemented, including a variety of commands (`ask "How are you today?"`, `sort the lines of bkgnd field 13`); flow control constructs (`if`, `repeat`); part properties (`the width of me`, `the textFont of`); event messaging (`send doSomethingCool to card button id 1`); built-in and user-defined functions and script handlers (`the mouseLoc`, `the long date`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
+* UI design maintains high fidelity to original software with window, palette and menu structure similar to HyperCard.
 
-This project represents a homework assignment and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
+### Notable absences
 
-## What can I do with this?
+This is not a HyperCard replacement nor is it an open-sourced release of Apple's software. HyperTalk Java is still missing quite a few features present in HyperCard:
 
-You can create stacks of cards containing graphics, buttons and fields. Buttons and fields are scriptable, and the full suite of HyperCard paint tools and patterns (with color!) are available.
+* Can't open or import HyperCard stacks.
+* Cards, stacks and backgrounds are not scriptable; no concept of user levels or stack protections.
+* No ability to modify the menu bar or listen for interactions with the menus.
+* No "Home" stack or stack script inheritance (i.e., `start using ...`); no message passing hierarchy (`pass mouseUp`).
+* No sound or visual effects; no support for external commands or functions (XCMDs/XFCNs).
+* Not all commands and functions in HyperTalk have been implemented
 
-Much of the HyperTalk language has been implemented including parts, attributes, event messaging, local and global variables, built-in and user-defined functions, and complex prepositional chunk expressions.
+## Getting started
 
-## What can't I do?
+Getting started is easy. What is it that you're interested in doing?
 
-This is not a HyperCard replacement nor is it an open-sourced version of Apple's software.
+#### I want to download and play with this.
 
-It won't import your old stacks and it's missing many foundational aspects of the real software. Among its limitations, this implementation lacks support for user levels; card, background or stack-level scripts; visual effects; externals (XCMDs/XFCNs) and home stack script inheritance.
+Lucky for you, an executable will be available for download soon.
 
-# Building the application
+#### I'm a Java developer and want to contribute to the source code.
 
-The project is built with Gradle and should import easily into any IDE with Gradle integration such as Eclipse or IntelliJ. Note that the project makes use of generated source code. The application will not compile (or import correctly into Eclipse) until these sources are generated via `gradle generateGrammarSource`.
+Glad to have you aboard! Have a look at [the build instructions](doc/BUILDING.md).
 
-The following Gradle tasks are defined by the project's build file:
+#### I don't care about your dumb homework assignment. I want to run the real HyperCard?
 
-Task                     | Description
--------------------------|----------------------------
-`run`                    | Build, test and run the application
-`generateGrammarSource`  | Re-generate the HyperTalk parser with Antlr4 (executes automatically as part of the `gradle build` task)
-`generateBundle`         | Generates installation packages for the current OS (i.e., a `.dmg` disk image and `.pkg` installer on macOS), plus an executable JAR file and JNLP (network launch) files.
-`clean`                  | Removes generated Antlr source and install bundles created by the `generateGrammarSource` and `generateBundle` tasks.
+Use the SheepShaver emulator to run Macintosh System Software on newer Macs and PCs. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
-The project uses Antlr4 as the parser generator and the IntelliJ GUI Designer for much of the Swing UI development (see the section below for information about modifying UI components). It was originally implemented using JCup/JFlex and was converted to Antlr in July, 2016. The JCup implementation can be found in the (abandoned) `jcup` branch.
+#### I'm an attorney and looking for new work.
 
-### Running the program
-
-Execute the `gradle run` task to build and start the program or simply execute the `HyperCard` class. Once the program is running, you'll be presented with the application's main window. From here you may:
-
-*	Begin adding your own user interface elements by choosing "New Button" or "New Field" from the "Objects" menu.
-* Use the paint tools (choose "Tools Palette" from the "Tools" menu) to draw on the card.
-*	Open a previously saved stack document ("File" -> "Open Stack...").
-*	Enter a statement or expression in the message box ("Go" -> "Message"). Press enter to execute or evaluate your message.
-
-To start scripting:
-
-1.	Create a new button or field, or, choose the button tool or field tool from the tools palette, then select an existing one.
-2.	Double-click on the selected part to show the part's property editor, then click the "Script..." button.
-
-### Modifying the HyperTalk language
-
-HyperTalk Java uses Antrl 4 as its parser generator and utilizes the Antlr *tree visitor* pattern to convert  Antlr's parse tree into a HyperTalk abstract syntax tree (a simple example [can be found on Stack Overflow](http://stackoverflow.com/questions/23092081/antlr4-visitor-pattern-on-simple-arithmetic-example)). The HyperTalk grammar is defined in `HyperTalk.g4` and the tree visitor (responsible for producing nodes in the abstract syntax tree) is `HyperTalkTreeVisitor.java`. When adding new grammar rules, note that the value to the right of the `#` symbol defines the name of the visitor method associated with that rule. (For example, the AST node associated with `'show' part # showCmdStmnt` is created by the visitor method `visitShowCmdStmnt`.)
-
-Changes made to the HyperTalk grammar file (`HyperTalk.g4`) require the parser to be regenerated. The can be accomplished by:
-
-* Re-running the `gradle generateGrammarSource` target, or
-* If using InteliJ with the Antlr plugin and you wish to automatically regenerate the parser each time you modify the grammar then right-click inside the `.g4` file, choose "Configure ANTLR..."; set the "Output directory where all output is generated" to `hypertalk-java/generated-src/` and check the "generate parse tree visitor" option.
-
-Once the parser has been regenerated, you're free to make corresponding changes to the tree visitor class ( `HyperTalkTreeVisitor`).
-
-### Modifying the UI components
-
-The UI forms are generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
-
-By default, IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is quite elegant, it produces source code that is incomplete and which cannot be successfully built by other tools.
-
-To correct this, you need to configure IntelliJ to generate its GUI boilerplate code in Java source:
-
-1. From IntelliJ IDEA menu, choose "Preferences..."
-2. Navigate to "Editor" -> GUI Designer
-3. Select the "Java source code" option for GUI generation.
-4. Apply the changes and "Rebuild project" from the "Build" menu.
+This project represents a homework assignment gone awry and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
 
 # The HyperTalk Language
 
@@ -130,7 +100,9 @@ As you enter script text into the script editor, this implementation will flag s
 
 ## Stacks of Cards
 
-A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window and when the current card changes as result of navigating away, the contents of the new card appear in place of the old card.
+A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window at any given time. When the user navigates from one card to another, the contents of the new card appear in place of the old card.
+
+Cards are comprised of two layers of graphics and user interface elements: a background and a foreground (called the `card` layer). Each card has a unique foreground, but its background can be shared between cards. Backgrounds, cards, and stacks could contain their own scripts in Apple's HyperCard, but this version does not allow scripting these elements.
 
 The `go` command is used to navigate between cards:
 
@@ -168,7 +140,7 @@ go to the prev card
 
 A script consists of zero or more _handlers_ and/or _function definitions_.
 
-A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it (you'll note [Smalltalk](https://en.wikipedia.org/wiki/Smalltalk)'s influence, here). A function definition, like its counterpart in other imperative languages, accepts zero or more arguments, executes one or more statements, and optionally returns a single value.
+A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it. A function definition, like its counterpart in other imperative languages, accepts zero or more arguments, executes zero or more statements, and optionally returns a single value.
 
 For example, a button might contain the script:
 
@@ -187,8 +159,8 @@ This HyperCard implementation automatically sends the following event messages:
  `mouseUp`          | Sent when the mouse is pressed and released over a part
  `mouseDown`        | Sent when the mouse is pressed over a part
  `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
- `mouseEnter`       | Sent when the cursor enters the region of a part
- `mouseLeave`       | Sent when the cursor leaves the region of a part
+ `mouseEnter`       | Sent when the cursor enters the bounds of a part
+ `mouseLeave`       | Sent when the cursor leaves the bounds of a part
  `keyDown`          | Sent only to in-focus fields when the user presses a key
  `keyUp`            | Sent only to in-focus fields when the user presses then releases a key
 
@@ -261,26 +233,41 @@ end mouseUp
 
 ## Parts and Properties
 
-A _part_ is a scriptable user interface element in HyperCard. Apple's implementation provided a wide range of parts and styles. This implementation provides a similar (but not identical) set of styled parts.
+A _part_ is a scriptable user interface element that appears on a card (i.e., a button or a field).
 
-In Apple's HyperCard, cards contain two layers of user interface elements: a foreground and a background. Each card has an individual foreground, but the background can be shared between cards. Each of these elements--backgrounds, cards, and stacks--could contain their own scripts and act upon event messages from HyperCard.
+A part maintains a set of _properties_ that describe various aspects of the part like its name, id, size and location on the card. Modifying a part's properties modifies the way it appears and behaves on the card. See the section below for details about these properties.
 
-This implementation does not allow scripting of cards, stacks or backgrounds and backgrounds can contain only graphics (button or field parts cannot yet be added to the background).
+HyperTalk Java treats properties as "first class" containers which may be accessed in whole or by chunk using the `get`, `set` or `put` commands (this is not quite true in Apple's HyperCard).
 
-In addition to containing scripts, a part also maintains a set of _properties_. Properties describe various aspects of the part like its name, id, size and location on the card. A part can be programmatically modified by way of its properties. Different types of parts have different properties.
+### Referring to Parts
 
-Parts may be addressed in HyperTalk by name or id, and a part can refer to itself as `me`. Properties are treated as "first class" containers in this implementation of HyperTalk and may be read with the `get` command, or mutated using the `set` or `put` commands (this is not quite true in Apple's HyperCard).
+Parts may be addressed in HyperTalk by name, number, or ID, and a part can refer to itself as `me`. Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.
 
-For example:
+#### Part IDs
+
+Each part in the stack is assigned a unique ID which never changes and will never be reused (even after the part is deleted). A part can be referred to in script by its ID. For example:
 
 ```
-set the visible of me to true
-set the left of button myButton to item 1 of the mouseLoc
-get the name of button id 0      -- puts the name into the implicit variable, 'it'
-set the rect of button "Hi" to "10,10,100,100"
+hide card button id 0
+put "I like IDs" into background field id 22
 ```
 
-Note that part names need not be unique and this fact may lead to ambiguity when addressing a part by name. If more than one part exists with the addressed name, one of the parts will be accessed (which one is indeterminate).
+#### Part Numbers
+
+Each part is assigned a number that differentiates it from other parts on its layer of the card (foreground or background). A part's number represents it's drawing order within the layer: Lowered number parts are drawn first and thereby appear behind higher numbered parts. You cannot directly change a part's number, but using the "Bring Closer" or "Send Further" commands from the "Objects" menu will affect the number assigned to it.
+
+You can refer to a part by its number relative to all parts on the same layer of the card (`background part 14`) or relative only to other parts of the same type (`card button 13` or `bkgnd field 3`).
+
+```
+add 20 to the height of card button 1.
+set the name of background part 9 to "Number 9"   -- might be a card or a field
+```
+
+#### Part names
+
+Every part has a name which can be edited by the user or changed via script. Parts do not need to have unique names, but note that when referring to a part by name the part with the lowest number will be assumed if there are multiple parts with requested name.
+
+### Properties common to all parts
 
 All parts have these properties:
 
@@ -330,10 +317,10 @@ Property    | Description
 ------------|------------
 `style`     | Sets or retrieves the button style. Button styles are described in the table above.
 `contents`  | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
-`showname`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
+`showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
 `enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that disabled buttons continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`.
 `hilite`    | (Sic) Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
-`autohilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autohilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
+`autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
 
 ### Fields
 
@@ -350,9 +337,9 @@ Property   | Description
 -----------|------------
 `text`     | Returns or sets the text contained within this field
 `visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
-`locktext` | Returns or sets whether the text contained by the field can be edited by the user.
-`showlines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
-`dontwrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached.
+`lockText` | Returns or sets whether the text contained by the field can be edited by the user.
+`showLines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
+`dontWrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached.
 
 ### Global Properties
 
@@ -667,3 +654,5 @@ repeat while the mouse is down
 	set the top of me to item 2 of the mouseLoc
 end repeat
 ```
+
+#### Nu är det slut...
