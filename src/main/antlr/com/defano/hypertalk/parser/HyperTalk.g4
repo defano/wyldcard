@@ -71,6 +71,7 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'click' 'at' expression 'with' expressionList # clickWithKeyCmdStmt
                     | 'drag' 'from' expression 'to' expression      # dragCmdStmt
                     | 'drag' 'from' expression 'to' expression 'with' expressionList            # dragWithKeyCmdStmt
+                    | 'delete' part                                 # deleteCmdStmt
                     ;
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd

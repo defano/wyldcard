@@ -491,6 +491,7 @@ Command	   | Description
 `sort`     | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items | lines} of] <container> [{{ascending | descending} | by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
 `hide`     | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
 `show`     | Makes a part visible on the card, for example `show button "My Button"`.
+`delete`   | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
 
 ## Functions
 

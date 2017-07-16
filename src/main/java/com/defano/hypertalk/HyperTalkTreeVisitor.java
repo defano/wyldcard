@@ -439,6 +439,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
+        return new StatDeleteCmd((ExpPart) visit(ctx.part()));
+    }
+
+    @Override
     public Object visitIfThenSingleLine(HyperTalkParser.IfThenSingleLineContext ctx) {
         return new StatIf((Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.singleThen()));
     }
