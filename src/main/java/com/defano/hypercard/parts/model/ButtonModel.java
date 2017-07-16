@@ -26,7 +26,6 @@ public class ButtonModel extends PartModel {
     public static final String PROP_HILITE = "hilite";
     public static final String PROP_AUTOHILIGHT = "autohilite";
     public static final String PROP_SHOWNAME = "showname";
-    public static final String PROP_ENABLED = "enabled";
     public static final String PROP_CONTENTS = "contents";
 
     private ButtonModel() {
@@ -44,7 +43,6 @@ public class ButtonModel extends PartModel {
         partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
         partModel.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
         partModel.defineProperty(PROP_SHOWNAME, new Value(true), false);
-        partModel.defineProperty(PROP_ENABLED, new Value(true), false);
         partModel.defineProperty(PROP_STYLE, new Value(ButtonStyle.DEFAULT.getName()), false);
         partModel.defineProperty(PROP_FAMILY, new Value(), false);
         partModel.defineProperty(PROP_HILITE, new Value(false), false);

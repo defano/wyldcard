@@ -8,6 +8,7 @@
 
 package com.defano.hypertalk;
 
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.constructs.*;
 import com.defano.hypertalk.ast.containers.*;
@@ -15,8 +16,8 @@ import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.functions.*;
 import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.exception.HtParseError;
-import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
+import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
@@ -40,12 +41,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
-        return new StatHideCmd((ExpPart) visit(ctx.part()));
+        return new StatPartPropertyCmd((ExpPart) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
     }
 
     @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
-        return new StatShowCmd((ExpPart) visit(ctx.part()));
+        return new StatPartPropertyCmd((ExpPart) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(true));
+    }
+
+    @Override
+    public Object visitDisableCmdStmnt(HyperTalkParser.DisableCmdStmntContext ctx) {
+        return new StatPartPropertyCmd((ExpPart) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(false));
+    }
+
+    @Override
+    public Object visitEnableCmdStmnt(HyperTalkParser.EnableCmdStmntContext ctx) {
+        return new StatPartPropertyCmd((ExpPart) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(true));
     }
 
     @Override

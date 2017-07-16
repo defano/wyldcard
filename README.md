@@ -278,6 +278,7 @@ All parts have these properties:
 
 Property      | Description
 --------------|------------
+`enabled`   | Returns or sets whether the button or field is enabled (a Boolean value). When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands.
 `script`      | Retrieves or replaces the current script of the part
 `id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
 `name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
@@ -291,8 +292,7 @@ Property      | Description
 `width`       | Returns or sets the width of the part (in pixels)
 `height`      | Returns or sets the height of the part (in pixels)
 `rectangle`   | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rect`.
-`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI.
-`enabled`     | Returns or sets whether the part is enabled (a Boolean value). When disabled, the part appears "grayed out", but note that it continues to receive HyperCard-generated messages (like `mouseEnter`).
+`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI. Can also be set using the `hide` and `show` commands.
 `textSize`    | Returns or sets the size (in points) of the part's text.
 `textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
 `textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
@@ -323,8 +323,7 @@ Property    | Description
 `style`     | Sets or retrieves the button style. Button styles are described in the table above.
 `contents`  | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
 `showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
-`enabled`   | Returns or sets whether the button is enabled (a Boolean value). When disabled, the button appears "grayed out". Note that disabled buttons continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`.
-`hilite`    | (Sic) Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
+`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
 `autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
 
 ### Fields
@@ -492,6 +491,8 @@ Command	   | Description
 `hide`     | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
 `show`     | Makes a part visible on the card, for example `show button "My Button"`.
 `delete`   | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
+`enable`   | Enables a part on the card; sets the part's `enabled` property to true.
+`disable`  | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
 
 ## Functions
 

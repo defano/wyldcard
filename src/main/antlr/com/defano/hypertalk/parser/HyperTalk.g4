@@ -60,6 +60,8 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | sortCmd                                       # sortCmdStmnt
                     | 'hide' part                                   # hideCmdStmnt
                     | 'show' part                                   # showCmdStmnt
+                    | 'disable' part                                # disableCmdStmnt
+                    | 'enable' part                                 # enableCmdStmnt
                     | 'go' 'to'? destination                        # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt

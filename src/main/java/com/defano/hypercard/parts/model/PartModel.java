@@ -46,6 +46,7 @@ public abstract class PartModel extends PropertiesModel {
     public static final String PROP_TEXTFONT = "textfont";
     public static final String PROP_TEXTSTYLE = "textstyle";
     public static final String PROP_TEXTALIGN = "textalign";
+    public static final String PROP_ENABLED = "enabled";
 
     private final PartType type;
 
@@ -142,6 +143,7 @@ public abstract class PartModel extends PropertiesModel {
         defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getFamily()), false);
         defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
         defineProperty(PROP_TEXTALIGN, new Value("center"), false);
+        defineProperty(PROP_ENABLED, new Value(true), false);
     }
 
     public Font getFont() {

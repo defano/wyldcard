@@ -57,7 +57,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
             setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            setEnabled(ToolMode.FIELD != arg);
             setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
         });
 
@@ -76,14 +75,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
 
-//        // Get notified when font styles change
-//        ToolsContext.getInstance().getFontProvider().addObserver(this);
-
         // And listen for ants to march
         MarchingAnts.getInstance().addObserver(this::repaint);
 
         SwingUtilities.invokeLater(() -> {
             toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
+            ToolsContext.getInstance().getToolModeProvider().notifyObservers(this);
         });
     }
 
@@ -141,6 +138,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
                 case FieldModel.PROP_TEXTSTYLE:
                 case FieldModel.PROP_TEXTFONT:
                     updateActiveFieldStyle(toolEditablePart.getPartModel().getFont());
+                    break;
+
+                case FieldModel.PROP_ENABLED:
+                    setEditable(newValue.booleanValue());
                     break;
             }
         });

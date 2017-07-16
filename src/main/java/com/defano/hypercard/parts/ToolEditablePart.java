@@ -162,7 +162,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     }
 
     /**
-     * Sets whether this part should be visible on the card (mutating its "visible" HyperTalk property), but this actual
+     * Sets whether this part should be visible on the card (mutating its "visible" HyperTalk property), but the actual
      * visibility of the Swing component may be overridden by tool context (i.e., hidden parts will be visible when
      * the part tool is active; visible parts in the foreground may be hidden when editing the background).
      *
