@@ -1076,10 +1076,10 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case MIN: return new ExpMinFun((Expression) visit(ctx.factor()));
             case MAX: return new ExpMaxFun((Expression) visit(ctx.factor()));
             case AVERAGE: return new ExpAverageFun((Expression) visit(ctx.factor()));
-            case NUMBER_CHARS: return new ExpNumberOfFun(ChunkType.CHAR, (Expression) visit(ctx.factor()));
-            case NUMBER_ITEMS: return new ExpNumberOfFun(ChunkType.ITEM, (Expression) visit(ctx.factor()));
-            case NUMBER_LINES: return new ExpNumberOfFun(ChunkType.LINE, (Expression) visit(ctx.factor()));
-            case NUMBER_WORDS: return new ExpNumberOfFun(ChunkType.WORD, (Expression) visit(ctx.factor()));
+            case NUMBER_CHARS: return new ExpNumberOfFun(Countable.CHAR, (Expression) visit(ctx.factor()));
+            case NUMBER_ITEMS: return new ExpNumberOfFun(Countable.ITEM, (Expression) visit(ctx.factor()));
+            case NUMBER_LINES: return new ExpNumberOfFun(Countable.LINE, (Expression) visit(ctx.factor()));
+            case NUMBER_WORDS: return new ExpNumberOfFun(Countable.WORD, (Expression) visit(ctx.factor()));
             case RANDOM: return new ExpRandomFun((Expression) visit(ctx.factor()));
             case SQRT:
             case TRUNC:
@@ -1098,7 +1098,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
                 return new ExpMathFun((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.factor()));
             case CHAR_TO_NUM: return new ExpCharToNum((Expression) visit(ctx.factor()));
             case VALUE: return new ExpValueFun((Expression) visit(ctx.factor()));
-            case LENGTH: return new ExpNumberOfFun(ChunkType.CHAR, (Expression) visit(ctx.factor()));
+            case LENGTH: return new ExpNumberOfFun(Countable.CHAR, (Expression) visit(ctx.factor()));
 
             default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.oneArgFunc().getText());
         }
@@ -1123,6 +1123,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case COMMAND_KEY: return new ExpModifierKeyFun(ModifierKey.COMMAND);
             case SHIFT_KEY: return new ExpModifierKeyFun(ModifierKey.SHIFT);
             case TOOL: return new ExpToolFun();
+            case NUMBER_CARD_PARTS: return new ExpNumberOfFun(Countable.CARD_PARTS);
+            case NUMBER_BKGND_PARTS: return new ExpNumberOfFun(Countable.BKGND_PARTS);
+            case NUMBER_CARD_BUTTONS: return new ExpNumberOfFun(Countable.CARD_BUTTONS);
+            case NUMBER_BKGND_BUTTONS: return new ExpNumberOfFun(Countable.BKGND_BUTTONS);
+            case NUMBER_CARD_FIELDS: return new ExpNumberOfFun(Countable.CARD_FIELDS);
+            case NUMBER_BKGND_FIELDS: return new ExpNumberOfFun(Countable.BKGND_FIELDS);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
         }
@@ -1152,6 +1158,36 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMaxFunc(HyperTalkParser.MaxFuncContext ctx) {
         return BuiltInFunction.MAX;
+    }
+
+    @Override
+    public Object visitNumberOfCardButtons(HyperTalkParser.NumberOfCardButtonsContext ctx) {
+        return BuiltInFunction.NUMBER_CARD_BUTTONS;
+    }
+
+    @Override
+    public Object visitNumberOfBkgndButtons(HyperTalkParser.NumberOfBkgndButtonsContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_BUTTONS;
+    }
+
+    @Override
+    public Object visitNumberOfCardFields(HyperTalkParser.NumberOfCardFieldsContext ctx) {
+        return BuiltInFunction.NUMBER_CARD_FIELDS;
+    }
+
+    @Override
+    public Object visitNumberOfBkgndFields(HyperTalkParser.NumberOfBkgndFieldsContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_FIELDS;
+    }
+
+    @Override
+    public Object visitNumberOfCardParts(HyperTalkParser.NumberOfCardPartsContext ctx) {
+        return BuiltInFunction.NUMBER_CARD_PARTS;
+    }
+
+    @Override
+    public Object visitNumberOfBkgndParts(HyperTalkParser.NumberOfBkgndPartsContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_PARTS;
     }
 
     @Override

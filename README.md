@@ -515,7 +515,10 @@ Function | Description
 `shiftKey` | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
 `commandKey` | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
 `optionKey` | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
-`number of words` <br> `number of chars` <br> `number of lines` <br> `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
+`number of words`, `number of chars`, `number of lines`, `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
+`number of card parts`, `number of background parts` | Returns the number buttons or field present on the card or background layer, respectively. For example, `repeat with n=1 to the number of card parts`.
+`number of card buttons`, `number of card fields` | Returns the number of buttons present on the card layer.
+`number of background buttons`, `number of background fields` | Returns the number of buttons present on the background layer.
 `result` | Returns the current value of the implicit variable `it`, for example: `the result`
 `message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`
 `min` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.

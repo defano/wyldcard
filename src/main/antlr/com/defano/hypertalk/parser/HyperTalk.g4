@@ -322,6 +322,12 @@ noArgFunc           : 'mouse'                                                   
                     | 'short time'                                                  # shortTimeFormatFunc
                     | ('abbrev time' | 'abbreviated time')                          # abbrevTimeFormatFunc
                     | 'tool'                                                        # toolFunc
+                    | 'number of' ('card' | 'cd') 'parts'                           # numberOfCardParts
+                    | 'number of' ('background' | 'bkgnd') 'parts'                  # numberOfBkgndParts
+                    | 'number of' ('card' | 'cd') 'buttons'                         # numberOfCardButtons
+                    | 'number of' ('background' | 'bkgnd') 'buttons'                # numberOfBkgndButtons
+                    | 'number of' ('card' | 'cd') 'fields'                          # numberOfCardFields
+                    | 'number of' ('background' | 'bkgnd') 'fields'                 # numberOfBkgndFields
                     ;
 
 literal				: STRING_LITERAL                                                # stringLiteral

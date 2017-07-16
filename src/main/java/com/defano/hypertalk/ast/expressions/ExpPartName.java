@@ -51,7 +51,7 @@ public class ExpPartName extends ExpPart {
         if (evaluatedName.isInteger()) {
             return new PartNumberSpecifier(layer, type, evaluatedName.integerValue());
         } else {
-            return new PartNameSpecifier(layer, type, name.evaluate().stringValue());
+            return new PartNameSpecifier(layer, type, evaluatedName.stringValue());
         }
     }
 }

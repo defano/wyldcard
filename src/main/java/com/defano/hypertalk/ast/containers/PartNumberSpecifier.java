@@ -31,7 +31,7 @@ public class PartNumberSpecifier implements PartSpecifier {
 
     @Override
     public PartType type() {
-        return null;
+        return type;
     }
 
     @Override
