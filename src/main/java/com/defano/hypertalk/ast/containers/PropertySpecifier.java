@@ -8,19 +8,19 @@
 
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypertalk.ast.expressions.ExpPart;
+import com.defano.hypertalk.ast.expressions.PartExp;
 
 public class PropertySpecifier {
 
     public final String property;
-    public final ExpPart partExp;
+    public final PartExp partExp;
 
     public PropertySpecifier (String globalProperty) {
         this.property = globalProperty;
         this.partExp = null;
     }
 
-    public PropertySpecifier (String property, ExpPart partSpecifier) {
+    public PropertySpecifier (String property, PartExp partSpecifier) {
         this.property = property;
         this.partExp = partSpecifier;
     }

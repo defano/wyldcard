@@ -15,6 +15,7 @@
 
 package com.defano.hypertalk.ast.functions;
 
+import com.defano.hypertalk.ast.common.ParameterList;
 import com.defano.hypertalk.ast.statements.StatementList;
 
 public class UserFunction {

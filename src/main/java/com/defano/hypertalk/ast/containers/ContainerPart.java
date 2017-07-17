@@ -18,27 +18,27 @@ package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.expressions.ExpPart;
 
 
 public class ContainerPart extends Container {
 
-    private final ExpPart part;
+    private final PartExp part;
     private final Chunk chunk;
 
-    public ContainerPart(ExpPart part) {
+    public ContainerPart(PartExp part) {
         this.part = part;
         this.chunk = null;
     }
 
-    public ContainerPart(ExpPart part, Chunk chunk) {
+    public ContainerPart(PartExp part, Chunk chunk) {
         this.part = part;
         this.chunk = chunk;
     }
 
-    public ExpPart part() {
+    public PartExp part() {
         return part;
     }
 

@@ -16,6 +16,7 @@
 
 package com.defano.hypercard.runtime;
 
+import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
@@ -25,7 +26,6 @@ import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
-import com.defano.hypertalk.ast.statements.StatExp;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtException;
@@ -75,8 +75,8 @@ public class Interpreter {
     public static Value evaluate(String expression) {
         try {
             Statement statement = compile(expression).getStatements().list.get(0);
-            if (statement instanceof StatExp) {
-                return ((StatExp) statement).expression.evaluate();
+            if (statement instanceof ExpressionStatement) {
+                return ((ExpressionStatement) statement).expression.evaluate();
             }
         } catch (Exception e) {}
 
@@ -85,7 +85,7 @@ public class Interpreter {
     }
 
     public static boolean isExpressionStatement(String statement) throws HtException {
-        return compile(statement).getStatements().list.get(0) instanceof StatExp;
+        return compile(statement).getStatements().list.get(0) instanceof ExpressionStatement;
     }
 
     public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
