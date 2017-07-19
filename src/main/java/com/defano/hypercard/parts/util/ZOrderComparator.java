@@ -1,5 +1,6 @@
-package com.defano.hypercard.parts;
+package com.defano.hypercard.parts.util;
 
+import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.model.PartModel;
 
 import java.util.Comparator;

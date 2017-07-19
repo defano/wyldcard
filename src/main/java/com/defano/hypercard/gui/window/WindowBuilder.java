@@ -22,6 +22,7 @@ public class WindowBuilder {
     private boolean initiallyVisible = true;
     private boolean resizable = false;
     private HyperCardWindow dock;
+    private boolean hasLocalMenubar = false;
 
     private WindowBuilder(HyperCardWindow window) {
         this.window = window;
@@ -37,6 +38,11 @@ public class WindowBuilder {
 
     public WindowBuilder withTitle(String title) {
         frame.setTitle(title);
+        return this;
+    }
+
+    public WindowBuilder hasLocalMenubar(boolean hasLocalMenubar) {
+        this.hasLocalMenubar = hasLocalMenubar;
         return this;
     }
 
@@ -75,7 +81,9 @@ public class WindowBuilder {
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                frame.setJMenuBar(menuBar);
+                if (isMacOs() || hasLocalMenubar) {
+                    frame.setJMenuBar(menuBar);
+                }
             }
 
             @Override
@@ -156,5 +164,9 @@ public class WindowBuilder {
         }
 
         return frame;
+    }
+
+    private boolean isMacOs() {
+        return System.getProperty("os.name").toLowerCase().contains("mac");
     }
 }

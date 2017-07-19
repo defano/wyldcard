@@ -35,6 +35,7 @@ public class WindowManager {
                 .quitOnClose()
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withModel(HyperCard.getInstance().getStack())
+                .hasLocalMenubar(true)
                 .build();
 
         WindowBuilder.make(messageWindow)

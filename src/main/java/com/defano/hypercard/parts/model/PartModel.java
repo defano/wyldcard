@@ -155,9 +155,11 @@ public abstract class PartModel extends PropertiesModel {
     }
 
     public void setFont(Font font) {
-        setKnownProperty(PROP_TEXTSIZE, new Value(font.getSize()));
-        setKnownProperty(PROP_TEXTFONT, new Value(font.getFamily()));
-        setKnownProperty(PROP_TEXTSTYLE, FontUtils.getValueForStyle(font.getStyle()));
+        if (font != null) {
+            setKnownProperty(PROP_TEXTSIZE, new Value(font.getSize()));
+            setKnownProperty(PROP_TEXTFONT, new Value(font.getFamily()));
+            setKnownProperty(PROP_TEXTSTYLE, FontUtils.getValueForStyle(font.getStyle()));
+        }
     }
 
     public Rectangle getRect() {

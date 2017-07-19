@@ -192,7 +192,7 @@ public interface Part {
 
     /**
      * Sets the z-position of this part relative to other parts on the card.
-     * @param newPosition
+     * @param newPosition The z-order position of this part
      */
     default void setZorder(int newPosition) {
         CardPart card = getCard();

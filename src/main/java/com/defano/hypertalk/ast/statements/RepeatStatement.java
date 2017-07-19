@@ -28,6 +28,9 @@ import com.defano.hypertalk.ast.constructs.RepeatSpecifier;
 import com.defano.hypertalk.ast.constructs.RepeatWith;
 import com.defano.hypertalk.exception.HtSemanticException;
 
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
+
 public class RepeatStatement extends Statement {
 
     public final RepeatSpecifier range;
@@ -118,13 +121,15 @@ public class RepeatStatement extends Statement {
     }
 
     private void rest() throws HtException {
+
         if (KeyboardManager.isBreakSequence) {
             throw new HtSemanticException("Script aborted.");
         } else {
             try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                Thread.interrupted();
+                // Flush the Swing UI event queue
+                SwingUtilities.invokeAndWait(() -> {});
+            } catch (InterruptedException | InvocationTargetException e) {
+                // Nothing to do
             }
         }
     }

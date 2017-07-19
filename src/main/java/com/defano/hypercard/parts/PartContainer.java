@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.util.ZOrderComparator;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.containers.PartIdSpecifier;
 import com.defano.hypertalk.ast.containers.PartNameSpecifier;
