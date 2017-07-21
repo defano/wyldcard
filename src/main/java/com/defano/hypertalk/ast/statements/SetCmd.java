@@ -37,7 +37,7 @@ public class SetCmd extends Statement {
             
             // Setting the property of HyperCard
             if (propertySpec.isGlobalPropertySpecifier()) {
-                GlobalContext.getContext().setGlobalProperty(propertySpec.property, expression.evaluate());
+                GlobalContext.getContext().getGlobalProperties().setProperty(propertySpec.property, expression.evaluate());
             }
 
             // Setting the property of a part

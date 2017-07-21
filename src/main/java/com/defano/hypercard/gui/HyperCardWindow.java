@@ -22,7 +22,7 @@ public abstract class HyperCardWindow extends WindowAdapter {
 
     private Provider<Boolean> windowVisibleProvider = new Provider<>(false);
 
-    public abstract JPanel getWindowPanel();
+    public abstract JComponent getWindowPanel();
     public abstract void bindModel(Object data);
 
     public JFrame getWindowFrame() {

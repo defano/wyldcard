@@ -74,6 +74,9 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'drag' 'from' expression 'to' expression      # dragCmdStmt
                     | 'drag' 'from' expression 'to' expression 'with' expressionList            # dragWithKeyCmdStmt
                     | 'delete' part                                 # deleteCmdStmt
+                    | 'lock' 'screen'                               # lockScreenCmdStmt
+                    | 'unlock' 'screen'                             # unlockScreenCmdStmt
+                    | 'unlock' 'screen' 'with' 'visual' visualEffect # unlockScreenVisualCmdStmt
                     ;
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
@@ -117,6 +120,57 @@ sortDirection       : 'ascending'                                   # sortDirect
 sortChunkType       : 'the'? ('line' | 'lines') ('of' | 'in')       # sortChunkLines
                     | 'the'? ('item' | 'items') ('of' | 'in')       # sortChunkItems
                     |                                               # sortChunkDefault
+                    ;
+
+visualEffect        : 'effect'? effect                              # effectDefault
+                    | 'effect'? effect 'to' image                   # effectTo
+                    | 'effect'? effect speed                        # effectSpeed
+                    | 'effect'? effect speed 'to' image             # effectSpeedTo
+                    ;
+
+speed               : 'fast'                                        # fastSpeed
+                    | ('slow' | 'slowly')                           # slowSpeed
+                    | 'very' 'fast'                                 # veryFastSpeed
+                    | 'very' ('slow' | 'slowly')                    # verySlowSpeed
+                    ;
+
+image               : 'black'                                       # blackImage
+                    | 'card'                                        # cardImage
+                    | ('gray' | 'grey')                             # grayImage
+                    | 'inverse'                                     # inverseImage
+                    | 'white'                                       # whiteImage
+                    ;
+
+effect              : 'dissolve'                                    # dissolveEffect
+                    | 'barn' 'door' 'open'                          # barnDoorOpenEffect
+                    | 'barn' 'door' 'close'                         # barnDoorCloseEffect
+                    | 'checkerboard'                                # checkerboardEffect
+                    | 'iris' 'open'                                 # irisOpenEffect
+                    | 'iris' 'close'                                # irisCloseEffect
+                    | 'plain'                                       # plainEffect
+                    | 'push' 'down'                                 # pushDownEffect
+                    | 'push' 'up'                                   # pushUpEffect
+                    | 'push' 'left'                                 # pushLeftEffect
+                    | 'push' 'right'                                # pushRightEffect
+                    | 'scroll' 'down'                               # scrollDownEffect
+                    | 'scroll' 'up'                                 # scrollUpEffect
+                    | 'scroll' 'left'                               # scrollLeftEffect
+                    | 'scroll' 'right'                              # scrollRightEffect
+                    | 'shrink' 'to' 'top'                           # shrinkToTopEffect
+                    | 'shrink' 'to' 'center'                        # shrinkToCenterEffect
+                    | 'shrink' 'to' 'bottom'                        # shrinkToBottomEffect
+                    | 'stretch' 'from' 'top'                        # stretchFromTopEffect
+                    | 'stretch' 'from' 'center'                     # stretchFromCenterEffect
+                    | 'stretch' 'from' 'bottom'                     # stretchFromBottomEffect
+                    | 'venetian' 'blinds'                           # venitianBlindsEffect
+                    | 'wipe' 'up'                                   # wipeUpEffect
+                    | 'wipe' 'down'                                 # wipeDownEffect
+                    | 'wipe' 'left'                                 # wipeLeftEffect
+                    | 'wipe' 'right'                                # wipeRightEffect
+                    | 'zoom' 'close'                                # zoomCloseEffect
+                    | 'zoom' 'in'                                   # zoomInEffect
+                    | 'zoom' 'open'                                 # zoomOpenEffect
+                    | 'zoom' 'out'                                  # zoomOutEffect
                     ;
 
 // Can't use a lexer rule for synonyms here because it creates ambiguity with ordinals and built-in function names. :(

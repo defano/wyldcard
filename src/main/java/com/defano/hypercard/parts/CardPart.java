@@ -341,6 +341,32 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
     }
 
     /**
+     * Takes a "screenshot" of the card, that is, generates a bitmap image of the card including the foreground and
+     * background canvas and part layers. The sceenshot is a pixel-accurate rendering of the card in the stack
+     * window.
+     *
+     * @return The card screenshot
+     */
+    public BufferedImage takeScreenshot() {
+        BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = screenshot.createGraphics();
+        this.printAll(g);
+        g.dispose();
+
+        return screenshot;
+    }
+
+    @Override
+    public int getHeight() {
+        return stackModel.getHeight();
+    }
+
+    @Override
+    public int getWidth() {
+        return stackModel.getWidth();
+    }
+
+    /**
      * Imports an existing button into this card. Note that this differs from {@link #addButton(ButtonPart, CardLayer)} in that a
      * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
      * copied button from another card onto this card.

@@ -11,6 +11,10 @@ package com.defano.hypercard;
 import com.google.gson.*;
 import com.defano.hypertalk.ast.common.Value;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -48,6 +52,32 @@ public class Serializer {
             return deserialize(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8), clazz);
         } catch (IOException e) {
             throw new RuntimeException("Failed to open card.", e);
+        }
+    }
+
+    public static byte[] serializeImage(BufferedImage image) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            baos.flush();
+            byte[] serialized = baos.toByteArray();
+            baos.close();
+            return serialized;
+        } catch (IOException e) {
+            throw new RuntimeException("An error occurred while trying to save an image.", e);
+        }
+    }
+
+    public static BufferedImage deserializeImage(byte[] imageData) {
+        if (imageData == null || imageData.length == 0) {
+            return new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
+        } else {
+            try {
+                ByteArrayInputStream stream = new ByteArrayInputStream(imageData);
+                return ImageIO.read(stream);
+            } catch (IOException e) {
+                throw new RuntimeException("An error occurred reading an image. This stack may be corrupted.", e);
+            }
         }
     }
 

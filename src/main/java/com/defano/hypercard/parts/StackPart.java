@@ -66,6 +66,7 @@ public class StackPart implements PropertyChangeObserver {
         goCard(model.getCurrentCardIndex());
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
+        fireOnCardOpened(getCurrentCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
 

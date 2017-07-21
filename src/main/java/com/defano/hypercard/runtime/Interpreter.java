@@ -6,16 +6,9 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * Interpreter.java
- * @author matt.defano@gmail.com
- * 
- * Interpreter class provides static methods for compiling a script (translate
- * into an AST) as well as executing a string as a script.
- */
-
 package com.defano.hypercard.runtime;
 
+import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -38,16 +31,31 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
+/**
+ * Interpreter class provides static methods for compiling a script (translate
+ * into an AST) as well as executing a string as a script.
+ */
 public class Interpreter {
 
-    private static ExecutorService scriptExecutor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
+    private static ThreadPoolExecutor scriptExecutor;
+    private static ScheduledExecutorService idleTimeExecutor;
+
+    static {
+        scriptExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
+        idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("idle-executor-%d").build());
+
+        idleTimeExecutor.scheduleAtFixedRate(() -> {
+            int pendingHandlers = scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
+            if (pendingHandlers == 0) {
+                GlobalContext.getContext().getGlobalProperties().resetProperties();
+            }
+
+        }, 0, 200, TimeUnit.MILLISECONDS);
+    }
 
     public static Script compile(String scriptText) throws HtException {
-
         HypertalkErrorListener errors = new HypertalkErrorListener();
 
         HyperTalkLexer lexer = new HyperTalkLexer(new ANTLRInputStream(scriptText));

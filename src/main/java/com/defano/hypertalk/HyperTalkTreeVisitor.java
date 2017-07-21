@@ -8,6 +8,7 @@
 
 package com.defano.hypertalk;
 
+import com.defano.hypercard.context.GlobalProperties;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.constructs.*;
@@ -41,22 +42,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
     }
 
     @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(true));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(true));
     }
 
     @Override
     public Object visitDisableCmdStmnt(HyperTalkParser.DisableCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(false));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(false));
     }
 
     @Override
     public Object visitEnableCmdStmnt(HyperTalkParser.EnableCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(true));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(true));
     }
 
     @Override
@@ -112,6 +113,76 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitSortChunkDefault(HyperTalkParser.SortChunkDefaultContext ctx) {
         return ChunkType.LINE;
+    }
+
+    @Override
+    public Object visitEffectDefault(HyperTalkParser.EffectDefaultContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()));
+    }
+
+    @Override
+    public Object visitEffectTo(HyperTalkParser.EffectToContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()), (VisualEffectImage) visit(ctx.image()));
+    }
+
+    @Override
+    public Object visitEffectSpeed(HyperTalkParser.EffectSpeedContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()));
+    }
+
+    @Override
+    public Object visitEffectSpeedTo(HyperTalkParser.EffectSpeedToContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()), (VisualEffectImage) visit(ctx.image()));
+    }
+
+    @Override
+    public Object visitFastSpeed(HyperTalkParser.FastSpeedContext ctx) {
+        return VisualEffectSpeed.FAST;
+    }
+
+    @Override
+    public Object visitSlowSpeed(HyperTalkParser.SlowSpeedContext ctx) {
+        return VisualEffectSpeed.SLOW;
+    }
+
+    @Override
+    public Object visitVeryFastSpeed(HyperTalkParser.VeryFastSpeedContext ctx) {
+        return VisualEffectSpeed.VERY_FAST;
+    }
+
+    @Override
+    public Object visitVerySlowSpeed(HyperTalkParser.VerySlowSpeedContext ctx) {
+        return VisualEffectSpeed.SLOW;
+    }
+
+    @Override
+    public Object visitBlackImage(HyperTalkParser.BlackImageContext ctx) {
+        return VisualEffectImage.BLACK;
+    }
+
+    @Override
+    public Object visitCardImage(HyperTalkParser.CardImageContext ctx) {
+        return VisualEffectImage.CARD;
+    }
+
+    @Override
+    public Object visitGrayImage(HyperTalkParser.GrayImageContext ctx) {
+        return VisualEffectImage.GRAY;
+    }
+
+    @Override
+    public Object visitInverseImage(HyperTalkParser.InverseImageContext ctx) {
+        return VisualEffectImage.INVERSE;
+    }
+
+    @Override
+    public Object visitWhiteImage(HyperTalkParser.WhiteImageContext ctx) {
+        return VisualEffectImage.WHITE;
+    }
+
+    @Override
+    public Object visitDissolveEffect(HyperTalkParser.DissolveEffectContext ctx) {
+        return VisualEffectName.DISSOLVE;
     }
 
     @Override
@@ -452,6 +523,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
         return new DeleteCmd((PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitLockScreenCmdStmt(HyperTalkParser.LockScreenCmdStmtContext ctx) {
+        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(true));
+    }
+
+    @Override
+    public Object visitUnlockScreenCmdStmt(HyperTalkParser.UnlockScreenCmdStmtContext ctx) {
+        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(false));
+    }
+
+    @Override
+    public Object visitUnlockScreenVisualCmdStmt(HyperTalkParser.UnlockScreenVisualCmdStmtContext ctx) {
+        return new UnlockScreenCmd((VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override

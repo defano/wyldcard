@@ -33,7 +33,7 @@ public class PropertyExp extends Expression {
 
             // Getting a HyperCard property
             if (propertySpecifier.isGlobalPropertySpecifier()) {
-                return GlobalContext.getContext().getGlobalProperty(propertySpecifier.property);
+                return GlobalContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
             }
 
             // Getting the property of a part

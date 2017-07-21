@@ -16,6 +16,7 @@
 
 package com.defano.hypertalk.utils;
 
+import com.defano.hypercard.context.GlobalProperties;
 import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.common.CompositeChunk;
 import com.defano.hypertalk.ast.common.Ordinal;
@@ -190,7 +191,7 @@ public class ChunkUtils {
     private static String getItemDelimiterRegex() {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
 
-        String itemDelimiter = GlobalContext.getContext().getItemDelimiter();
+        String itemDelimiter = GlobalContext.getContext().getGlobalProperties().getKnownProperty(GlobalProperties.PROP_ITEMDELIMITER).stringValue();
         StringBuilder itemDelimiterRegex = new StringBuilder();
 
         for (char thisChar : itemDelimiter.toCharArray()) {
@@ -220,7 +221,7 @@ public class ChunkUtils {
             case LINE:
                 return "\n";
             case ITEM:
-                return GlobalContext.getContext().getItemDelimiter();
+                return GlobalContext.getContext().getGlobalProperties().getKnownProperty(GlobalProperties.PROP_ITEMDELIMITER).stringValue();
             default:
                 throw new RuntimeException("Bug! Not implemented.");
         }
