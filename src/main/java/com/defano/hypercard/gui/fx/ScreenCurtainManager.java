@@ -35,10 +35,14 @@ public class ScreenCurtainManager implements AnimatedEffectObserver {
         if (this.activeEffect instanceof FreezeEffect) {
             this.activeEffect.stop();
 
-            BufferedImage from = activeEffect.getFrom();
-            BufferedImage to = HyperCard.getInstance().getCard().takeScreenshot();
+            if (effectSpecifier != null) {
+                BufferedImage from = activeEffect.getFrom();
+                BufferedImage to = HyperCard.getInstance().getCard().takeScreenshot();
 
-            startEffect(VisualEffectFactory.create(effectSpecifier, from, to));
+                startEffect(VisualEffectFactory.create(effectSpecifier, from, to));
+            } else {
+                cancelEffect();
+            }
         }
 
         else {

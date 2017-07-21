@@ -12,23 +12,30 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.Destination;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Position;
+import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class GoCmd extends Statement {
 
     private final Destination destination;
+    private final VisualEffectSpecifier visualEffect;
 
     public GoCmd(Destination destination) {
+        this(destination, null);
+    }
+
+    public GoCmd(Destination destination, VisualEffectSpecifier visualEffect) {
         this.destination = destination;
+        this.visualEffect = visualEffect;
     }
 
     public void execute() throws HtException {
         if (destination.ordinal != null) {
             if (destination.ordinal == Ordinal.FIRST) {
-                HyperCard.getInstance().getStack().goFirstCard();
+                HyperCard.getInstance().getStack().goFirstCard(visualEffect);
             } else if (destination.ordinal == Ordinal.LAST) {
-                HyperCard.getInstance().getStack().goLastCard();
+                HyperCard.getInstance().getStack().goLastCard(visualEffect);
             } else {
                 int destCard = destination.ordinal.intValue();
                 if (destCard == Ordinal.MIDDLE.intValue()) {
@@ -39,15 +46,15 @@ public class GoCmd extends Statement {
                     throw new HtSemanticException("No card numbered " + destCard + " in this stack.");
                 }
 
-                HyperCard.getInstance().getStack().goCard(destCard);
+                HyperCard.getInstance().getStack().goCard(destCard, visualEffect);
             }
         }
 
         else if (destination.position != null) {
             if (destination.position == Position.NEXT) {
-                HyperCard.getInstance().getStack().goNextCard();
+                HyperCard.getInstance().getStack().goNextCard(visualEffect);
             } else {
-                HyperCard.getInstance().getStack().goPrevCard();
+                HyperCard.getInstance().getStack().goPrevCard(visualEffect);
             }
         }
 
@@ -57,7 +64,7 @@ public class GoCmd extends Statement {
                 throw new HtSemanticException("No card numbered " + (destCard + 1) + " in this stack.");
             }
 
-            HyperCard.getInstance().getStack().goCard(destCard);
+            HyperCard.getInstance().getStack().goCard(destCard, visualEffect);
         }
     }
 }

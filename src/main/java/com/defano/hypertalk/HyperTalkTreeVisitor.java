@@ -20,6 +20,7 @@ import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import sun.security.krb5.internal.crypto.Des;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
@@ -198,6 +199,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
         return new GoCmd((Destination) visit(ctx.destination()));
+    }
+
+    @Override
+    public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
+        return new GoCmd((Destination) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override

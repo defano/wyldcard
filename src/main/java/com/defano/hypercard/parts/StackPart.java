@@ -3,11 +3,14 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.fx.ScreenCurtainManager;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.parts.model.StackObserver;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.VisualEffectName;
+import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
@@ -63,7 +66,7 @@ public class StackPart implements PropertyChangeObserver {
 
         this.stackModel.addPropertyChangedObserver(this);
 
-        goCard(model.getCurrentCardIndex());
+        goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
         fireOnCardOpened(getCurrentCard());
@@ -96,24 +99,29 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     /**
-     * Navigates to the given card index. Has no affect if no card with the requested index exists in this stack.
+     * Navigates to the given card index, applying a visual effect to the transition. Has no affect if no card with the
+     * requested index exists in this stack.
      *
      * Note that card index is zero-based, but card's are numbered starting from one from a user's perspective.
      *
      * @param cardIndex The zero-based index of the card to navigate to.
-     * @return The card now visible in the stack window.
+     * @param visualEffect The visual effect to apply to the transition
+     * @return The destination card (now visible in the stack window).
      */
-    public CardPart goCard(int cardIndex) {
-        return go(cardIndex, true);
+    public CardPart goCard(int cardIndex, VisualEffectSpecifier visualEffect) {
+        ScreenCurtainManager.getInstance().setScreenLocked(true);
+        CardPart destination = go(cardIndex, true);
+        ScreenCurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
+        return destination;
     }
 
     /**
      * Navigates to the next card in the stack; has no affect if the current card is the last card.
      * @return The card now visible in the stack window or null if no next card.
      */
-    public CardPart goNextCard() {
+    public CardPart goNextCard(VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() + 1 < stackModel.getCardCount()) {
-            return go(stackModel.getCurrentCardIndex() + 1, true);
+            return goCard(stackModel.getCurrentCardIndex() + 1, visualEffect);
         } else {
             return null;
         }
@@ -123,9 +131,9 @@ public class StackPart implements PropertyChangeObserver {
      * Naviages to the previous card in the stack; has no affect if the current card is the first card.
      * @return The card now visible in the stack window or null if no previous card.
      */
-    public CardPart goPrevCard() {
+    public CardPart goPrevCard(VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() - 1 >= 0) {
-            return go(stackModel.getCurrentCardIndex() - 1, true);
+            return goCard(stackModel.getCurrentCardIndex() - 1, visualEffect);
         } else {
             return null;
         }
@@ -135,9 +143,9 @@ public class StackPart implements PropertyChangeObserver {
      * Navigates to the last card on the backstack; has no affect if the backstack is empty.
      * @return The card now visible in the stack window, or null if no card available to pop
      */
-    public CardPart goBack() {
+    public CardPart goBack(VisualEffectSpecifier visualEffect) {
         if (!stackModel.getBackStack().isEmpty()) {
-            return go(stackModel.getBackStack().pop(), false);
+            return goCard(stackModel.getBackStack().pop(), visualEffect);
         } else {
             return null;
         }
@@ -147,16 +155,16 @@ public class StackPart implements PropertyChangeObserver {
      * Naviages to the first card in the stack.
      * @return The first card in the stack
      */
-    public CardPart goFirstCard() {
-        return go(0, true);
+    public CardPart goFirstCard(VisualEffectSpecifier visualEffect) {
+        return goCard(0, visualEffect);
     }
 
     /**
      * Navigates to the last card in the stack.
      * @return The last card in the stack
      */
-    public CardPart goLastCard() {
-        return go(stackModel.getCardCount() - 1, true);
+    public CardPart goLastCard(VisualEffectSpecifier visualEffect) {
+        return goCard(stackModel.getCardCount() - 1, visualEffect);
     }
 
     /**
@@ -191,7 +199,7 @@ public class StackPart implements PropertyChangeObserver {
         stackModel.newCardWithNewBackground();
         cardCountProvider.set(stackModel.getCardCount());
 
-        return goNextCard();
+        return goNextCard(null);
     }
 
     /**
@@ -206,7 +214,7 @@ public class StackPart implements PropertyChangeObserver {
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.set(stackModel.getCardCount());
 
-        return goNextCard();
+        return goNextCard(null);
     }
 
     /**
@@ -238,7 +246,7 @@ public class StackPart implements PropertyChangeObserver {
             stackModel.insertCard(cardClipboardProvider.get().getCardModel().copyOf());
             cardCountProvider.set(stackModel.getCardCount());
 
-            goNextCard();
+            goNextCard(null);
         }
     }
 

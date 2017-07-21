@@ -22,7 +22,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     protected void onPrintCompleted(boolean successfully) {
-        HyperCard.getInstance().getStack().goCard(currentCard);
+        HyperCard.getInstance().getStack().goCard(currentCard, null);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PrintStackAction extends PrintActionDelegate {
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
             // Need to transition to card in order to print it
-            HyperCard.getInstance().getStack().goCard(pageIndex).printAll(g);
+            HyperCard.getInstance().getStack().goCard(pageIndex, null).printAll(g);
 
             return PAGE_EXISTS;
         } else {
