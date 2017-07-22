@@ -231,6 +231,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitShrinkToTopEffect(HyperTalkParser.ShrinkToTopEffectContext ctx) {
+        return VisualEffectName.SHRINK_TO_TOP;
+    }
+
+    @Override
+    public Object visitShrinkToCenterEffect(HyperTalkParser.ShrinkToCenterEffectContext ctx) {
+        return VisualEffectName.SHRING_TO_CENTER;
+    }
+
+    @Override
+    public Object visitShrinkToBottomEffect(HyperTalkParser.ShrinkToBottomEffectContext ctx) {
+        return VisualEffectName.SHRINK_TO_BOTTOM;
+    }
+
+    @Override
     public Object visitStretchFromTopEffect(HyperTalkParser.StretchFromTopEffectContext ctx) {
         return VisualEffectName.STRETCH_FROM_TOP;
     }

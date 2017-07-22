@@ -68,6 +68,12 @@ public class VisualEffectFactory {
                 return new StretchFromBottomEffect();
             case STRETCH_FROM_CENTER:
                 return new StretchFromCenterEffect();
+            case SHRINK_TO_BOTTOM:
+                return new ShrinkToBottomEffect();
+            case SHRINK_TO_TOP:
+                return new ShrinkToTopEffect();
+            case SHRING_TO_CENTER:
+                return new ShrinkToCenterEffect();
 
             default:
                 throw new IllegalArgumentException("Unimplemented visual effect: " + name);

@@ -488,23 +488,29 @@ end mouseUp
 
 When navigating between cards or unlocking the screen, a *visual effect* can be applied to animate the change. HyperTalk Java supports these animations:
 
-Visual Effect      | Description
--------------------|-----------------------------------------
-`dissolve`         | Cross-dissolve from one card image to the next.
-`scroll left`      | Scroll from right to left
-`scroll right`     | Scroll from left to right
-`scroll up`        | Scroll from bottom to top
-`scroll down`      | Scroll from top to bottom
-`wipe left`        | Slides the resulting image over the source from right to left.
-`wipe right`       | Slides the resulting image over the source from left to right.
-`wipe up`          | Slides the resulting image over the source from bottom to top.
-`wipe down`        | Slides the resulting image over the source from top to bottom.
-`zoom open`        | The resulting card image expands over the source in a rectangle aperture.
-`zoom close`       | The resulting card collapses over the source in a rectangle aperture.
-`iris open`        | The resulting card image expands over the source in a circular aperture.
-`iris close`       | The resulting card image collapses over the source in a circular aperture.
-`barn door open`   | The source image is split horizontally and each side slides out left/right to expose the resulting image.
-`barn door close`  | The resulting image slides in the from the left/right obscuring the source image.
+Visual Effect         | Description
+----------------------|-----------------------------------------
+`dissolve`            | Cross-dissolve from one card image to the next.
+`scroll left`         | Scroll from right to left
+`scroll right`        | Scroll from left to right
+`scroll up`           | Scroll from bottom to top
+`scroll down`         | Scroll from top to bottom
+`wipe left`           | Slides the resulting image over the source from right to left.
+`wipe right`          | Slides the resulting image over the source from left to right.
+`wipe up`             | Slides the resulting image over the source from bottom to top.
+`wipe down`           | Slides the resulting image over the source from top to bottom.
+`zoom open`           | The resulting card image expands over the source in a rectangle aperture.
+`zoom close`          | The resulting card collapses over the source in a rectangle aperture.
+`iris open`           | The resulting card image expands over the source in a circular aperture.
+`iris close`          | The resulting card image collapses over the source in a circular aperture.
+`barn door open`      | The source image is split horizontally and each side slides out left/right to expose the resulting image.
+`barn door close`     | The resulting image slides in the from the left/right obscuring the source image.
+`shrink to bottom`    | The source image shrinks downward exposing the destination
+`shrink to top`       | The source image shrinks upward exposing the destination
+`shrink to center`    | The source image shrinks from the center of the screen exposing the destination
+`stretch from bottom` | The destination image grows from the bottom obscuring the source underneath it
+`stretch from top`    | The destination image grows from the top obscuring the source underneath it
+`stretch from center` | The destination image grows from the center of the screen obscuring the source underneath it
 
 The syntax for specifying a visual effect is:
 
