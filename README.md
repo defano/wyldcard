@@ -26,9 +26,9 @@ This is not a HyperCard replacement nor is it an open-sourced release of Apple's
 
 * Can't open or import HyperCard stacks.
 * Cards, stacks and backgrounds are not scriptable; no concept of user levels or stack protections.
-* No ability to modify the menu bar or listen for interactions with the menus.
+* No ability to modify the menu bar or listen for interactions with the menus; no sound or `play` command.
 * No "Home" stack or stack script inheritance (i.e., `start using ...`); no message passing hierarchy (`pass mouseUp`).
-* No sound or visual effects; no support for external commands or functions (XCMDs/XFCNs).
+* No support for external commands or functions (XCMDs/XFCNs).
 * Not all commands and functions in HyperTalk have been implemented
 
 ## Getting started
