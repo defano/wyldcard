@@ -35,6 +35,7 @@ public class CardModel {
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
     private byte[] cardImage;
+    private byte[] partsScreenshot;
 
     private CardModel (int cardId, int backgroundId) {
         this.buttonModels = new ArrayList<>();
@@ -110,15 +111,7 @@ public class CardModel {
      * @param image The card image.
      */
     public void setCardImage(BufferedImage image) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            baos.flush();
-            this.cardImage = baos.toByteArray();
-            baos.close();
-        } catch (IOException e) {
-            throw new RuntimeException("An error occurred while trying to save the card image.", e);
-        }
+        this.cardImage = Serializer.serializeImage(image);
     }
 
     /**
@@ -127,16 +120,7 @@ public class CardModel {
      * @return The foreground image.
      */
     public BufferedImage getCardImage() {
-        if (cardImage == null || cardImage.length == 0) {
-            return new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
-        } else {
-            try {
-                ByteArrayInputStream stream = new ByteArrayInputStream(cardImage);
-                return ImageIO.read(stream);
-            } catch (IOException e) {
-                throw new RuntimeException("An error occurred while reading the card image. The stack may be corrupted.", e);
-            }
-        }
+        return Serializer.deserializeImage(this.cardImage);
     }
 
     public String getCardName() {
@@ -165,6 +149,14 @@ public class CardModel {
 
     public int getCardId() {
         return cardId;
+    }
+
+    public void setPartsScreenshot(BufferedImage image) {
+        this.partsScreenshot = Serializer.serializeImage(image);
+    }
+
+    public BufferedImage getPartsScreenshot() {
+        return Serializer.deserializeImage(this.partsScreenshot);
     }
 
     /**

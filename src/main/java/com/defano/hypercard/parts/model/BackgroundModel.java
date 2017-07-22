@@ -8,6 +8,8 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.Serializer;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -25,6 +27,7 @@ public class BackgroundModel {
     private String name = "";
     private boolean cantDelete = false;
     private byte[] backgroundImage;
+    private byte[] partsScreenshot;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
 
@@ -54,28 +57,11 @@ public class BackgroundModel {
     }
 
     public void setBackgroundImage(BufferedImage image) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            baos.flush();
-            this.backgroundImage = baos.toByteArray();
-            baos.close();
-        } catch (IOException e) {
-            throw new RuntimeException("An error occurred while trying to save the card image.", e);
-        }
+        this.backgroundImage = Serializer.serializeImage(image);
     }
 
     public BufferedImage getBackgroundImage() {
-        if (backgroundImage == null || backgroundImage.length == 0) {
-            return new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
-        } else {
-            try {
-                ByteArrayInputStream stream = new ByteArrayInputStream(backgroundImage);
-                return ImageIO.read(stream);
-            } catch (IOException e) {
-                throw new RuntimeException("An error occurred while reading the card image. The stack may be corrupted.", e);
-            }
-        }
+        return Serializer.deserializeImage(this.backgroundImage);
     }
 
     public String getName() {
@@ -92,5 +78,13 @@ public class BackgroundModel {
 
     public void setCantDelete(boolean cantDelete) {
         this.cantDelete = cantDelete;
+    }
+
+    public void setPartsScreenshot(BufferedImage image) {
+        this.partsScreenshot = Serializer.serializeImage(image);
+    }
+
+    public BufferedImage getPartsScreenshot() {
+        return Serializer.deserializeImage(this.partsScreenshot);
     }
 }

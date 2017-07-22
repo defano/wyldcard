@@ -3,15 +3,18 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.parts.model.StackObserver;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,9 +66,10 @@ public class StackPart implements PropertyChangeObserver {
 
         this.stackModel.addPropertyChangedObserver(this);
 
-        goCard(model.getCurrentCardIndex());
+        goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
+        fireOnCardOpened(getCurrentCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
 
@@ -95,24 +99,36 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     /**
-     * Navigates to the given card index. Has no affect if no card with the requested index exists in this stack.
+     * Navigates to the given card index, applying a visual effect to the transition. Has no affect if no card with the
+     * requested index exists in this stack.
      *
      * Note that card index is zero-based, but card's are numbered starting from one from a user's perspective.
      *
      * @param cardIndex The zero-based index of the card to navigate to.
-     * @return The card now visible in the stack window.
+     * @param visualEffect The visual effect to apply to the transition
+     * @return The destination card (now visible in the stack window).
      */
-    public CardPart goCard(int cardIndex) {
-        return go(cardIndex, true);
+    public CardPart goCard(int cardIndex, VisualEffectSpecifier visualEffect) {
+        CardPart destination;
+
+        if (visualEffect == null) {
+            destination = go(cardIndex, true);
+        } else {
+            CurtainManager.getInstance().setScreenLocked(true);
+            destination = go(cardIndex, true);
+            CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
+        }
+
+        return destination;
     }
 
     /**
      * Navigates to the next card in the stack; has no affect if the current card is the last card.
      * @return The card now visible in the stack window or null if no next card.
      */
-    public CardPart goNextCard() {
+    public CardPart goNextCard(VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() + 1 < stackModel.getCardCount()) {
-            return go(stackModel.getCurrentCardIndex() + 1, true);
+            return goCard(stackModel.getCurrentCardIndex() + 1, visualEffect);
         } else {
             return null;
         }
@@ -122,9 +138,9 @@ public class StackPart implements PropertyChangeObserver {
      * Naviages to the previous card in the stack; has no affect if the current card is the first card.
      * @return The card now visible in the stack window or null if no previous card.
      */
-    public CardPart goPrevCard() {
+    public CardPart goPrevCard(VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() - 1 >= 0) {
-            return go(stackModel.getCurrentCardIndex() - 1, true);
+            return goCard(stackModel.getCurrentCardIndex() - 1, visualEffect);
         } else {
             return null;
         }
@@ -134,9 +150,9 @@ public class StackPart implements PropertyChangeObserver {
      * Navigates to the last card on the backstack; has no affect if the backstack is empty.
      * @return The card now visible in the stack window, or null if no card available to pop
      */
-    public CardPart goBack() {
+    public CardPart goBack(VisualEffectSpecifier visualEffect) {
         if (!stackModel.getBackStack().isEmpty()) {
-            return go(stackModel.getBackStack().pop(), false);
+            return goCard(stackModel.getBackStack().pop(), visualEffect);
         } else {
             return null;
         }
@@ -146,16 +162,16 @@ public class StackPart implements PropertyChangeObserver {
      * Naviages to the first card in the stack.
      * @return The first card in the stack
      */
-    public CardPart goFirstCard() {
-        return go(0, true);
+    public CardPart goFirstCard(VisualEffectSpecifier visualEffect) {
+        return goCard(0, visualEffect);
     }
 
     /**
      * Navigates to the last card in the stack.
      * @return The last card in the stack
      */
-    public CardPart goLastCard() {
-        return go(stackModel.getCardCount() - 1, true);
+    public CardPart goLastCard(VisualEffectSpecifier visualEffect) {
+        return goCard(stackModel.getCardCount() - 1, visualEffect);
     }
 
     /**
@@ -190,7 +206,7 @@ public class StackPart implements PropertyChangeObserver {
         stackModel.newCardWithNewBackground();
         cardCountProvider.set(stackModel.getCardCount());
 
-        return goNextCard();
+        return goNextCard(null);
     }
 
     /**
@@ -205,7 +221,7 @@ public class StackPart implements PropertyChangeObserver {
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.set(stackModel.getCardCount());
 
-        return goNextCard();
+        return goNextCard(null);
     }
 
     /**
@@ -237,7 +253,7 @@ public class StackPart implements PropertyChangeObserver {
             stackModel.insertCard(cardClipboardProvider.get().getCardModel().copyOf());
             cardCountProvider.set(stackModel.getCardCount());
 
-            goNextCard();
+            goNextCard(null);
         }
     }
 
@@ -353,6 +369,7 @@ public class StackPart implements PropertyChangeObserver {
 
         // Notify observers that current card is going away
         fireOnCardClosing(getCurrentCard());
+        takeScreenshot();
 
         return activateCard(cardIndex);
     }
@@ -383,6 +400,47 @@ public class StackPart implements PropertyChangeObserver {
         return stackModel.getCardCount() > 1 &&
                 !getCurrentCard().getCardModel().isCantDelete() &&
                 (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().isCantDelete());
+    }
+
+    /**
+     * Takes a "screenshot" of the visible card, that is, it generates a bitmap image of the card including the foreground and
+     * background canvas and part layers. The sceenshot is a pixel-accurate rendering of the card in the stack
+     * window and is used when processing visual effect (including 'lock screen'.
+     *
+     * Note that there is a limitation in Swing that prevents heavyweight components (those whose look and
+     * feel is provided by the native OS) from drawing properly when they are not visible on-screen. Thus, we
+     * cache a last-displayed image those parts./
+     *
+     * @return The card screenshot
+     */
+    public void takeScreenshot() {
+        CardPart cardPart = getCurrentCard();
+
+        BufferedImage cardPartsScreenshot = new BufferedImage(cardPart.getWidth(), cardPart.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = cardPartsScreenshot.createGraphics();
+
+        for (Component c : cardPart.getComponentsInCardLayer(CardLayer.CARD_PARTS)) {
+            Graphics cg = g.create();
+            cg.translate(c.getX(), c.getY());
+            c.printAll(cg);
+            cg.dispose();
+        }
+
+        cardPart.getCardModel().setPartsScreenshot(cardPartsScreenshot);
+        g.dispose();
+
+        BufferedImage bkgndPartsScreenshot = new BufferedImage(cardPart.getWidth(), cardPart.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        g = bkgndPartsScreenshot.createGraphics();
+
+        for (Component c : cardPart.getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS)) {
+            Graphics cg = g.create();
+            cg.translate(c.getX(), c.getY());
+            c.printAll(cg);
+            cg.dispose();
+        }
+
+        cardPart.getCardBackground().setPartsScreenshot(bkgndPartsScreenshot);
+        g.dispose();
     }
 
 }

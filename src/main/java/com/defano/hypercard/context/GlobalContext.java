@@ -204,26 +204,12 @@ public class GlobalContext {
         return this.me.get();
     }
 
-    public String getItemDelimiter() {
-        return globalProperties.getKnownProperty(GlobalProperties.PROP_ITEMDELIMITER).stringValue();
-    }
-
-    public void setGlobalProperty(String property, Value value)
-            throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
-    {
-        globalProperties.setProperty(property, value);
-    }
-
     public void setSelectedText(Value selectedText) {
         globalProperties.defineProperty(GlobalProperties.PROP_SELECTEDTEXT, selectedText, true);
     }
 
-    public Value getSelectedText() {
-        return globalProperties.getKnownProperty(GlobalProperties.PROP_SELECTEDTEXT);
-    }
-
-    public Value getGlobalProperty(String property) throws NoSuchPropertyException, HtSemanticException {
-        return globalProperties.getProperty(property);
+    public GlobalProperties getGlobalProperties() {
+        return globalProperties;
     }
 
     private Stack<Frame> getStack() {

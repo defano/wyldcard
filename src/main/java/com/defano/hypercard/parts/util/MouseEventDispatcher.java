@@ -1,5 +1,8 @@
 package com.defano.hypercard.parts.util;
 
+import com.defano.jmonet.canvas.AbstractPaintCanvas;
+import com.defano.jmonet.canvas.UndoablePaintCanvas;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -106,8 +109,12 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
         // No drag in progress; dispatch normally
         else {
             Component c = findHit(e);       // Find component behind source
-
             if (c != null) {
+
+                // TODO: Canvas shouldn't behave unusually in this respect.
+                if (c instanceof UndoablePaintCanvas) {
+                    ((UndoablePaintCanvas)c).getSurface().dispatchEvent(e);
+                }
 
                 // Obscured components will not automatically receive focus; force focus as needed
                 if (e.getID() == MouseEvent.MOUSE_CLICKED ||

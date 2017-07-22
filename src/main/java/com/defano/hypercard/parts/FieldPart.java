@@ -81,7 +81,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
      * @return The newly created field.
      */
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
-        FieldPart field = new FieldPart(FieldStyle.OPAQUE, parent);
+        FieldPart field = new FieldPart(FieldStyle.RECTANGLE, parent);
 
         field.initProperties(geometry);
 

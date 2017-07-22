@@ -29,13 +29,15 @@ public class PropertiesModel {
 
     // Transient fields will not be serialized and must be re-hydrated programmatically.
     private transient Map<String, String> propertyAliases;
-    private transient Set<PropertyChangeObserver> listeners;
+    private transient Set<PropertyChangeObserver> changeObservers;
+    private transient Set<PropertyWillChangeObserver> willChangeObservers;
     private transient Map<String,ComputedGetter> computerGetters;
     private transient Map<String,ComputedSetter> computerSetters;
 
     // Required to initialize transient data member when object is deserialized
     public PropertiesModel() {
-        listeners = new HashSet<>();
+        changeObservers = new HashSet<>();
+        willChangeObservers = new HashSet<>();
         propertyAliases = new HashMap<>();
         computerGetters = new HashMap<>();
         computerSetters = new HashMap<>();
@@ -112,7 +114,7 @@ public class PropertiesModel {
         setProperty(propertyName, value, false);
     }
 
-    public void setProperty (String propertyName, Value value, boolean quietly)
+    private void setProperty (String propertyName, Value value, boolean quietly)
             throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
     {
         propertyName = propertyName.toLowerCase();
@@ -131,6 +133,10 @@ public class PropertiesModel {
         }
 
         Value oldValue = getProperty(propertyName);
+
+        if (!quietly) {
+            fireOnPropertyWillChange(propertyName, oldValue, value);
+        }
 
         if (computerSetters.keySet().contains(propertyName)) {
             computerSetters.get(propertyName).setComputedValue(this, propertyName, value);
@@ -217,11 +223,19 @@ public class PropertiesModel {
     }
 
     /**
+     * Adds an observer of property will-change events.
+     * @param listener The observer
+     */
+    public void addPropertyWillChangeObserver(PropertyWillChangeObserver listener) {
+        willChangeObservers.add(listener);
+    }
+
+    /**
      * Adds an observer of property value changes.
      * @param listener The observer
      */
     public void addPropertyChangedObserver(PropertyChangeObserver listener) {
-        listeners.add(listener);
+        changeObservers.add(listener);
     }
 
     /**
@@ -240,13 +254,19 @@ public class PropertiesModel {
     }
 
     public boolean removePropertyChangedObserver(PropertyChangeObserver listener) {
-        return listeners.remove(listener);
+        return changeObservers.remove(listener);
+    }
+
+    private void fireOnPropertyWillChange(String property, Value oldValue, Value value) {
+        for (PropertyWillChangeObserver listener : willChangeObservers) {
+            listener.onPropertyWillChange(property, oldValue, value);
+        }
     }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
 
         // Make local copy to prevent concurrent change exceptions
-        final Set<PropertyChangeObserver> listeners = new HashSet<>(this.listeners);
+        final Set<PropertyChangeObserver> listeners = new HashSet<>(this.changeObservers);
 
         SwingUtilities.invokeLater(() -> {
             for (PropertyChangeObserver listener : listeners) {

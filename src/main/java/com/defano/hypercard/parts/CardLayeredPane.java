@@ -12,6 +12,9 @@ public abstract class CardLayeredPane extends JLayeredPane {
     private UndoablePaintCanvas foregroundCanvas;
     private UndoablePaintCanvas backgroundCanvas;
 
+    public CardLayeredPane() {
+    }
+
     public void setForegroundVisible(boolean isVisible) {
         foregroundVisible = isVisible;
         foregroundCanvas.setVisible(isVisible);

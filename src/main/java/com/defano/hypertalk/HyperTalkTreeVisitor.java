@@ -8,6 +8,7 @@
 
 package com.defano.hypertalk;
 
+import com.defano.hypercard.context.GlobalProperties;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.constructs.*;
@@ -19,6 +20,7 @@ import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import sun.security.krb5.internal.crypto.Des;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
@@ -41,22 +43,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
     }
 
     @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(true));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(true));
     }
 
     @Override
     public Object visitDisableCmdStmnt(HyperTalkParser.DisableCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(false));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(false));
     }
 
     @Override
     public Object visitEnableCmdStmnt(HyperTalkParser.EnableCmdStmntContext ctx) {
-        return new PartPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(true));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(true));
     }
 
     @Override
@@ -115,6 +117,146 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitEffectDefault(HyperTalkParser.EffectDefaultContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()));
+    }
+
+    @Override
+    public Object visitEffectTo(HyperTalkParser.EffectToContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()), (VisualEffectImage) visit(ctx.image()));
+    }
+
+    @Override
+    public Object visitEffectSpeed(HyperTalkParser.EffectSpeedContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()));
+    }
+
+    @Override
+    public Object visitEffectSpeedTo(HyperTalkParser.EffectSpeedToContext ctx) {
+        return new VisualEffectSpecifier((VisualEffectName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()), (VisualEffectImage) visit(ctx.image()));
+    }
+
+    @Override
+    public Object visitFastSpeed(HyperTalkParser.FastSpeedContext ctx) {
+        return VisualEffectSpeed.FAST;
+    }
+
+    @Override
+    public Object visitSlowSpeed(HyperTalkParser.SlowSpeedContext ctx) {
+        return VisualEffectSpeed.SLOW;
+    }
+
+    @Override
+    public Object visitVeryFastSpeed(HyperTalkParser.VeryFastSpeedContext ctx) {
+        return VisualEffectSpeed.VERY_FAST;
+    }
+
+    @Override
+    public Object visitVerySlowSpeed(HyperTalkParser.VerySlowSpeedContext ctx) {
+        return VisualEffectSpeed.SLOW;
+    }
+
+    @Override
+    public Object visitBlackImage(HyperTalkParser.BlackImageContext ctx) {
+        return VisualEffectImage.BLACK;
+    }
+
+    @Override
+    public Object visitCardImage(HyperTalkParser.CardImageContext ctx) {
+        return VisualEffectImage.CARD;
+    }
+
+    @Override
+    public Object visitGrayImage(HyperTalkParser.GrayImageContext ctx) {
+        return VisualEffectImage.GRAY;
+    }
+
+    @Override
+    public Object visitInverseImage(HyperTalkParser.InverseImageContext ctx) {
+        return VisualEffectImage.INVERSE;
+    }
+
+    @Override
+    public Object visitWhiteImage(HyperTalkParser.WhiteImageContext ctx) {
+        return VisualEffectImage.WHITE;
+    }
+
+    @Override
+    public Object visitDissolveEffect(HyperTalkParser.DissolveEffectContext ctx) {
+        return VisualEffectName.DISSOLVE;
+    }
+
+    @Override
+    public Object visitBarnDoorOpenEffect(HyperTalkParser.BarnDoorOpenEffectContext ctx) {
+        return VisualEffectName.BARN_DOOR_OPEN;
+    }
+
+    @Override
+    public Object visitBarnDoorCloseEffect(HyperTalkParser.BarnDoorCloseEffectContext ctx) {
+        return VisualEffectName.BARN_DOOR_CLOSE;
+    }
+
+    @Override
+    public Object visitIrisOpenEffect(HyperTalkParser.IrisOpenEffectContext ctx) {
+        return VisualEffectName.IRIS_OPEN;
+    }
+
+    @Override
+    public Object visitIrisCloseEffect(HyperTalkParser.IrisCloseEffectContext ctx) {
+        return VisualEffectName.IRIS_CLOSE;
+    }
+
+    @Override
+    public Object visitScrollDownEffect(HyperTalkParser.ScrollDownEffectContext ctx) {
+        return VisualEffectName.SCROLL_DOWN;
+    }
+
+    @Override
+    public Object visitScrollUpEffect(HyperTalkParser.ScrollUpEffectContext ctx) {
+        return VisualEffectName.SCROLL_UP;
+    }
+
+    @Override
+    public Object visitScrollLeftEffect(HyperTalkParser.ScrollLeftEffectContext ctx) {
+        return VisualEffectName.SCROLL_LEFT;
+    }
+
+    @Override
+    public Object visitScrollRightEffect(HyperTalkParser.ScrollRightEffectContext ctx) {
+        return VisualEffectName.SCROLL_RIGHT;
+    }
+
+    @Override
+    public Object visitWipeUpEffect(HyperTalkParser.WipeUpEffectContext ctx) {
+        return VisualEffectName.WIPE_UP;
+    }
+
+    @Override
+    public Object visitWipeDownEffect(HyperTalkParser.WipeDownEffectContext ctx) {
+        return VisualEffectName.WIPE_DOWN;
+    }
+
+    @Override
+    public Object visitWipeLeftEffect(HyperTalkParser.WipeLeftEffectContext ctx) {
+        return VisualEffectName.WIPE_LEFT;
+    }
+
+    @Override
+    public Object visitWipeRightEffect(HyperTalkParser.WipeRightEffectContext ctx) {
+        return VisualEffectName.WIPE_RIGHT;
+    }
+
+    @Override
+    public Object visitZoomCloseEffect(HyperTalkParser.ZoomCloseEffectContext ctx) {
+        return VisualEffectName.ZOOM_CLOSE;
+    }
+
+    @Override
+    public Object visitZoomOpenEffect(HyperTalkParser.ZoomOpenEffectContext ctx) {
+        return VisualEffectName.ZOOM_OPEN;
+    }
+
+    @Override
     public Object visitTicksTimeUnit(HyperTalkParser.TicksTimeUnitContext ctx) {
         return TimeUnit.TICKS;
     }
@@ -127,6 +269,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
         return new GoCmd((Destination) visit(ctx.destination()));
+    }
+
+    @Override
+    public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
+        return new GoCmd((Destination) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override
@@ -452,6 +599,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
         return new DeleteCmd((PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitLockScreenCmdStmt(HyperTalkParser.LockScreenCmdStmtContext ctx) {
+        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(true));
+    }
+
+    @Override
+    public Object visitUnlockScreenCmdStmt(HyperTalkParser.UnlockScreenCmdStmtContext ctx) {
+        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(false));
+    }
+
+    @Override
+    public Object visitUnlockScreenVisualCmdStmt(HyperTalkParser.UnlockScreenVisualCmdStmtContext ctx) {
+        return new UnlockScreenCmd((VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override

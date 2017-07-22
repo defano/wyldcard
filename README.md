@@ -53,7 +53,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Containers](#containers) | [Parts](#parts-and-properties) | [Expressions](#chunk-expressions) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs) 
+[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Containers](#containers) | [Parts](#parts-and-properties) | [Expressions](#chunk-expressions) | [Visual Effects](#visual-effects) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs)
 
 HyperCard's native language, called _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. There is no singular "main" script that executes at runtime.
 
@@ -106,7 +106,9 @@ A HyperCard stack consists of one or more cards grouped together in an ordered l
 
 Cards are comprised of two layers of graphics and user interface elements: a background and a foreground (called the `card` layer). Each card has a unique foreground, but its background can be shared between cards. Backgrounds, cards, and stacks could contain their own scripts in Apple's HyperCard, but this version does not allow scripting these elements.
 
-The `go` command is used to navigate between cards:
+### Navigating between cards
+
+Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or use the HyperTalk `go` command:
 
 ```
 go [to] <destination>
@@ -126,7 +128,7 @@ Where:
 For example:
 
 ```
-go to myCard  -- myCard is a variable holding the number of a card
+go to myCard  -- myCard is a variable holding the name or number of a card
 go to card 13 -- no effect if there are fewer than 13 cards
 go 1          -- first card; cards are numbered from 1, not 0
 go next
@@ -193,20 +195,20 @@ For example:
 --
 
 on mouseUp
-	global aVar
-	put 5 into aVar
+  global aVar
+  put 5 into aVar
 
-	f() -- call function f with no arguments
-	y() -- call function y with no arguments
+  f() -- call function f with no arguments
+  y() -- call function y with no arguments
 end mouseUp
 
 function f
-	put aVar	-- puts the empty string ("") into the message box
+  put aVar	-- puts the empty string ("") into the message box
 end f
 
 function y
-	global aVar
-	put aVar	-- puts "5" into the message box
+  global aVar
+  put aVar	-- puts "5" into the message box
 end y
 ```
 
@@ -227,9 +229,9 @@ For example:
 
 ```
 on mouseUp
-	ask "How are you, fine sir?"
-	put it into responseVar            -- ‘it' contains the user's input
-	put the result into responseVar    -- same effect as previous line
+  ask "How are you, fine sir?"
+  put it into responseVar            -- ‘it' contains the user's input
+  put the result into responseVar    -- same effect as previous line
 end mouseUp
 ```
 
@@ -467,6 +469,74 @@ not "nonsense" -- syntax error, "nonsense" is not a boolean
 false is not "tr" && "ue" -- true, concatenating 'tr' with 'ue' produces a logical value
 ```
 
+## Visual Effects
+
+A script can "lock" the screen to prevent the user from seeing what the script is doing. As long as the screen is locked, the user will see no changes made to the card or stack until HyperTalk Java is idle (has no more pending scripts to execute) or the `unlock screen` command is executed.
+
+For example, consider this script which secretly navigates to the next card in the stack, draws a diagonal line on it, and then navigates back. While this script executes, the user has no knowledge that "behind the scenes" we've moved to another card and modified it.
+
+```
+on mouseUp
+  lock screen
+  go to the next card
+  choose brush tool
+  drag from 50,50 to 200,200
+  go prev
+  unlock screen  -- not required; screen will unlock automatically upon completion
+end mouseUp
+```
+
+When navigating between cards or unlocking the screen, a *visual effect* can be applied to animate the change. HyperTalk Java supports these animations:
+
+Visual Effect      | Description
+-------------------|-----------------------------------------
+`dissolve`         | Cross-dissolve from one card image to the next.
+`scroll left`      | Scroll from right to left
+`scroll right`     | Scroll from left to right
+`scroll up`        | Scroll from bottom to top
+`scroll down`      | Scroll from top to bottom
+`wipe left`        | Slides the resulting image over the source from right to left.
+`wipe right`       | Slides the resulting image over the source from left to right.
+`wipe up`          | Slides the resulting image over the source from bottom to top.
+`wipe down`        | Slides the resulting image over the source from top to bottom.
+`zoom open`        | The resulting card image expands over the source in a rectangle aperture.
+`zoom close`       | The resulting card collapses over the source in a rectangle aperture.
+`iris open`        | The resulting card image expands over the source in a circular aperture.
+`iris close`       | The resulting card image collapses over the source in a circular aperture.
+`barn door open`   | The source image is split horizontally and each side slides out left/right to expose the resulting image.
+`barn door close`  | The resulting image slides in the from the left/right obscuring the source image.
+
+The syntax for specifying a visual effect is:
+
+```
+visual [effect] <effect-name> [to <image>] [speed]
+```
+
+Where `<effect-name>` is the name of a visual effect (from the table above); `<image>` is one of `card`, `gray`, `black` or `white` and speed is one of `fast`, `slow`, `slowly`, `very fast` or `very slow`.
+
+A visual effect can be applied when unlocking the screen or when navigating between cards. For example:
+
+```
+unlock screen with visual effect dissolve
+go next with visual barn door open slowly
+go to card 3 with visual effect iris open to black very fast
+```
+
+#### Known limitations:
+
+When unlocking the screen to a card image in which changes have been made to a part (while the screen was locked), the changes will not appear as part of the animation.
+
+Consider the following script: When the screen dissolves into the subsequent card, the word "Hello" will not appear in the field during the animation. However, once the animation is complete, the field will be drawn correctly with "Hello" as its first word.
+
+```
+  lock screen
+  go next card
+  put "Hello" before card field 1
+  unlock screen with visual dissolve slowly
+```
+
+This limitation is imposed by Java's Abstract Windowing Toolkit (AWT) which cannot accurately produce an image of certain UI elements when they are not physically visible on screen. See https://stackoverflow.com/questions/4028898/create-an-image-from-a-non-visible-awt-component.
+
 ## Commands
 
 This version of HyperCard implements the following set of commands:
@@ -561,8 +631,8 @@ The syntax for defining a function is:
 
 ```
 function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
-	<statementList>
-	[return <expression>]
+  <statementList>
+  [return <expression>]
 end <functionName>
 ```
 
@@ -576,14 +646,14 @@ on mouseUp
 end mouseUp
 
 function fibonacci sequence, lastValue, thisValue, maxValue
-	if sequence is empty then put "0" into sequence
-	put thisValue + lastValue after the last item of sequence
+  if sequence is empty then put "0" into sequence
+  put thisValue + lastValue after the last item of sequence
 
-	if thisValue + lastValue <= maxValue then
-		return fibonacci(sequence, thisValue, thisValue + lastValue, maxValue)
-	else
-		return sequence
-	end if
+  if thisValue + lastValue <= maxValue then
+  return fibonacci(sequence, thisValue, thisValue + lastValue, maxValue)
+  else
+  return sequence
+  end if
 
 end fibonacci
 ```
@@ -604,15 +674,15 @@ Some examples of conditional branching:
 
 ```
 if 1 < 2 and 3 < 4 then
-	answer "This is true!"
+  answer "This is true!"
 end if
 ```
 
 ```
 if the first line of field id 0 contains "hello" then
-	put "Hello" into the message box
+  put "Hello" into the message box
 else
-	put "Goodbye" into the message box
+  put "Goodbye" into the message box
 end if
 ```
 
@@ -657,13 +727,13 @@ For example:
 
 ```
 repeat with myVar = 1 to 10
-	answer myVar
+  answer myVar
 end repeat
 ```
 
 ```
 repeat while the mouse is down
-	set the top of me to item 2 of the mouseLoc
+  set the top of me to item 2 of the mouseLoc
 end repeat
 ```
 
