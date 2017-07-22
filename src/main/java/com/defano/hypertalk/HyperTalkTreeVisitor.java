@@ -187,6 +187,76 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBarnDoorOpenEffect(HyperTalkParser.BarnDoorOpenEffectContext ctx) {
+        return VisualEffectName.BARN_DOOR_OPEN;
+    }
+
+    @Override
+    public Object visitBarnDoorCloseEffect(HyperTalkParser.BarnDoorCloseEffectContext ctx) {
+        return VisualEffectName.BARN_DOOR_CLOSE;
+    }
+
+    @Override
+    public Object visitIrisOpenEffect(HyperTalkParser.IrisOpenEffectContext ctx) {
+        return VisualEffectName.IRIS_OPEN;
+    }
+
+    @Override
+    public Object visitIrisCloseEffect(HyperTalkParser.IrisCloseEffectContext ctx) {
+        return VisualEffectName.IRIS_CLOSE;
+    }
+
+    @Override
+    public Object visitScrollDownEffect(HyperTalkParser.ScrollDownEffectContext ctx) {
+        return VisualEffectName.SCROLL_DOWN;
+    }
+
+    @Override
+    public Object visitScrollUpEffect(HyperTalkParser.ScrollUpEffectContext ctx) {
+        return VisualEffectName.SCROLL_UP;
+    }
+
+    @Override
+    public Object visitScrollLeftEffect(HyperTalkParser.ScrollLeftEffectContext ctx) {
+        return VisualEffectName.SCROLL_LEFT;
+    }
+
+    @Override
+    public Object visitScrollRightEffect(HyperTalkParser.ScrollRightEffectContext ctx) {
+        return VisualEffectName.SCROLL_RIGHT;
+    }
+
+    @Override
+    public Object visitWipeUpEffect(HyperTalkParser.WipeUpEffectContext ctx) {
+        return VisualEffectName.WIPE_UP;
+    }
+
+    @Override
+    public Object visitWipeDownEffect(HyperTalkParser.WipeDownEffectContext ctx) {
+        return VisualEffectName.WIPE_DOWN;
+    }
+
+    @Override
+    public Object visitWipeLeftEffect(HyperTalkParser.WipeLeftEffectContext ctx) {
+        return VisualEffectName.WIPE_LEFT;
+    }
+
+    @Override
+    public Object visitWipeRightEffect(HyperTalkParser.WipeRightEffectContext ctx) {
+        return VisualEffectName.WIPE_RIGHT;
+    }
+
+    @Override
+    public Object visitZoomCloseEffect(HyperTalkParser.ZoomCloseEffectContext ctx) {
+        return VisualEffectName.ZOOM_CLOSE;
+    }
+
+    @Override
+    public Object visitZoomOpenEffect(HyperTalkParser.ZoomOpenEffectContext ctx) {
+        return VisualEffectName.ZOOM_OPEN;
+    }
+
+    @Override
     public Object visitTicksTimeUnit(HyperTalkParser.TicksTimeUnitContext ctx) {
         return TimeUnit.TICKS;
     }

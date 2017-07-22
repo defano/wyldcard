@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
@@ -34,6 +35,7 @@ import com.defano.jmonet.tools.base.PaintTool;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -340,17 +342,14 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 
-    /**
-     * Takes a "screenshot" of the card, that is, generates a bitmap image of the card including the foreground and
-     * background canvas and part layers. The sceenshot is a pixel-accurate rendering of the card in the stack
-     * window.
-     *
-     * @return The card screenshot
-     */
-    public BufferedImage takeScreenshot() {
+    public BufferedImage getScreenshot() {
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = screenshot.createGraphics();
-        this.printAll(g);
+
+        g.drawImage(getBackgroundCanvas().getCanvasImage(), 0, 0, null);
+        g.drawImage(getCardBackground().getPartsScreenshot(), 0, 0, null);
+        g.drawImage(getForegroundCanvas().getCanvasImage(), 0, 0, null);
+        g.drawImage(getCardModel().getPartsScreenshot(), 0, 0, null);
         g.dispose();
 
         return screenshot;

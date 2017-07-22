@@ -6,13 +6,10 @@ import java.awt.image.BufferedImage;
 
 public class FreezeEffect extends AnimatedVisualEffect {
 
-    public FreezeEffect(BufferedImage lockImage) {
-        setFrom(lockImage);
-        setDurationMs(Integer.MAX_VALUE);
-    }
-
     @Override
-    public BufferedImage render(float progress) {
-        return getFrom();
+    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
+
+        // No-op effect that simply renders the original image
+        return from;
     }
 }

@@ -1,14 +1,10 @@
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.gui.fx.ScreenCurtainObserver;
 import com.defano.hypercard.parts.util.MouseEventDispatcher;
 import com.defano.jmonet.canvas.UndoablePaintCanvas;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.image.BufferedImage;
 
 public abstract class CardLayeredPane extends JLayeredPane {
 

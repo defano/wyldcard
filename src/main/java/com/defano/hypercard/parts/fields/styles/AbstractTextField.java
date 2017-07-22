@@ -77,11 +77,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
 
         // And listen for ants to march
         MarchingAnts.getInstance().addObserver(this::repaint);
-
-        SwingUtilities.invokeLater(() -> {
-            toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
-            ToolsContext.getInstance().getToolModeProvider().notifyObservers(this);
-        });
     }
 
     @Override
@@ -218,6 +213,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
 
     @Override
     public void partOpened() {
+        toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
+        ToolsContext.getInstance().getToolModeProvider().notifyObservers(this);
         setRtf(((FieldModel) toolEditablePart.getPartModel()).getStyleData());
     }
 

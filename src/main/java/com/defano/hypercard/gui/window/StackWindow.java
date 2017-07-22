@@ -9,8 +9,8 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardWindow;
-import com.defano.hypercard.gui.fx.ScreenCurtainObserver;
-import com.defano.hypercard.gui.fx.ScreenCurtainManager;
+import com.defano.hypercard.gui.fx.CurtainObserver;
+import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.ScreenCurtain;
 import com.defano.hypercard.parts.StackPart;
@@ -23,15 +23,15 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends HyperCardWindow implements StackObserver, ScreenCurtainObserver {
+public class StackWindow extends HyperCardWindow implements StackObserver, CurtainObserver {
 
     private final int CARD_LAYER = 0;
     private final int CURTAIN_LAYER = 1;
 
-    private ScreenCurtain screenCurtain = new ScreenCurtain();
     private StackPart stack;
     private CardPart card;
     private JLayeredPane cardPanel = new JLayeredPane();
+    private ScreenCurtain screenCurtain = new ScreenCurtain();
 
     public StackWindow() {
         cardPanel.setLayout(new BorderLayout(0, 0));
@@ -48,8 +48,10 @@ public class StackWindow extends HyperCardWindow implements StackObserver, Scree
             }
         });
 
+        // Pass mouse events send to the curtain to card panel behind it
         MouseEventDispatcher.bindTo(screenCurtain, () -> new Component[] {card});
-        ScreenCurtainManager.getInstance().addScreenCurtainObserver(this);
+
+        CurtainManager.getInstance().addScreenCurtainObserver(this);
     }
 
     public CardPart getDisplayedCard() {

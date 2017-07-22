@@ -35,6 +35,7 @@ public class CardModel {
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
     private byte[] cardImage;
+    private byte[] partsScreenshot;
 
     private CardModel (int cardId, int backgroundId) {
         this.buttonModels = new ArrayList<>();
@@ -148,6 +149,14 @@ public class CardModel {
 
     public int getCardId() {
         return cardId;
+    }
+
+    public void setPartsScreenshot(BufferedImage image) {
+        this.partsScreenshot = Serializer.serializeImage(image);
+    }
+
+    public BufferedImage getPartsScreenshot() {
+        return Serializer.deserializeImage(this.partsScreenshot);
     }
 
     /**

@@ -27,6 +27,7 @@ public class BackgroundModel {
     private String name = "";
     private boolean cantDelete = false;
     private byte[] backgroundImage;
+    private byte[] partsScreenshot;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
 
@@ -77,5 +78,13 @@ public class BackgroundModel {
 
     public void setCantDelete(boolean cantDelete) {
         this.cantDelete = cantDelete;
+    }
+
+    public void setPartsScreenshot(BufferedImage image) {
+        this.partsScreenshot = Serializer.serializeImage(image);
+    }
+
+    public BufferedImage getPartsScreenshot() {
+        return Serializer.deserializeImage(this.partsScreenshot);
     }
 }

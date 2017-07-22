@@ -1,6 +1,7 @@
 package com.defano.hypercard.gui.fx;
 
-import com.defano.hypercard.gui.fx.renderers.DissolveEffect;
+import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.gui.fx.renderers.*;
 import com.defano.hypertalk.ast.common.VisualEffectImage;
 import com.defano.hypertalk.ast.common.VisualEffectName;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
@@ -19,10 +20,47 @@ public class VisualEffectFactory {
         return effect;
     }
 
+    public static FreezeEffect createScreenLock() {
+        FreezeEffect effect = new FreezeEffect();
+        effect.setFrom(HyperCard.getInstance().getCard().getScreenshot());
+        effect.setFps(1);
+        effect.setDurationMs(Integer.MAX_VALUE);
+        return effect;
+    }
+
     private static AnimatedVisualEffect effectNamed(VisualEffectName name) {
         switch (name) {
             case DISSOLVE:
                 return new DissolveEffect();
+            case SCROLL_LEFT:
+                return new ScrollLeftEffect();
+            case SCROLL_RIGHT:
+                return new ScrollRightEffect();
+            case SCROLL_UP:
+                return new ScrollUpEffect();
+            case SCROLL_DOWN:
+                return new ScrollDownEffect();
+            case BARN_DOOR_OPEN:
+                return new BarnDoorOpenEffect();
+            case BARN_DOOR_CLOSE:
+                return new BarnDoorCloseEffect();
+            case WIPE_LEFT:
+                return new WipeLeftEffect();
+            case WIPE_RIGHT:
+                return new WipeRightEffect();
+            case WIPE_UP:
+                return new WipeUpEffect();
+            case WIPE_DOWN:
+                return new WipeDownEffect();
+            case IRIS_OPEN:
+                return new IrisOpenEffect();
+            case IRIS_CLOSE:
+                return new IrisCloseEffect();
+            case ZOOM_CLOSE:
+                return new ZoomCloseEffect();
+            case ZOOM_OPEN:
+                return new ZoomOpenEffect();
+
             default:
                 throw new IllegalArgumentException("Unimplemented visual effect: " + name);
         }

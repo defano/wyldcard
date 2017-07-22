@@ -3,28 +3,33 @@ package com.defano.hypercard.gui.fx;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AnimatedVisualEffect {
 
-    public abstract BufferedImage render(float progress);
+    public abstract BufferedImage render(BufferedImage from, BufferedImage to, float progress);
 
     private final Set<AnimatedEffectObserver> animatedEffectObservers = new HashSet<>();
 
     private int durationMs = 1000;
-    private int fps = 20;
+    private int fps = 30;
 
     private ScheduledExecutorService animatorService;
     private long startTime;
-    protected BufferedImage from;
-    protected BufferedImage to;
+    private BufferedImage from;
+    private BufferedImage to;
 
     public void start() {
         this.startTime = System.currentTimeMillis();
 
-        fireFrameRendered(render(0f));
+        try {
+            fireFrameRendered(render(from, to, 0f));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (animatorService != null) {
             animatorService.shutdownNow();
@@ -33,8 +38,8 @@ public abstract class AnimatedVisualEffect {
         animatorService = Executors.newSingleThreadScheduledExecutor();
         animatorService.scheduleAtFixedRate(() -> {
             try {
-                if (getProgress() < 100) {
-                    fireFrameRendered(AnimatedVisualEffect.this.render(getProgress()));
+                if (getProgress() < 1.0f) {
+                    fireFrameRendered(AnimatedVisualEffect.this.render(from, to, getProgress()));
                 } else {
                     stop();
                     fireCompleted();
@@ -102,8 +107,8 @@ public abstract class AnimatedVisualEffect {
     }
 
     private float getProgress() {
-        float progress = ((float)(System.currentTimeMillis() - startTime) / (float) durationMs) * 100;
-        return progress < 0f ? 0f : progress > 100.0f ? 100.0f : progress;
+        float progress = ((float)(System.currentTimeMillis() - startTime) / (float) durationMs);
+        return progress < 0f ? 0f : progress > 1.0f ? 1.0f : progress;
     }
 
 }

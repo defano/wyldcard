@@ -8,18 +8,17 @@ import java.awt.image.BufferedImage;
 public class DissolveEffect extends AnimatedVisualEffect {
 
     @Override
-    public BufferedImage render(float progress) {
-        if (from.getWidth() != to.getWidth() || from.getHeight() != to.getHeight()) {
-            throw new IllegalStateException("To and from images must be the same size.");
-        }
+    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
 
         BufferedImage frame = new BufferedImage(from.getWidth(), from.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = frame.createGraphics();
 
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, progress / 100f));
+        // Fade in the to image
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, progress));
         g.drawImage(to, 0, 0, null);
 
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (100.f - progress) / 100f));
+        // Fade out the from image
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (1.0f - progress)));
         g.drawImage(from, 0, 0, null);
 
         return frame;

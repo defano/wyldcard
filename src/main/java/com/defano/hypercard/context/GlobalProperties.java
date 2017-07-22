@@ -8,8 +8,7 @@
 
 package com.defano.hypercard.context;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.fx.ScreenCurtainManager;
+import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.common.Value;
 
@@ -27,8 +26,7 @@ public class GlobalProperties extends PropertiesModel {
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {
                 case PROP_LOCKSCREEN:
-                    HyperCard.getInstance().getCard().takeScreenshot();
-                    ScreenCurtainManager.getInstance().setScreenLocked(newValue.booleanValue());
+                    CurtainManager.getInstance().setScreenLocked(newValue.booleanValue());
                     break;
             }
         });

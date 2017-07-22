@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.gui.fx.ScreenCurtainManager;
+import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
@@ -14,6 +14,6 @@ public class UnlockScreenCmd extends Statement {
 
     @Override
     public void execute() throws HtException {
-        ScreenCurtainManager.getInstance().unlockScreenWithEffect(effect);
+        CurtainManager.getInstance().unlockScreenWithEffect(effect);
     }
 }
