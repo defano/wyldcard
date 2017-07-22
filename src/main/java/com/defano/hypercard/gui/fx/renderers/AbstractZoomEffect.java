@@ -11,11 +11,15 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
         CIRCLE, RECTANGLE
     }
 
-    private final boolean zoomingIn;
+    public enum ZoomDirection {
+        ZOOM_IN, ZOOM_OUT
+    }
+
+    private final ZoomDirection direction;
     private final ZoomShape shape;
 
-    protected AbstractZoomEffect(ZoomShape shape, boolean zoomingIn) {
-        this.zoomingIn = zoomingIn;
+    protected AbstractZoomEffect(ZoomShape shape, ZoomDirection direction) {
+        this.direction = direction;
         this.shape = shape;
     }
 
@@ -23,7 +27,7 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
     public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
         int diagonal = (int) (Math.sqrt(Math.pow(from.getHeight(), 2) + Math.pow(from.getWidth(), 2)));
 
-        if (zoomingIn) {
+        if (direction == ZoomDirection.ZOOM_IN) {
             return renderZoom(to, from, (int)((diagonal / 2) * (1.0f - progress)));
         } else {
             return renderZoom(from, to, (int)((diagonal / 2) * progress));
@@ -36,7 +40,7 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
 
         // Cut the Iris out of the from image (leave a transparent hole) and draw it onto the frame
         g.drawImage(a, 0, 0, null);
-        maskIris(g, a.getWidth(), a.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+        maskZoomRegion(g, a.getWidth(), a.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_OUT));
 
         // Make a copy of the to image so we can cut an iris out of it
         BufferedImage iris = new BufferedImage(b.getWidth(), b.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -44,7 +48,7 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
         ig.drawImage(b, 0, 0, null);
 
         // Cut out the iris from the to image (leaving an opaque hole on a transparent background)
-        maskIris(ig, b.getWidth(), b.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_IN));
+        maskZoomRegion(ig, b.getWidth(), b.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_IN));
         ig.dispose();
 
         // Draw the cut-out iris onto the frame
@@ -56,7 +60,7 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
 
 
     /**
-     * Punches out an "iris" of a specified radius in the given graphics context.
+     * Punches out the ZoomShape of a specified radius in the given graphics context.
      *
      * @param g The graphics context to modify
      * @param width The width of the frame
@@ -64,7 +68,7 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
      * @param radius The radius of the iris to create
      * @param mode The Porter-Duff mode to apply
      */
-    protected void maskIris(Graphics g, int width, int height, int radius, AlphaComposite mode) {
+    protected void maskZoomRegion(Graphics g, int width, int height, int radius, AlphaComposite mode) {
 
         BufferedImage mask = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics mg = mask.createGraphics();
