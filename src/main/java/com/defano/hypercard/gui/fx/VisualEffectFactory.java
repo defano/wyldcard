@@ -60,6 +60,14 @@ public class VisualEffectFactory {
                 return new ZoomCloseEffect();
             case ZOOM_OPEN:
                 return new ZoomOpenEffect();
+            case PLAIN:
+                return new FreezeEffect();
+            case STRETCH_FROM_TOP:
+                return new StretchFromTopEffect();
+            case STRETCH_FROM_BOTTOM:
+                return new StretchFromBottomEffect();
+            case STRETCH_FROM_CENTER:
+                return new StretchFromCenterEffect();
 
             default:
                 throw new IllegalArgumentException("Unimplemented visual effect: " + name);

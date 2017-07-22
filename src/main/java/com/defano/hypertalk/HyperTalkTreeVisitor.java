@@ -206,6 +206,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPlainEffect(HyperTalkParser.PlainEffectContext ctx) {
+        return VisualEffectName.PLAIN;
+    }
+
+    @Override
     public Object visitScrollDownEffect(HyperTalkParser.ScrollDownEffectContext ctx) {
         return VisualEffectName.SCROLL_DOWN;
     }
@@ -223,6 +228,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitScrollRightEffect(HyperTalkParser.ScrollRightEffectContext ctx) {
         return VisualEffectName.SCROLL_RIGHT;
+    }
+
+    @Override
+    public Object visitStretchFromTopEffect(HyperTalkParser.StretchFromTopEffectContext ctx) {
+        return VisualEffectName.STRETCH_FROM_TOP;
+    }
+
+    @Override
+    public Object visitStretchFromCenterEffect(HyperTalkParser.StretchFromCenterEffectContext ctx) {
+        return VisualEffectName.STRETCH_FROM_CENTER;
+    }
+
+    @Override
+    public Object visitStretchFromBottomEffect(HyperTalkParser.StretchFromBottomEffectContext ctx) {
+        return VisualEffectName.STRETCH_FROM_BOTTOM;
     }
 
     @Override
