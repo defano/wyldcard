@@ -4,6 +4,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.fx.CurtainManager;
+import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.parts.model.StackObserver;
@@ -13,6 +14,7 @@ import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -312,21 +314,27 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     private void fireOnStackOpened () {
-        for (StackObserver observer : observers) {
-            observer.onStackOpened(this);
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onStackOpened(StackPart.this);
+            }
+        });
     }
 
     private void fireOnCardClosing (CardPart closingCard) {
-        for (StackObserver observer : observers) {
-            observer.onCardClosed(closingCard);
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardClosed(closingCard);
+            }
+        });
     }
 
     private void fireOnCardOpened (CardPart openedCard) {
-        for (StackObserver observer : observers) {
-            observer.onCardOpened(openedCard);
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardOpened(openedCard);
+            }
+        });
     }
 
     private void fireOnCardDimensionChanged(Dimension newDimension) {

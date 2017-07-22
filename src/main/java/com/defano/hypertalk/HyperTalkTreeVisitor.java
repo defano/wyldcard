@@ -20,7 +20,6 @@ import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import sun.security.krb5.internal.crypto.Des;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
