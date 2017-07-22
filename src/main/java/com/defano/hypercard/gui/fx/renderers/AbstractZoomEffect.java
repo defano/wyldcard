@@ -38,9 +38,12 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
         BufferedImage frame = new BufferedImage(a.getWidth(), a.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = frame.createGraphics();
 
-        // Cut the Iris out of the from image (leave a transparent hole) and draw it onto the frame
         g.drawImage(a, 0, 0, null);
-        maskZoomRegion(g, a.getWidth(), a.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+
+        if (!isBlend()) {
+            // Cut the Iris out of the from image (leave a transparent hole) and draw it onto the frame
+            maskZoomRegion(g, a.getWidth(), a.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+        }
 
         // Make a copy of the to image so we can cut an iris out of it
         BufferedImage iris = new BufferedImage(b.getWidth(), b.getHeight(), BufferedImage.TYPE_INT_ARGB);

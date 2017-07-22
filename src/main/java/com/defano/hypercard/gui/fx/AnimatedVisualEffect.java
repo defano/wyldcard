@@ -21,6 +21,7 @@ public abstract class AnimatedVisualEffect {
     private long startTime;
     private BufferedImage from;
     private BufferedImage to;
+    private boolean blend = false;
 
     public void start() {
         this.startTime = System.currentTimeMillis();
@@ -92,6 +93,14 @@ public abstract class AnimatedVisualEffect {
 
     public void setFps(int fps) {
         this.fps = fps;
+    }
+
+    public boolean isBlend() {
+        return blend;
+    }
+
+    public void setBlend(boolean blend) {
+        this.blend = blend;
     }
 
     private void fireFrameRendered(BufferedImage image) {

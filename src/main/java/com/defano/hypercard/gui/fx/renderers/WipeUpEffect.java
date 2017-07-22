@@ -16,9 +16,13 @@ public class WipeUpEffect extends AnimatedVisualEffect {
         // Calculate wipe distance
         int distance = (int) (progress * from.getHeight());
 
-        // Truncate the from image (it's getting wiped)
-        BufferedImage wiped = from.getSubimage(0, 0, from.getWidth(), from.getHeight() - distance);
-        g.drawImage(wiped, 0, 0, null);
+        if (!isBlend()) {
+            // Truncate the from image (it's getting wiped)
+            BufferedImage wiped = from.getSubimage(0, 0, from.getWidth(), from.getHeight() - distance);
+            g.drawImage(wiped, 0, 0, null);
+        } else {
+            g.drawImage(from, 0, 0, null);
+        }
 
         // Slide the to image atop the truncated portion of the from image
         AffineTransform toTranslate = new AffineTransform();

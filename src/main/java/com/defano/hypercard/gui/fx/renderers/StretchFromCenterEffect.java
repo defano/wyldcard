@@ -23,10 +23,12 @@ public class StretchFromCenterEffect extends AnimatedVisualEffect {
         BufferedImage resized = new BufferedImage(to.getWidth(), stretchDistance, BufferedImage.TYPE_INT_ARGB);
         Graphics2D rg = resized.createGraphics();
 
-        // Remove stretched region from from image
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
-        g.fillRect(0, to.getHeight() / 2 - stretchDistance / 2, resized.getWidth(), resized.getHeight());
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        if (!isBlend()) {
+            // Remove stretched region from from image
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+            g.fillRect(0, to.getHeight() / 2 - stretchDistance / 2, resized.getWidth(), resized.getHeight());
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        }
 
         rg.drawImage(to, 0, 0, resized.getWidth(), resized.getHeight(), null);
         g.drawImage(resized, 0, to.getHeight() / 2 - resized.getHeight() / 2, null);
