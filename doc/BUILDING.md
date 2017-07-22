@@ -62,3 +62,5 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 2. Navigate to "Editor" -> GUI Designer
 3. Select the "Java source code" option for GUI generation.
 4. Apply the changes and "Rebuild project" from the "Build" menu.
+
+#### That's all folks...
