@@ -14,9 +14,7 @@ import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -323,6 +321,8 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardClosing (CardPart closingCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            closingCard.notifyPartsClosing();
+
             for (StackObserver observer : observers) {
                 observer.onCardClosed(closingCard);
             }
@@ -377,7 +377,6 @@ public class StackPart implements PropertyChangeObserver {
 
         // Notify observers that current card is going away
         fireOnCardClosing(getCurrentCard());
-        takeScreenshot();
 
         return activateCard(cardIndex);
     }
@@ -408,47 +407,6 @@ public class StackPart implements PropertyChangeObserver {
         return stackModel.getCardCount() > 1 &&
                 !getCurrentCard().getCardModel().isCantDelete() &&
                 (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().isCantDelete());
-    }
-
-    /**
-     * Takes a "screenshot" of the visible card, that is, it generates a bitmap image of the card including the foreground and
-     * background canvas and part layers. The sceenshot is a pixel-accurate rendering of the card in the stack
-     * window and is used when processing visual effect (including 'lock screen'.
-     *
-     * Note that there is a limitation in Swing that prevents heavyweight components (those whose look and
-     * feel is provided by the native OS) from drawing properly when they are not visible on-screen. Thus, we
-     * cache a last-displayed image those parts./
-     *
-     * @return The card screenshot
-     */
-    public void takeScreenshot() {
-        CardPart cardPart = getCurrentCard();
-
-        BufferedImage cardPartsScreenshot = new BufferedImage(cardPart.getWidth(), cardPart.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = cardPartsScreenshot.createGraphics();
-
-        for (Component c : cardPart.getComponentsInCardLayer(CardLayer.CARD_PARTS)) {
-            Graphics cg = g.create();
-            cg.translate(c.getX(), c.getY());
-            c.printAll(cg);
-            cg.dispose();
-        }
-
-        cardPart.getCardModel().setPartsScreenshot(cardPartsScreenshot);
-        g.dispose();
-
-        BufferedImage bkgndPartsScreenshot = new BufferedImage(cardPart.getWidth(), cardPart.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        g = bkgndPartsScreenshot.createGraphics();
-
-        for (Component c : cardPart.getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS)) {
-            Graphics cg = g.create();
-            cg.translate(c.getX(), c.getY());
-            c.printAll(cg);
-            cg.dispose();
-        }
-
-        cardPart.getCardBackground().setPartsScreenshot(bkgndPartsScreenshot);
-        g.dispose();
     }
 
 }

@@ -8,13 +8,13 @@
 
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.FileDrop;
 import com.defano.hypercard.gui.util.ImageImporter;
+import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.model.ButtonModel;
@@ -35,7 +35,6 @@ import com.defano.jmonet.tools.base.PaintTool;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 /**
@@ -292,6 +291,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         CardLayer partLayer = getCardLayer(oldButtonComponent);
         removeSwingComponent(oldButtonComponent);
         addSwingComponent(newButtonComponent, forPart.getRect(), partLayer);
+        forPart.partOpened();
     }
 
     /**
@@ -344,13 +344,12 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
 
     public BufferedImage getScreenshot() {
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = screenshot.createGraphics();
 
-        g.drawImage(getBackgroundCanvas().getCanvasImage(), 0, 0, null);
-        g.drawImage(getCardBackground().getPartsScreenshot(), 0, 0, null);
-        g.drawImage(getForegroundCanvas().getCanvasImage(), 0, 0, null);
-        g.drawImage(getCardModel().getPartsScreenshot(), 0, 0, null);
-        g.dispose();
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            Graphics2D g = screenshot.createGraphics();
+            CardPart.this.printAll(g);
+            g.dispose();
+        });
 
         return screenshot;
     }

@@ -62,10 +62,7 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
     public void setFieldStyle(FieldStyle style) {
         Component oldComponent = getFieldView();
         fieldView = getComponentForStyle(style);
-
-        partClosed();
         replaceSwingComponent(oldComponent, (JComponent) fieldView);
-        partOpened();
     }
 
     private FieldView getComponentForStyle(FieldStyle style) {
@@ -104,19 +101,19 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
 
     @Override
     public void partOpened() {
+        fieldView.partOpened();
+
         getPartModel().addPropertyChangedObserver(fieldView);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
         KeyboardManager.addGlobalKeyListener(this);
-
-        fieldView.partOpened();
     }
 
     @Override
     public void partClosed() {
+        fieldView.partClosed();
+
         getPartModel().removePropertyChangedObserver(fieldView);
         KeyboardManager.removeGlobalKeyListener(this);
-
-        fieldView.partClosed();
     }
 
     @Override

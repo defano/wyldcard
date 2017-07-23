@@ -530,21 +530,6 @@ go next with visual barn door open slowly
 go to card 3 with visual effect iris open to black very fast
 ```
 
-#### Known limitations:
-
-When unlocking the screen to a card image in which changes have been made to a part (while the screen was locked), the changes will not appear as part of the animation.
-
-Consider the following script: When the screen dissolves into the subsequent card, the word "Hello" will not appear in the field during the animation. However, once the animation is complete, the field will be drawn correctly with "Hello" as its first word.
-
-```
-  lock screen
-  go next card
-  put "Hello" before card field 1
-  unlock screen with visual dissolve slowly
-```
-
-This limitation is imposed by Java's Abstract Windowing Toolkit (AWT) which cannot accurately produce an image of certain UI elements when they are not physically visible on screen. See https://stackoverflow.com/questions/4028898/create-an-image-from-a-non-visible-awt-component.
-
 ## Commands
 
 This version of HyperCard implements the following set of commands:

@@ -110,5 +110,6 @@ public class HyperCard {
 
     public void showErrorDialog(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
+        e.printStackTrace();
     }
 }

@@ -15,5 +15,11 @@ public class UnlockScreenCmd extends Statement {
     @Override
     public void execute() throws HtException {
         CurtainManager.getInstance().unlockScreenWithEffect(effect);
+
+        try {
+            CurtainManager.getInstance().waitForEffectToFinish();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
     }
 }

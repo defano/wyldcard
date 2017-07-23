@@ -2,18 +2,21 @@ package com.defano.hypercard.gui.fx;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.fx.renderers.FreezeEffect;
+import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 public class CurtainManager implements AnimatedEffectObserver {
 
     private final static CurtainManager instance = new CurtainManager();
     private final Set<CurtainObserver> curtainObservers = new HashSet<>();
 
+    private CountDownLatch latch = new CountDownLatch(0);
     private AnimatedVisualEffect activeEffect;
 
     private CurtainManager() {
@@ -25,7 +28,6 @@ public class CurtainManager implements AnimatedEffectObserver {
 
     public void setScreenLocked(boolean locked) {
         if (locked && !isScreenLocked()) {
-            HyperCard.getInstance().getStack().takeScreenshot();
             startEffect(VisualEffectFactory.createScreenLock());
         } else if (this.activeEffect instanceof FreezeEffect) {
             cancelEffect();
@@ -53,15 +55,21 @@ public class CurtainManager implements AnimatedEffectObserver {
     }
 
     private void startEffect(AnimatedVisualEffect effect) {
+        this.latch = new CountDownLatch(1);
         this.activeEffect = effect;
         this.activeEffect.addObserver(this);
         this.activeEffect.start();
+    }
+
+    public void waitForEffectToFinish() throws InterruptedException {
+        this.latch.await();
     }
 
     public void cancelEffect() {
         if (activeEffect != null) {
             activeEffect.stop();
             activeEffect.removeObserver(this);
+            latch.countDown();
         }
 
         activeEffect = null;

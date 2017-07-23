@@ -143,31 +143,31 @@ image               : 'black'                                       # blackImage
                     ;
 
 effect              : 'dissolve'                                    # dissolveEffect
-                    | 'barn' 'door' 'open'                          # barnDoorOpenEffect
-                    | 'barn' 'door' 'close'                         # barnDoorCloseEffect
+                    | 'barn door open'                              # barnDoorOpenEffect
+                    | 'barn door close'                             # barnDoorCloseEffect
                     | 'checkerboard'                                # checkerboardEffect
-                    | 'iris' 'open'                                 # irisOpenEffect
-                    | 'iris' 'close'                                # irisCloseEffect
+                    | 'iris open'                                   # irisOpenEffect
+                    | 'iris close'                                  # irisCloseEffect
                     | 'plain'                                       # plainEffect
-                    | 'scroll' 'down'                               # scrollDownEffect
-                    | 'scroll' 'up'                                 # scrollUpEffect
-                    | 'scroll' 'left'                               # scrollLeftEffect
-                    | 'scroll' 'right'                              # scrollRightEffect
-                    | 'shrink' 'to' 'top'                           # shrinkToTopEffect
-                    | 'shrink' 'to' 'center'                        # shrinkToCenterEffect
-                    | 'shrink' 'to' 'bottom'                        # shrinkToBottomEffect
-                    | 'stretch' 'from' 'top'                        # stretchFromTopEffect
-                    | 'stretch' 'from' 'center'                     # stretchFromCenterEffect
-                    | 'stretch' 'from' 'bottom'                     # stretchFromBottomEffect
-                    | 'venetian' 'blinds'                           # venitianBlindsEffect
-                    | 'wipe' 'up'                                   # wipeUpEffect
-                    | 'wipe' 'down'                                 # wipeDownEffect
-                    | 'wipe' 'left'                                 # wipeLeftEffect
-                    | 'wipe' 'right'                                # wipeRightEffect
-                    | 'zoom' 'close'                                # zoomCloseEffect
-                    | 'zoom' 'in'                                   # zoomInEffect
-                    | 'zoom' 'open'                                 # zoomOpenEffect
-                    | 'zoom' 'out'                                  # zoomOutEffect
+                    | 'scroll down'                                 # scrollDownEffect
+                    | 'scroll up'                                   # scrollUpEffect
+                    | 'scroll left'                                 # scrollLeftEffect
+                    | 'scroll right'                                # scrollRightEffect
+                    | 'shrink to top'                               # shrinkToTopEffect
+                    | 'shrink to center'                            # shrinkToCenterEffect
+                    | 'shrink to bottom'                            # shrinkToBottomEffect
+                    | 'stretch from top'                            # stretchFromTopEffect
+                    | 'stretch from center'                         # stretchFromCenterEffect
+                    | 'stretch from bottom'                         # stretchFromBottomEffect
+                    | 'venetian blinds'                             # venitianBlindsEffect
+                    | 'wipe up'                                     # wipeUpEffect
+                    | 'wipe down'                                   # wipeDownEffect
+                    | 'wipe left'                                   # wipeLeftEffect
+                    | 'wipe right'                                  # wipeRightEffect
+                    | 'zoom close'                                  # zoomCloseEffect
+                    | 'zoom in'                                     # zoomInEffect
+                    | 'zoom open'                                   # zoomOpenEffect
+                    | 'zoom out'                                    # zoomOutEffect
                     ;
 
 // Can't use a lexer rule for synonyms here because it creates ambiguity with ordinals and built-in function names. :(

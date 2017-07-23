@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -246,7 +247,7 @@ public class PropertiesModel {
      * @param listener This listener to be notified.
      */
     public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
-        SwingUtilities.invokeLater(() -> {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (String property : properties.keySet()) {
                 listener.onPropertyChanged(property, properties.get(property), properties.get(property));
             }
@@ -268,7 +269,7 @@ public class PropertiesModel {
         // Make local copy to prevent concurrent change exceptions
         final Set<PropertyChangeObserver> listeners = new HashSet<>(this.changeObservers);
 
-        SwingUtilities.invokeLater(() -> {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (PropertyChangeObserver listener : listeners) {
                 listener.onPropertyChanged(property, oldValue, value);
             }

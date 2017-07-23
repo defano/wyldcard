@@ -141,6 +141,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
 
     @Override
     public void partClosed() {
+        getPartModel().removePropertyChangedObserver(buttonView);
         KeyboardManager.removeGlobalKeyListener(this);
     }
 

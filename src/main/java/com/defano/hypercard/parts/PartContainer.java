@@ -267,4 +267,13 @@ public interface PartContainer {
         throw new IllegalArgumentException("No such part on this card.");
     }
 
+    /**
+     * Notify all parts in this container that they are closing (ostensibly because the container itself is closing).
+     */
+    default void notifyPartsClosing() {
+        for (Part p : getParts()) {
+            p.partClosed();
+        }
+    }
+
 }

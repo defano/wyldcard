@@ -11,6 +11,7 @@ package com.defano.hypercard.parts.fields.styles;
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.fields.FieldView;
 import com.defano.hypercard.parts.model.FieldModel;
@@ -188,6 +189,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         } finally {
             document.addDocumentListener(this);
         }
+
+        ThreadUtils.invokeAndWaitAsNeeded(() -> repaint());
     }
 
     @Override
@@ -220,6 +223,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
 
     @Override
     public void partClosed() {
+        toolEditablePart.getPartModel().removePropertyChangedObserver(this);
         ToolsContext.getInstance().getFontProvider().deleteObserver(this);
         ToolsContext.getInstance().getToolModeProvider().deleteObserver(this);
     }
