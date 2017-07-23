@@ -1,6 +1,6 @@
 grammar HyperTalk;
 
-script			    : handler (NEWLINE+ | EOF)                      # handlerScript
+script 			    : handler (NEWLINE+ | EOF)                      # handlerScript
                     | script handler (NEWLINE+ | EOF)               # scriptHandlerScript
                     | function (NEWLINE+ | EOF)                     # functionScript
                     | script function (NEWLINE+ | EOF)              # scriptFunctionScript
@@ -164,9 +164,7 @@ effect              : 'dissolve'                                    # dissolveEf
                     | 'wipe down'                                   # wipeDownEffect
                     | 'wipe left'                                   # wipeLeftEffect
                     | 'wipe right'                                  # wipeRightEffect
-                    | 'zoom close'                                  # zoomCloseEffect
                     | 'zoom in'                                     # zoomInEffect
-                    | 'zoom open'                                   # zoomOpenEffect
                     | 'zoom out'                                    # zoomOutEffect
                     ;
 
@@ -180,6 +178,7 @@ timeUnit            : 'ticks'                                       # ticksTimeU
 
 position            : 'the'? 'next'                                 # nextPosition
                     | 'the'? ('prev' | 'previous')                  # prevPosition
+                    | 'back'                                        # backPosition
                     ;
 
 destination         : destinationType expression                    # cardNumber

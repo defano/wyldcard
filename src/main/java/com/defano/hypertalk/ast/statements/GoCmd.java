@@ -31,6 +31,8 @@ public class GoCmd extends Statement {
     }
 
     public void execute() throws HtException {
+
+        // e.g., "go to first card", "go ninth card"
         if (destination.ordinal != null) {
             if (destination.ordinal == Ordinal.FIRST) {
                 HyperCard.getInstance().getStack().goFirstCard(visualEffect);
@@ -50,14 +52,22 @@ public class GoCmd extends Statement {
             }
         }
 
+        // e.g., "go next card", "go back"
         else if (destination.position != null) {
-            if (destination.position == Position.NEXT) {
-                HyperCard.getInstance().getStack().goNextCard(visualEffect);
-            } else {
-                HyperCard.getInstance().getStack().goPrevCard(visualEffect);
+            switch (destination.position) {
+                case NEXT:
+                    HyperCard.getInstance().getStack().goNextCard(visualEffect);
+                    break;
+                case PREV:
+                    HyperCard.getInstance().getStack().goPrevCard(visualEffect);
+                    break;
+                case BACK:
+                    HyperCard.getInstance().getStack().goBack(visualEffect);
+                    break;
             }
         }
 
+        // e.g., "go to card 983", "go myCardNumber"
         else if (destination.expression != null) {
             int destCard = destination.expression.evaluate().integerValue() - 1;
             if (destCard < 0 || destCard >= HyperCard.getInstance().getStack().getStackModel().getCardCount()) {

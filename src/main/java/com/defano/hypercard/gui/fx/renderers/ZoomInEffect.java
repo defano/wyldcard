@@ -1,8 +1,8 @@
 package com.defano.hypercard.gui.fx.renderers;
 
-public class ZoomCloseEffect extends AbstractZoomEffect {
+public class ZoomInEffect extends AbstractZoomEffect {
 
-    public ZoomCloseEffect() {
+    public ZoomInEffect() {
         super(ZoomShape.RECTANGLE, ZoomDirection.ZOOM_IN);
     }
 }

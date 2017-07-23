@@ -57,9 +57,9 @@ public class VisualEffectFactory {
             case IRIS_CLOSE:
                 return new IrisCloseEffect();
             case ZOOM_IN:
-                return new ZoomCloseEffect();
+                return new ZoomInEffect();
             case ZOOM_OUT:
-                return new ZoomOpenEffect();
+                return new ZoomOutEffect();
             case PLAIN:
                 return new FreezeEffect();
             case STRETCH_FROM_TOP:
