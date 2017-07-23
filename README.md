@@ -471,6 +471,8 @@ false is not "tr" && "ue" -- true, concatenating 'tr' with 'ue' produces a logic
 
 ## Visual Effects
 
+HyperCard provided a selection of visual effects that could be applied to card-to-card transitions or when "revealing" changes made by a script. HyperTalk Java provides a similar set of visual effects.
+
 A script can "lock" the screen to prevent the user from seeing what the script is doing. As long as the screen is locked, the user will see no changes made to the card or stack until HyperTalk Java is idle (has no more pending scripts to execute) or the `unlock screen` command is executed.
 
 For example, consider this script which secretly navigates to the next card in the stack, draws a diagonal line on it, and then navigates back. While this script executes, the user has no knowledge that "behind the scenes" we've moved to another card and modified it.
@@ -520,7 +522,7 @@ The syntax for specifying a visual effect is:
 visual [effect] <effect-name> [to <image>] [speed]
 ```
 
-Where `<effect-name>` is the name of a visual effect (from the table above); `<image>` is one of `card`, `gray`, `black` or `white` and speed is one of `fast`, `slow`, `slowly`, `very fast` or `very slow`.
+Where `<effect-name>` is the name of a visual effect (from the table above); `<image>` is one of `card`, `gray`, `black`, `white` or `inverse` (of the destination card) and speed is one of `fast`, `slow`, `slowly`, `very fast` or `very slow`.
 
 A visual effect can be applied when unlocking the screen or when navigating between cards. For example:
 
@@ -534,30 +536,32 @@ go to card 3 with visual effect iris open to black very fast
 
 This version of HyperCard implements the following set of commands:
 
-Command	   | Description
------------|------------
-`put`      | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
-`get`	     | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	     | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
-`go`       | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
-`wait`     | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
-`answer`   | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
-`ask`	     | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
-`do`       | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
-`send`     | Send a message to a part on the current card; `send "mouseUp" to field id 3`
-`add`      | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
-`subtract` | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
-`multiply` | Multiplies a container by a value; `multiply x by 3`
-`divide`   | Divides a container by a value; `divide x by it`
-`choose`   | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
-`click`    | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
-`drag`     | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
-`sort`     | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items | lines} of] <container> [{{ascending | descending} | by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
-`hide`     | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
-`show`     | Makes a part visible on the card, for example `show button "My Button"`.
-`delete`   | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
-`enable`   | Enables a part on the card; sets the part's `enabled` property to true.
-`disable`  | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
+Command	      | Description
+--------------|------------
+`put`         | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
+`get`	        | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
+`set`	        | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
+`go`          | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
+`wait`        | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
+`answer`      | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
+`ask`	        | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
+`do`          | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
+`send`        | Send a message to a part on the current card; `send "mouseUp" to field id 3`
+`add`         | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
+`subtract`    | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
+`multiply`    | Multiplies a container by a value; `multiply x by 3`
+`divide`      | Divides a container by a value; `divide x by it`
+`choose`      | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
+`click`       | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
+`drag`        | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
+`sort`        | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items | lines} of] <container> [{{ascending | descending} | by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
+`hide`        | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
+`show`        | Makes a part visible on the card, for example `show button "My Button"`.
+`delete`      | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
+`enable`      | Enables a part on the card; sets the part's `enabled` property to true.
+`disable`     | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
+`lock screen` | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
+`unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` | Unlocks the screen while optionally applying a visual effect to the revealed changes. See the "Visual Effects" section of this document for details.
 
 ## Functions
 

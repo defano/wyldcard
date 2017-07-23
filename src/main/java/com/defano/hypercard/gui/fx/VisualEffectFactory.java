@@ -94,10 +94,34 @@ public class VisualEffectFactory {
                 return to;
             case WHITE:
                 return solidColorImage(to.getWidth(), to.getHeight(), Color.WHITE);
+            case INVERSE:
+                return invert(to);
 
             default:
                 throw new IllegalArgumentException("Not implemented yet.");
         }
+    }
+
+    public static BufferedImage invert(BufferedImage image) {
+
+        BufferedImage inverted = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = inverted.createGraphics();
+        g.drawImage(image,0, 0, null);
+        g.dispose();
+
+        for (int x = 0; x < inverted.getWidth(); x++) {
+            for (int y = 0; y < inverted.getHeight(); y++) {
+
+                int argb = inverted.getRGB(x, y);
+                int alpha = 0xff000000 & argb;
+                int rgb = 0x00ffffff & argb;
+
+                // Invert preserving alpha channel
+                inverted.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
+            }
+        }
+
+        return inverted;
     }
 
     private static BufferedImage solidColorImage(int width, int height, Color color) {
