@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AnimatedVisualEffect {
 
-    public abstract BufferedImage render(BufferedImage from, BufferedImage to, float progress);
+    public abstract BufferedImage render(BufferedImage src, BufferedImage dst, float progress);
 
     private final Set<AnimatedEffectObserver> animatedEffectObservers = new HashSet<>();
 

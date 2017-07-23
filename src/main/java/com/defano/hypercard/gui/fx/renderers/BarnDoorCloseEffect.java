@@ -8,21 +8,21 @@ import java.awt.image.BufferedImage;
 
 public class BarnDoorCloseEffect extends AnimatedVisualEffect {
     @Override
-    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
-        BufferedImage frame = new BufferedImage(from.getWidth(), from.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    public BufferedImage render(BufferedImage src, BufferedImage dst, float progress) {
+        BufferedImage frame = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = frame.createGraphics();
 
         // Calculate width of the door opening
-        int opening = from.getWidth() - (int) (from.getWidth() * progress);
+        int opening = src.getWidth() - (int) (src.getWidth() * progress);
         opening = opening < 1 ? 1 : opening;
 
         // Mask the from image, grabbing the center-most portion the width of the opening
-        BufferedImage center = from.getSubimage((from.getWidth() / 2) - (opening / 2), 0, opening, from.getHeight());
-        g.drawImage(center, (from.getWidth() / 2) - (opening / 2), 0, null);
+        BufferedImage center = src.getSubimage((src.getWidth() / 2) - (opening / 2), 0, opening, src.getHeight());
+        g.drawImage(center, (src.getWidth() / 2) - (opening / 2), 0, null);
 
         // Subdivide the left and right sides to the to image
-        BufferedImage leftSide = to.getSubimage(0,0, to.getWidth() / 2, to.getHeight());
-        BufferedImage rightSide = to.getSubimage(to.getWidth() / 2, 0, to.getWidth() / 2, to.getHeight());
+        BufferedImage leftSide = dst.getSubimage(0,0, dst.getWidth() / 2, dst.getHeight());
+        BufferedImage rightSide = dst.getSubimage(dst.getWidth() / 2, 0, dst.getWidth() / 2, dst.getHeight());
 
         // Translate and draw the left "door"
         AffineTransform leftTranslate = new AffineTransform();
@@ -34,7 +34,7 @@ public class BarnDoorCloseEffect extends AnimatedVisualEffect {
         AffineTransform rightTranslate = new AffineTransform();
         rightTranslate.translate(opening / 2, 0);
         g.setTransform(rightTranslate);
-        g.drawImage(rightSide, from.getWidth() / 2, 0, null);
+        g.drawImage(rightSide, src.getWidth() / 2, 0, null);
 
         return frame;
     }

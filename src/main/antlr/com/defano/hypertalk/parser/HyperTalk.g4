@@ -149,10 +149,6 @@ effect              : 'dissolve'                                    # dissolveEf
                     | 'iris' 'open'                                 # irisOpenEffect
                     | 'iris' 'close'                                # irisCloseEffect
                     | 'plain'                                       # plainEffect
-                    | 'push' 'down'                                 # pushDownEffect
-                    | 'push' 'up'                                   # pushUpEffect
-                    | 'push' 'left'                                 # pushLeftEffect
-                    | 'push' 'right'                                # pushRightEffect
                     | 'scroll' 'down'                               # scrollDownEffect
                     | 'scroll' 'up'                                 # scrollUpEffect
                     | 'scroll' 'left'                               # scrollLeftEffect

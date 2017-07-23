@@ -8,19 +8,19 @@ import java.awt.image.BufferedImage;
 public class StretchFromTopEffect extends AnimatedVisualEffect {
 
     @Override
-    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
-        BufferedImage frame = new BufferedImage(from.getWidth(), from.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    public BufferedImage render(BufferedImage src, BufferedImage dst, float progress) {
+        BufferedImage frame = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = frame.createGraphics();
 
         // Calculate scroll distance
-        int stretchDistance = (int) (progress * from.getHeight());
+        int stretchDistance = (int) (progress * src.getHeight());
         stretchDistance = stretchDistance <= 0 ? 1 : stretchDistance;
 
         // Draw from image on frame
-        g.drawImage(from, 0, 0, null);
+        g.drawImage(src, 0, 0, null);
 
         // Stretch the to image onto the canvas
-        BufferedImage resized = new BufferedImage(to.getWidth(), stretchDistance, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage resized = new BufferedImage(dst.getWidth(), stretchDistance, BufferedImage.TYPE_INT_ARGB);
         Graphics2D rg = resized.createGraphics();
 
         if (!isBlend()) {
@@ -30,7 +30,7 @@ public class StretchFromTopEffect extends AnimatedVisualEffect {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         }
 
-        rg.drawImage(to, 0, 0, resized.getWidth(), resized.getHeight(), null);
+        rg.drawImage(dst, 0, 0, resized.getWidth(), resized.getHeight(), null);
         g.drawImage(resized, 0, 0, null);
         rg.dispose();
 

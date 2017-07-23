@@ -491,10 +491,12 @@ When navigating between cards or unlocking the screen, a *visual effect* can be 
 Visual Effect         | Description
 ----------------------|-----------------------------------------
 `dissolve`            | Cross-dissolve from one card image to the next.
-`scroll left`         | Scroll from right to left
-`scroll right`        | Scroll from left to right
-`scroll up`           | Scroll from bottom to top
-`scroll down`         | Scroll from top to bottom
+`checkerboard`        | Destination card image appears in a 8x8 matrix.
+`venetian blinds`     | Destination appears in "louvered" horizontal stripes.
+`scroll left`         | Scroll from right to left.
+`scroll right`        | Scroll from left to right.
+`scroll up`           | Scroll from bottom to top.
+`scroll down`         | Scroll from top to bottom.
 `wipe left`           | Slides the resulting image over the source from right to left.
 `wipe right`          | Slides the resulting image over the source from left to right.
 `wipe up`             | Slides the resulting image over the source from bottom to top.
@@ -505,12 +507,12 @@ Visual Effect         | Description
 `iris close`          | The resulting card image collapses over the source in a circular aperture.
 `barn door open`      | The source image is split horizontally and each side slides out left/right to expose the resulting image.
 `barn door close`     | The resulting image slides in the from the left/right obscuring the source image.
-`shrink to bottom`    | The source image shrinks downward exposing the destination
-`shrink to top`       | The source image shrinks upward exposing the destination
-`shrink to center`    | The source image shrinks from the center of the screen exposing the destination
-`stretch from bottom` | The destination image grows from the bottom obscuring the source underneath it
-`stretch from top`    | The destination image grows from the top obscuring the source underneath it
-`stretch from center` | The destination image grows from the center of the screen obscuring the source underneath it
+`shrink to bottom`    | The source image shrinks downward exposing the destination.
+`shrink to top`       | The source image shrinks upward exposing the destination.
+`shrink to center`    | The source image shrinks from the center of the screen exposing the destination.
+`stretch from bottom` | The destination image grows from the bottom obscuring the source underneath it.
+`stretch from top`    | The destination image grows from the top obscuring the source underneath it.
+`stretch from center` | The destination image grows from the center of the screen obscuring the source underneath it.
 
 The syntax for specifying a visual effect is:
 

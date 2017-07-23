@@ -9,24 +9,24 @@ import java.awt.image.BufferedImage;
 public class ScrollUpEffect extends AnimatedVisualEffect {
 
     @Override
-    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
-        BufferedImage frame = new BufferedImage(from.getWidth(), from.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    public BufferedImage render(BufferedImage src, BufferedImage dst, float progress) {
+        BufferedImage frame = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = frame.createGraphics();
 
         // Calculate scroll distance, in pixels
-        int scrollDistance = (int) (progress * from.getHeight());
+        int scrollDistance = (int) (progress * src.getHeight());
 
         // Slide from image up
         AffineTransform fromTranslate = new AffineTransform();
         fromTranslate.translate(0, -scrollDistance);
         g.setTransform(fromTranslate);
-        g.drawImage(from, 0, 0, null);
+        g.drawImage(src, 0, 0, null);
 
         // Slide to image up from bottom of screen
         AffineTransform toTranslate = new AffineTransform();
-        toTranslate.translate(0, to.getHeight() - scrollDistance);
+        toTranslate.translate(0, dst.getHeight() - scrollDistance);
         g.setTransform(toTranslate);
-        g.drawImage(to, 0, 0, null);
+        g.drawImage(dst, 0, 0, null);
 
         return frame;
     }

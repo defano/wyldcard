@@ -24,34 +24,34 @@ public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
     }
 
     @Override
-    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
-        int diagonal = (int) (Math.sqrt(Math.pow(from.getHeight(), 2) + Math.pow(from.getWidth(), 2)));
+    public BufferedImage render(BufferedImage src, BufferedImage dst, float progress) {
+        int diagonal = (int) (Math.sqrt(Math.pow(src.getHeight(), 2) + Math.pow(src.getWidth(), 2)));
 
         if (direction == ZoomDirection.ZOOM_IN) {
-            return renderZoom(to, from, (int)((diagonal / 2) * (1.0f - progress)));
+            return renderZoom(dst, src, (int)((diagonal / 2) * (1.0f - progress)));
         } else {
-            return renderZoom(from, to, (int)((diagonal / 2) * progress));
+            return renderZoom(src, dst, (int)((diagonal / 2) * progress));
         }
     }
 
-    private BufferedImage renderZoom(BufferedImage a, BufferedImage b, int radius) {
-        BufferedImage frame = new BufferedImage(a.getWidth(), a.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    private BufferedImage renderZoom(BufferedImage src, BufferedImage dst, int radius) {
+        BufferedImage frame = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = frame.createGraphics();
 
-        g.drawImage(a, 0, 0, null);
+        g.drawImage(src, 0, 0, null);
 
         if (!isBlend()) {
             // Cut the Iris out of the from image (leave a transparent hole) and draw it onto the frame
-            maskZoomRegion(g, a.getWidth(), a.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_OUT));
+            maskZoomRegion(g, src.getWidth(), src.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_OUT));
         }
 
         // Make a copy of the to image so we can cut an iris out of it
-        BufferedImage iris = new BufferedImage(b.getWidth(), b.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage iris = new BufferedImage(dst.getWidth(), dst.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D ig = iris.createGraphics();
-        ig.drawImage(b, 0, 0, null);
+        ig.drawImage(dst, 0, 0, null);
 
         // Cut out the iris from the to image (leaving an opaque hole on a transparent background)
-        maskZoomRegion(ig, b.getWidth(), b.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_IN));
+        maskZoomRegion(ig, dst.getWidth(), dst.getHeight(), radius, AlphaComposite.getInstance(AlphaComposite.DST_IN));
         ig.dispose();
 
         // Draw the cut-out iris onto the frame

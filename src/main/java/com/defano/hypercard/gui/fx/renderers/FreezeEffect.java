@@ -7,9 +7,9 @@ import java.awt.image.BufferedImage;
 public class FreezeEffect extends AnimatedVisualEffect {
 
     @Override
-    public BufferedImage render(BufferedImage from, BufferedImage to, float progress) {
+    public BufferedImage render(BufferedImage src, BufferedImage dst, float progress) {
 
         // No-op effect that simply renders the original image
-        return from;
+        return src;
     }
 }

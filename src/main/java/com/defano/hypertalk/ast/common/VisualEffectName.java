@@ -8,10 +8,6 @@ public enum VisualEffectName {
     IRIS_OPEN,
     IRIS_CLOSE,
     PLAIN,
-    PUSH_DOWN,
-    PUSH_UP,
-    PUSH_LEFT,
-    PUSH_RIGHT,
     SCROLL_DOWN,
     SCROLL_UP,
     SCROLL_LEFT,
@@ -27,8 +23,6 @@ public enum VisualEffectName {
     WIPE_DOWN,
     WIPE_LEFT,
     WIPE_RIGHT,
-    ZOOM_CLOSE,
     ZOOM_IN,
-    ZOOM_OPEN,
     ZOOM_OUT
 }

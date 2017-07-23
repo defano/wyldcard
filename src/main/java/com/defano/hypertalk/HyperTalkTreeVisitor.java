@@ -196,6 +196,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCheckerboardEffect(HyperTalkParser.CheckerboardEffectContext ctx) {
+        return VisualEffectName.CHECKERBOARD;
+    }
+
+    @Override
     public Object visitIrisOpenEffect(HyperTalkParser.IrisOpenEffectContext ctx) {
         return VisualEffectName.IRIS_OPEN;
     }
@@ -261,6 +266,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitVenitianBlindsEffect(HyperTalkParser.VenitianBlindsEffectContext ctx) {
+        return VisualEffectName.VENETIAN_BLINDS;
+    }
+
+    @Override
+    public Object visitZoomInEffect(HyperTalkParser.ZoomInEffectContext ctx) {
+        return VisualEffectName.ZOOM_IN;
+    }
+
+    @Override
+    public Object visitZoomOutEffect(HyperTalkParser.ZoomOutEffectContext ctx) {
+        return VisualEffectName.ZOOM_OUT;
+    }
+
+    @Override
     public Object visitWipeUpEffect(HyperTalkParser.WipeUpEffectContext ctx) {
         return VisualEffectName.WIPE_UP;
     }
@@ -278,16 +298,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitWipeRightEffect(HyperTalkParser.WipeRightEffectContext ctx) {
         return VisualEffectName.WIPE_RIGHT;
-    }
-
-    @Override
-    public Object visitZoomCloseEffect(HyperTalkParser.ZoomCloseEffectContext ctx) {
-        return VisualEffectName.ZOOM_CLOSE;
-    }
-
-    @Override
-    public Object visitZoomOpenEffect(HyperTalkParser.ZoomOpenEffectContext ctx) {
-        return VisualEffectName.ZOOM_OPEN;
     }
 
     @Override

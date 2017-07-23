@@ -56,9 +56,9 @@ public class VisualEffectFactory {
                 return new IrisOpenEffect();
             case IRIS_CLOSE:
                 return new IrisCloseEffect();
-            case ZOOM_CLOSE:
+            case ZOOM_IN:
                 return new ZoomCloseEffect();
-            case ZOOM_OPEN:
+            case ZOOM_OUT:
                 return new ZoomOpenEffect();
             case PLAIN:
                 return new FreezeEffect();
@@ -74,6 +74,10 @@ public class VisualEffectFactory {
                 return new ShrinkToTopEffect();
             case SHRING_TO_CENTER:
                 return new ShrinkToCenterEffect();
+            case VENETIAN_BLINDS:
+                return new BlindsEffect();
+            case CHECKERBOARD:
+                return new CheckerboardEffect();
 
             default:
                 throw new IllegalArgumentException("Unimplemented visual effect: " + name);
