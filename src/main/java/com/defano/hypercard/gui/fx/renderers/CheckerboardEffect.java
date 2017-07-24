@@ -45,14 +45,15 @@ public class CheckerboardEffect extends AnimatedVisualEffect {
 
                 // Special case: right-most square may exceed screen width
                 int thisSquareWidth = (x + squareSize) >= dst.getWidth() ? dst.getWidth() - x : squareSize;
+                int thisSquareHeight = (y + squareOpening) >= dst.getHeight() ? dst.getHeight() - y : squareOpening;
 
-                BufferedImage square = dst.getSubimage(x, y, thisSquareWidth, squareOpening);
+                BufferedImage square = dst.getSubimage(x, y, thisSquareWidth, thisSquareHeight);
                 Graphics2D lg = square.createGraphics();
 
                 if (!isBlend()) {
                     // Remove square from src
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
-                    g.fillRect(x, y, thisSquareWidth, squareOpening);
+                    g.fillRect(x, y, thisSquareWidth, thisSquareHeight);
                     g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
                 }
 

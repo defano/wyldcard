@@ -23,13 +23,15 @@ public class BlindsEffect extends AnimatedVisualEffect {
 
         // Then, render each louver of the dst image
         for (int y = 0; y < src.getHeight(); y += louverHeight) {
-            BufferedImage louver = dst.getSubimage(0, y, dst.getWidth(), louverOpening);
+            int thisLouverHeight = (y + louverOpening) >= dst.getHeight() ? dst.getHeight() - y : louverOpening;
+            BufferedImage louver = dst.getSubimage(0, y, dst.getWidth(), thisLouverHeight);
+
             Graphics2D lg = louver.createGraphics();
 
             if (!isBlend()) {
                 // Remove louver opening from src image
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT));
-                g.fillRect(0, y, dst.getWidth(), louverOpening);
+                g.fillRect(0, y, dst.getWidth(), thisLouverHeight);
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
             }
 
