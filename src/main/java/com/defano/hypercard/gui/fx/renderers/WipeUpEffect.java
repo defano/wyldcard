@@ -1,12 +1,12 @@
 package com.defano.hypercard.gui.fx.renderers;
 
-import com.defano.hypercard.gui.fx.AnimatedVisualEffect;
+import com.defano.hypercard.gui.fx.AnimatedSegue;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class WipeUpEffect extends AnimatedVisualEffect {
+public class WipeUpEffect extends AnimatedSegue {
 
     @Override
     public BufferedImage render(BufferedImage src, BufferedImage dst, float progress) {

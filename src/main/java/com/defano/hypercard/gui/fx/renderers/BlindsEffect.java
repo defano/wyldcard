@@ -1,11 +1,11 @@
 package com.defano.hypercard.gui.fx.renderers;
 
-import com.defano.hypercard.gui.fx.AnimatedVisualEffect;
+import com.defano.hypercard.gui.fx.AnimatedSegue;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class BlindsEffect extends AnimatedVisualEffect {
+public class BlindsEffect extends AnimatedSegue {
 
     private int louverCount = 12;
 

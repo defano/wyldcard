@@ -1,18 +1,19 @@
 package com.defano.hypercard.gui.fx;
 
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public abstract class AnimatedVisualEffect {
+public abstract class AnimatedSegue {
 
     public abstract BufferedImage render(BufferedImage src, BufferedImage dst, float progress);
 
-    private final Set<AnimatedEffectObserver> animatedEffectObservers = new HashSet<>();
+    private final Set<SegueAnimationObserver> animationObserver = new HashSet<>();
+    private final Set<SegueCompletionObserver> completionObserver = new HashSet<>();
 
     private int durationMs = 1000;
     private int fps = 30;
@@ -24,13 +25,9 @@ public abstract class AnimatedVisualEffect {
     private boolean blend = false;
 
     public void start() {
-        this.startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
-        try {
-            fireFrameRendered(render(from, to, 0f));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        fireFrameRendered(render(from, to, 0f));
 
         if (animatorService != null) {
             animatorService.shutdownNow();
@@ -38,29 +35,41 @@ public abstract class AnimatedVisualEffect {
 
         animatorService = Executors.newSingleThreadScheduledExecutor();
         animatorService.scheduleAtFixedRate(() -> {
-            try {
-                if (getProgress() < 1.0f) {
-                    fireFrameRendered(AnimatedVisualEffect.this.render(from, to, getProgress()));
-                } else {
-                    stop();
-                    fireCompleted();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (getProgress() < 1.0f) {
+                fireFrameRendered(AnimatedSegue.this.render(from, to, getProgress()));
+            } else {
+                stop();
+                fireCompleted();
             }
-        }, 0,1000 / fps, TimeUnit.MILLISECONDS);
+        }, 0, 1000 / fps, TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
         animatorService.shutdownNow();
     }
 
-    public void addObserver(AnimatedEffectObserver observer) {
-        this.animatedEffectObservers.add(observer);
+    public void addCompletionObserver(SegueCompletionObserver observer) {
+        this.completionObserver.add(observer);
     }
 
-    public void removeObserver(AnimatedEffectObserver observer) {
-        this.animatedEffectObservers.remove(observer);
+    public void addCompletionObservers(Collection<SegueCompletionObserver> observers) {
+        this.completionObserver.addAll(observers);
+    }
+
+    public void addAnimationObserver(SegueAnimationObserver observer) {
+        this.animationObserver.add(observer);
+    }
+
+    public void addAnimationObservers(Collection<SegueAnimationObserver> observers) {
+        this.animationObserver.addAll(observers);
+    }
+
+    public boolean removeAnimationObserver(SegueAnimationObserver observer) {
+        return this.animationObserver.remove(observer);
+    }
+
+    public boolean removeCompletionObserver(SegueCompletionObserver observer) {
+        return this.completionObserver.remove(observer);
     }
 
     public int getDurationMs() {
@@ -104,14 +113,14 @@ public abstract class AnimatedVisualEffect {
     }
 
     private void fireFrameRendered(BufferedImage image) {
-        for (AnimatedEffectObserver thisObserver : animatedEffectObservers) {
+        for (SegueAnimationObserver thisObserver : animationObserver) {
             thisObserver.onFrameRendered(image);
         }
     }
 
     private void fireCompleted() {
-        for (AnimatedEffectObserver thisObserver : animatedEffectObservers) {
-            thisObserver.onAnimationCompleted(this);
+        for (SegueCompletionObserver thisObserver : completionObserver) {
+            thisObserver.onSegueAnimationCompleted(this);
         }
     }
 

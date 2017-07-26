@@ -3,7 +3,6 @@ package com.defano.hypercard.gui.fx;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.fx.renderers.*;
 import com.defano.hypertalk.ast.common.VisualEffectImage;
-import com.defano.hypertalk.ast.common.VisualEffectName;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 
 import java.awt.*;
@@ -11,8 +10,8 @@ import java.awt.image.BufferedImage;
 
 public class VisualEffectFactory {
 
-    public static AnimatedVisualEffect create(VisualEffectSpecifier effectSpecifier, BufferedImage from, BufferedImage to) {
-        AnimatedVisualEffect effect = effectNamed(effectSpecifier.name);
+    public static AnimatedSegue create(VisualEffectSpecifier effectSpecifier, BufferedImage from, BufferedImage to) {
+        AnimatedSegue effect = effectNamed(effectSpecifier.name);
         effect.setFrom(from);
         effect.setTo(effectImage(effectSpecifier.image, to));
         effect.setDurationMs(effectSpecifier.speed.durationMs);
@@ -28,7 +27,7 @@ public class VisualEffectFactory {
         return effect;
     }
 
-    private static AnimatedVisualEffect effectNamed(VisualEffectName name) {
+    private static AnimatedSegue effectNamed(SegueName name) {
         switch (name) {
             case DISSOLVE:
                 return new DissolveEffect();

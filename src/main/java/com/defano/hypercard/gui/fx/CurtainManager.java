@@ -2,7 +2,6 @@ package com.defano.hypercard.gui.fx;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.fx.renderers.FreezeEffect;
-import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 
 import javax.swing.*;
@@ -11,13 +10,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-public class CurtainManager implements AnimatedEffectObserver {
+public class CurtainManager implements SegueAnimationObserver, SegueCompletionObserver {
 
     private final static CurtainManager instance = new CurtainManager();
     private final Set<CurtainObserver> curtainObservers = new HashSet<>();
 
     private CountDownLatch latch = new CountDownLatch(0);
-    private AnimatedVisualEffect activeEffect;
+    private AnimatedSegue activeEffect;
 
     private CurtainManager() {
     }
@@ -54,10 +53,11 @@ public class CurtainManager implements AnimatedEffectObserver {
         // Nothing to do if screen is not locked
     }
 
-    private void startEffect(AnimatedVisualEffect effect) {
+    private void startEffect(AnimatedSegue effect) {
         this.latch = new CountDownLatch(1);
         this.activeEffect = effect;
-        this.activeEffect.addObserver(this);
+        this.activeEffect.addAnimationObserver(this);
+        this.activeEffect.addCompletionObserver(this);
         this.activeEffect.start();
     }
 
@@ -68,7 +68,8 @@ public class CurtainManager implements AnimatedEffectObserver {
     public void cancelEffect() {
         if (activeEffect != null) {
             activeEffect.stop();
-            activeEffect.removeObserver(this);
+            activeEffect.removeAnimationObserver(this);
+            activeEffect.removeCompletionObserver(this);
             latch.countDown();
         }
 
@@ -93,7 +94,7 @@ public class CurtainManager implements AnimatedEffectObserver {
     }
 
     @Override
-    public void onAnimationCompleted(AnimatedVisualEffect effect) {
+    public void onSegueAnimationCompleted(AnimatedSegue effect) {
         cancelEffect();
     }
 

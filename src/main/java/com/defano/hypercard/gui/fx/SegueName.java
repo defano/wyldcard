@@ -1,6 +1,6 @@
-package com.defano.hypertalk.ast.common;
+package com.defano.hypercard.gui.fx;
 
-public enum VisualEffectName {
+public enum SegueName {
     DISSOLVE,
     BARN_DOOR_OPEN,
     BARN_DOOR_CLOSE,

@@ -1,11 +1,11 @@
 package com.defano.hypercard.gui.fx.renderers;
 
-import com.defano.hypercard.gui.fx.AnimatedVisualEffect;
+import com.defano.hypercard.gui.fx.AnimatedSegue;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractZoomEffect extends AnimatedVisualEffect {
+public abstract class AbstractZoomEffect extends AnimatedSegue {
 
     public enum ZoomShape {
         CIRCLE, RECTANGLE
