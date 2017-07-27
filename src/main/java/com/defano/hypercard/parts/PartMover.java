@@ -23,6 +23,7 @@ import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.ref.WeakReference;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,28 +38,34 @@ public class PartMover {
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    private Part part;
-    private Component within;
+    private WeakReference<Part> part;
+    private WeakReference<Component> within;
     private boolean done = true;
     private Point mouseLocInPart;
 
     private class MoverTask implements Runnable {
-        public void run () {        
-            Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-            SwingUtilities.convertPointFromScreen(mouseLoc, within);
+        public void run () {
+            Part partInst = part.get();
+            Component withinInst = within.get();
 
-            int newTop = KeyboardManager.isShiftDown ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
-            int newLeft = KeyboardManager.isShiftDown ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
+            if (partInst != null && withinInst != null) {
 
-            try {
-                part.setProperty(PartModel.PROP_TOP, new Value(newTop));
-                part.setProperty(PartModel.PROP_LEFT, new Value(newLeft));
-            } catch (Exception e) {
-                throw new RuntimeException (e);
-            }
+                Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+                SwingUtilities.convertPointFromScreen(mouseLoc, withinInst);
 
-            if (!done) {
-                executor.schedule(this, MOVER_REFRESH_MS, TimeUnit.MILLISECONDS);
+                int newTop = KeyboardManager.isShiftDown ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
+                int newLeft = KeyboardManager.isShiftDown ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
+
+                try {
+                    partInst.setProperty(PartModel.PROP_TOP, new Value(newTop));
+                    partInst.setProperty(PartModel.PROP_LEFT, new Value(newLeft));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+
+                if (!done) {
+                    executor.schedule(this, MOVER_REFRESH_MS, TimeUnit.MILLISECONDS);
+                }
             }
         }
     }
@@ -69,8 +76,8 @@ public class PartMover {
      * @param within The parent component in which it should be moved.
      */
     public PartMover(Part part, Component within) {
-        this.part = part;
-        this.within = within;
+        this.part = new WeakReference<>(part);
+        this.within = new WeakReference<>(within);
     }
 
     /**
@@ -85,11 +92,13 @@ public class PartMover {
      * Begin moving the part; should be invoked when the user has clicked the mouse over the part.
      */
     public void startMoving() {
-        if (!isMoving()) {
+        Part partInst = part.get();
+
+        if (!isMoving() && partInst != null) {
             done = false;
 
             Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-            SwingUtilities.convertPointFromScreen(mouseLoc, part.getComponent());
+            SwingUtilities.convertPointFromScreen(mouseLoc, partInst.getComponent());
             this.mouseLocInPart = new Point(mouseLoc.x, mouseLoc.y);
 
             MouseManager.notifyOnMouseReleased(() -> done = true);

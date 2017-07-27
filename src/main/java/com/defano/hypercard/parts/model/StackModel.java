@@ -8,7 +8,6 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.Value;
 
 import java.awt.*;

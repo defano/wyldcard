@@ -21,9 +21,12 @@ import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 public abstract class AbstractFieldView implements ToolEditablePart, MarchingAntsObserver {
 
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private FieldView fieldView;
     private boolean isBeingEdited;
 
@@ -104,7 +107,7 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
         fieldView.partOpened();
 
         getPartModel().addPropertyChangedObserver(fieldView);
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
     }
 
@@ -114,10 +117,18 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
 
         getPartModel().removePropertyChangedObserver(fieldView);
         KeyboardManager.removeGlobalKeyListener(this);
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
     @Override
     public void onAntsMoved() {
         getComponent().repaint();
+    }
+
+    private class ToolModeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            onToolModeChanged();
+        }
     }
 }

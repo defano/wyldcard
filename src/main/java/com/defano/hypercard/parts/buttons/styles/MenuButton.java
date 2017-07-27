@@ -20,10 +20,13 @@ import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 
 public class MenuButton extends JComboBox<String> implements ButtonView {
 
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();
 
@@ -36,7 +39,7 @@ public class MenuButton extends JComboBox<String> implements ButtonView {
             thisComponent.addMouseListener(toolEditablePart);
         }
 
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> setEnabled(ToolMode.BUTTON != arg));
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
 
         setModel(menuItems);
         addItemListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
@@ -69,6 +72,13 @@ public class MenuButton extends JComboBox<String> implements ButtonView {
             case ButtonModel.PROP_TEXTSTYLE:
                 setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
+        }
+    }
+
+    private class ToolModeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            setEnabled(ToolMode.BUTTON != arg);
         }
     }
 }

@@ -37,6 +37,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
 
     protected final HyperCardJTextPane textPane;
 
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private ToolEditablePart toolEditablePart;
     private MutableAttributeSet currentStyle = new SimpleAttributeSet();
 
@@ -55,11 +56,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         textPane.addKeyListener(toolEditablePart);
 
         // Get notified when field tool is selected
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
-            setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
-        });
+        ToolsContext.getInstance().getToolModeProvider().addObserver(toolModeObserver);
 
         // Listen for changes to the field's selected text (for the selectedText property)
         textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
@@ -75,9 +72,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
 
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
-
-        // And listen for ants to march
-        MarchingAnts.getInstance().addObserver(this::repaint);
     }
 
     @Override
@@ -217,7 +211,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
     @Override
     public void partOpened() {
         toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().notifyObservers(this);
+        ToolsContext.getInstance().getToolModeProvider().notifyObservers(toolModeObserver);
         setRtf(((FieldModel) toolEditablePart.getPartModel()).getStyleData());
     }
 
@@ -225,7 +219,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
     public void partClosed() {
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
         ToolsContext.getInstance().getFontProvider().deleteObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().deleteObserver(this);
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
     @Override
@@ -287,5 +281,14 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
 
         textPane.setCharacterAttributes(currentStyle, true);
+    }
+
+    private class ToolModeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
+        }
     }
 }

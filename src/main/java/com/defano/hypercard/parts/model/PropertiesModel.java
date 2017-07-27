@@ -239,6 +239,11 @@ public class PropertiesModel {
         changeObservers.add(listener);
     }
 
+    public void addAndNotifyPropertyChangeObserver(PropertyChangeObserver listener) {
+        changeObservers.add(listener);
+        notifyPropertyChangedObserver(listener);
+    }
+
     /**
      * Invokes the {@link PropertyChangeObserver#onPropertyChanged(String, Value, Value)} method for all properties on
      * the provided observer. Useful for listeners that wish to initialize themselves with the current state of the

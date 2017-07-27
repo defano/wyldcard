@@ -27,10 +27,10 @@ import java.util.Map;
 public class MouseEventDispatcher implements MouseListener, MouseMotionListener {
 
     // Source component whose mouse events we're re-dispatching to components behind it
-    private final Component source;
+    private Component source;
 
     // Enumerator of parts behind the source
-    private final ComponentEnumerator enumerator;
+    private ComponentEnumerator enumerator;
 
     // Mapping of component hashCode to whether we think this mouse is inside its bounds
     private final Map<Integer,Boolean> mouseWithinMap = new HashMap<>();
@@ -38,10 +38,18 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
     // The component currently being dragged.
     private Component dragging = null;
 
-    public static void bindTo(Component source, ComponentEnumerator delegate) {
+    public static MouseEventDispatcher bindTo(Component source, ComponentEnumerator delegate) {
         MouseEventDispatcher instance = new MouseEventDispatcher(source, delegate);
         source.addMouseListener(instance);
         source.addMouseMotionListener(instance);
+        return instance;
+    }
+
+    public void unbind() {
+        source.removeMouseListener(this);
+        source.removeMouseMotionListener(this);
+        this.source = null;
+        this.enumerator = null;
     }
 
     private MouseEventDispatcher(Component source, ComponentEnumerator enumerator) {

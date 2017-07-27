@@ -32,6 +32,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.ref.WeakReference;
 
 /**
  * The view object associated with a field on the card. See {@link FieldModel} for the model object associated with this
@@ -48,14 +49,14 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
 
     private Script script;
     private FieldModel partModel;
-    private CardPart parent;
+    private WeakReference<CardPart> parent;
     private PartMover mover;
 
     private FieldPart(FieldStyle style, CardPart parent) {
         super(style);
 
         this.mover = new PartMover(this, parent);
-        this.parent = parent;
+        this.parent = new WeakReference<>(parent);
         this.script = new Script();
     }
 
@@ -123,12 +124,12 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
 
     @Override
     public void resize(int fromQuadrant) {
-        new PartResizer(this, parent, fromQuadrant);
+        new PartResizer(this, parent.get(), fromQuadrant);
     }
 
     @Override
     public void delete() {
-        parent.removePart(this);
+        parent.get().removePart(this);
     }
 
     @Override
@@ -138,7 +139,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
 
     @Override
     public void replaceSwingComponent(Component oldComponent, Component newComponent) {
-        parent.replaceSwingComponent(this, oldComponent, newComponent);
+        parent.get().replaceSwingComponent(this, oldComponent, newComponent);
     }
 
     @Override
@@ -192,7 +193,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
 
     @Override
     public CardPart getCard() {
-        return parent;
+        return parent.get();
     }
 
     @Override
@@ -287,7 +288,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.getStackModel().getNextFieldId();
+        int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry);
         partModel.addPropertyChangedObserver(this);

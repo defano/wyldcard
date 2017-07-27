@@ -41,6 +41,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.ref.WeakReference;
 
 /**
  * The view object associated with a button on a card.
@@ -57,12 +58,12 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     private final PartMover mover;
     private Script script;
     private ButtonModel partModel;
-    private CardPart parent;
+    private WeakReference<CardPart> parent;
 
     private ButtonPart(ButtonStyle style, CardPart parent) {
         super(style);
 
-        this.parent = parent;
+        this.parent = new WeakReference<>(parent);
         this.script = new Script();
         this.mover = new PartMover(this, parent);
     }
@@ -118,11 +119,13 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public void partOpened() {
         super.partOpened();
+        partModel.addPropertyChangedObserver(this);
     }
 
     @Override
     public void partClosed() {
         super.partClosed();
+        partModel.removePropertyChangedObserver(this);
     }
 
     @Override
@@ -136,7 +139,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public CardPart getCard() {
-        return parent;
+        return parent.get();
     }
 
     @Override
@@ -151,12 +154,12 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public void resize(int fromQuadrant) {
-        new PartResizer(this, parent, fromQuadrant);
+        new PartResizer(this, parent.get(), fromQuadrant);
     }
 
     @Override
     public void delete() {
-        parent.removePart(this);
+        parent.get().removePart(this);
     }
 
     @Override
@@ -166,7 +169,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public void replaceSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
-        parent.replaceSwingComponent(this, oldButtonComponent, newButtonComponent);
+        parent.get().replaceSwingComponent(this, oldButtonComponent, newButtonComponent);
     }
 
     @Override
@@ -279,9 +282,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.getStackModel().getNextButtonId();
-
+        int id = parent.get().getStackModel().getNextButtonId();
         partModel = ButtonModel.newButtonModel(id, geometry);
-        partModel.addPropertyChangedObserver(this);
     }
 }

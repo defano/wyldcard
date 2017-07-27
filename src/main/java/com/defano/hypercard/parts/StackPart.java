@@ -69,6 +69,7 @@ public class StackPart implements PropertyChangeObserver {
         goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
+        getCurrentCard().openCard();
         fireOnCardOpened(getCurrentCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
@@ -281,8 +282,8 @@ public class StackPart implements PropertyChangeObserver {
      * Gets an observable object containing the number of cards in the stack.
      * @return The card count provider
      */
-    public ImmutableProvider<Integer> getCardCountProvider() {
-        return ImmutableProvider.from(cardCountProvider);
+    public Provider<Integer> getCardCountProvider() {
+        return cardCountProvider;
     }
 
     /**
@@ -321,8 +322,6 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardClosing (CardPart closingCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            closingCard.notifyPartsClosing();
-
             for (StackObserver observer : observers) {
                 observer.onCardClosed(closingCard);
             }
@@ -377,6 +376,7 @@ public class StackPart implements PropertyChangeObserver {
 
         // Notify observers that current card is going away
         fireOnCardClosing(getCurrentCard());
+        getCurrentCard().closeCard();
 
         return activateCard(cardIndex);
     }
@@ -389,6 +389,7 @@ public class StackPart implements PropertyChangeObserver {
             stackModel.setCurrentCardIndex(cardIndex);
 
             // Notify observers of new card
+            currentCard.openCard();
             fireOnCardOpened(currentCard);
 
             // Reactive paint tool on new card's canvas

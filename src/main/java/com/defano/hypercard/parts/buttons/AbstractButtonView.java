@@ -22,6 +22,8 @@ import com.defano.hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Provides common functionality for "stylable" button parts (that is, a single button part whose style determines
@@ -29,6 +31,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractButtonView implements ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
 
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private ButtonView buttonView;
     private boolean isBeingEdited = false;
 
@@ -135,7 +138,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
     public void partOpened() {
         getPartModel().addPropertyChangedObserver(buttonView);
         getPartModel().notifyPropertyChangedObserver(buttonView);
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
     }
 
@@ -143,10 +146,18 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(buttonView);
         KeyboardManager.removeGlobalKeyListener(this);
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
     @Override
     public void onAntsMoved() {
         getComponent().repaint();
+    }
+
+    private class ToolModeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            onToolModeChanged();
+        }
     }
 }

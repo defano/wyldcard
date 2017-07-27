@@ -11,6 +11,8 @@ package com.defano.hypercard.gui.window;
 import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.gui.fx.CurtainObserver;
 import com.defano.hypercard.gui.fx.CurtainManager;
+import com.defano.hypercard.gui.util.FileDrop;
+import com.defano.hypercard.gui.util.ImageImporter;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.ScreenCurtain;
 import com.defano.hypercard.parts.StackPart;
@@ -60,6 +62,9 @@ public class StackWindow extends HyperCardWindow implements StackObserver, Curta
 
     private void displayCard(CardPart card) {
         this.card = card;
+
+        // Listen for image files that are dropped onto the card
+        FileDrop fd = new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
 
         for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
             cardPanel.remove(c);

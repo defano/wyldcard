@@ -11,13 +11,14 @@ public abstract class CardLayeredPane extends JLayeredPane {
     private boolean foregroundVisible = true;
     private UndoablePaintCanvas foregroundCanvas;
     private UndoablePaintCanvas backgroundCanvas;
-
-    public CardLayeredPane() {
-    }
+    private MouseEventDispatcher mouseEventDispatcher;
 
     public void setForegroundVisible(boolean isVisible) {
         foregroundVisible = isVisible;
-        foregroundCanvas.setVisible(isVisible);
+
+        if (foregroundCanvas != null) {
+            foregroundCanvas.setVisible(isVisible);
+        }
 
         for (Component thisComponent : getComponentsInCardLayer(CardLayer.CARD_PARTS)) {
             thisComponent.setVisible(isVisible);
@@ -64,7 +65,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
         this.foregroundCanvas = canvas;
 
         // Pass mouse events to parts obscured behind the canvas.
-        MouseEventDispatcher.bindTo(this.foregroundCanvas.getSurface(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
+        mouseEventDispatcher = MouseEventDispatcher.bindTo(this.foregroundCanvas.getSurface(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
 
         setLayer(foregroundCanvas, CardLayer.CARD_GRAPHICS.paneLayer);
         add(foregroundCanvas);
@@ -80,5 +81,13 @@ public abstract class CardLayeredPane extends JLayeredPane {
 
     public Component[] getComponentsInCardLayer(CardLayer layer) {
         return getComponentsInLayer(layer.paneLayer);
+    }
+
+    public void dispose() {
+        removeAll();
+
+        mouseEventDispatcher.unbind();
+        foregroundCanvas = null;
+        backgroundCanvas = null;
     }
 }
