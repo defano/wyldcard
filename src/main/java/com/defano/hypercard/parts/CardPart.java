@@ -21,7 +21,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.canvas.UndoablePaintCanvas;
+import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.clipboard.CanvasTransferDelegate;
 import com.defano.jmonet.clipboard.CanvasTransferHandler;
@@ -84,13 +84,13 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         card.setTransferHandler(new CardPartTransferHandler(card));
 
         // Setup the foreground paint canvas
-        card.setForegroundCanvas(new UndoablePaintCanvas(card.cardModel.getCardImage()));
+        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage()));
         card.getForegroundCanvas().addCanvasCommitObserver(card);
         card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
         card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage()));
+        card.setBackgroundCanvas(new JMonetCanvas(card.getCardBackground().getBackgroundImage()));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
@@ -224,7 +224,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * on whether the user is currently editing the card's background.
      * @return The active paint canvas for this card.
      */
-    public UndoablePaintCanvas getCanvas() {
+    public JMonetCanvas getCanvas() {
         return ToolsContext.getInstance().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
     }
 
@@ -332,7 +332,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION);
+        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 

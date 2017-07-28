@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.util;
 
 import com.defano.jmonet.canvas.AbstractPaintCanvas;
-import com.defano.jmonet.canvas.UndoablePaintCanvas;
+import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -120,8 +120,8 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
             if (c != null) {
 
                 // TODO: Canvas shouldn't behave unusually in this respect.
-                if (c instanceof UndoablePaintCanvas) {
-                    ((UndoablePaintCanvas)c).getSurface().dispatchEvent(e);
+                if (c instanceof JMonetCanvas) {
+                    ((JMonetCanvas)c).getSurface().dispatchEvent(e);
                 }
 
                 // Obscured components will not automatically receive focus; force focus as needed

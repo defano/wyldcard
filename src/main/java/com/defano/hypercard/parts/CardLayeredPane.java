@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.parts.util.MouseEventDispatcher;
-import com.defano.jmonet.canvas.UndoablePaintCanvas;
+import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +9,8 @@ import java.awt.*;
 public abstract class CardLayeredPane extends JLayeredPane {
 
     private boolean foregroundVisible = true;
-    private UndoablePaintCanvas foregroundCanvas;
-    private UndoablePaintCanvas backgroundCanvas;
+    private JMonetCanvas foregroundCanvas;
+    private JMonetCanvas backgroundCanvas;
     private MouseEventDispatcher mouseEventDispatcher;
 
     public void setForegroundVisible(boolean isVisible) {
@@ -47,7 +47,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
         add(component);
     }
 
-    public void setBackgroundCanvas(UndoablePaintCanvas canvas) {
+    public void setBackgroundCanvas(JMonetCanvas canvas) {
         if (backgroundCanvas != null) {
             remove(backgroundCanvas);
         }
@@ -57,7 +57,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
         add(backgroundCanvas);
     }
 
-    public void setForegroundCanvas(UndoablePaintCanvas canvas) {
+    public void setForegroundCanvas(JMonetCanvas canvas) {
         if (foregroundCanvas != null) {
             remove(foregroundCanvas);
         }
@@ -71,11 +71,11 @@ public abstract class CardLayeredPane extends JLayeredPane {
         add(foregroundCanvas);
     }
 
-    public UndoablePaintCanvas getBackgroundCanvas() {
+    public JMonetCanvas getBackgroundCanvas() {
         return backgroundCanvas;
     }
 
-    public UndoablePaintCanvas getForegroundCanvas() {
+    public JMonetCanvas getForegroundCanvas() {
         return foregroundCanvas;
     }
 

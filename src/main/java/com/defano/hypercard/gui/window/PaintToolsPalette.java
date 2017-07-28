@@ -121,7 +121,7 @@ public class PaintToolsPalette extends HyperCardWindow implements Observer {
     }
 
     private void toolSelected(PaintToolType toolType) {
-        ToolsContext.getInstance().selectPaintTool(toolType);
+        ToolsContext.getInstance().selectPaintTool(toolType, false);
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {
