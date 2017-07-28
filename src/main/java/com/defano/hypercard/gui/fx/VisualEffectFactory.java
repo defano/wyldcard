@@ -1,9 +1,11 @@
 package com.defano.hypercard.gui.fx;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.fx.renderers.*;
 import com.defano.hypertalk.ast.common.VisualEffectImage;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.jsegue.AnimatedSegue;
+import com.defano.jsegue.SegueName;
+import com.defano.jsegue.renderers.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,16 +14,19 @@ public class VisualEffectFactory {
 
     public static AnimatedSegue create(VisualEffectSpecifier effectSpecifier, BufferedImage from, BufferedImage to) {
         AnimatedSegue effect = effectNamed(effectSpecifier.name);
-        effect.setFrom(from);
-        effect.setTo(effectImage(effectSpecifier.image, to));
+        effect.setSource(from);
+        effect.setDestination(effectImage(effectSpecifier.image, to));
         effect.setDurationMs(effectSpecifier.speed.durationMs);
 
         return effect;
     }
 
-    public static FreezeEffect createScreenLock() {
-        FreezeEffect effect = new FreezeEffect();
-        effect.setFrom(HyperCard.getInstance().getCard().getScreenshot());
+    public static PlainEffect createScreenLock() {
+        BufferedImage screenShot = HyperCard.getInstance().getCard().getScreenshot();
+
+        PlainEffect effect = new PlainEffect();
+        effect.setSource(screenShot);
+        effect.setDestination(screenShot);     // Ignored; never visible
         effect.setFps(1);
         effect.setDurationMs(Integer.MAX_VALUE);
         return effect;
@@ -60,7 +65,7 @@ public class VisualEffectFactory {
             case ZOOM_OUT:
                 return new ZoomOutEffect();
             case PLAIN:
-                return new FreezeEffect();
+                return new PlainEffect();
             case STRETCH_FROM_TOP:
                 return new StretchFromTopEffect();
             case STRETCH_FROM_BOTTOM:
@@ -71,7 +76,7 @@ public class VisualEffectFactory {
                 return new ShrinkToBottomEffect();
             case SHRINK_TO_TOP:
                 return new ShrinkToTopEffect();
-            case SHRING_TO_CENTER:
+            case SHRINK_TO_CENTER:
                 return new ShrinkToCenterEffect();
             case VENETIAN_BLINDS:
                 return new BlindsEffect();

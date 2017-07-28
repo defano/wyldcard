@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.common;
 
-import com.defano.hypercard.gui.fx.SegueName;
+import com.defano.jsegue.SegueName;
 
 public class VisualEffectSpecifier {
 

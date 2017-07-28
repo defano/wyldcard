@@ -9,7 +9,6 @@
 package com.defano.hypertalk;
 
 import com.defano.hypercard.context.GlobalProperties;
-import com.defano.hypercard.gui.fx.SegueName;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.constructs.*;
@@ -20,6 +19,7 @@ import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
+import com.defano.jsegue.SegueName;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
@@ -243,7 +243,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitShrinkToCenterEffect(HyperTalkParser.ShrinkToCenterEffectContext ctx) {
-        return SegueName.SHRING_TO_CENTER;
+        return SegueName.SHRINK_TO_CENTER;
     }
 
     @Override
