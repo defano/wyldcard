@@ -10,7 +10,7 @@ package com.defano.hypercard.parts.buttons.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
-import com.defano.hypercard.parts.buttons.ButtonView;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypertalk.ast.common.Value;
@@ -18,7 +18,7 @@ import com.defano.hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public class DefaultButton extends JButton implements ButtonView {
+public class DefaultButton extends JButton implements ButtonComponent {
 
     private final ToolEditablePart toolEditablePart;
 

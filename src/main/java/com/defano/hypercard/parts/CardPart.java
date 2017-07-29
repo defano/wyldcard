@@ -12,8 +12,6 @@ import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.util.FileDrop;
-import com.defano.hypercard.gui.util.ImageImporter;
 import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
@@ -23,7 +21,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.canvas.UndoablePaintCanvas;
+import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.clipboard.CanvasTransferDelegate;
 import com.defano.jmonet.clipboard.CanvasTransferHandler;
@@ -36,9 +34,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
- * A view object representing a card in the stack; extends the Swing JLayeredPane component.
+ * The "controller" object representing a card in the stack.
+ *
+ * See {@link CardLayeredPane} for the view object.
+ * See {@link CardModel} for the model object.
  */
 public class CardPart extends CardLayeredPane implements PartContainer, CanvasCommitObserver, CanvasTransferDelegate {
 
@@ -47,6 +50,10 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
 
     private PartsTable<FieldPart> fields = new PartsTable<>();
     private PartsTable<ButtonPart> buttons = new PartsTable<>();
+
+    private EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver();
+    private ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
+    private BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
 
     private CardPart() {
         super();
@@ -80,18 +87,16 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         card.setTransferHandler(new CardPartTransferHandler(card));
 
         // Setup the foreground paint canvas
-        card.setForegroundCanvas(new UndoablePaintCanvas(card.cardModel.getCardImage()));
+        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage()));
         card.getForegroundCanvas().addCanvasCommitObserver(card);
         card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
         card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
-        card.getForegroundCanvas().getScaleProvider().addObserver((o, arg) -> card.setBackgroundVisible(((Double) arg) == 1.0));
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new UndoablePaintCanvas(card.getCardBackground().getBackgroundImage()));
+        card.setBackgroundCanvas(new JMonetCanvas(card.getCardBackground().getBackgroundImage()));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
-        card.getBackgroundCanvas().getScaleProvider().addObserver((o, arg) -> card.setForegroundVisible(((Double) arg) == 1.0));
 
         // Resize Swing component
         card.setMaximumSize(stack.getSize());
@@ -106,21 +111,15 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
             thisField.getPartModel().notifyPropertyChangedObserver(thisField);
         }
 
-        // Listen for image files that are dropped onto the card
-        new FileDrop(card, files -> ImageImporter.importAsSelection(files[0]));
-
-        // Hide the foreground layer whenever the background is being edited
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver((oldValue, isEditingBackground) -> {
-            card.setForegroundVisible(!(boolean) isEditingBackground);
-        });
-
         return card;
     }
 
     /**
-     * Imports an existing part (button or field) into this card. Note that this differs from {@link #addField(FieldPart, CardLayer)}
-     * or {@link #addButton(ButtonPart, CardLayer)} in that a new ID for the part is generated before it is added to the card. This
-     * method is typically used to "paste" a copied part from another card onto this card.
+     * Imports an existing part (button or field) into this card.
+     *
+     * Note that this differs from {@link #addField(FieldPart, CardLayer)} or {@link #addButton(ButtonPart, CardLayer)}
+     * in that a new ID for the part is generated before it is added to the card. This method is typically used to
+     * "paste" a copied part from another card onto this card.
      *
      * @param part The part to be imported.
      * @return The newly imported part (identical to the given part, but with a new ID)
@@ -230,7 +229,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * on whether the user is currently editing the card's background.
      * @return The active paint canvas for this card.
      */
-    public UndoablePaintCanvas getCanvas() {
+    public JMonetCanvas getCanvas() {
         return ToolsContext.getInstance().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
     }
 
@@ -306,6 +305,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
@@ -315,6 +315,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public BufferedImage copySelection() {
         PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
@@ -325,6 +326,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteSelection() {
         PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
@@ -333,15 +335,23 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void pasteSelection(BufferedImage image) {
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION);
+        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 
+    /**
+     * Gets a screenshot of this card; a pixel accurate rendering of the card as would be visible to the user when the
+     * card is visible in the stack window including graphics and part layers (the rendering of which will differ
+     * based on Swing's current look-and-feel setting).
+     *
+     * @return A screenshot of this card.
+     */
     public BufferedImage getScreenshot() {
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -354,14 +364,41 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         return screenshot;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getHeight() {
         return stackModel.getHeight();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getWidth() {
         return stackModel.getWidth();
+    }
+
+    public void closeCard() {
+        // Lets parts know they're about to go away
+        notifyPartsClosing();
+
+        // Remove their Swing components from the card to free memory
+        removeAll();
+
+        setTransferHandler(null);
+        ToolsContext.getInstance().isEditingBackgroundProvider().deleteObserver(editingBackgroundObserver);
+        getForegroundCanvas().dispose();
+        getBackgroundCanvas().dispose();
+
+        editingBackgroundObserver = null;
+        foregroundScaleObserver = null;
+        backgroundScaleObserver = null;
+
+        super.dispose();
+    }
+
+    public void openCard() {
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver(editingBackgroundObserver);
+        getForegroundCanvas().getScaleProvider().addObserver(foregroundScaleObserver);
+        getBackgroundCanvas().getScaleProvider().addObserver(backgroundScaleObserver);
     }
 
     /**
@@ -476,6 +513,27 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         moveToFront(component);
 
         revalidate(); repaint();
+    }
+
+    private class BackgroundScaleObserver implements Observer {
+        @Override
+        public void update(Observable o, Object scale) {
+            setForegroundVisible(((Double) scale) == 1.0);
+        }
+    }
+
+    private class ForegroundScaleObserver implements Observer {
+        @Override
+        public void update(Observable o, Object scale) {
+            setBackgroundVisible(((Double) scale) == 1.0);
+        }
+    }
+
+    private class EditingBackgroundObserver implements Observer {
+        @Override
+        public void update(Observable o, Object isEditingBackground) {
+            setForegroundVisible(!(boolean) isEditingBackground);
+        }
     }
 
 }

@@ -11,7 +11,7 @@ package com.defano.hypercard.parts.buttons.styles;
 import com.defano.hypercard.fonts.HyperCardFont;
 import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.buttons.ButtonView;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
 import com.defano.hypercard.parts.buttons.SharedHilight;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.fonts.FontUtils;
@@ -22,7 +22,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class RadioButton extends JRadioButton implements SharedHilight, ButtonView, ActionListener {
+public class RadioButton extends JRadioButton implements SharedHilight, ButtonComponent, ActionListener {
 
     private final ToolEditablePart toolEditablePart;
 
@@ -78,11 +78,15 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonVi
     public void actionPerformed(ActionEvent e) {
         // Swing automatically changes the selection state of the component for us; we need to un-do this change when
         // not in auto hilite mode.
-        if (!toolEditablePart.isAutoHilited()) {
+        if (!isAutoHilited()) {
             setSelected(!isSelected());
         } else {
             setSharedHilite((ButtonPart) toolEditablePart, isSelected());
         }
+    }
+
+    private boolean isAutoHilited() {
+        return toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
 }

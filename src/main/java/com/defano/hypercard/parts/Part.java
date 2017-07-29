@@ -24,7 +24,7 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * An interface defining common behavior to all parts.
+ * An interface defining behavior common to all card-embedded parts (buttons and fields).
  */
 public interface Part {
 

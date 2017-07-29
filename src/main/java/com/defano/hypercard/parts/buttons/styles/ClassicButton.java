@@ -9,11 +9,11 @@
 package com.defano.hypercard.parts.buttons.styles;
 
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.buttons.ButtonView;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
 
 import java.awt.*;
 
-public class ClassicButton extends AbstractLabelButton implements ButtonView {
+public class ClassicButton extends AbstractLabelButton implements ButtonComponent {
 
     private final static int OUTLINE_SROKE = 2;
     private final static int ARC_SIZE = 10;

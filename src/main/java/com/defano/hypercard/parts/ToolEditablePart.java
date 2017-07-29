@@ -10,14 +10,13 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.parts.buttons.ButtonView;
-import com.defano.hypercard.parts.fields.FieldView;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.model.ButtonModel;
-import com.defano.hypertalk.ast.common.Tool;
-import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
+import com.defano.hypercard.parts.fields.FieldComponent;
+import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.jmonet.tools.util.MarchingAnts;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -135,7 +134,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
             // TODO: Add resizer support for dragging from any corner
             // g2d.fill(getTopLeftDragHandle());
             // g2d.fill(getBottomLeftDragHandle());
-            //  g2d.fill(getTopRightDragHandle());
+            // g2d.fill(getTopRightDragHandle());
             g2d.fill(getBottomRightDragHandle());
 
             g2d.setPaint(Color.WHITE);
@@ -181,16 +180,6 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     }
 
     /**
-     * Indicates whether the hilite of this part is automatically managed by HyperCard, or whether it is controlled
-     * by the user (via HyperTalk).
-     *
-     * @return True if managed by the system; false otherwise.
-     */
-    default boolean isAutoHilited() {
-        return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
-    }
-
-    /**
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
      */
     default void bringCloser() {
@@ -226,9 +215,9 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
             } else {
                 move();
             }
-        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonView) {
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
             PartToolContext.getInstance().setSelectedPart(this);
-        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldView) {
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {
             PartToolContext.getInstance().setSelectedPart(this);
         }
     }
@@ -238,9 +227,9 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
         if (isSelectedForEditing() && e.getClickCount() == 2) {
             editProperties();
         } else {
-            if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonView) {
+            if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
                 PartToolContext.getInstance().setSelectedPart(this);
-            } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldView) {
+            } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {
                 PartToolContext.getInstance().setSelectedPart(this);
             }
         }

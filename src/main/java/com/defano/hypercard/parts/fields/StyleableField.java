@@ -10,6 +10,7 @@ package com.defano.hypercard.parts.fields;
 
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
+import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.fields.styles.OpaqueField;
 import com.defano.hypercard.parts.fields.styles.RectangleField;
@@ -19,33 +20,38 @@ import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
-public abstract class AbstractFieldView implements ToolEditablePart, MarchingAntsObserver {
+/**
+ * The "view" object representing a styleable HyperCard field.
+ * <p>
+ * Note that we cannot simply extend a Swing component because the underlying component bound to this view can change at
+ * runtime (i.e., a transparent field can morph into a rectangular one).
+ * <p>
+ * This class provides common functionality for "styleable" field parts; the actual style of the field is provided by
+ * a concrete subclass.
+ */
+public abstract class StyleableField implements Styleable<FieldStyle,FieldComponent>, ToolEditablePart, MarchingAntsObserver {
 
-    private FieldView fieldView;
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
+    private FieldComponent fieldComponent;
     private boolean isBeingEdited;
 
-    public abstract void move();
-
-    public abstract void resize(int fromQuadrant);
-
-    public abstract void replaceSwingComponent(Component oldComponent, Component newComponent);
-
-    public AbstractFieldView(FieldStyle style) {
-        fieldView = getComponentForStyle(style);
+    public StyleableField(FieldStyle style) {
+        fieldComponent = getComponentForStyle(style);
     }
 
     @Override
     public boolean isSelectedForEditing() {
-        Window ancestorWindow = SwingUtilities.getWindowAncestor(getFieldView());
+        Window ancestorWindow = SwingUtilities.getWindowAncestor(getFieldComponent());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
     @Override
     public void setIsSelectedForEditing(boolean beingEdited) {
-        fieldView.setEditable(!beingEdited);
+        fieldComponent.setEditable(!beingEdited);
         isBeingEdited = beingEdited;
 
         isBeingEdited = beingEdited;
@@ -59,13 +65,15 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
         getComponent().repaint();
     }
 
-    public void setFieldStyle(FieldStyle style) {
-        Component oldComponent = getFieldView();
-        fieldView = getComponentForStyle(style);
-        replaceSwingComponent(oldComponent, (JComponent) fieldView);
+    @Override
+    public void setStyle(FieldStyle style) {
+        Component oldComponent = getFieldComponent();
+        fieldComponent = getComponentForStyle(style);
+        replaceSwingComponent(oldComponent, (JComponent) fieldComponent);
     }
 
-    private FieldView getComponentForStyle(FieldStyle style) {
+    @Override
+    public FieldComponent getComponentForStyle(FieldStyle style) {
         switch (style) {
             case TRANSPARENT:
                 return new TransparentField(this);
@@ -87,37 +95,41 @@ public abstract class AbstractFieldView implements ToolEditablePart, MarchingAnt
      *
      * @return
      */
-    public JComponent getFieldView() {
-        return (JComponent) fieldView;
+    public JComponent getFieldComponent() {
+        return (JComponent) fieldComponent;
     }
 
-    public JTextComponent getTextComponent() {
-        return fieldView.getTextComponent();
-    }
-
-    public String getText() {
-        return fieldView.getText();
+    public JTextPane getTextPane() {
+        return fieldComponent.getTextPane();
     }
 
     @Override
     public void partOpened() {
-        fieldView.partOpened();
+        fieldComponent.partOpened();
 
-        getPartModel().addPropertyChangedObserver(fieldView);
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> onToolModeChanged());
+        getPartModel().addPropertyChangedObserver(fieldComponent);
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
     }
 
     @Override
     public void partClosed() {
-        fieldView.partClosed();
+        fieldComponent.partClosed();
 
-        getPartModel().removePropertyChangedObserver(fieldView);
+        getPartModel().removePropertyChangedObserver(fieldComponent);
         KeyboardManager.removeGlobalKeyListener(this);
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
     @Override
     public void onAntsMoved() {
         getComponent().repaint();
+    }
+
+    private class ToolModeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            onToolModeChanged();
+        }
     }
 }

@@ -9,12 +9,10 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.PartToolContext;
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.context.*;
 import com.defano.hypercard.gui.window.FieldPropertyEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
-import com.defano.hypercard.parts.fields.AbstractFieldView;
+import com.defano.hypercard.parts.fields.StyleableField;
 import com.defano.hypercard.parts.fields.FieldStyle;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.runtime.WindowManager;
@@ -27,35 +25,36 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.ref.WeakReference;
 
 /**
- * The view object associated with a field on the card. See {@link FieldModel} for the model object associated with this
- * view.
+ * The controller object associated with a field on the card.
  *
- * Note that this is a bit of a deviation from the typical MVC architectural pattern in that a field can take on
- * different "styles" that may change dynamically. Thus, this object--while representing the view--only holds a
- * reference to the Swing component that represents its view in the Java world. See {@link #getFieldView()}.
+ * See {@link FieldModel} for the model object associated with this controller.
+ * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends AbstractFieldView implements Part, MouseListener, PropertyChangeObserver, KeyListener {
+public class FieldPart extends StyleableField implements Part, MouseListener, PropertyChangeObserver, KeyListener {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
 
     private Script script;
     private FieldModel partModel;
-    private CardPart parent;
+    private WeakReference<CardPart> parent;
     private PartMover mover;
 
     private FieldPart(FieldStyle style, CardPart parent) {
         super(style);
 
         this.mover = new PartMover(this, parent);
-        this.parent = parent;
+        this.parent = new WeakReference<>(parent);
         this.script = new Script();
     }
 
@@ -106,6 +105,7 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         return field;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void editProperties() {
         WindowBuilder.make(new FieldPropertyEditor())
@@ -116,56 +116,79 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
                 .build();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void partClosed() {
+        super.partClosed();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void partOpened() {
+        super.partOpened();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public void move() {
         mover.startMoving();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void resize(int fromQuadrant) {
-        new PartResizer(this, parent, fromQuadrant);
+        new PartResizer(this, parent.get(), fromQuadrant);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void delete() {
-        parent.removePart(this);
+        parent.get().removePart(this);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Tool getEditTool() {
         return Tool.FIELD;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void replaceSwingComponent(Component oldComponent, Component newComponent) {
-        parent.replaceSwingComponent(this, oldComponent, newComponent);
+        parent.get().replaceSwingComponent(this, oldComponent, newComponent);
     }
 
+    /** {@inheritDoc} */
     @Override
     public PartType getType() {
         return PartType.FIELD;
     }
 
+    /** {@inheritDoc} */
     @Override
     public JComponent getComponent() {
-        return this.getFieldView();
+        return this.getFieldComponent();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Part getPart() {
         return this;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Script getScript() {
         return script;
     }
 
+    /** {@inheritDoc} */
     @Override
     public PartModel getPartModel() {
         return partModel;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setValue(Value value) {
         try {
@@ -175,35 +198,44 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getValueProperty() {
         return com.defano.hypercard.parts.model.ButtonModel.PROP_CONTENTS;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPartToolActive() {
         return ToolsContext.getInstance().getToolMode() == ToolMode.FIELD;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Value getValue() {
         return partModel.getKnownProperty(FieldModel.PROP_TEXT);
     }
 
+    /** {@inheritDoc} */
     @Override
     public CardPart getCard() {
-        return parent;
+        return parent.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
+
+        // Update the clickText property
+        setClickText(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             sendMessage("mouseDown");
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
@@ -213,54 +245,62 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
         sendMessage("mouseEnter");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
         sendMessage("mouseLeave");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (getTextComponent().hasFocus()) {
+        if (getTextPane().hasFocus()) {
             sendMessage("keyDown");
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
 
-        if (getTextComponent().hasFocus()) {
+        if (getTextPane().hasFocus()) {
             sendMessage("keyUp");
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
+
         if (e.getClickCount() == 2) {
             sendMessage("mouseDoubleClick");
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
-                setFieldStyle(FieldStyle.fromName(newValue.stringValue()));
+                setStyle(FieldStyle.fromName(newValue.stringValue()));
                 break;
             case FieldModel.PROP_SCRIPT:
                 try {
@@ -286,8 +326,22 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
         }
     }
 
+    private void setClickText(MouseEvent evt) {
+        try {
+            int clickIndex = getTextPane().viewToModel(evt.getPoint());
+            int startWordIndex = Utilities.getWordStart(getTextPane(), clickIndex);
+            int endWordIndex = Utilities.getWordEnd(getTextPane(), clickIndex);
+
+            String clickText = getTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
+            GlobalContext.getContext().getGlobalProperties().defineProperty(GlobalProperties.PROP_CLICKTEXT, new Value(clickText), true);
+
+        } catch (BadLocationException e) {
+            // Nothing to do
+        }
+    }
+
     private void initProperties(Rectangle geometry) {
-        int id = parent.getStackModel().getNextFieldId();
+        int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry);
         partModel.addPropertyChangedObserver(this);
@@ -301,5 +355,6 @@ public class FieldPart extends AbstractFieldView implements Part, MouseListener,
             throw new HtSemanticException("Didn't understand that.");
         }
     }
+
 
 }

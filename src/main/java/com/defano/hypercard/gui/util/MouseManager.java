@@ -25,6 +25,7 @@ import java.util.Set;
 public class MouseManager {
 
     private static boolean mouseIsDown;
+    private static Point clickLoc = new Point();
 
     private static Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
     private static Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
@@ -39,6 +40,10 @@ public class MouseManager {
 
     public interface MouseReleasedObserver {
         void onMouseReleased();
+    }
+
+    public static Point getClickLoc() {
+        return clickLoc;
     }
 
     public static Point getMouseLoc() {
@@ -120,6 +125,7 @@ public class MouseManager {
 
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseIsDown = true;
+            clickLoc = getMouseLoc();
             fireOnMousePressed();
         }
         if (event.getID() == MouseEvent.MOUSE_RELEASED) {

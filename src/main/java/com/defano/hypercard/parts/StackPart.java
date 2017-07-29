@@ -11,7 +11,6 @@ import com.defano.hypercard.parts.model.StackObserver;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.Provider;
 
 import java.awt.*;
@@ -21,9 +20,9 @@ import java.util.List;
 
 /**
  * Represents the "virtual" view object of the stack itself. See {@link StackModel} for the data model.
- *
- * Note that while this class represents a view, it has no specific Swing component associated with it. Instead, it
- * represents a stack of cards; the current card is the Swing component which represents the stack's view.
+ * <p>
+ * This view is "virtual" because a stack has no view aside from the cards that comprise it. Thus, this class does
+ * not extend a Swing component and is not added to a view hierarchy.
  */
 public class StackPart implements PropertyChangeObserver {
 
@@ -69,6 +68,7 @@ public class StackPart implements PropertyChangeObserver {
         goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
+        getCurrentCard().openCard();
         fireOnCardOpened(getCurrentCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
@@ -175,7 +175,7 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     /**
-     * Deletes the current card provided there are more than one card in the stack.
+     * Deletes the current card provided there are more than one cards in the stack.
      * @return The card now visible in the stack window, or null if the current card could not be deleted.
      */
     public CardPart deleteCard() {
@@ -281,8 +281,8 @@ public class StackPart implements PropertyChangeObserver {
      * Gets an observable object containing the number of cards in the stack.
      * @return The card count provider
      */
-    public ImmutableProvider<Integer> getCardCountProvider() {
-        return ImmutableProvider.from(cardCountProvider);
+    public Provider<Integer> getCardCountProvider() {
+        return cardCountProvider;
     }
 
     /**
@@ -321,8 +321,6 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardClosing (CardPart closingCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            closingCard.notifyPartsClosing();
-
             for (StackObserver observer : observers) {
                 observer.onCardClosed(closingCard);
             }
@@ -358,11 +356,16 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     private CardPart go(int cardIndex, boolean addToBackstack) {
-
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
             return getCurrentCard();
         }
+
+        deactivateCard(addToBackstack);
+        return activateCard(cardIndex);
+    }
+
+    private void deactivateCard(boolean addToBackstack) {
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
         ToolsContext.getInstance().getPaintTool().deactivate();
@@ -377,18 +380,18 @@ public class StackPart implements PropertyChangeObserver {
 
         // Notify observers that current card is going away
         fireOnCardClosing(getCurrentCard());
-
-        return activateCard(cardIndex);
+        getCurrentCard().closeCard();
     }
 
     private CardPart activateCard (int cardIndex) {
-        try {
 
+        try {
             // Change cards
             currentCard = getCard(cardIndex);
             stackModel.setCurrentCardIndex(cardIndex);
 
             // Notify observers of new card
+            currentCard.openCard();
             fireOnCardOpened(currentCard);
 
             // Reactive paint tool on new card's canvas

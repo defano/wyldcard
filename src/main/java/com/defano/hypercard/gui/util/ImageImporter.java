@@ -29,7 +29,7 @@ public class ImageImporter {
                 int cardCenterX = HyperCard.getInstance().getCard().getWidth() / 2;
                 int cardCenterY = HyperCard.getInstance().getCard().getHeight() / 2;
 
-                SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION);
+                SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION, false);
                 tool.createSelection(importedImage, new Point(cardCenterX - importedImage.getWidth() / 2, cardCenterY - importedImage.getHeight() / 2));
             }
         } catch (IOException e) {

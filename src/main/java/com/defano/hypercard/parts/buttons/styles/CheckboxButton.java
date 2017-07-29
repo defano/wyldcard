@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.parts.buttons.styles;
 
-import com.defano.hypercard.parts.buttons.ButtonView;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
 import com.defano.hypercard.fonts.HyperCardFont;
 import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.ToolEditablePart;
@@ -22,7 +22,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonView, ActionListener {
+public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonComponent, ActionListener {
 
     private final ToolEditablePart toolEditablePart;
 
@@ -78,11 +78,15 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonVi
     public void actionPerformed(ActionEvent e) {
 
         // Swing automatically changes the selection state of the component for us; we need to un-do this change when not in auto-hilite mode.
-        if (toolEditablePart.isAutoHilited()) {
+        if (isAutoHilited()) {
             setSharedHilite((ButtonPart) toolEditablePart, isSelected());
         } else {
             setSelected(!isSelected());
         }
+    }
+
+    private boolean isAutoHilited() {
+        return toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
 }

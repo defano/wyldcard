@@ -13,17 +13,20 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.buttons.ButtonView;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 
-public class MenuButton extends JComboBox<String> implements ButtonView {
+public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();
 
@@ -36,7 +39,7 @@ public class MenuButton extends JComboBox<String> implements ButtonView {
             thisComponent.addMouseListener(toolEditablePart);
         }
 
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> setEnabled(ToolMode.BUTTON != arg));
+        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
 
         setModel(menuItems);
         addItemListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
@@ -69,6 +72,13 @@ public class MenuButton extends JComboBox<String> implements ButtonView {
             case ButtonModel.PROP_TEXTSTYLE:
                 setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
+        }
+    }
+
+    private class ToolModeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            setEnabled(ToolMode.BUTTON != arg);
         }
     }
 }

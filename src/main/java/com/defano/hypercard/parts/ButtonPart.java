@@ -22,7 +22,7 @@ import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.ButtonPropertyEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
-import com.defano.hypercard.parts.buttons.AbstractButtonView;
+import com.defano.hypercard.parts.buttons.StyleableButton;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.context.ToolsContext;
@@ -41,15 +41,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.ref.WeakReference;
 
 /**
- * The view object associated with a button on a card.
+ * The controller object associated with a button on a card.
  *
- * Note that this is a bit of a deviation from the typical MVC architectural pattern in that a button can take on
- * different "styles" that may change dynamically. Thus, this object--while representing the view--only holds a
- * reference to the Swing component that represents its view in the Java world. See {@link #getButtonView()}.
+ * See {@link ButtonModel} for the model associated with this controller.
+ * See {@link StyleableButton} for the view associated with this controller.
  */
-public class ButtonPart extends AbstractButtonView implements MouseListener, PropertyChangeObserver {
+public class ButtonPart extends StyleableButton implements MouseListener, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 160;
     private static final int DEFAULT_HEIGHT = 40;
@@ -57,12 +57,12 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     private final PartMover mover;
     private Script script;
     private ButtonModel partModel;
-    private CardPart parent;
+    private WeakReference<CardPart> parent;
 
     private ButtonPart(ButtonStyle style, CardPart parent) {
         super(style);
 
-        this.parent = parent;
+        this.parent = new WeakReference<>(parent);
         this.script = new Script();
         this.mover = new PartMover(this, parent);
     }
@@ -118,11 +118,13 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     @Override
     public void partOpened() {
         super.partOpened();
+        partModel.addPropertyChangedObserver(this);
     }
 
     @Override
     public void partClosed() {
         super.partClosed();
+        partModel.removePropertyChangedObserver(this);
     }
 
     @Override
@@ -136,7 +138,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public CardPart getCard() {
-        return parent;
+        return parent.get();
     }
 
     @Override
@@ -151,12 +153,12 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public void resize(int fromQuadrant) {
-        new PartResizer(this, parent, fromQuadrant);
+        new PartResizer(this, parent.get(), fromQuadrant);
     }
 
     @Override
     public void delete() {
-        parent.removePart(this);
+        parent.get().removePart(this);
     }
 
     @Override
@@ -166,7 +168,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public void replaceSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
-        parent.replaceSwingComponent(this, oldButtonComponent, newButtonComponent);
+        parent.get().replaceSwingComponent(this, oldButtonComponent, newButtonComponent);
     }
 
     @Override
@@ -176,7 +178,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
 
     @Override
     public JComponent getComponent() {
-        return this.getButtonView();
+        return this.getButtonComponent();
     }
 
     @Override
@@ -236,7 +238,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:
-                setButtonStyle(ButtonStyle.fromName(newValue.stringValue()));
+                setStyle(ButtonStyle.fromName(newValue.stringValue()));
                 break;
             case ButtonModel.PROP_SCRIPT:
                 try {
@@ -249,12 +251,12 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
             case ButtonModel.PROP_LEFT:
             case ButtonModel.PROP_WIDTH:
             case ButtonModel.PROP_HEIGHT:
-                getButtonView().setBounds(partModel.getRect());
-                getButtonView().validate();
-                getButtonView().repaint();
+                getButtonComponent().setBounds(partModel.getRect());
+                getButtonComponent().validate();
+                getButtonComponent().repaint();
                 break;
             case ButtonModel.PROP_ENABLED:
-                getButtonView().setEnabled(newValue.booleanValue());
+                getButtonComponent().setEnabled(newValue.booleanValue());
                 break;
             case ButtonModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());
@@ -279,9 +281,7 @@ public class ButtonPart extends AbstractButtonView implements MouseListener, Pro
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.getStackModel().getNextButtonId();
-
+        int id = parent.get().getStackModel().getNextButtonId();
         partModel = ButtonModel.newButtonModel(id, geometry);
-        partModel.addPropertyChangedObserver(this);
     }
 }

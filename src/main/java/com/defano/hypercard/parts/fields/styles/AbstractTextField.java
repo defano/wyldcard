@@ -13,14 +13,15 @@ import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.fields.FieldView;
+import com.defano.hypercard.parts.fields.FieldComponent;
 import com.defano.hypercard.parts.model.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.jmonet.tools.util.MarchingAnts;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
@@ -33,9 +34,14 @@ import java.util.LinkedList;
 import java.util.Observable;
 import java.util.Observer;
 
-public abstract class AbstractTextField extends JScrollPane implements FieldView, DocumentListener, Observer {
+/**
+ * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
+ * editable text component and the scrollable surface in which it is embedded.
+ */
+public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, Observer, CaretListener {
 
-    protected final HyperCardJTextPane textPane;
+    private final HyperCardJTextPane textPane;
+    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
 
     private ToolEditablePart toolEditablePart;
     private MutableAttributeSet currentStyle = new SimpleAttributeSet();
@@ -48,38 +54,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         textPane.setEditorKit(new RTFEditorKit());
         this.setViewportView(textPane);
 
-        // Add mouse and keyboard listeners
-        this.addMouseListener(toolEditablePart);
-        this.addKeyListener(toolEditablePart);
-        textPane.addMouseListener(toolEditablePart);
-        textPane.addKeyListener(toolEditablePart);
-
-        // Get notified when field tool is selected
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
-            setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
-        });
-
-        // Listen for changes to the field's selected text (for the selectedText property)
-        textPane.addCaretListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true));
-        textPane.addCaretListener(e -> GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText())));
-
-        // Listen for caret location changes so that we can update the app font selection
-        textPane.addCaretListener(e -> {
-            ToolsContext.getInstance().getFontProvider().deleteObserver(AbstractTextField.this);
-            AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
-            ToolsContext.getInstance().getFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
-            ToolsContext.getInstance().getFontProvider().addObserver(AbstractTextField.this);
-        });
-
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
-
-        // And listen for ants to march
-        MarchingAnts.getInstance().addObserver(this::repaint);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void insertUpdate(DocumentEvent e) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
@@ -87,6 +66,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         model.setStyleData(getRtf());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void removeUpdate(DocumentEvent e) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
@@ -94,6 +74,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         model.setStyleData(getRtf());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void changedUpdate(DocumentEvent e) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
@@ -101,21 +82,21 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         model.setStyleData(getRtf());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         SwingUtilities.invokeLater(() -> {
 
             switch (property) {
                 case FieldModel.PROP_TEXT:
-                    if (!newValue.toString().equals(getText())) {
-                        replaceText(newValue.stringValue());
-                    }
+                    replaceText(newValue.stringValue());
                     break;
 
                 case FieldModel.PROP_DONTWRAP:
@@ -144,14 +125,14 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
     }
 
     /**
-     * Replaces the field's text with the given value, attempting as best as possible to intelligently
+     * Replaces the field's text with the given String value, attempting as best as possible to intelligently
      * maintain the field's existing style.
      *
      * It is not possible to correctly restyle the new text in every case. This is a result of the {@link FieldModel}
      * not being able to notify us of insert/delete operations.
      *
      * This method invokes Google's DiffMatchPatch utility to generate a change set, then attempts to apply each change
-     * independently to best preserve formatting.
+     * independently to let the {@link StyledDocument} model best preserve its formatting.
      *
      * TODO: Change much infrastructure to allow model to report inserts and deletes instead of using this "cheat".
      *
@@ -159,8 +140,14 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
      */
     private void replaceText(String newText) {
 
-        int changePosition = 0;
         String existingText = getText();
+
+        // Don't waste our own time
+        if (newText.equals(existingText)) {
+            return;
+        }
+
+        int changePosition = 0;
         StyledDocument document = textPane.getStyledDocument();
         AttributeSet style = currentStyle;
 
@@ -190,9 +177,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
             document.addDocumentListener(this);
         }
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> repaint());
+        ThreadUtils.invokeAndWaitAsNeeded(this::repaint);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getText() {
         try {
@@ -203,35 +191,71 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public JTextComponent getTextComponent() {
+    public JTextPane getTextPane() {
         return textPane;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setEditable(boolean editable) {
         super.setEnabled(editable);
         textPane.setEnabled(editable);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void partOpened() {
+        // Get notified when field tool is selected
+        ToolsContext.getInstance().getToolModeProvider().addObserver(toolModeObserver);
+
+        // Add mouse and keyboard listeners
+        this.addMouseListener(toolEditablePart);
+        this.addKeyListener(toolEditablePart);
+        textPane.addMouseListener(toolEditablePart);
+        textPane.addKeyListener(toolEditablePart);
+        textPane.addCaretListener(this);
+
         toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().notifyObservers(this);
+        ToolsContext.getInstance().getToolModeProvider().notifyObservers(toolModeObserver);
         setRtf(((FieldModel) toolEditablePart.getPartModel()).getStyleData());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void partClosed() {
+        this.removeMouseListener(toolEditablePart);
+        this.removeKeyListener(toolEditablePart);
+        textPane.removeMouseListener(toolEditablePart);
+        textPane.removeKeyListener(toolEditablePart);
+        textPane.removeCaretListener(this);
+
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
+
         ToolsContext.getInstance().getFontProvider().deleteObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().deleteObserver(this);
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update(Observable o, Object arg) {
         // User changed global font selection from the menubar
         toolEditablePart.getPartModel().setFont((Font) arg);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void caretUpdate(CaretEvent e) {
+        // Update selectedText property
+        toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true);
+        GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()));
+
+        // Update global font style selection
+        ToolsContext.getInstance().getFontProvider().deleteObserver(AbstractTextField.this);
+        AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
+        ToolsContext.getInstance().getFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
+        ToolsContext.getInstance().getFontProvider().addObserver(AbstractTextField.this);
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
@@ -287,5 +311,16 @@ public abstract class AbstractTextField extends JScrollPane implements FieldView
         currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
 
         textPane.setCharacterAttributes(currentStyle, true);
+    }
+
+    private class ToolModeObserver implements Observer {
+
+        /** {@inheritDoc} */
+        @Override
+        public void update(Observable o, Object arg) {
+            setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
+        }
     }
 }

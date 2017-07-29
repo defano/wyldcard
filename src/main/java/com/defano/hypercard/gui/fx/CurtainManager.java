@@ -1,8 +1,11 @@
 package com.defano.hypercard.gui.fx;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.fx.renderers.FreezeEffect;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.jsegue.AnimatedSegue;
+import com.defano.jsegue.SegueAnimationObserver;
+import com.defano.jsegue.SegueCompletionObserver;
+import com.defano.jsegue.renderers.PlainEffect;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -28,7 +31,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     public void setScreenLocked(boolean locked) {
         if (locked && !isScreenLocked()) {
             startEffect(VisualEffectFactory.createScreenLock());
-        } else if (this.activeEffect instanceof FreezeEffect) {
+        } else if (this.activeEffect instanceof PlainEffect) {
             cancelEffect();
         }
     }
@@ -39,7 +42,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
 
             // Unlock with effect
             if (effectSpecifier != null) {
-                BufferedImage from = activeEffect.getFrom();
+                BufferedImage from = activeEffect.getSource();
                 BufferedImage to = HyperCard.getInstance().getCard().getScreenshot();
                 startEffect(VisualEffectFactory.create(effectSpecifier, from, to));
             }
@@ -78,7 +81,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     }
 
     public boolean isScreenLocked() {
-        return this.activeEffect != null && this.activeEffect instanceof FreezeEffect;
+        return this.activeEffect != null && this.activeEffect instanceof PlainEffect;
     }
 
     public boolean isEffectActive() {
@@ -99,7 +102,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     }
 
     @Override
-    public void onFrameRendered(BufferedImage image) {
+    public void onFrameRendered(AnimatedSegue segue, BufferedImage image) {
         fireOnCurtainUpdated(image);
     }
 

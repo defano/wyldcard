@@ -60,23 +60,6 @@ public class ToolsContext {
         return instance;
     }
 
-    public void morphSelection(PaintToolType newToolType) {
-        if (getPaintTool() instanceof AbstractSelectionTool && ((AbstractSelectionTool) getPaintTool()).hasSelectionBounds()) {
-            AbstractSelectionTool selectionTool = (AbstractSelectionTool) getPaintTool();
-            Shape selection = selectionTool.getSelectionOutline();
-
-            PaintTool newTool = selectPaintTool(newToolType);
-            if (newTool instanceof AbstractSelectionTool) {
-                ((AbstractSelectionTool) newTool).createSelection(selection.getBounds());
-            } else {
-                throw new IllegalArgumentException("Morph tool type must be a selection tool.");
-            }
-
-        } else {
-            selectPaintTool(newToolType);
-        }
-    }
-
     public Provider<Stroke> getLineStrokeProvider() {
         return lineStrokeProvider;
     }
@@ -100,7 +83,7 @@ public class ToolsContext {
 
     public void setToolMode(ToolMode mode) {
         if (mode != ToolMode.PAINT) {
-            selectPaintTool(PaintToolType.ARROW);
+            selectPaintTool(PaintToolType.ARROW, false);
         }
 
         toolModeProvider.set(mode);
@@ -118,10 +101,7 @@ public class ToolsContext {
         return paintToolProvider.get();
     }
 
-    public PaintTool selectPaintTool(PaintToolType selectedToolType) {
-
-        lastToolType = paintToolProvider.get().getToolType();
-        paintToolProvider.get().deactivate();
+    public PaintTool selectPaintTool(PaintToolType selectedToolType, boolean keepSelection) {
 
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
@@ -131,6 +111,16 @@ public class ToolsContext {
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
                 .build();
+
+        if (keepSelection) {
+            PaintTool lastTool = paintToolProvider.get();
+            if (lastTool instanceof AbstractSelectionTool && selectedTool instanceof AbstractSelectionTool) {
+                ((AbstractSelectionTool) lastTool).morphSelection((AbstractSelectionTool) selectedTool);
+            }
+        }
+
+        lastToolType = paintToolProvider.get().getToolType();
+        paintToolProvider.get().deactivate();
 
         if (selectedTool instanceof AbstractSelectionTool) {
             selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
@@ -216,12 +206,12 @@ public class ToolsContext {
     public void toggleMagnifier() {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
             HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
-            selectPaintTool(lastToolType);
+            selectPaintTool(lastToolType, false);
         } else if (HyperCard.getInstance().getCard().getCanvas().getScale() != 1.0) {
             HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
         }
         else {
-            selectPaintTool(PaintToolType.MAGNIFIER);
+            selectPaintTool(PaintToolType.MAGNIFIER, false);
         }
     }
 
@@ -288,7 +278,7 @@ public class ToolsContext {
 
     public void toggleShapesFilled() {
         shapesFilled.set(!shapesFilled.get());
-        selectPaintTool(paintToolProvider.get().getToolType());
+        selectPaintTool(paintToolProvider.get().getToolType(), false);
     }
 
     public Provider<Boolean> getShapesFilledProvider() {
@@ -301,55 +291,55 @@ public class ToolsContext {
                 setToolMode(ToolMode.BROWSE);
                 break;
             case OVAL:
-                selectPaintTool(PaintToolType.OVAL);
+                selectPaintTool(PaintToolType.OVAL, false);
                 break;
             case BRUSH:
-                selectPaintTool(PaintToolType.PAINTBRUSH);
+                selectPaintTool(PaintToolType.PAINTBRUSH, false);
                 break;
             case PENCIL:
-                selectPaintTool(PaintToolType.PENCIL);
+                selectPaintTool(PaintToolType.PENCIL, false);
                 break;
             case BUCKET:
-                selectPaintTool(PaintToolType.FILL);
+                selectPaintTool(PaintToolType.FILL, false);
                 break;
             case POLYGON:
-                selectPaintTool(PaintToolType.POLYGON);
+                selectPaintTool(PaintToolType.POLYGON, false);
                 break;
             case BUTTON:
                 toolModeProvider.set(ToolMode.BUTTON);
                 break;
             case RECTANGLE:
-                selectPaintTool(PaintToolType.RECTANGLE);
+                selectPaintTool(PaintToolType.RECTANGLE, false);
                 break;
             case CURVE:
-                selectPaintTool(PaintToolType.FREEFORM);
+                selectPaintTool(PaintToolType.FREEFORM, false);
                 break;
             case SHAPE:
-                selectPaintTool(PaintToolType.SHAPE);
+                selectPaintTool(PaintToolType.SHAPE, false);
                 break;
             case ERASER:
-                selectPaintTool(PaintToolType.ERASER);
+                selectPaintTool(PaintToolType.ERASER, false);
                 break;
             case ROUNDRECT:
-                selectPaintTool(PaintToolType.ROUND_RECTANGLE);
+                selectPaintTool(PaintToolType.ROUND_RECTANGLE, false);
                 break;
             case FIELD:
                 toolModeProvider.set(ToolMode.FIELD);
                 break;
             case SELECT:
-                selectPaintTool(PaintToolType.SELECTION);
+                selectPaintTool(PaintToolType.SELECTION, false);
                 break;
             case LASSO:
-                selectPaintTool(PaintToolType.LASSO);
+                selectPaintTool(PaintToolType.LASSO, false);
                 break;
             case SPRAY:
-                selectPaintTool(PaintToolType.AIRBRUSH);
+                selectPaintTool(PaintToolType.AIRBRUSH, false);
                 break;
             case LINE:
-                selectPaintTool(PaintToolType.LINE);
+                selectPaintTool(PaintToolType.LINE, false);
                 break;
             case TEXT:
-                selectPaintTool(PaintToolType.TEXT);
+                selectPaintTool(PaintToolType.TEXT, false);
                 break;
         }
     }

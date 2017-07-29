@@ -17,13 +17,11 @@ public class HyperCardJTextPane extends JTextPane {
     private boolean wrapText = true;
     private boolean showLines = false;
 
-    public HyperCardJTextPane(StyledDocument doc) {
+    HyperCardJTextPane(StyledDocument doc) {
         super(doc);
-
-        // Bit of a cheat; prevents cursor flickering when in the background layer but never displays text cursor.
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean getScrollableTracksViewportWidth() {
         Component parent = getParent();
@@ -57,6 +55,7 @@ public class HyperCardJTextPane extends JTextPane {
         this.repaint();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -168,6 +167,12 @@ public class HyperCardJTextPane extends JTextPane {
         return -1;
     }
 
+    /**
+     * Determines the number of rendered lines in the text field. Not the same as the number of lines of text because
+     * any given line of text could wrap across multiple lines of the field depending on its width.
+     *
+     * @return The number of lines of text in the field; some lines may be wrapped.
+     */
     private int getWrappedLineCount() {
 
         // Special case, empty document has zero lines

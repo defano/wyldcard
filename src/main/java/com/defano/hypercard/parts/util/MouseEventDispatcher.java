@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.util;
 
 import com.defano.jmonet.canvas.AbstractPaintCanvas;
-import com.defano.jmonet.canvas.UndoablePaintCanvas;
+import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,10 +27,10 @@ import java.util.Map;
 public class MouseEventDispatcher implements MouseListener, MouseMotionListener {
 
     // Source component whose mouse events we're re-dispatching to components behind it
-    private final Component source;
+    private Component source;
 
     // Enumerator of parts behind the source
-    private final ComponentEnumerator enumerator;
+    private ComponentEnumerator enumerator;
 
     // Mapping of component hashCode to whether we think this mouse is inside its bounds
     private final Map<Integer,Boolean> mouseWithinMap = new HashMap<>();
@@ -38,10 +38,18 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
     // The component currently being dragged.
     private Component dragging = null;
 
-    public static void bindTo(Component source, ComponentEnumerator delegate) {
+    public static MouseEventDispatcher bindTo(Component source, ComponentEnumerator delegate) {
         MouseEventDispatcher instance = new MouseEventDispatcher(source, delegate);
         source.addMouseListener(instance);
         source.addMouseMotionListener(instance);
+        return instance;
+    }
+
+    public void unbind() {
+        source.removeMouseListener(this);
+        source.removeMouseMotionListener(this);
+        this.source = null;
+        this.enumerator = null;
     }
 
     private MouseEventDispatcher(Component source, ComponentEnumerator enumerator) {
@@ -112,8 +120,8 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
             if (c != null) {
 
                 // TODO: Canvas shouldn't behave unusually in this respect.
-                if (c instanceof UndoablePaintCanvas) {
-                    ((UndoablePaintCanvas)c).getSurface().dispatchEvent(e);
+                if (c instanceof JMonetCanvas) {
+                    ((JMonetCanvas)c).getSurface().dispatchEvent(e);
                 }
 
                 // Obscured components will not automatically receive focus; force focus as needed

@@ -118,35 +118,35 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Scale")
-                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.SCALE))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.SCALE, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SCALE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Rotate")
-                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.ROTATE))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.ROTATE, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ROTATE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Slant")
-                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.SLANT))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.SLANT, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SLANT))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Distort")
-                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.PROJECTION))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.PROJECTION, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PROJECTION))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Perspective")
-                .withAction(e -> ToolsContext.getInstance().morphSelection(PaintToolType.PERSPECTIVE))
+                .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.PERSPECTIVE, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PERSPECTIVE))
                 .build(this);
