@@ -9,7 +9,7 @@
 package com.defano.hypercard.parts.buttons;
 
 /**
- * An enumeration of button styles available to the user.
+ * An enumeration of button styles.
  */
 public enum ButtonStyle {
 

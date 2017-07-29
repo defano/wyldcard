@@ -8,16 +8,17 @@
 
 package com.defano.hypercard.parts.buttons;
 
+import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.parts.ButtonPart;
+import com.defano.hypercard.parts.Styleable;
+import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.buttons.styles.*;
+import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
-import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.model.ButtonModel;
-import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,43 +27,35 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * Provides common functionality for "stylable" button parts (that is, a single button part whose style determines
- * which Swing component is drawn on the card).
+ * The "view" object representing a styleable HyperCard button.
+ * <p>
+ * Note that we cannot simply extend a Swing component because the underlying component bound to this view can change at
+ * runtime (i.e., a push button can morph into a radio button or combo box).
+ * <p>
+ * This class provides common functionality for "stylable" button parts; the actual style of the button is provided by
+ * a concrete subclass.
  */
-public abstract class AbstractButtonView implements ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
+public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonComponent>, ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
-    private ButtonView buttonView;
+    private ButtonComponent buttonComponent;
     private boolean isBeingEdited = false;
 
-    public abstract void move();
-
-    public abstract void resize(int fromQuadrant);
-
-    /**
-     * Indicates that the Swing component associated with this {@link ButtonPart} has changed and that the button's
-     * parent (i.e., card or background) should update itself accordingly. This is the primary means by which
-     * HyperCard can swap one button style for another (in which different buttons styles are represented by
-     * different Swing components).
-     *
-     * @param oldButtonComponent The former component associated with this part
-     * @param newButtonComponent The new component
-     */
-    public abstract void replaceSwingComponent(Component oldButtonComponent, Component newButtonComponent);
-
-    public AbstractButtonView(ButtonStyle style) {
-        buttonView = getComponentForStyle(style);
+    public StyleableButton(ButtonStyle style) {
+        buttonComponent = getComponentForStyle(style);
     }
 
-    public JComponent getButtonView() {
-        return (JComponent) buttonView;
+    public JComponent getButtonComponent() {
+        return (JComponent) buttonComponent;
     }
 
+    @Override
     public boolean isSelectedForEditing() {
-        Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonView());
+        Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonComponent());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
+    @Override
     public void setIsSelectedForEditing(boolean beingEdited) {
         isBeingEdited = beingEdited;
 
@@ -75,16 +68,18 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
         getComponent().repaint();
     }
 
-    public void setButtonStyle(ButtonStyle style) {
-        Component oldComponent = getButtonView();
-        buttonView = getComponentForStyle(style);
-        replaceSwingComponent(oldComponent, (JComponent) buttonView);
+    @Override
+    public void setStyle(ButtonStyle style) {
+        Component oldComponent = getButtonComponent();
+        buttonComponent = getComponentForStyle(style);
+        replaceSwingComponent(oldComponent, (JComponent) buttonComponent);
 
-        getPartModel().addPropertyChangedObserver(buttonView);
+        getPartModel().addPropertyChangedObserver(buttonComponent);
         partOpened();
     }
 
-    private ButtonView getComponentForStyle(ButtonStyle style) {
+    @Override
+    public ButtonComponent getComponentForStyle(ButtonStyle style) {
         switch (style) {
             case CHECKBOX:
                 return new CheckboxButton(this);
@@ -117,7 +112,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
         ToolEditablePart.super.mousePressed(e);
 
         if (isAutoHilited()) {
-            if (!(buttonView instanceof SharedHilight)) {
+            if (!(buttonComponent instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
             }
         }
@@ -128,7 +123,7 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
         ToolEditablePart.super.mouseReleased(e);
 
         if (!isSelectedForEditing() && isAutoHilited()) {
-            if (!(buttonView instanceof SharedHilight)) {
+            if (!(buttonComponent instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
             }
         }
@@ -136,15 +131,15 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
 
     @Override
     public void partOpened() {
-        getPartModel().addPropertyChangedObserver(buttonView);
-        getPartModel().notifyPropertyChangedObserver(buttonView);
+        getPartModel().addPropertyChangedObserver(buttonComponent);
+        getPartModel().notifyPropertyChangedObserver(buttonComponent);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
     }
 
     @Override
     public void partClosed() {
-        getPartModel().removePropertyChangedObserver(buttonView);
+        getPartModel().removePropertyChangedObserver(buttonComponent);
         KeyboardManager.removeGlobalKeyListener(this);
         ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
@@ -152,6 +147,10 @@ public abstract class AbstractButtonView implements ToolEditablePart, PropertyCh
     @Override
     public void onAntsMoved() {
         getComponent().repaint();
+    }
+
+    private boolean isAutoHilited() {
+        return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
     private class ToolModeObserver implements Observer {

@@ -2,6 +2,9 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypertalk.ast.common.PartLayer;
 
+/**
+ * An enumeration of layers in the card view stack.
+ */
 public enum CardLayer {
     BACKGROUND_GRAPHICS(1, "Background"),
     BACKGROUND_PARTS(2, "Background"),

@@ -10,5 +10,10 @@ package com.defano.hypercard.parts.buttons;
 
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 
-public interface ButtonView extends PropertyChangeObserver {
+/**
+ * A "marker" interface for classes that extend a Swing component (like JButton) and represent the Swing component
+ * associated with a HyperCard button part.
+ */
+public interface ButtonComponent extends PropertyChangeObserver {
+
 }

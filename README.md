@@ -230,7 +230,7 @@ For example:
 ```
 on mouseUp
   ask "How are you, fine sir?"
-  put it into responseVar            -- ‘it' contains the user's input
+  put it into responseVar            -- 'it' contains the user's input
   put the result into responseVar    -- same effect as previous line
 end mouseUp
 ```
@@ -363,7 +363,6 @@ This implementation supports only a single global property:
 Global Property | Description
 ----------------|---------------
 `itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
-`selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. This global property is read-only. For example, `answer the selectedText`
 
 ## Chunk Expressions
 
@@ -582,6 +581,11 @@ Function | Description
 `average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
 `mouse` | Returns the current state of the left mouse button; either "up" or "down"
 `mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
+`mouseH` | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
+`mouseV` | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
+`clickLoc` | Returns the coordinate of the last location the user clicked the mouse.
+`clickH` | Returns the x-coordinate of the last location the user clicked the mouse.
+`clickV` | Returns the y-coordinate of the last location the user clicked the mouse.
 `tool` | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "You chose the paint brush!"`
 `shiftKey` | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
 `commandKey` | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
@@ -617,6 +621,9 @@ Function | Description
 `charToNum` | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
 `value` | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12.
 `length` | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields 12.
+`selectedText` | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
+`clickText` | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
+`screenRect` | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`
 
 ### User-defined Functions
 

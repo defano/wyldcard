@@ -13,6 +13,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A container of button and field parts. Provides mixin functionality for finding, retrieving and counting parts.
+ */
 public interface PartContainer {
 
     /**
@@ -30,13 +33,18 @@ public interface PartContainer {
     Collection<FieldPart> getFields();
 
     /**
-     * Given a Swing component, gets the card layer in which its present.
+     * Given a Swing component, returns the layer of the card on which the component is present. Throws
+     * IllegalArgumentException if the component does not exist on the card.
      *
      * @param component The component whose card layer should be determined
-     * @return
+     * @return The card layer on which the given component lives.
      */
     CardLayer getCardLayer(Component component);
 
+    /**
+     * Gets a collection of all parts (buttons and fields) held by this container.
+     * @return The collection of parts in this container.
+     */
     default Collection<Part> getParts() {
         Collection<Part> parts = new ArrayList<>();
         parts.addAll(getButtons());

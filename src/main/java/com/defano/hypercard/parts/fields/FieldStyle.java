@@ -8,6 +8,9 @@
 
 package com.defano.hypercard.parts.fields;
 
+/**
+ * An enumeration of field styles.
+ */
 public enum FieldStyle {
     TRANSPARENT("Transparent"),
     OPAQUE("Opaque"),

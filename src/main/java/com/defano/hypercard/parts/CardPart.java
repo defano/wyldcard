@@ -38,7 +38,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * A view object representing a card in the stack; extends the Swing JLayeredPane component.
+ * The "controller" object representing a card in the stack.
+ *
+ * See {@link CardLayeredPane} for the view object.
+ * See {@link CardModel} for the model object.
  */
 public class CardPart extends CardLayeredPane implements PartContainer, CanvasCommitObserver, CanvasTransferDelegate {
 
@@ -112,9 +115,11 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
     }
 
     /**
-     * Imports an existing part (button or field) into this card. Note that this differs from {@link #addField(FieldPart, CardLayer)}
-     * or {@link #addButton(ButtonPart, CardLayer)} in that a new ID for the part is generated before it is added to the card. This
-     * method is typically used to "paste" a copied part from another card onto this card.
+     * Imports an existing part (button or field) into this card.
+     *
+     * Note that this differs from {@link #addField(FieldPart, CardLayer)} or {@link #addButton(ButtonPart, CardLayer)}
+     * in that a new ID for the part is generated before it is added to the card. This method is typically used to
+     * "paste" a copied part from another card onto this card.
      *
      * @param part The part to be imported.
      * @return The newly imported part (identical to the given part, but with a new ID)
@@ -300,6 +305,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
@@ -309,6 +315,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public BufferedImage copySelection() {
         PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
@@ -319,6 +326,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deleteSelection() {
         PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
@@ -327,6 +335,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void pasteSelection(BufferedImage image) {
         int cardCenterX = getWidth() / 2;
@@ -336,6 +345,13 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 
+    /**
+     * Gets a screenshot of this card; a pixel accurate rendering of the card as would be visible to the user when the
+     * card is visible in the stack window including graphics and part layers (the rendering of which will differ
+     * based on Swing's current look-and-feel setting).
+     *
+     * @return A screenshot of this card.
+     */
     public BufferedImage getScreenshot() {
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -348,11 +364,13 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         return screenshot;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getHeight() {
         return stackModel.getHeight();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getWidth() {
         return stackModel.getWidth();

@@ -23,15 +23,15 @@ public class TransparentField extends AbstractTextField {
         super(toolEditablePart);
 
         setOpaque(false);
-        textPane.setOpaque(false);
+        getTextPane().setOpaque(false);
         getViewport().setOpaque(false);
 
         setBorder(BorderFactory.createEmptyBorder());
-        textPane.setBorder(BorderFactory.createEmptyBorder());
+        getTextPane().setBorder(BorderFactory.createEmptyBorder());
 
         getViewport().setBackground(TRANSPARENT);
         setBackground(TRANSPARENT);
-        textPane.setBackground(TRANSPARENT);
+        getTextPane().setBackground(TRANSPARENT);
     }
 
     @Override

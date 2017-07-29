@@ -75,7 +75,7 @@ public class Value implements Comparable<Value> {
     }
 
     public Value (Rectangle r) {
-        this(r.x + "," + r.y + "," + r.x + r.width + "," + r.y + r.height);
+        this(r.x + "," + r.y + "," + (r.x + r.width) + "," + (r.y + r.height));
     }
 
     public Value (Object v) {

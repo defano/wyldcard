@@ -13,7 +13,7 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.buttons.ButtonView;
+import com.defano.hypercard.parts.buttons.ButtonComponent;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypertalk.ast.common.Value;
@@ -24,7 +24,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 
-public class MenuButton extends JComboBox<String> implements ButtonView {
+public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private final ToolEditablePart toolEditablePart;
