@@ -74,6 +74,8 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'click' 'at' expression 'with' expressionList # clickWithKeyCmdStmt
                     | 'drag' 'from' expression 'to' expression      # dragCmdStmt
                     | 'drag' 'from' expression 'to' expression 'with' expressionList            # dragWithKeyCmdStmt
+                    | 'type' expression                             # typeCmdStmt
+                    | 'type' expression 'with' 'commandKey'         # typeWithCmdKeyCmdStmt
                     | 'delete' part                                 # deleteCmdStmt
                     | 'lock' 'screen'                               # lockScreenCmdStmt
                     | 'unlock' 'screen'                             # unlockScreenCmdStmt

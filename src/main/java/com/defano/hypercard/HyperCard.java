@@ -112,4 +112,8 @@ public class HyperCard {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
         e.printStackTrace();
     }
+
+    public boolean isMacOs() {
+        return System.getProperty("os.name").toLowerCase().contains("mac");
+    }
 }

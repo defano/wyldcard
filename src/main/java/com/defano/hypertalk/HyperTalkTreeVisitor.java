@@ -647,6 +647,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitTypeCmdStmt(HyperTalkParser.TypeCmdStmtContext ctx) {
+        return new TypeCmd((Expression) visit(ctx.expression()), false);
+    }
+
+    @Override
+    public Object visitTypeWithCmdKeyCmdStmt(HyperTalkParser.TypeWithCmdKeyCmdStmtContext ctx) {
+        return new TypeCmd((Expression) visit(ctx.expression()), true);
+    }
+
+    @Override
     public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
         return new DeleteCmd((PartExp) visit(ctx.part()));
     }

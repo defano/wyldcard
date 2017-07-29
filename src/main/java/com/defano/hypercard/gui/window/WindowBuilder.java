@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.window;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardWindow;
 
 import javax.swing.*;
@@ -81,7 +82,7 @@ public class WindowBuilder {
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                if (isMacOs() || hasLocalMenubar) {
+                if (HyperCard.getInstance().isMacOs() || hasLocalMenubar) {
                     frame.setJMenuBar(menuBar);
                 }
             }
@@ -166,7 +167,4 @@ public class WindowBuilder {
         return frame;
     }
 
-    private boolean isMacOs() {
-        return System.getProperty("os.name").toLowerCase().contains("mac");
-    }
 }
