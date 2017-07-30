@@ -5,9 +5,7 @@ import com.defano.hypercard.Serializer;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.gui.util.ThreadUtils;
-import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.parts.model.StackModel;
-import com.defano.hypercard.parts.model.StackObserver;
+import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
@@ -408,8 +406,8 @@ public class StackPart implements PropertyChangeObserver {
         long cardCountInBackground = stackModel.getCardCountInBackground(getCurrentCard().getCardModel().getBackgroundId());
 
         return stackModel.getCardCount() > 1 &&
-                !getCurrentCard().getCardModel().isCantDelete() &&
-                (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().isCantDelete());
+                !getCurrentCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
+                (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
 }

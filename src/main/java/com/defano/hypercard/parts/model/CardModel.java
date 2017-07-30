@@ -11,12 +11,9 @@ package com.defano.hypercard.parts.model;
 import com.defano.hypercard.Serializer;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypertalk.ast.common.Value;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,12 +22,13 @@ import java.util.List;
  * A data model representing a card in a stack. See {@link com.defano.hypercard.parts.CardPart} for the associated
  * view object.
  */
-public class CardModel {
+public class CardModel extends PropertiesModel {
 
-    private int cardId = 0;
-    private boolean marked = false;
-    private boolean cantDelete = false;
-    private String cardName = "";
+    public final static String PROP_ID = "id";
+    public final static String PROP_MARKED = "marked";
+    public final static String PROP_CANTDELETE = "cantdelete";
+    public final static String PROP_NAME = "name";
+
     private int backgroundId = 0;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
@@ -40,7 +38,11 @@ public class CardModel {
         this.buttonModels = new ArrayList<>();
         this.fieldModels = new ArrayList<>();
         this.backgroundId = backgroundId;
-        this.cardId = cardId;
+
+        defineProperty(PROP_ID, new Value(cardId), true);
+        defineProperty(PROP_MARKED, new Value(false), false);
+        defineProperty(PROP_CANTDELETE, new Value(false), false);
+        defineProperty(PROP_NAME, new Value(""), false);
     }
 
     /**
@@ -120,34 +122,6 @@ public class CardModel {
      */
     public BufferedImage getCardImage() {
         return Serializer.deserializeImage(this.cardImage);
-    }
-
-    public String getCardName() {
-        return cardName;
-    }
-
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
-    public boolean isMarked() {
-        return marked;
-    }
-
-    public void setMarked(boolean marked) {
-        this.marked = marked;
-    }
-
-    public boolean isCantDelete() {
-        return cantDelete;
-    }
-
-    public void setCantDelete(boolean cantDelete) {
-        this.cantDelete = cantDelete;
-    }
-
-    public int getCardId() {
-        return cardId;
     }
 
     /**

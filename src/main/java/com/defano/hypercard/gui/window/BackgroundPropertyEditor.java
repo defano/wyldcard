@@ -3,7 +3,9 @@ package com.defano.hypercard.gui.window;
 import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.parts.CardLayer;
 import com.defano.hypercard.parts.CardPart;
+import com.defano.hypercard.parts.model.BackgroundModel;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -45,8 +47,8 @@ public class BackgroundPropertyEditor extends HyperCardWindow {
 
         int backgroundId = cardPart.getCardModel().getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
-        backgroundName.setText(cardPart.getCardBackground().getName());
-        cantDeleteBkgndCheckBox.setSelected(cardPart.getCardBackground().isCantDelete());
+        backgroundName.setText(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
+        cantDeleteBkgndCheckBox.setSelected(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
 
         long cardCount = cardPart.getStackModel().getCardCountInBackground(backgroundId);
         long fieldCount = cardPart.getPartCount(PartType.FIELD, CardLayer.BACKGROUND_PARTS);
@@ -58,8 +60,8 @@ public class BackgroundPropertyEditor extends HyperCardWindow {
     }
 
     private void updateProperties() {
-        cardPart.getCardBackground().setName(backgroundName.getText());
-        cardPart.getCardBackground().setCantDelete(cantDeleteBkgndCheckBox.isSelected());
+        cardPart.getCardBackground().setKnownProperty(BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
+        cardPart.getCardBackground().setKnownProperty(BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
     }
 
     /**

@@ -9,6 +9,7 @@
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.Serializer;
+import com.defano.hypertalk.ast.common.Value;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -22,10 +23,11 @@ import java.util.Collection;
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link com.defano.hypercard.parts.CardPart} view object when rendered.
  */
-public class BackgroundModel {
+public class BackgroundModel extends PropertiesModel {
 
-    private String name = "";
-    private boolean cantDelete = false;
+    public final static String PROP_NAME = "name";
+    public final static String PROP_CANTDELETE = "cantdelete";
+
     private byte[] backgroundImage;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
@@ -33,6 +35,9 @@ public class BackgroundModel {
     private BackgroundModel() {
         buttonModels = new ArrayList<>();
         fieldModels = new ArrayList<>();
+
+        defineProperty(PROP_NAME, new Value(""), false);
+        defineProperty(PROP_CANTDELETE, new Value(false), false);
     }
 
     public static BackgroundModel emptyBackground() {
@@ -61,22 +66,6 @@ public class BackgroundModel {
 
     public BufferedImage getBackgroundImage() {
         return Serializer.deserializeImage(this.backgroundImage);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isCantDelete() {
-        return cantDelete;
-    }
-
-    public void setCantDelete(boolean cantDelete) {
-        this.cantDelete = cantDelete;
     }
 
 }

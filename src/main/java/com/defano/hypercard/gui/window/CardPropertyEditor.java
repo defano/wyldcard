@@ -6,6 +6,7 @@ import com.defano.hypercard.parts.CardLayer;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.CardModel;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -40,9 +41,9 @@ public class CardPropertyEditor extends HyperCardWindow {
     }
 
     private void updateProperties() {
-        cardModel.setCardName(cardName.getText());
-        cardModel.setMarked(cardMarkedCheckBox.isSelected());
-        cardModel.setCantDelete(cantDeleteCardCheckBox.isSelected());
+        cardModel.setKnownProperty(CardModel.PROP_NAME, new Value(cardName.getText()));
+        cardModel.setKnownProperty(CardModel.PROP_MARKED, new Value(cardMarkedCheckBox.isSelected()));
+        cardModel.setKnownProperty(CardModel.PROP_CANTDELETE, new Value(cantDeleteCardCheckBox.isSelected()));
     }
 
     @Override
@@ -55,10 +56,10 @@ public class CardPropertyEditor extends HyperCardWindow {
         CardPart card = (CardPart) data;
         cardModel = card.getCardModel();
 
-        cardName.setText(cardModel.getCardName());
-        cardMarkedCheckBox.setSelected(cardModel.isMarked());
-        cantDeleteCardCheckBox.setSelected(cardModel.isCantDelete());
-        cardIdLabel.setText(String.valueOf(cardModel.getCardId()));
+        cardName.setText(cardModel.getKnownProperty(CardModel.PROP_NAME).stringValue());
+        cardMarkedCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_MARKED).booleanValue());
+        cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue());
+        cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(CardModel.PROP_ID).stringValue()));
 
         long fieldCount = card.getPartCount(PartType.FIELD, CardLayer.CARD_PARTS);
         long buttonCount = card.getPartCount(PartType.BUTTON, CardLayer.CARD_PARTS);
