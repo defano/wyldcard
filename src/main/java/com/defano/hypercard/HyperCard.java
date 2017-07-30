@@ -44,13 +44,6 @@ public class HyperCard {
 
     private HyperCard() {
 
-        try {
-            // Use this operating systems look and feel for our user interface.
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            // Nothing to do
-        }
-
         stackPart = StackPart.fromStackModel(StackModel.newStackModel("Untitled"));
 
         // Fire up the key and mouse listeners

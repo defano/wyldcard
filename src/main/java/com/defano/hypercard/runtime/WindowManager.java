@@ -9,8 +9,10 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.gui.window.*;
+import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
 
@@ -25,6 +27,8 @@ public class WindowManager {
     private final static BrushesPalette brushesPalette = new BrushesPalette();
     private final static ColorPalette colorPalette = new ColorPalette();
     private final static FontSizePicker fontSizePicker = new FontSizePicker();
+
+    private final static Provider<String> lookAndFeelClassProvider = new Provider();
 
     public static void start() {
 
@@ -110,6 +114,8 @@ public class WindowManager {
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .build();
+
+        lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
     }
 
     public static StackWindow getStackWindow() {
@@ -147,4 +153,39 @@ public class WindowManager {
     public static FontSizePicker getFontSizePicker() {
         return fontSizePicker;
     }
+
+    public static HyperCardWindow[] allWindows() {
+        return new HyperCardWindow[] {
+                getStackWindow(),
+                getMessageWindow(),
+                getPaintToolsPalette(),
+                getShapesPalette(),
+                getLinesPalette(),
+                getPatternsPalette(),
+                getBrushesPalette(),
+                getColorPalette(),
+                getFontSizePicker()
+        };
+    }
+
+    public static void setLookAndFeel(String lafClassName) {
+        try {
+            UIManager.setLookAndFeel(lafClassName);
+
+            for (HyperCardWindow thisWindow : allWindows()) {
+                SwingUtilities.updateComponentTreeUI(thisWindow.getWindowFrame());
+                thisWindow.getWindowFrame().pack();
+            }
+
+            lookAndFeelClassProvider.set(lafClassName);
+
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            // Nothing to do
+        }
+    }
+
+    public static Provider<String> getLookAndFeelClassProvider() {
+        return lookAndFeelClassProvider;
+    }
+
 }
