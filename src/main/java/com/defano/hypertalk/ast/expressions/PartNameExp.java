@@ -31,6 +31,10 @@ public class PartNameExp extends PartExp {
     public final PartType type;
     public final Expression name;
 
+    public PartNameExp(PartType type, Expression name) {
+        this(null, type, name);
+    }
+
     public PartNameExp(PartLayer layer, PartType type, Expression name) {
         this.layer = layer;
         this.type = type;

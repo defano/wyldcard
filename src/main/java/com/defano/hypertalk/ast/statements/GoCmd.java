@@ -11,7 +11,6 @@ package com.defano.hypertalk.ast.statements;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.Destination;
 import com.defano.hypertalk.ast.common.Ordinal;
-import com.defano.hypertalk.ast.common.Position;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -32,8 +31,13 @@ public class GoCmd extends Statement {
 
     public void execute() throws HtException {
 
+        // Special case: Go back
+        if (destination == null) {
+            HyperCard.getInstance().getStack().goBack(visualEffect);
+        }
+
         // e.g., "go to first card", "go ninth card"
-        if (destination.ordinal != null) {
+        else if (destination.ordinal != null) {
             if (destination.ordinal == Ordinal.FIRST) {
                 HyperCard.getInstance().getStack().goFirstCard(visualEffect);
             } else if (destination.ordinal == Ordinal.LAST) {
@@ -60,9 +64,6 @@ public class GoCmd extends Statement {
                     break;
                 case PREV:
                     HyperCard.getInstance().getStack().goPrevCard(visualEffect);
-                    break;
-                case BACK:
-                    HyperCard.getInstance().getStack().goBack(visualEffect);
                     break;
             }
         }

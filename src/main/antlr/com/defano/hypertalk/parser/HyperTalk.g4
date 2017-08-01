@@ -58,12 +58,11 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
                     | waitCmd                                       # waitCmdStmnt
                     | sortCmd                                       # sortCmdStmnt
+                    | goCmd                                         # goCmdStmt
                     | 'hide' part                                   # hideCmdStmnt
                     | 'show' part                                   # showCmdStmnt
                     | 'disable' part                                # disableCmdStmnt
                     | 'enable' part                                 # enableCmdStmnt
-                    | 'go' 'to'? destination 'with' 'visual' visualEffect    # goVisualEffectCmdStmnd
-                    | 'go' 'to'? destination                        # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt
                     | 'multiply' container 'by' expression          # multiplyCmdStmnt
@@ -81,6 +80,13 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'unlock' 'screen'                             # unlockScreenCmdStmt
                     | 'unlock' 'screen' 'with' 'visual' visualEffect # unlockScreenVisualCmdStmt
                     ;
+
+goCmd               : 'go' 'to'? destination 'with' 'visual' visualEffect    # goVisualEffectCmdStmnd
+                    | 'go' 'to'? destination                        # goCmdStmnt
+                    | 'go' 'back'                                   # goBackCmdStmt
+                    | 'go' 'back' 'with' 'visual' visualEffect      # goBackVisualEffectCmdStmt
+                    ;
+
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
                     | 'answer' expression 'with' expression 'or' expression                     # answerTwoButtonCmd
@@ -180,7 +186,6 @@ timeUnit            : 'ticks'                                       # ticksTimeU
 
 position            : 'the'? 'next'                                 # nextPosition
                     | 'the'? ('prev' | 'previous')                  # prevPosition
-                    | 'back'                                        # backPosition
                     ;
 
 destination         : destinationType expression                    # cardNumber
@@ -188,8 +193,7 @@ destination         : destinationType expression                    # cardNumber
                     | position destinationType                      # cardPosition
                     ;
 
-destinationType     : 'card'
-                    |
+destinationType     : ('card' | 'cd')
                     ;
 
 ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
@@ -285,6 +289,14 @@ part                : ('background' | 'bkgnd')? 'field' factor        # bkgndFie
                     | ('card' | 'cd') 'part' factor                   # cardPartNumberPart
                     | ('background' | 'bkgnd') 'part' factor          # bkgndPartNumberPart
                     | 'me'                                            # mePart
+                    | position ('card' | 'cd')                        # positionCardPart
+                    | position ('background' | 'bkgnd')               # positionBkgndPart
+                    | ordinal ('card' | 'cd')                         # ordinalCardPart
+                    | ordinal ('background' | 'bkgnd')                # ordinalBkgndPart
+                    | ('card' | 'cd') factor                          # cardPart
+                    | ('card' | 'cd') 'id' factor                     # cardIdPart
+                    | ('background' | 'bkgnd') factor                 # bkgndPart
+                    | ('background' | 'bkgnd') 'id' factor            # bkgndIdPart
                     ;
 
 ordinal             : 'the'? ordinalValue                           # theOrdinalVal

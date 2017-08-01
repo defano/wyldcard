@@ -136,6 +136,10 @@ public interface PartContainer {
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
     default Part findPartById(PartIdSpecifier ps) throws PartException {
+        if (ps.type != PartType.BUTTON && ps.type != PartType.FIELD) {
+            throw new IllegalArgumentException("Can't find parts of type " + ps.type);
+        }
+
         Optional<Part> foundPart = getParts().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
                 .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
@@ -157,6 +161,10 @@ public interface PartContainer {
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
     default Part findPartByName(PartNameSpecifier ps) throws PartException {
+        if (ps.type != PartType.BUTTON && ps.type != PartType.FIELD) {
+            throw new IllegalArgumentException("Can't find parts of type " + ps.type);
+        }
+
         Optional<Part> foundPart = getParts().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
                 .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
@@ -178,6 +186,10 @@ public interface PartContainer {
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
     default Part findPartByNumber(PartNumberSpecifier ps) throws PartException {
+        if (ps.type != PartType.BUTTON && ps.type != PartType.FIELD) {
+            throw new IllegalArgumentException("Can't find parts of type " + ps.type);
+        }
+
         List<Part> foundParts = getPartsInZOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
                 .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())

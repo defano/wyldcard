@@ -42,6 +42,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitGoCmdStmt(HyperTalkParser.GoCmdStmtContext ctx) {
+        return visit(ctx.goCmd());
+    }
+
+    @Override
     public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
         return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
     }
@@ -317,6 +322,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitGoBackCmdStmt(HyperTalkParser.GoBackCmdStmtContext ctx) {
+        return new GoCmd(null);
+    }
+
+    @Override
+    public Object visitGoBackVisualEffectCmdStmt(HyperTalkParser.GoBackVisualEffectCmdStmtContext ctx) {
+        return new GoCmd(null, (VisualEffectSpecifier) visit(ctx.visualEffect()));
+    }
+
+    @Override
     public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
         return new GoCmd((Destination) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
@@ -334,11 +349,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPrevPosition(HyperTalkParser.PrevPositionContext ctx) {
         return Position.PREV;
-    }
-
-    @Override
-    public Object visitBackPosition(HyperTalkParser.BackPositionContext ctx) {
-        return Position.BACK;
     }
 
     @Override
@@ -971,6 +981,46 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMePart(HyperTalkParser.MePartContext ctx) {
         return new PartMeExp();
+    }
+
+    @Override
+    public Object visitPositionCardPart(HyperTalkParser.PositionCardPartContext ctx) {
+        return new PartPositionExp(PartType.CARD, (Position) visit(ctx.position()));
+    }
+
+    @Override
+    public Object visitPositionBkgndPart(HyperTalkParser.PositionBkgndPartContext ctx) {
+        return new PartPositionExp(PartType.BACKGROUND, (Position) visit(ctx.position()));
+    }
+
+    @Override
+    public Object visitOrdinalCardPart(HyperTalkParser.OrdinalCardPartContext ctx) {
+        return new PartNumberExp(PartType.CARD, (Ordinal) visit(ctx.ordinal()));
+    }
+
+    @Override
+    public Object visitOrdinalBkgndPart(HyperTalkParser.OrdinalBkgndPartContext ctx) {
+        return new PartNumberExp(PartType.BACKGROUND, (Ordinal) visit(ctx.ordinal()));
+    }
+
+    @Override
+    public Object visitCardPart(HyperTalkParser.CardPartContext ctx) {
+        return new PartNameExp(PartType.CARD, (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardIdPart(HyperTalkParser.CardIdPartContext ctx) {
+        return new PartIdExp(PartType.CARD, (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndPart(HyperTalkParser.BkgndPartContext ctx) {
+        return new PartNameExp(PartType.BACKGROUND, (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndIdPart(HyperTalkParser.BkgndIdPartContext ctx) {
+        return new PartIdExp(PartType.BACKGROUND, (Expression) visit(ctx.factor()));
     }
 
     @Override

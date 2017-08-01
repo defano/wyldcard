@@ -29,7 +29,11 @@ public class PartIdExp extends PartExp {
     public final PartLayer layer;
     public final PartType type;
     public final Expression id;
-    
+
+    public PartIdExp(PartType type, Expression id) {
+        this(null, type, id);
+    }
+
     public PartIdExp(PartLayer layer, PartType type, Expression id) {
         this.layer = layer;
         this.type = type;
