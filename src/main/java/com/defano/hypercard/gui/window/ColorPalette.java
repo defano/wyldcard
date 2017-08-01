@@ -11,13 +11,13 @@ package com.defano.hypercard.gui.window;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 
-public class ColorPalette extends HyperCardWindow {
+public class ColorPalette extends HyperCardFrame {
 
     private JPanel panel;
     private JTabbedPane tabs;

@@ -1,7 +1,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -9,7 +9,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class FontSizePicker extends HyperCardWindow {
+public class FontSizePicker extends HyperCardFrame {
     private JSpinner fontSize;
     private JPanel windowPanel;
     private JButton OKButton;

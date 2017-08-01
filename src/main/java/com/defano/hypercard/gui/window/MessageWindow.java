@@ -9,7 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.exception.HtException;
@@ -24,7 +24,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class MessageWindow extends HyperCardWindow {
+public class MessageWindow extends HyperCardFrame {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 
@@ -146,7 +146,8 @@ public class MessageWindow extends HyperCardWindow {
         messageWindow.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         messageWindow.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null));
         messageBox = new JTextField();
-        messageBox.setFont(new Font("Monaco", messageBox.getFont().getStyle(), messageBox.getFont().getSize()));
+        Font messageBoxFont = this.$$$getFont$$$("Monaco", -1, -1, messageBox.getFont());
+        if (messageBoxFont != null) messageBox.setFont(messageBoxFont);
         messageWindow.add(messageBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(600, 25), null, 0, false));
     }
 

@@ -9,8 +9,10 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.gui.window.*;
+import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
 
@@ -26,10 +28,12 @@ public class WindowManager {
     private final static ColorPalette colorPalette = new ColorPalette();
     private final static FontSizePicker fontSizePicker = new FontSizePicker();
 
+    private final static Provider<String> lookAndFeelClassProvider = new Provider();
+
     public static void start() {
 
         // Create the main window, center it on the screen and display it
-        JFrame stackFrame = WindowBuilder.make(stackWindow)
+        WindowBuilder.make(stackWindow)
                 .withTitle(HyperCard.getInstance().getStack().getStackModel().getStackName())
                 .resizeable(false)
                 .quitOnClose()
@@ -37,6 +41,8 @@ public class WindowManager {
                 .withModel(HyperCard.getInstance().getStack())
                 .hasLocalMenubar(true)
                 .build();
+
+        JFrame stackFrame = stackWindow.getWindow();
 
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
@@ -62,7 +68,7 @@ public class WindowManager {
                 .withTitle("Shapes")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -72,7 +78,7 @@ public class WindowManager {
                 .withTitle("Lines")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -82,7 +88,7 @@ public class WindowManager {
                 .withTitle("")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -92,7 +98,7 @@ public class WindowManager {
                 .withTitle("")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationLeftOf(paintToolsPalette.getWindowFrame())
+                .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(colorPalette)
@@ -110,6 +116,8 @@ public class WindowManager {
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
                 .build();
+
+        lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
     }
 
     public static StackWindow getStackWindow() {
@@ -147,4 +155,40 @@ public class WindowManager {
     public static FontSizePicker getFontSizePicker() {
         return fontSizePicker;
     }
+
+    public static HyperCardFrame[] allWindows() {
+        return new HyperCardFrame[] {
+                getStackWindow(),
+                getMessageWindow(),
+                getPaintToolsPalette(),
+                getShapesPalette(),
+                getLinesPalette(),
+                getPatternsPalette(),
+                getBrushesPalette(),
+                getColorPalette(),
+                getFontSizePicker()
+        };
+    }
+
+    public static void setLookAndFeel(String lafClassName) {
+        try {
+            UIManager.setLookAndFeel(lafClassName);
+
+            for (HyperCardFrame thisWindow : allWindows()) {
+                SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+                thisWindow.getWindow().pack();
+                thisWindow.getWindow().invalidate();
+            }
+
+            lookAndFeelClassProvider.set(lafClassName);
+
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            // Nothing to do
+        }
+    }
+
+    public static Provider<String> getLookAndFeelClassProvider() {
+        return lookAndFeelClassProvider;
+    }
+
 }

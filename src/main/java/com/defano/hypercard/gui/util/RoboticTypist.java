@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
 /**
- * Utility that can generate a series of KeyEvent sequences from a string. This bit of stupidy is required
+ * Utility that can generate a series of KeyEvent sequences from a string. This bit of stupidity is required
  * because there is no built-in Java mechanism for converting a character into a sequence of KevEvents that
  * produce it.
  * <p>

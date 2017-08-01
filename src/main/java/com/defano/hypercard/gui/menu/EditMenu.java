@@ -12,6 +12,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.clipboard.CardActionListener;
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
@@ -139,5 +140,21 @@ public class EditMenu extends HyperCardMenu {
                 .named("Audio Help")
                 .disabled()
                 .build(this);
+
+        this.addSeparator();
+
+        JMenuItem laf = MenuItemBuilder.ofHeirarchicalType()
+                .named("Look & Feel")
+                .build(this);
+
+        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
+
+            MenuItemBuilder.ofCheckType()
+                    .named(thisLaf.getName())
+                    .withAction(a -> WindowManager.setLookAndFeel(thisLaf.getClassName()))
+                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(WindowManager.getLookAndFeelClassProvider(), value -> thisLaf.getClassName().equals(value)))
+                    .build(laf);
+        }
+
     }
 }
