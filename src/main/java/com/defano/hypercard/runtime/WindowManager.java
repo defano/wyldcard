@@ -9,7 +9,7 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.gui.window.*;
 import com.defano.jmonet.model.Provider;
@@ -33,7 +33,7 @@ public class WindowManager {
     public static void start() {
 
         // Create the main window, center it on the screen and display it
-        JFrame stackFrame = WindowBuilder.make(stackWindow)
+        WindowBuilder.make(stackWindow)
                 .withTitle(HyperCard.getInstance().getStack().getStackModel().getStackName())
                 .resizeable(false)
                 .quitOnClose()
@@ -41,6 +41,8 @@ public class WindowManager {
                 .withModel(HyperCard.getInstance().getStack())
                 .hasLocalMenubar(true)
                 .build();
+
+        JFrame stackFrame = stackWindow.getWindow();
 
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
@@ -66,7 +68,7 @@ public class WindowManager {
                 .withTitle("Shapes")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -76,7 +78,7 @@ public class WindowManager {
                 .withTitle("Lines")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -86,7 +88,7 @@ public class WindowManager {
                 .withTitle("")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationUnderneath(paintToolsPalette.getWindowFrame())
+                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -96,7 +98,7 @@ public class WindowManager {
                 .withTitle("")
                 .dockTo(stackWindow)
                 .withMenuBar(HyperCardMenuBar.instance)
-                .withLocationLeftOf(paintToolsPalette.getWindowFrame())
+                .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(colorPalette)
@@ -154,8 +156,8 @@ public class WindowManager {
         return fontSizePicker;
     }
 
-    public static HyperCardWindow[] allWindows() {
-        return new HyperCardWindow[] {
+    public static HyperCardFrame[] allWindows() {
+        return new HyperCardFrame[] {
                 getStackWindow(),
                 getMessageWindow(),
                 getPaintToolsPalette(),
@@ -172,9 +174,10 @@ public class WindowManager {
         try {
             UIManager.setLookAndFeel(lafClassName);
 
-            for (HyperCardWindow thisWindow : allWindows()) {
-                SwingUtilities.updateComponentTreeUI(thisWindow.getWindowFrame());
-                thisWindow.getWindowFrame().pack();
+            for (HyperCardFrame thisWindow : allWindows()) {
+                SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+                thisWindow.getWindow().pack();
+                thisWindow.getWindow().invalidate();
             }
 
             lookAndFeelClassProvider.set(lafClassName);

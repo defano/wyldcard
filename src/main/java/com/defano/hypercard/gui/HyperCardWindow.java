@@ -1,75 +1,40 @@
-/*
- * HyperCardWindow
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
 package com.defano.hypercard.gui;
 
-import com.defano.jmonet.model.Provider;
-
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
 
-public abstract class HyperCardWindow extends WindowAdapter {
+public interface HyperCardWindow<WindowType extends Window> {
 
-    // The Swing frame that this window is displayed in; bound only after the window has been built via WindowBuilder
-    private JFrame windowFrame;
-    private boolean isShown = false;
+    /**
+     * Gets the contents of this window; the root component (usually a JPanel) that contains all of the Swing elements
+     * present in this window.
+     *
+     * @return The window contents
+     */
+    JComponent getWindowPanel();
 
-    private Provider<Boolean> windowVisibleProvider = new Provider<>(false);
+    /**
+     * Update the contents of the window with the given model data.
+     * @param data An object representing the data to be displayed in the window.
+     */
+    void bindModel(Object data);
 
-    public abstract JComponent getWindowPanel();
-    public abstract void bindModel(Object data);
-
-    public JFrame getWindowFrame() {
-        return windowFrame;
-    }
-
-    public void setWindowFrame(JFrame windowFrame) {
-        this.windowFrame = windowFrame;
-        this.windowFrame.addWindowListener(this);
-    }
-
-    public boolean isShown() {
-        return isShown;
-    }
-
-    public void setShown(boolean shown) {
-        isShown = shown;
-        windowVisibleProvider.set(shown);
-
-        setVisible(shown);
-    }
-
-    public boolean isVisible() {
-        return windowFrame != null && windowFrame.isVisible();
-    }
-
-    public void setVisible(boolean physicallyVisible) {
-        if (windowFrame != null) {
-            windowFrame.setVisible(physicallyVisible);
-        }
-    }
-
-    public void toggleVisible() {
-        setShown(!isShown());
-    }
-
-    public void dispose() {
+    /**
+     * Close and dispose the window.
+     */
+    default void dispose() {
         SwingUtilities.getWindowAncestor(getWindowPanel()).dispose();
-        windowVisibleProvider.set(false);
     }
 
-    public Provider<Boolean> getWindowVisibleProvider() {
-        return windowVisibleProvider;
-    }
+    /**
+     * Gets the AWT window object that is bound to this application window (e.g., a JFrame or JDialog).
+     * @return The window object.
+     */
+    WindowType getWindow();
 
-    public void windowClosed(WindowEvent e) {
-        windowVisibleProvider.set(windowFrame.isVisible());
-    }
-
+    /**
+     * Sets the AWT window object that is bound this application window.
+     * @param windowFrame The window object
+     */
+    void setWindow(WindowType windowFrame);
 }

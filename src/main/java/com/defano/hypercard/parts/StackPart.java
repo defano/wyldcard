@@ -43,7 +43,7 @@ public class StackPart implements PropertyChangeObserver {
      * Prompts the user to choose a stack file to open.
      */
     public void open() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindowFrame(), "Open Stack", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
         fd.setVisible(true);
         fd.setMultipleMode(false);
         if (fd.getFiles().length > 0) {
@@ -75,7 +75,7 @@ public class StackPart implements PropertyChangeObserver {
      * Prompts the user to choose a file in which to save the current stack.
      */
     public void save() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindowFrame(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
 

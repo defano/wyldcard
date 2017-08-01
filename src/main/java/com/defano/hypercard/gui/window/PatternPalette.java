@@ -12,7 +12,7 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PatternPalette extends HyperCardWindow implements Observer {
+public class PatternPalette extends HyperCardFrame implements Observer {
 
     private final int PATTERN_WIDTH = 30;
     private final int PATTERN_HEIGHT = 20;
@@ -102,6 +102,7 @@ public class PatternPalette extends HyperCardWindow implements Observer {
             final int i = index;        // For use in lambda
 
             allPatterns[index].setIcon(new ImageIcon(createIconForButton(PATTERN_WIDTH, PATTERN_HEIGHT, i)));
+            allPatterns[index].setSize(PATTERN_WIDTH, PATTERN_HEIGHT);
             allPatterns[index].addActionListener(e -> {
                 selectedPattern = i;
                 ToolsContext.getInstance().setPattern(selectedPattern);

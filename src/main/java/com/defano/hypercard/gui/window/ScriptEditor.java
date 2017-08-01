@@ -12,7 +12,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Value;
@@ -26,7 +26,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 
-public class ScriptEditor extends HyperCardWindow {
+public class ScriptEditor extends HyperCardFrame {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
     private final static String DEFAULT_SCRIPT = new StringBuilder()
@@ -177,22 +177,22 @@ public class ScriptEditor extends HyperCardWindow {
         saveButton = new JButton();
         saveButton.setHideActionText(false);
         saveButton.setHorizontalAlignment(4);
-        saveButton.setMargin(new Insets(0, 0, 0, 0));
         saveButton.setOpaque(true);
         saveButton.setText("Save");
         scriptEditor.add(saveButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setFont(new Font("Monaco", scrollPane1.getFont().getStyle(), scrollPane1.getFont().getSize()));
+        Font scrollPane1Font = this.$$$getFont$$$("Monaco", -1, -1, scrollPane1.getFont());
+        if (scrollPane1Font != null) scrollPane1.setFont(scrollPane1Font);
         scriptEditor.add(scrollPane1, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scriptField = new JTextArea();
-        scriptField.setFont(new Font("Monaco", scriptField.getFont().getStyle(), scriptField.getFont().getSize()));
+        Font scriptFieldFont = this.$$$getFont$$$("Monaco", -1, -1, scriptField.getFont());
+        if (scriptFieldFont != null) scriptField.setFont(scriptFieldFont);
         scriptField.setTabSize(4);
         scrollPane1.setViewportView(scriptField);
         cancelButton = new JButton();
         cancelButton.setHorizontalAlignment(4);
-        cancelButton.setMargin(new Insets(0, 0, 0, 0));
         cancelButton.setText("Cancel");
         scriptEditor.add(cancelButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }

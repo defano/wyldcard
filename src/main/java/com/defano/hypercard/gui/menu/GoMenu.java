@@ -21,7 +21,6 @@ public class GoMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
                 .withAction(e -> HyperCard.getInstance().getStack().goBack(null))
-                .withShortcut('~')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -33,7 +32,6 @@ public class GoMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Help")
                 .disabled()
-                .withShortcut('?')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

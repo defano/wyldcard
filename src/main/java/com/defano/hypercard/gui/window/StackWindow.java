@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.gui.window;
 
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.fx.CurtainObserver;
 import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.gui.util.FileDrop;
@@ -25,7 +25,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends HyperCardWindow implements StackObserver, CurtainObserver {
+public class StackWindow extends HyperCardFrame implements StackObserver, CurtainObserver {
 
     private final int CARD_LAYER = 0;
     private final int CURTAIN_LAYER = 1;
@@ -83,9 +83,9 @@ public class StackWindow extends HyperCardWindow implements StackObserver, Curta
         boolean isEditingBackground = !card.isForegroundVisible();
 
         if (isEditingBackground) {
-            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
+            getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
-            getWindowFrame().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
+            getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
         }
     }
 
@@ -131,7 +131,7 @@ public class StackWindow extends HyperCardWindow implements StackObserver, Curta
     @Override
     public void onCardDimensionChanged(Dimension newDimension) {
         getWindowPanel().setPreferredSize(newDimension);
-        getWindowFrame().pack();
+        getWindow().pack();
     }
 
     @Override

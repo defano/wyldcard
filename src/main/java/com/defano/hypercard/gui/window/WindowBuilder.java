@@ -9,7 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,14 +18,14 @@ import java.awt.event.*;
 public class WindowBuilder {
 
     private final JFrame frame;
-    private final HyperCardWindow window;
+    private final HyperCardFrame window;
     private Point location = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
-    private HyperCardWindow dock;
+    private HyperCardFrame dock;
     private boolean hasLocalMenubar = false;
 
-    private WindowBuilder(HyperCardWindow window) {
+    private WindowBuilder(HyperCardFrame window) {
         this.window = window;
         this.frame = new JFrame();
 
@@ -33,7 +33,7 @@ public class WindowBuilder {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    public static WindowBuilder make(HyperCardWindow window) {
+    public static WindowBuilder make(HyperCardFrame window) {
         return new WindowBuilder(window);
     }
 
@@ -70,7 +70,7 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder dockTo(HyperCardWindow window) {
+    public WindowBuilder dockTo(HyperCardFrame window) {
         this.dock = window;
         return this;
     }
@@ -134,7 +134,7 @@ public class WindowBuilder {
             frame.setLocation(location);
         }
 
-        window.setWindowFrame(frame);
+        window.setWindow(frame);
         window.setShown(initiallyVisible);
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
@@ -144,7 +144,7 @@ public class WindowBuilder {
         frame.setResizable(resizable);
 
         if (dock != null) {
-            dock.getWindowFrame().addComponentListener(new ComponentAdapter() {
+            dock.getWindow().addComponentListener(new ComponentAdapter() {
                 private Point lastLocation;
 
                 @Override

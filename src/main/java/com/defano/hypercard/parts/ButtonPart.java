@@ -21,6 +21,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.ButtonPropertyEditor;
+import com.defano.hypercard.gui.window.DialogBuilder;
 import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.buttons.StyleableButton;
 import com.defano.hypercard.parts.model.PartModel;
@@ -129,7 +130,7 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
 
     @Override
     public void editProperties() {
-        WindowBuilder.make(new ButtonPropertyEditor())
+        DialogBuilder.make(new ButtonPropertyEditor())
                 .withTitle(getName())
                 .withModel(partModel)
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())

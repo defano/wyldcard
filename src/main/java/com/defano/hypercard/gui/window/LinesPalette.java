@@ -11,14 +11,14 @@ package com.defano.hypercard.gui.window;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.HyperCardWindow;
+import com.defano.hypercard.gui.HyperCardFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-public class LinesPalette extends HyperCardWindow implements Observer {
+public class LinesPalette extends HyperCardFrame implements Observer {
     private JPanel linesPanel;
 
     private JButton px1;
