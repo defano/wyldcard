@@ -133,7 +133,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     /**
-     * Naviages to the previous card in the stack; has no affect if the current card is the first card.
+     * Navigates to the previous card in the stack; has no affect if the current card is the first card.
      * @return The card now visible in the stack window or null if no previous card.
      */
     public CardPart goPrevCard(VisualEffectSpecifier visualEffect) {
@@ -157,7 +157,17 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     /**
-     * Naviages to the first card in the stack.
+     * Navigates to the current card; useful only to apply a visual effect to the current card
+     * image.
+     * @param visualEffectSpecifier The visual effect to apply
+     * @return The current card
+     */
+    public CardPart goThisCard(VisualEffectSpecifier visualEffectSpecifier) {
+        return goCard(stackModel.getCurrentCardIndex(), visualEffectSpecifier);
+    }
+
+    /**
+     * Navigates to the first card in the stack.
      * @return The first card in the stack
      */
     public CardPart goFirstCard(VisualEffectSpecifier visualEffect) {

@@ -353,6 +353,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitThisPosition(HyperTalkParser.ThisPositionContext ctx) {
+        return Position.THIS;
+    }
+
+    @Override
     public Object visitCardNumber(HyperTalkParser.CardNumberContext ctx) {
         return new Destination((Expression) visit(ctx.expression()), (DestinationType) visit(ctx.destinationType()));
     }

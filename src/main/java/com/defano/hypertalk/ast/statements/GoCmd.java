@@ -65,6 +65,9 @@ public class GoCmd extends Statement {
                 case PREV:
                     HyperCard.getInstance().getStack().goPrevCard(visualEffect);
                     break;
+                case THIS:
+                    HyperCard.getInstance().getStack().goThisCard(visualEffect);
+                    break;
             }
         }
 

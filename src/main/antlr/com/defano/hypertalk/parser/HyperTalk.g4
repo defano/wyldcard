@@ -186,6 +186,7 @@ timeUnit            : 'ticks'                                       # ticksTimeU
 
 position            : 'the'? 'next'                                 # nextPosition
                     | 'the'? ('prev' | 'previous')                  # prevPosition
+                    | 'this'                                        # thisPosition
                     ;
 
 destination         : destinationType expression                    # cardNumber

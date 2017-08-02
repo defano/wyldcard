@@ -30,5 +30,5 @@ public class PartOrdinalSpecifier implements PartSpecifier {
     public PartType type() {
         return type;
     }
-    
+
 }
