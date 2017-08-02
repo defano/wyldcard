@@ -35,6 +35,8 @@ public class StackModel extends PropertiesModel {
     }
 
     private StackModel() {
+        super();
+
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.backStack = new Stack<>();

@@ -9,17 +9,17 @@
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.buttons.ButtonStyle;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
  * A data model representing a button part on a card. See {@link com.defano.hypercard.parts.ButtonPart} for the
  * associated view object.
  */
-public class ButtonModel extends PartModel {
+public class ButtonModel extends CardLayerPartModel {
 
     public static final String PROP_STYLE = "style";
     public static final String PROP_FAMILY = "family";
@@ -28,12 +28,12 @@ public class ButtonModel extends PartModel {
     public static final String PROP_SHOWNAME = "showname";
     public static final String PROP_CONTENTS = "contents";
 
-    private ButtonModel() {
-        super(PartType.BUTTON);
+    private ButtonModel(Owner owner) {
+        super(PartType.BUTTON, owner);
     }
 
-    public static ButtonModel newButtonModel(Integer id, Rectangle geometry) {
-        ButtonModel partModel = new ButtonModel();
+    public static ButtonModel newButtonModel(Integer id, Rectangle geometry, Owner owner) {
+        ButtonModel partModel = new ButtonModel(owner);
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -51,4 +51,10 @@ public class ButtonModel extends PartModel {
 
         return partModel;
     }
+
+    @Override
+    public String getValueProperty() {
+        return ButtonModel.PROP_CONTENTS;
+    }
+
 }

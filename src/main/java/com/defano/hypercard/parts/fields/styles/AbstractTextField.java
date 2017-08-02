@@ -14,6 +14,7 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.fields.FieldComponent;
+import com.defano.hypercard.parts.model.CardLayerPartModel;
 import com.defano.hypercard.parts.model.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
@@ -114,7 +115,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                 case FieldModel.PROP_TEXTSIZE:
                 case FieldModel.PROP_TEXTSTYLE:
                 case FieldModel.PROP_TEXTFONT:
-                    updateActiveFieldStyle(toolEditablePart.getPartModel().getFont());
+                    updateActiveFieldStyle(((CardLayerPartModel)toolEditablePart.getPartModel()).getFont());
                     break;
 
                 case FieldModel.PROP_ENABLED:
@@ -241,14 +242,14 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void update(Observable o, Object arg) {
         // User changed global font selection from the menubar
-        toolEditablePart.getPartModel().setFont((Font) arg);
+        ((CardLayerPartModel)toolEditablePart.getPartModel()).setFont((Font) arg);
     }
 
     /** {@inheritDoc} */
     @Override
     public void caretUpdate(CaretEvent e) {
         // Update selectedText property
-        toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true);
+        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true);
         GlobalContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()));
 
         // Update global font style selection

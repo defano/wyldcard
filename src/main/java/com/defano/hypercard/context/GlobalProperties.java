@@ -28,6 +28,8 @@ public class GlobalProperties extends PropertiesModel {
     public final static String PROP_CLICKV = "clickv";
 
     public GlobalProperties() {
+        super();
+
         defineProperty(PROP_ITEMDELIMITER, new Value(","), false);
         defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
         defineProperty(PROP_LOCKSCREEN, new Value("false"), false);

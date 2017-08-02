@@ -9,6 +9,7 @@
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.fields.FieldStyle;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
@@ -18,7 +19,7 @@ import java.awt.*;
  * A data model representing a field part on a card. See {@link com.defano.hypercard.parts.FieldPart} for the associated
  * view object.
  */
-public class FieldModel extends PartModel {
+public class FieldModel extends CardLayerPartModel {
 
     public static final String PROP_TEXT = "text";
     public static final String PROP_DONTWRAP = "dontwrap";
@@ -28,12 +29,12 @@ public class FieldModel extends PartModel {
 
     private byte[] styleData;
 
-    public FieldModel () {
-        super(PartType.FIELD);
+    public FieldModel (Owner owner) {
+        super(PartType.FIELD, owner);
     }
 
-    public static FieldModel newFieldModel(int id, Rectangle geometry) {
-        FieldModel partModel = new FieldModel();
+    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner) {
+        FieldModel partModel = new FieldModel(owner);
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -59,5 +60,11 @@ public class FieldModel extends PartModel {
 
     public void setStyleData(byte[] styleData) {
         this.styleData = styleData;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getValueProperty() {
+        return PROP_TEXT;
     }
 }

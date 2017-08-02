@@ -6,7 +6,7 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-package com.defano.hypercard;
+package com.defano.hypercard.serializer;
 
 import com.google.gson.*;
 import com.defano.hypertalk.ast.common.Value;
@@ -25,6 +25,7 @@ import java.util.Base64;
 public class Serializer {
 
     private final static Gson gson = new GsonBuilder()
+            .registerTypeAdapterFactory(new PostConstructAdapterFactory())
             .registerTypeAdapter(Value.class, new ValueSerializer())
             .registerTypeAdapter(byte[].class, new ImageSerializer())
             .enableComplexMapKeySerialization()
@@ -107,4 +108,7 @@ public class Serializer {
             return new JsonPrimitive(Base64.getEncoder().encodeToString(src));
         }
     }
+
+
+
 }

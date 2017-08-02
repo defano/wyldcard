@@ -2,9 +2,9 @@ package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.CardLayer;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.CardModel;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -59,8 +59,8 @@ public class CardPropertyEditor extends HyperCardDialog {
         cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue());
         cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(CardModel.PROP_ID).stringValue()));
 
-        long fieldCount = card.getPartCount(PartType.FIELD, CardLayer.CARD_PARTS);
-        long buttonCount = card.getPartCount(PartType.BUTTON, CardLayer.CARD_PARTS);
+        long fieldCount = card.getPartCount(PartType.FIELD, Owner.CARD);
+        long buttonCount = card.getPartCount(PartType.BUTTON, Owner.CARD);
 
         int cardNumber = HyperCard.getInstance().getCard().getCardIndexInStack() + 1;
         int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().get();

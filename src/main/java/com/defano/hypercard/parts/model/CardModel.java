@@ -8,9 +8,11 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypercard.Serializer;
+import com.defano.hypercard.serializer.Serializer;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
 import java.awt.image.BufferedImage;
@@ -22,12 +24,13 @@ import java.util.List;
  * A data model representing a card in a stack. See {@link com.defano.hypercard.parts.CardPart} for the associated
  * view object.
  */
-public class CardModel extends PropertiesModel {
+public class CardModel extends PartModel {
 
     public final static String PROP_ID = "id";
     public final static String PROP_MARKED = "marked";
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_NAME = "name";
+    public final static String PROP_CONTENTS = "contents";
 
     private int backgroundId = 0;
     private Collection<ButtonModel> buttonModels;
@@ -35,6 +38,8 @@ public class CardModel extends PropertiesModel {
     private byte[] cardImage;
 
     private CardModel (int cardId, int backgroundId) {
+        super(PartType.CARD, Owner.STACK);
+
         this.buttonModels = new ArrayList<>();
         this.fieldModels = new ArrayList<>();
         this.backgroundId = backgroundId;
@@ -43,6 +48,7 @@ public class CardModel extends PropertiesModel {
         defineProperty(PROP_MARKED, new Value(false), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
         defineProperty(PROP_NAME, new Value(""), false);
+        defineProperty(PROP_CONTENTS, new Value(""), false);
     }
 
     /**
@@ -133,4 +139,9 @@ public class CardModel extends PropertiesModel {
     }
 
 
+    /** {@inheritDoc} */
+    @Override
+    public String getValueProperty() {
+        return PROP_CONTENTS;
+    }
 }

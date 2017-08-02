@@ -17,10 +17,11 @@
 
 package com.defano.hypercard.context;
 
-import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.Part;
-import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.*;
@@ -98,7 +99,7 @@ public class GlobalContext {
         else if (getFrame().symbols.exists(symbol))
             value = getFrame().symbols.get(symbol);
 
-            // Allow the user to refer to literals without quotation marks
+        // Allow the user to refer to literals without quotation marks
         else
             value = new Value(symbol);
 
@@ -109,7 +110,7 @@ public class GlobalContext {
         return HyperCard.getInstance().getCard();
     }
 
-    public void sendMessage (PartSpecifier ps, String message) 
+    public void sendMessage (PartSpecifier ps, String message)
     throws HtSemanticException, PartException
     {
         getCard().findPart(ps).sendMessage(message);
@@ -133,7 +134,7 @@ public class GlobalContext {
     public void put (Value mutator, Preposition p, ContainerPart d) throws HtSemanticException {
         
         try {
-            Part destPart = get(d.part().evaluateAsSpecifier());
+            PartModel destPart = get(d.part().evaluateAsSpecifier());
             Value destValue = destPart.getValue();
             Chunk chunk = d.chunk();
             
@@ -147,7 +148,7 @@ public class GlobalContext {
             setIt(destValue);
             
         } catch (PartException e) {
-            throw new HtSemanticException("Can't put into that part.");
+            throw new HtSemanticException("Can't put into that part.", e);
         }
     }
     
@@ -166,18 +167,24 @@ public class GlobalContext {
         setIt(mutable);
     }
 
-    public Part get (PartSpecifier ps) throws PartException {
-        return getCard().findPart(ps);
+    public PartModel get(PartSpecifier ps) throws PartException {
+        if (ps.isCardElementSpecifier()) {
+            return getCard().findPart(ps);
+        } else if (ps.isStackElementSpecifier()) {
+            return HyperCard.getInstance().getStack().findPart(ps);
+        }
+
+        throw new IllegalStateException("Bug! Unhandled part type: " + ps);
     }
-    
+
     public Value get (String property, PartSpecifier ps) throws NoSuchPropertyException, PartException, HtSemanticException {
-        return getCard().findPart(ps).getProperty(property);
+        return get(ps).getProperty(property);
     }
 
     public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value)
     throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSemanticException
     {
-        Value mutable = getCard().findPart(ps).getProperty(property);
+        Value mutable = get(ps).getProperty(property);
 
         if (chunk != null) {
             mutable = Value.setChunk(mutable, preposition, chunk, value);
@@ -185,7 +192,7 @@ public class GlobalContext {
             mutable = Value.setValue(mutable, preposition, value);
         }
 
-        getCard().findPart(ps).setProperty(property, mutable);
+        get(ps).setProperty(property, mutable);
     }
     
     public void setIt (Object value) {

@@ -22,7 +22,6 @@ import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.ButtonPropertyEditor;
 import com.defano.hypercard.gui.window.DialogBuilder;
-import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.buttons.StyleableButton;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
@@ -31,10 +30,7 @@ import com.defano.hypercard.parts.buttons.ButtonStyle;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Script;
-import com.defano.hypertalk.ast.common.Tool;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -50,21 +46,21 @@ import java.lang.ref.WeakReference;
  * See {@link ButtonModel} for the model associated with this controller.
  * See {@link StyleableButton} for the view associated with this controller.
  */
-public class ButtonPart extends StyleableButton implements MouseListener, PropertyChangeObserver {
+public class ButtonPart extends StyleableButton implements CardLayerPart, MouseListener, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 160;
     private static final int DEFAULT_HEIGHT = 40;
 
+    private final Owner owner;
     private final PartMover mover;
-    private Script script;
     private ButtonModel partModel;
     private WeakReference<CardPart> parent;
 
-    private ButtonPart(ButtonStyle style, CardPart parent) {
+    private ButtonPart(ButtonStyle style, CardPart parent, Owner owner) {
         super(style);
 
+        this.owner = owner;
         this.parent = new WeakReference<>(parent);
-        this.script = new Script();
         this.mover = new PartMover(this, parent);
     }
 
@@ -74,8 +70,8 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
      * @param parent The card that this button will belong to.
      * @return The new button.
      */
-    public static ButtonPart newButton(CardPart parent) {
-        ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    public static ButtonPart newButton(CardPart parent, Owner owner) {
+        ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().setToolMode(ToolMode.BUTTON);
@@ -91,8 +87,8 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
      * @param geometry The bounding rectangle of the new button.
      * @return The new button.
      */
-    public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry) {
-        ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent);
+    public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
+        ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent, owner);
         button.initProperties(geometry);
         return button;
     }
@@ -105,13 +101,12 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
      * @return The new button.
      * @throws Exception Thrown if an error occurs instantiating the button.
      */
-    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel) throws HtException {
+    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel, Owner owner) throws HtException {
         ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
-        ButtonPart button = new ButtonPart(style, parent);
+        ButtonPart button = new ButtonPart(style, parent, owner);
 
         button.partModel = partModel;
         button.partModel.addPropertyChangedObserver(button);
-        button.script = Interpreter.compile(partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).stringValue());
 
         return button;
     }
@@ -143,7 +138,7 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
     }
 
     @Override
-    public Part getPart() {
+    public CardLayerPart getPart() {
         return this;
     }
 
@@ -159,7 +154,7 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
 
     @Override
     public void delete() {
-        parent.get().removePart(this);
+        parent.get().removePart(getPartModel());
     }
 
     @Override
@@ -188,21 +183,11 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
     }
 
     @Override
-    public String getValueProperty() {
-        return ButtonModel.PROP_CONTENTS;
-    }
-
-    @Override
-    public Script getScript() {
-        return script;
-    }
-
-    @Override
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            sendMessage("mouseDown");
+            getPartModel().sendMessage("mouseDown");
         }
     }
 
@@ -211,27 +196,27 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
         super.mouseReleased(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            sendMessage("mouseUp");
+            getPartModel().sendMessage("mouseUp");
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        sendMessage("mouseEnter");
+        getPartModel().sendMessage("mouseEnter");
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        sendMessage("mouseLeave");
+        getPartModel().sendMessage("mouseLeave");
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
         if (e.getClickCount() == 2) {
-            sendMessage("mouseDoubleClick");
+            getPartModel().sendMessage("mouseDoubleClick");
         }
     }
 
@@ -243,9 +228,9 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
                 break;
             case ButtonModel.PROP_SCRIPT:
                 try {
-                    compile();
-                } catch (HtSemanticException e) {
-                    HyperCard.getInstance().showErrorDialog(e);
+                    Interpreter.compile(newValue.stringValue());
+                } catch (HtException e) {
+                    HyperCard.getInstance().showErrorDialog(new HtSemanticException("Didn't understand that.", e));
                 }
                 break;
             case ButtonModel.PROP_TOP:
@@ -262,27 +247,14 @@ public class ButtonPart extends StyleableButton implements MouseListener, Proper
             case ButtonModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());
                 break;
-            case PartModel.PROP_ZORDER:
-                getCard().onZOrderChanged();
+            case ButtonModel.PROP_ZORDER:
+                getCard().onDisplayOrderChanged();
                 break;
-        }
-    }
-
-    /**
-     * Compiles the script associated with this button and stores the AST in the script property.
-     * @throws HtSemanticException Thrown if a syntax or semantic error occurs.
-     */
-    private void compile() throws HtSemanticException {
-        try {
-            String scriptText = partModel.getKnownProperty(ButtonModel.PROP_SCRIPT).toString();
-            script = Interpreter.compile(scriptText);
-        } catch (Exception e) {
-            throw new HtSemanticException("Didn't understand that.");
         }
     }
 
     private void initProperties(Rectangle geometry) {
         int id = parent.get().getStackModel().getNextButtonId();
-        partModel = ButtonModel.newButtonModel(id, geometry);
+        partModel = ButtonModel.newButtonModel(id, geometry, owner);
     }
 }

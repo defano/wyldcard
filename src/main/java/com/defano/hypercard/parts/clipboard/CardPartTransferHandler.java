@@ -42,7 +42,7 @@ public class CardPartTransferHandler extends TransferHandler {
     public boolean importData(TransferHandler.TransferSupport info) {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
-            CardLayer layer = Part.getActivePartLayer();
+            CardLayer layer = CardLayerPart.getActivePartLayer();
             ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importExistingPart(part, layer);
 
             SwingUtilities.invokeLater(() -> {

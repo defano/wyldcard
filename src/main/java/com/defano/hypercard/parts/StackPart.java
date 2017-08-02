@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.Serializer;
+import com.defano.hypercard.serializer.Serializer;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.gui.util.ThreadUtils;
@@ -22,7 +22,7 @@ import java.util.List;
  * This view is "virtual" because a stack has no view aside from the cards that comprise it. Thus, this class does
  * not extend a Swing component and is not added to a view hierarchy.
  */
-public class StackPart implements PropertyChangeObserver {
+public class StackPart implements PropertyChangeObserver, PartContainer {
 
     private StackModel stackModel;
     private List<StackObserver> observers = new ArrayList<>();
@@ -289,6 +289,13 @@ public class StackPart implements PropertyChangeObserver {
      */
     public void addObserver (StackObserver observer) {
         observers.add(observer);
+    }
+
+    @Override
+    public List<PartModel> getPartsInDisplayOrder() {
+        ArrayList<PartModel> cards = new ArrayList<>();
+        cards.addAll(stackModel.getCardModels());
+        return cards;
     }
 
     @Override

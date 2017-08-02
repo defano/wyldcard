@@ -14,7 +14,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
 
-import javax.swing.*;
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
@@ -37,9 +37,14 @@ public class PropertiesModel {
 
     // Required to initialize transient data member when object is deserialized
     public PropertiesModel() {
+        initialize();
+    }
+
+    @PostConstruct
+    protected void initialize() {
+        propertyAliases = new HashMap<>();
         changeObservers = new HashSet<>();
         willChangeObservers = new HashSet<>();
-        propertyAliases = new HashMap<>();
         computerGetters = new HashMap<>();
         computerSetters = new HashMap<>();
     }
@@ -176,9 +181,7 @@ public class PropertiesModel {
      *
      * @throws NoSuchPropertyException If no property exists with this name
      */
-    public Value getProperty (String property)
-            throws NoSuchPropertyException
-    {
+    public Value getProperty (String property) throws NoSuchPropertyException {
         property = property.toLowerCase();
 
         if (!propertyExists(property)) {

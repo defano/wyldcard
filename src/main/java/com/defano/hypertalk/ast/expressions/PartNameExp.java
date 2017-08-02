@@ -17,7 +17,7 @@
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.context.GlobalContext;
-import com.defano.hypertalk.ast.common.PartLayer;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartNameSpecifier;
@@ -27,7 +27,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 
 public class PartNameExp extends PartExp {
 
-    public final PartLayer layer;
+    public final Owner layer;
     public final PartType type;
     public final Expression name;
 
@@ -35,7 +35,7 @@ public class PartNameExp extends PartExp {
         this(null, type, name);
     }
 
-    public PartNameExp(PartLayer layer, PartType type, Expression name) {
+    public PartNameExp(Owner layer, PartType type, Expression name) {
         this.layer = layer;
         this.type = type;
         this.name = name;

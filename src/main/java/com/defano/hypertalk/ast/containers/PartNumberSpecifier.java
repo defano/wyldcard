@@ -1,19 +1,15 @@
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypertalk.ast.common.PartLayer;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
 public class PartNumberSpecifier implements PartSpecifier {
 
-    public PartType type = null;
-    public PartLayer layer;
-    public int number;
+    public final PartType type;
+    public final Owner layer;
+    public final int number;
 
-    public PartNumberSpecifier(PartLayer layer, int number) {
-        this(layer, null, number);
-    }
-
-    public PartNumberSpecifier(PartLayer layer, PartType type, int number) {
+    public PartNumberSpecifier(Owner layer, PartType type, int number) {
         this.layer = layer;
         this.number = number;
         this.type = type;
@@ -25,7 +21,7 @@ public class PartNumberSpecifier implements PartSpecifier {
     }
 
     @Override
-    public PartLayer layer() {
+    public Owner layer() {
         return layer;
     }
 
@@ -36,7 +32,9 @@ public class PartNumberSpecifier implements PartSpecifier {
 
     @Override
     public String toString() {
-        if (type == null) {
+        if (layer == null) {
+            return type + " " + number;
+        } else if (type == null) {
             return layer().name() + " part " + number;
         } else {
             return layer().name() + " " + type + " " + number;

@@ -41,7 +41,7 @@ public class PropertyExp extends Expression {
                 return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
             }
         } catch (Exception e) {
-            throw new HtSemanticException("The property '" + propertySpecifier.property + "' does not exist on this part.");
+            throw new HtSemanticException("The property '" + propertySpecifier.property + "' does not exist on this part.", e);
         }
     }    
 }

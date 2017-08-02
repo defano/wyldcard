@@ -279,12 +279,16 @@ propertySpec        : 'the'? ID                                     # propertySp
                     ;
 
 part                : ('background' | 'bkgnd')? 'field' factor        # bkgndFieldPart
+                    | ordinal ('background' | 'bkgnd')? 'field'       # bkgndFieldOrdinalPart
                     | ('background' | 'bkgnd')? 'field' 'id' factor   # bkgndFieldIdPart
                     | ('background' | 'bkgnd')? 'button' factor       # bkgndButtonPart
+                    | ordinal ('background' | 'bkgnd')? 'button'      # bkgndButtonOrdinalPart
                     | ('background' | 'bkgnd')? 'button' 'id' factor  # bkgndButtonIdPart
                     | ('card' | 'cd')? 'field' factor                 # cardFieldPart
+                    | ordinal ('card' | 'cd')? 'field'                # cardFieldOrdinalPart
                     | ('card' | 'cd')? 'field' 'id' factor            # cardFieldIdPart
                     | ('card' | 'cd')? 'button' factor                # cardButtonPart
+                    | ordinal ('card' | 'cd')? 'button'               # cardButtonOrdinalPart
                     | ('card' | 'cd')? 'button' 'id' factor           # cardButtonIdPart
                     | ('card' | 'cd') 'part' factor                   # cardPartNumberPart
                     | ('background' | 'bkgnd') 'part' factor          # bkgndPartNumberPart

@@ -8,14 +8,12 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypercard.Serializer;
+import com.defano.hypercard.serializer.Serializer;
+import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -23,21 +21,25 @@ import java.util.Collection;
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link com.defano.hypercard.parts.CardPart} view object when rendered.
  */
-public class BackgroundModel extends PropertiesModel {
+public class BackgroundModel extends PartModel {
 
     public final static String PROP_NAME = "name";
     public final static String PROP_CANTDELETE = "cantdelete";
+    public final static String PROP_CONTENTS = "contents";
 
     private byte[] backgroundImage;
     private Collection<ButtonModel> buttonModels;
     private Collection<FieldModel> fieldModels;
 
     private BackgroundModel() {
+        super(PartType.BACKGROUND, Owner.STACK);
+
         buttonModels = new ArrayList<>();
         fieldModels = new ArrayList<>();
 
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
+        defineProperty(PROP_CONTENTS, new Value(""), false);
     }
 
     public static BackgroundModel emptyBackground() {
@@ -68,4 +70,8 @@ public class BackgroundModel extends PropertiesModel {
         return Serializer.deserializeImage(this.backgroundImage);
     }
 
+    @Override
+    public String getValueProperty() {
+        return null;
+    }
 }

@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts;
 
-import com.defano.hypertalk.ast.common.PartLayer;
+import com.defano.hypertalk.ast.common.Owner;
 
 /**
  * An enumeration of layers in the card view stack.
@@ -19,8 +19,8 @@ public enum CardLayer {
         this.friendlyName = friendlyName;
     }
 
-    public PartLayer asPartLayer() {
-        return (this == BACKGROUND_GRAPHICS || this == BACKGROUND_PARTS) ? PartLayer.BACKGROUND : PartLayer.CARD;
+    public Owner asParentContainer() {
+        return (this == BACKGROUND_GRAPHICS || this == BACKGROUND_PARTS) ? Owner.BACKGROUND : Owner.CARD;
     }
 
     public static CardLayer fromPaneLayer(int layer) {

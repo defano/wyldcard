@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.Serializer;
+import com.defano.hypercard.serializer.Serializer;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.PartsTable;
 import com.defano.hypercard.context.ToolsContext;
@@ -17,6 +17,7 @@ import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.model.ButtonModel;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
@@ -33,6 +34,7 @@ import com.defano.jmonet.tools.base.PaintTool;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
@@ -43,7 +45,7 @@ import java.util.Observer;
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
  */
-public class CardPart extends CardLayeredPane implements PartContainer, CanvasCommitObserver, CanvasTransferDelegate {
+public class CardPart extends CardLayeredPane implements Part, LayeredPartContainer, CanvasCommitObserver, CanvasTransferDelegate {
 
     private CardModel cardModel;
     private StackModel stackModel;
@@ -139,11 +141,11 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * Removes a part (button or field) from this card. Has no effect of the part is not on this card.
      * @param part The part to be removed.
      */
-    public void removePart(Part part) {
-        if (part instanceof ButtonPart) {
-            removeButton((ButtonPart) part);
-        } else if (part instanceof FieldPart) {
-            removeField((FieldPart) part);
+    public void removePart(PartModel part) {
+        if (part instanceof ButtonModel) {
+            removeButton((ButtonModel) part);
+        } else if (part instanceof FieldModel) {
+            removeField((FieldModel) part);
         }
     }
 
@@ -153,8 +155,9 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      */
     public void newButton() {
         try {
-            ButtonPart newButton = ButtonPart.newButton(this);
-            addButton(newButton, Part.getActivePartLayer());
+            CardLayer layer = CardLayerPart.getActivePartLayer();
+            ButtonPart newButton = ButtonPart.newButton(this, layer.asParentContainer());
+            addButton(newButton, layer);
             PartToolContext.getInstance().setSelectedPart(newButton);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! Shouldn't be possible.", ex);
@@ -167,8 +170,9 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      */
     public void newField() {
         try {
-            FieldPart newField = FieldPart.newField(this);
-            addField(newField, Part.getActivePartLayer());
+            CardLayer layer = CardLayerPart.getActivePartLayer();
+            FieldPart newField = FieldPart.newField(this, layer.asParentContainer());
+            addField(newField, layer);
             PartToolContext.getInstance().setSelectedPart(newField);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! Shouldn't be possible.", ex);
@@ -179,7 +183,6 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * Gets an unordered collection of buttons that exist on this card in the active layer.
      * @return The buttons on this card.
      */
-    @Override
     public Collection<ButtonPart> getButtons() {
         return buttons.getParts();
     }
@@ -188,7 +191,6 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * Gets an unordered collection of fields that exist on this card in the active layer.
      * @return The fields on this card.
      */
-    @Override
     public Collection<FieldPart> getFields() {
         return fields.getParts();
     }
@@ -202,12 +204,12 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
     private void addPartFromModel(PartModel thisPart, CardLayer layer) throws HtException {
         switch (thisPart.getType()) {
             case BUTTON:
-                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
+                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart, layer.asParentContainer());
                 buttons.addPart(button);
                 addSwingComponent(button.getComponent(), button.getRect(), layer);
                 break;
             case FIELD:
-                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
+                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart, layer.asParentContainer());
                 fields.addPart(field);
                 addSwingComponent(field.getComponent(), field.getRect(), layer);
                 break;
@@ -297,10 +299,10 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
      * Indicates that the z-order of a part changed (and that components should be reordered on the pane according to
      * their new position).
      */
-    public void onZOrderChanged() {
+    public void onDisplayOrderChanged() {
         SwingUtilities.invokeLater(() -> {
-            for (Part thisPart : getPartsInZOrder()) {
-                moveToBack(thisPart.getComponent());
+            for (PartModel thisPart : getPartsInDisplayOrder()) {
+                moveToBack(((CardLayerPart)getPart(thisPart)).getComponent());
             }
         });
     }
@@ -402,6 +404,19 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
     }
 
     /**
+     * Notify all parts in this container that they are closing (ostensibly because the container itself is closing).
+     */
+    private void notifyPartsClosing() {
+        for (ButtonPart p : buttons.getParts()) {
+            p.partClosed();
+        }
+
+        for (FieldPart p : fields.getParts()) {
+            p.partClosed();
+        }
+    }
+
+    /**
      * Imports an existing button into this card. Note that this differs from {@link #addButton(ButtonPart, CardLayer)} in that a
      * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
      * copied button from another card onto this card.
@@ -414,7 +429,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
         model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextButtonId()), true);
 
-        ButtonPart newButton = ButtonPart.fromModel(this, model);
+        ButtonPart newButton = ButtonPart.fromModel(this, model, layer.asParentContainer());
         addButton(newButton, layer);
         return newButton;
     }
@@ -432,7 +447,7 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
         model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextFieldId()), true);
 
-        FieldPart newField = FieldPart.fromModel(this, model);
+        FieldPart newField = FieldPart.fromModel(this, model, layer.asParentContainer());
         addField(newField, layer);
         return newField;
     }
@@ -456,9 +471,10 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
 
     /**
      * Removes a field from this card. Has no effect if the field does not exist on the card.
-     * @param field The field to be removed.
+     * @param fieldModel The field to be removed.
      */
-    private void removeField(FieldPart field) {
+    private void removeField(FieldModel fieldModel) {
+        FieldPart field = fields.getPartForModel(fieldModel);
         cardModel.removePart(field);
         fields.removePart(field);
         removeSwingComponent(field.getComponent());
@@ -484,9 +500,10 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
 
     /**
      * Removes a button from this card. Has no effect if the button does not exist on the card.
-     * @param button The button to be removed.
+     * @param buttonModel The button to be removed.
      */
-    private void removeButton(ButtonPart button) {
+    private void removeButton(ButtonModel buttonModel) {
+        ButtonPart button = buttons.getPartForModel(buttonModel);
         cardModel.removePart(button);
         buttons.removePart(button);
         removeSwingComponent(button.getComponent());
@@ -513,6 +530,48 @@ public class CardPart extends CardLayeredPane implements PartContainer, CanvasCo
         moveToFront(component);
 
         revalidate(); repaint();
+    }
+
+    @Override
+    public PartType getType() {
+        return PartType.CARD;
+    }
+
+    @Override
+    public PartModel getPartModel() {
+        return getCardModel();
+    }
+
+    @Override
+    public void partOpened() {
+        // Nothing to do
+    }
+
+    @Override
+    public void partClosed() {
+        // Nothing to do
+    }
+
+    public Part getPart(PartModel partModel) {
+        if (partModel instanceof FieldModel) {
+            return fields.getPartForModel(partModel);
+        } else if (partModel instanceof ButtonModel) {
+            return buttons.getPartForModel(partModel);
+        }
+
+        throw new IllegalArgumentException("No part on this card matching model: " + partModel);
+    }
+
+    @Override
+    public Collection<PartModel> getParts() {
+        ArrayList<PartModel> partModels = new ArrayList<>();
+        for (ButtonPart thisButton : buttons.getParts()) {
+            partModels.add(thisButton.getPartModel());
+        }
+        for (FieldPart thisField : fields.getParts()) {
+            partModels.add(thisField.getPartModel());
+        }
+        return partModels;
     }
 
     private class BackgroundScaleObserver implements Observer {

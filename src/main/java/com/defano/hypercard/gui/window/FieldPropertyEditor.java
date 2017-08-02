@@ -9,9 +9,8 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.FieldPart;
-import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.fields.FieldStyle;
+import com.defano.hypercard.parts.model.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.FieldModel;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -68,7 +67,7 @@ public class FieldPropertyEditor extends HyperCardFrame {
             dispose();
         });
 
-        textStyleButton.addActionListener(e -> model.setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getFont())));
+        textStyleButton.addActionListener(e -> ((CardLayerPartModel) model).setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont())));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (FieldStyle thisStyle : FieldStyle.values()) {
@@ -88,12 +87,12 @@ public class FieldPropertyEditor extends HyperCardFrame {
         if (data instanceof PartModel) {
             this.model = (PartModel) data;
 
-            Part part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+            PartModel part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
             long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
-            long fieldNumber = HyperCard.getInstance().getCard().getFieldNumber((FieldPart) part);
-            long fieldCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getCardLayer());
-            long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getCardLayer());
-            String layer = part.getCardLayer().friendlyName;
+            long fieldNumber = HyperCard.getInstance().getCard().getFieldNumber((FieldModel) part);
+            long fieldCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getOwner());
+            long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getOwner());
+            String layer = part.getOwner().friendlyName;
 
             fieldLabel.setText(layer + " Field:");
             fieldLabelValue.setText(fieldNumber + " of " + fieldCount);

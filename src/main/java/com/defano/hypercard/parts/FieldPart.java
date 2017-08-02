@@ -17,12 +17,8 @@ import com.defano.hypercard.parts.fields.FieldStyle;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Script;
-import com.defano.hypertalk.ast.common.Tool;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -40,22 +36,22 @@ import java.lang.ref.WeakReference;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements Part, MouseListener, PropertyChangeObserver, KeyListener {
+public class FieldPart extends StyleableField implements CardLayerPart, MouseListener, PropertyChangeObserver, KeyListener {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
 
-    private Script script;
+    private Owner owner;
     private FieldModel partModel;
     private WeakReference<CardPart> parent;
     private PartMover mover;
 
-    private FieldPart(FieldStyle style, CardPart parent) {
+    private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
 
+        this.owner = owner;
         this.mover = new PartMover(this, parent);
         this.parent = new WeakReference<>(parent);
-        this.script = new Script();
     }
 
     /**
@@ -63,8 +59,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
      * @param parent The card in which the field should be generated.
      * @return The newly created FieldPart
      */
-    public static FieldPart newField(CardPart parent) {
-        FieldPart newField = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    public static FieldPart newField(CardPart parent, Owner owner) {
+        FieldPart newField = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
 
         // When a new field is created, make the field tool active and select the newly created part
         ToolsContext.getInstance().setToolMode(ToolMode.FIELD);
@@ -79,8 +75,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
      * @param geometry The size and location of the field.
      * @return The newly created field.
      */
-    public static FieldPart fromGeometry(CardPart parent, Rectangle geometry) {
-        FieldPart field = new FieldPart(FieldStyle.RECTANGLE, parent);
+    public static FieldPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
+        FieldPart field = new FieldPart(FieldStyle.RECTANGLE, parent, owner);
 
         field.initProperties(geometry);
 
@@ -95,10 +91,9 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
      * @return The newly created field.
      * @throws HtException Thrown if an error occurs instantiating this field on the card.
      */
-    public static FieldPart fromModel(CardPart parent, FieldModel model) throws HtException {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent);
+    public static FieldPart fromModel(CardPart parent, FieldModel model, Owner owner) throws HtException {
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent, owner);
 
-        field.script = Interpreter.compile(model.getKnownProperty(FieldModel.PROP_SCRIPT).stringValue());
         field.partModel = model;
         field.partModel.addPropertyChangedObserver(field);
 
@@ -143,7 +138,7 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
     /** {@inheritDoc} */
     @Override
     public void delete() {
-        parent.get().removePart(this);
+        parent.get().removePart(getPartModel());
     }
 
     /** {@inheritDoc} */
@@ -172,14 +167,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
 
     /** {@inheritDoc} */
     @Override
-    public Part getPart() {
+    public CardLayerPart getPart() {
         return this;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Script getScript() {
-        return script;
     }
 
     /** {@inheritDoc} */
@@ -190,30 +179,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
 
     /** {@inheritDoc} */
     @Override
-    public void setValue(Value value) {
-        try {
-            partModel.setProperty(FieldModel.PROP_TEXT, value);
-        } catch (Exception e) {
-            throw new RuntimeException("Field's text property cannot be set");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getValueProperty() {
-        return com.defano.hypercard.parts.model.ButtonModel.PROP_CONTENTS;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public boolean isPartToolActive() {
         return ToolsContext.getInstance().getToolMode() == ToolMode.FIELD;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Value getValue() {
-        return partModel.getKnownProperty(FieldModel.PROP_TEXT);
     }
 
     /** {@inheritDoc} */
@@ -231,7 +198,7 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
         setClickText(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            sendMessage("mouseDown");
+            getPartModel().sendMessage("mouseDown");
         }
     }
 
@@ -241,7 +208,7 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
         super.mouseReleased(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            sendMessage("mouseUp");
+            getPartModel().sendMessage("mouseUp");
         }
     }
 
@@ -249,14 +216,14 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        sendMessage("mouseEnter");
+        getPartModel().sendMessage("mouseEnter");
     }
 
     /** {@inheritDoc} */
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        sendMessage("mouseLeave");
+        getPartModel().sendMessage("mouseLeave");
     }
 
     /** {@inheritDoc} */
@@ -265,7 +232,7 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
         super.keyPressed(e);
 
         if (getTextPane().hasFocus()) {
-            sendMessage("keyDown");
+            getPartModel().sendMessage("keyDown");
         }
     }
 
@@ -275,7 +242,7 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
         super.keyReleased(e);
 
         if (getTextPane().hasFocus()) {
-            sendMessage("keyUp");
+            getPartModel().sendMessage("keyUp");
         }
     }
 
@@ -285,7 +252,7 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
         super.mouseClicked(e);
 
         if (e.getClickCount() == 2) {
-            sendMessage("mouseDoubleClick");
+            getPartModel().sendMessage("mouseDoubleClick");
         }
     }
 
@@ -304,8 +271,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
                 break;
             case FieldModel.PROP_SCRIPT:
                 try {
-                    compile();
-                } catch (HtSemanticException e) {
+                    Interpreter.compile(newValue.stringValue());
+                } catch (HtException e) {
                     HyperCard.getInstance().showErrorDialog(e);
                 }
                 break;
@@ -320,8 +287,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
             case FieldModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());
                 break;
-            case PartModel.PROP_ZORDER:
-                getCard().onZOrderChanged();
+            case CardLayerPartModel.PROP_ZORDER:
+                getCard().onDisplayOrderChanged();
                 break;
         }
     }
@@ -343,18 +310,8 @@ public class FieldPart extends StyleableField implements Part, MouseListener, Pr
     private void initProperties(Rectangle geometry) {
         int id = parent.get().getStackModel().getNextFieldId();
 
-        partModel = FieldModel.newFieldModel(id, geometry);
+        partModel = FieldModel.newFieldModel(id, geometry, owner);
         partModel.addPropertyChangedObserver(this);
     }
-
-    private void compile() throws HtSemanticException {
-
-        try {
-            script = Interpreter.compile(partModel.getKnownProperty(FieldModel.PROP_SCRIPT).toString());
-        } catch (Exception e) {
-            throw new HtSemanticException("Didn't understand that.");
-        }
-    }
-
 
 }

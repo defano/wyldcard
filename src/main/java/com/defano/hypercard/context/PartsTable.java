@@ -18,6 +18,7 @@ package com.defano.hypercard.context;
 
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
 import java.util.Collection;
@@ -35,7 +36,7 @@ public class PartsTable<T extends Part> {
     public void removePart (T p) {
         
         try {
-            Integer partId = p.getProperty("id").integerValue();
+            Integer partId = p.getProperty(PartModel.PROP_ID).integerValue();
             idhash.remove(partId);
         } catch (NoSuchPropertyException e) {
             throw new RuntimeException("All parts must have a valid name and id");
@@ -45,7 +46,7 @@ public class PartsTable<T extends Part> {
     public void addPart(T p) throws PartException {
         
         try {            
-            Integer partId = p.getProperty("id").integerValue();
+            Integer partId = p.getProperty(PartModel.PROP_ID).integerValue();
 
             // Check for duplicate id or name
             if (idhash.containsKey(partId)) {
@@ -61,5 +62,9 @@ public class PartsTable<T extends Part> {
 
     public Collection<T> getParts() {
         return idhash.values();
+    }
+
+    public T getPartForModel(PartModel model) {
+        return idhash.get(model.getId());
     }
 }

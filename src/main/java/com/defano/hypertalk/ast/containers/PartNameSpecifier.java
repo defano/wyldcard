@@ -15,24 +15,24 @@
 
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypertalk.ast.common.PartLayer;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
 
 public class PartNameSpecifier implements PartSpecifier {
 
-    public final PartLayer layer;
+    public final Owner layer;
     public final PartType type;
     public final String name;
 
-    public PartNameSpecifier (PartLayer layer, PartType type, String name) {
+    public PartNameSpecifier (Owner layer, PartType type, String name) {
         this.layer = layer;
         this.type = type;
         this.name = name;
     }
 
     @Override
-    public PartLayer layer() {
+    public Owner layer() {
         return layer;
     }
 

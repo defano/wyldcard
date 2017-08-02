@@ -28,7 +28,7 @@ public class SetPropertyCmd extends Statement {
         if (this.part == null) {
             GlobalContext.getContext().getGlobalProperties().setProperty(property, value);
         } else {
-            HyperCard.getInstance().getCard().findPart(part.evaluateAsSpecifier()).getPartModel().setKnownProperty(property, value);
+            HyperCard.getInstance().getCard().findPart(part.evaluateAsSpecifier()).setKnownProperty(property, value);
         }
     }
 }

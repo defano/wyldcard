@@ -42,7 +42,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
 
         setModel(menuItems);
-        addItemListener(e -> toolEditablePart.getPartModel().defineProperty(PartModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
+        addItemListener(e -> toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
     }
 
     @Override

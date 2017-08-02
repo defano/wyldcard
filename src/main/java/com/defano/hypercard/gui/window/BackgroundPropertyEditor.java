@@ -1,9 +1,9 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.CardLayer;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.BackgroundModel;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -51,8 +51,8 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
         cantDeleteBkgndCheckBox.setSelected(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
 
         long cardCount = cardPart.getStackModel().getCardCountInBackground(backgroundId);
-        long fieldCount = cardPart.getPartCount(PartType.FIELD, CardLayer.BACKGROUND_PARTS);
-        long buttonCount = cardPart.getPartCount(PartType.BUTTON, CardLayer.BACKGROUND_PARTS);
+        long fieldCount = cardPart.getPartCount(PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = cardPart.getPartCount(PartType.BUTTON, Owner.BACKGROUND);
 
         cardCountLabel.setText("Background shared by " + cardCount + " cards.");
         buttonCountLabel.setText("Contains " + buttonCount + " background buttons.");

@@ -10,8 +10,7 @@ package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.ButtonPart;
-import com.defano.hypercard.parts.Part;
+import com.defano.hypercard.parts.model.CardLayerPartModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -71,7 +70,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
-        textStyle.addActionListener(e -> model.setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getFont())));
+        textStyle.addActionListener(e -> ((CardLayerPartModel) model).setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont())));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ButtonStyle thisStyle : ButtonStyle.values()) {
@@ -89,12 +88,12 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     public void bindModel(Object data) {
         this.model = (PartModel) data;
 
-        Part part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+        PartModel part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
         long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
-        long buttonNumber = HyperCard.getInstance().getCard().getButtonNumber((ButtonPart) part);
-        long buttonCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getCardLayer());
-        long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getCardLayer());
-        String layer = part.getCardLayer().friendlyName;
+        long buttonNumber = HyperCard.getInstance().getCard().getButtonNumber((ButtonModel) part);
+        long buttonCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getOwner());
+        long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getOwner());
+        String layer = part.getOwner().friendlyName;
 
         buttonLabel.setText(layer + " Button:");
         buttonLabelValue.setText(buttonNumber + " of " + buttonCount);
