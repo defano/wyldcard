@@ -10,7 +10,6 @@ package com.defano.hypercard.parts.buttons;
 
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
-import com.defano.hypercard.parts.ButtonPart;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.buttons.styles.*;

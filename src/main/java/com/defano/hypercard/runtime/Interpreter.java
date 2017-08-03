@@ -39,8 +39,8 @@ import java.util.concurrent.*;
  */
 public class Interpreter {
 
-    private static ThreadPoolExecutor scriptExecutor;
-    private static ScheduledExecutorService idleTimeExecutor;
+    private static final ThreadPoolExecutor scriptExecutor;
+    private static final ScheduledExecutorService idleTimeExecutor;
 
     static {
         scriptExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
@@ -97,11 +97,11 @@ public class Interpreter {
     }
 
     public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
-        return executeStatementList(me, compile(statementList).getStatements(), true);
+        return executeStatementList(me, compile(statementList).getStatements());
     }
 
     public static void executeHandler(PartSpecifier me, Script script, String handler) {
-        executeStatementList(me, script.getHandler(handler), true);
+        executeStatementList(me, script.getHandler(handler));
     }
 
     public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) {
@@ -118,9 +118,9 @@ public class Interpreter {
         }
     }
 
-    private static Future executeStatementList(PartSpecifier me, StatementList handler, boolean onNewThread) {
+    private static Future executeStatementList(PartSpecifier me, StatementList handler) {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler);
-        if (SwingUtilities.isEventDispatchThread() || onNewThread)
+        if (SwingUtilities.isEventDispatchThread())
             return scriptExecutor.submit(handlerTask);
         else {
             handlerTask.run();

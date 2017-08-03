@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
-import com.defano.hypercard.context.GlobalProperties;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtException;

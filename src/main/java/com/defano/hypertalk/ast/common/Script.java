@@ -24,8 +24,8 @@ import java.util.Map;
 
 public class Script {
 
-    private Map<String, StatementList> handlers;
-    private Map<String, UserFunction> functions;
+    private final Map<String, StatementList> handlers;
+    private final Map<String, UserFunction> functions;
     private StatementList statements = null;
     
     public Script () {

@@ -30,7 +30,7 @@ public class MessageWindow extends HyperCardFrame {
 
     private JTextField messageBox;
     private JPanel messageWindow;
-    private ArrayList<String> messageStack = new ArrayList<>();
+    private final ArrayList<String> messageStack = new ArrayList<>();
     private int messageStackIndex = -1;
 
     public MessageWindow() {

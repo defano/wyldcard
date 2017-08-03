@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class PartsTable<T extends Part> {
 
-    private Map<Integer, T> idhash;         // Mapping of ID to part
+    private final Map<Integer, T> idhash;         // Mapping of ID to part
 
     public PartsTable () {
         idhash = new HashMap<>();

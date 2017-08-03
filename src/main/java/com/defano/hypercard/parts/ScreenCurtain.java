@@ -5,7 +5,6 @@ import com.defano.hypercard.gui.util.ThreadUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * A Swing component used to obscure the "actual" contents of the stack window. Used for screen locking and card-to-card

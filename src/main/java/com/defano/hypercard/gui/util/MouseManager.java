@@ -27,8 +27,8 @@ public class MouseManager {
     private static boolean mouseIsDown;
     private static Point clickLoc = new Point();
 
-    private static Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
-    private static Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
+    private static final Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
+    private static final Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
 
     public static void start() {
         Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);

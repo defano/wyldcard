@@ -11,11 +11,8 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartIdSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
@@ -69,10 +66,6 @@ public interface Part {
      */
     default Value getProperty(String property) throws NoSuchPropertyException {
         return getPartModel().getProperty(property);
-    }
-
-    default CardLayer getCardLayer() {
-        return null;
     }
 
     /**

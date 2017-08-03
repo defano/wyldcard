@@ -54,7 +54,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     private final Owner owner;
     private final PartMover mover;
     private ButtonModel partModel;
-    private WeakReference<CardPart> parent;
+    private final WeakReference<CardPart> parent;
 
     private ButtonPart(ButtonStyle style, CardPart parent, Owner owner) {
         super(style);

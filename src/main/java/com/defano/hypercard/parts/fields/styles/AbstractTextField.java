@@ -16,7 +16,6 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.fields.FieldComponent;
 import com.defano.hypercard.parts.model.CardLayerPartModel;
 import com.defano.hypercard.parts.model.FieldModel;
-import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
@@ -44,7 +43,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final HyperCardJTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
 
-    private ToolEditablePart toolEditablePart;
+    private final ToolEditablePart toolEditablePart;
     private MutableAttributeSet currentStyle = new SimpleAttributeSet();
 
     public AbstractTextField(ToolEditablePart toolEditablePart) {

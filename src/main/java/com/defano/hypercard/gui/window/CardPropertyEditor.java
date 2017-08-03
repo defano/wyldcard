@@ -54,7 +54,12 @@ public class CardPropertyEditor extends HyperCardDialog {
         CardPart card = (CardPart) data;
         cardModel = card.getCardModel();
 
-        cardName.setText(cardModel.getKnownProperty(CardModel.PROP_NAME).stringValue());
+        // Don't display "default" name ('card id xxx')
+        Value cardNameValue = cardModel.getRawProperty(CardModel.PROP_NAME);
+        if (cardNameValue != null && !cardNameValue.isEmpty()) {
+            cardName.setText(cardModel.getKnownProperty(CardModel.PROP_NAME).stringValue());
+        }
+
         cardMarkedCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_MARKED).booleanValue());
         cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue());
         cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(CardModel.PROP_ID).stringValue()));

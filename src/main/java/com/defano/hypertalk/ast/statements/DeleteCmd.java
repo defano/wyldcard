@@ -1,7 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.PartExp;

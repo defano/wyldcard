@@ -41,10 +41,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
 
-    private Owner owner;
+    private final Owner owner;
     private FieldModel partModel;
-    private WeakReference<CardPart> parent;
-    private PartMover mover;
+    private final WeakReference<CardPart> parent;
+    private final PartMover mover;
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);

@@ -19,7 +19,6 @@ package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
@@ -34,19 +33,19 @@ import java.util.Vector;
 
 public class GlobalContext {
 
-    private static GlobalContext instance = new GlobalContext();
+    private static final GlobalContext instance = new GlobalContext();
     
-    private SymbolTable globals;
-    private GlobalProperties globalProperties = new GlobalProperties();
+    private final SymbolTable globals;
+    private final GlobalProperties globalProperties = new GlobalProperties();
 
     /*
      * In this implementation, when HyperCard sends a system-defined message to a part
      * (i.e., "mouseEnter") the reaction to that message exists in its own thread; therefore
      * the entire local context needs to be specific to each thread.
      */
-    private ThreadLocal<Stack<Frame>> stack = new ThreadLocal<>();
-    private ThreadLocal<Frame> frame = new ThreadLocal<>();
-    private ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
+    private final ThreadLocal<Stack<Frame>> stack = new ThreadLocal<>();
+    private final ThreadLocal<Frame> frame = new ThreadLocal<>();
+    private final ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
 
     private GlobalContext () {
         globals = new SymbolTable();

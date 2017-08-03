@@ -8,17 +8,23 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.serializer.Serializer;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
+import com.google.common.collect.Lists;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * A data model representing a card in a stack. See {@link com.defano.hypercard.parts.CardPart} for the associated
@@ -30,25 +36,35 @@ public class CardModel extends PartModel {
     public final static String PROP_MARKED = "marked";
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_NAME = "name";
-    public final static String PROP_CONTENTS = "contents";
 
     private int backgroundId = 0;
-    private Collection<ButtonModel> buttonModels;
-    private Collection<FieldModel> fieldModels;
+    private Collection<FieldModel> fields = new ArrayList<>();
+    private Collection<ButtonModel> buttons = new ArrayList<>();
     private byte[] cardImage;
 
     private CardModel (int cardId, int backgroundId) {
         super(PartType.CARD, Owner.STACK);
 
-        this.buttonModels = new ArrayList<>();
-        this.fieldModels = new ArrayList<>();
         this.backgroundId = backgroundId;
 
         defineProperty(PROP_ID, new Value(cardId), true);
         defineProperty(PROP_MARKED, new Value(false), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
         defineProperty(PROP_NAME, new Value(""), false);
-        defineProperty(PROP_CONTENTS, new Value(""), false);
+
+        // When no name of card is provided, returns 'card id xxx'
+        defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
+            Value raw = model.getRawProperty(propertyName);
+            if (raw == null || raw.isEmpty()) {
+                return new Value("card id " + model.getKnownProperty(PROP_ID));
+            } else {
+                return raw;
+            }
+        });
+
+        // Card inherits size and location properties from the stack
+        delegateProperties(Lists.newArrayList(PROP_RECT, PROP_RECTANGLE, PROP_TOP, PROP_LEFT, PROP_BOTTOM, PROP_RIGHT, PROP_TOPLEFT, PROP_BOTTOMRIGHT, PROP_HEIGHT, PROP_WIDTH),
+                property -> HyperCard.getInstance().getStack().getStackModel());
     }
 
     /**
@@ -63,43 +79,42 @@ public class CardModel extends PartModel {
     }
 
     public Collection<PartModel> getPartModels() {
-        List<PartModel> partModels = new ArrayList<>();
-        partModels.addAll(buttonModels);
-        partModels.addAll(fieldModels);
-        return partModels;
+        return Stream.concat(fields.stream(), buttons.stream()).collect(Collectors.toList());
     }
 
     /**
      * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
-     * @param part The part to remove from this card.
+     * @param partModel The part to remove from this card.
      */
-    public void removePart (Part part) {
-        switch (part.getType()) {
-            case BUTTON:
-                buttonModels.remove(part.getPartModel());
-                break;
+    public void removePartModel(PartModel partModel) {
+        switch (partModel.getType()) {
             case FIELD:
-                fieldModels.remove(part.getPartModel());
+                fields.remove(partModel);
                 break;
+            case BUTTON:
+                buttons.remove(partModel);
+                break;
+            default:
+                throw new IllegalArgumentException("Bug! Can't delete this kind of part from a card: " + partModel.getType());
         }
     }
 
     /**
      * Adds a part (button or field) to this card.
      *
-     * @param part The part to add.
+     * @param partModel The part to add.
      * @throws PartException Thrown if part type is unsupported.
      */
-    public void addPart (Part part) throws PartException {
-        switch (part.getType()) {
-            case BUTTON:
-                buttonModels.add((ButtonModel) part.getPartModel());
-                break;
+    public void addPartModel(PartModel partModel) throws PartException {
+        switch (partModel.getType()) {
             case FIELD:
-                fieldModels.add((FieldModel) part.getPartModel());
+                fields.add((FieldModel)partModel);
+                break;
+            case BUTTON:
+                buttons.add((ButtonModel)partModel);
                 break;
             default:
-                throw new PartException("Bug! Unsupported part type: " + part.getType());
+                throw new IllegalArgumentException("Bug! Can't add this kind of part to a card: " + partModel.getType());
         }
     }
 
@@ -137,7 +152,6 @@ public class CardModel extends PartModel {
     public CardModel copyOf() {
         return Serializer.copy(this);
     }
-
 
     /** {@inheritDoc} */
     @Override

@@ -24,6 +24,7 @@ import com.l2fprod.common.swing.JFontChooser;
 import javax.swing.*;
 import java.awt.*;
 
+@SuppressWarnings("unchecked")
 public class FieldPropertyEditor extends HyperCardFrame {
 
     private PartModel model;

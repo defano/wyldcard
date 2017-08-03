@@ -23,7 +23,7 @@ import java.awt.*;
  * Implements a table of model associated with a partSpecifier object. Provides methods for defining, getting and
  * setting model, as well as notifying listeners of changes.
  */
-public abstract class PartModel extends PropertiesModel {
+public class PartModel extends PropertiesModel {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -41,21 +41,14 @@ public abstract class PartModel extends PropertiesModel {
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOC = "loc";
     public static final String PROP_LOCATION = "location";
+    public static final String PROP_CONTENTS = "contents";
+    public static final String PROP_SCRIPTTEXT = "scripttext";
 
-    private static final String PROP_SCRIPTTEXT = "scripttext";
-
-    private final PartType type;
-    private final Owner owner;
+    private PartType type;
+    private Owner owner;
     private transient Script script = new Script();
 
-    /**
-     * Gets the name of the property that is read or written when a value is placed into the part (i.e., 'the contents'
-     * or 'the text')
-     * @return The name of the value property
-     */
-    public abstract String getValueProperty();
-
-    protected PartModel(PartType type, Owner owner) {
+    public PartModel(PartType type, Owner owner) {
         super();
 
         this.type = type;
@@ -248,4 +241,14 @@ public abstract class PartModel extends PropertiesModel {
         return Interpreter.executeFunction(new PartIdSpecifier(getOwner(), getType(), getId()), getScript().getFunction(function), arguments);
     }
 
+    /**
+     * Gets the name of the property that is read or written when a value is placed into the part i.e., ('put "Hello"
+     * into card field 1'). Typically the 'contents' property, but other parts (like fields) may override to provide
+     * a different property (e.g., fields use the 'text' property as their contents).
+     *
+     * @return The name of the part's value property
+     */
+    public String getValueProperty() {
+        return PROP_CONTENTS;
+    }
 }

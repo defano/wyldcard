@@ -1,6 +1,5 @@
 package com.defano.hypercard.parts.util;
 
-import com.defano.jmonet.canvas.AbstractPaintCanvas;
 import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;

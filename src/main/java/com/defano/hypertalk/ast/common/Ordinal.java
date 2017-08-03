@@ -25,7 +25,7 @@ public enum Ordinal {
     // Any negative value is interpreter to mean middle
     MIDDLE(-1);
     
-    private int value;
+    private final int value;
     
     Ordinal(int v) {
         value = v;

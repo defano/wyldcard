@@ -88,9 +88,11 @@ public class ChunkUtils {
 
             // If necessary, add as many lines/items as are needed to assure the value can be mutated
             String separator = getSeparatorForChunkType(chunkType);
+            StringBuilder mutableStringBuilder = new StringBuilder(mutableString);
             for (int index = chunksInContainer; index < chunkNumber; index++) {
-                mutableString = mutableString + separator;
+                mutableStringBuilder.append(separator);
             }
+            mutableString = mutableStringBuilder.toString();
         }
 
         if (chunkType.isRange()) {

@@ -43,7 +43,7 @@ public enum BinaryOperator {
     IS_A("is a", "is an"),
     IS_NOT_A("is not a", "is not an");
 
-    private List<String> tokens;
+    private final List<String> tokens;
 
     BinaryOperator(String... operatorTokens) {
         tokens = Arrays.asList(operatorTokens);

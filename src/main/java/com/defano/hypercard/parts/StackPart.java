@@ -25,17 +25,16 @@ import java.util.List;
 public class StackPart implements PropertyChangeObserver, PartContainer {
 
     private StackModel stackModel;
-    private List<StackObserver> observers = new ArrayList<>();
+    private final List<StackObserver> observers = new ArrayList<>();
     private CardPart currentCard;
-    private Provider<Integer> cardCountProvider = new Provider<>(0);
-    private Provider<CardPart> cardClipboardProvider = new Provider<>();
+    private final Provider<Integer> cardCountProvider = new Provider<>(0);
+    private final Provider<CardPart> cardClipboardProvider = new Provider<>();
 
     private StackPart() {}
 
     public static StackPart fromStackModel(StackModel model) {
         StackPart stackPart = new StackPart();
         stackPart.stackModel = model;
-
         return stackPart;
     }
 
@@ -301,13 +300,24 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         observers.add(observer);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<PartModel> getPartsInDisplayOrder() {
-        ArrayList<PartModel> cards = new ArrayList<>();
-        cards.addAll(stackModel.getCardModels());
-        return cards;
+        ArrayList<PartModel> parts = new ArrayList<>();
+
+        for (CardModel thisCard : stackModel.getCardModels()) {
+            parts.add(thisCard);
+
+            BackgroundModel thisBackground = getStackModel().getBackground(thisCard.getBackgroundId());
+            if (!parts.contains(thisBackground)) {
+                parts.add(thisBackground);
+            }
+        }
+
+        return parts;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         switch (property) {

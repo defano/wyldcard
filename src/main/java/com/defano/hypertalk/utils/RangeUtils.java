@@ -117,6 +117,7 @@ public class RangeUtils {
             return getRange(value, c.type, startVal.integerValue());
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void advanceToMatch(Matcher matcher, int index) {
         while (index-- >= 0) {
             matcher.find();

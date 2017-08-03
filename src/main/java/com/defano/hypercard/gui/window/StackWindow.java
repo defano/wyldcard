@@ -32,8 +32,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
 
     private StackPart stack;
     private CardPart card;
-    private JLayeredPane cardPanel = new JLayeredPane();
-    private ScreenCurtain screenCurtain = new ScreenCurtain();
+    private final JLayeredPane cardPanel = new JLayeredPane();
+    private final ScreenCurtain screenCurtain = new ScreenCurtain();
 
     public StackWindow() {
         cardPanel.setLayout(new BorderLayout(0, 0));

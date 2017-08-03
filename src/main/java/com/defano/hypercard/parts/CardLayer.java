@@ -19,7 +19,7 @@ public enum CardLayer {
         this.friendlyName = friendlyName;
     }
 
-    public Owner asParentContainer() {
+    public Owner asOwner() {
         return (this == BACKGROUND_GRAPHICS || this == BACKGROUND_PARTS) ? Owner.BACKGROUND : Owner.CARD;
     }
 

@@ -8,20 +8,18 @@
 
 package com.defano.hypercard.parts.model;
 
+import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class StackModel extends PropertiesModel {
+public class StackModel extends PartModel {
 
-    private final static StackModel instance = new StackModel();
-
-    public final static String PROP_NAME = "name";
-    public final static String PROP_WIDTH = "width";
-    public final static String PROP_HEIGHT = "height";
-
+    // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
     private int nextCardId = 0;
     private int nextBackgroundId = 0;
@@ -30,24 +28,25 @@ public class StackModel extends PropertiesModel {
     private final List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
 
-    public static StackModel getInstance() {
-        return instance;
-    }
-
-    private StackModel() {
-        super();
+    private StackModel(String stackName, Dimension dimension) {
+        super(PartType.STACK, Owner.HYPERCARD);
 
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.backStack = new Stack<>();
 
-        defineProperty(PROP_NAME, new Value("Untitled"), false);
-        defineProperty(PROP_WIDTH, new Value(640), false);
-        defineProperty(PROP_HEIGHT, new Value(480), false);
+        defineProperty(PROP_NAME, new Value(stackName), false);
+        defineProperty(PROP_WIDTH, new Value(dimension.width), false);
+        defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
+
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getStackWindow().getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getStackWindow().getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getStackWindow().getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getStackWindow().getWindow().setLocation(WindowManager.getStackWindow().getWindow().getX(), value.integerValue()));
     }
 
-    public static StackModel newStackModel(String name) {
-        StackModel stack = new StackModel();
+    public static StackModel newStackModel(String stackName) {
+        StackModel stack = new StackModel(stackName, new Dimension(640, 480));
         stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel()));
         return stack;
     }
@@ -67,7 +66,7 @@ public class StackModel extends PropertiesModel {
 
     private int newBackgroundModel() {
         int newBackgroundId = getNextBackgroundId();
-        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground());
+        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground(newBackgroundId));
         return newBackgroundId;
     }
 

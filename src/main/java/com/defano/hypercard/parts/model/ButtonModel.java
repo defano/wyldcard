@@ -26,7 +26,6 @@ public class ButtonModel extends CardLayerPartModel {
     public static final String PROP_HILITE = "hilite";
     public static final String PROP_AUTOHILIGHT = "autohilite";
     public static final String PROP_SHOWNAME = "showname";
-    public static final String PROP_CONTENTS = "contents";
 
     private ButtonModel(Owner owner) {
         super(PartType.BUTTON, owner);
@@ -47,14 +46,8 @@ public class ButtonModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_FAMILY, new Value(), false);
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
-        partModel.defineProperty(PROP_CONTENTS, new Value(), false);
 
         return partModel;
-    }
-
-    @Override
-    public String getValueProperty() {
-        return ButtonModel.PROP_CONTENTS;
     }
 
 }

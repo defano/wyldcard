@@ -18,7 +18,6 @@ import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.containers.Container;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 

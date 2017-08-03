@@ -23,27 +23,38 @@ import java.util.Collection;
  */
 public class BackgroundModel extends PartModel {
 
+    public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";
     public final static String PROP_CANTDELETE = "cantdelete";
-    public final static String PROP_CONTENTS = "contents";
 
     private byte[] backgroundImage;
-    private Collection<ButtonModel> buttonModels;
-    private Collection<FieldModel> fieldModels;
+    private final Collection<ButtonModel> buttonModels;
+    private final Collection<FieldModel> fieldModels;
 
-    private BackgroundModel() {
+    private BackgroundModel(int backgroundId) {
         super(PartType.BACKGROUND, Owner.STACK);
 
         buttonModels = new ArrayList<>();
         fieldModels = new ArrayList<>();
 
+        defineProperty(PROP_ID, new Value(backgroundId), true);
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
-        defineProperty(PROP_CONTENTS, new Value(""), false);
+
+        // When no name of card is provided, returns 'background id xxx'
+        defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
+            Value raw = model.getRawProperty(propertyName);
+            if (raw == null || raw.isEmpty()) {
+                return new Value("background id " + model.getKnownProperty(PROP_ID));
+            } else {
+                return raw;
+            }
+        });
+
     }
 
-    public static BackgroundModel emptyBackground() {
-        return new BackgroundModel();
+    public static BackgroundModel emptyBackground(int backgroundId) {
+        return new BackgroundModel(backgroundId);
     }
 
     public Collection<PartModel> getPartModels() {
@@ -68,10 +79,5 @@ public class BackgroundModel extends PartModel {
 
     public BufferedImage getBackgroundImage() {
         return Serializer.deserializeImage(this.backgroundImage);
-    }
-
-    @Override
-    public String getValueProperty() {
-        return null;
     }
 }

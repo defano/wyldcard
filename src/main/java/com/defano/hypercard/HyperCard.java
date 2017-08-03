@@ -29,8 +29,8 @@ import java.util.concurrent.Executors;
 public class HyperCard {
 
     private static HyperCard instance;
-    private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
-    private StackPart stackPart;
+    private static final ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
+    private final StackPart stackPart;
 
     public static void main(String argv[]) {
         // Display the frame's menu as the Mac OS menubar

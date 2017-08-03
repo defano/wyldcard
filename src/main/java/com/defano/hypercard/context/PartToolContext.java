@@ -18,7 +18,7 @@ public class PartToolContext {
 
     private final static PartToolContext instance = new PartToolContext();
 
-    private Provider<ToolEditablePart> selectedPart = new Provider<>(null);
+    private final Provider<ToolEditablePart> selectedPart = new Provider<>(null);
 
     private PartToolContext() {
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> deselectAllParts());

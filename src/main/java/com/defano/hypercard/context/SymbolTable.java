@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class SymbolTable {
 
-    private Map<String, Value> table;
+    private final Map<String, Value> table;
     
     public SymbolTable () {
         table = new HashMap<>();

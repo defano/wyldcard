@@ -294,6 +294,8 @@ part                : ('background' | 'bkgnd')? 'field' factor        # bkgndFie
                     | ('card' | 'cd') 'part' factor                   # cardPartNumberPart
                     | ('background' | 'bkgnd') 'part' factor          # bkgndPartNumberPart
                     | 'me'                                            # mePart
+                    | 'this' ('card' | 'cd')                          # thisCardPart
+                    | 'this' ('background' | 'bkgnd')                 # thisBkgndPart
                     | position ('card' | 'cd')                        # positionCardPart
                     | position ('background' | 'bkgnd')               # positionBkgndPart
                     | ordinal ('card' | 'cd')                         # ordinalCardPart

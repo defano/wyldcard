@@ -10,7 +10,6 @@ package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.parts.model.StackModel;
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.print.PrintActionDelegate;
 import com.defano.hypercard.runtime.print.PrintCardAction;
 import com.defano.hypercard.runtime.print.PrintStackAction;
 

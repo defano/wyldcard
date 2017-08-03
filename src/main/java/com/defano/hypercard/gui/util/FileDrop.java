@@ -64,7 +64,7 @@ public class FileDrop
     private static Boolean supportsDnD;
     
     // Default border color
-    private static java.awt.Color defaultBorderColor = new java.awt.Color( 0f, 0f, 1f, 0.25f );
+    private static final java.awt.Color defaultBorderColor = new java.awt.Color( 0f, 0f, 1f, 0.25f );
     
     /**
      * Constructs a {@link FileDrop} with a default light-blue border
@@ -445,7 +445,7 @@ public class FileDrop
     
     
      // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
-     private static String ZERO_CHAR_STRING = "" + (char)0;
+     private static final String ZERO_CHAR_STRING = "" + (char)0;
      private static File[] createFileArray(BufferedReader bReader, PrintStream out)
      {
         try { 
@@ -656,7 +656,7 @@ public class FileDrop
      */
     public static class Event extends java.util.EventObject {
 
-        private java.io.File[] files;
+        private final java.io.File[] files;
 
         /**
          * Constructs an {@link Event} with the array

@@ -19,8 +19,8 @@ import com.defano.hypertalk.ast.expressions.Expression;
 
 public class RepeatDuration extends RepeatSpecifier {
 
-    public static boolean POLARITY_WHILE = true;
-    public static boolean POLARITY_UNTIL = false;
+    public static final boolean POLARITY_WHILE = true;
+    public static final boolean POLARITY_UNTIL = false;
     
     public final boolean polarity;
     public final Expression condition;

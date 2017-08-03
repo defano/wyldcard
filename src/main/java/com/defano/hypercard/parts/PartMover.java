@@ -38,8 +38,8 @@ public class PartMover {
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    private WeakReference<CardLayerPart> part;
-    private WeakReference<Component> within;
+    private final WeakReference<CardLayerPart> part;
+    private final WeakReference<Component> within;
     private boolean done = true;
     private Point mouseLocInPart;
 

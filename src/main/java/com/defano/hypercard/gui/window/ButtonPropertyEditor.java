@@ -51,6 +51,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     private JLabel idLabelValue;
     private JButton textStyle;
 
+    @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
             dispose();
@@ -130,14 +131,10 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     }
 
     private void showContentsEditor() {
-        String contents = PartContentsEditor.editContents(model.getKnownProperty(ButtonModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(model.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
         if (contents != null) {
-            model.setKnownProperty(ButtonModel.PROP_CONTENTS, new Value(contents));
+            model.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));
         }
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 
     /**

@@ -36,7 +36,7 @@ public class Value implements Comparable<Value> {
     // Cache for known value types
     private Long longValue;
     private Double floatValue;
-    private Boolean booleanValue;
+    private final Boolean booleanValue;
 
     public static Value ofLines(List<Value> lines) {
         StringBuilder builder = new StringBuilder();
@@ -585,9 +585,9 @@ public class Value implements Comparable<Value> {
     @Override
     public int compareTo(Value o) {
         if (this.isInteger() && o.isInteger()) {
-            return new Integer(this.integerValue()).compareTo(new Integer(o.integerValue()));
+            return Integer.compare(this.integerValue(), o.integerValue());
         } else if (this.isFloat() && o.isFloat()) {
-            return new Double(this.doubleValue()).compareTo(new Double(o.doubleValue()));
+            return Double.compare(this.doubleValue(), o.doubleValue());
         } else {
             return this.stringValue().toLowerCase().trim().compareTo(o.stringValue().toLowerCase().trim());
         }

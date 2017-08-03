@@ -9,7 +9,6 @@
 package com.defano.hypercard.parts.buttons.styles;
 
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.borders.DropShadowBorder;
 
 import java.awt.*;
 

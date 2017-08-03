@@ -11,7 +11,6 @@ package com.defano.hypercard.parts.fields;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 
 import javax.swing.*;
-import javax.swing.text.JTextComponent;
 
 public interface FieldComponent extends PropertyChangeObserver {
 

@@ -16,7 +16,6 @@
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.context.GlobalContext;
-import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.ExpressionList;

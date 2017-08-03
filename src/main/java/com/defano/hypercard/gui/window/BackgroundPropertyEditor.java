@@ -3,6 +3,7 @@ package com.defano.hypercard.gui.window;
 import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.model.BackgroundModel;
+import com.defano.hypercard.parts.model.CardModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
@@ -47,8 +48,13 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
 
         int backgroundId = cardPart.getCardModel().getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
-        backgroundName.setText(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
         cantDeleteBkgndCheckBox.setSelected(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+
+        // Don't display "default" name ('background id xxx')
+        Value bkgndNameValue = cardPart.getCardBackground().getRawProperty(BackgroundModel.PROP_NAME);
+        if (bkgndNameValue != null && !bkgndNameValue.isEmpty()) {
+            backgroundName.setText(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
+        }
 
         long cardCount = cardPart.getStackModel().getCardCountInBackground(backgroundId);
         long fieldCount = cardPart.getPartCount(PartType.FIELD, Owner.BACKGROUND);
