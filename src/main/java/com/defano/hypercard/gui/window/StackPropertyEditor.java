@@ -4,6 +4,7 @@ import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.parts.model.StackModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,6 @@ public class StackPropertyEditor extends HyperCardDialog {
     private JTextField stackName;
     private JLabel cardCountLabel;
     private JLabel backgroundCountLabel;
-    private JButton cancelButton;
     private JButton saveButton;
     private JButton editScriptButton;
     private JButton resizeButton;
@@ -25,8 +25,6 @@ public class StackPropertyEditor extends HyperCardDialog {
             updateProperties();
             dispose();
         });
-
-        cancelButton.addActionListener(e -> dispose());
 
         resizeButton.addActionListener(e -> model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel())));
     }
@@ -120,8 +118,7 @@ public class StackPropertyEditor extends HyperCardDialog {
         saveButton = new JButton();
         saveButton.setText("Save");
         propertiesPanel.add(saveButton, new GridConstraints(7, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cancelButton = new JButton();
-        cancelButton.setText("Cancel");
-        propertiesPanel.add(cancelButton, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        propertiesPanel.add(spacer1, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 }

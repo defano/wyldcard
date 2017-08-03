@@ -40,6 +40,7 @@ public class BackgroundModel extends PartModel {
         defineProperty(PROP_ID, new Value(backgroundId), true);
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
+        defineProperty(PROP_CONTENTS, new Value(""), false);
 
         // When no name of card is provided, returns 'background id xxx'
         defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {

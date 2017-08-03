@@ -50,6 +50,7 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.RECTANGLE.getName()), false);
         partModel.defineProperty(PROP_TEXT, new Value(""), false);
         partModel.defineProperty(PROP_TEXTALIGN, new Value("left"), false);
+        partModel.defineProperty(PROP_CONTENTS, new Value(""), false);
 
         return partModel;
     }

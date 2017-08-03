@@ -46,6 +46,7 @@ public class ButtonModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_FAMILY, new Value(), false);
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
+        partModel.defineProperty(PROP_CONTENTS, new Value(""), false);
 
         return partModel;
     }

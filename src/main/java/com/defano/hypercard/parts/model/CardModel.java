@@ -51,6 +51,7 @@ public class CardModel extends PartModel {
         defineProperty(PROP_MARKED, new Value(false), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
         defineProperty(PROP_NAME, new Value(""), false);
+        defineProperty(PROP_CONTENTS, new Value(""), false);
 
         // When no name of card is provided, returns 'card id xxx'
         defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
