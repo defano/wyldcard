@@ -338,11 +338,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitDestinationType(HyperTalkParser.DestinationTypeContext ctx) {
-        return DestinationType.CARD;
-    }
-
-    @Override
     public Object visitNextPosition(HyperTalkParser.NextPositionContext ctx) {
         return Position.NEXT;
     }
@@ -370,6 +365,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCardPosition(HyperTalkParser.CardPositionContext ctx) {
         return new Destination((Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
+    }
+
+    @Override
+    public Object visitCardDestinationType(HyperTalkParser.CardDestinationTypeContext ctx) {
+        return DestinationType.CARD;
+    }
+
+    @Override
+    public Object visitBkgndDestinationType(HyperTalkParser.BkgndDestinationTypeContext ctx) {
+        return DestinationType.BACKGROUND;
     }
 
     @Override

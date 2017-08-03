@@ -194,7 +194,8 @@ destination         : destinationType expression                    # cardNumber
                     | position destinationType                      # cardPosition
                     ;
 
-destinationType     : ('card' | 'cd')
+destinationType     : ('card' | 'cd')                               # cardDestinationType
+                    | ('background' | 'bkgnd')                      # bkgndDestinationType
                     ;
 
 ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
