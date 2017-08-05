@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.functions;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.common.Value;
 
@@ -24,6 +24,6 @@ public class ResultFunc extends Expression {
     public ResultFunc() {}
     
     public Value evaluate () {
-        return GlobalContext.getContext().getIt();
+        return ExecutionContext.getContext().getIt();
     }
 }

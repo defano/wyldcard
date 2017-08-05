@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
@@ -32,7 +32,7 @@ public class SendCmd extends Statement {
     
     public void execute () {
         try {
-            GlobalContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
+            ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
         } catch (Exception e) {
             HyperCard.getInstance().showErrorDialog(e);
         }

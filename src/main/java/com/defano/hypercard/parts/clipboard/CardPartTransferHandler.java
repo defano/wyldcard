@@ -4,6 +4,9 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.*;
+import com.defano.hypercard.parts.card.CardLayer;
+import com.defano.hypercard.parts.card.CardLayerPart;
+import com.defano.hypercard.parts.card.CardPart;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;

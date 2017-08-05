@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -30,6 +30,6 @@ public class ExpressionStatement extends Statement {
     
     public void execute () throws HtSemanticException {
         Value v = expression.evaluate();
-        GlobalContext.getContext().setIt(v);
+        ExecutionContext.getContext().setIt(v);
     }
 }

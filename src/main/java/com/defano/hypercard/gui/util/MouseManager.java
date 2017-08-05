@@ -9,7 +9,7 @@
 package com.defano.hypercard.gui.util;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.CardPart;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 

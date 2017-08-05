@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.clipboard;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.CardPart;
+import com.defano.hypercard.parts.card.CardPart;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

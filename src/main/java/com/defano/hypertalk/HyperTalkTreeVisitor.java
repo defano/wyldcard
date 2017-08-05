@@ -8,8 +8,8 @@
 
 package com.defano.hypertalk;
 
-import com.defano.hypercard.context.GlobalProperties;
-import com.defano.hypercard.parts.model.CardLayerPartModel;
+import com.defano.hypercard.context.HyperCardProperties;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.constructs.*;
@@ -665,12 +665,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitLockScreenCmdStmt(HyperTalkParser.LockScreenCmdStmtContext ctx) {
-        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(true));
+        return new SetPropertyCmd(HyperCardProperties.PROP_LOCKSCREEN, new Value(true));
     }
 
     @Override
     public Object visitUnlockScreenCmdStmt(HyperTalkParser.UnlockScreenCmdStmtContext ctx) {
-        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(false));
+        return new SetPropertyCmd(HyperCardProperties.PROP_LOCKSCREEN, new Value(false));
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.util;
 
-import com.defano.hypercard.parts.model.CardLayerPartModel;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 
 import java.util.Comparator;

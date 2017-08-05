@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.model.CardModel;
+import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.PartType;
@@ -17,7 +17,7 @@ public interface PartContainer {
 
     /**
      * Gets all parts in this container in the order that they appear or are displayed. For buttons and fields, this
-     * is their z-order; for cards or backgrounds, this is their order in the stack.
+     * is their z-order; for card or backgrounds, this is their order in the stack.
      *
      * @return The list of parts held by this container in their logical displayed order.
      */

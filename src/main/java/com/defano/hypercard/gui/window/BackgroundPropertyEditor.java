@@ -1,8 +1,8 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.model.BackgroundModel;
+import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Owner;
@@ -76,7 +76,7 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
         long fieldCount = cardPart.getPartCount(PartType.FIELD, Owner.BACKGROUND);
         long buttonCount = cardPart.getPartCount(PartType.BUTTON, Owner.BACKGROUND);
 
-        cardCountLabel.setText("Background shared by " + cardCount + " cards.");
+        cardCountLabel.setText("Background shared by " + cardCount + " card.");
         buttonCountLabel.setText("Contains " + buttonCount + " background buttons.");
         fieldCountLabel.setText("Contains " + fieldCount + " background fields.");
     }

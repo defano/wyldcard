@@ -2,8 +2,8 @@ package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.model.CardModel;
+import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Owner;

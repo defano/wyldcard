@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
@@ -35,13 +35,13 @@ public class ContainerProperty extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value propertyValue = GlobalContext.getContext().get(getPartSpecifier()).getProperty(getPropertyName());
+        Value propertyValue = ExecutionContext.getContext().get(getPartSpecifier()).getProperty(getPropertyName());
         return chunkOf(propertyValue, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), preposition, chunk, value);
+        ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), preposition, chunk, value);
     }
 
     public PartSpecifier getPartSpecifier() throws HtSemanticException {

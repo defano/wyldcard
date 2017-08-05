@@ -17,6 +17,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;

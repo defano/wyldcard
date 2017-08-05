@@ -10,8 +10,8 @@ package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.jmonet.model.Provider;
-import com.defano.hypercard.parts.ButtonPart;
-import com.defano.hypercard.parts.FieldPart;
+import com.defano.hypercard.parts.button.ButtonPart;
+import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 public class PartToolContext {

@@ -16,7 +16,7 @@
 
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
@@ -46,12 +46,12 @@ public class ContainerVariable extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = GlobalContext.getContext().get(symbol);
+        Value value = ExecutionContext.getContext().get(symbol);
         return chunkOf(value, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        GlobalContext.getContext().put(value, preposition, this);
+        ExecutionContext.getContext().put(value, preposition, this);
     }
 }

@@ -1,7 +1,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.model.StackModel;
+import com.defano.hypercard.parts.stack.StackModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -39,7 +39,7 @@ public class StackPropertyEditor extends HyperCardDialog {
         model = (StackModel) data;
 
         stackName.setText(model.getStackName());
-        cardCountLabel.setText("Stack contains " + model.getCardCount() + " cards.");
+        cardCountLabel.setText("Stack contains " + model.getCardCount() + " card.");
         backgroundCountLabel.setText("Stack contains " + model.getBackgroundCount() + " backgrounds.");
     }
 

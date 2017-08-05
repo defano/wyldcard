@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PropertySpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -33,12 +33,12 @@ public class PropertyExp extends Expression {
 
             // Getting a HyperCard property
             if (propertySpecifier.isGlobalPropertySpecifier()) {
-                return GlobalContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
+                return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
             }
 
             // Getting the property of a part
             else {
-                return GlobalContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
+                return ExecutionContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
             }
         } catch (Exception e) {
             throw new HtSemanticException("The property '" + propertySpecifier.property + "' does not exist on this part.", e);

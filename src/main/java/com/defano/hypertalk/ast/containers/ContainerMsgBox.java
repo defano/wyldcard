@@ -16,7 +16,7 @@
 
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
@@ -50,7 +50,7 @@ public class ContainerMsgBox extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        GlobalContext.getContext().put(value, preposition, this);
+        ExecutionContext.getContext().put(value, preposition, this);
         SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setShown(true));
     }
 

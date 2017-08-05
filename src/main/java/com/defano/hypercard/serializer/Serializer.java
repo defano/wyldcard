@@ -36,7 +36,7 @@ public class Serializer {
         return (T) deserialize(serialize(t), t.getClass());
     }
 
-    public static String serialize (Object object) {
+    private static String serialize(Object object) {
         return gson.toJson(object);
     }
 
@@ -44,7 +44,7 @@ public class Serializer {
         Files.write(file.toPath(), serialize(object).getBytes(StandardCharsets.UTF_8));
     }
 
-    public static <T> T deserialize (String json, Class<T> clazz) {
+    private static <T> T deserialize(String json, Class<T> clazz) {
         return gson.fromJson(json, clazz);
     }
 
@@ -98,7 +98,9 @@ public class Serializer {
         }
     }
 
-
+    /**
+     * Used to serialize/deserialize a BufferedImage into a Base64-encoded array of bytes.
+     */
     private static class ImageSerializer implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
         public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             return Base64.getDecoder().decode(json.getAsString());
@@ -108,7 +110,5 @@ public class Serializer {
             return new JsonPrimitive(Base64.getEncoder().encodeToString(src));
         }
     }
-
-
 
 }

@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.containers.ContainerVariable;
 import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.ast.containers.PropertySpecifier;
@@ -37,12 +37,12 @@ public class SetCmd extends Statement {
             
             // Setting the property of HyperCard
             if (propertySpec.isGlobalPropertySpecifier()) {
-                GlobalContext.getContext().getGlobalProperties().setProperty(propertySpec.property, expression.evaluate());
+                ExecutionContext.getContext().getGlobalProperties().setProperty(propertySpec.property, expression.evaluate());
             }
 
             // Setting the property of a part
             else {
-                GlobalContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
+                ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
             }
 
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class SetCmd extends Statement {
                 throw new HtSemanticException("Cannot set the '" + propertySpec.property + "' of this part.", e);
             } else {
                 // When all else fails, set the value of a container
-                GlobalContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));
+                ExecutionContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));
             }
         }
     }

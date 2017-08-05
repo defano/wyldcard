@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -37,7 +37,7 @@ public class GetCmd extends Statement {
     
     public void execute () throws HtSemanticException {
         if (expression != null) {
-            GlobalContext.getContext().setIt(expression.evaluate());
+            ExecutionContext.getContext().setIt(expression.evaluate());
         }
     }
 }

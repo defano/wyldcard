@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.SortDirection;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.Preposition;
@@ -89,10 +89,10 @@ public class SortCmd extends Statement {
         @Override
         public int compare(Value o1, Value o2) {
             try {
-                GlobalContext.getContext().set("each", o1);
+                ExecutionContext.getContext().set("each", o1);
                 Value o1Evaluated = expression.evaluate();
 
-                GlobalContext.getContext().set("each", o2);
+                ExecutionContext.getContext().set("each", o2);
                 Value o2Evaluated = expression.evaluate();
 
                 return o1Evaluated.compareTo(o2Evaluated);

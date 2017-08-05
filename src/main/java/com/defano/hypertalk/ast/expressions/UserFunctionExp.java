@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.ExpressionList;
@@ -36,8 +36,8 @@ public class UserFunctionExp extends Expression {
     public Value evaluate () throws HtSemanticException {
         
         try {
-            PartSpecifier ps = GlobalContext.getContext().getMe();
-            PartModel part = GlobalContext.getContext().get(ps);
+            PartSpecifier ps = ExecutionContext.getContext().getMe();
+            PartModel part = ExecutionContext.getContext().get(ps);
             
             arguments.evaluate();
             return part.executeUserFunction(function, arguments);

@@ -9,7 +9,7 @@
 package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.clipboard.CardActionListener;
 import com.defano.hypercard.runtime.WindowManager;
@@ -35,12 +35,12 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().undo())
+                .withAction(e -> ExecutionContext.getContext().getCard().getCanvas().undo())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> GlobalContext.getContext().getCard().getCanvas().redo())
+                .withAction(e -> ExecutionContext.getContext().getCard().getCanvas().redo())
                 .build(this);
 
         this.addSeparator();

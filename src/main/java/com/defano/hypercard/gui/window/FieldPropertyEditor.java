@@ -9,10 +9,10 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.fields.FieldStyle;
-import com.defano.hypercard.parts.model.CardLayerPartModel;
+import com.defano.hypercard.parts.field.FieldStyle;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.model.FieldModel;
+import com.defano.hypercard.parts.field.FieldModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;

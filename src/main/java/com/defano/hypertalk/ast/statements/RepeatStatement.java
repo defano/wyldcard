@@ -16,7 +16,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
@@ -100,7 +100,7 @@ public class RepeatStatement extends Statement {
                     throw new HtSemanticException("Start of repeat range is greater than end: " + from + " > " + to);
 
                 for (int index = from; index <= to; index++) {
-                    GlobalContext.getContext().set(symbol, new Value(index));
+                    ExecutionContext.getContext().set(symbol, new Value(index));
                     statements.execute();
                     rest();
                 }
@@ -111,7 +111,7 @@ public class RepeatStatement extends Statement {
                     throw new HtSemanticException("End of repeat range is less than start: " + to + " > " + from);
 
                 for (int index = from; index >= to; index--) {
-                    GlobalContext.getContext().set(symbol, new Value(index));
+                    ExecutionContext.getContext().set(symbol, new Value(index));
                     statements.execute();
                     rest();
                 }

@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.runtime;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
@@ -50,7 +50,7 @@ public class Interpreter {
         idleTimeExecutor.scheduleAtFixedRate(() -> {
             int pendingHandlers = scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
             if (pendingHandlers == 0) {
-                GlobalContext.getContext().getGlobalProperties().resetProperties();
+                ExecutionContext.getContext().getGlobalProperties().resetProperties();
             }
 
         }, 0, 200, TimeUnit.MILLISECONDS);

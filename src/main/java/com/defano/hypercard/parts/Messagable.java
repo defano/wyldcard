@@ -3,6 +3,7 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.runtime.CommandCompletionHandler;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.containers.PartIdSpecifier;

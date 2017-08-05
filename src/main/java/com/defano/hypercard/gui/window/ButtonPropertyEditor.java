@@ -10,12 +10,12 @@ package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.model.CardLayerPartModel;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.defano.hypercard.parts.buttons.ButtonStyle;
-import com.defano.hypercard.parts.model.ButtonModel;
+import com.defano.hypercard.parts.button.ButtonStyle;
+import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
