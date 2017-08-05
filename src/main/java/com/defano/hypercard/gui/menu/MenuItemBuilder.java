@@ -14,12 +14,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuItemBuilder {
 
     private final JMenuItem item;
     private ImmutableProvider<Boolean> checkmarkProvider;
     private ImmutableProvider<Boolean> disabledProvider;
+    private List<ActionListener> actionListeners = new ArrayList<>();
 
     private MenuItemBuilder(JMenuItem item) {
         this.item = item;
@@ -46,7 +49,7 @@ public class MenuItemBuilder {
     }
 
     public MenuItemBuilder withAction (ActionListener action) {
-        this.item.addActionListener(action);
+        this.actionListeners.add(action);
         return this;
     }
 
@@ -108,17 +111,16 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public MenuItemBuilder withActionListener(ActionListener actionListener) {
-        this.item.addActionListener(actionListener);
-        return this;
-    }
-
     public MenuItemBuilder withActionCommand(String actionCommand) {
         this.item.setActionCommand(actionCommand);
         return this;
     }
 
     public JMenuItem build (JMenuItem intoMenu) {
+
+        if (actionListeners.size() > 0) {
+            this.item.addActionListener(new DelegatedActionListener(intoMenu.getText(), this.item.getText(), actionListeners));
+        }
 
         if (checkmarkProvider != null) {
             checkmarkProvider.addObserver((o, newValue) -> item.setSelected((boolean) newValue));

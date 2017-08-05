@@ -47,24 +47,24 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofAction(new DefaultEditorKit.CutAction())
                 .named("Cut")
-                .withActionListener(canvasActionListener)
-                .withActionListener(cardActionListener)
+                .withAction(canvasActionListener)
+                .withAction(cardActionListener)
                 .withActionCommand((String) TransferHandler.getCutAction().getValue(Action.NAME))
                 .withShortcut('X')
                 .build(this);
 
         MenuItemBuilder.ofAction(new DefaultEditorKit.CopyAction())
                 .named("Copy")
-                .withActionListener(canvasActionListener)
-                .withActionListener(cardActionListener)
+                .withAction(canvasActionListener)
+                .withAction(cardActionListener)
                 .withActionCommand((String) TransferHandler.getCopyAction().getValue(Action.NAME))
                 .withShortcut('C')
                 .build(this);
 
         MenuItemBuilder.ofAction(new DefaultEditorKit.PasteAction())
                 .named("Paste")
-                .withActionListener(canvasActionListener)
-                .withActionListener(cardActionListener)
+                .withAction(canvasActionListener)
+                .withAction(cardActionListener)
                 .withActionCommand((String) TransferHandler.getPasteAction().getValue(Action.NAME))
                 .withShortcut('V')
                 .build(this);

@@ -165,7 +165,7 @@ In addition to `mouseUp`, HyperTalk Java automatically sends the following messa
  `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
- `keyDown`          | Sent when a key is typed over a focused part
+ `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
  `arrowKey`         | Sent when an arrow key is pressed
  `commandKeyDown`   | Sent when the command key (the `meta` key, on non-macOS systems) is pressed
  `controlKey`       | Sent when the control key is pressed
