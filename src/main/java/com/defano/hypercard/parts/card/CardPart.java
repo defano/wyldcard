@@ -24,7 +24,9 @@ import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.SystemMessage;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
@@ -40,6 +42,10 @@ import com.defano.jmonet.tools.base.PaintTool;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +58,7 @@ import java.util.Observer;
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
  */
-public class CardPart extends CardLayeredPane implements Part, LayeredPartContainer, CanvasCommitObserver, CanvasTransferDelegate {
+public class CardPart extends CardLayeredPane implements Part, LayeredPartContainer, CanvasCommitObserver, CanvasTransferDelegate, MouseListener, KeyListener {
 
     private CardModel cardModel;
     private StackModel stackModel;
@@ -401,6 +407,9 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         foregroundScaleObserver = null;
         backgroundScaleObserver = null;
 
+        getForegroundCanvas().getSurface().removeMouseListener(this);
+        getForegroundCanvas().getSurface().removeKeyListener(this);
+
         super.dispose();
     }
 
@@ -408,6 +417,9 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         ToolsContext.getInstance().isEditingBackgroundProvider().addObserver(editingBackgroundObserver);
         getForegroundCanvas().getScaleProvider().addObserver(foregroundScaleObserver);
         getBackgroundCanvas().getScaleProvider().addObserver(backgroundScaleObserver);
+
+        getForegroundCanvas().getSurface().addMouseListener(this);
+        getForegroundCanvas().getSurface().addKeyListener(this);
     }
 
     /**
@@ -584,6 +596,51 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
             partModels.add(thisField.getPartModel());
         }
         return partModels;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            getPartModel().sendMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        getPartModel().sendMessage(SystemMessage.MOUSE_DOWN.messageName);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        getPartModel().sendMessage(SystemMessage.MOUSE_UP.messageName);
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        getPartModel().sendMessage(SystemMessage.MOUSE_ENTER.messageName);
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        getPartModel().sendMessage(SystemMessage.MOUSE_LEAVE.messageName);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        getPartModel().sendAndConsume(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        SystemMessage command = SystemMessage.fromKeyEvent(e, false);
+        if (command != null) {
+            getPartModel().sendAndConsume(command.messageName, new ExpressionList(), e);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // Nothing to do
     }
 
     private class BackgroundScaleObserver implements Observer {
