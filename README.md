@@ -15,8 +15,8 @@ Apple called it "programming for the rest of us."
 HyperTalk Java is attempt to recreate HyperCard's functionality in Java. It presently supports these features:
 
 * Create, save and open stacks of cards containing graphics, buttons and text fields. Cards support a foreground and background layer; buttons come in a variety of styles similar to HyperCard's (including radio buttons, checkboxes and combo-box menus); text fields can contain rich (formatted) text.
-* Buttons, fields, cards, background and stacks are scriptable in the HyperTalk language. Messages are trappable and follow HyperCard message passing order.
-* The full suite of original MacPaint-like tools, patterns, and 2D transforms (i.e., perspective, distort, rotate, invert); integrates with the system clipboard to provide cut-and-paste between applications.
+* Buttons, fields, cards, backgrounds and stacks are scriptable in the HyperTalk language. Messages are trappable and follow HyperCard's message passing order.
+* The full suite of paint tools, patterns, and 2D transforms (i.e., perspective, distort, rotate, invert); integrates with the system clipboard to provide cut-and-paste between applications.
 * Much of the HyperTalk language has been implemented including a variety of commands (`ask "How are you today?"`, `sort the lines of bkgnd field 13`); flow control constructs (`if`, `repeat`); part properties (`the width of me`, `the textFont of`); event messaging (`send doSomethingCool to card button id 1`); built-in and user-defined functions and script handlers (`the mouseLoc`, `the long date`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 * UI design maintains high fidelity to original software with window, palette and menu structure similar to HyperCard.
 
@@ -312,7 +312,7 @@ put "2 * 2 = 4" after card field "Math"
 All buttons and fields have these properties:
 
 Property      | Description
---------------|------------
+--------------|--------------------------
 `enabled`   | Returns or sets whether the button or field is enabled (a Boolean value). When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands.
 `script`      | Retrieves or replaces the current script of the part
 `id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
@@ -339,7 +339,7 @@ Property      | Description
 Buttons come in a variety of _styles_ which affect their look-and-feel as well as their behavior. This implementation supports the following button styles:
 
 Style                                    | Name          | Notes
------------------------------------------|---------------|------------
+-----------------------------------------|---------------|----------------------
 ![Default](doc/images/default.png)       | `default`     | A typical push button whose style matches that of the operating system.
 ![Default](doc/images/classic.png)       | `classic`     | A push button drawn in the style of Mac OS Classic.
 ![Default](doc/images/shadow.png)        | `shadow`      | A push button drawn with a drop-shadow decoration.
@@ -366,14 +366,14 @@ Property    | Description
 In this implementation, fields come in only two flavors: transparent and opaque:
 
 Style                                        | Name          | Notes
----------------------------------------------|---------------|------------
+---------------------------------------------|---------------|-------------------------
 ![Opaque](doc/images/opaque_field.png)       | `opaque`      | An opaque, etched-border editable text field that can be filled with formatted text.
 ![Default](doc/images/transparent_field.png) | `transparent` | Functionally identical to an opaque field, but whose background and border is transparent.
 
 A field has these properties:
 
 Property   | Description
------------|------------
+-----------|----------------------
 `text`     | Returns or sets the text contained within this field
 `visible`  | Returns or sets the visibility of the field (a Boolean value). When invisible, the field is not drawn on the screen and receives no messages from the UI.
 `lockText` | Returns or sets whether the text contained by the field can be edited by the user.
@@ -448,12 +448,12 @@ HyperTalk supports a standard suite of mathematical, text and logical operators,
 |------------| ----------------|-------------
 |1 (highest) | `( )`           | Grouping
 |2           | `-`             | Negation for numbers (unary)
-|            | `not`	      | Negation for boolean values (unary)
+|            | `not`	         | Negation for boolean values (unary)
 |3           | `^`             | Exponentiation for numbers
 |4           | `*`             | Multiplication for numbers
 |            | `/`             | Division for numbers
-|            | `div`	      | Division for numbers
-|            | `mod`	      | Modulus division for numbers; returns the remainder
+|            | `div`	         | Division for numbers
+|            | `mod`	         | Modulus division for numbers; returns the remainder
 |5           | `+`             | Addition for numbers
 |            | `-`             | Subtraction for numbers
 |6           | `&`, `&&`       | Text concatenation; `&&` adds a space between operands; `&` does not
@@ -467,7 +467,7 @@ HyperTalk supports a standard suite of mathematical, text and logical operators,
 |8           | `=`             | Equality comparison for text
 |            | `is`            | Equality comparison for text
 |            | `is not`        | Negative equality comparison for text
-|            | `<>`	      | Synonym for is not
+|            | `<>`	           | Synonym for is not
 |9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
 |            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
 |10          | `and`           | Logical AND for boolean values
@@ -476,7 +476,7 @@ HyperTalk supports a standard suite of mathematical, text and logical operators,
 HyperCard uses the following order (top to bottom) to evaluate factors and terms in an expression:
 
 Precedence   | Term                    | Description
--------------|------------------------|------------
+-------------|-------------------------|------------
 1 (highest)  | `empty`                 | Keyword expression representing the empty string (e.g., `if x is empty`)
 2            | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
 3            | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
@@ -521,31 +521,31 @@ end mouseUp
 
 When navigating between cards or unlocking the screen, a *visual effect* can be applied to animate the change. HyperTalk Java supports these animations:
 
-Visual Effect         | Description
-----------------------|-----------------------------------------
-`dissolve`            | Cross-dissolve from one card image to the next.
-`checkerboard`        | Destination card image appears in a 8x8 matrix.
-`venetian blinds`     | Destination appears in "louvered" horizontal stripes.
-`scroll left`         | Scroll from right to left.
-`scroll right`        | Scroll from left to right.
-`scroll up`           | Scroll from bottom to top.
-`scroll down`         | Scroll from top to bottom.
-`wipe left`           | Slides the resulting image over the source from right to left.
-`wipe right`          | Slides the resulting image over the source from left to right.
-`wipe up`             | Slides the resulting image over the source from bottom to top.
-`wipe down`           | Slides the resulting image over the source from top to bottom.
-`zoom open`           | The resulting card image expands over the source in a rectangle aperture.
-`zoom close`          | The resulting card collapses over the source in a rectangle aperture.
-`iris open`           | The resulting card image expands over the source in a circular aperture.
-`iris close`          | The resulting card image collapses over the source in a circular aperture.
-`barn door open`      | The source image is split horizontally and each side slides out left/right to expose the resulting image.
-`barn door close`     | The resulting image slides in the from the left/right obscuring the source image.
-`shrink to bottom`    | The source image shrinks downward exposing the destination.
-`shrink to top`       | The source image shrinks upward exposing the destination.
-`shrink to center`    | The source image shrinks from the center of the screen exposing the destination.
-`stretch from bottom` | The destination image grows from the bottom obscuring the source underneath it.
-`stretch from top`    | The destination image grows from the top obscuring the source underneath it.
-`stretch from center` | The destination image grows from the center of the screen obscuring the source underneath it.
+Visual Effect                                                  | Name                  | Description
+---------------------------------------------------------------|-----------------------|--------------------------
+![dissolve](doc/images/vfx/DISSOLVE.gif)                       | `dissolve`            | Cross-dissolve from one card image to the next.
+![checkerboard](doc/images/vfx/CHECKERBOARD.gif)               | `checkerboard`        | Destination card image appears in a 8x8 matrix.
+![venetian blinds](doc/images/vfx/VENETIAN_BLINDS.gif)         | `venetian blinds`     | Destination appears in "louvered" horizontal stripes.
+![scroll left](doc/images/vfx/SCROLL_LEFT.gif)                 | `scroll left`         | Scroll from right to left.
+![scroll right](doc/images/vfx/SCROLL_RIGHT.gif)               | `scroll right`        | Scroll from left to right.
+![scroll up](doc/images/vfx/SCROLL_UP.gif)                     | `scroll up`           | Scroll from bottom to top.
+![scroll down](doc/images/vfx/SCROLL_DOWN.gif)                 | `scroll down`         | Scroll from top to bottom.
+![wipe left](doc/images/vfx/WIPE_LEFT.gif)                     | `wipe left`           | Slides the resulting image over the source from right to left.
+![wipe right](doc/images/vfx/WIPE_RIGHT.gif)                   | `wipe right`          | Slides the resulting image over the source from left to right.
+![wipe up](doc/images/vfx/WIPE_UP.gif)                         | `wipe up`             | Slides the resulting image over the source from bottom to top.
+![wipe down](doc/images/vfx/WIPE_DOWN.gif)                     | `wipe down`           | Slides the resulting image over the source from top to bottom.
+![zoom open](doc/images/vfx/ZOOM_OUT.gif)                      | `zoom open`           | The resulting card image expands over the source in a rectangle aperture.
+![zoom close](doc/images/vfx/ZOOM_IN.gif)                      | `zoom close`          | The resulting card collapses over the source in a rectangle aperture.
+![iris open](doc/images/vfx/IRIS_OPEN.gif)                     | `iris open`           | The resulting card image expands over the source in a circular aperture.
+![iris close](doc/images/vfx/IRIS_CLOSE.gif)                   | `iris close`          | The resulting card image collapses over the source in a circular aperture.
+![barn door open](doc/images/vfx/BARN_DOOR_OPEN.gif)           | `barn door open`      | The source image is split horizontally and each side slides out left/right to expose the resulting image.
+![barn door close](doc/images/vfx/BARN_DOOR_CLOSE.gif)         | `barn door close`     | The resulting image slides in the from the left/right obscuring the source image.
+![shrink to bottom](doc/images/vfx/SHRINK_TO_BOTTOM.gif)       | `shrink to bottom`    | The source image shrinks downward exposing the destination.
+![shrink to top](doc/images/vfx/SHRINK_TO_TOP.gif)             | `shrink to top`       | The source image shrinks upward exposing the destination.
+![shrink to center](doc/images/vfx/SHRINK_TO_CENTER.gif)       | `shrink to center`    | The source image shrinks from the center of the screen exposing the destination.
+![stretch from bottom](doc/images/vfx/STRETCH_FROM_BOTTOM.gif) | `stretch from bottom` | The destination image grows from the bottom obscuring the source underneath it.
+![stretch from top](doc/images/vfx/STRETCH_FROM_TOP.gif)       | `stretch from top`    | The destination image grows from the top obscuring the source underneath it.
+![stretch from center](doc/images/vfx/STRETCH_FROM_CENTER.gif) | `stretch from center` | The destination image grows from the center of the screen obscuring the source underneath it.
 
 The syntax for specifying a visual effect is:
 
@@ -567,33 +567,33 @@ go to card 3 with visual effect iris open to black very fast
 
 This version of HyperCard implements the following set of commands:
 
-Command	      | Description
---------------|------------
-`put`         | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
-`get`	        | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	        | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
-`go`          | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
-`wait`        | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
-`answer`      | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
-`ask`	        | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
-`do`          | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
-`send`        | Send a message to a part on the current card; `send "mouseUp" to field id 3`
-`add`         | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
-`subtract`    | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
-`multiply`    | Multiplies a container by a value; `multiply x by 3`
-`divide`      | Divides a container by a value; `divide x by it`
-`choose`      | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
-`click`       | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
-`drag`        | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
-`type`        | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
-`sort`        | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items | lines} of] <container> [{{ascending | descending} | by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
-`hide`        | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
-`show`        | Makes a part visible on the card, for example `show button "My Button"`.
-`delete`      | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
-`enable`      | Enables a part on the card; sets the part's `enabled` property to true.
-`disable`     | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
-`lock screen` | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
-`unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` | Unlocks the screen while optionally applying a visual effect to the revealed changes. See the "Visual Effects" section of this document for details.
+Command	         | Description
+-----------------|------------------------------
+`put`            | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
+`get`	           | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
+`set`	           | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
+`go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
+`wait`           | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
+`answer`         | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
+`ask`   	        | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
+`do`             | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
+`send`           | Send a message to a part on the current card; `send "mouseUp" to field id 3`
+`add`            | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
+`subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
+`multiply`       | Multiplies a container by a value; `multiply x by 3`
+`divide`         | Divides a container by a value; `divide x by it`
+`choose`         | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
+`click`          | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
+`drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
+`type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
+`sort`           | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items,lines} of] <container> [{{ascending,descending} by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
+`hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
+`show`           | Makes a part visible on the card, for example `show button "My Button"`.
+`delete`         | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
+`enable`         | Enables a part on the card; sets the part's `enabled` property to true.
+`disable`        | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
+`lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
+`unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
 
 ## Functions
 
@@ -609,54 +609,51 @@ There are several equivalent syntax forms that can be used when invoking a built
 
 This implementation includes the following built-in functions:
 
-Function | Description
----------|-------------
-`average`	| Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
-`mouse` | Returns the current state of the left mouse button; either "up" or "down"
-`mouseLoc` | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
-`mouseH` | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
-`mouseV` | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
-`clickLoc` | Returns the coordinate of the last location the user clicked the mouse.
-`clickH` | Returns the x-coordinate of the last location the user clicked the mouse.
-`clickV` | Returns the y-coordinate of the last location the user clicked the mouse.
-`tool` | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "You chose the paint brush!"`
-`shiftKey` | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
-`commandKey` | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
-`optionKey` | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
-`number of words`, `number of chars`, `number of lines`, `number of items` | Returns the number of words, characters, items or lines in a given factor. For example: `the number of characters in "hello"` returns "5"
-`number of card parts`, `number of background parts` | Returns the number buttons or field present on the card or background layer, respectively. For example, `repeat with n=1 to the number of card parts`.
-`number of card buttons`, `number of card fields` | Returns the number of buttons present on the card layer.
-`number of background buttons`, `number of background fields` | Returns the number of buttons present on the background layer.
-`result` | Returns the current value of the implicit variable `it`, for example: `the result`
-`message`<br>`message box`<br>`message window` | Returns the contents of the message box. For example: `put the message box into aVar`
-`min` | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
-`max` | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
+Function        | Description
+----------------|-----------------------------------
+`average`	      | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
+`mouse`         | Returns the current state of the left mouse button; either "up" or "down"
+`mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
+`mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
+`mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
+`clickLoc`      | Returns the coordinate of the last location the user clicked the mouse.
+`clickH`        | Returns the x-coordinate of the last location the user clicked the mouse.
+`clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.
+`tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "You chose the paint brush!"`
+`shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
+`commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
+`optionKey`     | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
+`number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`. For example, `repeat with n = 1 to the number of items in myList`
+`result`        | Returns the current value of the implicit variable `it`, for example: `the result`
+`message`       | Returns the contents of the message box. For example: `put the message box into aVar`. Also available as `message box` or `message window`
+`min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
+`max`           | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
 `date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields 07/04/16.
-`long date` | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
+`long date`     | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
 `abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
-`seconds` | Returns the number of seconds since midnight, January 1, 1970 UTC.
-`ticks` | Returns the number of ticks (1/60th second) since the JVM was started.
-`random` | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
-`sqrt` | Returns the square root of the given argument or `NaN` of the argument is negative.
-`sin` | Returns the trigonometric sine of the given argument, represented in radians.
-`cos` | Returns the trigonometric cosine of the given argument, represented in radians.
-`tan` | Returns the trigonometric tangent of the given argument, represented in radians.
-`atan` | Returns the trigonometric arctangent of the given argument, represented in radians.
-`exp` | Returns the value of _e_ raised to the power of the given argument.
-`exp1` | Returns the value of _1-e_ raised to the number of the given argument.
-`exp2` | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.
-`ln` | Returns the natural logarithm of the given argument.
-`ln1` | Returns the natural logarithm of the given argument plus one.
-`log2` | Returns the base-2 logarithm of the given argument.
-`trunc` | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
-`abs` | Returns the absolute value of the given numerical argument.
-`numToChar` | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
-`charToNum` | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
-`value` | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12.
-`length` | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields 12.
-`selectedText` | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
-`clickText` | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
-`screenRect` | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`
+`seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
+`ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
+`random`        | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
+`sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.
+`sin`           | Returns the trigonometric sine of the given argument, represented in radians.
+`cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
+`tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
+`atan`          | Returns the trigonometric arctangent of the given argument, represented in radians.
+`exp`           | Returns the value of _e_ raised to the power of the given argument.
+`exp1`          | Returns the value of _1-e_ raised to the number of the given argument.
+`exp2`          | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.
+`ln`            | Returns the natural logarithm of the given argument.
+`ln1`           | Returns the natural logarithm of the given argument plus one.
+`log2`          | Returns the base-2 logarithm of the given argument.
+`trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
+`abs`           | Returns the absolute value of the given numerical argument.
+`numToChar`     | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
+`charToNum`     | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
+`value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12.
+`length`        | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields 12.
+`selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
+`clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
+`screenRect`    | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`
 
 ### User-defined Functions
 
