@@ -14,6 +14,8 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartIdSpecifier;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -230,5 +232,13 @@ public class PartModel extends PropertiesModel implements Messagable {
      */
     public String getValueProperty() {
         return PROP_CONTENTS;
+    }
+
+    /**
+     * Gets a part specifier that refers to this part in the stack.
+     * @return A part specifier referring to this part.
+     */
+    public PartSpecifier getMe() {
+        return new PartIdSpecifier(getOwner(), getType(), getId());
     }
 }

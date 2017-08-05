@@ -40,7 +40,7 @@ public class UserFunctionExp extends Expression {
             PartModel part = ExecutionContext.getContext().get(ps);
             
             arguments.evaluate();
-            return part.executeUserFunction(function, arguments);
+            return part.invokeFunction(function, arguments);
         } catch (PartException e) {
             throw new HtSemanticException(e.getMessage());
         }                        

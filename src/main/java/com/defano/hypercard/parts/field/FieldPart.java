@@ -202,7 +202,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         setClickText(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            getPartModel().sendMessage("mouseDown");
+            getPartModel().sendMessage(SystemMessage.MOUSE_DOWN.messageName);
         }
     }
 
@@ -212,7 +212,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         super.mouseReleased(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            getPartModel().sendMessage("mouseUp");
+            getPartModel().sendMessage(SystemMessage.MOUSE_UP.messageName);
         }
     }
 
@@ -220,14 +220,14 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        getPartModel().sendMessage("mouseEnter");
+        getPartModel().sendMessage(SystemMessage.MOUSE_ENTER.messageName);
     }
 
     /** {@inheritDoc} */
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        getPartModel().sendMessage("mouseLeave");
+        getPartModel().sendMessage(SystemMessage.MOUSE_LEAVE.messageName);
     }
 
     /** {@inheritDoc} */
@@ -236,7 +236,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         super.mouseClicked(e);
 
         if (e.getClickCount() == 2) {
-            getPartModel().sendMessage("mouseDoubleClick");
+            getPartModel().sendMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 
@@ -248,7 +248,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         super.keyTyped(e);
 
         if (getTextPane().hasFocus()) {
-            getPartModel().sendAndConsume(PassedCommand.KEY_DOWN, new ExpressionList(String.valueOf(e.getKeyChar())), e);
+            getPartModel().sendAndConsume(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e);
         }
     }
 
@@ -258,9 +258,9 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         super.keyPressed(e);
 
         if (getTextPane().hasFocus()) {
-            PassedCommand command = PassedCommand.fromKeyEvent(e, true);
+            SystemMessage command = SystemMessage.fromKeyEvent(e, true);
             if (command != null) {
-                getPartModel().sendAndConsume(command, new ExpressionList(), e);
+                getPartModel().sendAndConsume(command.messageName, new ExpressionList(), e);
             }
         }
     }

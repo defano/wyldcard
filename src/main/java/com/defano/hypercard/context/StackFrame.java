@@ -15,7 +15,6 @@
 
 package com.defano.hypercard.context;
 
-import com.defano.hypertalk.ast.common.PassedCommand;
 import com.defano.hypertalk.ast.common.Value;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class StackFrame {
 
     public final SymbolTable symbols;
     private final List<String> globalsInScope;
-    private PassedCommand passedCommand;
+    private String passedMessage;
     private Value returnValue;
     
     public StackFrame(SymbolTable symbols, List<String> globalsInScope, Value returnValue) {
@@ -52,11 +51,11 @@ public class StackFrame {
         return returnValue;
     }
 
-    public PassedCommand getPassedCommand() {
-        return passedCommand;
+    public String getPassedMessage() {
+        return passedMessage;
     }
 
-    public void setPassedCommand(PassedCommand passedCommand) {
-        this.passedCommand = passedCommand;
+    public void setPassedMessage(String passedMessage) {
+        this.passedMessage = passedMessage;
     }
 }

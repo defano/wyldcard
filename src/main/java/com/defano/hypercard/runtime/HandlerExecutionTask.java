@@ -12,7 +12,6 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.NamedBlock;
-import com.defano.hypertalk.ast.common.PassedCommand;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -21,7 +20,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class HandlerExecutionTask implements Callable<PassedCommand> {
+public class HandlerExecutionTask implements Callable<String> {
 
     private final NamedBlock handler;
     private final PartSpecifier me;
@@ -34,7 +33,7 @@ public class HandlerExecutionTask implements Callable<PassedCommand> {
     }
     
     @Override
-    public PassedCommand call() throws Exception {
+    public String call() throws Exception {
 
         try {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -65,6 +64,6 @@ public class HandlerExecutionTask implements Callable<PassedCommand> {
             HyperCard.getInstance().showErrorDialog(e);
         }
 
-        return ExecutionContext.getContext().getPassedCommand();
+        return ExecutionContext.getContext().getPassedMessage();
     }
 }

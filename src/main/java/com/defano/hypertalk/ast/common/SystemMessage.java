@@ -1,10 +1,13 @@
 package com.defano.hypertalk.ast.common;
 
-import com.defano.hypertalk.exception.HtSemanticException;
-
 import java.awt.event.KeyEvent;
 
-public enum PassedCommand {
+public enum SystemMessage {
+    MOUSE_UP("mouseUp"),
+    MOUSE_DOWN("mouseDown"),
+    MOUSE_ENTER("mouseEnter"),
+    MOUSE_LEAVE("mouseLeave"),
+    MOUSE_DOUBLE_CLICK("mouseDoubleClick"),
     KEY_DOWN("keyDown"),
     ARROW_KEY("arrowKey"),
     COMMAND_KEY("commandKeyDown"),
@@ -19,21 +22,11 @@ public enum PassedCommand {
 
     public final String messageName;
 
-    PassedCommand(String messageName) {
+    SystemMessage(String messageName) {
         this.messageName = messageName;
     }
 
-    public static PassedCommand fromMessageName(String messageName) throws HtSemanticException {
-        for (PassedCommand thisPassedCommand : values()) {
-            if (thisPassedCommand.messageName.equalsIgnoreCase(messageName)) {
-                return thisPassedCommand;
-            }
-        }
-
-        throw new HtSemanticException("The message " + messageName + " cannot be passed.");
-    }
-
-    public static PassedCommand fromKeyEvent(KeyEvent e, boolean inField) {
+    public static SystemMessage fromKeyEvent(KeyEvent e, boolean inField) {
         if (e.isControlDown()) {
             return CONTROL_KEY;
         }

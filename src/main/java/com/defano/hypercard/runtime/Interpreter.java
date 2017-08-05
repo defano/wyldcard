@@ -8,10 +8,12 @@
 
 package com.defano.hypercard.runtime;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
@@ -109,15 +111,28 @@ public class Interpreter {
      * @param me The part whose script is being executed.
      * @param script The script of the part
      * @param command The command handler name.
-     * @return A future containing a boolean indicating if the handler has "trapped" the message.
+     * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
+     * scripts attempts to pass a message other than the message being handled.
      */
-    public static ListenableFuture<Boolean> executeCommandHandler(PartSpecifier me, Script script, PassedCommand command, ExpressionList arguments) {
-        NamedBlock handler = script.getHandler(command.messageName);
+    public static ListenableFuture<Boolean> executeCommandHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) {
+        NamedBlock handler = script.getHandler(command);
 
         if (handler == null) {
             return Futures.immediateFuture(false);
         } else {
-            return Futures.transform(executeNamedBlock(me, handler, arguments), (Function<PassedCommand, Boolean>) input -> input != command);
+            return Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) input -> {
+                if (input == null || input.isEmpty()) {
+                    return false;
+                }
+
+                if (input.equalsIgnoreCase(command)) {
+                    return true;
+                }
+
+                // Passing a message other than the handled message is disallowed.
+                HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
+                return true;
+            });
         }
     }
 
@@ -143,7 +158,7 @@ public class Interpreter {
         }
     }
 
-    private static ListenableFuture<PassedCommand> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) {
+    private static ListenableFuture<String> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler, arguments);
 
         try {

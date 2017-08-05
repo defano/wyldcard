@@ -188,7 +188,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mousePressed(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            getPartModel().sendMessage("mouseDown");
+            getPartModel().sendMessage(SystemMessage.MOUSE_DOWN.messageName);
         }
     }
 
@@ -197,27 +197,27 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mouseReleased(e);
 
         if (SwingUtilities.isLeftMouseButton(e)) {
-            getPartModel().sendMessage("mouseUp");
+            getPartModel().sendMessage(SystemMessage.MOUSE_UP.messageName);
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        getPartModel().sendMessage("mouseEnter");
+        getPartModel().sendMessage(SystemMessage.MOUSE_ENTER.messageName);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        getPartModel().sendMessage("mouseLeave");
+        getPartModel().sendMessage(SystemMessage.MOUSE_LEAVE.messageName);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
         if (e.getClickCount() == 2) {
-            getPartModel().sendMessage("mouseDoubleClick");
+            getPartModel().sendMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 

@@ -13,7 +13,6 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.PassedCommand;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -69,12 +68,12 @@ public class ExecutionContext {
         return getFrame().getReturnValue();
     }
 
-    public PassedCommand getPassedCommand() {
-        return getFrame().getPassedCommand();
+    public String getPassedMessage() {
+        return getFrame().getPassedMessage();
     }
 
-    public void setPassedCommand(PassedCommand passedCommand) {
-        getFrame().setPassedCommand(passedCommand);
+    public void setPassedMessage(String passedMessage) {
+        getFrame().setPassedMessage(passedMessage);
     }
 
     public void defineGlobal (String id) {

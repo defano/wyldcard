@@ -1,22 +1,20 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.PassedCommand;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 
 public class PassCmd extends Statement {
 
-    private final Expression passedCommand;
+    private final Expression passedMessage;
 
-    public PassCmd(Expression passedCommand) {
-        this.passedCommand = passedCommand;
+    public PassCmd(Expression passedMessage) {
+        this.passedMessage = passedMessage;
     }
 
     @Override
     public void execute() throws HtException {
-        String passedCommandName = passedCommand.evaluate().stringValue();
-        ExecutionContext.getContext().setPassedCommand(PassedCommand.fromMessageName(passedCommandName));
+        ExecutionContext.getContext().setPassedMessage(passedMessage.evaluate().stringValue());
         this.breakExecution = true;
     }
 }
