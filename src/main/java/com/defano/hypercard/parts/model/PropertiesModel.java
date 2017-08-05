@@ -14,34 +14,42 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
 
-import javax.swing.*;
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
- * A model of HyperTalk properties providing observability, derived getters and setters, and read-only attributes.
+ * A model of HyperTalk-addressable properties that provides observability, derived getters and setters, and read-only
+ * attributes.
  */
 public class PropertiesModel {
 
     // Properties which can be read/set by HyperTalk
-    private Map<String, Value> properties = new HashMap<>();
+    private final Map<String, Value> properties = new HashMap<>();
 
-    // Properties which are readable, but not writeable via HyperTalk (i.e., part id)
-    private List<String> immutableProperties = new ArrayList<>();
+    // Properties which are readable, but not writable via HyperTalk (i.e., part id)
+    private final Set<String> immutableProperties = new HashSet<>();
 
-    // Transient fields will not be serialized and must be re-hydrated programmatically.
+    // Transient fields will not be serialized and must be re-hydrated programmatically in @PostConstruct.
     private transient Map<String, String> propertyAliases;
     private transient Set<PropertyChangeObserver> changeObservers;
     private transient Set<PropertyWillChangeObserver> willChangeObservers;
     private transient Map<String,ComputedGetter> computerGetters;
     private transient Map<String,ComputedSetter> computerSetters;
+    private transient Map<String,DelegatedProperty> delegatedProperties;
 
     // Required to initialize transient data member when object is deserialized
     public PropertiesModel() {
+        initialize();
+    }
+
+    @PostConstruct
+    protected void initialize() {
+        propertyAliases = new HashMap<>();
         changeObservers = new HashSet<>();
         willChangeObservers = new HashSet<>();
-        propertyAliases = new HashMap<>();
         computerGetters = new HashMap<>();
         computerSetters = new HashMap<>();
+        delegatedProperties = new HashMap<>();
     }
 
     /**
@@ -59,6 +67,26 @@ public class PropertiesModel {
 
         if (readOnly) {
             this.immutableProperties.add(property);
+        }
+    }
+
+    /**
+     * Delegates gets/sets to a property to a property of the same name held in another model. Useful in cases where
+     * one part inherits a property from another part (i.e., the rectangle of a card is actually defined by its stack).
+     *
+     * @param property The name of the delegated property
+     * @param delegatedProperty The delegate to which requests should be forwarded.
+     */
+    public void delegateProperty(String property, DelegatedProperty delegatedProperty) {
+        delegatedProperties.put(property.toLowerCase(), delegatedProperty);
+    }
+
+    /**
+     * Delegates a collection of properties to another properties model. See {@link #delegateProperty(String, DelegatedProperty)}.
+     */
+    public void delegateProperties(Collection<String> properties, DelegatedProperty delegatedProperty) {
+        for (String thisProperty : properties) {
+            delegateProperty(thisProperty, delegatedProperty);
         }
     }
 
@@ -120,7 +148,12 @@ public class PropertiesModel {
     {
         propertyName = propertyName.toLowerCase();
 
-        if (!propertyExists(propertyName)) {
+        if (delegatedProperties.containsKey(propertyName)) {
+            delegatedProperties.get(propertyName).getDelegatedModel(propertyName).setProperty(propertyName, value, quietly);
+            return;
+        }
+
+        if (!hasProperty(propertyName)) {
             throw new NoSuchPropertyException("Can't set property " + propertyName + " because it doesn't exist.");
         }
 
@@ -169,6 +202,16 @@ public class PropertiesModel {
     }
 
     /**
+     * Gets the "raw" value of the given property. That is, does not account for aliases, delegates, or computed
+     * values.
+     * @param property The name of the property.
+     * @return The raw value associated with this property or null, if no raw value exists.
+     */
+    public Value getRawProperty(String property) {
+        return properties.get(property.toLowerCase());
+    }
+
+    /**
      * Gets the value of a property.
      *
      * @param property The name of the property to get (or one of its aliases)
@@ -176,12 +219,14 @@ public class PropertiesModel {
      *
      * @throws NoSuchPropertyException If no property exists with this name
      */
-    public Value getProperty (String property)
-            throws NoSuchPropertyException
-    {
+    public Value getProperty (String property) throws NoSuchPropertyException {
         property = property.toLowerCase();
 
-        if (!propertyExists(property)) {
+        if (delegatedProperties.containsKey(property)) {
+            return delegatedProperties.get(property).getDelegatedModel(property).getProperty(property);
+        }
+
+        if (!hasProperty(property)) {
             throw new NoSuchPropertyException("Can't get property " + property + " because it doesn't exist.");
         }
 
@@ -218,7 +263,7 @@ public class PropertiesModel {
      * @param property The name of the property (or one of its aliases).
      * @return True if the property exists, false otherwise.
      */
-    public boolean propertyExists (String property) {
+    public boolean hasProperty(String property) {
         property = property.toLowerCase();
         return properties.containsKey(property) || propertyAliases.containsKey(property) || (computerGetters.containsKey(property) && computerSetters.containsKey(property));
     }

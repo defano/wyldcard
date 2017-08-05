@@ -24,8 +24,8 @@ import java.util.Map;
 
 public class Script {
 
-    private Map<String, StatementList> handlers;
-    private Map<String, UserFunction> functions;
+    private final Map<String, NamedBlock> handlers;
+    private final Map<String, UserFunction> functions;
     private StatementList statements = null;
     
     public Script () {
@@ -34,7 +34,7 @@ public class Script {
     }
 
     public Script defineHandler (NamedBlock handler) {
-        handlers.put(handler.name.toLowerCase(), handler.body);
+        handlers.put(handler.name.toLowerCase(), handler);
         return this;
     }
     
@@ -48,7 +48,7 @@ public class Script {
         return this;
     }
 
-    public StatementList getHandler(String handler) {
+    public NamedBlock getHandler(String handler) {
         return handlers.get(handler.toLowerCase());
     }
 

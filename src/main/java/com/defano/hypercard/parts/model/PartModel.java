@@ -8,25 +8,28 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.HyperCardFont;
-import com.defano.hypercard.parts.CardLayer;
+import com.defano.hypercard.parts.Messagable;
+import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartIdSpecifier;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-import javax.swing.*;
+import javax.annotation.PostConstruct;
 import java.awt.*;
 
 /**
  * Implements a table of model associated with a partSpecifier object. Provides methods for defining, getting and
  * setting model, as well as notifying listeners of changes.
  */
-public abstract class PartModel extends PropertiesModel {
+public class PartModel extends PropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
-    public static final String PROP_ZORDER = "zorder";
     public static final String PROP_NAME = "name";
     public static final String PROP_LEFT = "left";
     public static final String PROP_TOP = "top";
@@ -41,17 +44,28 @@ public abstract class PartModel extends PropertiesModel {
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOC = "loc";
     public static final String PROP_LOCATION = "location";
-    public static final String PROP_SELECTEDTEXT = "selectedtext";
-    public static final String PROP_TEXTSIZE = "textsize";
-    public static final String PROP_TEXTFONT = "textfont";
-    public static final String PROP_TEXTSTYLE = "textstyle";
-    public static final String PROP_TEXTALIGN = "textalign";
-    public static final String PROP_ENABLED = "enabled";
+    public static final String PROP_CONTENTS = "contents";
+    public static final String PROP_SCRIPTTEXT = "scripttext";
 
-    private final PartType type;
+    private PartType type;
+    private Owner owner;
+    private transient Script script = new Script();
 
-    protected PartModel(PartType type) {
+    public PartModel(PartType type, Owner owner) {
+        super();
+
         this.type = type;
+        this.owner = owner;
+
+        defineProperty(PROP_VISIBLE, new Value(true), false);
+        defineProperty(PROP_SCRIPTTEXT, new Value(""), false);
+
+        initialize();
+    }
+
+    @PostConstruct
+    public void initialize() {
+        super.initialize();
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
         defineComputedSetterProperty(PROP_RECT, (model, propertyName, value) -> {
@@ -136,30 +150,16 @@ public abstract class PartModel extends PropertiesModel {
         });
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
-        defineProperty(PROP_VISIBLE, new Value(true), false);
-        defineProperty(PROP_ZORDER, new Value(0), false);
-        defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
-        defineProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
-        defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getFamily()), false);
-        defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
-        defineProperty(PROP_TEXTALIGN, new Value("center"), false);
-        defineProperty(PROP_ENABLED, new Value(true), false);
-    }
 
-    public Font getFont() {
-        String family = getKnownProperty(PROP_TEXTFONT).stringValue();
-        int style = FontUtils.getStyleForValue(getKnownProperty(PROP_TEXTSTYLE));
-        int size = getKnownProperty(PROP_TEXTSIZE).integerValue();
-
-        return HyperCardFont.byNameStyleSize(family, style, size);
-    }
-
-    public void setFont(Font font) {
-        if (font != null) {
-            setKnownProperty(PROP_TEXTSIZE, new Value(font.getSize()));
-            setKnownProperty(PROP_TEXTFONT, new Value(font.getFamily()));
-            setKnownProperty(PROP_TEXTSTYLE, FontUtils.getValueForStyle(font.getStyle()));
-        }
+        defineComputedGetterProperty(PROP_SCRIPT, (model, propertyName) -> model.getKnownProperty(PROP_SCRIPTTEXT));
+        defineComputedSetterProperty(PROP_SCRIPT, (model, propertyName, value) -> {
+            model.setKnownProperty(PROP_SCRIPTTEXT, value);
+            try {
+                script = Interpreter.compile(value.stringValue());
+            } catch (HtException e) {
+                script = new Script();
+            }
+        });
     }
 
     public Rectangle getRect() {
@@ -172,11 +172,73 @@ public abstract class PartModel extends PropertiesModel {
 
             return rect;
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't get geometry for part model.");
+            throw new RuntimeException("Couldn't get geometry for part model.", e);
         }
     }
 
     public PartType getType() {
         return type;
+    }
+
+    public Script getScript() {
+        if (script == null) {
+            try {
+                script = Interpreter.compile(getKnownProperty(PROP_SCRIPTTEXT).stringValue());
+            } catch (HtException e) {
+                e.printStackTrace();
+            }
+        }
+        return script;
+    }
+
+    public Owner getOwner() {
+         return owner;
+    }
+
+    public int getId() {
+        return getKnownProperty(PROP_ID).integerValue();
+    }
+
+    public String getName() {
+        return getKnownProperty(PROP_NAME).stringValue();
+    }
+
+    /**
+     * Sets the value of this part; thus, sets the value of the property returned by {@link #getValueProperty()}.
+     * @param value The value of this part.
+     */
+    public void setValue(Value value) {
+        try {
+            setProperty(getValueProperty(), value);
+        } catch (Exception e) {
+            throw new RuntimeException("Bug! Part's value cannot be set.");
+        }
+    }
+
+    /**
+     * Gets the value of this part; thus, reads the value of the property returned by {@link #getValueProperty()}.
+     * @return The value of this property
+     */
+    public Value getValue() {
+        return getKnownProperty(getValueProperty());
+    }
+
+    /**
+     * Gets the name of the property that is read or written when a value is placed into the part i.e., ('put "Hello"
+     * into card field 1'). Typically the 'contents' property, but other parts (like fields) may override to provide
+     * a different property (e.g., fields use the 'text' property as their contents).
+     *
+     * @return The name of the part's value property
+     */
+    public String getValueProperty() {
+        return PROP_CONTENTS;
+    }
+
+    /**
+     * Gets a part specifier that refers to this part in the stack.
+     * @return A part specifier referring to this part.
+     */
+    public PartSpecifier getMe() {
+        return new PartIdSpecifier(getOwner(), getType(), getId());
     }
 }

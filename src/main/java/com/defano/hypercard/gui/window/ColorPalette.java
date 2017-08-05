@@ -24,9 +24,9 @@ public class ColorPalette extends HyperCardFrame {
     private JPanel foregroundChooserPanel;
     private JPanel backgroundChooserPanel;
     private JPanel lineChooserPanel;
-    private JColorChooser foregroundChooser = new JColorChooser();
-    private JColorChooser backgroundChooser = new JColorChooser();
-    private JColorChooser lineChooser = new JColorChooser();
+    private final JColorChooser foregroundChooser = new JColorChooser();
+    private final JColorChooser backgroundChooser = new JColorChooser();
+    private final JColorChooser lineChooser = new JColorChooser();
 
     public ColorPalette() {
         foregroundChooser.setPreviewPanel(new JPanel());

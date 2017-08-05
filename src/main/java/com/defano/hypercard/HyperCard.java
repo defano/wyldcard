@@ -8,12 +8,12 @@
 
 package com.defano.hypercard;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.gui.util.KeyboardManager;
-import com.defano.hypercard.parts.StackPart;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.model.StackModel;
+import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
 
@@ -29,8 +29,8 @@ import java.util.concurrent.Executors;
 public class HyperCard {
 
     private static HyperCard instance;
-    private static ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
-    private StackPart stackPart;
+    private static final ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
+    private final StackPart stackPart;
 
     public static void main(String argv[]) {
         // Display the frame's menu as the Mac OS menubar
@@ -92,7 +92,7 @@ public class HyperCard {
 
                     // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
                     if (Interpreter.isExpressionStatement(messageText)) {
-                        HyperCard.getInstance().setMessageBoxText(GlobalContext.getContext().getIt());
+                        HyperCard.getInstance().setMessageBoxText(ExecutionContext.getContext().getIt());
                     }
                 }
             } catch (Exception e) {

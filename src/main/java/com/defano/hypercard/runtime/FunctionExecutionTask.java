@@ -9,11 +9,11 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypertalk.ast.common.NamedBlock;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.List;
@@ -21,11 +21,11 @@ import java.util.concurrent.Callable;
 
 public class FunctionExecutionTask implements Callable<Value> {
 
-    private final UserFunction function;
+    private final NamedBlock function;
     private final ExpressionList arguments;
     private final PartSpecifier me;
 
-    public FunctionExecutionTask (PartSpecifier me, UserFunction function, ExpressionList arguments) {
+    public FunctionExecutionTask (PartSpecifier me, NamedBlock function, ExpressionList arguments) {
         this.function = function;
         this.arguments = arguments;
         this.me = me;
@@ -40,8 +40,8 @@ public class FunctionExecutionTask implements Callable<Value> {
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluate();
 
-        GlobalContext.getContext().pushContext();
-        GlobalContext.getContext().setMe(me);
+        ExecutionContext.getContext().pushContext();
+        ExecutionContext.getContext().setMe(me);
 
         try {
             // Bind argument values to parameter variables in this context
@@ -49,7 +49,7 @@ public class FunctionExecutionTask implements Callable<Value> {
                 String theParam = function.parameters.list.get(index);
                 Value theArg = evaluatedArguments.get(index);
 
-                GlobalContext.getContext().set(theParam, theArg);
+                ExecutionContext.getContext().set(theParam, theArg);
             }
             
             function.statements.execute();
@@ -58,8 +58,8 @@ public class FunctionExecutionTask implements Callable<Value> {
             HyperCard.getInstance().showErrorDialog(e);
         }
 
-        Value returnValue = GlobalContext.getContext().getReturnValue();
-        GlobalContext.getContext().popContext();    
+        Value returnValue = ExecutionContext.getContext().getReturnValue();
+        ExecutionContext.getContext().popContext();
         
         return returnValue;
     }

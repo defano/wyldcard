@@ -20,7 +20,7 @@ public abstract class HyperCardFrame extends WindowAdapter implements HyperCardW
     private JFrame windowFrame;
     private boolean isShown = false;
 
-    private Provider<Boolean> windowVisibleProvider = new Provider<>(false);
+    private final Provider<Boolean> windowVisibleProvider = new Provider<>(false);
 
     @Override
     public JFrame getWindow() {

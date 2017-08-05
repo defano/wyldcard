@@ -9,5 +9,5 @@
 package com.defano.hypertalk.ast.common;
 
 public enum DestinationType {
-    CARD
+    CARD, BACKGROUND
 }

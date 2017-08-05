@@ -10,8 +10,10 @@ script 			    : handler (NEWLINE+ | EOF)                      # handlerScript
                     | COMMENT                                       # commentScript
                     ;
 
-handler				: 'on' ID NEWLINE statementList 'end' ID        # populatedHandler
-                    | 'on' ID NEWLINE 'end' ID                      # emptyHandler
+handler				: 'on' ID NEWLINE statementList 'end' ID               # populatedHandler
+                    | 'on' ID parameterList NEWLINE statementList 'end' ID # populatedArgHandler
+                    | 'on' ID NEWLINE 'end' ID                             # emptyHandler
+                    | 'on' ID parameterList NEWLINE 'end' ID               # emptyArgHandler
                     ;
 
 function			: 'function' ID parameterList NEWLINE statementList 'end' ID    # populatedFunction
@@ -58,12 +60,11 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | sendCmd                                       # sendCmdStmnt
                     | waitCmd                                       # waitCmdStmnt
                     | sortCmd                                       # sortCmdStmnt
+                    | goCmd                                         # goCmdStmt
                     | 'hide' part                                   # hideCmdStmnt
                     | 'show' part                                   # showCmdStmnt
                     | 'disable' part                                # disableCmdStmnt
                     | 'enable' part                                 # enableCmdStmnt
-                    | 'go' 'to'? destination 'with' 'visual' visualEffect    # goVisualEffectCmdStmnd
-                    | 'go' 'to'? destination                        # goCmdStmnt
                     | 'add' expression 'to' container               # addCmdStmnt
                     | 'subtract' expression 'from' container        # subtractCmdStmnt
                     | 'multiply' container 'by' expression          # multiplyCmdStmnt
@@ -80,7 +81,15 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'lock' 'screen'                               # lockScreenCmdStmt
                     | 'unlock' 'screen'                             # unlockScreenCmdStmt
                     | 'unlock' 'screen' 'with' 'visual' visualEffect # unlockScreenVisualCmdStmt
+                    | 'pass' factor                                 # passCmdStmt
                     ;
+
+goCmd               : 'go' 'to'? destination 'with' 'visual' visualEffect    # goVisualEffectCmdStmnd
+                    | 'go' 'to'? destination                        # goCmdStmnt
+                    | 'go' 'back'                                   # goBackCmdStmt
+                    | 'go' 'back' 'with' 'visual' visualEffect      # goBackVisualEffectCmdStmt
+                    ;
+
 
 answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression     # answerThreeButtonCmd
                     | 'answer' expression 'with' expression 'or' expression                     # answerTwoButtonCmd
@@ -180,7 +189,7 @@ timeUnit            : 'ticks'                                       # ticksTimeU
 
 position            : 'the'? 'next'                                 # nextPosition
                     | 'the'? ('prev' | 'previous')                  # prevPosition
-                    | 'back'                                        # backPosition
+                    | 'this'                                        # thisPosition
                     ;
 
 destination         : destinationType expression                    # cardNumber
@@ -188,8 +197,8 @@ destination         : destinationType expression                    # cardNumber
                     | position destinationType                      # cardPosition
                     ;
 
-destinationType     : 'card'
-                    |
+destinationType     : ('card' | 'cd')                               # cardDestinationType
+                    | ('background' | 'bkgnd')                      # bkgndDestinationType
                     ;
 
 ifStatement			: 'if' expression THEN singleThen               # ifThenSingleLine
@@ -275,16 +284,30 @@ propertySpec        : 'the'? ID                                     # propertySp
                     ;
 
 part                : ('background' | 'bkgnd')? 'field' factor        # bkgndFieldPart
+                    | ordinal ('background' | 'bkgnd')? 'field'       # bkgndFieldOrdinalPart
                     | ('background' | 'bkgnd')? 'field' 'id' factor   # bkgndFieldIdPart
                     | ('background' | 'bkgnd')? 'button' factor       # bkgndButtonPart
+                    | ordinal ('background' | 'bkgnd')? 'button'      # bkgndButtonOrdinalPart
                     | ('background' | 'bkgnd')? 'button' 'id' factor  # bkgndButtonIdPart
                     | ('card' | 'cd')? 'field' factor                 # cardFieldPart
+                    | ordinal ('card' | 'cd')? 'field'                # cardFieldOrdinalPart
                     | ('card' | 'cd')? 'field' 'id' factor            # cardFieldIdPart
                     | ('card' | 'cd')? 'button' factor                # cardButtonPart
+                    | ordinal ('card' | 'cd')? 'button'               # cardButtonOrdinalPart
                     | ('card' | 'cd')? 'button' 'id' factor           # cardButtonIdPart
                     | ('card' | 'cd') 'part' factor                   # cardPartNumberPart
                     | ('background' | 'bkgnd') 'part' factor          # bkgndPartNumberPart
                     | 'me'                                            # mePart
+                    | 'this' ('card' | 'cd')                          # thisCardPart
+                    | 'this' ('background' | 'bkgnd')                 # thisBkgndPart
+                    | position ('card' | 'cd')                        # positionCardPart
+                    | position ('background' | 'bkgnd')               # positionBkgndPart
+                    | ordinal ('card' | 'cd')                         # ordinalCardPart
+                    | ordinal ('background' | 'bkgnd')                # ordinalBkgndPart
+                    | ('card' | 'cd') factor                          # cardPart
+                    | ('card' | 'cd') 'id' factor                     # cardIdPart
+                    | ('background' | 'bkgnd') factor                 # bkgndPart
+                    | ('background' | 'bkgnd') 'id' factor            # bkgndIdPart
                     ;
 
 ordinal             : 'the'? ordinalValue                           # theOrdinalVal

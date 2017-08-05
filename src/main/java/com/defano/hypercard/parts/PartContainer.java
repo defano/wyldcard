@@ -1,287 +1,226 @@
 package com.defano.hypercard.parts;
 
+import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.util.ZOrderComparator;
+import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.containers.PartIdSpecifier;
-import com.defano.hypertalk.ast.containers.PartNameSpecifier;
-import com.defano.hypertalk.ast.containers.PartNumberSpecifier;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.common.Position;
+import com.defano.hypertalk.ast.containers.*;
+import com.google.common.collect.Lists;
 
-import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * A container of button and field parts. Provides mixin functionality for finding, retrieving and counting parts.
- */
 public interface PartContainer {
 
     /**
-     * Gets all buttons on the card (foreground and background) in no specific order.
+     * Gets all parts in this container in the order that they appear or are displayed. For buttons and fields, this
+     * is their z-order; for card or backgrounds, this is their order in the stack.
      *
-     * @return All buttons on the card.
+     * @return The list of parts held by this container in their logical displayed order.
      */
-    Collection<ButtonPart> getButtons();
+    List<PartModel> getPartsInDisplayOrder();
 
     /**
-     * Gets all fields on the card (foreground and background) in no specific order.
-     *
-     * @return All fields on the card.
-     */
-    Collection<FieldPart> getFields();
-
-    /**
-     * Given a Swing component, returns the layer of the card on which the component is present. Throws
-     * IllegalArgumentException if the component does not exist on the card.
-     *
-     * @param component The component whose card layer should be determined
-     * @return The card layer on which the given component lives.
-     */
-    CardLayer getCardLayer(Component component);
-
-    /**
-     * Gets a collection of all parts (buttons and fields) held by this container.
-     * @return The collection of parts in this container.
-     */
-    default Collection<Part> getParts() {
-        Collection<Part> parts = new ArrayList<>();
-        parts.addAll(getButtons());
-        parts.addAll(getFields());
-        return parts;
-    }
-
-    /**
-     * Gets a list of parts (buttons and field) that appear on this card, listed in their z-order (that is, the order
-     * in which one is drawn atop another).
-     *
-     * @return The z-ordered list of parts on this card.
-     */
-    default List<Part> getPartsInZOrder() {
-        ArrayList<Part> bkgndParts = new ArrayList<>();
-        bkgndParts.addAll(getPartsInZOrder(CardLayer.BACKGROUND_PARTS));
-        bkgndParts.sort(new ZOrderComparator());
-
-        ArrayList<Part> cardParts = new ArrayList<>();
-        cardParts.addAll(getPartsInZOrder(CardLayer.CARD_PARTS));
-        cardParts.sort(new ZOrderComparator());
-
-        bkgndParts.addAll(cardParts);
-        return bkgndParts;
-    }
-
-    /**
-     * Gets a list of parts (buttons and field) that appear on the given layer of this card, listed in their z-order
-     * (that is, the order in which one is drawn atop another).
-     *
-     * @param layer The layer of parts to be returned
-     * @return The z-ordered list of parts in the given layer of this card.
-     */
-    default List<Part> getPartsInZOrder(CardLayer layer) {
-        ArrayList<Part> parts = new ArrayList<>();
-
-        parts.addAll(getButtons()
-                .stream()
-                .filter(p -> getCardLayer(p.getComponent()) == layer)
-                .collect(Collectors.toList()));
-
-        parts.addAll(getFields()
-                .stream()
-                .filter(p -> getCardLayer(p.getComponent()) == layer)
-                .collect(Collectors.toList()));
-
-        parts.sort(new ZOrderComparator());
-        return parts;
-    }
-
-    /**
-     * Finds a part on the card or on the card's background matching the given type and ID.
-     *
-     * @param type The type of part to find.
-     * @param id   The id of the part to find.
-     * @return The found part or null if no matching part exists.
-     */
-    default Part findPartOnCard(PartType type, int id) {
-        return getPartsInZOrder()
-                .stream()
-                .filter(p -> p.getType() == type && p.getPartModel().getKnownProperty(PartModel.PROP_ID).integerValue() == id).findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * Returns the part (button or field) represented by a given a HyperTalk part specifier.
+     * Returns the part represented by the given part specifier.
      *
      * @param ps The part specifier representing the part to fetch
      * @return The specified part
      * @throws PartException Thrown if no such part exists on this card.
      */
-    default Part findPart(PartSpecifier ps) throws PartException {
+    default PartModel findPart(PartSpecifier ps) throws PartException {
         if (ps instanceof PartIdSpecifier) {
             return findPartById((PartIdSpecifier) ps);
         } else if (ps instanceof PartNameSpecifier) {
             return findPartByName((PartNameSpecifier) ps);
         } else if (ps instanceof PartNumberSpecifier) {
             return findPartByNumber((PartNumberSpecifier) ps);
+        } else if (ps instanceof PartOrdinalSpecifier) {
+            return findPartByOrdinal((PartOrdinalSpecifier) ps);
+        } else if (ps instanceof PartPositionSpecifier) {
+            return findPartByPosition((PartPositionSpecifier) ps);
         }
 
         throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
     }
 
     /**
-     * Returns the part (button or field) identified by the given specifier.
+     * Finds a part based on its ID.
      *
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default Part findPartById(PartIdSpecifier ps) throws PartException {
-        Optional<Part> foundPart = getParts().stream()
+    default PartModel findPartById(PartIdSpecifier ps) throws PartException {
+        Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
+                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
                 .filter(p -> p.getId() == ps.id)
                 .findFirst();
 
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this card.");
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase());
         }
     }
 
     /**
-     * Returns the part (button or field) identified by the given specifier.
+     * Finds a part based on its name.
      *
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default Part findPartByName(PartNameSpecifier ps) throws PartException {
-        Optional<Part> foundPart = getParts().stream()
+    default PartModel findPartByName(PartNameSpecifier ps) throws PartException {
+        Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
+                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
                 .filter(p -> p.getName().equalsIgnoreCase(ps.value()))
                 .findFirst();
 
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this card.");
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase());
         }
     }
 
     /**
-     * Returns the part (button or field) identified by the given specifier.
+     * Finds a part based on its number.
      *
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default Part findPartByNumber(PartNumberSpecifier ps) throws PartException {
-        List<Part> foundParts = getPartsInZOrder().stream()
+    default PartModel findPartByNumber(PartNumberSpecifier ps) throws PartException {
+        List<PartModel> foundParts = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getCardLayer().asPartLayer() == ps.layer())
+                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
                 .collect(Collectors.toList());
 
         int partIndex = ps.number - 1;
 
         if (partIndex >= foundParts.size() || partIndex < 0) {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this card.");
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase());
         } else {
             return foundParts.get(partIndex);
         }
     }
 
     /**
-     * Gets the number of parts of the given type that exist on the specified layer.
+     * Finds a part based on ordinal (first, second... middle, last).
      *
-     * @param type Type of part to count or null to count all parts
-     * @return The number of parts of the given type displayed on this card.
+     * @param ps The specification of the part to find
+     * @return The specified part
+     * @throws PartException Thrown if no part can by found matching the specifier.
      */
-    default long getPartCount(PartType type, CardLayer layer) {
-        return getPartsInZOrder(layer)
-                .stream()
-                .filter(p -> type == null || p.getType() == type)
-                .count();
-    }
+    default PartModel findPartByOrdinal(PartOrdinalSpecifier ps) throws PartException {
+        List<PartModel> foundParts = getPartsInDisplayOrder().stream()
+                .filter(p -> ps.type() == null || p.getType() == ps.type())
+                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
+                .collect(Collectors.toList());
 
-    /**
-     * Gets the "number" of the specified part on the card relative to all other parts in the same layer.
-     * <p>
-     * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
-     * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
-     *
-     * @param part The part whose number should be returned.
-     * @return The number of this part
-     */
-    default long getPartNumber(Part part) {
-        int number = 0;
+        int index = ps.ordinal.intValue() - 1;
 
-        for (Part thisPart : getPartsInZOrder(part.getCardLayer())) {
-            number++;
-            if (thisPart.getId() == part.getId()) {
-                return number;
-            }
+        if (ps.ordinal == Ordinal.LAST) {
+            index = foundParts.size() - 1;
+        } else if (ps.ordinal == Ordinal.MIDDLE) {
+            index = foundParts.size() / 2;
         }
 
-        throw new IllegalArgumentException("No such part on this card.");
-    }
-
-    /**
-     * Gets the "number" of the specified button on the card relative to other buttons within the same layer.
-     * <p>
-     * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
-     * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
-     *
-     * @param part The part whose number should be returned.
-     * @return The number of this part
-     */
-    default long getButtonNumber(ButtonPart part) {
-        int number = 0;
-        for (Part thisPart : getPartsInZOrder(part.getCardLayer())) {
-            if (thisPart.getType() == PartType.BUTTON) {
-                number++;
-            }
-
-            if (thisPart.getId() == part.getId()) {
-                return number;
-            }
-        }
-
-        throw new IllegalArgumentException("No such part on this card.");
-    }
-
-    /**
-     * Gets the "number" of the specified field on the card relative to other buttons within the same layer.
-     * <p>
-     * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
-     * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
-     *
-     * @param part The part whose number should be returned.
-     * @return The number of this part
-     */
-    default long getFieldNumber(FieldPart part) {
-        int number = 0;
-        for (Part thisPart : getPartsInZOrder(part.getCardLayer())) {
-            if (thisPart.getType() == PartType.FIELD) {
-                number++;
-            }
-
-            if (thisPart.getId() == part.getId()) {
-                return number;
-            }
-        }
-
-        throw new IllegalArgumentException("No such part on this card.");
-    }
-
-    /**
-     * Notify all parts in this container that they are closing (ostensibly because the container itself is closing).
-     */
-    default void notifyPartsClosing() {
-        for (Part p : getParts()) {
-            p.partClosed();
+        if (index < 0 || index >= foundParts.size()) {
+            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase());
+        } else {
+            return foundParts.get(index);
         }
     }
 
+    /**
+     * Finds a card or background based on its relative position to the current card or background.
+     *
+     * @param ps The specification of the card or background to find
+     * @return The model of the requested part.
+     * @throws PartException Thrown if the requested part cannot be found.
+     */
+    default PartModel findPartByPosition(PartPositionSpecifier ps) throws PartException {
+        if (ps.type() != PartType.BACKGROUND && ps.type() != PartType.CARD) {
+            throw new PartException("Cannot find " + ps.type().toString().toLowerCase() + " by position.");
+        }
+
+        int thisCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+
+        try {
+            if (ps.type() == PartType.CARD) {
+                switch ((Position) ps.value()) {
+                    case NEXT:
+                        return HyperCard.getInstance().getStack().getStackModel().getCardModel(thisCard + 1);
+                    case PREV:
+                        return HyperCard.getInstance().getStack().getStackModel().getCardModel(thisCard - 1);
+                    case THIS:
+                        return HyperCard.getInstance().getStack().getStackModel().getCardModel(thisCard);
+                }
+            }
+
+            if (ps.type() == PartType.BACKGROUND) {
+                switch ((Position) ps.value()) {
+                    case NEXT:
+                        return HyperCard.getInstance().getStack().getStackModel().getBackground(findNextBackground().getBackgroundId());
+                    case PREV:
+                        return HyperCard.getInstance().getStack().getStackModel().getBackground(findPrevBackground().getBackgroundId());
+                    case THIS:
+                        return HyperCard.getInstance().getCard().getCardBackground();
+                }
+            }
+
+        } catch (Throwable t) {
+            throw new PartException("No such card or background.");
+        }
+
+        throw new PartException("Bug! Unhandled search term");
+    }
+
+    /**
+     * Finds the first previous card containing a different background then the current card.
+     * @return The first previous card with a different background than the current card.
+     * @throws PartException Thrown if no such card can be found.
+     */
+    default CardModel findPrevBackground() throws PartException {
+        int thisCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+        List<CardModel> prevCards = Lists.reverse(HyperCard.getInstance().getStack().getStackModel().getCardModels().subList(0, thisCard + 1));
+
+        return findNextBackground(prevCards);
+    }
+
+    /**
+     * Finds the next card containing a different background then the current card.
+     * @return The next card with a different background than the current card.
+     * @throws PartException Thrown if no such card can be found.
+     */
+    default CardModel findNextBackground() throws PartException {
+        int thisCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+        int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().get();
+        List<CardModel> nextCards = HyperCard.getInstance().getStack().getStackModel().getCardModels().subList(thisCard, cardCount);
+
+        return findNextBackground(nextCards);
+    }
+
+    /**
+     * Finds the next card in a list of card models containing a different background than the first card in this list.
+     * @param cardList The list of card models to traverse.
+     * @return The first card with a different background than the first card.
+     * @throws PartException Thrown if no such card can be found.
+     */
+    default CardModel findNextBackground(List<CardModel> cardList) throws PartException {
+        int thisBackground = cardList.get(0).getBackgroundId();
+
+        Optional<CardModel> nextBkgnd = cardList.stream().filter(cardModel -> cardModel.getBackgroundId() != thisBackground).findFirst();
+        if (nextBkgnd.isPresent()) {
+            return nextBkgnd.get();
+        }
+
+        throw new PartException("No such card.");
+    }
 }

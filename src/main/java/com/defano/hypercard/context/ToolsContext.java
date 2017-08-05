@@ -30,27 +30,27 @@ public class ToolsContext {
     private final static ToolsContext instance = new ToolsContext();
 
     // Tool mode properties
-    private Provider<ToolMode> toolModeProvider = new Provider<>(ToolMode.BROWSE);
+    private final Provider<ToolMode> toolModeProvider = new Provider<>(ToolMode.BROWSE);
 
     // Properties that the tools provide to us...
-    private ImmutableProvider<BufferedImage> selectedImageProvider = new ImmutableProvider<>();
+    private final ImmutableProvider<BufferedImage> selectedImageProvider = new ImmutableProvider<>();
 
     // Properties that we provide the tools...
-    private Provider<Boolean> shapesFilled = new Provider<>(false);
-    private Provider<Boolean> isEditingBackground = new Provider<>(false);
-    private Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
-    private Provider<BasicBrush> eraserStrokeProvider = new Provider<>(BasicBrush.SQUARE_12X12);
-    private Provider<BasicBrush> brushStrokeProvider = new Provider<>(BasicBrush.ROUND_12X12);
-    private Provider<Paint> linePaintProvider = new Provider<>(Color.black);
-    private Provider<Integer> fillPatternProvider = new Provider<>(0);
-    private Provider<Integer> shapeSidesProvider = new Provider<>(5);
-    private Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
-    private Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
-    private Provider<Boolean> drawMultiple = new Provider<>(false);
-    private Provider<Boolean> drawCentered = new Provider<>(false);
+    private final Provider<Boolean> shapesFilled = new Provider<>(false);
+    private final Provider<Boolean> isEditingBackground = new Provider<>(false);
+    private final Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
+    private final Provider<BasicBrush> eraserStrokeProvider = new Provider<>(BasicBrush.SQUARE_12X12);
+    private final Provider<BasicBrush> brushStrokeProvider = new Provider<>(BasicBrush.ROUND_12X12);
+    private final Provider<Paint> linePaintProvider = new Provider<>(Color.black);
+    private final Provider<Integer> fillPatternProvider = new Provider<>(0);
+    private final Provider<Integer> shapeSidesProvider = new Provider<>(5);
+    private final Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
+    private final Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private final Provider<Boolean> drawMultiple = new Provider<>(false);
+    private final Provider<Boolean> drawCentered = new Provider<>(false);
 
-    private Provider<Color> foregroundColorProvider = new Provider<>(Color.BLACK);
-    private Provider<Color> backgroundColorProvider = new Provider<>(Color.WHITE);
+    private final Provider<Color> foregroundColorProvider = new Provider<>(Color.BLACK);
+    private final Provider<Color> backgroundColorProvider = new Provider<>(Color.WHITE);
 
     private PaintToolType lastToolType;
 

@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
@@ -27,8 +27,8 @@ public class PartMeExp extends PartExp {
     
     public Value evaluate () throws HtSemanticException {
         try {
-            PartSpecifier part = GlobalContext.getContext().getMe();
-            return GlobalContext.getContext().get(part).getValue();
+            PartSpecifier part = ExecutionContext.getContext().getMe();
+            return ExecutionContext.getContext().get(part).getValue();
         } catch (PartException e) {
             throw new HtSemanticException(e.getMessage());
         }
@@ -37,6 +37,6 @@ public class PartMeExp extends PartExp {
     public PartSpecifier evaluateAsSpecifier () 
     throws HtSemanticException
     {        
-        return GlobalContext.getContext().getMe();
+        return ExecutionContext.getContext().getMe();
     }    
 }

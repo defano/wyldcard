@@ -13,10 +13,10 @@ import com.defano.hypercard.gui.fx.CurtainObserver;
 import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypercard.gui.util.FileDrop;
 import com.defano.hypercard.gui.util.ImageImporter;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.ScreenCurtain;
-import com.defano.hypercard.parts.StackPart;
-import com.defano.hypercard.parts.model.StackObserver;
+import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.stack.ScreenCurtain;
+import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.parts.stack.StackObserver;
 import com.defano.hypercard.parts.util.MouseEventDispatcher;
 
 import javax.swing.*;
@@ -32,8 +32,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
 
     private StackPart stack;
     private CardPart card;
-    private JLayeredPane cardPanel = new JLayeredPane();
-    private ScreenCurtain screenCurtain = new ScreenCurtain();
+    private final JLayeredPane cardPanel = new JLayeredPane();
+    private final ScreenCurtain screenCurtain = new ScreenCurtain();
 
     public StackWindow() {
         cardPanel.setLayout(new BorderLayout(0, 0));

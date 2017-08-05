@@ -1,9 +1,11 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.CardLayer;
-import com.defano.hypercard.parts.CardPart;
-import com.defano.hypercard.parts.model.BackgroundModel;
+import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -15,17 +17,18 @@ import java.awt.*;
 
 public class BackgroundPropertyEditor extends HyperCardDialog {
     private CardPart cardPart;
+    private BackgroundModel backgroundModel;
 
     private JPanel propertiesPanel;
     private JTextField backgroundName;
     private JLabel fieldCountLabel;
     private JLabel buttonCountLabel;
     private JCheckBox cantDeleteBkgndCheckBox;
-    private JButton cancelButton;
     private JButton saveButton;
     private JLabel cardCountLabel;
     private JLabel backgroundIdLabel;
-    private JButton editScriptButton;
+    private JButton scriptButton;
+    private JButton contentsButton;
 
     public BackgroundPropertyEditor() {
         saveButton.addActionListener(e -> {
@@ -33,7 +36,20 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
-        cancelButton.addActionListener(e -> dispose());
+        contentsButton.addActionListener(e -> {
+            dispose();
+            showContentsEditor();
+        });
+
+        scriptButton.addActionListener(e -> {
+            dispose();
+            WindowBuilder.make(new ScriptEditor())
+                    .withTitle("Script of " + backgroundModel.getKnownProperty(BackgroundModel.PROP_NAME).stringValue())
+                    .withModel(backgroundModel)
+                    .resizeable(true)
+                    .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .build();
+        });
     }
 
     @Override
@@ -44,17 +60,23 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
     @Override
     public void bindModel(Object data) {
         cardPart = (CardPart) data;
+        backgroundModel = cardPart.getCardBackground();
 
         int backgroundId = cardPart.getCardModel().getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
-        backgroundName.setText(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
-        cantDeleteBkgndCheckBox.setSelected(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+        cantDeleteBkgndCheckBox.setSelected(backgroundModel.getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+
+        // Don't display "default" name ('background id xxx')
+        Value bkgndNameValue = cardPart.getCardBackground().getRawProperty(BackgroundModel.PROP_NAME);
+        if (bkgndNameValue != null && !bkgndNameValue.isEmpty()) {
+            backgroundName.setText(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
+        }
 
         long cardCount = cardPart.getStackModel().getCardCountInBackground(backgroundId);
-        long fieldCount = cardPart.getPartCount(PartType.FIELD, CardLayer.BACKGROUND_PARTS);
-        long buttonCount = cardPart.getPartCount(PartType.BUTTON, CardLayer.BACKGROUND_PARTS);
+        long fieldCount = cardPart.getPartCount(PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = cardPart.getPartCount(PartType.BUTTON, Owner.BACKGROUND);
 
-        cardCountLabel.setText("Background shared by " + cardCount + " cards.");
+        cardCountLabel.setText("Background shared by " + cardCount + " card.");
         buttonCountLabel.setText("Contains " + buttonCount + " background buttons.");
         fieldCountLabel.setText("Contains " + fieldCount + " background fields.");
     }
@@ -62,6 +84,13 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
     private void updateProperties() {
         cardPart.getCardBackground().setKnownProperty(BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
         cardPart.getCardBackground().setKnownProperty(BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
+    }
+
+    private void showContentsEditor() {
+        String contents = PartContentsEditor.editContents(backgroundModel.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        if (contents != null) {
+            backgroundModel.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));
+        }
     }
 
     /**
@@ -101,52 +130,53 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         propertiesPanel = new JPanel();
-        propertiesPanel.setLayout(new GridLayoutManager(11, 4, new Insets(10, 10, 10, 10), -1, -1));
+        propertiesPanel.setLayout(new GridLayoutManager(11, 5, new Insets(10, 10, 10, 10), -1, -1));
         panel1.add(propertiesPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Background Name:");
-        propertiesPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(label1, new GridConstraints(0, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         backgroundName = new JTextField();
-        propertiesPanel.add(backgroundName, new GridConstraints(0, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        propertiesPanel.add(backgroundName, new GridConstraints(0, 3, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         backgroundIdLabel = new JLabel();
         backgroundIdLabel.setText("Background ID:");
-        propertiesPanel.add(backgroundIdLabel, new GridConstraints(2, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(backgroundIdLabel, new GridConstraints(2, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fieldCountLabel = new JLabel();
         fieldCountLabel.setText("Contains 2 background fields.");
-        propertiesPanel.add(fieldCountLabel, new GridConstraints(5, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(fieldCountLabel, new GridConstraints(5, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonCountLabel = new JLabel();
         buttonCountLabel.setText("Contains 2 background buttons.");
-        propertiesPanel.add(buttonCountLabel, new GridConstraints(6, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(buttonCountLabel, new GridConstraints(6, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cantDeleteBkgndCheckBox = new JCheckBox();
         cantDeleteBkgndCheckBox.setText("Can't Delete Background");
-        propertiesPanel.add(cantDeleteBkgndCheckBox, new GridConstraints(8, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(cantDeleteBkgndCheckBox, new GridConstraints(8, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("");
-        propertiesPanel.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(label2, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("");
-        propertiesPanel.add(label3, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label4 = new JLabel();
-        label4.setText("");
-        propertiesPanel.add(label4, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(label3, new GridConstraints(7, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cardCountLabel = new JLabel();
         cardCountLabel.setText("Background shared by 9 cards.");
-        propertiesPanel.add(cardCountLabel, new GridConstraints(3, 0, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label5 = new JLabel();
-        label5.setText("");
-        propertiesPanel.add(label5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        editScriptButton = new JButton();
-        editScriptButton.setEnabled(false);
-        editScriptButton.setText("Edit Script...");
-        editScriptButton.setToolTipText("Not implemented");
-        propertiesPanel.add(editScriptButton, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(cardCountLabel, new GridConstraints(3, 0, 1, 5, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("");
+        propertiesPanel.add(label4, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptButton = new JButton();
+        scriptButton.setEnabled(true);
+        scriptButton.setText("Edit Script...");
+        scriptButton.setToolTipText("Not implemented");
+        propertiesPanel.add(scriptButton, new GridConstraints(10, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        propertiesPanel.add(spacer1, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        propertiesPanel.add(spacer1, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
-        propertiesPanel.add(saveButton, new GridConstraints(10, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cancelButton = new JButton();
-        cancelButton.setText("Cancel");
-        propertiesPanel.add(cancelButton, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        propertiesPanel.add(saveButton, new GridConstraints(10, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentsButton = new JButton();
+        contentsButton.setEnabled(true);
+        contentsButton.setText("Contents...");
+        contentsButton.setToolTipText("Not implemented");
+        propertiesPanel.add(contentsButton, new GridConstraints(9, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        propertiesPanel.add(spacer2, new GridConstraints(10, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 }

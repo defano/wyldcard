@@ -8,19 +8,19 @@
 
 package com.defano.hypercard.runtime;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.defano.hypertalk.ast.statements.StatementList;
+import com.defano.hypertalk.exception.HtSemanticException;
+import com.google.common.base.Function;
+import com.google.common.util.concurrent.*;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
 import com.defano.hypertalk.HypertalkErrorListener;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.Script;
-import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.exception.HtSyntaxException;
@@ -32,6 +32,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
 import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Interpreter class provides static methods for compiling a script (translate
@@ -39,17 +40,19 @@ import java.util.concurrent.*;
  */
 public class Interpreter {
 
-    private static ThreadPoolExecutor scriptExecutor;
-    private static ScheduledExecutorService idleTimeExecutor;
+    private static final ThreadPoolExecutor scriptExecutor;
+    private static final ListeningExecutorService listeningScriptExecutor;
+    private static final ScheduledExecutorService idleTimeExecutor;
 
     static {
         scriptExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
+        listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
         idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("idle-executor-%d").build());
 
         idleTimeExecutor.scheduleAtFixedRate(() -> {
             int pendingHandlers = scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
             if (pendingHandlers == 0) {
-                GlobalContext.getContext().getGlobalProperties().resetProperties();
+                ExecutionContext.getContext().getGlobalProperties().resetProperties();
             }
 
         }, 0, 200, TimeUnit.MILLISECONDS);
@@ -96,12 +99,48 @@ public class Interpreter {
         return compile(statement).getStatements().list.get(0) instanceof ExpressionStatement;
     }
 
-    public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
-        return executeStatementList(me, compile(statementList).getStatements(), true);
+    /**
+     * Executes a "command" handler in the given script. A command handler is a special handler whose
+     * name is passed like a message from HyperCard, but represents a special event that can be trapped
+     * and overridden in the script. (Command handlers include 'keyDown', 'returnInField', 'returnKey', etc.)
+     *
+     * Any part that implements a command handler must 'pass' the command handler back to HyperCard, otherwise
+     * the default behavior of that command will not be executed. A script that does not override the command
+     * is assumed to 'pass' it.
+     *
+     * @param me The part whose script is being executed.
+     * @param script The script of the part
+     * @param command The command handler name.
+     * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
+     * scripts attempts to pass a message other than the message being handled.
+     */
+    public static ListenableFuture<Boolean> executeCommandHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) {
+        NamedBlock handler = script.getHandler(command);
+
+        if (handler == null) {
+            return Futures.immediateFuture(false);
+        } else {
+            return Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
+
+                // Did not invoke pass: handler trapped message
+                if (passedMessage == null || passedMessage.isEmpty()) {
+                    return true;
+                }
+
+                // Invoked pass; did not trap message
+                if (passedMessage.equalsIgnoreCase(command)) {
+                    return false;
+                }
+
+                // Semantic error: Passing a message other than the handled message is disallowed.
+                HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
+                return true;
+            });
+        }
     }
 
-    public static void executeHandler(PartSpecifier me, Script script, String handler) {
-        executeStatementList(me, script.getHandler(handler), true);
+    public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
+        return executeNamedBlock(me, getBlockForStatementList(compile(statementList).getStatements()), new ExpressionList());
     }
 
     public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) {
@@ -118,14 +157,22 @@ public class Interpreter {
         }
     }
 
-    private static Future executeStatementList(PartSpecifier me, StatementList handler, boolean onNewThread) {
-        HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler);
-        if (SwingUtilities.isEventDispatchThread() || onNewThread)
-            return scriptExecutor.submit(handlerTask);
-        else {
-            handlerTask.run();
-            return Futures.immediateFuture(null);
+    private static ListenableFuture<String> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) {
+        HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler, arguments);
+
+        try {
+            if (SwingUtilities.isEventDispatchThread())
+                return listeningScriptExecutor.submit(handlerTask);
+            else {
+                return Futures.immediateFuture(handlerTask.call());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private static NamedBlock getBlockForStatementList(StatementList statementList) {
+        return new NamedBlock("", "", new ParameterList(), statementList);
     }
 
 }

@@ -37,11 +37,11 @@ public class PartResizer {
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    private WeakReference<Part> part;
-    private WeakReference<Component> within;
+    private final WeakReference<Part> part;
+    private final WeakReference<Component> within;
     private boolean done = false;
-    private int fromQuadrant;
-    private Rectangle originalBounds;
+    private final int fromQuadrant;
+    private final Rectangle originalBounds;
     
     private class ResizerTask implements Runnable {
 

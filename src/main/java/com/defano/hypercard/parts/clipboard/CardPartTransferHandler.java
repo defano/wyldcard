@@ -4,6 +4,9 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.parts.*;
+import com.defano.hypercard.parts.card.CardLayer;
+import com.defano.hypercard.parts.card.CardLayerPart;
+import com.defano.hypercard.parts.card.CardPart;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
@@ -42,8 +45,8 @@ public class CardPartTransferHandler extends TransferHandler {
     public boolean importData(TransferHandler.TransferSupport info) {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
-            CardLayer layer = Part.getActivePartLayer();
-            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importExistingPart(part, layer);
+            CardLayer layer = CardLayerPart.getActivePartLayer();
+            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importPart(part, layer);
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

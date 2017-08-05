@@ -10,8 +10,8 @@ package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.*;
-import com.defano.hypercard.parts.ButtonPart;
-import com.defano.hypercard.parts.FieldPart;
+import com.defano.hypercard.parts.button.ButtonPart;
+import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.hypercard.context.PartToolContext;

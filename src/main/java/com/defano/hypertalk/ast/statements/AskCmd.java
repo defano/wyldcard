@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
@@ -68,7 +68,7 @@ public class AskCmd extends Statement {
             if (result == null)
                 result = "";
 
-            GlobalContext.getContext().setIt(new Value(result));
+            ExecutionContext.getContext().setIt(new Value(result));
             latch.countDown();
         });
 

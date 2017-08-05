@@ -17,7 +17,7 @@ import static junit.framework.Assert.fail;
 
 public class TestGrammar {
 
-    private String validStatements[] = new String[]{
+    private final String[] validStatements = new String[]{
             "",
             "3",
             "3.0",
@@ -31,7 +31,7 @@ public class TestGrammar {
             "ask \"hello\" with \"answer\""
     };
 
-    private String validScripts[] = new String[] {
+    private final String[] validScripts = new String[] {
             "",
             "-- comment",
             "\n\n\n",

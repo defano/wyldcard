@@ -15,9 +15,9 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.parts.PartException;
-import com.defano.hypertalk.ast.common.PartLayer;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartIdSpecifier;
@@ -26,11 +26,15 @@ import com.defano.hypertalk.exception.HtSemanticException;
 
 public class PartIdExp extends PartExp {
 
-    public final PartLayer layer;
+    public final Owner layer;
     public final PartType type;
     public final Expression id;
-    
-    public PartIdExp(PartLayer layer, PartType type, Expression id) {
+
+    public PartIdExp(PartType type, Expression id) {
+        this(null, type, id);
+    }
+
+    public PartIdExp(Owner layer, PartType type, Expression id) {
         this.layer = layer;
         this.type = type;
         this.id = id;
@@ -38,7 +42,7 @@ public class PartIdExp extends PartExp {
     
     public Value evaluate () throws HtSemanticException {
         try {
-            return GlobalContext.getContext().get(evaluateAsSpecifier()).getValue();
+            return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
         } catch (PartException e) {
             throw new HtSemanticException("Can't get that part.");
         }

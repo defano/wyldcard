@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 
 public class VariableExp extends Expression {
@@ -27,6 +27,6 @@ public class VariableExp extends Expression {
     }
     
     public Value evaluate () {
-        return GlobalContext.getContext().get(identifier);
+        return ExecutionContext.getContext().get(identifier);
     }
 }

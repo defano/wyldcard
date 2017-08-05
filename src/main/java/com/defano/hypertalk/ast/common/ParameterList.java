@@ -20,7 +20,7 @@ import java.util.Vector;
 
 public class ParameterList {
 
-    public List<String> list;
+    public final List<String> list;
     
     public ParameterList () {
         list = new Vector<>();

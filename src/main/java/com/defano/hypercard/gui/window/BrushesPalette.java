@@ -109,10 +109,6 @@ public class BrushesPalette extends HyperCardFrame implements Observer {
         return square16;
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
-
     /**
      * @noinspection ALL
      */

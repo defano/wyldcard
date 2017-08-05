@@ -57,10 +57,6 @@ public class PartContentsEditor extends JDialog {
         return dialog.canceled ? null : dialog.contentsField.getText();
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
-
     /**
      * @noinspection ALL
      */

@@ -16,12 +16,12 @@
 
 package com.defano.hypertalk.utils;
 
-import com.defano.hypercard.context.GlobalProperties;
+import com.defano.hypercard.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.common.CompositeChunk;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.google.common.collect.Lists;
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -88,9 +88,11 @@ public class ChunkUtils {
 
             // If necessary, add as many lines/items as are needed to assure the value can be mutated
             String separator = getSeparatorForChunkType(chunkType);
+            StringBuilder mutableStringBuilder = new StringBuilder(mutableString);
             for (int index = chunksInContainer; index < chunkNumber; index++) {
-                mutableString = mutableString + separator;
+                mutableStringBuilder.append(separator);
             }
+            mutableString = mutableStringBuilder.toString();
         }
 
         if (chunkType.isRange()) {
@@ -191,7 +193,7 @@ public class ChunkUtils {
     private static String getItemDelimiterRegex() {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
 
-        String itemDelimiter = GlobalContext.getContext().getGlobalProperties().getKnownProperty(GlobalProperties.PROP_ITEMDELIMITER).stringValue();
+        String itemDelimiter = ExecutionContext.getContext().getGlobalProperties().getKnownProperty(HyperCardProperties.PROP_ITEMDELIMITER).stringValue();
         StringBuilder itemDelimiterRegex = new StringBuilder();
 
         for (char thisChar : itemDelimiter.toCharArray()) {
@@ -221,7 +223,7 @@ public class ChunkUtils {
             case LINE:
                 return "\n";
             case ITEM:
-                return GlobalContext.getContext().getGlobalProperties().getKnownProperty(GlobalProperties.PROP_ITEMDELIMITER).stringValue();
+                return ExecutionContext.getContext().getGlobalProperties().getKnownProperty(HyperCardProperties.PROP_ITEMDELIMITER).stringValue();
             default:
                 throw new RuntimeException("Bug! Not implemented.");
         }

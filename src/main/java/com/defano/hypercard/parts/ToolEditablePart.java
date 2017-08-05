@@ -11,8 +11,11 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.parts.buttons.ButtonComponent;
-import com.defano.hypercard.parts.fields.FieldComponent;
+import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.card.CardLayer;
+import com.defano.hypercard.parts.card.CardLayerPart;
+import com.defano.hypercard.parts.field.FieldComponent;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.ast.common.Value;
@@ -25,7 +28,7 @@ import java.awt.event.*;
  * An interface defining actions common to all tool-editable parts (i.e., buttons and fields that can be edited
  * using the button tool or field tool).
  */
-public interface ToolEditablePart extends Part, KeyListener, MouseListener, ActionListener {
+public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListener, ActionListener {
 
     /**
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
@@ -71,7 +74,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
      * Gets the Part object associated with this ToolEditablePart.
      * @return The associated Part
      */
-    Part getPart();
+    CardLayerPart getPart();
 
     /**
      * Determines the tool that is used to edit parts of this type (i.e., ButtonTool or FieldTool).
@@ -174,7 +177,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
         boolean forceHidden = getCardLayer() == CardLayer.CARD_PARTS && !getCard().isForegroundVisible();
 
         // Force show when part tool is active and part is in the editing part layer
-        boolean forceVisible = isPartToolActive() && getCardLayer() == Part.getActivePartLayer();
+        boolean forceVisible = isPartToolActive() && getCardLayer() == CardLayerPart.getActivePartLayer();
 
         getComponent().setVisible((visibleOnCard && !forceHidden) || forceVisible);
     }
@@ -183,14 +186,14 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
      */
     default void bringCloser() {
-        getPart().setZorder(getZOrder() - 1);
+        getPart().setDisplayOrder(getZOrder() - 1);
     }
 
     /**
      * Adjust the z-order of this part, moving it one part further from the front of the part stack.
      */
     default void sendFurther() {
-        getPart().setZorder(getZOrder() + 1);
+        getPart().setDisplayOrder(getZOrder() + 1);
     }
 
     /**
@@ -198,7 +201,7 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
      * @return The relative front-to-back position of this part to others drawn on the card.
      */
     default int getZOrder() {
-        return getPartModel().getKnownProperty(PartModel.PROP_ZORDER).integerValue();
+        return getPartModel().getKnownProperty(CardLayerPartModel.PROP_ZORDER).integerValue();
     }
 
     @Override
@@ -223,6 +226,15 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     }
 
     @Override
+    default void mouseReleased(MouseEvent e) {}
+
+    @Override
+    default void mouseEntered(MouseEvent e) {}
+
+    @Override
+    default void mouseExited(MouseEvent e) {}
+
+    @Override
     default void mouseClicked(MouseEvent e) {
         if (isSelectedForEditing() && e.getClickCount() == 2) {
             editProperties();
@@ -236,8 +248,10 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
     }
 
     @Override
-    default void keyPressed(KeyEvent e) {
+    default void keyTyped(KeyEvent e) {}
 
+    @Override
+    default void keyPressed(KeyEvent e) {
         if (isSelectedForEditing()) {
             int top = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
             int left = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
@@ -268,18 +282,6 @@ public interface ToolEditablePart extends Part, KeyListener, MouseListener, Acti
 
     @Override
     default void keyReleased(KeyEvent e) {}
-
-    @Override
-    default void mouseReleased(MouseEvent e) {}
-
-    @Override
-    default void mouseEntered(MouseEvent e) {}
-
-    @Override
-    default void mouseExited(MouseEvent e) {}
-
-    @Override
-    default void keyTyped(KeyEvent e) {}
 
     @Override
     default void actionPerformed(ActionEvent e) {}

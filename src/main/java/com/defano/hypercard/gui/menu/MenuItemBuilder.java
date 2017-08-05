@@ -13,12 +13,11 @@ import com.defano.jmonet.model.ImmutableProvider;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class MenuItemBuilder {
 
-    private JMenuItem item;
+    private final JMenuItem item;
     private ImmutableProvider<Boolean> checkmarkProvider;
     private ImmutableProvider<Boolean> disabledProvider;
 

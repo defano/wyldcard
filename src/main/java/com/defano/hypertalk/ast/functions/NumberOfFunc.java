@@ -16,11 +16,7 @@
 package com.defano.hypertalk.ast.functions;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.CardLayer;
-import com.defano.hypertalk.ast.common.ChunkType;
-import com.defano.hypertalk.ast.common.Countable;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -50,17 +46,17 @@ public class NumberOfFunc extends Expression {
             case ITEM:
                 return new Value(expression.evaluate().itemCount());
             case CARD_PARTS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(null, CardLayer.CARD_PARTS));
+                return new Value(HyperCard.getInstance().getCard().getPartCount(null, Owner.CARD));
             case BKGND_PARTS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(null, CardLayer.BACKGROUND_PARTS));
+                return new Value(HyperCard.getInstance().getCard().getPartCount(null, Owner.BACKGROUND));
             case CARD_BUTTONS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, CardLayer.CARD_PARTS));
+                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, Owner.CARD));
             case BKGND_BUTTONS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, CardLayer.BACKGROUND_PARTS));
+                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
             case CARD_FIELDS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, CardLayer.CARD_PARTS));
+                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, CardLayer.BACKGROUND_PARTS));
+                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemtype);
         }

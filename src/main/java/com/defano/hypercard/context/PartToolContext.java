@@ -10,15 +10,15 @@ package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.jmonet.model.Provider;
-import com.defano.hypercard.parts.ButtonPart;
-import com.defano.hypercard.parts.FieldPart;
+import com.defano.hypercard.parts.button.ButtonPart;
+import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 public class PartToolContext {
 
     private final static PartToolContext instance = new PartToolContext();
 
-    private Provider<ToolEditablePart> selectedPart = new Provider<>(null);
+    private final Provider<ToolEditablePart> selectedPart = new Provider<>(null);
 
     private PartToolContext() {
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> deselectAllParts());
@@ -63,7 +63,7 @@ public class PartToolContext {
     public void deleteSelectedPart() {
         ToolEditablePart selectedPart = this.selectedPart.get();
         if (selectedPart != null) {
-            HyperCard.getInstance().getCard().removePart(selectedPart);
+            HyperCard.getInstance().getCard().removePart(selectedPart.getPartModel());
         }
     }
 

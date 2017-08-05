@@ -17,6 +17,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;
@@ -38,8 +39,8 @@ public class PartMover {
 
     private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    private WeakReference<Part> part;
-    private WeakReference<Component> within;
+    private final WeakReference<CardLayerPart> part;
+    private final WeakReference<Component> within;
     private boolean done = true;
     private Point mouseLocInPart;
 
@@ -75,7 +76,7 @@ public class PartMover {
      * @param part The part to move
      * @param within The parent component in which it should be moved.
      */
-    public PartMover(Part part, Component within) {
+    public PartMover(CardLayerPart part, Component within) {
         this.part = new WeakReference<>(part);
         this.within = new WeakReference<>(within);
     }
@@ -92,7 +93,7 @@ public class PartMover {
      * Begin moving the part; should be invoked when the user has clicked the mouse over the part.
      */
     public void startMoving() {
-        Part partInst = part.get();
+        CardLayerPart partInst = part.get();
 
         if (!isMoving() && partInst != null) {
             done = false;

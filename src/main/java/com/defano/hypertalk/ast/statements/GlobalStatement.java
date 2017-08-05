@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 
 public class GlobalStatement extends Statement {
 
@@ -26,6 +26,6 @@ public class GlobalStatement extends Statement {
     }
 
     public void execute () {
-        GlobalContext.getContext().defineGlobal(symbol);
+        ExecutionContext.getContext().defineGlobal(symbol);
     }
 }

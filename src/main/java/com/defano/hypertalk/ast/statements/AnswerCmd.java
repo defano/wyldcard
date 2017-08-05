@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -94,10 +94,10 @@ public class AnswerCmd extends Statement {
                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
 
             switch (choice) {
-                case 0:     GlobalContext.getContext().setIt(choice1); break;
-                case 1:     GlobalContext.getContext().setIt(choice2); break;
-                case 2:     GlobalContext.getContext().setIt(choice3); break;
-                default:     GlobalContext.getContext().setIt(new Value()); break;
+                case 0:     ExecutionContext.getContext().setIt(choice1); break;
+                case 1:     ExecutionContext.getContext().setIt(choice2); break;
+                case 2:     ExecutionContext.getContext().setIt(choice3); break;
+                default:     ExecutionContext.getContext().setIt(new Value()); break;
             }
 
             latch.countDown();

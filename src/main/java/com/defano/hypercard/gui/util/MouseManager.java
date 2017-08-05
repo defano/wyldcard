@@ -9,7 +9,7 @@
 package com.defano.hypercard.gui.util;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.CardPart;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -27,8 +27,8 @@ public class MouseManager {
     private static boolean mouseIsDown;
     private static Point clickLoc = new Point();
 
-    private static Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
-    private static Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
+    private static final Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
+    private static final Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
 
     public static void start() {
         Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);

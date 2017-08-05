@@ -8,7 +8,8 @@
 
 package com.defano.hypertalk;
 
-import com.defano.hypercard.context.GlobalProperties;
+import com.defano.hypercard.context.HyperCardProperties;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.constructs.*;
@@ -16,7 +17,6 @@ import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.functions.*;
 import com.defano.hypertalk.ast.statements.*;
-import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
@@ -42,6 +42,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitGoCmdStmt(HyperTalkParser.GoCmdStmtContext ctx) {
+        return visit(ctx.goCmd());
+    }
+
+    @Override
     public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
         return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
     }
@@ -53,12 +58,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDisableCmdStmnt(HyperTalkParser.DisableCmdStmntContext ctx) {
-        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(false));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(false));
     }
 
     @Override
     public Object visitEnableCmdStmnt(HyperTalkParser.EnableCmdStmntContext ctx) {
-        return new SetPropertyCmd((PartExp) visit(ctx.part()), PartModel.PROP_ENABLED, new Value(true));
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(true));
     }
 
     @Override
@@ -317,13 +322,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd((Destination) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
+    public Object visitGoBackCmdStmt(HyperTalkParser.GoBackCmdStmtContext ctx) {
+        return new GoCmd(null);
     }
 
     @Override
-    public Object visitDestinationType(HyperTalkParser.DestinationTypeContext ctx) {
-        return DestinationType.CARD;
+    public Object visitGoBackVisualEffectCmdStmt(HyperTalkParser.GoBackVisualEffectCmdStmtContext ctx) {
+        return new GoCmd(null, (VisualEffectSpecifier) visit(ctx.visualEffect()));
+    }
+
+    @Override
+    public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
+        return new GoCmd((Destination) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override
@@ -337,8 +347,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitBackPosition(HyperTalkParser.BackPositionContext ctx) {
-        return Position.BACK;
+    public Object visitThisPosition(HyperTalkParser.ThisPositionContext ctx) {
+        return Position.THIS;
     }
 
     @Override
@@ -354,6 +364,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCardPosition(HyperTalkParser.CardPositionContext ctx) {
         return new Destination((Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
+    }
+
+    @Override
+    public Object visitCardDestinationType(HyperTalkParser.CardDestinationTypeContext ctx) {
+        return DestinationType.CARD;
+    }
+
+    @Override
+    public Object visitBkgndDestinationType(HyperTalkParser.BkgndDestinationTypeContext ctx) {
+        return DestinationType.BACKGROUND;
     }
 
     @Override
@@ -414,50 +434,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (StatementList) visit(ctx.statementList()));
+    }
 
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new NamedBlock(open, (StatementList) visit(ctx.statementList()));
+    @Override
+    public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitEmptyHandler(HyperTalkParser.EmptyHandlerContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new StatementList());
+    }
 
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new NamedBlock(open, new StatementList());
+    @Override
+    public Object visitEmptyArgHandler(HyperTalkParser.EmptyArgHandlerContext ctx) {
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), new StatementList());
     }
 
     @Override
     public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
-
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on function " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new UserFunction(open, (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitEmptyFunction(HyperTalkParser.EmptyFunctionContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
-
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on function " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new UserFunction(open, (ParameterList) visit(ctx.parameterList()), new StatementList());
+        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), new StatementList());
     }
 
     @Override
@@ -663,17 +665,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitLockScreenCmdStmt(HyperTalkParser.LockScreenCmdStmtContext ctx) {
-        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(true));
+        return new SetPropertyCmd(HyperCardProperties.PROP_LOCKSCREEN, new Value(true));
     }
 
     @Override
     public Object visitUnlockScreenCmdStmt(HyperTalkParser.UnlockScreenCmdStmtContext ctx) {
-        return new SetPropertyCmd(GlobalProperties.PROP_LOCKSCREEN, new Value(false));
+        return new SetPropertyCmd(HyperCardProperties.PROP_LOCKSCREEN, new Value(false));
     }
 
     @Override
     public Object visitUnlockScreenVisualCmdStmt(HyperTalkParser.UnlockScreenVisualCmdStmtContext ctx) {
         return new UnlockScreenCmd((VisualEffectSpecifier) visit(ctx.visualEffect()));
+    }
+
+    @Override
+    public Object visitPassCmdStmt(HyperTalkParser.PassCmdStmtContext ctx) {
+        return new PassCmd((Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -920,57 +927,127 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBkgndFieldPart(HyperTalkParser.BkgndFieldPartContext ctx) {
-        return new PartNameExp(PartLayer.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
+        return new PartNameExp(Owner.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndFieldOrdinalPart(HyperTalkParser.BkgndFieldOrdinalPartContext ctx) {
+        return new PartNumberExp(Owner.BACKGROUND, PartType.FIELD, (Ordinal) visit(ctx.ordinal()));
     }
 
     @Override
     public Object visitBkgndFieldIdPart(HyperTalkParser.BkgndFieldIdPartContext ctx) {
-        return new PartIdExp(PartLayer.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
+        return new PartIdExp(Owner.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
     }
 
     @Override
     public Object visitBkgndButtonPart(HyperTalkParser.BkgndButtonPartContext ctx) {
-        return new PartNameExp(PartLayer.BACKGROUND, PartType.BUTTON, (Expression)visit(ctx.factor()));
+        return new PartNameExp(Owner.BACKGROUND, PartType.BUTTON, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndButtonOrdinalPart(HyperTalkParser.BkgndButtonOrdinalPartContext ctx) {
+        return new PartNumberExp(Owner.BACKGROUND, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()));
     }
 
     @Override
     public Object visitBkgndButtonIdPart(HyperTalkParser.BkgndButtonIdPartContext ctx) {
-        return new PartIdExp(PartLayer.BACKGROUND, PartType.BUTTON, (Expression)visit(ctx.factor()));
+        return new PartIdExp(Owner.BACKGROUND, PartType.BUTTON, (Expression)visit(ctx.factor()));
     }
 
     @Override
     public Object visitCardFieldPart(HyperTalkParser.CardFieldPartContext ctx) {
-        return new PartNameExp(PartLayer.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
+        return new PartNameExp(Owner.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardFieldOrdinalPart(HyperTalkParser.CardFieldOrdinalPartContext ctx) {
+        return new PartNumberExp(Owner.CARD, PartType.FIELD, (Ordinal) visit(ctx.ordinal()));
     }
 
     @Override
     public Object visitCardFieldIdPart(HyperTalkParser.CardFieldIdPartContext ctx) {
-        return new PartIdExp(PartLayer.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
+        return new PartIdExp(Owner.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
     }
 
     @Override
     public Object visitCardButtonPart(HyperTalkParser.CardButtonPartContext ctx) {
-        return new PartNameExp(PartLayer.CARD, PartType.BUTTON, (Expression)visit(ctx.factor()));
+        return new PartNameExp(Owner.CARD, PartType.BUTTON, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardButtonOrdinalPart(HyperTalkParser.CardButtonOrdinalPartContext ctx) {
+        return new PartNumberExp(Owner.CARD, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()));
     }
 
     @Override
     public Object visitCardButtonIdPart(HyperTalkParser.CardButtonIdPartContext ctx) {
-        return new PartIdExp(PartLayer.CARD, PartType.BUTTON, (Expression)visit(ctx.factor()));
+        return new PartIdExp(Owner.CARD, PartType.BUTTON, (Expression)visit(ctx.factor()));
     }
 
     @Override
     public Object visitCardPartNumberPart(HyperTalkParser.CardPartNumberPartContext ctx) {
-        return new PartNumberExp(PartLayer.CARD, (Expression)visit(ctx.factor()));
+        return new PartNumberExp(Owner.CARD, (Expression)visit(ctx.factor()));
     }
 
     @Override
     public Object visitBkgndPartNumberPart(HyperTalkParser.BkgndPartNumberPartContext ctx) {
-        return new PartNumberExp(PartLayer.BACKGROUND, (Expression)visit(ctx.factor()));
+        return new PartNumberExp(Owner.BACKGROUND, (Expression)visit(ctx.factor()));
     }
 
     @Override
     public Object visitMePart(HyperTalkParser.MePartContext ctx) {
         return new PartMeExp();
+    }
+
+    @Override
+    public Object visitThisCardPart(HyperTalkParser.ThisCardPartContext ctx) {
+        return new PartPositionExp(PartType.CARD, Position.THIS);
+    }
+
+    @Override
+    public Object visitThisBkgndPart(HyperTalkParser.ThisBkgndPartContext ctx) {
+        return new PartPositionExp(PartType.BACKGROUND, Position.THIS);
+    }
+
+    @Override
+    public Object visitPositionCardPart(HyperTalkParser.PositionCardPartContext ctx) {
+        return new PartPositionExp(PartType.CARD, (Position) visit(ctx.position()));
+    }
+
+    @Override
+    public Object visitPositionBkgndPart(HyperTalkParser.PositionBkgndPartContext ctx) {
+        return new PartPositionExp(PartType.BACKGROUND, (Position) visit(ctx.position()));
+    }
+
+    @Override
+    public Object visitOrdinalCardPart(HyperTalkParser.OrdinalCardPartContext ctx) {
+        return new PartNumberExp(PartType.CARD, (Ordinal) visit(ctx.ordinal()));
+    }
+
+    @Override
+    public Object visitOrdinalBkgndPart(HyperTalkParser.OrdinalBkgndPartContext ctx) {
+        return new PartNumberExp(PartType.BACKGROUND, (Ordinal) visit(ctx.ordinal()));
+    }
+
+    @Override
+    public Object visitCardPart(HyperTalkParser.CardPartContext ctx) {
+        return new PartNameExp(PartType.CARD, (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitCardIdPart(HyperTalkParser.CardIdPartContext ctx) {
+        return new PartIdExp(PartType.CARD, (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndPart(HyperTalkParser.BkgndPartContext ctx) {
+        return new PartNameExp(PartType.BACKGROUND, (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitBkgndIdPart(HyperTalkParser.BkgndIdPartContext ctx) {
+        return new PartIdExp(PartType.BACKGROUND, (Expression) visit(ctx.factor()));
     }
 
     @Override
