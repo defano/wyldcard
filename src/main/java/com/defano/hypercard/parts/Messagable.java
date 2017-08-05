@@ -6,6 +6,7 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
@@ -30,7 +31,9 @@ public interface Messagable {
     Script getScript();
 
     /**
-     * Gets a part specifier that uniquely identifies this part in the stack.
+     * Gets a part specifier that uniquely identifies this part in the stack. This part will be bound to the 'me'
+     * keyword in the script that receives messages.
+     *
      * @return The part specifier for the 'me' keyword.
      */
     PartSpecifier getMe();
@@ -159,6 +162,11 @@ public interface Messagable {
                 return HyperCard.getInstance().getStack().getStackModel();
             case FIELD:
             case BUTTON:
+                if (getMe().layer() == Owner.BACKGROUND) {
+                    return HyperCard.getInstance().getCard().getCardBackground();
+                } else {
+                    return HyperCard.getInstance().getCard().getCardModel();
+                }
             case MESSAGEBOX:
                 return HyperCard.getInstance().getCard().getCardModel();
             case CARD:

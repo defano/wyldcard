@@ -15,7 +15,7 @@ Apple called it "programming for the rest of us."
 HyperTalk Java is attempt to recreate HyperCard's functionality in Java. It presently supports these features:
 
 * Create, save and open stacks of cards containing graphics, buttons and text fields. Cards support a foreground and background layer; buttons come in a variety of styles similar to HyperCard's (including radio buttons, checkboxes and combo-box menus); text fields can contain rich (formatted) text.
-* Buttons, fields, cards, background and stacks are scriptable in the HyperTalk language.
+* Buttons, fields, cards, background and stacks are scriptable in the HyperTalk language. Messages are trappable and follow HyperCard message passing order.
 * The full suite of original MacPaint-like tools, patterns, and 2D transforms (i.e., perspective, distort, rotate, invert); integrates with the system clipboard to provide cut-and-paste between applications.
 * Much of the HyperTalk language has been implemented including a variety of commands (`ask "How are you today?"`, `sort the lines of bkgnd field 13`); flow control constructs (`if`, `repeat`); part properties (`the width of me`, `the textFont of`); event messaging (`send doSomethingCool to card button id 1`); built-in and user-defined functions and script handlers (`the mouseLoc`, `the long date`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 * UI design maintains high fidelity to original software with window, palette and menu structure similar to HyperCard.
@@ -25,9 +25,9 @@ HyperTalk Java is attempt to recreate HyperCard's functionality in Java. It pres
 This is not a HyperCard replacement nor is it an open-sourced release of Apple's software. HyperTalk Java is still missing quite a few features present in HyperCard:
 
 * Can't open or import HyperCard stacks.
-* Cards, stacks and backgrounds are not scriptable; no concept of user levels or stack protections.
+* No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No ability to modify the menu bar; no sound or `play` command.
-* No "Home" stack or stack script inheritance (i.e., `start using ...`) and no support for external commands or functions (XCMDs/XFCNs).
+* No support for external commands or functions (XCMDs/XFCNs).
 * Not all commands and functions in HyperTalk have been implemented.
 
 ## Getting started
@@ -52,7 +52,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Messages](#scripts-and-handlers) | [Containers](#containers) | [Parts](#parts-and-properties) | [Expressions](#chunk-expressions) | [Visual Effects](#visual-effects) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs)
+[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Containers](#containers) | [Parts](#parts-and-properties) | [Expressions](#chunk-expressions) | [Visual Effects](#visual-effects) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs)
 
 HyperCard's native language, called _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. There is no singular "main" script that executes at startup.
 
@@ -79,7 +79,7 @@ end mouseUp
 
 ```
 
-Although indentation and most whitespace is ignored, newlines have meaning in the syntax (unlike Java or C). Newlines are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot break across multiple lines.
+Although indentation and most whitespace is ignored, newlines have meaning in the syntax and are somewhat analogous to semicolons in C-like languages; statements must be separated by a newline, and a single statement cannot usually break across multiple lines.
 
 For example, this is legal:
 
@@ -95,15 +95,15 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-Apple's HyperCard supported a newline character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block)) that could be used to break a long statement across multiple lines; this implementation does not.
+Apple's HyperCard supported a newline character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block))) that could be used to break a long statement across multiple lines; this implementation does not.
 
-As you enter script text into the script editor, this implementation will flag syntax errors as you type by underlining the offending text with a red squiggle.
+As you enter script text into the script editor, HyperTalk Java will flag syntax errors as you type by underlining the offending text with a red squiggle.
 
 ## Stacks of Cards
 
-A HyperCard stack consists of one or more cards grouped together in an ordered list (like a stack of index cards or a Rolodex). Only one card in the stack is ever visible at any given time. When the user navigates from one card to another, the contents of the new card appear in place of the old card (optionally animated using a `visual effect` transition).
+A HyperCard stack consists of one or more cards grouped together in an ordered list (like a stack of index cards or a Rolodex) with only one card ever visible at any given time. When the user navigates from one card to another, the contents of the new card appear in place of the old card (and the transition may be animated using a `visual effect` specification).
 
-Cards are comprised of two layers of graphics and user interface elements: a background and a foreground (called the `card` layer). Each card has a unique foreground, but its background can be shared between multiple cards.
+Every card is comprised of two layers of graphics and interactive user interface elements: a background layer and a card layer (foreground). Each card has a unique foreground, but its background can be shared between multiple cards.
 
 ### Navigating between cards
 
@@ -116,31 +116,33 @@ go [to] <destination>
 Where:
 
 ```
-<destination>   :== { card | } <expression>
-                | [the] <ordinal> { card | }
-                | [the] <position> { card | }
+<destination>   :== { card | cd | background | bkgnd } <expression>
+                | [the] <ordinal> { card | cd | background | bkgnd }
+                | [the] <position> { card | cd | background | bkgnd }
 <ordinal>       :== first | second | third | ... | tenth
-<position>      :== first | last | next | prev | previous
-
+<position>      :== this | first | last | next | prev | previous
 ```
 
-For example, you can navigate to a specific card:
+For example, you can navigate to a specific card,
 
 ```
-go to myCard  -- myCard is a variable holding the name or number of a card
+go to card "MyCard" -- navigates to next card named "MyCard"
 go to card 13 -- no effect if there are fewer than 13 cards
 go next card
 go to the third card
+go to card id 7
+```
 
--- Lots of different ways to say the same thing:
-go previous card
-go to the previous card
-go to the prev card
+You can also navigate to a card based on background,
+
+```
+go to the next background -- next card in the stack with a different background than current card
+go to background 3 -- first card with the third unique background in the stack
 ```
 
 ## Scripts and Handlers
 
-A HyperTalk script consists of _handlers_ and _function definitions_.
+In HyperCard, stacks, backgrounds, cards, buttons and fields can be scripted in the HyperTalk language. A script is a set of _handlers_ and _functions_ that describe how the part reacts when HyperCard (or another script) sends a message to it.
 
 A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it. A function, like its counterpart in other imperative languages, accepts zero or more arguments, executes zero or more statements, and optionally returns a single value.
 
@@ -148,13 +150,13 @@ For example, a button might contain the script:
 
 ```
 on mouseUp
-  answer "Hello World" with "Why, thank you"
+  answer "Hello World" with "Why, thank you."
 end mouseUp
 ```
 
-In this example, when the user clicks the button containing this script the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in this example, this generates a "hello world" dialog box).
+In this example, when the user clicks the button containing this script the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog box).
 
-This HyperCard implementation automatically sends the following event messages:
+In addition to `mouseUp`, HyperTalk Java automatically sends the following messages to parts:
 
  Event Message      | Description
 --------------------|-----------------------------------------------------------------------------
@@ -163,31 +165,47 @@ This HyperCard implementation automatically sends the following event messages:
  `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
- `keyDown`          | Sent only to in-focus fields when the user presses a key
- `keyUp`            | Sent only to in-focus fields when the user presses then releases a key
+ `keyDown`          | Sent when a key is typed over a focused part
+ `arrowKey`         | Sent when an arrow key is pressed
+ `commandKeyDown`   | Sent when the command key (the `meta` key, on non-macOS systems) is pressed
+ `controlKey`       | Sent when the control key is pressed
+ `enterKey`         | Sent when the enter key is pressed over a part
+ `enterInField`     | Sent when the enter key is pressed while typing in a field
+ `returnInField`    | Sent when the return key is pressed while typing in a field
+ `functionKey`      | Sent when a function (i.e, F1) key is pressed
+ `returnKey`        | Sent when the return key is pressed over a part
+ `tabKey`           | Sent when the tab key is pressed
 
-Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Furthermore, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the author's own creation.
+Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. When using `send` to originate a message, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the author's own creation.
 
 For example:
 
 ```
-send mouseExit to button id 0
-send doSomethingCool to field "myField"
-send keyDown to me
+send mouseUp to button 1   -- Make 'button 1' act as though user clicked it
+send doSomethingCool to field "myField" -- call the 'on doSomethingCool' handler
 ```
 
 Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
 
-### Command messages
+### Message passing order
 
-In addition to these messages, there are a special class of messages called _commands_ that are sent only by HyperCard (they cannot be user-generated via the `send` command). Command messages apply to user events that can be trapped (overridden) in a script.
+Messages sent to a part follow a _message passing order_. If a part receives a message and does not have a handler which handles it (or, if its handler invokes the `pass` command) then the message is forwarded to the next part in the sequence.
 
-Just like normal messages, a script can intercept these messages and do something when they're received. But, commands differ from normal messages in two ways:
+Messages follow this order:
 
-1. Their handlers can accept arguments (for example, the `keyDown` command passes the character that was typed which generated the command message), and
-2. Command messages are sent along a message-passing chain. Handlers can choose to perform some action when these messages are received and then either _pass_ the message to the next part in the message-passing order, or _trap_ the message. If a part implements a handler for a command and does not pass it, HyperCard will not receive the command and normal behavior associated with the command will not occur. (This is useful, for example, when overriding the behavior of a menu item, or enabling a field to do something special when enter is pressed inside of it.)
+A **button** or **field** passes messages to the **card** or **background** on which it appears; a card passes messages to its **background**; and a background passes messages to its **stack**. If the stack does not trap the message, it is passed back to **HyperCard** which handles the message itself.
 
+This enables parts to "override" certain HyperCard behaviors by trapping the associated event message (like overriding the behavior of a what a given menu item does by trapping the `doMenu` message).
 
+For example, add the following script to a field to disallow entry any of any character other than an even number:
+
+```
+on keyDown theKey
+	if theKey is a number and theKey mod 2 is 0 then pass keyDown
+end keyDownInField
+```
+
+This works by passing the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing a `keyDown` handler and only conditionally passing the message back to HyperCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the field).
 
 ## Containers
 
@@ -221,7 +239,7 @@ function y
 end y
 ```
 
-Parts, properties and the message box can also be used to store value. When placing a value into a field, the text of the field is changed. When placing a value into a button, the button's `contents` property is changed (the `contents` property does not affect the button's appearance in any way).
+Parts can also be used to store value like a variable. When placing a value into a field, the text of the field itself is changed. When placing a value into a button, card, background or stack, the part's `contents` property is changed (the `contents` property does not affect the button's appearance in any way and can be seen/edited from the "Info..." dialog associated with the part in the "Objects" menu).
 
 For example:
 
@@ -246,11 +264,11 @@ end mouseUp
 
 ## Parts and Properties
 
-A _part_ is a scriptable user interface element that appears on a card (i.e., a button or a field).
+A _part_ is a scriptable user interface element. Buttons, fields, cards, backgrounds and the stack itself are parts.
 
-A part maintains a set of _properties_ that describe various aspects of the part like its name, id, size and location on the card. Modifying a part's properties modifies the way it appears and behaves on the card. See the section below for details about these properties.
+A part maintains a set of _properties_ that describe various aspects of the part like its name, id, size and location. Modifying a part's properties modifies the way it appears and behaves.
 
-HyperTalk Java treats properties as "first class" containers which may be accessed in whole or by chunk using the `get`, `set` or `put` commands (this is not quite true in Apple's HyperCard).
+HyperTalk Java treats properties as "first class" containers which may be accessed in whole or by chunk using the `get`, `set` or `put` commands (this was not quite true in HyperCard).
 
 ### Referring to Parts
 
@@ -267,9 +285,13 @@ put "I like IDs" into background field id 22
 
 #### Part Numbers
 
-Each part is assigned a number that differentiates it from other parts on its layer of the card (foreground or background). A part's number represents it's drawing order within the layer: Lowered number parts are drawn first and thereby appear behind higher numbered parts. You cannot directly change a part's number, but using the "Bring Closer" or "Send Further" commands from the "Objects" menu will affect the number assigned to it.
+Each part is assigned a number that represents it's logical order within the context of the part's owner.
 
-You can refer to a part by its number relative to all parts on the same layer of the card (`background part 14`) or relative only to other parts of the same type (`card button 13` or `bkgnd field 3`).
+For buttons and fields, this represents the drawing order of the part (z-order); Higher numbered parts are drawn before lowered numbered parts and thereby appear behind them. You cannot directly change a button of field's number, but using the "Bring Closer" or "Send Further" commands from the "Objects" menu will affect the number assigned to it.
+
+For cards and backgrounds, their number represents their position in the stack. Card 1 is the first card in the stack, card 2 is the second and so forth. Backgrounds are similarly numbered by their first appearance in the stack.
+
+You can refer to fields and buttons by their number relative to all parts on the same layer of the card (`background part 14`) or relative only to other parts of the same type (`bkgnd button 13` or `bkgnd field 3`).
 
 ```
 add 20 to the height of card button 1.
@@ -278,16 +300,16 @@ set the name of background part 9 to "Number 9"   -- might be a card or a field
 
 #### Part names
 
-Every part has a name which can be edited by the user or changed via script. Parts do not need to have unique names, but note that when referring to a part by name the part with the lowest number will be assumed if there are multiple parts with requested name.
+Every part has a name which can be edited by the user or changed via script. Parts do not need to have unique names. However, be aware that when referring to a part by name, the part with the lowest number will be assumed if there are multiple parts with requested name.
 
 ```
 get the height of background button "My Neat Button"
 put "2 * 2 = 4" after card field "Math"
 ```
 
-### Properties common to all parts
+### Properties common to all buttons and fields
 
-All parts have these properties:
+All buttons and fields have these properties:
 
 Property      | Description
 --------------|------------
@@ -358,19 +380,20 @@ Property   | Description
 `showLines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
 `dontWrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached.
 
-### Global Properties
+### HyperCard Properties
 
-Some properties apply to HyperCard at large (instead of just an individual part). The syntax for setting or getting a global property is similar to part properties, sans the `of` clause. For example:
+Some properties apply to HyperCard at large (instead of just an individual part). The syntax for setting or getting a global property is similar to part properties. For example:
 
 ```
 set the itemDelimiter to ","
 get the itemDelimiter
 ```
 
-This implementation supports only a single global property:
+This implementation supports these HyperCard properties:
 
 Global Property | Description
 ----------------|---------------
+`lockScreen`    | A boolean value indicating whether or not the screen is locked. Reset to false at idle. See the "Visual Effects" section for more details.
 `itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 
 ## Chunk Expressions
@@ -452,15 +475,15 @@ HyperTalk supports a standard suite of mathematical, text and logical operators,
 
 HyperCard uses the following order (top to bottom) to evaluate factors and terms in an expression:
 
-Precedence  | Term                    | Description
-------------|------------------------|------------
-1 (highest) | `empty`                 | Keyword expression representing the empty string (e.g., `if x is empty`)
-2           | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
-3           | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
-4           | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
-5           | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
-6           | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
-7 (lowest)  | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+Precedence   | Term                    | Description
+-------------|------------------------|------------
+1 (highest)  | `empty`                 | Keyword expression representing the empty string (e.g., `if x is empty`)
+2            | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
+3            | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
+4            | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
+5            | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
+6            | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
+7 (lowest)   | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
 
 This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as Apple's HyperTalk.  
 

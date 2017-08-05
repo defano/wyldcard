@@ -120,16 +120,19 @@ public class Interpreter {
         if (handler == null) {
             return Futures.immediateFuture(false);
         } else {
-            return Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) input -> {
-                if (input == null || input.isEmpty()) {
-                    return false;
-                }
+            return Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
 
-                if (input.equalsIgnoreCase(command)) {
+                // Did not invoke pass: handler trapped message
+                if (passedMessage == null || passedMessage.isEmpty()) {
                     return true;
                 }
 
-                // Passing a message other than the handled message is disallowed.
+                // Invoked pass; did not trap message
+                if (passedMessage.equalsIgnoreCase(command)) {
+                    return false;
+                }
+
+                // Semantic error: Passing a message other than the handled message is disallowed.
                 HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
                 return true;
             });
@@ -138,10 +141,6 @@ public class Interpreter {
 
     public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
         return executeNamedBlock(me, getBlockForStatementList(compile(statementList).getStatements()), new ExpressionList());
-    }
-
-    public static void executeHandler(PartSpecifier me, Script script, String handler) {
-        executeNamedBlock(me, script.getHandler(handler), new ExpressionList());
     }
 
     public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) {
