@@ -10,10 +10,10 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.GlobalContext;
+import com.defano.hypertalk.ast.common.NamedBlock;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.List;
@@ -21,11 +21,11 @@ import java.util.concurrent.Callable;
 
 public class FunctionExecutionTask implements Callable<Value> {
 
-    private final UserFunction function;
+    private final NamedBlock function;
     private final ExpressionList arguments;
     private final PartSpecifier me;
 
-    public FunctionExecutionTask (PartSpecifier me, UserFunction function, ExpressionList arguments) {
+    public FunctionExecutionTask (PartSpecifier me, NamedBlock function, ExpressionList arguments) {
         this.function = function;
         this.arguments = arguments;
         this.me = me;
@@ -59,7 +59,7 @@ public class FunctionExecutionTask implements Callable<Value> {
         }
 
         Value returnValue = GlobalContext.getContext().getReturnValue();
-        GlobalContext.getContext().popContext();    
+        GlobalContext.getContext().popContext();
         
         return returnValue;
     }

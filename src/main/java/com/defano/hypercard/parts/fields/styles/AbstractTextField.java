@@ -211,10 +211,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ToolsContext.getInstance().getToolModeProvider().addObserver(toolModeObserver);
 
         // Add mouse and keyboard listeners
-        this.addMouseListener(toolEditablePart);
-        this.addKeyListener(toolEditablePart);
         textPane.addMouseListener(toolEditablePart);
-        textPane.addKeyListener(toolEditablePart);
         textPane.addCaretListener(this);
 
         toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
@@ -225,10 +222,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     /** {@inheritDoc} */
     @Override
     public void partClosed() {
-        this.removeMouseListener(toolEditablePart);
-        this.removeKeyListener(toolEditablePart);
         textPane.removeMouseListener(toolEditablePart);
-        textPane.removeKeyListener(toolEditablePart);
         textPane.removeCaretListener(this);
 
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);

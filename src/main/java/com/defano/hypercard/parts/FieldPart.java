@@ -12,11 +12,14 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.*;
 import com.defano.hypercard.gui.window.FieldPropertyEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
-import com.defano.hypercard.parts.fields.StyleableField;
 import com.defano.hypercard.parts.fields.FieldStyle;
-import com.defano.hypercard.parts.model.*;
-import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.parts.fields.StyleableField;
+import com.defano.hypercard.parts.model.CardLayerPartModel;
+import com.defano.hypercard.parts.model.FieldModel;
+import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 
@@ -228,26 +231,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
 
     /** {@inheritDoc} */
     @Override
-    public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-
-        if (getTextPane().hasFocus()) {
-            getPartModel().sendMessage("keyDown");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void keyReleased(KeyEvent e) {
-        super.keyReleased(e);
-
-        if (getTextPane().hasFocus()) {
-            getPartModel().sendMessage("keyUp");
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
 
@@ -256,10 +239,29 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
+
+        if (getTextPane().hasFocus()) {
+            getPartModel().sendAndConsume(PassedCommand.KEY_DOWN, new ExpressionList(String.valueOf(e.getKeyChar())), e);
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void keyPressed(KeyEvent e) {
+        super.keyPressed(e);
+
+        if (getTextPane().hasFocus()) {
+            PassedCommand command = PassedCommand.fromKeyEvent(e, true);
+            if (command != null) {
+                getPartModel().sendAndConsume(command, new ExpressionList(), e);
+            }
+        }
     }
 
     /** {@inheritDoc} */

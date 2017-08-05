@@ -15,9 +15,9 @@ Apple called it "programming for the rest of us."
 HyperTalk Java is attempt to recreate HyperCard's functionality in Java. It presently supports these features:
 
 * Create, save and open stacks of cards containing graphics, buttons and text fields. Cards support a foreground and background layer; buttons come in a variety of styles similar to HyperCard's (including radio buttons, checkboxes and combo-box menus); text fields can contain rich (formatted) text.
-* Buttons and fields are scriptable in the HyperTalk language.
+* Buttons, fields, cards, background and stacks are scriptable in the HyperTalk language.
 * The full suite of original MacPaint-like tools, patterns, and 2D transforms (i.e., perspective, distort, rotate, invert); integrates with the system clipboard to provide cut-and-paste between applications.
-* Much of the HyperTalk language has been implemented, including a variety of commands (`ask "How are you today?"`, `sort the lines of bkgnd field 13`); flow control constructs (`if`, `repeat`); part properties (`the width of me`, `the textFont of`); event messaging (`send doSomethingCool to card button id 1`); built-in and user-defined functions and script handlers (`the mouseLoc`, `the long date`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
+* Much of the HyperTalk language has been implemented including a variety of commands (`ask "How are you today?"`, `sort the lines of bkgnd field 13`); flow control constructs (`if`, `repeat`); part properties (`the width of me`, `the textFont of`); event messaging (`send doSomethingCool to card button id 1`); built-in and user-defined functions and script handlers (`the mouseLoc`, `the long date`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 * UI design maintains high fidelity to original software with window, palette and menu structure similar to HyperCard.
 
 ### Notable absences
@@ -26,10 +26,9 @@ This is not a HyperCard replacement nor is it an open-sourced release of Apple's
 
 * Can't open or import HyperCard stacks.
 * Cards, stacks and backgrounds are not scriptable; no concept of user levels or stack protections.
-* No ability to modify the menu bar or listen for interactions with the menus; no sound or `play` command.
-* No "Home" stack or stack script inheritance (i.e., `start using ...`); no message passing hierarchy (`pass mouseUp`).
-* No support for external commands or functions (XCMDs/XFCNs).
-* Not all commands and functions in HyperTalk have been implemented
+* No ability to modify the menu bar; no sound or `play` command.
+* No "Home" stack or stack script inheritance (i.e., `start using ...`) and no support for external commands or functions (XCMDs/XFCNs).
+* Not all commands and functions in HyperTalk have been implemented.
 
 ## Getting started
 
@@ -53,13 +52,13 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Containers](#containers) | [Parts](#parts-and-properties) | [Expressions](#chunk-expressions) | [Visual Effects](#visual-effects) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs)
+[Stacks](#stacks-of-cards) | [Messages](#scripts-and-handlers) | [Containers](#containers) | [Parts](#parts-and-properties) | [Expressions](#chunk-expressions) | [Visual Effects](#visual-effects) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs)
 
-HyperCard's native language, called _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. There is no singular "main" script that executes at runtime.
+HyperCard's native language, called _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. There is no singular "main" script that executes at startup.
 
 HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string and converted to an integer, float, boolean, or list depending on the context of its use. Unlike Perl, HyperCard does not allow nonsensical conversions. Adding `5` to `hello` for example, produces a syntax error.
 
-Apple's HyperTalk was case insensitive, but keywords in this version are not. Thus, `the mouseLoc` returns the coordinates of the mouse, but `the MOUSELOC` yields an error. Comments are preceded by `--`.
+Apple's HyperTalk was case insensitive, but certain keywords in this version are not. For example, `the mouseLoc` returns the coordinates of the mouse, but `the MOUSELOC` yields an error. Comments are preceded by `--`.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -102,9 +101,9 @@ As you enter script text into the script editor, this implementation will flag s
 
 ## Stacks of Cards
 
-A HyperCard stack consists of one or more cards grouped together in an ordered list (analogous to a stack of index cards or a Rolodex). Only one card is ever visible to the user inside the stack window at any given time. When the user navigates from one card to another, the contents of the new card appear in place of the old card.
+A HyperCard stack consists of one or more cards grouped together in an ordered list (like a stack of index cards or a Rolodex). Only one card in the stack is ever visible at any given time. When the user navigates from one card to another, the contents of the new card appear in place of the old card (optionally animated using a `visual effect` transition).
 
-Cards are comprised of two layers of graphics and user interface elements: a background and a foreground (called the `card` layer). Each card has a unique foreground, but its background can be shared between cards. Backgrounds, cards, and stacks could contain their own scripts in Apple's HyperCard, but this version does not allow scripting these elements.
+Cards are comprised of two layers of graphics and user interface elements: a background and a foreground (called the `card` layer). Each card has a unique foreground, but its background can be shared between multiple cards.
 
 ### Navigating between cards
 
@@ -125,13 +124,12 @@ Where:
 
 ```
 
-For example:
+For example, you can navigate to a specific card:
 
 ```
 go to myCard  -- myCard is a variable holding the name or number of a card
 go to card 13 -- no effect if there are fewer than 13 cards
-go 1          -- first card; cards are numbered from 1, not 0
-go next
+go next card
 go to the third card
 
 -- Lots of different ways to say the same thing:
@@ -142,9 +140,9 @@ go to the prev card
 
 ## Scripts and Handlers
 
-A script consists of zero or more _handlers_ and/or _function definitions_.
+A HyperTalk script consists of _handlers_ and _function definitions_.
 
-A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it. A function definition, like its counterpart in other imperative languages, accepts zero or more arguments, executes zero or more statements, and optionally returns a single value.
+A handler is a list of statements that execute when the handler's name is passed as a message to the part containing it. A function, like its counterpart in other imperative languages, accepts zero or more arguments, executes zero or more statements, and optionally returns a single value.
 
 For example, a button might contain the script:
 
@@ -168,7 +166,7 @@ This HyperCard implementation automatically sends the following event messages:
  `keyDown`          | Sent only to in-focus fields when the user presses a key
  `keyUp`            | Sent only to in-focus fields when the user presses then releases a key
 
-Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Moreover, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the scripter's own creation.
+Not all messages need originate from HyperCard. A script may send a message to itself or to another part using the `send` command. Furthermore, the message need not be a known HyperCard message (i.e., one listed in the table above); it's acceptable to send a message of the author's own creation.
 
 For example:
 
@@ -179,6 +177,17 @@ send keyDown to me
 ```
 
 Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
+
+### Command messages
+
+In addition to these messages, there are a special class of messages called _commands_ that are sent only by HyperCard (they cannot be user-generated via the `send` command). Command messages apply to user events that can be trapped (overridden) in a script.
+
+Just like normal messages, a script can intercept these messages and do something when they're received. But, commands differ from normal messages in two ways:
+
+1. Their handlers can accept arguments (for example, the `keyDown` command passes the character that was typed which generated the command message), and
+2. Command messages are sent along a message-passing chain. Handlers can choose to perform some action when these messages are received and then either _pass_ the message to the next part in the message-passing order, or _trap_ the message. If a part implements a handler for a command and does not pass it, HyperCard will not receive the command and normal behavior associated with the command will not occur. (This is useful, for example, when overriding the behavior of a menu item, or enabling a field to do something special when enter is pressed inside of it.)
+
+
 
 ## Containers
 

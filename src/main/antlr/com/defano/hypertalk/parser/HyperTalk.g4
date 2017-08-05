@@ -10,8 +10,10 @@ script 			    : handler (NEWLINE+ | EOF)                      # handlerScript
                     | COMMENT                                       # commentScript
                     ;
 
-handler				: 'on' ID NEWLINE statementList 'end' ID        # populatedHandler
-                    | 'on' ID NEWLINE 'end' ID                      # emptyHandler
+handler				: 'on' ID NEWLINE statementList 'end' ID               # populatedHandler
+                    | 'on' ID parameterList NEWLINE statementList 'end' ID # populatedArgHandler
+                    | 'on' ID NEWLINE 'end' ID                             # emptyHandler
+                    | 'on' ID parameterList NEWLINE 'end' ID               # emptyArgHandler
                     ;
 
 function			: 'function' ID parameterList NEWLINE statementList 'end' ID    # populatedFunction
@@ -79,6 +81,7 @@ commandStmnt		: answerCmd                                     # answerCmdStmnt
                     | 'lock' 'screen'                               # lockScreenCmdStmt
                     | 'unlock' 'screen'                             # unlockScreenCmdStmt
                     | 'unlock' 'screen' 'with' 'visual' visualEffect # unlockScreenVisualCmdStmt
+                    | 'pass' factor                                 # passCmdStmt
                     ;
 
 goCmd               : 'go' 'to'? destination 'with' 'visual' visualEffect    # goVisualEffectCmdStmnd

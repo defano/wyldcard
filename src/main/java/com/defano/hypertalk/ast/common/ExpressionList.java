@@ -18,6 +18,7 @@
 package com.defano.hypertalk.ast.common;
 
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.ArrayList;
@@ -28,6 +29,12 @@ public class ExpressionList {
     private final List<Expression> list = new ArrayList<>();
 
     public ExpressionList() {
+    }
+
+    public ExpressionList(String... boundValues) {
+        for (String thisValue : boundValues) {
+            addArgument(new LiteralExp(thisValue));
+        }
     }
 
     public ExpressionList(Expression expr) {

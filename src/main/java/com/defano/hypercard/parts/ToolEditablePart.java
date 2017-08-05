@@ -26,7 +26,7 @@ import java.awt.event.*;
  * An interface defining actions common to all tool-editable parts (i.e., buttons and fields that can be edited
  * using the button tool or field tool).
  */
-public interface ToolEditablePart extends CardLayerPart, KeyListener, MouseListener, ActionListener {
+public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListener, ActionListener {
 
     /**
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
@@ -224,6 +224,15 @@ public interface ToolEditablePart extends CardLayerPart, KeyListener, MouseListe
     }
 
     @Override
+    default void mouseReleased(MouseEvent e) {}
+
+    @Override
+    default void mouseEntered(MouseEvent e) {}
+
+    @Override
+    default void mouseExited(MouseEvent e) {}
+
+    @Override
     default void mouseClicked(MouseEvent e) {
         if (isSelectedForEditing() && e.getClickCount() == 2) {
             editProperties();
@@ -237,8 +246,10 @@ public interface ToolEditablePart extends CardLayerPart, KeyListener, MouseListe
     }
 
     @Override
-    default void keyPressed(KeyEvent e) {
+    default void keyTyped(KeyEvent e) {}
 
+    @Override
+    default void keyPressed(KeyEvent e) {
         if (isSelectedForEditing()) {
             int top = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
             int left = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
@@ -269,18 +280,6 @@ public interface ToolEditablePart extends CardLayerPart, KeyListener, MouseListe
 
     @Override
     default void keyReleased(KeyEvent e) {}
-
-    @Override
-    default void mouseReleased(MouseEvent e) {}
-
-    @Override
-    default void mouseEntered(MouseEvent e) {}
-
-    @Override
-    default void mouseExited(MouseEvent e) {}
-
-    @Override
-    default void keyTyped(KeyEvent e) {}
 
     @Override
     default void actionPerformed(ActionEvent e) {}

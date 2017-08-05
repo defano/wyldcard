@@ -8,11 +8,12 @@
 
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.parts.Messagable;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.containers.PartIdSpecifier;
+import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.Script;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -23,7 +24,7 @@ import java.awt.*;
  * Implements a table of model associated with a partSpecifier object. Provides methods for defining, getting and
  * setting model, as well as notifying listeners of changes.
  */
-public class PartModel extends PropertiesModel {
+public class PartModel extends PropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -218,27 +219,6 @@ public class PartModel extends PropertiesModel {
      */
     public Value getValue() {
         return getKnownProperty(getValueProperty());
-    }
-
-    /**
-     * Sends a message (i.e., 'mouseUp') to this part.
-     * @param message The message to be passed.
-     */
-    public void sendMessage(String message) {
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-            Interpreter.executeHandler(new PartIdSpecifier(getOwner(), getType(), getId()), getScript(), message);
-        }
-    }
-
-    /**
-     * Attempts to execute a function defined in the part's script.
-     * @param function The name of the function to execute.
-     * @param arguments The arguments to the function.
-     * @return The value returned by the function upon completion.
-     * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
-     */
-    public Value executeUserFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(new PartIdSpecifier(getOwner(), getType(), getId()), getScript().getFunction(function), arguments);
     }
 
     /**

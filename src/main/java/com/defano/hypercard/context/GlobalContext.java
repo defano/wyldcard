@@ -22,6 +22,7 @@ import com.defano.hypercard.parts.CardPart;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.PassedCommand;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -74,6 +75,14 @@ public class GlobalContext {
 
     public Value getReturnValue () {
         return getFrame().getReturnValue();
+    }
+
+    public PassedCommand getPassedCommand() {
+        return getFrame().getPassedCommand();
+    }
+
+    public void setPassedCommand(PassedCommand passedCommand) {
+        getFrame().setPassedCommand(passedCommand);
     }
 
     public void defineGlobal (String id) {

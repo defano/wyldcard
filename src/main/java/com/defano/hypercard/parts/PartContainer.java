@@ -1,7 +1,6 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.model.BackgroundModel;
 import com.defano.hypercard.parts.model.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Ordinal;
@@ -9,11 +8,9 @@ import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
 import com.defano.hypertalk.ast.containers.*;
 import com.google.common.collect.Lists;
-import javafx.geometry.Pos;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface PartContainer {

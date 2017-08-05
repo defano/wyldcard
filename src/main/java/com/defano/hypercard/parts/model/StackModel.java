@@ -35,6 +35,7 @@ public class StackModel extends PartModel {
         this.backgroundModels = new HashMap<>();
         this.backStack = new Stack<>();
 
+        defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);

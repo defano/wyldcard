@@ -17,7 +17,6 @@ import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.functions.*;
 import com.defano.hypertalk.ast.statements.*;
-import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
@@ -435,50 +434,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (StatementList) visit(ctx.statementList()));
+    }
 
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new NamedBlock(open, (StatementList) visit(ctx.statementList()));
+    @Override
+    public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitEmptyHandler(HyperTalkParser.EmptyHandlerContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new StatementList());
+    }
 
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new NamedBlock(open, new StatementList());
+    @Override
+    public Object visitEmptyArgHandler(HyperTalkParser.EmptyArgHandlerContext ctx) {
+        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), new StatementList());
     }
 
     @Override
     public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
-
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on function " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new UserFunction(open, (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitEmptyFunction(HyperTalkParser.EmptyFunctionContext ctx) {
-        String open = (String) visit(ctx.ID(0));
-        String close = (String) visit(ctx.ID(1));
-
-        if (!open.equals(close)) {
-            throw new HtParseError(ctx, "'on function " + open + "' does not match 'end " + close + "'");
-        }
-
-        return new UserFunction(open, (ParameterList) visit(ctx.parameterList()), new StatementList());
+        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), new StatementList());
     }
 
     @Override
@@ -695,6 +676,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitUnlockScreenVisualCmdStmt(HyperTalkParser.UnlockScreenVisualCmdStmtContext ctx) {
         return new UnlockScreenCmd((VisualEffectSpecifier) visit(ctx.visualEffect()));
+    }
+
+    @Override
+    public Object visitPassCmdStmt(HyperTalkParser.PassCmdStmtContext ctx) {
+        return new PassCmd((Expression) visit(ctx.factor()));
     }
 
     @Override
