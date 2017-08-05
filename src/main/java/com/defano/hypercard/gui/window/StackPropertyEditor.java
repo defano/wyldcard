@@ -1,13 +1,17 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
+import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.runtime.WindowManager;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class StackPropertyEditor extends HyperCardDialog {
     private StackModel model;
@@ -26,6 +30,15 @@ public class StackPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
+        editScriptButton.addActionListener(e -> {
+            dispose();
+            WindowBuilder.make(new ScriptEditor())
+                    .withTitle("Script of stack " + model.getKnownProperty(StackModel.PROP_NAME).stringValue())
+                    .withModel(model)
+                    .resizeable(true)
+                    .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .build();
+        });
         resizeButton.addActionListener(e -> model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel())));
     }
 
@@ -107,7 +120,7 @@ public class StackPropertyEditor extends HyperCardDialog {
         label4.setText("");
         propertiesPanel.add(label4, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
-        editScriptButton.setEnabled(false);
+        editScriptButton.setEnabled(true);
         editScriptButton.setText("Edit Script...");
         editScriptButton.setToolTipText("Not implemented");
         propertiesPanel.add(editScriptButton, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
