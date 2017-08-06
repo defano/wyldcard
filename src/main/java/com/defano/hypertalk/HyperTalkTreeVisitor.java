@@ -20,15 +20,15 @@ import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitHandlerScript(HyperTalkParser.HandlerScriptContext ctx) {
-        Script script = new Script();
-        script.defineHandler((NamedBlock) visit(ctx.handler()));
-        return script;
+        return new Script((NamedBlock) visit(ctx.handler()), ctx.handler().getStart().getLine(), ctx.handler().getStop().getLine());
     }
 
     @Override
@@ -397,21 +397,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitScriptFunctionScript(HyperTalkParser.ScriptFunctionScriptContext ctx) {
         Script script = (Script) visit(ctx.script());
-        script.defineUserFunction((UserFunction) visit(ctx.function()));
+        script.defineUserFunction((UserFunction) visit(ctx.function()), ctx.function().getStart().getLine(), ctx.function().getStop().getLine());
         return script;
     }
 
     @Override
     public Object visitFunctionScript(HyperTalkParser.FunctionScriptContext ctx) {
         Script script = new Script();
-        script.defineUserFunction((UserFunction) visit(ctx.function()));
+        script.defineUserFunction((UserFunction) visit(ctx.function()), ctx.function().getStart().getLine(), ctx.function().getStop().getLine());
         return script;
     }
 
     @Override
     public Object visitScriptHandlerScript(HyperTalkParser.ScriptHandlerScriptContext ctx) {
         Script script = (Script) visit(ctx.script());
-        script.defineHandler((NamedBlock) visit(ctx.handler()));
+        script.defineHandler((NamedBlock) visit(ctx.handler()), ctx.handler().getStart().getLine(), ctx.handler().getStop().getLine());
         return script;
     }
 

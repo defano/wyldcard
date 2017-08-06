@@ -58,6 +58,25 @@ public class Interpreter {
         }, 0, 200, TimeUnit.MILLISECONDS);
     }
 
+    public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
+        ExecutorService exector = Executors.newSingleThreadExecutor();
+        exector.submit(new Runnable() {
+            @Override
+            public void run() {
+                HtException generatedError = null;
+                Script compiledScript = null;
+
+                try {
+                    compiledScript = compile(scriptText);
+                } catch (HtException e) {
+                    generatedError = e;
+                }
+
+                observer.onCompileCompleted(scriptText, compiledScript, generatedError);
+            }
+        });
+    }
+
     public static Script compile(String scriptText) throws HtException {
         HypertalkErrorListener errors = new HypertalkErrorListener();
 

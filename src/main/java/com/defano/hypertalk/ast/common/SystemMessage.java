@@ -1,29 +1,72 @@
 package com.defano.hypertalk.ast.common;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public enum SystemMessage {
-    MOUSE_UP("mouseUp"),
-    MOUSE_DOWN("mouseDown"),
-    MOUSE_ENTER("mouseEnter"),
-    MOUSE_LEAVE("mouseLeave"),
-    MOUSE_DOUBLE_CLICK("mouseDoubleClick"),
-    KEY_DOWN("keyDown"),
-    ARROW_KEY("arrowKey"),
-    COMMAND_KEY("commandKeyDown"),
-    CONTROL_KEY("controlKey"),
-    ENTER_KEY("enterKey"),
-    ENTER_IN_FIELD("enterInField"),
-    RETURN_IN_FIELD("returnInField"),
-    FUNCTION_KEY("functionKey"),
-    RETURN_KEY("returnKey"),
-    TAB_KEY("tabKey"),
-    DO_MENU("doMenu");
+    MOUSE_UP("mouseUp", "Sent when the user presses and releases the mouse over this part."),
+    MOUSE_DOWN("mouseDown", "Sent when the user presses the mouse over this part."),
+    MOUSE_ENTER("mouseEnter", "Sent when the mouse enters the rectangle of this part."),
+    MOUSE_LEAVE("mouseLeave", "Sent when the mouse leaves the rectangle of this part."),
+    MOUSE_DOUBLE_CLICK("mouseDoubleClick", "Send when the user double-clicks this part."),
+    KEY_DOWN("keyDown", "Sent when the user types a key into this part.", "theKey"),
+    ARROW_KEY("arrowKey", "Sent when the user types an arrow key into this part."),
+    COMMAND_KEY("commandKeyDown", "Sent when the user presses the command key."),
+    CONTROL_KEY("controlKey", "Sent when the user presses the control key."),
+    ENTER_KEY("enterKey", "Sent when the user presses the enter key."),
+    ENTER_IN_FIELD("enterInField", "Sent to fields when the user types enter in the field.", PartType.FIELD),
+    RETURN_IN_FIELD("returnInField", "Sent to fields when the user types return in the field.", PartType.FIELD),
+    FUNCTION_KEY("functionKey", "Sent when the user presses a function key."),
+    RETURN_KEY("returnKey", "Sent when the user presses the return key."),
+    TAB_KEY("tabKey", "Sent when the user presses the tab key."),
+    DO_MENU("doMenu", "Sent when the user chooses a menu item from the menu bar.", "theMenu", "theMenuItem");
 
     public final String messageName;
+    public final String description;
+    private final PartType sentOnlyTo;
+    public final String[] arguments;
 
-    SystemMessage(String messageName) {
+    SystemMessage(String  messageName, String description) {
         this.messageName = messageName;
+        this.description = description;
+        this.arguments = null;
+        this.sentOnlyTo = null;
+    }
+
+    SystemMessage(String  messageName, String description, String... arguments) {
+        this.messageName = messageName;
+        this.description = description;
+        this.arguments = arguments;
+        this.sentOnlyTo = null;
+    }
+
+    SystemMessage(String messageName, String description, PartType sentOnlyTo) {
+        this.messageName = messageName;
+        this.description = description;
+        this.arguments = null;
+        this.sentOnlyTo = sentOnlyTo;
+    }
+
+    public static Collection<SystemMessage> messagesSentTo(PartType partType) {
+        ArrayList<SystemMessage> messages = new ArrayList<>();
+        for (SystemMessage thisMessage : SystemMessage.values()) {
+            if (thisMessage.sentOnlyTo == null || thisMessage.sentOnlyTo == partType) {
+                messages.add(thisMessage);
+            }
+        }
+
+        return messages;
+    }
+
+    public static SystemMessage fromHandlerName(String handlerName) {
+        for (SystemMessage thisMessage : values()) {
+            if (thisMessage.messageName.equalsIgnoreCase(handlerName)) {
+                return thisMessage;
+            }
+        }
+
+        return null;
     }
 
     public static SystemMessage fromKeyEvent(KeyEvent e, boolean inField) {

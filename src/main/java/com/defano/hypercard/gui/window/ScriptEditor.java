@@ -8,7 +8,10 @@
 
 package com.defano.hypercard.gui.window;
 
+import com.defano.hypercard.gui.util.HandlerComboBox;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypertalk.ast.common.Script;
+import com.defano.hypertalk.ast.common.SystemMessage;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -16,7 +19,6 @@ import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSyntaxException;
 
 import javax.swing.*;
@@ -24,42 +26,28 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Highlighter;
+import javax.swing.text.Utilities;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class ScriptEditor extends HyperCardFrame {
+public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
-    private final static String DEFAULT_SCRIPT = new StringBuilder()
-            .append("on mouseUp\n")
-            .append("    -- Fires whenever the mouse is clicked and released over this part.\n")
-            .append("end mouseUp\n")
-            .append("\n")
-            .append("on mouseDown\n")
-            .append("    -- Fires whenever the mouse is clicked over this part.\n")
-            .append("end mouseDown\n")
-            .append("\n")
-            .append("on mouseDoubleClick\n")
-            .append("    -- Fires whenever the mouse is double-clicked over this part.\n")
-            .append("end mouseDoubleClick\n")
-            .append("\n")
-            .append("on mouseEnter\n")
-            .append("    -- Fires whenever the mouse is moved over this part.\n")
-            .append("end mouseEnter\n")
-            .append("\n")
-            .append("on mouseLeave\n")
-            .append("    -- Fires whenever the mouse is moved away from this part.\n")
-            .append("end mouseLeave\n")
-            .toString();
-
     private PartModel model;
+    private Script compiledScript;
 
     private JPanel scriptEditor;
     private JButton cancelButton;
     private JButton saveButton;
     private JTextArea scriptField;
+    private HandlerComboBox handlersMenu;
+    private HandlerComboBox functionsMenu;
 
     public ScriptEditor() {
 
+        handlersMenu.setDelegate(this);
+        functionsMenu.setDelegate(this);
         cancelButton.addActionListener(e -> dispose());
 
         saveButton.addActionListener(e -> {
@@ -80,20 +68,28 @@ public class ScriptEditor extends HyperCardFrame {
                 checkSyntax();
             }
         });
+
+        scriptField.addCaretListener(e -> updateActiveHandler());
     }
 
     private void checkSyntax() {
-        try {
-            Interpreter.compile(scriptField.getText());
+        Interpreter.compileInBackground(scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
+            if (compiledScript != null) {
+                ScriptEditor.this.compiledScript = compiledScript;
+            }
             scriptField.getHighlighter().removeAllHighlights();
-        } catch (HtSyntaxException e1) {
-            setHighlightedLine(e1.lineNumber - 1);
-        } catch (HtException e1) {
-            setHilightedLine();
-        }
+            handlersMenu.invalidateDataset();
+            functionsMenu.invalidateDataset();
+
+            if (generatedError instanceof HtSyntaxException) {
+                setHighlightedLine(((HtSyntaxException) generatedError).lineNumber - 1);
+            } else if (generatedError != null) {
+                setHighlightedLine();
+            }
+        });
     }
 
-    private void setHilightedLine() {
+    private void setHighlightedLine() {
         try {
             setHighlightedLine(scriptField.getLineOfOffset(scriptField.getCaretPosition()));
         } catch (BadLocationException e) {
@@ -101,7 +97,7 @@ public class ScriptEditor extends HyperCardFrame {
         }
     }
 
-    private void setHilightedSelection(int start, int end) {
+    private void setHighlightedSelection(int start, int end) {
         try {
             scriptField.getHighlighter().addHighlight(start, end, ERROR_HIGHLIGHTER);
         } catch (BadLocationException e) {
@@ -111,7 +107,7 @@ public class ScriptEditor extends HyperCardFrame {
 
     private void setHighlightedLine(int line) {
         try {
-            setHilightedSelection(scriptField.getLineStartOffset(line), scriptField.getLineEndOffset(line));
+            setHighlightedSelection(scriptField.getLineStartOffset(line), scriptField.getLineEndOffset(line));
         } catch (BadLocationException e) {
             // Nothing to do
         }
@@ -127,7 +123,8 @@ public class ScriptEditor extends HyperCardFrame {
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
             String script = this.model.getKnownProperty("script").stringValue();
-            scriptField.setText(script.trim().isEmpty() ? DEFAULT_SCRIPT : script);
+            scriptField.setText(script.trim());
+            checkSyntax();
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + properties);
         }
@@ -135,6 +132,111 @@ public class ScriptEditor extends HyperCardFrame {
 
     private void updateProperties() {
         model.setKnownProperty("script", new Value(scriptField.getText()));
+    }
+
+    @Override
+    public Collection<String> getImplementedHandlers(HandlerComboBox theComboBox) {
+        if (theComboBox == functionsMenu) {
+            return compiledScript == null ? new ArrayList<>() : compiledScript.getFunctions();
+        } else {
+            return compiledScript == null ? new ArrayList<>() : compiledScript.getHandlers();
+        }
+    }
+
+    @Override
+    public Collection<SystemMessage> getSystemMessages(HandlerComboBox theComboBox) {
+        if (theComboBox == functionsMenu) {
+            return new ArrayList<>();
+        } else {
+            return model == null ? new ArrayList<>() : SystemMessage.messagesSentTo(model.getType());
+        }
+    }
+
+    @Override
+    public void jumpToHandler(HandlerComboBox theComboBox, String handler) {
+        if (compiledScript == null) {
+            appendHandler(handler);
+        } else {
+            Integer lineNumber = compiledScript.getLineNumberForNamedBlock(handler);
+            if (lineNumber == null) {
+                appendHandler(handler);
+            } else {
+                scriptField.requestFocus();
+                jumpToLine(lineNumber);
+            }
+        }
+    }
+
+    private void updateActiveHandler() {
+        if (compiledScript != null) {
+            handlersMenu.setActiveHandler(compiledScript.getNamedBlockForLine(currentLine()));
+            functionsMenu.setActiveHandler(compiledScript.getNamedBlockForLine(currentLine()));
+        }
+    }
+
+    /**
+     * Appends the handler to the script, including, when available, a description and argument list.
+     * @param handlerName The name of the handler to append.
+     */
+    private void appendHandler(String handlerName) {
+        int lastIndex = scriptField.getDocument().getLength();
+
+        StringBuilder builder = new StringBuilder();
+        SystemMessage message = SystemMessage.fromHandlerName(handlerName);
+
+        if (scriptField.getText().length() > 0 && !scriptField.getText().endsWith("\n")) {
+            builder.append("\n\n");
+        }
+
+        // Add the handler description if one exists
+        if (message != null) {
+            builder.append("--\n-- ");
+            builder.append(message.description);
+            builder.append("\n--");
+        }
+
+        // Add the 'on handler' text
+        builder.append("\non ");
+        builder.append(handlerName);
+
+        // Add the handler arguments, if they exist
+        if (message != null && message.arguments != null) {
+            builder.append(" ");
+            for (int index = 0; index < message.arguments.length; index++) {
+                builder.append(message.arguments[index]);
+                if (index < message.arguments.length - 1) {
+                    builder.append(", ");
+                }
+            }
+        }
+
+        // Add the 'end handler' text
+        builder.append("\n\nend ");
+        builder.append(handlerName);
+
+        try {
+            scriptField.getDocument().insertString(lastIndex, builder.toString(), null);
+        } catch (BadLocationException e) {
+            // Nothing to do
+        }
+    }
+
+    private void jumpToLine(int lineIndex) {
+        scriptField.setCaretPosition(scriptField.getDocument().getDefaultRootElement().getElement(lineIndex).getStartOffset());
+    }
+
+    private int currentLine() {
+        int caretPos = scriptField.getCaretPosition();
+        int rowNum = (caretPos == 0) ? 1 : 0;
+        for (int offset = caretPos; offset > 0; ) {
+            try {
+                offset = Utilities.getRowStart(scriptField, offset) - 1;
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+            rowNum++;
+        }
+        return rowNum;
     }
 
     /**
@@ -172,20 +274,20 @@ public class ScriptEditor extends HyperCardFrame {
      */
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
-        scriptEditor.setLayout(new GridLayoutManager(2, 4, new Insets(10, 10, 10, 10), 0, -1));
+        scriptEditor.setLayout(new GridLayoutManager(4, 7, new Insets(10, 10, 10, 10), 0, -1));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
         saveButton = new JButton();
         saveButton.setHideActionText(false);
         saveButton.setHorizontalAlignment(4);
         saveButton.setOpaque(true);
         saveButton.setText("Save");
-        scriptEditor.add(saveButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptEditor.add(saveButton, new GridConstraints(3, 6, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        scriptEditor.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
+        scriptEditor.add(spacer1, new GridConstraints(3, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
         Font scrollPane1Font = this.$$$getFont$$$("Monaco", -1, -1, scrollPane1.getFont());
         if (scrollPane1Font != null) scrollPane1.setFont(scrollPane1Font);
-        scriptEditor.add(scrollPane1, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        scriptEditor.add(scrollPane1, new GridConstraints(2, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scriptField = new JTextArea();
         Font scriptFieldFont = this.$$$getFont$$$("Monaco", -1, -1, scriptField.getFont());
         if (scriptFieldFont != null) scriptField.setFont(scriptFieldFont);
@@ -194,7 +296,22 @@ public class ScriptEditor extends HyperCardFrame {
         cancelButton = new JButton();
         cancelButton.setHorizontalAlignment(4);
         cancelButton.setText("Cancel");
-        scriptEditor.add(cancelButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptEditor.add(cancelButton, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        handlersMenu = new HandlerComboBox();
+        handlersMenu.setName("Handlers:");
+        scriptEditor.add(handlersMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("Handlers: ");
+        scriptEditor.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("Functions: ");
+        scriptEditor.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        scriptEditor.add(spacer2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        functionsMenu = new HandlerComboBox();
+        scriptEditor.add(functionsMenu, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        scriptEditor.add(spacer3, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**
