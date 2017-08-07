@@ -23,6 +23,7 @@ public class HandlerComboBox extends JComboBox<String> {
 
     private HandlerComboBoxDelegate delegate;
     private boolean ignoreChanges;
+    private String lastSelection;
 
     public void setDelegate(HandlerComboBoxDelegate delegate) {
         this.delegate = delegate;
@@ -37,6 +38,7 @@ public class HandlerComboBox extends JComboBox<String> {
         if (handler != null) {
             ignoreChanges = true;
             setSelectedItem(handler);
+            lastSelection = handler;
             ignoreChanges = false;
         }
     }
@@ -69,9 +71,10 @@ public class HandlerComboBox extends JComboBox<String> {
         }
 
         setModel(cbm);
+        setActiveHandler(lastSelection);
     }
 
-    private boolean hasImplementedHandler(String handler) {
+    private boolean isImplementedBlock(String handler) {
         if (delegate != null && handler != null) {
             for (String thisHandler : delegate.getImplementedHandlers(this)) {
                 if (thisHandler.equalsIgnoreCase(handler)) {
@@ -108,7 +111,7 @@ public class HandlerComboBox extends JComboBox<String> {
                 return new JSeparator();
             }
 
-            if (hasImplementedHandler(String.valueOf(value))) {
+            if (isImplementedBlock(String.valueOf(value))) {
                 setFont(getFont().deriveFont(Font.BOLD));
             }
 
