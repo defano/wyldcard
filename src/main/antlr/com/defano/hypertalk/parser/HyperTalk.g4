@@ -1,6 +1,6 @@
 grammar HyperTalk;
 
-script 			    : handler (NEWLINE+ | EOF)                                                                          # handlerScript
+script              : handler (NEWLINE+ | EOF)                                                                          # handlerScript
                     | script handler (NEWLINE+ | EOF)                                                                   # scriptHandlerScript
                     | function (NEWLINE+ | EOF)                                                                         # functionScript
                     | script function (NEWLINE+ | EOF)                                                                  # scriptFunctionScript
@@ -10,7 +10,7 @@ script 			    : handler (NEWLINE+ | EOF)                                        
                     | COMMENT                                                                                           # commentScript
                     ;
 
-handler				: 'on' blockName NEWLINE statementList 'end' blockName                                              # populatedHandler
+handler             : 'on' blockName NEWLINE statementList 'end' blockName                                              # populatedHandler
                     | 'on' blockName parameterList NEWLINE statementList 'end'blockName                                 # populatedArgHandler
                     | 'on' blockName NEWLINE 'end' blockName                                                            # emptyHandler
                     | 'on' blockName parameterList NEWLINE 'end' blockName                                              # emptyArgHandler
@@ -20,27 +20,27 @@ blockName           : ID
                     | 'doMenu'      // Need a special rule here to handle 'doMenu' because it's also a command keyword
                     ;
 
-function			: 'function' ID parameterList NEWLINE statementList 'end' ID                                        # populatedFunction
+function            : 'function' ID parameterList NEWLINE statementList 'end' ID                                        # populatedFunction
                     | 'function' ID parameterList NEWLINE 'end' ID                                                      # emptyFunction
                     ;
 
-expressionList		: expression                                                                                        # singleExpArgList
+expressionList      : expression                                                                                        # singleExpArgList
                     | expressionList ',' expression                                                                     # multiExpArgList
                     |                                                                                                   # emptyArgList
                     ;
 
-parameterList		: ID                                                                                                # singleParamList
+parameterList       : ID                                                                                                # singleParamList
                     | parameterList ',' ID                                                                              # multiParamList
                     |                                                                                                   # emptyParamList
                     ;
 
-statementList		: statementList nonEmptyStmnt NEWLINE                                                               # multiStmntList
+statementList       : statementList nonEmptyStmnt NEWLINE                                                               # multiStmntList
                     | nonEmptyStmnt NEWLINE                                                                             # singleStmntList
                     | statementList NEWLINE                                                                             # stmntListNewlineStmntList
                     | NEWLINE                                                                                           # newlineStmntList
                     ;
 
-nonEmptyStmnt		: commandStmnt                                                                                      # nonEmptyCommandStmnt
+nonEmptyStmnt       : commandStmnt                                                                                      # nonEmptyCommandStmnt
                     | globalStmnt                                                                                       # nonEmptyGlobalStmnt
                     | ifStatement                                                                                       # nonEmptyIfStmnt
                     | repeatStatement                                                                                   # nonEmptyRepeatStmnt
@@ -49,14 +49,14 @@ nonEmptyStmnt		: commandStmnt                                                   
                     | expression                                                                                        # nonEmptyExpStmnt
                     ;
 
-returnStmnt			: 'return' expression                                                                               # eprReturnStmnt
+returnStmnt         : 'return' expression                                                                               # eprReturnStmnt
                     | 'return'                                                                                          # voidReturnStmnt
                     ;
 
-doStmnt				: 'do' expression
+doStmnt             : 'do' expression
                     ;
 
-commandStmnt		: answerCmd                                                                                         # answerCmdStmnt
+commandStmnt        : answerCmd                                                                                         # answerCmdStmnt
                     | askCmd                                                                                            # askCmdStmnt
                     | putCmd                                                                                            # putCmdStmnt
                     | getCmd                                                                                            # getCmdStmnt
@@ -100,27 +100,27 @@ goCmd               : 'go' 'to'? destination 'with' 'visual' visualEffect       
                     ;
 
 
-answerCmd			: 'answer' expression 'with' expression 'or' expression 'or' expression                             # answerThreeButtonCmd
+answerCmd           : 'answer' expression 'with' expression 'or' expression 'or' expression                             # answerThreeButtonCmd
                     | 'answer' expression 'with' expression 'or' expression                                             # answerTwoButtonCmd
                     | 'answer' expression 'with' expression                                                             # answerOneButtonCmd
                     | 'answer' expression                                                                               # answerDefaultCmd
                     ;
 
-askCmd				: 'ask' expression 'with' expression                                                                # askExpWithCmd
+askCmd              : 'ask' expression 'with' expression                                                                # askExpWithCmd
                     | 'ask' expression                                                                                  # askExpCmd
                     ;
 
-putCmd				: 'put' expression                                                                                  # putIntoCmd
+putCmd              : 'put' expression                                                                                  # putIntoCmd
                     | 'put' expression preposition container                                                            # putPrepositionCmd
                     ;
 
-getCmd				: 'get' expression
+getCmd                : 'get' expression
                     ;
 
-setCmd				: 'set' propertySpec 'to' expression                                                                # setPropertyCmd
+setCmd              : 'set' propertySpec 'to' expression                                                                # setPropertyCmd
                     ;
 
-sendCmd				: 'send' expression 'to' part
+sendCmd             : 'send' expression 'to' part
                     ;
 
 waitCmd             : 'wait' factor timeUnit                                                                            # waitCountCmd
@@ -210,53 +210,53 @@ destinationType     : ('card' | 'cd')                                           
                     | ('background' | 'bkgnd')                                                                          # bkgndDestinationType
                     ;
 
-ifStatement			: 'if' expression THEN singleThen                                                                   # ifThenSingleLine
+ifStatement         : 'if' expression THEN singleThen                                                                   # ifThenSingleLine
                     | 'if' expression THEN NEWLINE multiThen                                                            # ifThenMultiline
                     ;
 
-singleThen			: nonEmptyStmnt NEWLINE elseBlock                                                                   # singleThenNewlineElse
+singleThen          : nonEmptyStmnt NEWLINE elseBlock                                                                   # singleThenNewlineElse
                     | nonEmptyStmnt elseBlock                                                                           # singleThenElse
                     | nonEmptyStmnt                                                                                     # singleThenNoElse
                     ;
 
-multiThen			: statementList 'end if'                                                                            # emptyElse
+multiThen           : statementList 'end if'                                                                            # emptyElse
                     | 'end if'                                                                                          # emptyThenEmptyElse
                     | statementList elseBlock                                                                           # thenElse
                     ;
 
-elseBlock			: 'else' nonEmptyStmnt                                                                              # elseStmntBlock
+elseBlock           : 'else' nonEmptyStmnt                                                                              # elseStmntBlock
                     | 'else' NEWLINE statementList 'end if'                                                             # elseStmntListBlock
                     | 'else' NEWLINE 'end if'                                                                           # elseEmptyBlock
                     ;
 
-repeatStatement		: 'repeat' repeatRange NEWLINE statementList 'end repeat'                                           # repeatStmntList
+repeatStatement     : 'repeat' repeatRange NEWLINE statementList 'end repeat'                                           # repeatStmntList
                     | 'repeat' repeatRange NEWLINE 'end repeat'                                                         # repeatEmpty
                     ;
 
-repeatRange			: 'forever'                                                                                         # infiniteLoop
+repeatRange         : 'forever'                                                                                         # infiniteLoop
                     | duration                                                                                          # durationLoop
                     | count                                                                                             # countLoop
                     | 'with' ID '=' range                                                                               # withLoop
                     ;
 
-duration			: 'until' expression                                                                                # untilDuration
+duration            : 'until' expression                                                                                # untilDuration
                     | 'while' expression                                                                                # whileDuration
                     ;
 
-count				: 'for' expression 'times'
+count               : 'for' expression 'times'
                     | 'for' expression
                     | expression 'times'
                     | expression
                     ;
 
-range				: expression 'down to' expression                                                                   # rangeDownTo
+range               : expression 'down to' expression                                                                   # rangeDownTo
                     | expression 'to' expression                                                                        # rangeUpTo
                     ;
 
-globalStmnt			: 'global' ID
+globalStmnt         : 'global' ID
                     ;
 
-preposition			: 'before'                                                                                          # beforePreposition
+preposition         : 'before'                                                                                          # beforePreposition
                     | 'after'                                                                                           # afterPreposition
                     | 'into'                                                                                            # intoPreposition
                     ;
@@ -364,7 +364,7 @@ expression          : 'empty'                                                   
                     | expression 'or' expression                                                                        # orExp
                     ;
 
-factor			    : literal                                                                                           # literalFactor
+factor              : literal                                                                                           # literalFactor
                     | ID                                                                                                # idFactor
                     | part                                                                                              # partFactor
                     | '(' expression ')'                                                                                # expressionFactor
@@ -428,7 +428,7 @@ noArgFunc           : 'mouse'                                                   
                     | 'number of' ('background' | 'bkgnd') 'fields'                                                     # numberOfBkgndFields
                     ;
 
-literal			    : STRING_LITERAL                                                                                    # stringLiteral
+literal             : STRING_LITERAL                                                                                    # stringLiteral
                     | INTEGER_LITERAL                                                                                   # numberLiteral
                     | '-' INTEGER_LITERAL                                                                               # negNumberLiteral
                     | '.' INTEGER_LITERAL                                                                               # dotNumberLiteral
@@ -439,7 +439,7 @@ literal			    : STRING_LITERAL                                                  
                     | '-' INTEGER_LITERAL '.' INTEGER_LITERAL                                                           # negNumberDotNumberLiteral
                     ;
 
-THEN				: NEWLINE 'then' | 'then';
+THEN                : NEWLINE 'then' | 'then';
 
 ID                  : POINT | RECT | (ALPHA (ALPHA | DIGIT)*) ;
 
