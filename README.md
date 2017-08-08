@@ -590,10 +590,15 @@ Command	         | Description
 `hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
 `show`           | Makes a part visible on the card, for example `show button "My Button"`.
 `delete`         | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
+`delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
+`create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
 `enable`         | Enables a part on the card; sets the part's `enabled` property to true.
 `disable`        | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
 `lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
+`doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that HyperCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
+`visual effect`  | Specifies the visual effect to be used with any subsequent `go` command within the current handler. If the `go` command specifies its own visual effect, the `go` command's visual effect takes precedence. This command only affects navigation that occurs within the function/handler that invokes it.
+`reset menuBar`  | Resets the menu bar to its default state; removes any custom menus added with the `create menu` command and restores any deleted menus to their default state.
 
 ## Functions
 
@@ -611,26 +616,26 @@ This implementation includes the following built-in functions:
 
 Function        | Description
 ----------------|-----------------------------------
-`average`	      | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns 65.33.
-`mouse`         | Returns the current state of the left mouse button; either "up" or "down"
-`mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns "123,55"
+`average`	      | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns `65.33`.
+`mouse`         | Returns the current state of the left mouse button; either `up` or `down`
+`mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
 `mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
 `mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
 `clickLoc`      | Returns the coordinate of the last location the user clicked the mouse.
 `clickH`        | Returns the x-coordinate of the last location the user clicked the mouse.
 `clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.
-`tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "You chose the paint brush!"`
+`tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
 `shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
 `commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
 `optionKey`     | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
 `number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`. For example, `repeat with n = 1 to the number of items in myList`
 `result`        | Returns the current value of the implicit variable `it`, for example: `the result`
 `message`       | Returns the contents of the message box. For example: `put the message box into aVar`. Also available as `message box` or `message window`
-`min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 3.
-`max`           | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to 9.
-`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields 07/04/16.
-`long date`     | Returns the current date fully spelled out. For example, Saturday, July 02, 2016.
-`abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, Sat, Jul 02, 2016.
+`min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `3`.
+`max`           | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `9`.
+`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields `07/04/16`.
+`long date`     | Returns the current date fully spelled out. For example, `Saturday, July 02, 2016`.
+`abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, `Sat, Jul 02, 2016`.
 `seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
 `random`        | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
@@ -649,8 +654,8 @@ Function        | Description
 `abs`           | Returns the absolute value of the given numerical argument.
 `numToChar`     | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
 `charToNum`     | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
-`value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields 12.
-`length`        | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields 12.
+`value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
+`length`        | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields `12`.
 `selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
 `clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
 `screenRect`    | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`

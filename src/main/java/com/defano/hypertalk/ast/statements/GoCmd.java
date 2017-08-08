@@ -9,6 +9,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Destination;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
@@ -18,7 +19,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 public class GoCmd extends Statement {
 
     private final Destination destination;
-    private final VisualEffectSpecifier visualEffect;
+    private VisualEffectSpecifier visualEffect;
 
     public GoCmd(Destination destination) {
         this(destination, null);
@@ -30,6 +31,10 @@ public class GoCmd extends Statement {
     }
 
     public void execute() throws HtException {
+
+        if (visualEffect == null) {
+            visualEffect = ExecutionContext.getContext().getVisualEffect();
+        }
 
         // Special case: Go back
         if (destination == null) {

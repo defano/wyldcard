@@ -23,7 +23,7 @@ import com.defano.jmonet.model.ImmutableProvider;
 
 public class EditMenu extends HyperCardMenu {
 
-    public final static EditMenu instance = new EditMenu();
+    public static EditMenu instance = new EditMenu();
 
     private EditMenu () {
         super("Edit");
@@ -153,6 +153,9 @@ public class EditMenu extends HyperCardMenu {
                     .withCheckmarkProvider(ImmutableProvider.derivedFrom(WindowManager.getLookAndFeelClassProvider(), value -> thisLaf.getClassName().equals(value)))
                     .build(laf);
         }
+    }
 
+    public void reset() {
+        instance = new EditMenu();
     }
 }

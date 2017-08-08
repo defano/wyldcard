@@ -13,7 +13,7 @@ import com.defano.hypercard.runtime.WindowManager;
 
 public class GoMenu extends HyperCardMenu {
 
-    public final static GoMenu instance = new GoMenu();
+    public static GoMenu instance = new GoMenu();
 
     private GoMenu() {
         super("Go");
@@ -92,5 +92,9 @@ public class GoMenu extends HyperCardMenu {
                 .disabled()
                 .withShortcut('L')
                 .build(this);
+    }
+
+    public void reset() {
+        instance = new GoMenu();
     }
 }

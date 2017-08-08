@@ -20,7 +20,7 @@ import javax.swing.*;
 
 public class OptionsMenu extends HyperCardMenu {
 
-    public final static OptionsMenu instance = new OptionsMenu();
+    public static OptionsMenu instance = new OptionsMenu();
 
     private OptionsMenu() {
         super("Options");
@@ -150,6 +150,10 @@ public class OptionsMenu extends HyperCardMenu {
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), value -> !(value instanceof AbstractSelectionTool)))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PERSPECTIVE))
                 .build(this);
+    }
+
+    public void reset() {
+        instance = new OptionsMenu();
     }
 
 }

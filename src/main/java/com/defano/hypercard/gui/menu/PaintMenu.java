@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class PaintMenu extends HyperCardMenu {
 
-    public final static PaintMenu instance = new PaintMenu();
+    public static PaintMenu instance = new PaintMenu();
 
     private PaintMenu() {
         super("Paint");
@@ -123,5 +123,9 @@ public class PaintMenu extends HyperCardMenu {
                 .named("Revert")
                 .disabled()
                 .build(this);
+    }
+
+    public void reset() {
+        instance = new PaintMenu();
     }
 }

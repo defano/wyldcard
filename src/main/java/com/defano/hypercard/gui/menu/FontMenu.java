@@ -15,7 +15,7 @@ import java.awt.*;
 
 public class FontMenu extends HyperCardMenu {
 
-    public final static FontMenu instance = new FontMenu();
+    public static FontMenu instance = new FontMenu();
 
     private FontMenu() {
         super("Font");
@@ -28,5 +28,9 @@ public class FontMenu extends HyperCardMenu {
                     .fontFamily(thisFamily)
                     .build(this);
         }
+    }
+
+    public void reset() {
+        instance = new FontMenu();
     }
 }

@@ -387,6 +387,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMenuDest(HyperTalkParser.MenuDestContext ctx) {
+        return new ContainerMenu((MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
+    public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
+        return new ContainerMenu((MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
     public Object visitStatementScript(HyperTalkParser.StatementScriptContext ctx) {
         Script script = new Script();
         Statement statement = (Statement) visit(ctx.nonEmptyStmnt());
@@ -434,22 +444,27 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (StatementList) visit(ctx.statementList()));
+        return new NamedBlock((String) visit(ctx.blockName(0)), (String) visit(ctx.blockName(1)), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+        return new NamedBlock((String) visit(ctx.blockName(0)), (String) visit(ctx.blockName(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitEmptyHandler(HyperTalkParser.EmptyHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new StatementList());
+        return new NamedBlock((String) visit(ctx.blockName(0)), (String) visit(ctx.blockName(1)), new StatementList());
     }
 
     @Override
     public Object visitEmptyArgHandler(HyperTalkParser.EmptyArgHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), new StatementList());
+        return new NamedBlock((String) visit(ctx.blockName(0)), (String) visit(ctx.blockName(1)), (ParameterList) visit(ctx.parameterList()), new StatementList());
+    }
+
+    @Override
+    public Object visitBlockName(HyperTalkParser.BlockNameContext ctx) {
+        return super.visitBlockName(ctx);
     }
 
     @Override
@@ -680,7 +695,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPassCmdStmt(HyperTalkParser.PassCmdStmtContext ctx) {
-        return new PassCmd((Expression) visit(ctx.factor()));
+        return new PassCmd((String) visit(ctx.blockName()));
+    }
+
+    @Override
+    public Object visitDoMenuCmdStmt(HyperTalkParser.DoMenuCmdStmtContext ctx) {
+        return new DoMenuCmd((Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitVisualEffectCmdStmt(HyperTalkParser.VisualEffectCmdStmtContext ctx) {
+        return new VisualEffectCmd((VisualEffectSpecifier) visit(ctx.visualEffect()));
+    }
+
+    @Override
+    public Object visitResetMenuCmdStmt(HyperTalkParser.ResetMenuCmdStmtContext ctx) {
+        return new ResetMenuCmd();
+    }
+
+    @Override
+    public Object visitCreateMenuCmdStmt(HyperTalkParser.CreateMenuCmdStmtContext ctx) {
+        return new CreateMenuCmd((Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitDeleteMenuCmdStmt(HyperTalkParser.DeleteMenuCmdStmtContext ctx) {
+        return new DeleteMenuCmd((Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -913,6 +953,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDefaultDest(HyperTalkParser.DefaultDestContext ctx) {
         return new ContainerMsgBox();
+    }
+
+    @Override
+    public Object visitExpressionMenu(HyperTalkParser.ExpressionMenuContext ctx) {
+        return new MenuSpecifier((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitOrdinalMenu(HyperTalkParser.OrdinalMenuContext ctx) {
+        return new MenuSpecifier((Ordinal) visit(ctx.ordinal()));
     }
 
     @Override
@@ -1338,6 +1388,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitIdOfPartFactor(HyperTalkParser.IdOfPartFactorContext ctx) {
         return new PropertyExp((PropertySpecifier) visit(ctx.propertySpec()));
+    }
+
+    @Override
+    public Object visitMenuFactor(HyperTalkParser.MenuFactorContext ctx) {
+        return new MenuExp((MenuSpecifier) visit(ctx.menu()));
     }
 
     @Override
