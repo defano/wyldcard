@@ -22,7 +22,7 @@ public class MenuSpecifier {
         this.menuExpr = null;
     }
 
-    public JMenu evaluate() throws HtSemanticException {
+    public JMenu getSpecifiedMenu() throws HtSemanticException {
 
         if (menuExpr != null) {
             JMenu foundMenu;

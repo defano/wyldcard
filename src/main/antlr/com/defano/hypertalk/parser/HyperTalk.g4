@@ -286,7 +286,7 @@ container           : ID                                                        
                     | propertySpec                                                                                      # propertyDest
                     | chunk propertySpec                                                                                # chunkPropertyDest
                     | menu                                                                                              # menuDest
-                    | menuItem 'of' menu                                                                                # menuItemDest
+                    | menuItem                                                                                          # menuItemDest
                     |                                                                                                   # defaultDest
                     ;
 
@@ -294,8 +294,8 @@ menu                : 'menu' expression                                         
                     | ordinal 'menu'                                                                                    # ordinalMenu
                     ;
 
-menuItem            : 'menuItem' expression                                                                             # expressionMenuItem
-                    | ordinal 'menuItem'                                                                                # ordinalMenuItem
+menuItem            : 'menuItem' expression 'of' menu                                                                   # expressionMenuItem
+                    | ordinal 'menuItem' 'of' menu                                                                      # ordinalMenuItem
                     ;
 
 propertySpec        : 'the'? ID                                                                                         # propertySpecGlobal
@@ -370,6 +370,7 @@ factor              : literal                                                   
                     | '(' expression ')'                                                                                # expressionFactor
                     | propertySpec                                                                                      # idOfPartFactor
                     | menu                                                                                              # menuFactor
+                    | menuItem                                                                                          # menuItemFactor
                     ;
 
 builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs

@@ -209,16 +209,19 @@ This works by passing the `keyDown` through the message passing order only when 
 
 ## Containers
 
-A _container_ is any entity in HyperCard that can hold a value; all parts, variables, properties and the message box are containers.
+A _container_ is any entity in HyperCard that can hold a value; parts, variables, properties, menus and the message box are containers.
 
-Local variables in HyperTalk are lexically scoped and implicitly declared. That is, they retain their value only within the handler or function in which they're used. A variable may be made global by explicitly declaring it as such with the `global` keyword. Variables that are not declared as global are considered local, even when a global variable of the same name exists. All variables, global and local, are implicitly initialized with the empty string.
+#### Variable containers
 
-HyperTalk uses `--` to initiate a single-line comment (there is no multi-line comment syntax). Comments can appear on their own line or following a statement, inline. It's also legal for comments to appear outside of function definitions and handlers.
-For example:
+HyperTalk supports dynamically-typed local and global variables.
+
+Local variables in HyperTalk are lexically scoped and implicitly declared. That is, local variables retain their value only within the handler or function in which they're used and they are not declared before they're used.
+
+A variable may be made global by explicitly declaring it as such with the `global` keyword. Global variables are accessible from any script anywhere in the stack, and once created, they retain their value until the application is closed. Note that variables that are not explicitly declared as global are considered local, even when a global variable of the same name exists. All variables--global and local--are implicitly initialized with the empty string.
 
 ```
 --
--- Global variable example script
+-- Global and local variable example script
 --
 
 on mouseUp
@@ -230,7 +233,7 @@ on mouseUp
 end mouseUp
 
 function f
-  put aVar	-- puts the empty string ("") into the message box
+  put aVar	-- aVar is a local variable in this context; puts the empty string
 end f
 
 function y
@@ -239,26 +242,66 @@ function y
 end y
 ```
 
-Parts can also be used to store value like a variable. When placing a value into a field, the text of the field itself is changed. When placing a value into a button, card, background or stack, the part's `contents` property is changed (the `contents` property does not affect the button's appearance in any way and can be seen/edited from the "Info..." dialog associated with the part in the "Objects" menu).
+#### Part containers
+
+Like variables, a part can also be used to store value. When placing a value into a field, the text of the field is changed. When placing a value into a button, card, background or stack, the part's `contents` property is changed (except for `menu` style buttons, this property does not affect the part's appearance in any way and can be seen/edited from the "Info..." dialog associated with the part in the "Objects" menu).
 
 For example:
 
 ```
 put 35 + 27 into field id 12          -- Changes the text of this field to "62"
-put 35 + 26 into button "My Button"   -- Changes the contents of this button to "62"
-put the name of button myButton into the message box
-put "Button " && buttonTitle into the name of button id 1
+put 35 + 27 into button "My Button"   -- Changes the contents of this button to "62"
+put "This is my card" into this card  -- Changes the contents of this card
 ```
 
-Note that HyperTalk contains an implicit variable named `it`. Most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard).
+#### Menu containers
+
+Every menu in the menu bar and buttons of the style `menu` are containers whose value determines the items that appear in the menu. When putting a value into a menu container, the value is interpreted as a list of items or lines, each item of which is treated as a distinct item in the menu. Note that any item in the list equal to `-` is interpreted as menu separator.
+
+For example:
+
+```
+create menu "My Menu"   -- adds new menu to the menu bar
+put "Item 1,Item 2,-,Other..." into menu "My Menu"  -- adds three items and a separator
+```
+
+The result of getting `menu "My Menu"` would produce:
+
+```
+Item 1
+Item 2
+-
+Other...
+```
+
+A few notes about using menus:
+
+* When getting the contents of a menu, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
+* In Apple's HyperCard, if you created a menu item with the same name as an existing HyperCard menu item, the item would inherit the behavior of HyperCard's menu. This is not true in HyperTalk Java.
+* Menus created by script have no default behavior. Use the `on doMenu theMenu, theMenuItem` handler (in the card, background or stack script) to trap and add your own behavior.
+* Use the `reset menuBar` command to restore the application menu bar to its default state.
+
+#### The message box
+
+The message box is a HyperCard window containing a single-line text field (hide or show this window from the "Go" menu). Text entered into this field is interpreted as a HyperTalk command or expression when you press enter. The contents of this field can by read or written as a container. The message box is addressable as `[the] message`, `[the] message box` or `[the] message window`
+
+For example:
+
+```
+put "-- Add a comment" after the message box
+multiply message by 3
+```
+
+#### The `it` container
+
+HyperTalk provides an implicit variable named `it`. Most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard).
 
 For example:
 
 ```
 on mouseUp
-  ask "How are you, fine sir?"
-  put it into responseVar            -- 'it' contains the user's input
-  put the result into responseVar    -- same effect as previous line
+  get 2 * 3
+  answer it   -- Responds with 6
 end mouseUp
 ```
 

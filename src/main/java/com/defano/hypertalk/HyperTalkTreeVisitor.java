@@ -393,7 +393,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
-        return new ContainerMenu((MenuSpecifier) visit(ctx.menu()));
+        return new ContainerMenu((MenuItemSpecifier) visit(ctx.menuItem()));
     }
 
     @Override
@@ -966,6 +966,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitExpressionMenuItem(HyperTalkParser.ExpressionMenuItemContext ctx) {
+        return new MenuItemSpecifier((Expression) visit(ctx.expression()), (MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
+    public Object visitOrdinalMenuItem(HyperTalkParser.OrdinalMenuItemContext ctx) {
+        return new MenuItemSpecifier((Ordinal) visit(ctx.ordinal()), (MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
     public Object visitPropertySpecGlobal(HyperTalkParser.PropertySpecGlobalContext ctx) {
         return new PropertySpecifier((String) visit(ctx.ID()));
     }
@@ -1393,6 +1403,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenuFactor(HyperTalkParser.MenuFactorContext ctx) {
         return new MenuExp((MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
+    public Object visitMenuItemFactor(HyperTalkParser.MenuItemFactorContext ctx) {
+        return new MenuExp((MenuItemSpecifier) visit(ctx.menuItem()));
     }
 
     @Override
