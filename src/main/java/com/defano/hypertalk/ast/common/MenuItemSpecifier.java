@@ -23,6 +23,17 @@ public class MenuItemSpecifier {
         this.expression = null;
     }
 
+    public JMenuItem getSpecifiedMenuItem() throws HtSemanticException {
+        JMenu menu = getSpecifiedMenu();
+        int itemIndex = getSpecifiedItemIndex();
+
+        if (itemIndex > 0 && itemIndex < menu.getItemCount()) {
+            return menu.getItem(itemIndex);
+        }
+
+        throw new HtSemanticException("No such menu item.");
+    }
+
     public JMenu getSpecifiedMenu() throws HtSemanticException {
         return this.menu.getSpecifiedMenu();
     }
@@ -37,9 +48,10 @@ public class MenuItemSpecifier {
             } else {
                 for (int index = 0; index < menu.getItemCount(); index++) {
                     JMenuItem thisItem = menu.getItem(index);
+
                     if (thisItem == null || thisItem.getText() == null && exprValue.stringValue().equals("-")) {
                         return index;
-                    } else if (exprValue.stringValue().equals(thisItem.getText())) {
+                    } else if (exprValue.stringValue().equalsIgnoreCase(thisItem.getText())) {
                         return index;
                     }
                 }

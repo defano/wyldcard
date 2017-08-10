@@ -1019,6 +1019,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPropertySpecMenuItem(HyperTalkParser.PropertySpecMenuItemContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.ID()), (MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
     public Object visitBkgndFieldPart(HyperTalkParser.BkgndFieldPartContext ctx) {
         return new PartNameExp(Owner.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
     }

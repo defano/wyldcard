@@ -26,9 +26,9 @@ This is not a HyperCard replacement nor is it an open-sourced release of Apple's
 
 * Can't open or import HyperCard stacks.
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No ability to modify the menu bar; no sound or `play` command.
+* No sound or `play` command.
 * No support for external commands or functions (XCMDs/XFCNs).
-* Not all commands and functions in HyperTalk have been implemented.
+* Not all commands, functions or properties of HyperTalk have been implemented.
 
 ## Getting started
 
@@ -201,7 +201,7 @@ For example, add the following script to a field to disallow entry any of any ch
 
 ```
 on keyDown theKey
-	if theKey is a number and theKey mod 2 is 0 then pass keyDown
+  if theKey is a number and theKey mod 2 is 0 then pass keyDown
 end keyDownInField
 ```
 
@@ -738,9 +738,9 @@ function fibonacci sequence, lastValue, thisValue, maxValue
   put thisValue + lastValue after the last item of sequence
 
   if thisValue + lastValue <= maxValue then
-  return fibonacci(sequence, thisValue, thisValue + lastValue, maxValue)
+    return fibonacci(sequence, thisValue, thisValue + lastValue, maxValue)
   else
-  return sequence
+    return sequence
   end if
 
 end fibonacci
