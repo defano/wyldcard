@@ -29,7 +29,13 @@ public class ContainerMenu extends Container {
 
     @Override
     public Value getValue() throws HtSemanticException {
-        return item != null ? getMenuItemValue() : getMenuValue();
+        if (item != null) {
+            return getMenuItemValue(item.getSpecifiedMenu(), item.getSpecifiedItemIndex());
+        } else if (menu != null) {
+            return getMenuValue(menu.getSpecifiedMenu());
+        }
+
+        throw new IllegalStateException("Bug! Invalid container state.");
     }
 
     @Override
@@ -41,9 +47,13 @@ public class ContainerMenu extends Container {
         }
     }
 
-    private Value getMenuValue() throws HtSemanticException {
-        JMenu menu = this.menu.getSpecifiedMenu();
-
+    /**
+     * Gets the value of a menu as a whole (a list of all menu items in the menu).
+     *
+     * @param menu The menu whose value should be returned.
+     * @return The value of the menu
+     */
+    private Value getMenuValue(JMenu menu)  {
         ArrayList<Value> menuItems = new ArrayList<>();
         for (int thisItemIndex = 0; thisItemIndex < menu.getItemCount(); thisItemIndex++) {
             JMenuItem thisItem = menu.getItem(thisItemIndex);
@@ -57,10 +67,14 @@ public class ContainerMenu extends Container {
         return Value.ofLines(menuItems);
     }
 
-    private Value getMenuItemValue() throws HtSemanticException {
-        JMenu menu = item.getSpecifiedMenu();
-        int itemIndex = item.getSpecifiedItemIndex();
-
+    /**
+     * Gets the value of a specific menu item.
+     *
+     * @param itemIndex The index of the menu item whose value should be returned.
+     * @param menu The menu whose menu items should be returned.
+     * @return The value of the specified menu item.
+     */
+    private Value getMenuItemValue(JMenu menu, int itemIndex) throws HtSemanticException {
         if (menu.getItem(itemIndex) == null) {
             return new Value("-");
         } else {
@@ -68,42 +82,65 @@ public class ContainerMenu extends Container {
         }
     }
 
+    /**
+     * Puts a Value into a menu relative to a given menu item. See {@link #addValueToMenu(Value, JMenu, int)}
+     *
+     * @param value the value representing new menu items.
+     * @param preposition The preposition representing where items should be added relative to the given menu item.
+     * @throws HtSemanticException Thrown if an error occurs adding items.
+     */
     private void putMenuItemValue(Value value, Preposition preposition) throws HtSemanticException {
         JMenu menu = item.getSpecifiedMenu();
-        int itemIndex = item.getSpecifiedItemIndex();
+        int itemIndex = item.getSpecifiedItemIndex();       // Location of specified item
 
-        switch (preposition) {
-            case BEFORE:
-                putIntoMenu(value, menu, itemIndex);
-                break;
-            case AFTER:
-                putIntoMenu(value, menu, itemIndex + 1 <= menu.getItemCount() ? itemIndex + 1 : menu.getItemCount());
-                break;
-            case INTO:
-                menu.remove(itemIndex);
-                putIntoMenu(value, menu, itemIndex);
-                break;
+        if (preposition == Preposition.AFTER) {
+            itemIndex++;
         }
+
+        if (itemIndex < 0 || itemIndex > menu.getItemCount()) {
+            throw new HtSemanticException("No such menu item.");
+        }
+
+        if (preposition == Preposition.INTO) {
+            menu.remove(itemIndex);
+        }
+
+        addValueToMenu(value, menu, itemIndex);
     }
 
+    /**
+     * Puts a Value into a menu as a whole. See {@link #addValueToMenu(Value, JMenu, int)}
+     *
+     * @param value The value representing new menu items
+     * @param preposition The preposition representing where items should be added
+     * @throws HtSemanticException Thrown if an error occurs adding items.
+     */
     private void putMenuValue(Value value, Preposition preposition) throws HtSemanticException {
         JMenu menu = this.menu.getSpecifiedMenu();
 
         switch (preposition) {
             case BEFORE:
-                putIntoMenu(value, menu, 0);
+                addValueToMenu(value, menu, 0);
                 break;
             case AFTER:
-                putIntoMenu(value, menu, menu.getItemCount());
+                addValueToMenu(value, menu, menu.getItemCount());
                 break;
             case INTO:
                 menu.removeAll();
-                putIntoMenu(value, menu, 0);
+                addValueToMenu(value, menu, 0);
                 break;
         }
     }
 
-    private void putIntoMenu(Value v, JMenu menu, int startingIndex) {
+    /**
+     * Places a value into a menu at a given menu item index. Value is interpreted as a list of items or lines with each
+     * element in the list being added as a new menu item.
+     *
+     * @param v The value representing new menu items
+     * @param menu The menu into which items should be added
+     * @param index The index at which the menu items should be added.
+     */
+    private void addValueToMenu(Value v, JMenu menu, int index) {
         List<Value> menuItems = v.getLines();
 
         // If value contains a single line, then attempt to evaluate it as items
@@ -112,13 +149,14 @@ public class ContainerMenu extends Container {
         }
 
         Collections.reverse(menuItems);
+
         for (Value thisItem : menuItems) {
             if (thisItem.stringValue().equals("-")) {
-                menu.add(new JSeparator(), startingIndex);
+                menu.add(new JSeparator(), index);
             } else {
                 MenuItemBuilder.ofDefaultType()
                         .named(thisItem.stringValue())
-                        .atIndex(startingIndex)
+                        .atIndex(index)
                         .withAction(e -> {})        // No-op action
                         .build(menu);
             }

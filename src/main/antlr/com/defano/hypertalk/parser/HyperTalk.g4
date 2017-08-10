@@ -65,10 +65,10 @@ commandStmnt        : answerCmd                                                 
                     | waitCmd                                                                                           # waitCmdStmnt
                     | sortCmd                                                                                           # sortCmdStmnt
                     | goCmd                                                                                             # goCmdStmt
+                    | enableCmd                                                                                         # enableCmdStmnt
+                    | disableCmd                                                                                        # disableCmdStmnt
                     | 'hide' part                                                                                       # hideCmdStmnt
                     | 'show' part                                                                                       # showCmdStmnt
-                    | 'disable' part                                                                                    # disableCmdStmnt
-                    | 'enable' part                                                                                     # enableCmdStmnt
                     | 'add' expression 'to' container                                                                   # addCmdStmnt
                     | 'subtract' expression 'from' container                                                            # subtractCmdStmnt
                     | 'multiply' container 'by' expression                                                              # multiplyCmdStmnt
@@ -81,7 +81,6 @@ commandStmnt        : answerCmd                                                 
                     | 'drag' 'from' expression 'to' expression 'with' expressionList                                    # dragWithKeyCmdStmt
                     | 'type' expression                                                                                 # typeCmdStmt
                     | 'type' expression 'with' 'commandKey'                                                             # typeWithCmdKeyCmdStmt
-                    | 'delete' part                                                                                     # deleteCmdStmt
                     | 'lock' 'screen'                                                                                   # lockScreenCmdStmt
                     | 'unlock' 'screen'                                                                                 # unlockScreenCmdStmt
                     | 'unlock' 'screen' 'with' 'visual' visualEffect                                                    # unlockScreenVisualCmdStmt
@@ -90,7 +89,19 @@ commandStmnt        : answerCmd                                                 
                     | 'visual' visualEffect                                                                             # visualEffectCmdStmt
                     | 'reset' 'the'? 'menuBar'                                                                          # resetMenuCmdStmt
                     | 'create' 'menu' factor                                                                            # createMenuCmdStmt
-                    | 'delete' 'menu' factor                                                                            # deleteMenuCmdStmt
+                    | 'delete' menu                                                                                     # deleteMenuCmdStmt
+                    | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
+                    | 'delete' part                                                                                     # deleteCmdStmt
+                    ;
+
+enableCmd           : 'enable' part                                                                                     # enablePartCmd
+                    | 'enable' menuItem                                                                                 # enableMenuItemCmd
+                    | 'enable' menu                                                                                     # enableMenuCmd
+                    ;
+
+disableCmd          : 'disable' part                                                                                    # disablePartCmd
+                    | 'disable' menuItem                                                                                # disableMenuItemCmd
+                    | 'disable' menu                                                                                    # disableMenuCmd
                     ;
 
 goCmd               : 'go' 'to'? destination 'with' 'visual' visualEffect                                               # goVisualEffectCmdStmnd
@@ -114,7 +125,7 @@ putCmd              : 'put' expression                                          
                     | 'put' expression preposition container                                                            # putPrepositionCmd
                     ;
 
-getCmd                : 'get' expression
+getCmd              : 'get' expression
                     ;
 
 setCmd              : 'set' propertySpec 'to' expression                                                                # setPropertyCmd
@@ -294,12 +305,13 @@ menu                : 'menu' expression                                         
                     | ordinal 'menu'                                                                                    # ordinalMenu
                     ;
 
-menuItem            : 'menuItem' expression 'of' menu                                                                   # expressionMenuItem
-                    | ordinal 'menuItem' 'of' menu                                                                      # ordinalMenuItem
+menuItem            : 'menuItem' expression ('of' | 'from') menu                                                        # expressionMenuItem
+                    | ordinal 'menuItem' ('of' | 'from') menu                                                           # ordinalMenuItem
                     ;
 
 propertySpec        : 'the'? ID                                                                                         # propertySpecGlobal
                     | 'the'? ID ('of' | 'in') part                                                                      # propertySpecPart
+                    | 'the'? ID 'of' menuItem                                                                           # propertySpecMenuItem
                     ;
 
 part                : ('background' | 'bkgnd')? 'field' factor                                                          # bkgndFieldPart
@@ -385,6 +397,7 @@ oneArgFunc          : 'average'                                                 
                     | 'number of' ('word' | 'words')                                                                    # numberOfWordsFunc
                     | 'number of' ('item' | 'items')                                                                    # numberOfItemsFunc
                     | 'number of' ('line' | 'lines')                                                                    # numberOfLinesFunc
+                    | 'number of' ('menuItems')                                                                         # numberOfMenuItemsFunc
                     | 'random'                                                                                          # randomFunc
                     | 'sqrt'                                                                                            # sqrtFunc
                     | 'trunc'                                                                                           # truncFunc
@@ -427,6 +440,7 @@ noArgFunc           : 'mouse'                                                   
                     | 'number of' ('background' | 'bkgnd') 'buttons'                                                    # numberOfBkgndButtons
                     | 'number of' ('card' | 'cd') 'fields'                                                              # numberOfCardFields
                     | 'number of' ('background' | 'bkgnd') 'fields'                                                     # numberOfBkgndFields
+                    | 'menus'                                                                                           # menusFunc
                     ;
 
 literal             : STRING_LITERAL                                                                                    # stringLiteral

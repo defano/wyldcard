@@ -28,6 +28,7 @@ public enum BuiltInFunction {
     NUMBER_WORDS,
     NUMBER_LINES,
     NUMBER_ITEMS,
+    NUMBER_MENUITEMS,
     NUMBER_CARD_PARTS,
     NUMBER_BKGND_PARTS,
     NUMBER_CARD_BUTTONS,
@@ -55,5 +56,6 @@ public enum BuiltInFunction {
     COMMAND_KEY,
     TOOL,
     VALUE,
-    LENGTH
+    LENGTH,
+    MENUS
 }

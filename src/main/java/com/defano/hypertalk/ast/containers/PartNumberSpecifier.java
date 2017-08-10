@@ -21,7 +21,7 @@ public class PartNumberSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Owner layer() {
+    public Owner owner() {
         return layer;
     }
 
@@ -35,9 +35,9 @@ public class PartNumberSpecifier implements PartSpecifier {
         if (layer == null) {
             return type + " " + number;
         } else if (type == null) {
-            return layer().name() + " part " + number;
+            return owner().name() + " part " + number;
         } else {
-            return layer().name() + " " + type + " " + number;
+            return owner().name() + " " + type + " " + number;
         }
     }
 }

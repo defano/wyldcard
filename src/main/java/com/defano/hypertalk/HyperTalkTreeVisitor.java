@@ -20,8 +20,6 @@ import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
@@ -58,12 +56,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDisableCmdStmnt(HyperTalkParser.DisableCmdStmntContext ctx) {
-        return new SetPropertyCmd((PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(false));
+        return visit(ctx.disableCmd());
     }
 
     @Override
     public Object visitEnableCmdStmnt(HyperTalkParser.EnableCmdStmntContext ctx) {
-        return new SetPropertyCmd((PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(true));
+        return visit(ctx.enableCmd());
     }
 
     @Override
@@ -720,7 +718,42 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDeleteMenuCmdStmt(HyperTalkParser.DeleteMenuCmdStmtContext ctx) {
-        return new DeleteMenuCmd((Expression) visit(ctx.factor()));
+        return new DeleteMenuCmd((MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
+    public Object visitDeleteMenuItemCmdStmt(HyperTalkParser.DeleteMenuItemCmdStmtContext ctx) {
+        return new DeleteMenuItemCmd((MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitEnablePartCmd(HyperTalkParser.EnablePartCmdContext ctx) {
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(true));
+    }
+
+    @Override
+    public Object visitEnableMenuItemCmd(HyperTalkParser.EnableMenuItemCmdContext ctx) {
+        return new EnableMenuItemCmd((MenuItemSpecifier) visit(ctx.menuItem()), true);
+    }
+
+    @Override
+    public Object visitEnableMenuCmd(HyperTalkParser.EnableMenuCmdContext ctx) {
+        return new EnableMenuCmd((MenuSpecifier) visit(ctx.menu()), true);
+    }
+
+    @Override
+    public Object visitDisablePartCmd(HyperTalkParser.DisablePartCmdContext ctx) {
+        return new SetPropertyCmd((PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(false));
+    }
+
+    @Override
+    public Object visitDisableMenuItemCmd(HyperTalkParser.DisableMenuItemCmdContext ctx) {
+        return new EnableMenuItemCmd((MenuItemSpecifier) visit(ctx.menuItem()), false);
+    }
+
+    @Override
+    public Object visitDisableMenuCmd(HyperTalkParser.DisableMenuCmdContext ctx) {
+        return new EnableMenuCmd((MenuSpecifier) visit(ctx.menu()), false);
     }
 
     @Override
@@ -1465,6 +1498,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_ITEMS: return new NumberOfFunc(Countable.ITEM, (Expression) visit(ctx.factor()));
             case NUMBER_LINES: return new NumberOfFunc(Countable.LINE, (Expression) visit(ctx.factor()));
             case NUMBER_WORDS: return new NumberOfFunc(Countable.WORD, (Expression) visit(ctx.factor()));
+            case NUMBER_MENUITEMS: return new NumberOfFunc(Countable.MENU_ITEMS, (Expression) visit(ctx.factor()));
             case RANDOM: return new RandomFunc((Expression) visit(ctx.factor()));
             case SQRT:
             case TRUNC:
@@ -1514,6 +1548,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_BKGND_BUTTONS: return new NumberOfFunc(Countable.BKGND_BUTTONS);
             case NUMBER_CARD_FIELDS: return new NumberOfFunc(Countable.CARD_FIELDS);
             case NUMBER_BKGND_FIELDS: return new NumberOfFunc(Countable.BKGND_FIELDS);
+            case MENUS: return new MenusFunc();
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
         }
@@ -1566,6 +1601,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMenusFunc(HyperTalkParser.MenusFuncContext ctx) {
+        return BuiltInFunction.MENUS;
+    }
+
+    @Override
     public Object visitNumberOfCardParts(HyperTalkParser.NumberOfCardPartsContext ctx) {
         return BuiltInFunction.NUMBER_CARD_PARTS;
     }
@@ -1593,6 +1633,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNumberOfLinesFunc(HyperTalkParser.NumberOfLinesFuncContext ctx) {
         return BuiltInFunction.NUMBER_LINES;
+    }
+
+    @Override
+    public Object visitNumberOfMenuItemsFunc(HyperTalkParser.NumberOfMenuItemsFuncContext ctx) {
+        return BuiltInFunction.NUMBER_MENUITEMS;
     }
 
     @Override

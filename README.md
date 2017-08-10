@@ -274,11 +274,17 @@ Item 2
 Other...
 ```
 
+When working with `menu` styled buttons, use the `selectedText` property to get or set the menu's selected item. For example,
+
+```
+if the selectedText of card button 2 is "Item 3" then answer "Please choose an even number."
+```
+
 A few notes about using menus:
 
-* When getting the contents of a menu, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
-* In Apple's HyperCard, if you created a menu item with the same name as an existing HyperCard menu item, the item would inherit the behavior of HyperCard's menu. This is not true in HyperTalk Java.
-* Menus created by script have no default behavior. Use the `on doMenu theMenu, theMenuItem` handler (in the card, background or stack script) to trap and add your own behavior.
+* When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
+* In Apple's HyperCard, if you created a menu item with the same name as an existing HyperCard menu item, the new item would inherit the behavior of HyperCard's menu. This is not true in HyperTalk Java.
+* Menus created by script have no default behavior. Use the `on doMenu theMenu, theMenuItem` handler (in the card, background or stack script) to trap selections from the menu bar and add your own behavior. Menu buttons do not send the `doMenu` message.
 * Use the `reset menuBar` command to restore the application menu bar to its default state.
 
 #### The message box
@@ -356,26 +362,26 @@ All buttons and fields have these properties:
 
 Property      | Description
 --------------|--------------------------
-`enabled`   | Returns or sets whether the button or field is enabled (a Boolean value). When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands.
-`script`      | Retrieves or replaces the current script of the part
-`id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
-`name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
-`location`    | Returns or sets the center point of the part. Also available as the `loc` property.
-`left`        | Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.
-`right`       | Returns or sets the right-most border of the part's location, moving the part horizontally but not affecting its width.
-`top`	        | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
 `bottom`      | Returns or sets the bottom-most border of the part's location, moving the part vertically but not affecting its height.
-`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
-`width`       | Returns or sets the width of the part (in pixels)
+`enabled`     | Returns or sets whether the button or field is enabled (a Boolean value). When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands.
 `height`      | Returns or sets the height of the part (in pixels)
+`id`          | Returns the part's id. Each part has a globally unique id that is assigned by HyperCard at creation and cannot be changed.
+`left`        | Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.
+`location`    | Returns or sets the center point of the part. Also available as the `loc` property.
+`name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
 `rectangle`   | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rect`.
-`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI. Can also be set using the `hide` and `show` commands.
-`textSize`    | Returns or sets the size (in points) of the part's text.
-`textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
-`textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
-`textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic`. Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
+`right`       | Returns or sets the right-most border of the part's location, moving the part horizontally but not affecting its width.
+`script`      | Retrieves or replaces the current script of the part
 `selectedText`| For fields, returns the currently selected text. For buttons, returns the selected menu item of `menu`-style buttons or the empty string for all other button styles. This property is read-only; it cannot be set via HyperTalk.
+`textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
+`textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
+`textSize`    | Returns or sets the size (in points) of the part's text.
+`textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic`. Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
+`top`         | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
+`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the button is not drawn on the screen and receives no messages from the UI. Can also be set using the `hide` and `show` commands.
+`width`       | Returns or sets the width of the part (in pixels)
 
 ### Buttons
 
@@ -612,37 +618,36 @@ This version of HyperCard implements the following set of commands:
 
 Command	         | Description
 -----------------|------------------------------
-`put`            | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
-`get`	           | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
-`set`	           | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
-`go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
-`wait`           | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
-`answer`         | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
-`ask`   	        | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
-`do`             | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
-`send`           | Send a message to a part on the current card; `send "mouseUp" to field id 3`
 `add`            | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
-`subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
-`multiply`       | Multiplies a container by a value; `multiply x by 3`
-`divide`         | Divides a container by a value; `divide x by it`
+`answer`         | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
+`ask`            | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
 `choose`         | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
 `click`          | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
-`drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
-`type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
-`sort`           | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items,lines} of] <container> [{{ascending,descending} by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
-`hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
-`show`           | Makes a part visible on the card, for example `show button "My Button"`.
-`delete`         | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
-`delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
 `create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
-`enable`         | Enables a part on the card; sets the part's `enabled` property to true.
-`disable`        | Disables a part on the card causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false.  
-`lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
-`unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
+`delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
+`delete`         | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
+`disable`        | Disables a part, menu or menu item causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false. For example, `disable card button 3` or `disable menuItem "Bold" of menu "Style"`
+`divide`         | Divides a container by a value; `divide x by it`
+`do`             | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
 `doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that HyperCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
-`visual effect`  | Specifies the visual effect to be used with any subsequent `go` command within the current handler. If the `go` command specifies its own visual effect, the `go` command's visual effect takes precedence. This command only affects navigation that occurs within the function/handler that invokes it.
+`drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
+`enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
+`get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
+`go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
+`hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
+`lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
+`multiply`       | Multiplies a container by a value; `multiply x by 3`
+`put`            | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
 `reset menuBar`  | Resets the menu bar to its default state; removes any custom menus added with the `create menu` command and restores any deleted menus to their default state.
-
+`send`           | Send a message to a part on the current card; `send "mouseUp" to field id 3`
+`set`            | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
+`show`           | Makes a part visible on the card, for example `show button "My Button"`.
+`sort`           | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items,lines} of] <container> [{{ascending,descending} by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
+`subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
+`type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
+`unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
+`visual effect`  | Specifies the visual effect to be used with any subsequent `go` command within the current handler. If the `go` command specifies its own visual effect, the `go` command's visual effect takes precedence. This command only affects navigation that occurs within the function/handler that invokes it.
+`wait`           | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
 ## Functions
 
 HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
@@ -659,49 +664,50 @@ This implementation includes the following built-in functions:
 
 Function        | Description
 ----------------|-----------------------------------
-`average`	      | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns `65.33`.
-`mouse`         | Returns the current state of the left mouse button; either `up` or `down`
-`mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
-`mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
-`mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
-`clickLoc`      | Returns the coordinate of the last location the user clicked the mouse.
-`clickH`        | Returns the x-coordinate of the last location the user clicked the mouse.
-`clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.
-`tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
-`shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
-`commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
-`optionKey`     | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
-`number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`. For example, `repeat with n = 1 to the number of items in myList`
-`result`        | Returns the current value of the implicit variable `it`, for example: `the result`
-`message`       | Returns the contents of the message box. For example: `put the message box into aVar`. Also available as `message box` or `message window`
-`min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `3`.
-`max`           | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `9`.
-`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields `07/04/16`.
-`long date`     | Returns the current date fully spelled out. For example, `Saturday, July 02, 2016`.
-`abbreviated date`<br>`abbrev date` | Returns the current date  spelled out using abbreviations. For example, `Sat, Jul 02, 2016`.
-`seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
-`ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
-`random`        | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
-`sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.
-`sin`           | Returns the trigonometric sine of the given argument, represented in radians.
-`cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
-`tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
+`abbrev date`   | Returns the current date spelled out using abbreviations. For example, `Sat, Jul 02, 2016`. Also available as `abbreviated data`.
+`abs`           | Returns the absolute value of the given numerical argument.
 `atan`          | Returns the trigonometric arctangent of the given argument, represented in radians.
+`average`       | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns `65.33`.
+`charToNum`     | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
+`clickH`        | Returns the x-coordinate of the last location the user clicked the mouse.
+`clickLoc`      | Returns the coordinate of the last location the user clicked the mouse.
+`clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
+`clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.
+`commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
+`cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
+`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields `07/04/16`.
 `exp`           | Returns the value of _e_ raised to the power of the given argument.
 `exp1`          | Returns the value of _1-e_ raised to the number of the given argument.
 `exp2`          | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.
+`length`        | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields `12`.
 `ln`            | Returns the natural logarithm of the given argument.
 `ln1`           | Returns the natural logarithm of the given argument plus one.
 `log2`          | Returns the base-2 logarithm of the given argument.
-`trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
-`abs`           | Returns the absolute value of the given numerical argument.
+`long date`     | Returns the current date fully spelled out. For example, `Saturday, July 02, 2016`.
+`max`           | Returns the maximum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `9`.
+`menus`         | Returns a newline-delimited list of menus appearing in the menu bar.
+`message`       | Returns the contents of the message box. For example: `put the message box into aVar`. Also available as `message box` or `message window`
+`min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `3`.
+`mouse`         | Returns the current state of the left mouse button; either `up` or `down`
+`mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
+`mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
+`mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
+`number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`, `number of menuItems in menu <menuName>`. For example, `repeat with n = 1 to the number of items in myList`
 `numToChar`     | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
-`charToNum`     | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
-`value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
-`length`        | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields `12`.
-`selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
-`clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
+`optionKey`     | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
+`random`        | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
+`result`        | Returns the current value of the implicit variable `it`, for example: `the result`
 `screenRect`    | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`
+`seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
+`selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
+`shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
+`sin`           | Returns the trigonometric sine of the given argument, represented in radians.
+`sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.
+`tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
+`ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
+`tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
+`trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
+`value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
 
 ### User-defined Functions
 

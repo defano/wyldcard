@@ -8,7 +8,6 @@
 
 package com.defano.hypercard.gui.menu;
 
-import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -24,6 +23,7 @@ public class HyperCardMenuBar extends JMenuBar {
     }
 
     public void reset() {
+        // Reset menu items in each menu
         FileMenu.instance.reset();
         EditMenu.instance.reset();
         GoMenu.instance.reset();
@@ -34,8 +34,8 @@ public class HyperCardMenuBar extends JMenuBar {
         FontMenu.instance.reset();
         StyleMenu.instance.reset();
 
+        // Reset menus in the menu bar
         removeAll();
-
         add(FileMenu.instance);
         add(EditMenu.instance);
         add(GoMenu.instance);
@@ -60,35 +60,12 @@ public class HyperCardMenuBar extends JMenuBar {
         throw new HtSemanticException("Can't find menu item " + theMenuItem);
     }
 
-    public void deleteMenu(String name) throws HtSemanticException {
-        JMenu theMenu = findMenuByName(name);
-
-        if (theMenu == null) {
-            throw new HtSemanticException("No menu named " + name + " exists.");
-        }
-
-        remove(theMenu);
-    }
-
     public void createMenu(String name) throws HtSemanticException {
         if (findMenuByName(name) != null) {
             throw new HtSemanticException("A menu named " + name + " already exists.");
         }
 
         add(new HyperCardMenu(name));
-    }
-
-    public void createMenuItem(String inMenu, String named, int atIndex) throws HtException {
-        JMenu menu = findMenuByName(inMenu);
-
-        if (menu == null) {
-            throw new HtSemanticException("No menu named " + inMenu + " exists.");
-        }
-
-        if (atIndex < 0) atIndex = 0;
-        if (atIndex >= menu.getItemCount()) atIndex = menu.getItemCount() - 1;
-
-        add(new JCheckBoxMenuItem(named), atIndex);
     }
 
     public JMenu findMenuByNumber(int index) throws HtSemanticException {
@@ -111,7 +88,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return null;
     }
 
-    public JMenuItem findMenuItemByName(String name) {
+    private JMenuItem findMenuItemByName(String name) {
         for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
             JMenu thisMenu = this.getMenu(thisMenuIndex);
 
@@ -121,20 +98,6 @@ public class HyperCardMenuBar extends JMenuBar {
                 if (thisMenuItem != null && thisMenuItem.getText() != null && thisMenuItem.getText().equalsIgnoreCase(name)) {
                     return thisMenuItem;
                 }
-            }
-        }
-
-        return null;
-    }
-
-    public JMenuItem findMenuByMenuAndItemName(String menuName, String menuItemName) {
-        JMenu thisMenu = findMenuByName(menuName);
-
-        for (int thisMenuItemIndex = 0; thisMenuItemIndex < thisMenu.getItemCount(); thisMenuItemIndex++) {
-            JMenuItem thisMenuItem = thisMenu.getItem(thisMenuItemIndex);
-
-            if (thisMenuItem != null && thisMenuItem.getText() != null && thisMenuItem.getText().equalsIgnoreCase(menuItemName)) {
-                return thisMenuItem;
             }
         }
 

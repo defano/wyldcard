@@ -22,7 +22,7 @@ public class PartOrdinalSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Owner layer() {
+    public Owner owner() {
         return layer;
     }
 

@@ -38,17 +38,16 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private Script compiledScript;
 
     private JPanel scriptEditor;
-    private JButton cancelButton;
     private JButton saveButton;
     private JTextArea scriptField;
     private HandlerComboBox handlersMenu;
     private HandlerComboBox functionsMenu;
+    private JLabel charCount;
 
     public ScriptEditor() {
 
         handlersMenu.setDelegate(this);
         functionsMenu.setDelegate(this);
-        cancelButton.addActionListener(e -> dispose());
 
         saveButton.addActionListener(e -> {
             updateProperties();
@@ -73,6 +72,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     private void checkSyntax() {
+        charCount.setText(String.valueOf(scriptField.getText().length()) + " characters, " + String.valueOf(scriptField.getText().split("\n").length) + " lines.");
         Interpreter.compileInBackground(scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
             if (compiledScript != null) {
                 ScriptEditor.this.compiledScript = compiledScript;
@@ -176,6 +176,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     /**
      * Appends the handler to the script, including, when available, a description and argument list.
+     *
      * @param handlerName The name of the handler to append.
      */
     private void appendHandler(String handlerName) {
@@ -274,29 +275,22 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
      */
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
-        scriptEditor.setLayout(new GridLayoutManager(4, 7, new Insets(10, 10, 10, 10), 0, -1));
+        scriptEditor.setLayout(new GridLayoutManager(4, 8, new Insets(10, 10, 10, 10), 0, -1));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
         saveButton = new JButton();
         saveButton.setHideActionText(false);
-        saveButton.setHorizontalAlignment(4);
         saveButton.setOpaque(true);
         saveButton.setText("Save");
-        scriptEditor.add(saveButton, new GridConstraints(3, 6, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        scriptEditor.add(spacer1, new GridConstraints(3, 3, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
+        scriptEditor.add(saveButton, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
         Font scrollPane1Font = this.$$$getFont$$$("Monaco", -1, -1, scrollPane1.getFont());
         if (scrollPane1Font != null) scrollPane1.setFont(scrollPane1Font);
-        scriptEditor.add(scrollPane1, new GridConstraints(2, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        scriptEditor.add(scrollPane1, new GridConstraints(2, 0, 1, 8, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scriptField = new JTextArea();
         Font scriptFieldFont = this.$$$getFont$$$("Monaco", -1, -1, scriptField.getFont());
         if (scriptFieldFont != null) scriptField.setFont(scriptFieldFont);
         scriptField.setTabSize(4);
         scrollPane1.setViewportView(scriptField);
-        cancelButton = new JButton();
-        cancelButton.setHorizontalAlignment(4);
-        cancelButton.setText("Cancel");
-        scriptEditor.add(cancelButton, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         handlersMenu = new HandlerComboBox();
         handlersMenu.setName("Handlers:");
         scriptEditor.add(handlersMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -306,12 +300,17 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         final JLabel label2 = new JLabel();
         label2.setText("Functions: ");
         scriptEditor.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer2 = new Spacer();
-        scriptEditor.add(spacer2, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        scriptEditor.add(spacer1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         functionsMenu = new HandlerComboBox();
         scriptEditor.add(functionsMenu, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        scriptEditor.add(spacer2, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        charCount = new JLabel();
+        charCount.setText("Label");
+        scriptEditor.add(charCount, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        scriptEditor.add(spacer3, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        scriptEditor.add(spacer3, new GridConstraints(3, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**

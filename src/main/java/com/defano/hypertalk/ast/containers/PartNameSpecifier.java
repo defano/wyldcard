@@ -32,7 +32,7 @@ public class PartNameSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Owner layer() {
+    public Owner owner() {
         return layer;
     }
 
@@ -48,6 +48,6 @@ public class PartNameSpecifier implements PartSpecifier {
 
     @Override
     public String toString() {
-        return layer().name() + " " + type + " " + name;
+        return owner().name() + " " + type + " " + name;
     }
 }

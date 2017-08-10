@@ -20,6 +20,9 @@ import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -41,8 +44,9 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
 
+        setRenderer(new MenuButtonCellRenderer());
         setModel(menuItems);
-        addItemListener(e -> toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(e.getItem())), true));
+        addActionListener(new MenuButtonItemListener());
     }
 
     @Override
@@ -55,10 +59,11 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         switch (property) {
             case PartModel.PROP_CONTENTS:
-                menuItems.removeAllElements();
-                for (String thisItem : newValue.stringValue().split("\n")) {
-                    menuItems.addElement(thisItem);
-                }
+                putValueInMenu(newValue);
+                break;
+
+            case ButtonModel.PROP_SELECTEDTEXT:
+                menuItems.setSelectedItem(newValue.stringValue());
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
@@ -75,10 +80,54 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
         }
     }
 
+    private void putValueInMenu(Value v) {
+        menuItems.removeAllElements();
+        List<Value> items;
+
+        if (v.lineCount() > 1) {
+            items = v.getLines();
+        } else {
+            items = v.getItems();
+        }
+
+        for (Value thisItem : items) {
+            menuItems.addElement(thisItem.stringValue());
+        }
+    }
+
     private class ToolModeObserver implements Observer {
         @Override
         public void update(Observable o, Object arg) {
             setEnabled(ToolMode.BUTTON != arg);
         }
     }
+
+    private class MenuButtonItemListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if ("-".equals(getSelectedItem())) {
+                setSelectedIndex(0);
+            } else {
+                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(getSelectedItem())), false);
+            }
+        }
+    }
+
+    private class MenuButtonCellRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            if (String.valueOf(value).equals("-")) {
+                JSeparator separator = new JSeparator();
+                separator.setEnabled(false);
+                return separator;
+            }
+
+            return this;
+        }
+    }
+
 }
