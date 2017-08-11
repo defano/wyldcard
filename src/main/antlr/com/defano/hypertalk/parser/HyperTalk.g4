@@ -397,7 +397,7 @@ oneArgFunc          : 'average'                                                 
                     | 'number of' ('word' | 'words')                                                                    # numberOfWordsFunc
                     | 'number of' ('item' | 'items')                                                                    # numberOfItemsFunc
                     | 'number of' ('line' | 'lines')                                                                    # numberOfLinesFunc
-                    | 'number of' ('menuItems')                                                                         # numberOfMenuItemsFunc
+                    | 'number of' 'menuItems'                                                                           # numberOfMenuItemsFunc
                     | 'random'                                                                                          # randomFunc
                     | 'sqrt'                                                                                            # sqrtFunc
                     | 'trunc'                                                                                           # truncFunc
@@ -440,6 +440,7 @@ noArgFunc           : 'mouse'                                                   
                     | 'number of' ('background' | 'bkgnd') 'buttons'                                                    # numberOfBkgndButtons
                     | 'number of' ('card' | 'cd') 'fields'                                                              # numberOfCardFields
                     | 'number of' ('background' | 'bkgnd') 'fields'                                                     # numberOfBkgndFields
+                    | 'number of' 'menus'                                                                               # numberOfMenusFunc
                     | 'menus'                                                                                           # menusFunc
                     ;
 

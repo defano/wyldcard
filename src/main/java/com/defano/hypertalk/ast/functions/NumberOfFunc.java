@@ -55,6 +55,8 @@ public class NumberOfFunc extends Expression {
                 return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
                 return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
+            case MENUS:
+                return new Value(HyperCardMenuBar.instance.getMenuCount());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemtype);
         }

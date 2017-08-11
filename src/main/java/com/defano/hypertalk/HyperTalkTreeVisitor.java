@@ -1553,6 +1553,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_BKGND_BUTTONS: return new NumberOfFunc(Countable.BKGND_BUTTONS);
             case NUMBER_CARD_FIELDS: return new NumberOfFunc(Countable.CARD_FIELDS);
             case NUMBER_BKGND_FIELDS: return new NumberOfFunc(Countable.BKGND_FIELDS);
+            case NUMBER_MENUS: return new NumberOfFunc(Countable.MENUS);
             case MENUS: return new MenusFunc();
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
@@ -1646,6 +1647,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNumberOfMenusFunc(HyperTalkParser.NumberOfMenusFuncContext ctx) {
+        return BuiltInFunction.NUMBER_MENUS;
+    }
+
+    @Override
     public Object visitRandomFunc(HyperTalkParser.RandomFuncContext ctx) {
         return BuiltInFunction.RANDOM;
     }
@@ -1718,6 +1724,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitLengthFunc(HyperTalkParser.LengthFuncContext ctx) {
         return BuiltInFunction.LENGTH;
+    }
+
+    @Override
+    public Object visitMenuFunc(HyperTalkParser.MenuFuncContext ctx) {
+        return BuiltInFunction.MENU;
     }
 
     @Override

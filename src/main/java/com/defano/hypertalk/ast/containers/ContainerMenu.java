@@ -53,7 +53,7 @@ public class ContainerMenu extends Container {
      * @param menu The menu whose value should be returned.
      * @return The value of the menu
      */
-    private Value getMenuValue(JMenu menu)  {
+    public static Value getMenuValue(JMenu menu)  {
         ArrayList<Value> menuItems = new ArrayList<>();
         for (int thisItemIndex = 0; thisItemIndex < menu.getItemCount(); thisItemIndex++) {
             JMenuItem thisItem = menu.getItem(thisItemIndex);
@@ -74,7 +74,11 @@ public class ContainerMenu extends Container {
      * @param menu The menu whose menu items should be returned.
      * @return The value of the specified menu item.
      */
-    private Value getMenuItemValue(JMenu menu, int itemIndex) throws HtSemanticException {
+    public static Value getMenuItemValue(JMenu menu, int itemIndex) throws HtSemanticException {
+        if (itemIndex < 0 || itemIndex >= menu.getItemCount()) {
+            throw new HtSemanticException("No such menu item " + (itemIndex + 1));
+        }
+
         if (menu.getItem(itemIndex) == null) {
             return new Value("-");
         } else {

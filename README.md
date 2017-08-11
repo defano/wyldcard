@@ -280,13 +280,6 @@ When working with `menu` styled buttons, use the `selectedText` property to get 
 if the selectedText of card button 2 is "Item 3" then answer "Please choose an even number."
 ```
 
-A few notes about using menus:
-
-* When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
-* In Apple's HyperCard, if you created a menu item with the same name as an existing HyperCard menu item, the new item would inherit the behavior of HyperCard's menu. This is not true in HyperTalk Java.
-* Menus created by script have no default behavior. Use the `on doMenu theMenu, theMenuItem` handler (in the card, background or stack script) to trap selections from the menu bar and add your own behavior. Menu buttons do not send the `doMenu` message.
-* Use the `reset menuBar` command to restore the application menu bar to its default state.
-
 #### The message box
 
 The message box is a HyperCard window containing a single-line text field (hide or show this window from the "Go" menu). Text entered into this field is interpreted as a HyperTalk command or expression when you press enter. The contents of this field can by read or written as a container. The message box is addressable as `[the] message`, `[the] message box` or `[the] message window`
@@ -313,7 +306,7 @@ end mouseUp
 
 ## Parts and Properties
 
-A _part_ is a scriptable user interface element. Buttons, fields, cards, backgrounds and the stack itself are parts.
+A _part_ is a scriptable user interface element. Buttons, fields, cards, backgrounds and the stack itself are parts. Menus (in the menu bar) are also controllable via HyperTalk but they behave a bit differently than other parts in HyperCard. See the section below for details about [controlling the menu bar](#menus).
 
 A part maintains a set of _properties_ that describe various aspects of the part like its name, id, size and location. Modifying a part's properties modifies the way it appears and behaves.
 
@@ -429,6 +422,38 @@ Property   | Description
 `showLines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
 `dontWrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a newline is reached.
 
+### Menus
+
+HyperTalk can control the menus that appear in the application menu bar as well as the behavior associated with them. Unlike buttons or fields, however, changes to the menu bar are not "saved" as part of the stack (modifications to the menu bar will not be restored when opening a saved stack document), nor are they local to the current stack (opening a new stack does not restore the menu bar to its default state).
+
+Even though the behavior of a menu is scriptable, menus themselves do not "contain" a script that can be edited and are not assigned an ID or a part number.
+
+#### Referring to menus
+
+A menu or menu item can be addressed by its name or by its position in the menu. For example,
+
+```
+put the second menu into menuName -- Usually the 'Edit' menu
+answer menu 1 -- Usually refers to 'File' menu
+menu "Objects"
+```
+
+#### Creating menus and menu items
+
+#### Properties of a menu item
+
+#### Special considerations
+
+Menus in HyperTalk Java differ from Apple's HyperCard if a few nuanced ways:
+
+* In Apple's HyperCard, if you created a menu item with the same name as an existing HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in HyperTalk Java.
+* HyperTalk Java cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (meaning the stack cannot take action when the user selects an item from them).
+
+* When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
+* Menus created by script have no default behavior. Use the `on doMenu theMenu, theMenuItem` handler (in the card, background or stack script) to trap selections from the menu bar and add your own behavior. Menu buttons do not send the `doMenu` message.
+* Use the `reset menuBar` command to restore the application menu bar to its default state.
+
+
 ### HyperCard Properties
 
 Some properties apply to HyperCard at large (instead of just an individual part). The syntax for setting or getting a global property is similar to part properties. For example:
@@ -443,7 +468,7 @@ This implementation supports these HyperCard properties:
 Global Property | Description
 ----------------|---------------
 `lockScreen`    | A boolean value indicating whether or not the screen is locked. Reset to false at idle. See the "Visual Effects" section for more details.
-`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yeilds 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
+`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yields 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 
 ## Chunk Expressions
 
@@ -692,7 +717,7 @@ Function        | Description
 `mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
 `mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
 `mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
-`number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`, `number of menuItems in menu <menuName>`. For example, `repeat with n = 1 to the number of items in myList`
+`number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`, `number of menuItems in menu <menuName>`, `number of menus`. For example, `repeat with n = 1 to the number of items in myList`
 `numToChar`     | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
 `optionKey`     | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`
 `random`        | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.

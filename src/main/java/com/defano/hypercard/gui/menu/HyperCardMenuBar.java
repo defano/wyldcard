@@ -70,7 +70,7 @@ public class HyperCardMenuBar extends JMenuBar {
 
     public JMenu findMenuByNumber(int index) throws HtSemanticException {
         if (index < 0 || index >= getMenuCount()) {
-            throw new HtSemanticException("No such menu numbered " + (index + 1));
+            return null;
         }
 
         return getMenu(index);
