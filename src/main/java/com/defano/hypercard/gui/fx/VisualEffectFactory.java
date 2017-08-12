@@ -106,7 +106,7 @@ public class VisualEffectFactory {
         }
     }
 
-    public static BufferedImage invert(BufferedImage image) {
+    private static BufferedImage invert(BufferedImage image) {
 
         BufferedImage inverted = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = inverted.createGraphics();

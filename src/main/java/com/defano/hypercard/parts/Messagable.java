@@ -162,7 +162,7 @@ public interface Messagable {
                 return HyperCard.getInstance().getStack().getStackModel();
             case FIELD:
             case BUTTON:
-                if (getMe().layer() == Owner.BACKGROUND) {
+                if (getMe().owner() == Owner.BACKGROUND) {
                     return HyperCard.getInstance().getCard().getCardBackground();
                 } else {
                     return HyperCard.getInstance().getCard().getCardModel();
@@ -175,7 +175,7 @@ public interface Messagable {
                 return null;
         }
 
-        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe().layer());
+        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe().owner());
     }
 
 }

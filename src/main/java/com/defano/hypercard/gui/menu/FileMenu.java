@@ -15,7 +15,7 @@ import com.defano.hypercard.runtime.print.PrintStackAction;
 
 public class FileMenu extends HyperCardMenu {
 
-    public final static FileMenu instance = new FileMenu();
+    public static FileMenu instance = new FileMenu();
 
     private FileMenu() {
         super("File");
@@ -88,5 +88,9 @@ public class FileMenu extends HyperCardMenu {
                 .named("Print Report...")
                 .disabled()
                 .build(this);
+    }
+
+    public void reset() {
+        instance = new FileMenu();
     }
 }

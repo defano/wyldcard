@@ -67,6 +67,8 @@ public class PropertiesModel {
 
         if (readOnly) {
             this.immutableProperties.add(property);
+        } else {
+            this.immutableProperties.remove(property);
         }
     }
 

@@ -13,7 +13,7 @@ import com.defano.hypertalk.ast.common.PartType;
 
 public interface PartSpecifier {
     Object value();
-    Owner layer();
+    Owner owner();
     PartType type();
 
     default boolean isCardElementSpecifier() {

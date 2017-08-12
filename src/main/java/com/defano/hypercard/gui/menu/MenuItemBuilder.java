@@ -12,6 +12,7 @@ import com.defano.jmonet.model.ImmutableProvider;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class MenuItemBuilder {
     private ImmutableProvider<Boolean> checkmarkProvider;
     private ImmutableProvider<Boolean> disabledProvider;
     private List<ActionListener> actionListeners = new ArrayList<>();
+    private Integer atIndex;
 
     private MenuItemBuilder(JMenuItem item) {
         this.item = item;
@@ -83,6 +85,11 @@ public class MenuItemBuilder {
         return this;
     }
 
+    public MenuItemBuilder atIndex(int index) {
+        this.atIndex = index;
+        return this;
+    }
+
     public MenuItemBuilder named (String name) {
         this.item.setName(name);
         this.item.setText(name);
@@ -132,7 +139,12 @@ public class MenuItemBuilder {
             item.setEnabled(!disabledProvider.get());
         }
 
-        intoMenu.add(item);
+        if (atIndex == null) {
+            intoMenu.add(item);
+        } else {
+            intoMenu.add(item, atIndex.intValue());
+        }
+
         return item;
     }
 }

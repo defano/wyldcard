@@ -10,5 +10,7 @@ public enum Countable {
     BKGND_BUTTONS,
     CARD_BUTTONS,
     BKGND_FIELDS,
-    CARD_FIELDS
+    CARD_FIELDS,
+    MENU_ITEMS,
+    MENUS
 }

@@ -14,6 +14,7 @@ import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -74,6 +75,14 @@ public class ExecutionContext {
 
     public void setPassedMessage(String passedMessage) {
         getFrame().setPassedMessage(passedMessage);
+    }
+
+    public void setVisualEffect(VisualEffectSpecifier visualEffect) {
+        getFrame().setVisualEffect(visualEffect);
+    }
+
+    public VisualEffectSpecifier getVisualEffect() {
+        return getFrame().getVisualEffect();
     }
 
     public void defineGlobal (String id) {

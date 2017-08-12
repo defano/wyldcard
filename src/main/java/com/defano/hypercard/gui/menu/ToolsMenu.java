@@ -18,7 +18,7 @@ import javax.swing.*;
 
 public class ToolsMenu extends HyperCardMenu {
 
-    public final static ToolsMenu instance = new ToolsMenu();
+    public static ToolsMenu instance = new ToolsMenu();
 
     private ToolsMenu() {
         super("Tools");
@@ -188,6 +188,9 @@ public class ToolsMenu extends HyperCardMenu {
                 .withAction(e -> ToolsContext.getInstance().selectPaintTool(PaintToolType.TEXT, false))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.TEXT))
                 .build(this);
+    }
 
+    public void reset() {
+        instance = new ToolsMenu();
     }
 }

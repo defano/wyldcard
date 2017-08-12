@@ -22,7 +22,7 @@ import java.util.Objects;
 
 public class ObjectsMenu extends HyperCardMenu {
 
-    public final static ObjectsMenu instance = new ObjectsMenu();
+    public static ObjectsMenu instance = new ObjectsMenu();
 
     private ObjectsMenu() {
         super("Objects");
@@ -102,5 +102,9 @@ public class ObjectsMenu extends HyperCardMenu {
                 .named("New Background")
                 .withAction(e -> HyperCard.getInstance().getStack().newBackground())
                 .build(this);
+    }
+
+    public void reset() {
+        instance = new ObjectsMenu();
     }
 }

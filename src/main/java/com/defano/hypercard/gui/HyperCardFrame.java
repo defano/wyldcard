@@ -19,6 +19,7 @@ public abstract class HyperCardFrame extends WindowAdapter implements HyperCardW
     // The Swing frame that this window is displayed in; bound only after the window has been built via WindowBuilder
     private JFrame windowFrame;
     private boolean isShown = false;
+    private boolean ownsMenubar = false;
 
     private final Provider<Boolean> windowVisibleProvider = new Provider<>(false);
 
@@ -71,4 +72,11 @@ public abstract class HyperCardFrame extends WindowAdapter implements HyperCardW
         windowVisibleProvider.set(windowFrame.isVisible());
     }
 
+    public boolean ownsMenubar() {
+        return ownsMenubar;
+    }
+
+    public void setOwnsMenubar(boolean ownsMenubar) {
+        this.ownsMenubar = ownsMenubar;
+    }
 }

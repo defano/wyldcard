@@ -16,7 +16,7 @@ import java.awt.*;
 
 public class StyleMenu extends HyperCardMenu {
 
-    public final static StyleMenu instance = new StyleMenu();
+    public static StyleMenu instance = new StyleMenu();
 
     private StyleMenu() {
         super("Style");
@@ -120,5 +120,9 @@ public class StyleMenu extends HyperCardMenu {
                     WindowManager.getFontSizePicker().setShown(true);
                 })
                 .build(this);
+    }
+
+    public void reset() {
+        instance = new StyleMenu();
     }
 }

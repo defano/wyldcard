@@ -8,25 +8,38 @@
 
 package com.defano.hypertalk.ast.containers;
 
+import com.defano.hypertalk.ast.common.MenuItemSpecifier;
 import com.defano.hypertalk.ast.expressions.PartExp;
 
 public class PropertySpecifier {
 
     public final String property;
     public final PartExp partExp;
+    public final MenuItemSpecifier menuItem;
 
     public PropertySpecifier (String globalProperty) {
         this.property = globalProperty;
         this.partExp = null;
+        this.menuItem = null;
     }
 
     public PropertySpecifier (String property, PartExp partSpecifier) {
         this.property = property;
         this.partExp = partSpecifier;
+        this.menuItem = null;
+    }
+
+    public PropertySpecifier (String property, MenuItemSpecifier menuItem) {
+        this.property = property;
+        this.menuItem = menuItem;
+        this.partExp = null;
     }
 
     public boolean isGlobalPropertySpecifier() {
-        return partExp == null;
+        return partExp == null && menuItem == null;
     }
 
+    public boolean isMenuItemPropertySpecifier() {
+        return menuItem != null;
+    }
 }

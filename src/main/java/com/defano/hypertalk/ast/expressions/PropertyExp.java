@@ -19,6 +19,7 @@ import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PropertySpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 
 public class PropertyExp extends Expression {
 
@@ -30,10 +31,13 @@ public class PropertyExp extends Expression {
     
     public Value evaluate () throws HtSemanticException {
         try {
-
             // Getting a HyperCard property
             if (propertySpecifier.isGlobalPropertySpecifier()) {
                 return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
+            }
+
+            else if (propertySpecifier.isMenuItemPropertySpecifier()) {
+                return MenuPropertiesDelegate.getProperty(propertySpecifier.property, propertySpecifier.menuItem);
             }
 
             // Getting the property of a part

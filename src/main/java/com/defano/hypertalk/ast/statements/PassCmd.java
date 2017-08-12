@@ -6,15 +6,15 @@ import com.defano.hypertalk.exception.HtException;
 
 public class PassCmd extends Statement {
 
-    private final Expression passedMessage;
+    private final String passedMessage;
 
-    public PassCmd(Expression passedMessage) {
+    public PassCmd(String passedMessage) {
         this.passedMessage = passedMessage;
     }
 
     @Override
     public void execute() throws HtException {
-        ExecutionContext.getContext().setPassedMessage(passedMessage.evaluate().stringValue());
+        ExecutionContext.getContext().setPassedMessage(passedMessage);
         this.breakExecution = true;
     }
 }

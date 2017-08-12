@@ -23,7 +23,7 @@ public class WindowBuilder {
     private boolean initiallyVisible = true;
     private boolean resizable = false;
     private HyperCardFrame dock;
-    private boolean hasLocalMenubar = false;
+    private boolean ownsMenubar = false;
 
     private WindowBuilder(HyperCardFrame window) {
         this.window = window;
@@ -42,8 +42,8 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder hasLocalMenubar(boolean hasLocalMenubar) {
-        this.hasLocalMenubar = hasLocalMenubar;
+    public WindowBuilder setHasMenubar(boolean hasLocalMenubar) {
+        this.ownsMenubar = hasLocalMenubar;
         return this;
     }
 
@@ -63,7 +63,6 @@ public class WindowBuilder {
     }
 
     public WindowBuilder asPalette() {
-        frame.setAlwaysOnTop(true);
         frame.setAutoRequestFocus(true);
         frame.setFocusableWindowState(false);
 
@@ -82,7 +81,7 @@ public class WindowBuilder {
         frame.addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                if (HyperCard.getInstance().isMacOs() || hasLocalMenubar) {
+                if (HyperCard.getInstance().isMacOs() || ownsMenubar) {
                     frame.setJMenuBar(menuBar);
                 }
             }
@@ -136,6 +135,7 @@ public class WindowBuilder {
 
         window.setWindow(frame);
         window.setShown(initiallyVisible);
+        window.setOwnsMenubar(ownsMenubar);
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.

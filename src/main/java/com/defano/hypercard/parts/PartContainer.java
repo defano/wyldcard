@@ -56,7 +56,7 @@ public interface PartContainer {
     default PartModel findPartById(PartIdSpecifier ps) throws PartException {
         Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
+                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
                 .filter(p -> p.getId() == ps.id)
                 .findFirst();
 
@@ -77,7 +77,7 @@ public interface PartContainer {
     default PartModel findPartByName(PartNameSpecifier ps) throws PartException {
         Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
+                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
                 .filter(p -> p.getName().equalsIgnoreCase(ps.value()))
                 .findFirst();
 
@@ -98,7 +98,7 @@ public interface PartContainer {
     default PartModel findPartByNumber(PartNumberSpecifier ps) throws PartException {
         List<PartModel> foundParts = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
+                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
                 .collect(Collectors.toList());
 
         int partIndex = ps.number - 1;
@@ -120,7 +120,7 @@ public interface PartContainer {
     default PartModel findPartByOrdinal(PartOrdinalSpecifier ps) throws PartException {
         List<PartModel> foundParts = getPartsInDisplayOrder().stream()
                 .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.layer() == null || p.getOwner() == ps.layer())
+                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
                 .collect(Collectors.toList());
 
         int index = ps.ordinal.intValue() - 1;

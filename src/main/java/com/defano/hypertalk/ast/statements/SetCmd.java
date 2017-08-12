@@ -21,6 +21,7 @@ import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.ast.containers.PropertySpecifier;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 
 public class SetCmd extends Statement {
 
@@ -38,6 +39,10 @@ public class SetCmd extends Statement {
             // Setting the property of HyperCard
             if (propertySpec.isGlobalPropertySpecifier()) {
                 ExecutionContext.getContext().getGlobalProperties().setProperty(propertySpec.property, expression.evaluate());
+            }
+
+            else if (propertySpec.isMenuItemPropertySpecifier()) {
+                MenuPropertiesDelegate.setProperty(propertySpec.property, expression.evaluate(), propertySpec.menuItem);
             }
 
             // Setting the property of a part

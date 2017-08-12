@@ -13,6 +13,7 @@ import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 
 public class ContainerProperty extends Container {
 
@@ -35,13 +36,24 @@ public class ContainerProperty extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value propertyValue = ExecutionContext.getContext().get(getPartSpecifier()).getProperty(getPropertyName());
+        Value propertyValue;
+
+        if (propertySpec.isMenuItemPropertySpecifier()) {
+            propertyValue = MenuPropertiesDelegate.getProperty(propertySpec.property, propertySpec.menuItem);
+        } else {
+            propertyValue = ExecutionContext.getContext().get(getPartSpecifier()).getProperty(getPropertyName());
+        }
+
         return chunkOf(propertyValue, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), preposition, chunk, value);
+        if (propertySpec.isMenuItemPropertySpecifier()) {
+            throw new HtSemanticException("Cannot put a value into this kind of property.");
+        } else {
+            ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), preposition, chunk, value);
+        }
     }
 
     public PartSpecifier getPartSpecifier() throws HtSemanticException {
