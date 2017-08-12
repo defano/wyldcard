@@ -14,6 +14,6 @@ public class DeleteMenuCmd extends Statement {
 
     @Override
     public void execute() throws HtException {
-        HyperCardMenuBar.instance.remove(menu.getSpecifiedMenu());
+        HyperCardMenuBar.instance.deleteMenu(menu.getSpecifiedMenu());
     }
 }

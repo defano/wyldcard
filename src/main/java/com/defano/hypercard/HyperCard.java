@@ -107,6 +107,6 @@ public class HyperCard {
     }
 
     public boolean isMacOs() {
-        return System.getProperty("os.name").toLowerCase().contains("mac");
+        return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
     }
 }

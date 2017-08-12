@@ -22,6 +22,7 @@ public class MenuPropertiesDelegate {
     private static final String PROP_ENABLED = "enabled";
     private static final String PROP_CHECKMARK = "checkmark";
     private static final String PROP_COMMANDCHAR = "commandchar";
+    private static final String PROP_NAME = "name";
 
     public static Value getProperty(String name, MenuItemSpecifier menuItem) throws HtSemanticException {
         switch (name.toLowerCase()) {
@@ -31,6 +32,8 @@ public class MenuPropertiesDelegate {
                 return new Value(menuItem.getSpecifiedMenuItem().isSelected());
             case PROP_COMMANDCHAR:
                 return new Value(menuItem.getSpecifiedMenuItem().getAccelerator().getKeyChar());
+            case PROP_NAME:
+                return new Value(menuItem.getSpecifiedMenuItem().getText());
             default:
                 throw new HtSemanticException(name + " is not a menu item property.");
         }
@@ -53,6 +56,8 @@ public class MenuPropertiesDelegate {
                     menuItem.getSpecifiedMenuItem().setAccelerator(KeyStroke.getKeyStroke(accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
                 }
                 break;
+            case PROP_NAME:
+                menuItem.getSpecifiedMenuItem().setText(value.stringValue());
             default:
                 throw new HtSemanticException(name + " is not a menu item property.");
         }

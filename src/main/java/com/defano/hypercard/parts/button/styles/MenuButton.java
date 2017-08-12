@@ -62,10 +62,6 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
                 putValueInMenu(newValue);
                 break;
 
-            case ButtonModel.PROP_SELECTEDTEXT:
-                menuItems.setSelectedItem(newValue.stringValue());
-                break;
-
             case ButtonModel.PROP_TEXTSIZE:
                 setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
                 break;

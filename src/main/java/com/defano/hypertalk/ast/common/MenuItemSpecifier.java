@@ -27,7 +27,7 @@ public class MenuItemSpecifier {
         JMenu menu = getSpecifiedMenu();
         int itemIndex = getSpecifiedItemIndex();
 
-        if (itemIndex > 0 && itemIndex < menu.getItemCount()) {
+        if (itemIndex >= 0 && itemIndex < menu.getItemCount()) {
             return menu.getItem(itemIndex);
         }
 

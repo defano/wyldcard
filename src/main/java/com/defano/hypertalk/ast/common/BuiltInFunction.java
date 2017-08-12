@@ -58,6 +58,5 @@ public enum BuiltInFunction {
     TOOL,
     VALUE,
     LENGTH,
-    MENUS,
-    MENU
+    MENUS
 }

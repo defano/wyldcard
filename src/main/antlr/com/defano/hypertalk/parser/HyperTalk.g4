@@ -301,11 +301,11 @@ container           : ID                                                        
                     |                                                                                                   # defaultDest
                     ;
 
-menu                : 'menu' expression                                                                                 # expressionMenu
+menu                : 'menu' factor                                                                                     # expressionMenu
                     | ordinal 'menu'                                                                                    # ordinalMenu
                     ;
 
-menuItem            : 'menuItem' expression ('of' | 'from') menu                                                        # expressionMenuItem
+menuItem            : 'menuItem' factor ('of' | 'from') menu                                                            # expressionMenuItem
                     | ordinal 'menuItem' ('of' | 'from') menu                                                           # ordinalMenuItem
                     ;
 

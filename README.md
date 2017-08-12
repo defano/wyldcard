@@ -256,7 +256,7 @@ put "This is my card" into this card  -- Changes the contents of this card
 
 #### Menu containers
 
-Every menu in the menu bar and buttons of the style `menu` are containers whose value determines the items that appear in the menu. When putting a value into a menu container, the value is interpreted as a list of items or lines, each item of which is treated as a distinct item in the menu. Note that any item in the list equal to `-` is interpreted as menu separator.
+Every menu in the menu bar and buttons of the style `menu` are containers whose value determines the items that appear in the menu. The value placed into a menu container is interpreted as a list of items or lines, each of which represents an item in the menu. Any value in the list equal to `-` is interpreted as menu separator.
 
 For example:
 
@@ -272,12 +272,6 @@ Item 1
 Item 2
 -
 Other...
-```
-
-When working with `menu` styled buttons, use the `selectedText` property to get or set the menu's selected item. For example,
-
-```
-if the selectedText of card button 2 is "Item 3" then answer "Please choose an even number."
 ```
 
 #### The message box
@@ -424,23 +418,65 @@ Property   | Description
 
 ### Menus
 
-HyperTalk can control the menus that appear in the application menu bar as well as the behavior associated with them. Unlike buttons or fields, however, changes to the menu bar are not "saved" as part of the stack (modifications to the menu bar will not be restored when opening a saved stack document), nor are they local to the current stack (opening a new stack does not restore the menu bar to its default state).
+HyperTalk can control the menus that appear in the application menu bar as well as the behavior associated with them. However, unlike buttons or fields, changes to the menu bar are not "saved" as part of the stack nor are they restricted to the current stack. That is, modifications to the menu bar will not be automatically restored when opening a saved stack document, and opening a new stack does not restore the menu bar to its default state.
 
 Even though the behavior of a menu is scriptable, menus themselves do not "contain" a script that can be edited and are not assigned an ID or a part number.
 
+The list of menus appearing in the menu bar is retrievable via `the menus` function. For example, `if the menus contains "Edit" then delete menu "Edit"`
+
 #### Referring to menus
 
-A menu or menu item can be addressed by its name or by its position in the menu. For example,
+A menu or menu item can be addressed by its name (`"Edit" menu`, `"Undo" menuItem of menu "Edit"`) or by its position in the menu (`the third menu`, `menu 5`, `menuItem 6 of menu "Font"`). When referring to a menu, the resultant value is a line-separated list of menu items that appear in the menu (using the string `-` to represent a separator). When referring to a menu item, the value of the item is its name (i.e., `menuItem 1 of menu "Edit"` usually yields `Undo`).
+
+For example,
 
 ```
-put the second menu into menuName -- Usually the 'Edit' menu
-answer menu 1 -- Usually refers to 'File' menu
-menu "Objects"
+    if menu "Objects" contains "Card Info..." then answer "Try choosing 'Card Info...'"
+    put the second menu into editMenuItems    -- typically all the menu items in the Edit menu
+    answer the first menuItem of menu "Edit"  -- typically responds with 'Undo'
 ```
 
 #### Creating menus and menu items
 
+New menus are created in the menu bar using the `create` and `delete` commands. For example, `create menu "My Custom Menu"` or `if the menus contains "My Custom Menu" then delete menu "My Custom Menu"`. Note that when creating a new menu it will be added to the end of the menu bar (the far-right position).
+
+You cannot create two menus that share the same name, nor can you delete a menu that does not exist.
+
+The value of each menu is treated as a list; you can add, delete, or modify menu items by mutating items in the menu's value. For example, to replace the contents of a menu `put "Item 1,-,Item 2" into menu "My Custom Menu"`. To append items to a menu, `put "Item 3" after the last line of menu "My Custom Menu"`. To delete a menu item, `delete the second line of menu "Edit"`
+
+Use the `reset menuBar` command to restore the application menu bar to its default state
+
+#### Responding to user selections in the menu bar
+
+When the user chooses a menu from the menu bar, the `doMenu` system message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior.
+
+For example, place the following handler in a stack script to prompt the user to confirm if they really want to edit the background of the card:
+
+```
+on doMenu theMenu, theMenuItem
+  if theMenu is "Edit" and theMenuItem is "Background" then
+    answer "Are you sure you want to edit the background?" with "OK" or "Cancel"
+    if it is "OK" then pass doMenu
+  else
+	  pass doMenu  
+  end if
+end doMenu
+```
+
+Note that by invoking `pass doMenu` we're letting HyperCard respond to these menu selections. In the case where the user chooses "Background" and does not click "OK" in the dialog box, we are not passing `doMenu` and thereby "trapping" the menu selection preventing HyperCard from acting upon it.
+
+Be aware that messages are sent **only** when in browse mode (the browse tool is active). If you author a script that accidentally traps all menu messages or you otherwise need to temporarily restore normal behavior to the menubar you can do so by choosing a different tool from the palette.
+
 #### Properties of a menu item
+
+The name, accelerator key, enable/disable and checkmark of a menu item can be scripted in HyperTalk by referring to these menu item properties.
+
+Menu Property   | Description
+----------------|---------------
+`name`          | A string value representing the name (text) of the menu item. For example, `set the name of menuItem "Italic" of menu "Style" to "Oblique"`
+`commandChar`   | A single character representing the accelerator key (the command or control-key sequence that can be typed to execute the command). Note that only command/control-key accelerators are supported; you cannot combine with shift or other keys. If more than one character is specified, the first character in the value will be used.
+`enabled`       | A boolean value representing whether the menu item is enabled (selectable). For example, `set the enabled of menuItem "Back" of menu "Go" to false`. Also available via the `enable` and `disable` commands.
+`checkmark`     | A boolean value indicating whether the menu has a checkmark next to it. For example, `set the checkmark of menuItem "Plain" of menu "Style" to not the checkmark of menuItem "Plain" of menu "Style"`
 
 #### Special considerations
 
@@ -448,11 +484,8 @@ Menus in HyperTalk Java differ from Apple's HyperCard if a few nuanced ways:
 
 * In Apple's HyperCard, if you created a menu item with the same name as an existing HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in HyperTalk Java.
 * HyperTalk Java cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (meaning the stack cannot take action when the user selects an item from them).
-
 * When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
 * Menus created by script have no default behavior. Use the `on doMenu theMenu, theMenuItem` handler (in the card, background or stack script) to trap selections from the menu bar and add your own behavior. Menu buttons do not send the `doMenu` message.
-* Use the `reset menuBar` command to restore the application menu bar to its default state.
-
 
 ### HyperCard Properties
 
@@ -469,6 +502,8 @@ Global Property | Description
 ----------------|---------------
 `lockScreen`    | A boolean value indicating whether or not the screen is locked. Reset to false at idle. See the "Visual Effects" section for more details.
 `itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yields 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
+
+Note that these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
 
 ## Chunk Expressions
 

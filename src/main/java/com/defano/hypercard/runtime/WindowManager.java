@@ -39,7 +39,7 @@ public class WindowManager {
                 .quitOnClose()
                 .withMenuBar(HyperCardMenuBar.instance)
                 .withModel(HyperCard.getInstance().getStack())
-                .hasLocalMenubar(true)
+                .setHasMenubar(true)
                 .build();
 
         JFrame stackFrame = stackWindow.getWindow();
@@ -171,20 +171,28 @@ public class WindowManager {
     }
 
     public static void setLookAndFeel(String lafClassName) {
-        try {
-            UIManager.setLookAndFeel(lafClassName);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(lafClassName);
 
-            for (HyperCardFrame thisWindow : allWindows()) {
-                SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
-                thisWindow.getWindow().pack();
-                thisWindow.getWindow().invalidate();
+                for (HyperCardFrame thisWindow : allWindows()) {
+                    if (!thisWindow.ownsMenubar()) {
+                        thisWindow.getWindow().setJMenuBar(null);
+                    } else {
+                        thisWindow.getWindow().setJMenuBar(HyperCardMenuBar.instance);
+                    }
+
+                    SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+                    thisWindow.getWindow().pack();
+                    thisWindow.getWindow().invalidate();
+                }
+
+                lookAndFeelClassProvider.set(lafClassName);
+
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                // Nothing to do
             }
-
-            lookAndFeelClassProvider.set(lafClassName);
-
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            // Nothing to do
-        }
+        });
     }
 
     public static Provider<String> getLookAndFeelClassProvider() {

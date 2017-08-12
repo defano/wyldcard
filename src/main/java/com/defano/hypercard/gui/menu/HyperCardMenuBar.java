@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.menu;
 
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -66,6 +67,16 @@ public class HyperCardMenuBar extends JMenuBar {
         }
 
         add(new HyperCardMenu(name));
+
+        // Required on non-macOS systems when menu is modified by message window
+        WindowManager.getStackWindow().getWindow().pack();
+    }
+
+    public void deleteMenu(JMenu menu) {
+        super.remove(menu);
+
+        // Required on non-macOS systems when menu is modified by message window
+        WindowManager.getStackWindow().getWindow().pack();
     }
 
     public JMenu findMenuByNumber(int index) throws HtSemanticException {
