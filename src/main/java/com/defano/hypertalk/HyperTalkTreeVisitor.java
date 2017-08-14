@@ -677,6 +677,31 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPlayCmdStmt(HyperTalkParser.PlayCmdStmtContext ctx) {
+        return new PlayCmd((Expression) visit(ctx.expression()), (MusicSpecifier) visit(ctx.music()));
+    }
+
+    @Override
+    public Object visitMusicNotes(HyperTalkParser.MusicNotesContext ctx) {
+        return MusicSpecifier.forNotes((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitMusicNotesTempo(HyperTalkParser.MusicNotesTempoContext ctx) {
+        return MusicSpecifier.forNotesAndTempo((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitMusicTempo(HyperTalkParser.MusicTempoContext ctx) {
+        return MusicSpecifier.forTempo((Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitMusicDefault(HyperTalkParser.MusicDefaultContext ctx) {
+        return MusicSpecifier.forDefault();
+    }
+
+    @Override
     public Object visitLockScreenCmdStmt(HyperTalkParser.LockScreenCmdStmtContext ctx) {
         return new SetPropertyCmd(HyperCardProperties.PROP_LOCKSCREEN, new Value(true));
     }

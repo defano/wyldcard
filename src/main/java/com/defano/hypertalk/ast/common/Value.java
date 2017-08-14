@@ -6,17 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * Value.java
- * @author matt.defano@gmail.com
- * 
- * Representation of value in HyperTalk; all values are stored internally
- * as Strings and converted to integers, floats or booleans as required by
- * the expression. 
- * 
- * The Value object is immutable; once created it cannot change value. 
- */
-
 package com.defano.hypertalk.ast.common;
 
 import java.awt.*;
@@ -29,11 +18,18 @@ import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.DateUtils;
 
+/**
+ * Representation of value in HyperTalk; all values are stored internally
+ * as Strings and converted to integers, floats or booleans as required by
+ * the expression.
+ *
+ * The Value object is immutable; once created it cannot change value.
+ */
 public class Value implements Comparable<Value> {
 
     private final String value;
 
-    // Cache for known value types
+    // Cache for known value types (all are effectively final)
     private Long longValue;
     private Double floatValue;
     private final Boolean booleanValue;
@@ -259,6 +255,14 @@ public class Value implements Comparable<Value> {
         return list;
     }
 
+    public List<Value> getWords() {
+        ArrayList<Value> words = new ArrayList<>();
+        for (int i = 1; i <= ChunkUtils.getCount(ChunkType.WORD, stringValue()); i++) {
+            words.add(new Value(ChunkUtils.getChunk(ChunkType.WORD, this.stringValue(), i, i)));
+        }
+        return words;
+    }
+
     public int itemCount () {
         return ChunkUtils.getCount(ChunkType.ITEM, value);
     }
@@ -347,7 +351,7 @@ public class Value implements Comparable<Value> {
         case BEFORE:    return new Value(mutator.toString() + mutable.toString());
         case INTO:        return new Value(mutator.toString());
         case AFTER:        return new Value(mutable.toString() + mutator.toString());
-        default: throw new RuntimeException("Value.setValue()| Unhandeled preposition");
+        default: throw new RuntimeException("Bug! Unhandled preposition");
         }
     }
     
