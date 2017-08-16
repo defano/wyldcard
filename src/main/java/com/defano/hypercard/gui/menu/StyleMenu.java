@@ -117,7 +117,7 @@ public class StyleMenu extends HyperCardMenu {
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() != 9 && e.getSize() != 10 && e.getSize() != 12 && e.getSize() != 14 && e.getSize() != 18 && e.getSize() != 24))
                 .withAction(e -> {
                     WindowManager.getFontSizePicker().bindModel(ToolsContext.getInstance().getFontProvider().get().getSize());
-                    WindowManager.getFontSizePicker().setShown(true);
+                    WindowManager.getFontSizePicker().setVisible(true);
                 })
                 .build(this);
     }

@@ -9,6 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.gui.HyperCardFrame;
@@ -19,7 +20,7 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-public class BrushesPalette extends HyperCardFrame implements Observer {
+public class BrushesPalette extends HyperCardDialog implements Observer {
 
     private JPanel brushesPanel;
 

@@ -9,11 +9,11 @@
 package com.defano.hypercard;
 
 import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.gui.util.KeyboardManager;
-import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
 
@@ -33,11 +33,15 @@ public class HyperCard {
     private final StackPart stackPart;
 
     public static void main(String argv[]) {
-        // Display the frame's menu as the Mac OS menubar
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.macos.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
-        System.setProperty("apple.awt.application.name", "HyperCard");
+        try {
+            // Display the frame's menu as the Mac OS menubar
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+            System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
+            System.setProperty("apple.awt.application.name", "HyperCard");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         instance = new HyperCard();
     }
@@ -104,9 +108,5 @@ public class HyperCard {
     public void showErrorDialog(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
         e.printStackTrace();
-    }
-
-    public boolean isMacOs() {
-        return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
     }
 }

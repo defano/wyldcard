@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.gui.border.RoundRectBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 
@@ -18,38 +19,18 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
     private final static int OUTLINE_SROKE = 2;
     private final static int ARC_SIZE = 10;
 
-    private boolean isHilited = false;
-
     public ClassicButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
+        setOpaque(true);
+        setBackground(Color.WHITE);
+        setBorder(new RoundRectBorder(OUTLINE_SROKE, ARC_SIZE));
     }
 
     @Override
-    protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        g.setPaint(Color.WHITE);
-        g.fillRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
-
-        g.setPaint(textColor(isDisabled));
-        g.setStroke(new BasicStroke(OUTLINE_SROKE));
-        g.drawRoundRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
-
+    protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
+            g.setColor(Color.BLACK);
             g.fillRoundRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, ARC_SIZE, ARC_SIZE);
-        }
-    }
-
-    @Override
-    protected void setName(boolean isDisabled, String name) {
-        setForeground(textColor(isDisabled));
-        ClassicButton.super.setText(name);
-    }
-
-    @Override
-    protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
-            this.isHilited = isHilited;
-            setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
-            repaint();
         }
     }
 

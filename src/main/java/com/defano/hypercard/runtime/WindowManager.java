@@ -10,6 +10,7 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardFrame;
+import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.gui.window.*;
 import com.defano.jmonet.model.Provider;
@@ -31,93 +32,76 @@ public class WindowManager {
     private final static Provider<String> lookAndFeelClassProvider = new Provider();
 
     public static void start() {
+        lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
 
         // Create the main window, center it on the screen and display it
         WindowBuilder.make(stackWindow)
                 .withTitle(HyperCard.getInstance().getStack().getStackModel().getStackName())
-                .resizeable(false)
                 .quitOnClose()
-                .withMenuBar(HyperCardMenuBar.instance)
+                .ownsMenubar()
                 .withModel(HyperCard.getInstance().getStack())
-                .setHasMenubar(true)
                 .build();
 
         JFrame stackFrame = stackWindow.getWindow();
 
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
-                .resizeable(false)
                 .withLocationUnderneath(stackFrame)
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
-                .resizeable(false)
                 .asPalette()
                 .withTitle("")
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(stackFrame)
                 .build();
 
         WindowBuilder.make(shapesPalette)
-                .resizeable(false)
                 .asPalette()
                 .withTitle("Shapes")
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(linesPalette)
-                .resizeable(false)
                 .asPalette()
                 .withTitle("Lines")
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(brushesPalette)
-                .resizeable(false)
                 .asPalette()
                 .withTitle("")
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(patternsPalette)
-                .resizeable(false)
                 .asPalette()
                 .withTitle("")
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(colorPalette)
-                .resizeable(false)
                 .withTitle("Colors")
                 .notInitiallyVisible()
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .build();
 
         WindowBuilder.make(fontSizePicker)
-                .resizeable(false)
                 .withTitle("Font Size")
                 .notInitiallyVisible()
                 .dockTo(stackWindow)
-                .withMenuBar(HyperCardMenuBar.instance)
                 .build();
 
-        lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
+        stackFrame.requestFocus();
     }
 
     public static StackWindow getStackWindow() {
@@ -156,8 +140,8 @@ public class WindowManager {
         return fontSizePicker;
     }
 
-    public static HyperCardFrame[] allWindows() {
-        return new HyperCardFrame[] {
+    public static HyperCardWindow[] allWindows() {
+        return new HyperCardWindow[] {
                 getStackWindow(),
                 getMessageWindow(),
                 getPaintToolsPalette(),
@@ -171,26 +155,22 @@ public class WindowManager {
     }
 
     public static void setLookAndFeel(String lafClassName) {
+        lookAndFeelClassProvider.set(lafClassName);
+
         SwingUtilities.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(lafClassName);
 
-                for (HyperCardFrame thisWindow : allWindows()) {
-                    if (!thisWindow.ownsMenubar()) {
-                        thisWindow.getWindow().setJMenuBar(null);
-                    } else {
-                        thisWindow.getWindow().setJMenuBar(HyperCardMenuBar.instance);
-                    }
+                for (HyperCardWindow thisWindow : allWindows()) {
+                    thisWindow.applyMenuBar();
 
                     SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
                     thisWindow.getWindow().pack();
                     thisWindow.getWindow().invalidate();
                 }
 
-                lookAndFeelClassProvider.set(lafClassName);
-
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                // Nothing to do
+                e.printStackTrace();
             }
         });
     }
@@ -199,4 +179,7 @@ public class WindowManager {
         return lookAndFeelClassProvider;
     }
 
+    public static boolean isMacOs() {
+        return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
+    }
 }

@@ -19,6 +19,8 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,20 +31,32 @@ import java.util.Observer;
 
 public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
-    private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();
 
     public MenuButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        super.addActionListener(toolEditablePart);
-        super.addKeyListener(toolEditablePart);
-        for (Component thisComponent : super.getComponents()) {
-            thisComponent.addMouseListener(toolEditablePart);
-        }
+        addActionListener(toolEditablePart);
+        addMouseListener(toolEditablePart);
+        addKeyListener(toolEditablePart);
 
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
+        addAncestorListener(new AncestorListener() {
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+                event.getComponent().addKeyListener(toolEditablePart);
+                event.getComponent().addMouseListener(toolEditablePart);
+            }
+
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+                event.getComponent().removeKeyListener(toolEditablePart);
+                event.getComponent().removeMouseListener(toolEditablePart);
+            }
+
+            @Override
+            public void ancestorMoved(AncestorEvent event) { }
+        });
 
         setRenderer(new MenuButtonCellRenderer());
         setModel(menuItems);
@@ -50,8 +64,8 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
 
@@ -88,13 +102,6 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
         for (Value thisItem : items) {
             menuItems.addElement(thisItem.stringValue());
-        }
-    }
-
-    private class ToolModeObserver implements Observer {
-        @Override
-        public void update(Observable o, Object arg) {
-            setEnabled(ToolMode.BUTTON != arg);
         }
     }
 

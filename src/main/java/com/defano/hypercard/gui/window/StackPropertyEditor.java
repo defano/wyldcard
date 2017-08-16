@@ -52,7 +52,7 @@ public class StackPropertyEditor extends HyperCardDialog {
         model = (StackModel) data;
 
         stackName.setText(model.getStackName());
-        cardCountLabel.setText("Stack contains " + model.getCardCount() + " card.");
+        cardCountLabel.setText("Stack contains " + model.getCardCount() + " cards.");
         backgroundCountLabel.setText("Stack contains " + model.getBackgroundCount() + " backgrounds.");
     }
 

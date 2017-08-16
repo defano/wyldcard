@@ -8,42 +8,48 @@
 
 package com.defano.hypercard.gui.window;
 
-import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.gui.HyperCardFrame;
+import com.defano.hypercard.gui.HyperCardWindow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
-public class WindowBuilder {
+public class WindowBuilder<T extends HyperCardWindow> {
 
-    private final JFrame frame;
-    private final HyperCardFrame window;
+    private final HyperCardWindow window;
     private Point location = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
     private HyperCardFrame dock;
-    private boolean ownsMenubar = false;
+    private boolean isPalette = false;
 
     private WindowBuilder(HyperCardFrame window) {
         this.window = window;
-        this.frame = new JFrame();
 
-        frame.setContentPane(window.getWindowPanel());
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.window.setContentPane(window.getWindowPanel());
+        this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    public static WindowBuilder make(HyperCardFrame window) {
+    private WindowBuilder(HyperCardDialog window) {
+        this.window = window;
+
+        this.window.setContentPane(window.getWindowPanel());
+        this.window.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+    }
+
+    public static WindowBuilder<HyperCardWindow> make(HyperCardFrame window) {
         return new WindowBuilder(window);
     }
 
-    public WindowBuilder withTitle(String title) {
-        frame.setTitle(title);
-        return this;
+    public static WindowBuilder<HyperCardDialog> make(HyperCardDialog window) {
+        return new WindowBuilder<>(window);
     }
 
-    public WindowBuilder setHasMenubar(boolean hasLocalMenubar) {
-        this.ownsMenubar = hasLocalMenubar;
+    public WindowBuilder withTitle(String title) {
+        this.window.setTitle(title);
         return this;
     }
 
@@ -53,7 +59,7 @@ public class WindowBuilder {
     }
 
     public WindowBuilder quitOnClose() {
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         return this;
     }
 
@@ -63,9 +69,7 @@ public class WindowBuilder {
     }
 
     public WindowBuilder asPalette() {
-        frame.setAutoRequestFocus(true);
-        frame.setFocusableWindowState(false);
-
+        this.isPalette = true;
         return this;
     }
 
@@ -74,48 +78,28 @@ public class WindowBuilder {
         return this;
     }
 
-    public WindowBuilder withMenuBar(JMenuBar menuBar) {
-
-        // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
-        // menubar each time the window comes into focus.
-        frame.addWindowFocusListener(new WindowFocusListener() {
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-                if (HyperCard.getInstance().isMacOs() || ownsMenubar) {
-                    frame.setJMenuBar(menuBar);
-                }
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-            }
-        });
-
-        return this;
-    }
-
     public WindowBuilder withLocationUnderneath(Component component) {
-        frame.pack();
+        this.window.getWindow().pack();
 
         int targetY = (int) component.getLocation().getY() + component.getHeight() + 10;
-        int targetX = (int) component.getLocation().getX() - ((frame.getWidth() / 2) - (component.getWidth() / 2));
+        int targetX = (int) component.getLocation().getX() - ((window.getWindow().getWidth() / 2) - (component.getWidth() / 2));
         location = new Point(targetX, targetY);
 
         return this;
     }
 
     public WindowBuilder withLocationLeftOf(Component component) {
-        frame.pack();
+        this.window.getWindow().pack();
 
         int targetY = (int) component.getLocation().getY();
-        int targetX = (int) component.getLocation().getX() - frame.getWidth() - 10;
+        int targetX = (int) component.getLocation().getX() - window.getWindow().getWidth() - 10;
         location = new Point(targetX, targetY);
 
         return this;
     }
 
     public WindowBuilder withLocationCenteredOver(Component component) {
-        frame.setLocationRelativeTo(component);
+        this.window.getWindow().setLocationRelativeTo(component);
         return this;
     }
 
@@ -124,24 +108,34 @@ public class WindowBuilder {
         return this;
     }
 
-    public JFrame build() {
-        frame.pack();
+    public WindowBuilder ownsMenubar() {
+        this.window.setOwnsMenubar(true);
+        return this;
+    }
+
+    public WindowBuilder asModal() {
+        this.window.setIsModal();
+        return this;
+    }
+
+    public HyperCardWindow build() {
+        this.window.getWindow().pack();
 
         if (location == null) {
-            frame.setLocationRelativeTo(null);
+            this.window.getWindow().setLocationRelativeTo(null);
         } else {
-            frame.setLocation(location);
+            this.window.getWindow().setLocation(location);
         }
 
-        window.setWindow(frame);
-        window.setShown(initiallyVisible);
-        window.setOwnsMenubar(ownsMenubar);
+        window.getWindow().setVisible(initiallyVisible);
+        this.window.applyMenuBar();
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.
         // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
 
-        frame.setResizable(resizable);
+        this.window.setResizable(resizable);
+        this.window.getWindow().setFocusableWindowState(!isPalette);
 
         if (dock != null) {
             dock.getWindow().addComponentListener(new ComponentAdapter() {
@@ -156,7 +150,7 @@ public class WindowBuilder {
                         int deltaX = location.x - lastLocation.x;
                         int deltaY = location.y - lastLocation.y;
 
-                        frame.setLocation(frame.getLocation().x + deltaX, frame.getLocation().y + deltaY);
+                        window.getWindow().setLocation(window.getWindow().getLocation().x + deltaX, window.getWindow().getLocation().y + deltaY);
                     }
 
                     lastLocation = location;
@@ -164,7 +158,7 @@ public class WindowBuilder {
             });
         }
 
-        return frame;
+        return window;
     }
 
 }

@@ -9,6 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -20,7 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PatternPalette extends HyperCardFrame implements Observer {
+public class PatternPalette extends HyperCardDialog implements Observer {
 
     private final int PATTERN_WIDTH = 30;
     private final int PATTERN_HEIGHT = 20;
