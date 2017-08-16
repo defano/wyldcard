@@ -69,15 +69,15 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
-                label.setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                label.setFont(HyperCardFont.byNameStyleSize(label.getFont().getFamily(), label.getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), label.getFont().getStyle(), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                label.setFont(HyperCardFont.byNameStyleSize(label.getFont().getFamily(), FontUtils.getStyleForValue(newValue), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
