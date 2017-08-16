@@ -35,8 +35,8 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonCo
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
 

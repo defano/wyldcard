@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
  * A Swing component used to obscure the "actual" contents of the stack window. Used for screen locking and card-to-card
  * animated visual effects.
  */
-public class ScreenCurtain extends JComponent {
+public class ScreenCurtain extends JPanel {
 
     private BufferedImage curtainImage;
 

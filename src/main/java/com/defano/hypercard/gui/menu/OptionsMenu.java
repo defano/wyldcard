@@ -73,13 +73,13 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Line Size...")
-                .withAction(a -> WindowManager.getLinesPalette().setShown(true))
+                .withAction(a -> WindowManager.getLinesPalette().setVisible(true))
                 .withDisabledProvider(WindowManager.getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Brush Shape...")
-                .withAction(a -> WindowManager.getBrushesPalette().setShown(true))
+                .withAction(a -> WindowManager.getBrushesPalette().setVisible(true))
                 .withDisabledProvider(WindowManager.getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
@@ -90,7 +90,7 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Polygon Sides...")
-                .withAction(a -> WindowManager.getShapesPalette().setShown(true))
+                .withAction(a -> WindowManager.getShapesPalette().setVisible(true))
                 .withDisabledProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 

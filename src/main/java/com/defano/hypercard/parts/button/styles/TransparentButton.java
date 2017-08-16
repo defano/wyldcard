@@ -8,36 +8,36 @@
 
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.gui.border.RectangleBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class TransparentButton extends AbstractLabelButton {
 
     public TransparentButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
+        setBorder(BorderFactory.createEmptyBorder());
+        setOpaque(false);
     }
 
     @Override
-    protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        if (toolEditablePart.isPartToolActive()) {
-            g.setPaint(Color.GRAY);
-            g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+    protected void paintHilite(boolean isHilited, Graphics2D g) {
+        if (isHilited) {
+            g.setPaint(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
     }
 
     @Override
-    protected void setName(boolean isDisabled, String name) {
-        setForeground(textColor(isDisabled));
-        TransparentButton.super.setText(name);
-    }
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
 
-    @Override
-    protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled) {
-            setOpaque(isHilited);
-            setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
+        if (enabled) {
+            setBorder(BorderFactory.createEmptyBorder());
+        } else {
+            setBorder(new RectangleBorder(1));
         }
     }
-
 }

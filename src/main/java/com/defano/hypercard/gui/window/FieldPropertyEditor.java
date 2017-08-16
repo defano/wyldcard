@@ -9,6 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.parts.field.FieldStyle;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
@@ -25,7 +26,7 @@ import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("unchecked")
-public class FieldPropertyEditor extends HyperCardFrame {
+public class FieldPropertyEditor extends HyperCardDialog {
 
     private PartModel model;
 

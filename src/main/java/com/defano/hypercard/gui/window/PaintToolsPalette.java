@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.window;
 
+import com.defano.hypercard.gui.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.HyperCard;
@@ -24,7 +25,7 @@ import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-public class PaintToolsPalette extends HyperCardFrame implements Observer {
+public class PaintToolsPalette extends HyperCardDialog implements Observer {
     private JPanel palettePanel;
 
     private JButton selection;
@@ -74,10 +75,10 @@ public class PaintToolsPalette extends HyperCardFrame implements Observer {
 
         // Double-click actions
         eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getInstance().getCard().getCanvas().clearCanvas());
-        shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setShown(true));
-        line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setShown(true));
-        paintbrush.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
-        spraypaint.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setShown(true));
+        shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setVisible(true));
+        line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setVisible(true));
+        paintbrush.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setVisible(true));
+        spraypaint.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setVisible(true));
         rectangle.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
         roundRectangle.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
         oval.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());

@@ -31,8 +31,8 @@ public class DefaultButton extends JButton implements ButtonComponent {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    public void paint(Graphics g) {
+        super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
 

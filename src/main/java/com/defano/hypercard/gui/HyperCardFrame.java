@@ -11,71 +11,63 @@ package com.defano.hypercard.gui;
 import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
-public abstract class HyperCardFrame extends WindowAdapter implements HyperCardWindow<JFrame> {
-
-    // The Swing frame that this window is displayed in; bound only after the window has been built via WindowBuilder
-    private JFrame windowFrame;
-    private boolean isShown = false;
-    private boolean ownsMenubar = false;
+public abstract class HyperCardFrame extends JFrame implements HyperCardWindow<JFrame> {
 
     private final Provider<Boolean> windowVisibleProvider = new Provider<>(false);
+    private boolean ownsMenubar = false;
+
+    public HyperCardFrame() {
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                windowVisibleProvider.set(true);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                windowVisibleProvider.set(false);
+            }
+        });
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                windowVisibleProvider.set(false);
+            }
+        });
+
+        // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
+        // menubar each time the window comes into focus.
+        this.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                HyperCardFrame.this.applyMenuBar();
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+            }
+        });
+
+    }
 
     @Override
     public JFrame getWindow() {
-        return windowFrame;
-    }
-
-    @Override
-    public void setWindow(JFrame windowFrame) {
-        this.windowFrame = windowFrame;
-        this.windowFrame.addWindowListener(this);
-    }
-
-    public boolean isShown() {
-        return isShown;
-    }
-
-    public void setShown(boolean shown) {
-        isShown = shown;
-        windowVisibleProvider.set(shown);
-
-        setVisible(shown);
-    }
-
-    public boolean isVisible() {
-        return windowFrame != null && windowFrame.isVisible();
-    }
-
-    public void setVisible(boolean physicallyVisible) {
-        if (windowFrame != null) {
-            windowFrame.setVisible(physicallyVisible);
-        }
-    }
-
-    public void toggleVisible() {
-        setShown(!isShown());
-    }
-
-    public void dispose() {
-        SwingUtilities.getWindowAncestor(getWindowPanel()).dispose();
-        windowVisibleProvider.set(false);
+        return this;
     }
 
     public Provider<Boolean> getWindowVisibleProvider() {
         return windowVisibleProvider;
     }
 
-    public void windowClosed(WindowEvent e) {
-        windowVisibleProvider.set(windowFrame.isVisible());
-    }
-
+    @Override
     public boolean ownsMenubar() {
-        return ownsMenubar;
+        return this.ownsMenubar;
     }
 
+    @Override
     public void setOwnsMenubar(boolean ownsMenubar) {
         this.ownsMenubar = ownsMenubar;
     }

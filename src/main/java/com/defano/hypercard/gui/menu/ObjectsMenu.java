@@ -45,7 +45,8 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Card Info...")
-                .withAction(e -> DialogBuilder.make(new CardPropertyEditor())
+                .withAction(e -> WindowBuilder.make(new CardPropertyEditor())
+                        .asModal()
                         .withTitle("Card Properties")
                         .withModel(HyperCard.getInstance().getCard())
                         .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
@@ -54,8 +55,9 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Background Info...")
-                .withAction(e -> DialogBuilder.make(new BackgroundPropertyEditor())
+                .withAction(e -> WindowBuilder.make(new BackgroundPropertyEditor())
                         .withTitle("Background Properties")
+                        .asModal()
                         .withModel(HyperCard.getInstance().getCard())
                         .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                         .build())
@@ -63,8 +65,9 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Stack Info...")
-                .withAction(e -> DialogBuilder.make(new StackPropertyEditor())
+                .withAction(e -> WindowBuilder.make(new StackPropertyEditor())
                         .withTitle("Stack Properties")
+                        .asModal()
                         .withModel(HyperCard.getInstance().getStack().getStackModel())
                         .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                         .build())

@@ -18,18 +18,18 @@ import com.defano.hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class AbstractLabelButton extends JLabel implements ButtonComponent {
+public abstract class AbstractLabelButton extends JPanel implements ButtonComponent {
 
     protected final ToolEditablePart toolEditablePart;
-    protected boolean drawnDisabled = false;
+    private boolean isHilited = false;
+    private JLabel label;
 
-    protected abstract void drawBorder(boolean isDisabled, Graphics2D g);
-    protected abstract void setName(boolean isDisabled, String name);
-    protected abstract void setHilite(boolean isDisabled, boolean isHilited);
+    protected abstract void paintHilite(boolean isHilited, Graphics2D g);
 
     public AbstractLabelButton(ToolEditablePart toolEditablePart) {
-        super("", SwingConstants.CENTER);
-        setBackground(Color.BLACK);
+        label = new JLabel("", SwingConstants.CENTER);
+        setLayout(new BorderLayout());
+        add(label);
 
         this.toolEditablePart = toolEditablePart;
         super.setEnabled(true);
@@ -40,8 +40,14 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonCompon
 
     @Override
     public void paintComponent(Graphics g) {
-        drawBorder(drawnDisabled, (Graphics2D) g);
         super.paintComponent(g);
+        paintHilite(isHilited, (Graphics2D) g);
+        label.paintComponents(g);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
 
@@ -51,36 +57,51 @@ public abstract class AbstractLabelButton extends JLabel implements ButtonCompon
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue();
-                setName(drawnDisabled, showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
+                label.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
 
             case ButtonModel.PROP_HILITE:
-                setHilite(drawnDisabled, newValue.booleanValue());
+                isHilited = newValue.booleanValue() && isEnabled();
+                label.setForeground(getLabelColor());
                 break;
 
             case ButtonModel.PROP_ENABLED:
-                drawnDisabled = !newValue.booleanValue();
+                setEnabled(newValue.booleanValue());
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
-                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                label.setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
-                setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
+                label.setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
                 break;
         }
+
+        revalidate();
+        repaint();
     }
 
-    protected Color textColor(boolean isDisabled) {
-        return isDisabled ? Color.GRAY : Color.BLACK;
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+
+        if (!enabled) {
+            isHilited = false;
+        }
+
+        label.setForeground(getLabelColor());
+    }
+
+    private Color getLabelColor() {
+        return isHilited ? Color.WHITE : isEnabled() ? Color.BLACK : Color.GRAY;
     }
 
 }

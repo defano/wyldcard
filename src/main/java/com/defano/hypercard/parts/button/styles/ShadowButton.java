@@ -8,50 +8,29 @@
 
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.gui.border.DropShadowBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
 
 public class ShadowButton extends AbstractLabelButton {
 
-    private final static int OUTLINE_SROKE = 2;
+    private final static int OUTLINE_STROKE = 1;
     private final static int SHADOW_STROKE = 2;
     private final static int SHADOW_OFFSET = 5;
 
-    private boolean isHilited = false;
-
     public ShadowButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
+        setBorder(new DropShadowBorder(OUTLINE_STROKE, SHADOW_STROKE, SHADOW_OFFSET));
+        setOpaque(false);
     }
 
     @Override
-    protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        g.setPaint(Color.WHITE);
-        g.fillRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE - SHADOW_STROKE, getHeight() - OUTLINE_SROKE - SHADOW_STROKE);
-
-        g.setPaint(textColor(isDisabled));
-        g.setStroke(new BasicStroke(OUTLINE_SROKE));
-        g.drawRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE - SHADOW_STROKE, getHeight() - OUTLINE_SROKE - SHADOW_STROKE);
-        g.drawLine(SHADOW_OFFSET, getHeight() - SHADOW_STROKE / 2, getWidth(), getHeight() - SHADOW_STROKE / 2);
-        g.drawLine(getWidth() - SHADOW_STROKE / 2, getHeight() - SHADOW_STROKE / 2, getWidth() - SHADOW_STROKE / 2, SHADOW_OFFSET);
-
+    protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.fillRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE - SHADOW_STROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE - SHADOW_STROKE);
+            g.setPaint(Color.BLACK);
+            g.fillRect(Math.floorDiv(OUTLINE_STROKE, 2) + OUTLINE_STROKE, Math.floorDiv(OUTLINE_STROKE, 2) + OUTLINE_STROKE,getWidth() - OUTLINE_STROKE * 2 - OUTLINE_STROKE - SHADOW_STROKE, getHeight() - OUTLINE_STROKE * 2 - OUTLINE_STROKE - SHADOW_STROKE);
         }
     }
 
-    @Override
-    protected void setName(boolean isDisabled, String name) {
-        setForeground(textColor(isDisabled));
-        ShadowButton.super.setText(name);
-    }
-
-    @Override
-    protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
-            this.isHilited = isHilited;
-            setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
-            repaint();
-        }
-    }
 }

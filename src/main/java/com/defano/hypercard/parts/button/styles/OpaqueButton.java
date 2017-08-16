@@ -10,34 +10,23 @@ package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.parts.ToolEditablePart;
 
+import javax.swing.*;
 import java.awt.*;
 
 public class OpaqueButton extends AbstractLabelButton {
 
-    private boolean isHilited;
-
     public OpaqueButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
+        setOpaque(true);
+        setBackground(Color.WHITE);
+        setBorder(BorderFactory.createEmptyBorder());
     }
 
     @Override
-    protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        g.setPaint(isHilited ? Color.BLACK : Color.WHITE);
-        g.fillRect(0,0, getWidth(), getHeight());
-    }
-
-    @Override
-    protected void setName(boolean isDisabled, String name) {
-        setForeground(textColor(isDisabled));
-        OpaqueButton.super.setText(name);
-    }
-
-    @Override
-    protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
-            this.isHilited = isHilited;
-            setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
-            repaint();
+    protected void paintHilite(boolean isHilited, Graphics2D g) {
+        if (isHilited) {
+            g.setPaint(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
     }
 

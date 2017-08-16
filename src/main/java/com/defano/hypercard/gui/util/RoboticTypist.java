@@ -1,6 +1,7 @@
 package com.defano.hypercard.gui.util;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -25,7 +26,7 @@ public class RoboticTypist {
     private Robot robot;
 
     private RoboticTypist() {
-        commandKey = HyperCard.getInstance().isMacOs() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+        commandKey = WindowManager.isMacOs() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
 
         keystrokeMap.put('\n', new KeyStroke(KeyEvent.VK_ENTER, false));
         keystrokeMap.put('\t', new KeyStroke(KeyEvent.VK_TAB, false));

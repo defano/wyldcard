@@ -153,6 +153,7 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
      */
     default void onToolModeChanged() {
         setVisibleOnCard(!isHidden());
+        setEnabledOnCard(isEnabled());
     }
 
     /**
@@ -161,6 +162,14 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
      */
     default boolean isHidden() {
         return !getPartModel().getKnownProperty(PartModel.PROP_VISIBLE).booleanValue();
+    }
+
+    /**
+     * Determines if this part is presently enabled on the card (as determined by its "enabled" property).
+     * @return True if enabled; false if disabled.
+     */
+    default boolean isEnabled() {
+        return getPartModel().getKnownProperty(CardLayerPartModel.PROP_ENABLED).booleanValue();
     }
 
     /**
@@ -180,6 +189,22 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
         boolean forceVisible = isPartToolActive() && getCardLayer() == CardLayerPart.getActivePartLayer();
 
         getComponent().setVisible((visibleOnCard && !forceHidden) || forceVisible);
+    }
+
+    /**
+     * Sets whether this part should be enabled on the card (mutating its "enabled" HyperTalk property), but the actual
+     * enable of this Swing component may be overridden by tool context (i.e., all parts will be disabled while they
+     * are being edited by the part tool).
+     *
+     * @param enabledOnCard True to make the part enabled; false to disable.
+     */
+    default void setEnabledOnCard(boolean enabledOnCard) {
+        getPartModel().setKnownProperty(CardLayerPartModel.PROP_ENABLED, new Value(enabledOnCard), true);
+
+        // Force disabled when part tool is active
+        boolean forceDisabled = isPartToolActive();
+
+        getComponent().setEnabled((enabledOnCard && !forceDisabled));
     }
 
     /**

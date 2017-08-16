@@ -108,6 +108,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
     @Override
     public void editProperties() {
         WindowBuilder.make(new FieldPropertyEditor())
+                .asModal()
                 .withTitle(getName())
                 .withModel(partModel)
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())

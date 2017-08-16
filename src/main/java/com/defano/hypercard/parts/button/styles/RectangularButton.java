@@ -8,45 +8,26 @@
 
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.gui.border.RectangleBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
 
 public class RectangularButton extends AbstractLabelButton {
 
-    private final static int OUTLINE_SROKE = 2;
-    private boolean isHilited = false;
+    private final static int OUTLINE_STROKE = 2;
 
     public RectangularButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
+        setBorder(new RectangleBorder(OUTLINE_STROKE));
+        setOpaque(false);
     }
 
     @Override
-    protected void drawBorder(boolean isDisabled, Graphics2D g) {
-        g.setPaint(Color.WHITE);
-        g.fillRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
-
-        g.setPaint(textColor(isDisabled));
-        g.setStroke(new BasicStroke(OUTLINE_SROKE));
-        g.drawRect(OUTLINE_SROKE / 2, OUTLINE_SROKE / 2, getWidth() - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE);
-
+    protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.fillRect(OUTLINE_SROKE / 2 + OUTLINE_SROKE,OUTLINE_SROKE / 2 + OUTLINE_SROKE,getWidth() - OUTLINE_SROKE * 2 - OUTLINE_SROKE, getHeight() - OUTLINE_SROKE * 2 - OUTLINE_SROKE);
-        }
-    }
-
-    @Override
-    protected void setName(boolean isDisabled, String name) {
-        setForeground(textColor(isDisabled));
-        RectangularButton.super.setText(name);
-    }
-
-    @Override
-    protected void setHilite(boolean isDisabled, boolean isHilited) {
-        if (!isDisabled && !toolEditablePart.isPartToolActive()) {
-            this.isHilited = isHilited;
-            setForeground(isHilited ? Color.WHITE : textColor(isDisabled));
-            repaint();
+            g.setPaint(Color.BLACK);
+            g.fillRect(OUTLINE_STROKE / 2 + OUTLINE_STROKE, OUTLINE_STROKE / 2 + OUTLINE_STROKE,getWidth() - OUTLINE_STROKE * 2 - OUTLINE_STROKE, getHeight() - OUTLINE_STROKE * 2 - OUTLINE_STROKE);
         }
     }
 
