@@ -80,7 +80,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
      * @return The newly created field.
      */
     public static FieldPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
-        FieldPart field = new FieldPart(FieldStyle.RECTANGLE, parent, owner);
+        FieldPart field = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
         field.initProperties(geometry);
 
@@ -315,6 +315,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
         int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry, owner);
+        partModel.setFont(ToolsContext.getInstance().getFontProvider().get());
         partModel.addPropertyChangedObserver(this);
     }
 
