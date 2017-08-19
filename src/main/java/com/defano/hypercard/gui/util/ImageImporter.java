@@ -37,7 +37,7 @@ public class ImageImporter {
         }
     }
 
-    public static BufferedImage importImage(File file) throws IOException {
+    private static BufferedImage importImage(File file) throws IOException {
         return ImageIO.read(file);
     }
 }

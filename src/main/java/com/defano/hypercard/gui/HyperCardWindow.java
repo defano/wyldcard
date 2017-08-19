@@ -66,7 +66,7 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
     }
 
-    default void setResizable(boolean resizable) {
+    default void setAllowResizing(boolean resizable) {
         if (getWindow() instanceof JFrame) {
             ((JFrame) getWindow()).setResizable(resizable);
         } if (getWindow() instanceof JDialog) {

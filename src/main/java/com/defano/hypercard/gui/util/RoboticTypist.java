@@ -1,6 +1,5 @@
 package com.defano.hypercard.gui.util;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

@@ -50,7 +50,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
     }
 
     @Override
-    public void setIsSelectedForEditing(boolean beingEdited) {
+    public void setSelectedForEditing(boolean beingEdited) {
         fieldComponent.setEditable(!beingEdited);
         isBeingEdited = beingEdited;
 

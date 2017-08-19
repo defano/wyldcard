@@ -127,14 +127,20 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.getWindow().setLocation(location);
         }
 
-        window.getWindow().setVisible(initiallyVisible);
+
         this.window.applyMenuBar();
+
+        if (window instanceof HyperCardDialog) {
+            this.window.setAllowResizing(resizable);
+        }
+
+        window.getWindow().setVisible(initiallyVisible);
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.
         // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
 
-        this.window.setResizable(resizable);
+        this.window.setAllowResizing(resizable);
         this.window.getWindow().setFocusableWindowState(!isPalette);
 
         if (dock != null) {

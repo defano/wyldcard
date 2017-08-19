@@ -14,8 +14,7 @@ import com.defano.hypercard.gui.window.FieldPropertyEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.parts.PartMover;
-import com.defano.hypercard.parts.PartResizer;
+import com.defano.hypercard.parts.editor.PartMover;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
@@ -40,7 +39,7 @@ import java.lang.ref.WeakReference;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart, MouseListener, PropertyChangeObserver, KeyListener {
+public class FieldPart extends StyleableField implements CardLayerPart, PropertyChangeObserver {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -126,24 +125,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, MouseLis
     @Override
     public void partOpened() {
         super.partOpened();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void move() {
-        mover.startMoving();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void resize(int fromQuadrant) {
-        new PartResizer(this, parent.get(), fromQuadrant);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void delete() {
-        parent.get().removePart(getPartModel());
     }
 
     /** {@inheritDoc} */

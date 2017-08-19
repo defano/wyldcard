@@ -232,11 +232,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void update(Observable o, Object arg) {
-        // User changed global font selection from the menubar
-        ((CardLayerPartModel)toolEditablePart.getPartModel()).setFont((Font) arg);
+        if (arg instanceof Font) {
+            setActiveFont((Font) arg);
+        }
     }
 
     /** {@inheritDoc} */

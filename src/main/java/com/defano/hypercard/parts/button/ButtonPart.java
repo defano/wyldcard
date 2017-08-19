@@ -24,8 +24,7 @@ import com.defano.hypercard.gui.window.ButtonPropertyEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.parts.PartMover;
-import com.defano.hypercard.parts.PartResizer;
+import com.defano.hypercard.parts.editor.PartMover;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.context.ToolsContext;
@@ -128,6 +127,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void editProperties() {
         WindowBuilder.make(new ButtonPropertyEditor())
                 .asModal()
+                .resizeable(false)
                 .withTitle(getName())
                 .withModel(partModel)
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
@@ -142,21 +142,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     @Override
     public CardLayerPart getPart() {
         return this;
-    }
-
-    @Override
-    public void move() {
-        mover.startMoving();
-    }
-
-    @Override
-    public void resize(int fromQuadrant) {
-        new PartResizer(this, parent.get(), fromQuadrant);
-    }
-
-    @Override
-    public void delete() {
-        parent.get().removePart(getPartModel());
     }
 
     @Override

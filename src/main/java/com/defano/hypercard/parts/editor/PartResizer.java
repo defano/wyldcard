@@ -6,9 +6,10 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-package com.defano.hypercard.parts;
+package com.defano.hypercard.parts.editor;
 
 import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;
@@ -25,11 +26,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class PartResizer {
 
-    public final static int QUADRANT_TOPRIGHT = 1;
-    public final static int QUADRANT_TOPLEFT = 2;
-    public final static int QUADRANT_BOTTOMLEFT = 3;
-    public final static int QUADRANT_BOTTOMRIGHT = 4;
-
     private final static int SNAP_TO_GRID_SIZE = 10;
     private final static int RESIZER_REFRESH_MS = 10;
     private final static int MIN_WIDTH = 20;
@@ -40,7 +36,6 @@ public class PartResizer {
     private final WeakReference<Part> part;
     private final WeakReference<Component> within;
     private boolean done = false;
-    private final int fromQuadrant;
     private final Rectangle originalBounds;
     
     private class ResizerTask implements Runnable {
@@ -76,10 +71,9 @@ public class PartResizer {
         }
     }
 
-    public PartResizer (Part part, Component within, int fromQuadrant) {
+    public PartResizer (Part part, Component within) {
         this.part = new WeakReference<>(part);
         this.within = new WeakReference<>(within);
-        this.fromQuadrant = fromQuadrant;
         this.originalBounds = new Rectangle(part.getRect());
 
         MouseManager.notifyOnMouseReleased(() -> done = true);

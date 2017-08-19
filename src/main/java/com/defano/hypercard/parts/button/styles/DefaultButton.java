@@ -25,7 +25,6 @@ public class DefaultButton extends JButton implements ButtonComponent {
     public DefaultButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        super.addActionListener(toolEditablePart);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
     }
