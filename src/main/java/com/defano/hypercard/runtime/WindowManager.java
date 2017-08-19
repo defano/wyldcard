@@ -27,7 +27,6 @@ public class WindowManager {
     private final static PatternPalette patternsPalette = new PatternPalette();
     private final static BrushesPalette brushesPalette = new BrushesPalette();
     private final static ColorPalette colorPalette = new ColorPalette();
-    private final static FontSizePicker fontSizePicker = new FontSizePicker();
 
     private final static Provider<String> lookAndFeelClassProvider = new Provider();
 
@@ -95,12 +94,6 @@ public class WindowManager {
                 .dockTo(stackWindow)
                 .build();
 
-        WindowBuilder.make(fontSizePicker)
-                .withTitle("Font Size")
-                .notInitiallyVisible()
-                .dockTo(stackWindow)
-                .build();
-
         stackFrame.requestFocus();
     }
 
@@ -136,10 +129,6 @@ public class WindowManager {
         return colorPalette;
     }
 
-    public static FontSizePicker getFontSizePicker() {
-        return fontSizePicker;
-    }
-
     public static HyperCardWindow[] allWindows() {
         return new HyperCardWindow[] {
                 getStackWindow(),
@@ -149,8 +138,7 @@ public class WindowManager {
                 getLinesPalette(),
                 getPatternsPalette(),
                 getBrushesPalette(),
-                getColorPalette(),
-                getFontSizePicker()
+                getColorPalette()
         };
     }
 

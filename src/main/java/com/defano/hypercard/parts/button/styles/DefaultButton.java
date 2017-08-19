@@ -25,7 +25,6 @@ public class DefaultButton extends JButton implements ButtonComponent {
     public DefaultButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        super.addActionListener(toolEditablePart);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
     }
@@ -58,7 +57,7 @@ public class DefaultButton extends JButton implements ButtonComponent {
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:

@@ -14,9 +14,10 @@
  * of the main window. (Not nearly as trivial as one might assume.)
  */
 
-package com.defano.hypercard.parts;
+package com.defano.hypercard.parts.editor;
 
 import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.gui.util.KeyboardManager;
@@ -82,20 +83,12 @@ public class PartMover {
     }
 
     /**
-     * Determines if the part is moving (i.e., the user is presently dragging it)
-     * @return True if moving; false otherwise
-     */
-    public boolean isMoving() {
-        return !done;
-    }
-
-    /**
      * Begin moving the part; should be invoked when the user has clicked the mouse over the part.
      */
     public void startMoving() {
         CardLayerPart partInst = part.get();
 
-        if (!isMoving() && partInst != null) {
+        if (done && partInst != null) {
             done = false;
 
             Point mouseLoc = MouseInfo.getPointerInfo().getLocation();

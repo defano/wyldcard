@@ -56,6 +56,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
+        ToolsContext.getInstance().getFontProvider().addObserver(this);
     }
 
     /** {@inheritDoc} */
@@ -114,7 +115,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                 case FieldModel.PROP_TEXTSIZE:
                 case FieldModel.PROP_TEXTSTYLE:
                 case FieldModel.PROP_TEXTFONT:
-                    updateActiveFieldStyle(((CardLayerPartModel)toolEditablePart.getPartModel()).getFont());
+                    setActiveFont(((CardLayerPartModel)toolEditablePart.getPartModel()).getFont());
                     break;
 
                 case FieldModel.PROP_ENABLED:
@@ -231,11 +232,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void update(Observable o, Object arg) {
-        // User changed global font selection from the menubar
-        ((CardLayerPartModel)toolEditablePart.getPartModel()).setFont((Font) arg);
+        if (arg instanceof Font) {
+            setActiveFont((Font) arg);
+        }
     }
 
     /** {@inheritDoc} */
@@ -297,7 +298,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
     }
 
-    private void updateActiveFieldStyle(Font font) {
+    private void setActiveFont(Font font) {
         currentStyle = new SimpleAttributeSet();
         currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
         currentStyle.addAttribute(StyleConstants.Size, font.getSize());

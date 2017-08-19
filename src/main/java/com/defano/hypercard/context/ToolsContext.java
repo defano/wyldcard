@@ -216,7 +216,9 @@ public class ToolsContext {
     }
 
     public void setFont(Font font) {
-        fontProvider.set(font);
+        if (font != null) {
+            fontProvider.set(font);
+        }
     }
 
     public void setFontSize(int size) {

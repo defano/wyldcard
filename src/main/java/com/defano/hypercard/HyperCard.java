@@ -11,6 +11,7 @@ package com.defano.hypercard;
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.parts.editor.PartEditor;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
@@ -53,6 +54,7 @@ public class HyperCard {
         // Fire up the key and mouse listeners
         KeyboardManager.start();
         MouseManager.start();
+        PartEditor.start();
 
         // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
         // directly from the constructor. This behaves like @PostConstruct

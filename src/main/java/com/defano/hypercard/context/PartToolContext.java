@@ -9,10 +9,13 @@
 package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.jmonet.model.Provider;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.ToolEditablePart;
+
+import java.awt.*;
 
 public class PartToolContext {
 
@@ -22,6 +25,7 @@ public class PartToolContext {
 
     private PartToolContext() {
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> deselectAllParts());
+        ToolsContext.getInstance().getFontProvider().addObserver((o, arg) -> setSelectedPartFont((Font) arg));
     }
 
     public static PartToolContext getInstance() {
@@ -32,17 +36,17 @@ public class PartToolContext {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON || ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
             deselectAllParts();
             selectedPart.set(part);
-            selectedPart.get().setIsSelectedForEditing(true);
+            part.setSelectedForEditing(true);
         }
     }
 
     public void deselectAllParts() {
         for (ButtonPart thisButton : HyperCard.getInstance().getCard().getButtons()) {
-            thisButton.setIsSelectedForEditing(false);
+            thisButton.setSelectedForEditing(false);
         }
 
         for (FieldPart thisField : HyperCard.getInstance().getCard().getFields()) {
-            thisField.setIsSelectedForEditing(false);
+            thisField.setSelectedForEditing(false);
         }
 
         selectedPart.set(null);
@@ -64,6 +68,14 @@ public class PartToolContext {
         ToolEditablePart selectedPart = this.selectedPart.get();
         if (selectedPart != null) {
             HyperCard.getInstance().getCard().removePart(selectedPart.getPartModel());
+            this.selectedPart.set(null);
+        }
+    }
+
+    public void setSelectedPartFont(Font font) {
+        ToolEditablePart selectedPart = this.selectedPart.get();
+        if (selectedPart != null) {
+            ((CardLayerPartModel)selectedPart.getPart().getPartModel()).setFont(font);
         }
     }
 

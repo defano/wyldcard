@@ -65,7 +65,7 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonCo
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:

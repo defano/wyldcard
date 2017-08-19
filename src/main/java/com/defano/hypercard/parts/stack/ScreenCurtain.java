@@ -1,6 +1,5 @@
 package com.defano.hypercard.parts.stack;
 
-import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.card.CardPart;
 
 import javax.swing.*;
@@ -11,9 +10,7 @@ import java.awt.image.BufferedImage;
  * A Swing component used to obscure the "actual" contents of the stack window. Used for screen locking and card-to-card
  * animated visual effects.
  */
-public class ScreenCurtain extends JPanel {
-
-    private BufferedImage curtainImage;
+public class ScreenCurtain extends JLabel {
 
     public ScreenCurtain() {
         setVisible(false);
@@ -31,25 +28,12 @@ public class ScreenCurtain extends JPanel {
      *                     underneath.
      */
     public void setCurtainImage(BufferedImage curtainImage) {
-        this.curtainImage = curtainImage;
         setVisible(curtainImage != null);
 
         if (curtainImage != null) {
+            this.setIcon(new ImageIcon(curtainImage));
             this.setPreferredSize(new Dimension(curtainImage.getWidth(), curtainImage.getHeight()));
             this.invalidate();
         }
-
-        ThreadUtils.invokeAndWaitAsNeeded(this::repaint);
     }
-
-    /** {@inheritDoc} */
-    @Override
-    public void paintComponent(Graphics g) {
-        if (curtainImage == null) {
-            super.paintComponent(g);
-        } else {
-            g.drawImage(curtainImage, 0, 0, null);
-        }
-    }
-
 }

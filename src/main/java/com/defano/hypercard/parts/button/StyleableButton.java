@@ -54,7 +54,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
-    public void setIsSelectedForEditing(boolean beingEdited) {
+    public void setSelectedForEditing(boolean beingEdited) {
         isBeingEdited = beingEdited;
 
         if (isSelectedForEditing()) {

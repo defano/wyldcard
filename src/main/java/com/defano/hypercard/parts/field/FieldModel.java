@@ -47,7 +47,7 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_VISIBLE, new Value(true), false);
         partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
         partModel.defineProperty(PROP_SHOWLINES, new Value(true), false);
-        partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.RECTANGLE.getName()), false);
+        partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
         partModel.defineProperty(PROP_TEXT, new Value(""), false);
         partModel.defineProperty(PROP_TEXTALIGN, new Value("left"), false);
         partModel.defineProperty(PROP_CONTENTS, new Value(""), false);

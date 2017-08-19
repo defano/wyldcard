@@ -10,8 +10,12 @@ package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypercard.runtime.print.PrintCardAction;
 import com.defano.hypercard.runtime.print.PrintStackAction;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FileMenu extends HyperCardMenu {
 
@@ -88,6 +92,17 @@ public class FileMenu extends HyperCardMenu {
                 .named("Print Report...")
                 .disabled()
                 .build(this);
+
+        if (!WindowManager.isMacOs()) {
+
+            this.addSeparator();
+
+            MenuItemBuilder.ofDefaultType()
+                    .named("Quit HyperCard")
+                    .withAction(e -> System.exit(0))
+                    .withShortcut('Q')
+                    .build(this);
+        }
     }
 
     public void reset() {

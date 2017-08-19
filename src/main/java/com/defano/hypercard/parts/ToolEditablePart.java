@@ -11,6 +11,8 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.util.KeyListenable;
+import com.defano.hypercard.gui.util.MouseListenable;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;
@@ -28,7 +30,7 @@ import java.awt.event.*;
  * An interface defining actions common to all tool-editable parts (i.e., buttons and fields that can be edited
  * using the button tool or field tool).
  */
-public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListener, ActionListener {
+public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLayerPart {
 
     /**
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
@@ -36,7 +38,7 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
      *
      * @param beingEdited True if selected; false otherwise.
      */
-    void setIsSelectedForEditing(boolean beingEdited);
+    void setSelectedForEditing(boolean beingEdited);
 
     /**
      * Determines if the part is currently selected for editing.
@@ -44,25 +46,6 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
      * @return True if selected; false otherwise
      */
     boolean isSelectedForEditing();
-
-    /**
-     * Begin moving the part; implies that the user has clicked the part and is beginning to drag it around the
-     * card.
-     */
-    void move();
-
-    /**
-     * Begin resizing the part; implies that the user has clicked a resize drag handle and is beginning to drag a corner
-     * of the part.
-     * @param fromQuadrant Indicates which corner/quadrant has been dragged. See {@link PartResizer} for constants.
-     */
-    void resize(int fromQuadrant);
-
-    /**
-     * Delete the part from the card; implies that the part has been selected and the user has requested it be
-     * deleted (i.e. via DELETE or BACKSPACE)
-     */
-    void delete();
 
     /**
      * Show the property editor for this part; implies the user has selected and double-clicked the part, or chosen
@@ -86,40 +69,16 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
      * Returns the size of the drag handle square to be rendered in the marching ants.
      * @return The size, in pixels, of the handle
      */
-    default int getDragHandleSize() {
+    default int getResizeDragHandleSize() {
         return 8;
-    }
-
-    /**
-     * Returns a rectangle representing the bounds of the top-left drag handle for this part.
-     * @return The drag handle bounds.
-     */
-    default Rectangle getTopLeftDragHandle() {
-        return new Rectangle(0, 0, getDragHandleSize(), getDragHandleSize());
-    }
-
-    /**
-     * Returns a rectangle representing the bounds of the bottom-left drag handle for this part.
-     * @return The drag handle bounds.
-     */
-    default Rectangle getBottomLeftDragHandle() {
-        return new Rectangle(0, getComponent().getHeight() - getDragHandleSize(), getDragHandleSize(), getDragHandleSize());
-    }
-
-    /**
-     * Returns a rectangle representing the bounds of the top-right drag handle for this part.
-     * @return The drag handle bounds.
-     */
-    default Rectangle getTopRightDragHandle() {
-        return new Rectangle(getComponent().getWidth() - getDragHandleSize(), 0, getDragHandleSize(), getDragHandleSize());
     }
 
     /**
      * Returns a rectangle representing the bounds of the bottom-right drag handle for this part.
      * @return The drag handle bounds.
      */
-    default Rectangle getBottomRightDragHandle() {
-        return new Rectangle(getComponent().getWidth() - getDragHandleSize(), getComponent().getHeight() - getDragHandleSize(), getDragHandleSize(), getDragHandleSize());
+    default Rectangle getResizeDragHandle() {
+        return new Rectangle(getComponent().getWidth() - getResizeDragHandleSize(), getComponent().getHeight() - getResizeDragHandleSize(), getResizeDragHandleSize(), getResizeDragHandleSize());
     }
 
     /**
@@ -134,11 +93,7 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
         if (isSelectedForEditing()) {
             g2d.setPaint(Color.BLACK);
 
-            // TODO: Add resizer support for dragging from any corner
-            // g2d.fill(getTopLeftDragHandle());
-            // g2d.fill(getBottomLeftDragHandle());
-            // g2d.fill(getTopRightDragHandle());
-            g2d.fill(getBottomRightDragHandle());
+            g2d.fill(getResizeDragHandle());
 
             g2d.setPaint(Color.WHITE);
             g2d.drawRect(0,0, getComponent().getWidth() - 1, getComponent().getHeight() - 1);
@@ -231,33 +186,12 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
 
     @Override
     default void mousePressed(MouseEvent e) {
-        if (isSelectedForEditing()) {
-            if (getTopLeftDragHandle().contains(e.getPoint())) {
-                resize(PartResizer.QUADRANT_TOPLEFT);
-            } else if (getTopRightDragHandle().contains(e.getPoint())) {
-                resize(PartResizer.QUADRANT_TOPRIGHT);
-            } else if (getBottomLeftDragHandle().contains(e.getPoint())) {
-                resize(PartResizer.QUADRANT_BOTTOMLEFT);
-            } else if (getBottomRightDragHandle().contains(e.getPoint())) {
-                resize(PartResizer.QUADRANT_BOTTOMRIGHT);
-            } else {
-                move();
-            }
-        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
             PartToolContext.getInstance().setSelectedPart(this);
         } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {
             PartToolContext.getInstance().setSelectedPart(this);
         }
     }
-
-    @Override
-    default void mouseReleased(MouseEvent e) {}
-
-    @Override
-    default void mouseEntered(MouseEvent e) {}
-
-    @Override
-    default void mouseExited(MouseEvent e) {}
 
     @Override
     default void mouseClicked(MouseEvent e) {
@@ -273,9 +207,6 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
     }
 
     @Override
-    default void keyTyped(KeyEvent e) {}
-
-    @Override
     default void keyPressed(KeyEvent e) {
         if (isSelectedForEditing()) {
             int top = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
@@ -284,7 +215,8 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
                 case KeyEvent.VK_BACK_SPACE:
-                    delete();
+                    PartToolContext.getInstance().deleteSelectedPart();
+                    break;
 
                 case KeyEvent.VK_LEFT:
                     getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
@@ -305,9 +237,4 @@ public interface ToolEditablePart extends CardLayerPart, MouseListener, KeyListe
         }
     }
 
-    @Override
-    default void keyReleased(KeyEvent e) {}
-
-    @Override
-    default void actionPerformed(ActionEvent e) {}
 }

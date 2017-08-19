@@ -8,8 +8,6 @@
 
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
 import com.defano.hypercard.parts.ToolEditablePart;
@@ -19,14 +17,10 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 
 public class MenuButton extends JComboBox<String> implements ButtonComponent {
@@ -37,26 +31,17 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
     public MenuButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
-        addActionListener(toolEditablePart);
-        addMouseListener(toolEditablePart);
-        addKeyListener(toolEditablePart);
+        this.addMouseListener(toolEditablePart);
+        this.addKeyListener(toolEditablePart);
 
-        addAncestorListener(new AncestorListener() {
-            @Override
-            public void ancestorAdded(AncestorEvent event) {
-                event.getComponent().addKeyListener(toolEditablePart);
-                event.getComponent().addMouseListener(toolEditablePart);
-            }
+        final Component[] components = this.getComponents();
+        for(final Component component : components) {
+            component.addMouseListener(toolEditablePart);
+            component.addKeyListener(toolEditablePart);
+        }
+        this.getEditor().getEditorComponent().addMouseListener(toolEditablePart);
+        this.getEditor().getEditorComponent().addKeyListener(toolEditablePart);
 
-            @Override
-            public void ancestorRemoved(AncestorEvent event) {
-                event.getComponent().removeKeyListener(toolEditablePart);
-                event.getComponent().removeMouseListener(toolEditablePart);
-            }
-
-            @Override
-            public void ancestorMoved(AncestorEvent event) { }
-        });
 
         setRenderer(new MenuButtonCellRenderer());
         setModel(menuItems);
@@ -85,7 +70,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
         }
     }
