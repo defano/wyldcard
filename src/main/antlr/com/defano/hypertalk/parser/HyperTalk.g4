@@ -96,7 +96,7 @@ commandStmnt        : answerCmd                                                 
                     ;
 
 music               : expression                                                                                        # musicNotes
-                    | expression 'tempo' factor                                                                         # musicNotesTempo
+                    | 'tempo' factor expression                                                                         # musicNotesTempo
                     | 'tempo' factor                                                                                    # musicTempo
                     |                                                                                                   # musicDefault
                     ;

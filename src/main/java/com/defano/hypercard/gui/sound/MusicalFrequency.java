@@ -140,6 +140,14 @@ public enum MusicalFrequency {
         return octave;
     }
 
+    public char getName() {
+        return name.get(0);
+    }
+
+    public char getAccidental() {
+        return accidental.get(0);
+    }
+
     public double getFrequenceAdjustment(MusicalFrequency from) {
         return frequency / from.frequency;
     }

@@ -10,80 +10,97 @@ public class MusicalNote {
         this.duration = duration;
     }
 
-    public static MusicalNote ofMiddleCQuarterNote() {
+    public static MusicalNote fromMiddleCQuarterNote() {
         return new MusicalNote(MusicalFrequency.C4, MusicalDuration.QUARTER);
     }
 
-    public static MusicalNote ofNameAccidentalOctiveDuration(char name, char accidental, int octave, MusicalDuration duration) {
+    public static MusicalNote fromNameAccidentalOctaveDuration(char name, char accidental, int octave, MusicalDuration duration) {
         return new MusicalNote(MusicalFrequency.of(name, accidental, octave), duration);
     }
 
     public static MusicalNote fromString(MusicalNote previousNote, String note) {
         if (note == null || note.length() == 0) {
-            return null;
+            return previousNote;
         }
 
-        char name = parseName(note, 0, 'c');
-        char accidental = parseAccidental(note, 1, '-');
-        int octave = parseOctave(note, 2, previousNote.frequency.getOctave());
-        MusicalDuration duration = parseDuration(note, 3, MusicalDuration.QUARTER);
+        int index = 0;
 
-        return MusicalNote.ofNameAccidentalOctiveDuration(name, accidental, octave, duration);
+        Character name = parseName(note, index);
+        Character accidental = parseAccidental(note, name != null ? ++index : index);
+        Integer octave = parseOctave(note, accidental != null ? ++ index : index);
+        MusicalDuration duration = parseDuration(note, octave != null ? ++index : index);
+
+        return MusicalNote.fromNameAccidentalOctaveDuration(
+                name == null ? previousNote.getFrequency().getName() : name,
+                accidental == null ? '-' : accidental,
+                octave == null ? previousNote.getFrequency().getOctave() : octave,
+                duration == null ? previousNote.duration : duration);
     }
 
     public MusicalFrequency getFrequency() {
         return frequency;
     }
 
-    private static char parseAccidental(String note, int index, char dflt) {
+    public MusicalDuration getDuration() {
+        return duration;
+    }
+
+    private static Character parseAccidental(String note, int index) {
         if (note.length() <= index) {
-            return dflt;
+            return null;
         }
 
-        if (note.charAt(index) == '#') {
+        if (note.substring(index).contains("#")) {
             return '#';
         }
 
-        if (note.charAt(index) == 'b') {
+        if (note.substring(index).contains("b")) {
             return 'b';
         }
 
-        return dflt;
+        return null;
     }
 
-    private static char parseName(String note, int index, char dflt) {
+    private static Character parseName(String note, int index) {
         if (note.length() <= index) {
-            return dflt;
+            return null;
         }
 
         if (note.charAt(index) >= 'a' && note.charAt(index) <= 'g') return note.charAt(index);
         if (note.charAt(index) == 'r') return note.charAt(index);
 
-        return dflt;
+        return null;
     }
 
-    private static int parseOctave(String note, int index, int dflt) {
+    private static Integer parseOctave(String note, int index) {
         int octave;
 
         if (note.length() <= index) {
-            return dflt;
+            return null;
         }
 
         try {
             octave = Integer.parseInt(note.substring(index, index + 1));
         } catch (NumberFormatException e) {
-            octave = dflt;
+            octave = -1;
         }
 
-        return (octave >= 0 && octave <= 8) ? octave : dflt;
+        return (octave >= 0 && octave <= 8) ? octave : null;
     }
 
-    private static MusicalDuration parseDuration(String note, int index, MusicalDuration dflt) {
+    private static MusicalDuration parseDuration(String note, int index) {
         if (note.length() <= index) {
-            return dflt;
+            return null;
         }
 
-        return MusicalDuration.of(note.substring(index), dflt);
+        return MusicalDuration.fromString(note.substring(index));
     }
 
+    @Override
+    public String toString() {
+        return "MusicalNote{" +
+                "frequency=" + frequency +
+                ", duration=" + duration +
+                '}';
+    }
 }

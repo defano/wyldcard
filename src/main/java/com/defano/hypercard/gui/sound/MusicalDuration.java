@@ -3,12 +3,12 @@ package com.defano.hypercard.gui.sound;
 public enum  MusicalDuration {
 
     WHOLE(1),
-    HALF(1/2),
-    QUARTER(1/4),
-    EIGHTH(1/8),
-    SIXTEENTH(1/16),
-    THIRTYSECOND(1/32),
-    SIXTYFOURTH(1/64);
+    HALF(1.0/2.0),
+    QUARTER(1.0/4.0),
+    EIGHTH(1.0/8.0),
+    SIXTEENTH(1.0/16.0),
+    THIRTYSECOND(1.0/32.0),
+    SIXTYFOURTH(1.0/64.0);
 
     private final double relativeDuration;
     private boolean dotted = false;
@@ -29,9 +29,16 @@ public enum  MusicalDuration {
         return isDotted() ? this.relativeDuration + (this.relativeDuration / 2) : this.relativeDuration;
     }
 
-    public static MusicalDuration of(String duration, MusicalDuration dflt) {
+    public double getDurationMs(int forBpm) {
+        double SECONDS_PER_MINUTE = 60.0;
+        double MILLISECONDS_PER_SECOND = 1000.0;
+
+        return ((SECONDS_PER_MINUTE / forBpm) * MILLISECONDS_PER_SECOND) * getRelativeDuration();
+    }
+
+    public static MusicalDuration fromString(String duration) {
         if (duration.length() == 0) {
-            return dflt;
+            return MusicalDuration.QUARTER;
         }
 
         MusicalDuration value;
@@ -40,17 +47,26 @@ public enum  MusicalDuration {
             case 'w': value = WHOLE; break;
             case 'h': value = HALF; break;
             case 'q': value = QUARTER; break;
+            case 'e': value = EIGHTH; break;
             case 's': value = SIXTEENTH; break;
             case 't': value = THIRTYSECOND; break;
             case 'x': value = SIXTYFOURTH; break;
 
-            default: return dflt;
+            default: return MusicalDuration.QUARTER;
         }
 
-        if (duration.length() > 1 && duration.charAt(1) == '.') {
+        if (duration.contains(".")) {
             value.setDotted(true);
         }
 
         return value;
+    }
+
+    @Override
+    public String toString() {
+        return "MusicalDuration{" +
+                "relativeDuration=" + relativeDuration +
+                ", dotted=" + dotted +
+                '}';
     }
 }
