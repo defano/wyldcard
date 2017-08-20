@@ -26,7 +26,7 @@ This is neither a HyperCard replacement nor an open-sourced release of Apple's s
 
 * Can't open or import HyperCard stacks.
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No sound or `play` command.
+* No soundSample or `play` command.
 * No support for external commands or functions (XCMDs/XFCNs).
 * Not all commands, functions or properties of HyperTalk have been implemented.
 

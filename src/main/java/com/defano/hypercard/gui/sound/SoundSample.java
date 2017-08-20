@@ -2,22 +2,23 @@ package com.defano.hypercard.gui.sound;
 
 import java.net.URL;
 
-public enum Sound {
+public enum SoundSample {
 
-    HARPSICHORD("harpsichord", MusicalFrequency.G4, 479, 818),
-    BOING("boing", MusicalFrequency.D4),
-    FLUTE("flute", MusicalFrequency.A4, 658, 1316);
+    HARPSICHORD("harpsichord", MusicalPitch.G4),
+    BOING("boing", MusicalPitch.D4),
+    FLUTE("flute", MusicalPitch.A3, 658, 1316),
+    SILENCE("silence", MusicalPitch.REST);
 
     private final String resource;
-    private final MusicalFrequency dominantFrequency;
+    private final MusicalPitch dominantFrequency;
     private final Integer loopStart;
     private final Integer loopEnd;
 
-    Sound(String resource, MusicalFrequency dominantFrequency) {
+    SoundSample(String resource, MusicalPitch dominantFrequency) {
         this(resource, dominantFrequency, null, null);
     }
 
-    Sound(String resource, MusicalFrequency dominantFrequency, Integer loopStart, Integer loopEnd) {
+    SoundSample(String resource, MusicalPitch dominantFrequency, Integer loopStart, Integer loopEnd) {
         this.resource = resource;
         this.dominantFrequency = dominantFrequency;
         this.loopStart = loopStart;
@@ -37,17 +38,17 @@ public enum Sound {
     }
 
     public URL getResource() {
-        return Sound.class.getResource("/sounds/" + resource + ".wav");
+        return SoundSample.class.getResource("/sounds/" + resource + ".wav");
     }
 
-    public MusicalFrequency getDominantFrequency() {
+    public MusicalPitch getDominantFrequency() {
         return dominantFrequency;
     }
 
-    public static Sound fromName(String name) {
-        for (Sound thisSound : values()) {
-            if (name.equalsIgnoreCase(thisSound.resource)) {
-                return thisSound;
+    public static SoundSample fromName(String name) {
+        for (SoundSample thisSoundSample : values()) {
+            if (name.equalsIgnoreCase(thisSoundSample.resource)) {
+                return thisSoundSample;
             }
         }
 

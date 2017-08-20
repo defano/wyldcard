@@ -2,20 +2,20 @@ package com.defano.hypercard.gui.sound;
 
 public class MusicalNote {
 
-    private final MusicalFrequency frequency;
+    private final MusicalPitch frequency;
     private final MusicalDuration duration;
 
-    public MusicalNote (MusicalFrequency frequency, MusicalDuration duration) {
+    public MusicalNote (MusicalPitch frequency, MusicalDuration duration) {
         this.frequency = frequency;
         this.duration = duration;
     }
 
     public static MusicalNote fromMiddleCQuarterNote() {
-        return new MusicalNote(MusicalFrequency.C4, MusicalDuration.QUARTER);
+        return new MusicalNote(MusicalPitch.C4, MusicalDuration.QUARTER);
     }
 
     public static MusicalNote fromNameAccidentalOctaveDuration(char name, char accidental, int octave, MusicalDuration duration) {
-        return new MusicalNote(MusicalFrequency.of(name, accidental, octave), duration);
+        return new MusicalNote(MusicalPitch.of(name, accidental, octave), duration);
     }
 
     public static MusicalNote fromString(MusicalNote previousNote, String note) {
@@ -37,7 +37,7 @@ public class MusicalNote {
                 duration == null ? previousNote.duration : duration);
     }
 
-    public MusicalFrequency getFrequency() {
+    public MusicalPitch getFrequency() {
         return frequency;
     }
 

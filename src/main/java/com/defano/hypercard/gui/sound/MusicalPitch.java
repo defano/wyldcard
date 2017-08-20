@@ -4,9 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public enum MusicalFrequency {
+public enum MusicalPitch {
 
-    R(0, 'r', 0),   // Represents a rest note; special case
+    REST(0, 'r', 0),   // Represents a rest note (special case)
+
     C0(16.35, 'c', 0),
     Cs0_Db0(17.32, 'c', '#', 'd', 'b', 0),
     D0(18.35, 'd', 0),
@@ -121,15 +122,15 @@ public enum MusicalFrequency {
     private final List<Character> accidental;
     private final int octave;
 
-    MusicalFrequency(double frequency, char name, int octave) {
+    MusicalPitch(double frequency, char name, int octave) {
         this(frequency, Collections.singletonList(name), Collections.singletonList('-'), octave);
     }
 
-    MusicalFrequency(double frequency, char name1, char accidental1, char name2, char accidental2, int octave) {
+    MusicalPitch(double frequency, char name1, char accidental1, char name2, char accidental2, int octave) {
         this(frequency, Arrays.asList(name1, name2), Arrays.asList(accidental1, accidental2), octave);
     }
 
-    MusicalFrequency(double frequency, List<Character> name, List<Character> accidental, int octave) {
+    MusicalPitch(double frequency, List<Character> name, List<Character> accidental, int octave) {
         this.frequency = frequency;
         this.name = name;
         this.accidental = accidental;
@@ -148,17 +149,18 @@ public enum MusicalFrequency {
         return accidental.get(0);
     }
 
-    public double getFrequenceAdjustment(MusicalFrequency from) {
+    public double getFrequenceAdjustment(MusicalPitch from) {
         return frequency / from.frequency;
     }
 
-    public static MusicalFrequency of(char name, char accidental, int octave) {
-        // Special case: Rest note
+    public static MusicalPitch of(char name, char accidental, int octave) {
+
+        // Special case: Rest note (has no accidental or octave)
         if (name == 'r') {
-            return R;
+            return REST;
         }
 
-        for (MusicalFrequency thisFreq : values()) {
+        for (MusicalPitch thisFreq : values()) {
             if (thisFreq.name.contains(name) && thisFreq.accidental.contains(accidental) && thisFreq.octave == octave) {
                 return thisFreq;
             }
