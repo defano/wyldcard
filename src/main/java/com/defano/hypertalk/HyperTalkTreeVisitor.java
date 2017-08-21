@@ -682,6 +682,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitDialCmdStmt(HyperTalkParser.DialCmdStmtContext ctx) {
+        return new DialCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitMusicNotes(HyperTalkParser.MusicNotesContext ctx) {
         return MusicSpecifier.forNotes((Expression) visit(ctx.expression()));
     }

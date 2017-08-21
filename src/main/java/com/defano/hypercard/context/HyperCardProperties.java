@@ -9,8 +9,7 @@
 package com.defano.hypercard.context;
 
 import com.defano.hypercard.gui.fx.CurtainManager;
-import com.defano.hypercard.gui.sound.MusicPlayer;
-import com.defano.hypercard.gui.sound.SoundPlaybackExecutor;
+import com.defano.hypercard.gui.sound.SoundPlayer;
 import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.WindowManager;
@@ -51,7 +50,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedGetterProperty(PROP_CLICKLOC, (model, propertyName) -> new Value(MouseManager.getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (model, propertyName) -> new Value(MouseManager.getClickLoc().x));
         defineComputedGetterProperty(PROP_CLICKV, (model, propertyName) -> new Value(MouseManager.getClickLoc().y));
-        defineComputedGetterProperty(PROP_SOUND, (model, propertyName) -> new Value(MusicPlayer.getSound()));
+        defineComputedGetterProperty(PROP_SOUND, (model, propertyName) -> new Value(SoundPlayer.getSound()));
 
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {

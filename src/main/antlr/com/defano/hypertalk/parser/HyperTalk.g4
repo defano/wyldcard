@@ -93,6 +93,7 @@ commandStmnt        : answerCmd                                                 
                     | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
                     | 'delete' part                                                                                     # deleteCmdStmt
                     | 'play' expression music                                                                           # playCmdStmt
+                    | 'dial' expression                                                                                 # dialCmdStmt
                     ;
 
 music               : expression                                                                                        # musicNotes

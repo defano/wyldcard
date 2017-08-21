@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.gui.sound.MusicPlayer;
+import com.defano.hypercard.gui.sound.SoundPlayer;
 import com.defano.hypertalk.ast.common.MusicSpecifier;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -21,6 +21,6 @@ public class PlayCmd extends Statement {
         Value notes = ofMusic.notes == null ? new Value() : ofMusic.notes.evaluate();
         Value tempo = ofMusic.tempo == null ? new Value() : ofMusic.tempo.evaluate();
 
-        MusicPlayer.play(sound.evaluate(), notes, tempo);
+        SoundPlayer.play(sound.evaluate(), notes, tempo);
     }
 }
