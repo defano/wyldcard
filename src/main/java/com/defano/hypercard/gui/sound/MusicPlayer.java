@@ -12,6 +12,20 @@ import java.util.concurrent.CountDownLatch;
 public class MusicPlayer {
 
     private static final int DEFAULT_TEMPO = 120;
+    private static String lastPlayedSound = "";
+
+    public static void play(Value sound, Value notes, Value tempo) {
+        lastPlayedSound = sound.stringValue();
+        SoundPlaybackExecutor.getInstance().submit(() -> playNotes(sound, notes, tempo));
+    }
+
+    public static String getSound() {
+        if (SoundPlaybackExecutor.getInstance().getActiveSoundChannelsCount() == 0) {
+            return "done";
+        } else {
+            return lastPlayedSound;
+        }
+    }
 
     /**
      * Attempts to play a sound as a series of musical notes at a given tempo.
@@ -23,7 +37,7 @@ public class MusicPlayer {
      *              a tempo of 120 is assumed.
      * @throws HtSemanticException Thrown if an error occurs while playing the sound.
      */
-    public static void playNotes(Value sound, Value notes, Value tempo) throws HtSemanticException {
+    private static void playNotes(Value sound, Value notes, Value tempo) {
         MusicalNote lastNote = MusicalNote.fromMiddleCQuarterNote();
 
         // Tempo is specified in eighth notes played per minute; convert to beats (whole notes) per minute
@@ -56,7 +70,7 @@ public class MusicPlayer {
      * @param tempoBpm The speed at which the note is played in beats per minute
      * @throws HtSemanticException
      */
-    private static void playNote(SoundSample soundSample, MusicalNote note, int tempoBpm) throws HtSemanticException {
+    private static void playNote(SoundSample soundSample, MusicalNote note, int tempoBpm) {
 
         try {
             CountDownLatch cdl = new CountDownLatch(1);
@@ -74,7 +88,7 @@ public class MusicPlayer {
             cdl.await();
 
         } catch (Exception e) {
-            throw new HtSemanticException("An error occurred while trying to play the sound.", e);
+            e.printStackTrace();
         }
     }
 

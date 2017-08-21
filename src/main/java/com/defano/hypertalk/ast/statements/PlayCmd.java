@@ -21,6 +21,6 @@ public class PlayCmd extends Statement {
         Value notes = ofMusic.notes == null ? new Value() : ofMusic.notes.evaluate();
         Value tempo = ofMusic.tempo == null ? new Value() : ofMusic.tempo.evaluate();
 
-        MusicPlayer.playNotes(sound.evaluate(), notes, tempo);
+        MusicPlayer.play(sound.evaluate(), notes, tempo);
     }
 }
