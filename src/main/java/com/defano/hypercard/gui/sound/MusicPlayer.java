@@ -19,7 +19,7 @@ public class MusicPlayer {
      * @param sound The name of the sound to play, i.e., "boing", "harpsichord" or "flute"
      * @param notes The sequence of notes to be played in name, accidental, octave and duration format (i.e.,
      *              "c4 d#5h." When empty, the sound sample is played without adjustments to duration or frequency.
-     * @param tempo The speed at which to play the notes, specified in eighth notes per minute. When not specified,
+     * @param tempo The speed at which to play the notes, specified in quarter notes per minute. When not specified,
      *              a tempo of 120 is assumed.
      * @throws HtSemanticException Thrown if an error occurs while playing the sound.
      */
@@ -27,7 +27,7 @@ public class MusicPlayer {
         MusicalNote lastNote = MusicalNote.fromMiddleCQuarterNote();
 
         // Tempo is specified in eighth notes played per minute; convert to beats (whole notes) per minute
-        int bpm = tempo.isEmpty() || !tempo.isNumber() ? DEFAULT_TEMPO / 8 : tempo.integerValue() / 8;
+        int bpm = tempo.isEmpty() || !tempo.isNumber() ? DEFAULT_TEMPO / 4 : tempo.integerValue() / 4;
         SoundSample soundSampleResource = SoundSample.fromName(sound.stringValue().toLowerCase());
 
         // Play each note
@@ -74,7 +74,7 @@ public class MusicPlayer {
             cdl.await();
 
         } catch (Exception e) {
-            throw new HtSemanticException("An error occurred while trying to play the soundSample.", e);
+            throw new HtSemanticException("An error occurred while trying to play the sound.", e);
         }
     }
 
@@ -121,10 +121,14 @@ public class MusicPlayer {
      * @return A new AudioInputStream representing the sound of the input stream adjusted for pitch
      */
     private static AudioInputStream transformStreamFrequency(AudioInputStream stream, MusicalPitch from, MusicalPitch to) {
+        if (from == to) {
+            return stream;
+        }
+
         AudioFormat inFormat = stream.getFormat();
         final AudioFormat outFormat = new AudioFormat(
                 inFormat.getEncoding(),
-                Math.round(inFormat.getSampleRate() * to.getFrequenceAdjustment(from)),
+                Math.round(inFormat.getSampleRate() * to.getFrequencyAdjustment(from)),
                 inFormat.getSampleSizeInBits(),
                 inFormat.getChannels(),
                 inFormat.getFrameSize(),
@@ -153,15 +157,15 @@ public class MusicPlayer {
     private static AudioInputStream transformStreamDuration(SoundSample soundSample, AudioInputStream stream, MusicalDuration duration, int tempoBpm) throws IOException {
         double durationMs = duration.getDurationMs(tempoBpm);
         double framesPerMs = stream.getFormat().getFrameRate() / 1000.0;
-        int framesForDuration = (int) (framesPerMs * durationMs);
+        double framesForDuration = framesPerMs * durationMs;
 
         if (framesForDuration < stream.getFrameLength()) {
             return new AudioInputStream(stream, stream.getFormat(), Math.round(framesForDuration));
         } else if (framesForDuration > stream.getFrameLength()) {
             if (soundSample.isStretchable()) {
-                return stretchAudio(soundSample, stream, framesForDuration);
+                return stretchAudio(soundSample, stream, (int) framesForDuration);
             } else {
-                return appendSilenceToAudio(stream, framesForDuration);
+                return appendSilenceToAudio(stream, (int) framesForDuration);
             }
         } else {
             return stream;
@@ -188,7 +192,7 @@ public class MusicPlayer {
         }
 
         for (int index = sample.length; index < desiredFrames; index++) {
-            stretched[index] = 0x00;
+            stretched[index] = 0;
         }
 
         return new AudioInputStream(new ByteArrayInputStream(stretched), stream.getFormat(), desiredFrames);
@@ -213,18 +217,21 @@ public class MusicPlayer {
         byte[] sample = new byte[(int) (stream.getFrameLength() * stream.getFormat().getFrameSize())];
         stream.read(sample, 0, (int) (stream.getFrameLength() * stream.getFormat().getFrameSize()));
 
+        int introLength = soundSample.getLoopStart();
+        int outroLength = sample.length - soundSample.getLoopEnd();
+
         // Append intro section (attack) to output buffer
         int stretchedIdx = 0;
-        for (int sampleIdx = 0; sampleIdx < soundSample.getLoopStart(); sampleIdx++) {
+        for (int sampleIdx = 0; sampleIdx < introLength; sampleIdx++) {
             stretched[stretchedIdx++] = sample[sampleIdx];
         }
 
         // Loop sample to output
         do {
-            for (int sampleIdx = soundSample.getLoopStart(); sampleIdx <= soundSample.getLoopEnd() && stretchedIdx < stretched.length - soundSample.getLoopEnd(); sampleIdx++) {
+            for (int sampleIdx = introLength; sampleIdx <= soundSample.getLoopEnd() && stretchedIdx < stretched.length - outroLength; sampleIdx++) {
                 stretched[stretchedIdx++] = sample[sampleIdx];
             }
-        } while (stretchedIdx < stretched.length - soundSample.getLoopEnd());
+        } while (stretchedIdx < stretched.length - outroLength);
 
         // Append outro section (release) to output
         for (int sampleIdx = soundSample.getLoopEnd() + 1; sampleIdx < sample.length && stretchedIdx < stretched.length; sampleIdx++) {

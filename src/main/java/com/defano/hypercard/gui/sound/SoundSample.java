@@ -7,7 +7,19 @@ public enum SoundSample {
     HARPSICHORD("harpsichord", MusicalPitch.G4),
     BOING("boing", MusicalPitch.D4),
     FLUTE("flute", MusicalPitch.A3, 658, 1316),
-    SILENCE("silence", MusicalPitch.REST);
+    SILENCE("silence", MusicalPitch.REST),
+    DIAL_0("dial0", MusicalPitch.C4),
+    DIAL_1("dial1", MusicalPitch.C4),
+    DIAL_2("dial2", MusicalPitch.C4),
+    DIAL_3("dial3", MusicalPitch.C4),
+    DIAL_4("dial4", MusicalPitch.C4),
+    DIAL_5("dial5", MusicalPitch.C4),
+    DIAL_6("dial6", MusicalPitch.C4),
+    DIAL_7("dial7", MusicalPitch.C4),
+    DIAL_8("dial8", MusicalPitch.C4),
+    DIAL_9("dial9", MusicalPitch.C4),
+    DIAL_STAR("dial*", MusicalPitch.C4),
+    DIAL_HASH("dial#", MusicalPitch.C4);
 
     private final String resource;
     private final MusicalPitch dominantFrequency;

@@ -149,7 +149,7 @@ public enum MusicalPitch {
         return accidental.get(0);
     }
 
-    public double getFrequenceAdjustment(MusicalPitch from) {
+    public double getFrequencyAdjustment(MusicalPitch from) {
         return frequency / from.frequency;
     }
 
