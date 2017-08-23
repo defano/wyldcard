@@ -10,6 +10,7 @@ package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.gui.icons.IconFactory;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -82,6 +83,10 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
 
             case ButtonModel.PROP_TEXTALIGN:
                 label.setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
+                break;
+
+            case ButtonModel.PROP_ICON:
+                label.setIcon(IconFactory.iconForId(newValue.integerValue()));
                 break;
         }
 

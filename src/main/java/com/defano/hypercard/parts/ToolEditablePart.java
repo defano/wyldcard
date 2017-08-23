@@ -54,6 +54,11 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     void editProperties();
 
     /**
+     * Show the script editor for this part; implies the user has selected and double-control-clicked the part.
+     */
+    void editScript();
+
+    /**
      * Gets the Part object associated with this ToolEditablePart.
      * @return The associated Part
      */
@@ -195,9 +200,19 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     @Override
     default void mouseClicked(MouseEvent e) {
-        if (isSelectedForEditing() && e.getClickCount() == 2) {
+
+        // Double-command click to edit script
+        if (isSelectedForEditing() && e.getClickCount() == 2 && (e.isControlDown() || e.isMetaDown())) {
+            editScript();
+        }
+
+        // Double-click to edit properties
+        else if (isSelectedForEditing() && e.getClickCount() == 2) {
             editProperties();
-        } else {
+        }
+
+        // Single click to select part
+        else {
             if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
                 PartToolContext.getInstance().setSelectedPart(this);
             } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {

@@ -10,6 +10,7 @@ package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.gui.icons.IconFactory;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -62,6 +63,10 @@ public class DefaultButton extends JButton implements ButtonComponent {
 
             case ButtonModel.PROP_TEXTALIGN:
                 setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
+                break;
+
+            case ButtonModel.PROP_ICON:
+                setIcon(IconFactory.iconForId(newValue.integerValue()));
                 break;
         }
     }

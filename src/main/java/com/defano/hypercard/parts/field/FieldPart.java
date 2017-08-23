@@ -11,7 +11,9 @@ package com.defano.hypercard.parts.field;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.*;
 import com.defano.hypercard.gui.window.FieldPropertyEditor;
+import com.defano.hypercard.gui.window.ScriptEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
+import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.editor.PartMover;
@@ -101,6 +103,17 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
         field.partModel.addPropertyChangedObserver(field);
 
         return field;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void editScript() {
+        WindowBuilder.make(new ScriptEditor())
+                .withTitle("Script of field " + partModel.getKnownProperty(FieldModel.PROP_NAME).stringValue())
+                .withModel(partModel)
+                .resizeable(true)
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .build();
     }
 
     /** {@inheritDoc} */
