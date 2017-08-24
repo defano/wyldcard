@@ -3,6 +3,7 @@ package com.defano.hypercard.gui.window;
 import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.gui.icons.ButtonIcon;
 import com.defano.hypercard.gui.icons.IconFactory;
+import com.defano.hypercard.gui.util.WrapLayout;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -17,10 +18,13 @@ import java.util.List;
 
 public class IconPicker extends HyperCardDialog {
 
+    private static final int ICON_SIZE = 60;
+
     private JButton okButton;
     private JPanel windowPanel;
     private JPanel iconPanel;
     private JButton noneButton;
+    private JLabel iconSelection;
     private List<JButton> buttons;
     private ButtonModel model;
     private int selectedIconId;
@@ -43,7 +47,11 @@ public class IconPicker extends HyperCardDialog {
             iconPanel.add(thisButt);
         }
 
-        iconPanel.setPreferredSize(new Dimension(iconPanel.getWidth(), (100 / 5) * 100 + 2 * ((FlowLayout) iconPanel.getLayout()).getVgap()));
+        iconPanel.setSize(400, 1);
+        iconPanel.setLayout(new WrapLayout());
+        ((WrapLayout) iconPanel.getLayout()).setHgap(2);
+        ((WrapLayout) iconPanel.getLayout()).setVgap(2);
+
         invalidate();
     }
 
@@ -52,13 +60,15 @@ public class IconPicker extends HyperCardDialog {
 
         for (ButtonIcon thisIcon : IconFactory.getAllIcons()) {
             JButton thisButt = new JButton();
-            thisButt.setPreferredSize(new Dimension(100, 100));
+            thisButt.setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
+            thisButt.setSize(new Dimension(ICON_SIZE, ICON_SIZE));
             thisButt.setIcon(thisIcon.getIcon());
             thisButt.setFocusable(false);
             thisButt.addActionListener(e -> {
                 enableButtons();
                 ((JButton) e.getSource()).setEnabled(false);
                 selectedIconId = thisIcon.getId();
+                iconSelection.setText("Icon \"" + thisIcon.getName() + "\" ID " + thisIcon.getId());
             });
             buttons.add(thisButt);
         }
@@ -99,23 +109,26 @@ public class IconPicker extends HyperCardDialog {
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 10, 0), -1, -1));
+        windowPanel.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 10, 0), -1, -1));
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setVerticalScrollBarPolicy(22);
-        windowPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(550, 400), null, 0, false));
+        windowPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(550, 400), null, 0, false));
         iconPanel = new JPanel();
         iconPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 2, 2));
         iconPanel.setFocusable(false);
-        iconPanel.setPreferredSize(new Dimension(400, -1));
+        iconPanel.setRequestFocusEnabled(false);
         scrollPane1.setViewportView(iconPanel);
         okButton = new JButton();
         okButton.setText("OK");
-        windowPanel.add(okButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        windowPanel.add(okButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         noneButton = new JButton();
         noneButton.setText("None");
-        windowPanel.add(noneButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        windowPanel.add(noneButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        iconSelection = new JLabel();
+        iconSelection.setText("No icon selected.");
+        windowPanel.add(iconSelection, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
         final Spacer spacer1 = new Spacer();
-        windowPanel.add(spacer1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        windowPanel.add(spacer1, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**

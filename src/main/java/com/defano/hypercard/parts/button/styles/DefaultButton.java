@@ -66,7 +66,7 @@ public class DefaultButton extends JButton implements ButtonComponent {
                 break;
 
             case ButtonModel.PROP_ICON:
-                setIcon(IconFactory.iconForId(newValue.integerValue()));
+                setIcon(IconFactory.iconForValue(newValue));
                 break;
         }
     }

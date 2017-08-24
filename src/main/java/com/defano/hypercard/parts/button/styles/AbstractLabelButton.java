@@ -86,7 +86,7 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
                 break;
 
             case ButtonModel.PROP_ICON:
-                label.setIcon(IconFactory.iconForId(newValue.integerValue()));
+                label.setIcon(IconFactory.iconForValue(newValue));
                 break;
         }
 
