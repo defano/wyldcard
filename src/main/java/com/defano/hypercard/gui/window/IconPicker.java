@@ -27,12 +27,12 @@ public class IconPicker extends HyperCardDialog {
     private JLabel iconSelection;
     private List<JButton> buttons;
     private ButtonModel model;
-    private int selectedIconId;
+    private Value selectedIconValue;
 
     public IconPicker() {
 
         okButton.addActionListener(e -> {
-            model.setKnownProperty(ButtonModel.PROP_ICON, new Value(selectedIconId));
+            model.setKnownProperty(ButtonModel.PROP_ICON, selectedIconValue);
             dispose();
         });
 
@@ -40,23 +40,13 @@ public class IconPicker extends HyperCardDialog {
             model.setKnownProperty(ButtonModel.PROP_ICON, new Value());
             dispose();
         });
-
-        buttons = getButtons();
-
-        for (JButton thisButt : buttons) {
-            iconPanel.add(thisButt);
-        }
-
-        iconPanel.setSize(400, 1);
-        iconPanel.setLayout(new WrapLayout());
-        ((WrapLayout) iconPanel.getLayout()).setHgap(2);
-        ((WrapLayout) iconPanel.getLayout()).setVgap(2);
-
-        invalidate();
     }
 
     private List<JButton> getButtons() {
         List<JButton> buttons = new ArrayList<>();
+
+        List<ButtonIcon> icons = IconFactory.getAllIcons();
+        ButtonIcon selectedIcon = IconFactory.findIconForValue(selectedIconValue, icons);
 
         for (ButtonIcon thisIcon : IconFactory.getAllIcons()) {
             JButton thisButt = new JButton();
@@ -67,9 +57,14 @@ public class IconPicker extends HyperCardDialog {
             thisButt.addActionListener(e -> {
                 enableButtons();
                 ((JButton) e.getSource()).setEnabled(false);
-                selectedIconId = thisIcon.getId();
-                iconSelection.setText("Icon \"" + thisIcon.getName() + "\" ID " + thisIcon.getId());
+                selectedIconValue = new Value(thisIcon.getId());
+                iconSelection.setText("Icon ID: " + thisIcon.getId() + " \"" + thisIcon.getName() + "\"");
             });
+
+            if (thisIcon == selectedIcon) {
+                thisButt.setEnabled(false);
+            }
+
             buttons.add(thisButt);
         }
 
@@ -90,7 +85,20 @@ public class IconPicker extends HyperCardDialog {
     @Override
     public void bindModel(Object data) {
         this.model = (ButtonModel) data;
-        selectedIconId = this.model.getKnownProperty(ButtonModel.PROP_ICON).integerValue();
+        selectedIconValue = this.model.getKnownProperty(ButtonModel.PROP_ICON);
+
+        buttons = getButtons();
+
+        for (JButton thisButt : buttons) {
+            iconPanel.add(thisButt);
+        }
+
+        iconPanel.setSize(400, 1);
+        iconPanel.setLayout(new WrapLayout());
+        ((WrapLayout) iconPanel.getLayout()).setHgap(2);
+        ((WrapLayout) iconPanel.getLayout()).setVgap(2);
+
+        invalidate();
     }
 
     {

@@ -1,5 +1,7 @@
 package com.defano.hypercard.gui.icons;
 
+import com.defano.hypercard.gui.util.AlphaImageIcon;
+
 import javax.swing.*;
 import java.util.Arrays;
 
@@ -86,7 +88,7 @@ public enum HyperCardIcon implements ButtonIcon {
     }
 
     @Override
-    public ImageIcon getIcon() {
-        return new ImageIcon(IconFactory.class.getResource("/button-icons/" + getName() + ".png"));
+    public AlphaImageIcon getImage() {
+        return new AlphaImageIcon(new ImageIcon(IconFactory.class.getResource("/button-icons/" + getName() + ".png")), 1.0f);
     }
 }

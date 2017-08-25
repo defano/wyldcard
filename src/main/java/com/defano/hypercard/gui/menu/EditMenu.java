@@ -11,15 +11,22 @@ package com.defano.hypercard.gui.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.window.IconCreator;
+import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.clipboard.CardActionListener;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
+import com.defano.jmonet.model.ProviderTransform;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 import com.defano.jmonet.model.ImmutableProvider;
+import com.defano.jmonet.tools.base.PaintTool;
 
 public class EditMenu extends HyperCardMenu {
 
@@ -122,8 +129,14 @@ public class EditMenu extends HyperCardMenu {
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Icon")
-                .disabled()
+                .named("Create Icon...")
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withAction(e -> WindowBuilder.make(new IconCreator())
+                        .resizeable(false)
+                        .withTitle("Create Icon")
+                        .asModal()
+                        .withModel(ToolsContext.getInstance().getSelectedImageProvider().get())
+                        .build())
                 .withShortcut('I')
                 .build(this);
 

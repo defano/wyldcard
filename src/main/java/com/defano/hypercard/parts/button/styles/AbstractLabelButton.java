@@ -10,7 +10,9 @@ package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.gui.icons.ButtonIcon;
 import com.defano.hypercard.gui.icons.IconFactory;
+import com.defano.hypercard.gui.util.AlphaImageIcon;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -42,6 +44,9 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (label.getIcon() != null && label.getIcon() instanceof AlphaImageIcon) {
+            ((AlphaImageIcon) label.getIcon()).setAlpha(isHilited ? 0.5f : 1.0f);
+        }
         paintHilite(isHilited, (Graphics2D) g);
         label.paintComponents(g);
     }
@@ -86,7 +91,8 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
                 break;
 
             case ButtonModel.PROP_ICON:
-                label.setIcon(IconFactory.iconForValue(newValue));
+                ButtonIcon icon = IconFactory.findIconForValue(newValue);
+                label.setIcon(icon == null ? null : icon.getImage());
                 break;
         }
 

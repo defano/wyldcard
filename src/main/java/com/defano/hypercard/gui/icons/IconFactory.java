@@ -1,8 +1,8 @@
 package com.defano.hypercard.gui.icons;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.Value;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,9 +12,8 @@ public class IconFactory {
 
     public static List<ButtonIcon> getAllIcons() {
         ArrayList<ButtonIcon> icons = new ArrayList<>();
-        icons.addAll(getHyperCardIcons());
         icons.addAll(getStackIcons());
-
+        icons.addAll(getHyperCardIcons());
         return icons;
     }
 
@@ -23,41 +22,37 @@ public class IconFactory {
     }
 
     public static List<ButtonIcon> getStackIcons() {
-        return new ArrayList<>();
+        return HyperCard.getInstance().getStack().getStackModel().getUserIcons();
     }
 
-    public static ImageIcon iconForValue(Value value) {
+    public static ButtonIcon findIconForValue(Value value) {
+        return findIconForValue(value, getAllIcons());
+    }
+
+    public static ButtonIcon findIconForValue(Value value, List<ButtonIcon> icons) {
         if (value.isInteger()) {
-            return iconForId(value.integerValue());
+            return iconForId(value.integerValue(), icons);
         } else {
-            return iconForName(value.stringValue());
+            return iconForName(value.stringValue(), icons);
         }
     }
 
-    public static ImageIcon iconForName(String name) {
-        Optional<ButtonIcon> icon = getAllIcons().stream()
+    public static ButtonIcon iconForName(String name, List<ButtonIcon> icons) {
+        Optional<ButtonIcon> icon = icons.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name))
                 .findFirst();
 
-        if (icon.isPresent()) {
-            return icon.get().getIcon();
-        } else {
-            return null;
-        }
+        return icon.orElse(null);
     }
 
-    public static ImageIcon iconForId(int id) {
+    public static ButtonIcon iconForId(int id, List<ButtonIcon> icons) {
         if (id < 1) return null;
 
-        Optional<ButtonIcon> icon = getAllIcons().stream()
+        Optional<ButtonIcon> icon = icons.stream()
                 .filter(p -> p.getId() == id)
                 .findFirst();
 
-        if (icon.isPresent()) {
-            return icon.get().getIcon();
-        } else {
-            return null;
-        }
+        return icon.orElse(null);
     }
 
 }
