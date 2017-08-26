@@ -9,7 +9,6 @@
 package com.defano.hypercard.gui.menu;
 
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.l2fprod.common.swing.JFontChooser;

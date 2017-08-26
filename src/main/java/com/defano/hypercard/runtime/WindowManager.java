@@ -9,9 +9,7 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.HyperCardWindow;
-import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.gui.window.*;
 import com.defano.jmonet.model.Provider;
 

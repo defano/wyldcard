@@ -49,6 +49,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     private JLabel partLabelValue;
     private JLabel idLabelValue;
     private JButton textStyle;
+    private JButton iconButton;
 
     @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
@@ -67,6 +68,15 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         saveButton.addActionListener(e -> {
             updateProperties();
             dispose();
+        });
+
+        iconButton.addActionListener(e -> {
+            WindowBuilder.make(new IconPicker())
+                    .withTitle("Icon")
+                    .resizeable(false)
+                    .withModel(model)
+                    .asModal()
+                    .build();
         });
 
         textStyle.addActionListener(e -> ((CardLayerPartModel) model).setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont())));
@@ -301,6 +311,9 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         buttonEditor.add(spacer4, new GridConstraints(3, 4, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
         buttonEditor.add(spacer5, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        iconButton = new JButton();
+        iconButton.setText("Icon...");
+        buttonEditor.add(iconButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

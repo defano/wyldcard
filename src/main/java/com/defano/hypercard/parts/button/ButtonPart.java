@@ -21,6 +21,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.ButtonPropertyEditor;
+import com.defano.hypercard.gui.window.ScriptEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
@@ -121,6 +122,16 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void partClosed() {
         super.partClosed();
         partModel.removePropertyChangedObserver(this);
+    }
+
+    @Override
+    public void editScript() {
+        WindowBuilder.make(new ScriptEditor())
+                .withTitle("Script of button " + partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
+                .withModel(partModel)
+                .resizeable(true)
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .build();
     }
 
     @Override
