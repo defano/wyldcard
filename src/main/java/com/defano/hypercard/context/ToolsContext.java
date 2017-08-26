@@ -44,7 +44,6 @@ public class ToolsContext {
     private final Provider<Paint> linePaintProvider = new Provider<>(Color.black);
     private final Provider<Integer> fillPatternProvider = new Provider<>(0);
     private final Provider<Integer> shapeSidesProvider = new Provider<>(5);
-    private final Provider<Font> fontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
     private final Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private final Provider<Boolean> drawMultiple = new Provider<>(false);
     private final Provider<Boolean> drawCentered = new Provider<>(false);
@@ -52,9 +51,17 @@ public class ToolsContext {
     private final Provider<Color> foregroundColorProvider = new Provider<>(Color.BLACK);
     private final Provider<Color> backgroundColorProvider = new Provider<>(Color.WHITE);
 
+    // Last font explicitly chosen by the user from the Font/Style menus
+    private final Provider<Font> selectedFontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
+
+    // Last hilited font in text field or active button
+    private final Provider<Font> hilitedFontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
+
     private PaintToolType lastToolType;
 
-    private ToolsContext() {}
+    private ToolsContext() {
+        selectedFontProvider.addObserver((o, arg) -> hilitedFontProvider.set((Font) arg));
+    }
 
     public static ToolsContext getInstance() {
         return instance;
@@ -107,7 +114,7 @@ public class ToolsContext {
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
-                .withFontProvider(fontProvider)
+                .withFontProvider(selectedFontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
                 .build();
@@ -215,35 +222,43 @@ public class ToolsContext {
         }
     }
 
+    public void setVisibleFont(Font font) {
+        hilitedFontProvider.set(font);
+    }
+
     public void setFont(Font font) {
         if (font != null) {
-            fontProvider.set(font);
+            selectedFontProvider.set(font);
         }
     }
 
     public void setFontSize(int size) {
-        String currentFamily = fontProvider.get().getFamily();
-        int currentStyle = fontProvider.get().getStyle();
+        String currentFamily = selectedFontProvider.get().getFamily();
+        int currentStyle = selectedFontProvider.get().getStyle();
 
-        fontProvider.set(new Font(currentFamily, currentStyle, size));
+        selectedFontProvider.set(new Font(currentFamily, currentStyle, size));
     }
 
     public void setFontStyle(int style) {
-        String currentFamily = fontProvider.get().getFamily();
-        int currentSize = fontProvider.get().getSize();
+        String currentFamily = selectedFontProvider.get().getFamily();
+        int currentSize = selectedFontProvider.get().getSize();
 
-        fontProvider.set(new Font(currentFamily, style, currentSize));
+        selectedFontProvider.set(new Font(currentFamily, style, currentSize));
     }
 
     public void setFontFamily(String fontName) {
-        int currentSize = fontProvider.get().getSize();
-        int currentStyle = fontProvider.get().getStyle();
+        int currentSize = selectedFontProvider.get().getSize();
+        int currentStyle = selectedFontProvider.get().getStyle();
 
-        fontProvider.set(new Font(fontName, currentStyle, currentSize));
+        selectedFontProvider.set(new Font(fontName, currentStyle, currentSize));
     }
 
-    public Provider<Font> getFontProvider() {
-        return fontProvider;
+    public Provider<Font> getSelectedFontProvider() {
+        return selectedFontProvider;
+    }
+
+    public Provider<Font> getHilitedFontProvider() {
+        return hilitedFontProvider;
     }
 
     public void setLineWidth(int width) {

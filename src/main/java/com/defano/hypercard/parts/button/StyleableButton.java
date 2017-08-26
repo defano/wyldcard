@@ -57,8 +57,9 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     public void setSelectedForEditing(boolean beingEdited) {
         isBeingEdited = beingEdited;
 
-        if (isSelectedForEditing()) {
+        if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
+            ToolsContext.getInstance().getHilitedFontProvider().set(((ButtonModel) getPartModel()).getFont());
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }

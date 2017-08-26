@@ -24,8 +24,11 @@ public class PartToolContext {
     private final Provider<ToolEditablePart> selectedPart = new Provider<>(null);
 
     private PartToolContext() {
+        // Deselect all parts when user changes tool mode
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> deselectAllParts());
-        ToolsContext.getInstance().getFontProvider().addObserver((o, arg) -> setSelectedPartFont((Font) arg));
+
+        // Change part font when user chooses a font/style from the menubar
+        ToolsContext.getInstance().getSelectedFontProvider().addObserver((o, arg) -> setSelectedPartFont((Font) arg));
     }
 
     public static PartToolContext getInstance() {

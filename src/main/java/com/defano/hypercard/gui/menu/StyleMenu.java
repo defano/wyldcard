@@ -25,21 +25,21 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Plain")
                 .withAction(e -> ToolsContext.getInstance().setFontStyle(Font.PLAIN))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getStyle() == Font.PLAIN))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getStyle() == Font.PLAIN))
                 .fontStyle(Font.PLAIN)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Bold")
                 .withAction(e -> ToolsContext.getInstance().setFontStyle(Font.BOLD))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getStyle() == Font.BOLD))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getStyle() == Font.BOLD))
                 .fontStyle(Font.BOLD)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Italic")
                 .withAction(e -> ToolsContext.getInstance().setFontStyle(Font.ITALIC))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getStyle() == Font.ITALIC))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getStyle() == Font.ITALIC))
                 .fontStyle(Font.ITALIC)
                 .build(this);
 
@@ -78,45 +78,45 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("9")
                 .withAction(e -> ToolsContext.getInstance().setFontSize(9))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() == 9))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() == 9))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("10")
                 .withAction(e -> ToolsContext.getInstance().setFontSize(10))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() == 10))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() == 10))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("12")
                 .withAction(e -> ToolsContext.getInstance().setFontSize(12))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() == 12))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() == 12))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("14")
                 .withAction(e -> ToolsContext.getInstance().setFontSize(14))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() == 14))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() == 14))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("18")
                 .withAction(e -> ToolsContext.getInstance().setFontSize(18))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() == 18))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() == 18))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("24")
                 .withAction(e -> ToolsContext.getInstance().setFontSize(24))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() == 24))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() == 24))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Other...")
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getFontProvider(), e -> e.getSize() != 9 && e.getSize() != 10 && e.getSize() != 12 && e.getSize() != 14 && e.getSize() != 18 && e.getSize() != 24))
-                .withAction(e -> ToolsContext.getInstance().setFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", ToolsContext.getInstance().getFontProvider().get())))
+                .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), e -> e.getSize() != 9 && e.getSize() != 10 && e.getSize() != 12 && e.getSize() != 14 && e.getSize() != 18 && e.getSize() != 24))
+                .withAction(e -> ToolsContext.getInstance().setFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", ToolsContext.getInstance().getSelectedFontProvider().get())))
                 .build(this);
     }
 

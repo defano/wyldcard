@@ -56,7 +56,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         // Listen for changes to the field's contents
         textPane.getStyledDocument().addDocumentListener(this);
-        ToolsContext.getInstance().getFontProvider().addObserver(this);
+        ToolsContext.getInstance().getSelectedFontProvider().addObserver(this);
     }
 
     /** {@inheritDoc} */
@@ -228,7 +228,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
 
-        ToolsContext.getInstance().getFontProvider().deleteObserver(this);
+        ToolsContext.getInstance().getSelectedFontProvider().deleteObserver(this);
         ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
@@ -247,10 +247,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ExecutionContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()));
 
         // Update global font style selection
-        ToolsContext.getInstance().getFontProvider().deleteObserver(AbstractTextField.this);
         AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
-        ToolsContext.getInstance().getFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
-        ToolsContext.getInstance().getFontProvider().addObserver(AbstractTextField.this);
+        ToolsContext.getInstance().getHilitedFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
