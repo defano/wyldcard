@@ -40,6 +40,11 @@ public class StackPropertyEditor extends HyperCardDialog {
     }
 
     @Override
+    public JButton getDefaultButton() {
+        return saveButton;
+    }
+
+    @Override
     public JComponent getWindowPanel() {
         return propertiesPanel;
     }

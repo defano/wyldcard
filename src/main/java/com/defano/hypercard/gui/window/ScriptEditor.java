@@ -114,6 +114,11 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
+    public JButton getDefaultButton() {
+        return saveButton;
+    }
+
+    @Override
     public JPanel getWindowPanel() {
         return scriptEditor;
     }

@@ -32,6 +32,11 @@ public class IconCreator extends HyperCardDialog {
     }
 
     @Override
+    public JButton getDefaultButton() {
+        return createButton;
+    }
+
+    @Override
     public JComponent getWindowPanel() {
         return windowPanel;
     }

@@ -89,6 +89,11 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     }
 
     @Override
+    public JButton getDefaultButton() {
+        return saveButton;
+    }
+
+    @Override
     public JPanel getWindowPanel() {
         return buttonEditor;
     }

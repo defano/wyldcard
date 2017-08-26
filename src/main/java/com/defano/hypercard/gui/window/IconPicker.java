@@ -43,6 +43,11 @@ public class IconPicker extends HyperCardDialog {
     }
 
     @Override
+    public JButton getDefaultButton() {
+        return okButton;
+    }
+
+    @Override
     public JComponent getWindowPanel() {
         return windowPanel;
     }
