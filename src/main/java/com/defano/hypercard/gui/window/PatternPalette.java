@@ -13,7 +13,6 @@ import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.hypercard.gui.HyperCardFrame;
 
 import javax.swing.*;
 import java.awt.*;

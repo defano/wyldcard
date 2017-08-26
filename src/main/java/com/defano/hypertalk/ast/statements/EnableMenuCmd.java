@@ -1,7 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.common.MenuSpecifier;
-import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;

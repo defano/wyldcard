@@ -171,6 +171,7 @@ public enum HyperCardIcon implements ButtonIcon {
     CARD_IDEAS,
     STACK_IDEAS,
 
+    // Misc
     BILL,
     CLICKED_CLOSE_BOX,
     CLOSE_BOX,

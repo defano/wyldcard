@@ -13,7 +13,6 @@ import com.defano.hypercard.context.*;
 import com.defano.hypercard.gui.window.FieldPropertyEditor;
 import com.defano.hypercard.gui.window.ScriptEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
-import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.editor.PartMover;
@@ -30,9 +29,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.lang.ref.WeakReference;
 
 /**

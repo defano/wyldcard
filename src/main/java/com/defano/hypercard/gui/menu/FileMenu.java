@@ -14,9 +14,6 @@ import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypercard.runtime.print.PrintCardAction;
 import com.defano.hypercard.runtime.print.PrintStackAction;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class FileMenu extends HyperCardMenu {
 
     public static FileMenu instance = new FileMenu();

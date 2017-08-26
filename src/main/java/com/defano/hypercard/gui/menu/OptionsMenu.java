@@ -14,7 +14,6 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import java.util.Objects;

@@ -3,7 +3,6 @@ package com.defano.hypercard.gui.window;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.gui.icons.ButtonIcon;
-import com.defano.jmonet.algo.Transform;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;

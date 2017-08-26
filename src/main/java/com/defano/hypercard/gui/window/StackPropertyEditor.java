@@ -1,7 +1,6 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
-import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.WindowManager;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -10,8 +9,6 @@ import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class StackPropertyEditor extends HyperCardDialog {
     private StackModel model;

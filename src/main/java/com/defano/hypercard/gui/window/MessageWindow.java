@@ -9,9 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.gui.HyperCardFrame;
-import com.defano.hypercard.gui.HyperCardWindow;
 import com.defano.hypercard.gui.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.exception.HtException;

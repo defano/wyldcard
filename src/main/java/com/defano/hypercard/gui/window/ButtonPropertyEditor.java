@@ -23,8 +23,6 @@ import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ButtonPropertyEditor extends HyperCardDialog {
     private PartModel model;

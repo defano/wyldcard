@@ -14,7 +14,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.util.DoubleClickListener;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;

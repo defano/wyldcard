@@ -3,8 +3,6 @@
  */
 package com.defano.hypercard.gui.util;
 
-import sun.awt.IconInfo;
-
 import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;

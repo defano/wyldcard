@@ -1,6 +1,5 @@
 package com.defano.hypercard.gui;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.Provider;

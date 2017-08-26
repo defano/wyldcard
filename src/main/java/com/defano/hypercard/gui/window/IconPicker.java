@@ -18,7 +18,7 @@ import java.util.List;
 
 public class IconPicker extends HyperCardDialog {
 
-    private static final int ICON_SIZE = 60;
+    private static final int BUTTON_SIZE = 60;
 
     private JButton okButton;
     private JPanel windowPanel;
@@ -40,41 +40,6 @@ public class IconPicker extends HyperCardDialog {
             model.setKnownProperty(ButtonModel.PROP_ICON, new Value());
             dispose();
         });
-    }
-
-    private List<JButton> getButtons() {
-        List<JButton> buttons = new ArrayList<>();
-
-        List<ButtonIcon> icons = IconFactory.getAllIcons();
-        ButtonIcon selectedIcon = IconFactory.findIconForValue(selectedIconValue, icons);
-
-        for (ButtonIcon thisIcon : IconFactory.getAllIcons()) {
-            JButton thisButt = new JButton();
-            thisButt.setPreferredSize(new Dimension(ICON_SIZE, ICON_SIZE));
-            thisButt.setSize(new Dimension(ICON_SIZE, ICON_SIZE));
-            thisButt.setIcon(thisIcon.getIcon());
-            thisButt.setFocusable(false);
-            thisButt.addActionListener(e -> {
-                enableButtons();
-                ((JButton) e.getSource()).setEnabled(false);
-                selectedIconValue = new Value(thisIcon.getId());
-                iconSelection.setText("Icon ID: " + thisIcon.getId() + " \"" + thisIcon.getName() + "\"");
-            });
-
-            if (thisIcon == selectedIcon) {
-                thisButt.setEnabled(false);
-            }
-
-            buttons.add(thisButt);
-        }
-
-        return buttons;
-    }
-
-    private void enableButtons() {
-        for (JButton thisButton : buttons) {
-            thisButton.setEnabled(true);
-        }
     }
 
     @Override
@@ -99,6 +64,42 @@ public class IconPicker extends HyperCardDialog {
         ((WrapLayout) iconPanel.getLayout()).setVgap(2);
 
         invalidate();
+    }
+
+    private List<JButton> getButtons() {
+        List<JButton> buttons = new ArrayList<>();
+
+        List<ButtonIcon> icons = IconFactory.getAllIcons();
+        ButtonIcon selectedIcon = IconFactory.findIconForValue(selectedIconValue, icons);
+
+        for (ButtonIcon thisIcon : IconFactory.getAllIcons()) {
+            buttons.add(getButtonForIcon(thisIcon, thisIcon == selectedIcon));
+        }
+
+        return buttons;
+    }
+
+    private JButton getButtonForIcon(ButtonIcon buttonIcon, boolean isSelected) {
+        JButton button = new JButton();
+        button.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+        button.setSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
+        button.setIcon(buttonIcon.getIcon());
+        button.setFocusable(false);
+        button.addActionListener(e -> {
+            enableButtons();
+            ((JButton) e.getSource()).setEnabled(false);
+            selectedIconValue = new Value(buttonIcon.getId());
+            iconSelection.setText("Icon ID: " + buttonIcon.getId() + " \"" + buttonIcon.getName() + "\"");
+        });
+
+        button.setEnabled(!isSelected);
+        return button;
+    }
+
+    private void enableButtons() {
+        for (JButton thisButton : buttons) {
+            thisButton.setEnabled(true);
+        }
     }
 
     {

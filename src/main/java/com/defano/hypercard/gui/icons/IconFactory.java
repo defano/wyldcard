@@ -31,13 +31,13 @@ public class IconFactory {
 
     public static ButtonIcon findIconForValue(Value value, List<ButtonIcon> icons) {
         if (value.isInteger()) {
-            return iconForId(value.integerValue(), icons);
-        } else {
-            return iconForName(value.stringValue(), icons);
+            return findIconById(value.integerValue(), icons);
         }
+
+        return findIconByName(value.stringValue(), icons);
     }
 
-    public static ButtonIcon iconForName(String name, List<ButtonIcon> icons) {
+    public static ButtonIcon findIconByName(String name, List<ButtonIcon> icons) {
         Optional<ButtonIcon> icon = icons.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name))
                 .findFirst();
@@ -45,7 +45,7 @@ public class IconFactory {
         return icon.orElse(null);
     }
 
-    public static ButtonIcon iconForId(int id, List<ButtonIcon> icons) {
+    public static ButtonIcon findIconById(int id, List<ButtonIcon> icons) {
         if (id < 1) return null;
 
         Optional<ButtonIcon> icon = icons.stream()

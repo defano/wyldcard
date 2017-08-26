@@ -12,7 +12,6 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.gui.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.jmonet.tools.brushes.BasicBrush;
 
 import javax.swing.*;
