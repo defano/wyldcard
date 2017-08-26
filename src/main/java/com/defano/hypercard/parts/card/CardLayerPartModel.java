@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -38,7 +38,7 @@ public abstract class CardLayerPartModel extends PartModel {
         int style = FontUtils.getStyleForValue(getKnownProperty(PROP_TEXTSTYLE));
         int size = getKnownProperty(PROP_TEXTSIZE).integerValue();
 
-        return HyperCardFont.byNameStyleSize(family, style, size);
+        return FontFactory.byNameStyleSize(family, style, size);
     }
 
     public void setFont(Font font) {

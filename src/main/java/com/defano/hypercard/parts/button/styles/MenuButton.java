@@ -9,7 +9,7 @@
 package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -62,15 +62,15 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
-                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(FontFactory.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
         }
     }

@@ -9,6 +9,7 @@
 package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
@@ -236,21 +237,21 @@ public class ToolsContext {
         String currentFamily = selectedFontProvider.get().getFamily();
         int currentStyle = selectedFontProvider.get().getStyle();
 
-        selectedFontProvider.set(new Font(currentFamily, currentStyle, size));
+        selectedFontProvider.set(FontFactory.byNameStyleSize(currentFamily, currentStyle, size));
     }
 
     public void setFontStyle(int style) {
         String currentFamily = selectedFontProvider.get().getFamily();
         int currentSize = selectedFontProvider.get().getSize();
 
-        selectedFontProvider.set(new Font(currentFamily, style, currentSize));
+        selectedFontProvider.set(FontFactory.byNameStyleSize(currentFamily, style, currentSize));
     }
 
     public void setFontFamily(String fontName) {
         int currentSize = selectedFontProvider.get().getSize();
         int currentStyle = selectedFontProvider.get().getStyle();
 
-        selectedFontProvider.set(new Font(fontName, currentStyle, currentSize));
+        selectedFontProvider.set(FontFactory.byNameStyleSize(fontName, currentStyle, currentSize));
     }
 
     public Provider<Font> getSelectedFontProvider() {

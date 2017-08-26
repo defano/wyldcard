@@ -9,7 +9,7 @@
 package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.gui.icons.ButtonIcon;
 import com.defano.hypercard.gui.icons.IconFactory;
 import com.defano.hypercard.gui.util.AlphaImageIcon;
@@ -75,15 +75,15 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
-                label.setFont(HyperCardFont.byNameStyleSize(label.getFont().getFamily(), label.getFont().getStyle(), newValue.integerValue()));
+                label.setFont(FontFactory.byNameStyleSize(label.getFont().getFamily(), label.getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), label.getFont().getStyle(), label.getFont().getSize()));
+                label.setFont(FontFactory.byNameStyleSize(newValue.stringValue(), label.getFont().getStyle(), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                label.setFont(HyperCardFont.byNameStyleSize(label.getFont().getFamily(), FontUtils.getStyleForValue(newValue), label.getFont().getSize()));
+                label.setFont(FontFactory.byNameStyleSize(label.getFont().getFamily(), FontUtils.getStyleForValue(newValue), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
