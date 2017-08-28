@@ -9,7 +9,10 @@
 package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.fonts.FontFactory;
+import com.defano.hypercard.gui.icons.ButtonIcon;
+import com.defano.hypercard.gui.icons.IconFactory;
+import com.defano.hypercard.gui.util.AlphaImageIcon;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -41,6 +44,9 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (label.getIcon() != null && label.getIcon() instanceof AlphaImageIcon) {
+            ((AlphaImageIcon) label.getIcon()).setAlpha(isHilited ? 0.5f : 1.0f);
+        }
         paintHilite(isHilited, (Graphics2D) g);
         label.paintComponents(g);
     }
@@ -69,19 +75,24 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
-                label.setFont(HyperCardFont.byNameStyleSize(label.getFont().getFamily(), label.getFont().getStyle(), newValue.integerValue()));
+                label.setFont(FontFactory.byNameStyleSize(label.getFont().getFamily(), label.getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                label.setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), label.getFont().getStyle(), label.getFont().getSize()));
+                label.setFont(FontFactory.byNameStyleSize(newValue.stringValue(), label.getFont().getStyle(), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                label.setFont(HyperCardFont.byNameStyleSize(label.getFont().getFamily(), FontUtils.getStyleForValue(newValue), label.getFont().getSize()));
+                label.setFont(FontFactory.byNameStyleSize(label.getFont().getFamily(), FontUtils.getStyleForValue(newValue), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
                 label.setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
+                break;
+
+            case ButtonModel.PROP_ICON:
+                ButtonIcon icon = IconFactory.findIconForValue(newValue);
+                label.setIcon(icon == null ? null : icon.getImage());
                 break;
         }
 

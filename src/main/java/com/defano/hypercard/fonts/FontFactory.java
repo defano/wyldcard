@@ -10,7 +10,7 @@ package com.defano.hypercard.fonts;
 
 import java.awt.*;
 
-public class HyperCardFont {
+public class FontFactory {
 
     public static Font byNameStyleSize(String name, int style, int size) {
         if (LocalFont.isLocalFont(name)) {

@@ -8,15 +8,19 @@
 
 package com.defano.hypercard.parts.stack;
 
+import com.defano.hypercard.gui.icons.ButtonIcon;
+import com.defano.hypercard.gui.icons.UserIcon;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.serializer.Serializer;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 
@@ -30,12 +34,14 @@ public class StackModel extends PartModel {
     private Stack<Integer> backStack = new Stack<>();
     private final List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
+    private final Map<String, byte[]> userIcons;
 
     private StackModel(String stackName, Dimension dimension) {
         super(PartType.STACK, Owner.HYPERCARD);
 
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
+        this.userIcons = new HashMap<>();
         this.backStack = new Stack<>();
 
         defineProperty(PROP_ID, new Value(0), true);
@@ -164,6 +170,19 @@ public class StackModel extends PartModel {
                 .stream()
                 .filter(c -> c.getBackgroundId() == backgroundId)
                 .count();
+    }
+
+    public void createIcon(String name, BufferedImage image) {
+        userIcons.put(name, Serializer.serializeImage(image));
+    }
+
+    public List<ButtonIcon> getUserIcons() {
+        ArrayList<ButtonIcon> icons = new ArrayList<>();
+        for (String thisIconName : userIcons.keySet()) {
+            icons.add(new UserIcon(thisIconName, userIcons.get(thisIconName)));
+        }
+
+        return icons;
     }
 }
 

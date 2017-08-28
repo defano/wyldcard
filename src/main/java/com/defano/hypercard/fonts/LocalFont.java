@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum LocalFont {
-    CHICAGO("/fonts/Chicago.ttf", "chicagoflf", "chicago");
+    CHICAGO("/fonts/pixChicago.ttf", "pix chicago", "chicago");
 
     public final String resource;
     public final List<String> familyNames;

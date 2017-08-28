@@ -11,6 +11,8 @@ package com.defano.hypercard.parts.button.styles;
 import com.defano.hypercard.gui.border.RoundRectBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypertalk.ast.common.Value;
 
 import java.awt.*;
 
@@ -24,6 +26,9 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
         setOpaque(true);
         setBackground(Color.WHITE);
         setBorder(new RoundRectBorder(OUTLINE_SROKE, ARC_SIZE));
+
+        toolEditablePart.getPart().getPartModel().setKnownProperty(ButtonModel.PROP_TEXTFONT, new Value("Chicago"));
+        toolEditablePart.getPart().getPartModel().setKnownProperty(ButtonModel.PROP_TEXTSIZE, new Value("9"));
     }
 
     @Override

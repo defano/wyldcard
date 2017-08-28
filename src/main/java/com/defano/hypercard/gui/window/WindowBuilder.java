@@ -134,6 +134,10 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.setAllowResizing(resizable);
         }
 
+        if (window.getDefaultButton() != null) {
+            SwingUtilities.getRootPane(window.getDefaultButton()).setDefaultButton(window.getDefaultButton());
+        }
+
         window.getWindow().setVisible(initiallyVisible);
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,

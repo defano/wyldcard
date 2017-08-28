@@ -17,7 +17,6 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.l2fprod.common.swing.JFontChooser;
@@ -74,6 +73,11 @@ public class FieldPropertyEditor extends HyperCardDialog {
         }
         style.setModel(model);
 
+    }
+
+    @Override
+    public JButton getDefaultButton() {
+        return saveButton;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.defano.hypercard.gui;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypercard.runtime.WindowManager;
 import com.defano.jmonet.model.Provider;
@@ -39,8 +38,17 @@ public interface HyperCardWindow<WindowType extends Window> {
 
     boolean ownsMenubar();
     void setOwnsMenubar(boolean ownsMenubar);
-
     Provider<Boolean> getWindowVisibleProvider();
+
+    /**
+     * Specifies the default button in this window (i.e., the button that will be hilited and which activates when the
+     * return/enter key is pressed. Override in window subclasses to specify a default button.
+     *
+     * @return The default button on this window, or null if no button is a default.
+     */
+    default JButton getDefaultButton() {
+        return null;
+    }
 
     default void setContentPane(Container contentPane) {
         if (getWindow() instanceof JDialog) {

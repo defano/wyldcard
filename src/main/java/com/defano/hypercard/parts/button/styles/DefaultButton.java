@@ -9,7 +9,9 @@
 package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.HyperCardFont;
+import com.defano.hypercard.fonts.FontFactory;
+import com.defano.hypercard.gui.icons.ButtonIcon;
+import com.defano.hypercard.gui.icons.IconFactory;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -49,19 +51,24 @@ public class DefaultButton extends JButton implements ButtonComponent {
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
-                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
+                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), getFont().getStyle(), newValue.integerValue()));
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(HyperCardFont.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(FontFactory.byNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(HyperCardFont.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
                 setHorizontalAlignment(FontUtils.getAlignmentForValue(newValue));
+                break;
+
+            case ButtonModel.PROP_ICON:
+                ButtonIcon icon = IconFactory.findIconForValue(newValue);
+                setIcon(icon == null ? null : icon.getImage());
                 break;
         }
     }
