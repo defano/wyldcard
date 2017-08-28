@@ -137,12 +137,12 @@ public class SoundPlayer {
     private static AudioInputStream getAudioForNote(SoundSample soundSample, MusicalNote note, int tempoBpm) throws IOException, UnsupportedAudioFileException {
         if (note.getFrequency() == MusicalPitch.REST) {
             AudioInputStream stream = getAudioForSample(SoundSample.SILENCE);
-            return transformStreamDuration(SoundSample.SILENCE, stream, note.getDuration(), tempoBpm);
+            return transformAudioDuration(SoundSample.SILENCE, stream, note.getDuration(), tempoBpm);
         }
         else {
             AudioInputStream stream = getAudioForSample(soundSample);
-            stream = transformStreamFrequency(stream, soundSample.getDominantFrequency(), note.getFrequency());
-            return transformStreamDuration(soundSample, stream, note.getDuration(), tempoBpm);
+            stream = transformAudioFrequency(stream, soundSample.getDominantFrequency(), note.getFrequency());
+            return transformAudioDuration(soundSample, stream, note.getDuration(), tempoBpm);
         }
     }
 
@@ -154,7 +154,7 @@ public class SoundPlayer {
      * @param to The desired pitch of the sound
      * @return A new AudioInputStream representing the sound of the input stream adjusted for pitch
      */
-    private static AudioInputStream transformStreamFrequency(AudioInputStream stream, MusicalPitch from, MusicalPitch to) {
+    private static AudioInputStream transformAudioFrequency(AudioInputStream stream, MusicalPitch from, MusicalPitch to) {
         if (from == to) {
             return stream;
         }
@@ -188,20 +188,27 @@ public class SoundPlayer {
      * @return A new AudioInputStream transformed for duration
      * @throws IOException Thrown if an error occurs reading the sound sample.
      */
-    private static AudioInputStream transformStreamDuration(SoundSample soundSample, AudioInputStream stream, MusicalDuration duration, int tempoBpm) throws IOException {
+    private static AudioInputStream transformAudioDuration(SoundSample soundSample, AudioInputStream stream, MusicalDuration duration, int tempoBpm) throws IOException {
         double durationMs = duration.getDurationMs(tempoBpm);
-        double framesPerMs = stream.getFormat().getFrameRate() / 1000.0;
-        double framesForDuration = framesPerMs * durationMs;
+        double samplesPerMs = stream.getFormat().getSampleRate() / 1000.0;
+        double framesForDuration = samplesPerMs * durationMs;
 
+        // Sample is longer than desired duration; truncate
         if (framesForDuration < stream.getFrameLength()) {
             return new AudioInputStream(stream, stream.getFormat(), Math.round(framesForDuration));
-        } else if (framesForDuration > stream.getFrameLength()) {
+        }
+
+        // Sample is shorter than desired duration; stretch or silence-append
+        else if (framesForDuration > stream.getFrameLength()) {
             if (soundSample.isStretchable()) {
                 return stretchAudio(soundSample, stream, (int) framesForDuration);
             } else {
                 return appendSilenceToAudio(stream, (int) framesForDuration);
             }
-        } else {
+        }
+
+        // What are the odds?! Sample is perfectly sized
+        else {
             return stream;
         }
     }
@@ -221,10 +228,10 @@ public class SoundPlayer {
         byte[] sample = new byte[(int) (stream.getFrameLength() * stream.getFormat().getFrameSize())];
         stream.read(sample, 0, (int) (stream.getFrameLength() * stream.getFormat().getFrameSize()));
 
-        for (int index = 0; index < sample.length; index++) {
-            stretched[index] = sample[index];
-        }
+        // Write sample to buffer
+        System.arraycopy(sample, 0, stretched, 0, sample.length);
 
+        // Pad remaining frames with silencio
         for (int index = sample.length; index < desiredFrames; index++) {
             stretched[index] = 0;
         }
@@ -243,33 +250,41 @@ public class SoundPlayer {
      * @throws IOException Thrown if an error occurs reading the sound sample.
      */
     private static AudioInputStream stretchAudio(SoundSample soundSample, AudioInputStream stream, int desiredFrames) throws IOException {
+        int frameSize = stream.getFormat().getFrameSize();              // Bytes per frame
+        int stretchedIdx = 0;
 
         // Create buffer for stretched soundSample
-        byte[] stretched = new byte[stream.getFormat().getFrameSize() * desiredFrames];
+        byte[] stretched = new byte[frameSize * desiredFrames];
 
         // Read soundSample sample into memory
-        byte[] sample = new byte[(int) (stream.getFrameLength() * stream.getFormat().getFrameSize())];
-        stream.read(sample, 0, (int) (stream.getFrameLength() * stream.getFormat().getFrameSize()));
+        byte[] sample = new byte[(int) (stream.getFrameLength() * frameSize)];
+        int sampleLength = stream.read(sample, 0, (int) (stream.getFrameLength() * frameSize));
 
-        int introLength = soundSample.getLoopStart();
-        int outroLength = sample.length - soundSample.getLoopEnd();
+        int introIndex = soundSample.getLoopStart() * frameSize;        // Index in sample where loop starts
+        int outroIndex = soundSample.getLoopEnd() * frameSize;          // Index in sample where loop ends, inclusive
+        int outroLength = sampleLength - outroIndex;                    // Length of release
+        int loopLength = (soundSample.getLoopEnd() - soundSample.getLoopStart()) * frameSize;
 
         // Append intro section (attack) to output buffer
-        int stretchedIdx = 0;
-        for (int sampleIdx = 0; sampleIdx < introLength; sampleIdx++) {
+        for (int sampleIdx = 0; sampleIdx < introIndex; sampleIdx++) {
             stretched[stretchedIdx++] = sample[sampleIdx];
         }
 
         // Loop sample to output
-        do {
-            for (int sampleIdx = introLength; sampleIdx <= soundSample.getLoopEnd() && stretchedIdx < stretched.length - outroLength; sampleIdx++) {
+        while (stretchedIdx < stretched.length - (outroLength + loopLength)) {
+            for (int sampleIdx = introIndex; sampleIdx < outroIndex + frameSize && stretchedIdx < stretched.length - outroLength; sampleIdx++) {
                 stretched[stretchedIdx++] = sample[sampleIdx];
             }
-        } while (stretchedIdx < stretched.length - outroLength);
+        }
 
         // Append outro section (release) to output
-        for (int sampleIdx = soundSample.getLoopEnd() + 1; sampleIdx < sample.length && stretchedIdx < stretched.length; sampleIdx++) {
+        for (int sampleIdx = outroIndex + frameSize; sampleIdx < sampleLength; sampleIdx++) {
             stretched[stretchedIdx++] = sample[sampleIdx];
+        }
+
+        // Pad remainder with silence
+        while (stretchedIdx < stretched.length) {
+            stretched[stretchedIdx++] = 0;
         }
 
         return new AudioInputStream(new ByteArrayInputStream(stretched), stream.getFormat(), desiredFrames);

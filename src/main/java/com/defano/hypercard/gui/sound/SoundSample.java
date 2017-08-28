@@ -6,7 +6,7 @@ public enum SoundSample {
 
     HARPSICHORD("harpsichord", MusicalPitch.G4),
     BOING("boing", MusicalPitch.D4),
-    FLUTE("flute", MusicalPitch.A3, 658, 1316),
+    FLUTE("flute", MusicalPitch.A3, 653, 1367),
     SILENCE("silence", MusicalPitch.REST),
     DIAL_0("dial0", MusicalPitch.C4),
     DIAL_1("dial1", MusicalPitch.C4),
