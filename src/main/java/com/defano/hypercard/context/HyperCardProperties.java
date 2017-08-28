@@ -9,6 +9,7 @@
 package com.defano.hypercard.context;
 
 import com.defano.hypercard.gui.fx.CurtainManager;
+import com.defano.hypercard.gui.sound.SoundPlayer;
 import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.WindowManager;
@@ -26,6 +27,7 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_CLICKLOC = "clickloc";
     public final static String PROP_CLICKH = "clickh";
     public final static String PROP_CLICKV = "clickv";
+    public final static String PROP_SOUND = "sound";
 
     public HyperCardProperties() {
         super();
@@ -40,6 +42,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_CLICKLOC, new Value("0, 0"), true);
         defineProperty(PROP_CLICKH, new Value("0"), true);
         defineProperty(PROP_CLICKV, new Value("0"), true);
+        defineProperty(PROP_SOUND, new Value("done"), true);
 
         defineComputedGetterProperty(PROP_MOUSEH, (model, propertyName) -> new Value(MouseManager.getMouseLoc().x));
         defineComputedGetterProperty(PROP_MOUSEV, (model, propertyName) -> new Value(MouseManager.getMouseLoc().y));
@@ -47,6 +50,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedGetterProperty(PROP_CLICKLOC, (model, propertyName) -> new Value(MouseManager.getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (model, propertyName) -> new Value(MouseManager.getClickLoc().x));
         defineComputedGetterProperty(PROP_CLICKV, (model, propertyName) -> new Value(MouseManager.getClickLoc().y));
+        defineComputedGetterProperty(PROP_SOUND, (model, propertyName) -> new Value(SoundPlayer.getSound()));
 
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {

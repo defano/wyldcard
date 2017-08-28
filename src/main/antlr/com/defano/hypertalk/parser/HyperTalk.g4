@@ -92,6 +92,14 @@ commandStmnt        : answerCmd                                                 
                     | 'delete' menu                                                                                     # deleteMenuCmdStmt
                     | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
                     | 'delete' part                                                                                     # deleteCmdStmt
+                    | 'play' expression music                                                                           # playCmdStmt
+                    | 'dial' expression                                                                                 # dialCmdStmt
+                    ;
+
+music               : expression                                                                                        # musicNotes
+                    | 'tempo' factor expression                                                                         # musicNotesTempo
+                    | 'tempo' factor                                                                                    # musicTempo
+                    |                                                                                                   # musicDefault
                     ;
 
 enableCmd           : 'enable' part                                                                                     # enablePartCmd
