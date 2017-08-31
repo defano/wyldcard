@@ -44,7 +44,7 @@ dependencies {
 	compile 'com.intellij:javac2:7.0.3'
 	compile 'com.google.code.gson:gson:2.8.1'
 	compile 'com.google.guava:guava:19.0'
-	compile ('com.defano.jmonet:jmonet:0.0.7') {changing = true}
+	compile ('com.defano.jmonet:jmonet:0.0.8') {changing = true}
 	compile ('com.defano.jsegue:jsegue:0.0.1') {changing = true}
 	compile 'org.bitbucket.cowwoc.diff-match-patch:diff-match-patch:1.0'
 	compile 'com.l2fprod.common:l2fprod-common-fontchooser:6.9.1'

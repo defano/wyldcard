@@ -13,6 +13,7 @@ import com.defano.hypercard.context.ToolsContext;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
+import javax.swing.*;
 import java.util.Objects;
 
 public class PaintMenu extends HyperCardMenu {
@@ -123,6 +124,62 @@ public class PaintMenu extends HyperCardMenu {
                 .named("Revert")
                 .disabled()
                 .build(this);
+
+        this.addSeparator();
+
+        JMenuItem reduceColorMenu = MenuItemBuilder.ofHeirarchicalType()
+                .named("Reduce Color")
+                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .build(this);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("Black & White")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(0))
+                        .build(reduceColorMenu);
+
+                reduceColorMenu.add(new JSeparator());
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("8 Grays")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(8))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("32 Grays")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(32))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("64 Grays")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(64))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("256 Grays")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(256))
+                        .build(reduceColorMenu);
+
+                reduceColorMenu.add(new JSeparator());
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("8 Colors")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(8))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("32 Colors")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(32))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("64 Colors")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(64))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("256 Colors")
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(256))
+                        .build(reduceColorMenu);
     }
 
     public void reset() {
