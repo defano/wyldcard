@@ -234,22 +234,22 @@ public class ToolsContext {
     }
 
     public void setFontSize(int size) {
-        String currentFamily = selectedFontProvider.get().getFamily();
-        int currentStyle = selectedFontProvider.get().getStyle();
+        String currentFamily = hilitedFontProvider.get().getFamily();
+        int currentStyle = hilitedFontProvider.get().getStyle();
 
         selectedFontProvider.set(FontFactory.byNameStyleSize(currentFamily, currentStyle, size));
     }
 
     public void setFontStyle(int style) {
-        String currentFamily = selectedFontProvider.get().getFamily();
-        int currentSize = selectedFontProvider.get().getSize();
+        String currentFamily = hilitedFontProvider.get().getFamily();
+        int currentSize = hilitedFontProvider.get().getSize();
 
         selectedFontProvider.set(FontFactory.byNameStyleSize(currentFamily, style, currentSize));
     }
 
     public void setFontFamily(String fontName) {
-        int currentSize = selectedFontProvider.get().getSize();
-        int currentStyle = selectedFontProvider.get().getStyle();
+        int currentSize = hilitedFontProvider.get().getSize();
+        int currentStyle = hilitedFontProvider.get().getStyle();
 
         selectedFontProvider.set(FontFactory.byNameStyleSize(fontName, currentStyle, currentSize));
     }

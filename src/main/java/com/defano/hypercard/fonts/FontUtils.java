@@ -11,9 +11,23 @@ package com.defano.hypercard.fonts;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 
 public class FontUtils {
+
+    public static int getAlignmentStyleForValue(Value v) {
+        switch (v.stringValue().trim().toLowerCase()) {
+            case "left":
+                return StyleConstants.ALIGN_LEFT;
+            case "right":
+                return StyleConstants.ALIGN_RIGHT;
+
+            default:
+            case "center":
+                return StyleConstants.ALIGN_CENTER;
+        }
+    }
 
     public static int getAlignmentForValue(Value v) {
         switch (v.stringValue().trim().toLowerCase()) {

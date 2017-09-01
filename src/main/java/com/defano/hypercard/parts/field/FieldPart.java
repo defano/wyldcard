@@ -46,13 +46,11 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     private final Owner owner;
     private FieldModel partModel;
     private final WeakReference<CardPart> parent;
-    private final PartMover mover;
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
 
         this.owner = owner;
-        this.mover = new PartMover(this, parent);
         this.parent = new WeakReference<>(parent);
     }
 

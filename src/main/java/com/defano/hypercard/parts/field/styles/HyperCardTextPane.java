@@ -2,24 +2,36 @@ package com.defano.hypercard.parts.field.styles;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.View;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
- * An extension to {@link JTextPane} that adds the ability to disable auto-wrapping of text and to draw dotted lines
- * underneath each line of text.
+ * An extension to {@link JTextPane} that adds the ability to disable auto-wrapping of text, to draw dotted lines
+ * underneath each line of text, and to position the cursor beyond the bounds of the field contents.
  */
-public class HyperCardJTextPane extends JTextPane {
+public class HyperCardTextPane extends JTextPane {
 
     private boolean wrapText = true;
     private boolean showLines = false;
 
-    HyperCardJTextPane(StyledDocument doc) {
+    HyperCardTextPane(StyledDocument doc) {
         super(doc);
+
+        super.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                expandContentsToClickLoc(e.getPoint());
+            }
+        });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean getScrollableTracksViewportWidth() {
         Component parent = getParent();
@@ -53,7 +65,9 @@ public class HyperCardJTextPane extends JTextPane {
         this.repaint();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -114,8 +128,7 @@ public class HyperCardJTextPane extends JTextPane {
      *
      * @return The number of lines of text in the field; some lines may be wrapped.
      */
-    private int getWrappedLineCount()
-    {
+    private int getWrappedLineCount() {
         int lines = 0;
         View document = getUI().getRootView(this).getView(0);
 
@@ -127,6 +140,52 @@ public class HyperCardJTextPane extends JTextPane {
         }
 
         return lines;
+    }
+
+    /**
+     * Expands the contents of the field (with newlines) if/as needed to reach the line represented by the clickLoc.
+     * This lets a user click within an empty field and move the cursor to an arbitrary line, even the contents of
+     * the field don't reach the line they clicked.
+     *
+     * @param clickLoc The location of the mouse click.
+     */
+    private void expandContentsToClickLoc(Point clickLoc) {
+        int clickLine = getClickedLine(clickLoc);
+
+        // Did we click beyond the length of the field contents
+        if (getWrappedLineCount() < clickLine) {
+            int needsLines = clickLine - getWrappedLineCount();
+
+            // Expand field contents to reach click line
+            for (int index = 0; index < needsLines; index++) {
+                try {
+                    getStyledDocument().insertString(getStyledDocument().getLength(), "\n", getCharacterAttributes());
+                } catch (BadLocationException e) {
+                    throw new IllegalStateException("Bug! Shouldn't be possible.", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Determines the line number (counting from 1) where the given point is located.
+     *
+     * @param clickLoc A point within the bounds of this component
+     * @return The line number where the give point is located
+     */
+    private int getClickedLine(Point clickLoc) {
+        float cumulativeLineHeight = 0;
+        float thisLineHeight = 0;
+
+        for (int line = 0; ; line++) {
+            thisLineHeight = getLineHeight(line) == 0 ? thisLineHeight : getLineHeight(line);
+
+            if (clickLoc.y >= cumulativeLineHeight && clickLoc.y < cumulativeLineHeight + thisLineHeight) {
+                return line + 1;
+            }
+
+            cumulativeLineHeight += thisLineHeight;
+        }
     }
 
 }

@@ -11,6 +11,7 @@ package com.defano.hypercard.parts.field.styles;
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
@@ -40,7 +41,7 @@ import java.util.Observer;
  */
 public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, Observer, CaretListener {
 
-    private final HyperCardJTextPane textPane;
+    private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
 
     private final ToolEditablePart toolEditablePart;
@@ -50,7 +51,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         this.toolEditablePart = toolEditablePart;
 
         // Create the editor component
-        textPane = new HyperCardJTextPane(new DefaultStyledDocument());
+        textPane = new HyperCardTextPane(new DefaultStyledDocument());
         textPane.setEditorKit(new RTFEditorKit());
         this.setViewportView(textPane);
 
@@ -110,6 +111,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
                 case FieldModel.PROP_SHOWLINES:
                     textPane.setShowLines(newValue.booleanValue());
+                    break;
+
+                case FieldModel.PROP_TEXTALIGN:
+                    setActiveTextAlign(newValue);
                     break;
 
                 case FieldModel.PROP_TEXTSIZE:
@@ -296,14 +301,24 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
     }
 
-    private void setActiveFont(Font font) {
-        currentStyle = new SimpleAttributeSet();
-        currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
-        currentStyle.addAttribute(StyleConstants.Size, font.getSize());
-        currentStyle.addAttribute(StyleConstants.Bold, font.isBold());
-        currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
+    private void setActiveTextAlign(Value v) {
+        SimpleAttributeSet alignment = new SimpleAttributeSet();
+        StyleConstants.setAlignment(alignment, FontUtils.getAlignmentStyleForValue(v));
+        textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
+    }
 
-        textPane.setCharacterAttributes(currentStyle, true);
+    private void setActiveFont(Font font) {
+        if (getText().length() == 0) {
+            textPane.setFont(font);
+        } else {
+            currentStyle = new SimpleAttributeSet();
+            currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
+            currentStyle.addAttribute(StyleConstants.Size, font.getSize());
+            currentStyle.addAttribute(StyleConstants.Bold, font.isBold());
+            currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
+
+            textPane.setCharacterAttributes(currentStyle, true);
+        }
     }
 
     private class ToolModeObserver implements Observer {

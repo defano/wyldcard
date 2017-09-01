@@ -53,7 +53,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     private static final int DEFAULT_HEIGHT = 40;
 
     private final Owner owner;
-    private final PartMover mover;
     private ButtonModel partModel;
     private final WeakReference<CardPart> parent;
 
@@ -62,7 +61,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         this.owner = owner;
         this.parent = new WeakReference<>(parent);
-        this.mover = new PartMover(this, parent);
     }
 
     /**
