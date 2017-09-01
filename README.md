@@ -26,7 +26,6 @@ This is neither a HyperCard replacement nor an open-sourced release of Apple's s
 
 * Can't open or import HyperCard stacks.
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No icons (coming soon).
 * No support for external commands or functions (XCMDs/XFCNs).
 * Not all commands, functions or properties of HyperTalk have been implemented.
 
@@ -685,13 +684,14 @@ go to card 3 with visual effect iris open to black very fast
 
 ### Sound Effects and Music
 
-HyperTalk Java has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes with the `play` command. Additionally, Touch-Tone phone sounds (dual-tone multi-frequency) can be produced with the `dial` command.
+HyperTalk Java has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes with the `play` command. Additionally, Touch-Tone phone sounds can be produced with the `dial` command, and the system alert sound can be emitted with `beep`.
 
 ```
 play harpsichord
 play boing
 play flute
 dial "1-800-588-2300"
+beep
 ```
 
 To produce music, use the syntax `play <sound> [tempo <speed>] <musical-expression>` where:
@@ -707,12 +707,20 @@ Each musical note is written in the format `<name>[<octave>][<accidental>][<dura
 * `<accidental>` is a half-note increase or decrease in pitch; of one `b` (flat, decreased pitch) or `#` (sharp, increased pitch).
 * `<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (once whose duration is played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).
 
-Be aware that when not explicitly specified, each note "inherits" its duration and octave from the previous note played. The first note in the musical sequence is assumed to be a 4th-octave quarter note (if not explicitly noted). For example, in the musical sequence `"ce5 d"`, the second note (`d`) is played as an eighth note in the 5th octave.
+When not explicitly specified, each note "inherits" its duration and octave from the previous note played. The first note in the musical sequence is assumed to be a 4th-octave quarter note (if not explicitly noted). For example, in the musical sequence `"g ce5 d"`, the first note (`g`) is played as a quarter note in the 4th octave, but the third note (`d`) is played as an eighth note in the 5th octave.
 
 For example, to play "Mary Had a Little Lamb" on the harpsichord,
 
 ```
 play harpsichord "be a g a b b b r a a a r b d5 d r b4 a g a b b b b a a b a g"
+```
+
+Use `the sound` function to determine the currently playing sound (returns `done` when no sound is playing). This may also be used to wait until a sequence of nots has completed:
+
+```
+play flute "c d e f g"
+wait until the sound is done
+put "Finally, peace and quiet!"
 ```
 
 ## Commands
@@ -724,6 +732,7 @@ Command	         | Description
 `add`            | Adds a value to a container; for example `add 3 to x` or `add card field id 0 to card field id 1`
 `answer`         | Produces a dialog box with a message and up to three user-defined buttons. Follows the syntax `answer <message> [with <button1> [or <button2>] [or <button3>]]]`. Upon completion, it contains the text of the button selected by the user, or the empty string if answer is used without an optional button specifier.
 `ask`            | Similar to answer, but produces a dialog box with a message and a user-editable response string. Follows the syntax `ask <message> [with <answer>]`. Upon completion, it contains the value of the user-editable text field, or the empty string if the user cancelled the dialog.
+`beep`           | Causes the system to emit an alert/beep sound. Has no effect if the system has no alert sound.
 `choose`         | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
 `click`          | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
 `create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.

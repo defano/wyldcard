@@ -94,6 +94,7 @@ commandStmnt        : answerCmd                                                 
                     | 'delete' part                                                                                     # deleteCmdStmt
                     | 'play' expression music                                                                           # playCmdStmt
                     | 'dial' expression                                                                                 # dialCmdStmt
+                    | 'beep'                                                                                            # beepCmdStmt
                     ;
 
 music               : expression                                                                                        # musicNotes

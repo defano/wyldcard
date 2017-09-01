@@ -687,6 +687,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBeepCmdStmt(HyperTalkParser.BeepCmdStmtContext ctx) {
+        return new BeepCmd();
+    }
+
+    @Override
     public Object visitMusicNotes(HyperTalkParser.MusicNotesContext ctx) {
         return MusicSpecifier.forNotes((Expression) visit(ctx.expression()));
     }
