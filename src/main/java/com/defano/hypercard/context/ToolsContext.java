@@ -15,6 +15,7 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
+import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
@@ -145,6 +146,11 @@ public class ToolsContext {
 
         paintToolProvider.set(selectedTool);
         return selectedTool;
+    }
+
+    public void selectAll() {
+        SelectionTool tool = (SelectionTool) selectPaintTool(PaintToolType.SELECTION, false);
+        tool.createSelection(new Rectangle(0, 0, HyperCard.getInstance().getCard().getWidth() - 1, HyperCard.getInstance().getCard().getHeight() - 1));
     }
 
     public void setForegroundColor(Color color) {

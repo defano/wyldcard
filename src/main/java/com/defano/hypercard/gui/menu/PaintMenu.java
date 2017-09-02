@@ -35,7 +35,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Select All")
                 .withShortcut('A')
-                .disabled()
+                .withAction(a -> ToolsContext.getInstance().selectAll())
                 .build(this);
 
         this.addSeparator();

@@ -10,7 +10,7 @@ package com.defano.hypercard.gui.util;
 
 import java.awt.event.*;
 
-public interface DoubleClickListener extends MouseListenable {
+public interface DoubleClickListenable extends MouseListenable {
 
     void onDoubleClick(MouseEvent e);
 

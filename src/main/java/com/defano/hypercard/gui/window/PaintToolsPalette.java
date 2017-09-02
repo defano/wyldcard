@@ -14,7 +14,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.util.DoubleClickListener;
+import com.defano.hypercard.gui.util.DoubleClickListenable;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.hypercard.runtime.WindowManager;
@@ -73,16 +73,17 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
 
         // Double-click actions
-        eraser.addMouseListener((DoubleClickListener) e -> HyperCard.getInstance().getCard().getCanvas().clearCanvas());
-        shape.addMouseListener((DoubleClickListener) e -> WindowManager.getShapesPalette().setVisible(true));
-        line.addMouseListener((DoubleClickListener) e -> WindowManager.getLinesPalette().setVisible(true));
-        paintbrush.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setVisible(true));
-        spraypaint.addMouseListener((DoubleClickListener) e -> WindowManager.getBrushesPalette().setVisible(true));
-        rectangle.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
-        roundRectangle.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
-        oval.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
-        curve.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
-        polygon.addMouseListener((DoubleClickListener) e -> ToolsContext.getInstance().toggleShapesFilled());
+        eraser.addMouseListener((DoubleClickListenable) e -> HyperCard.getInstance().getCard().getCanvas().clearCanvas());
+        shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getShapesPalette().setVisible(true));
+        line.addMouseListener((DoubleClickListenable) e -> WindowManager.getLinesPalette().setVisible(true));
+        paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getBrushesPalette().setVisible(true));
+        spraypaint.addMouseListener((DoubleClickListenable) e -> WindowManager.getBrushesPalette().setVisible(true));
+        rectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
+        roundRectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
+        oval.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
+        curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
+        polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
+        selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
 
         ToolsContext.getInstance().getShapesFilledProvider().addObserverAndUpdate((o, filled) -> {
             boolean isFilled = (Boolean) filled;
