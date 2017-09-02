@@ -9,8 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.ImageObserver;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 /**
  * An Icon  wrapper that paints the contained icon with a specified transparency.
@@ -24,7 +23,6 @@ import javax.swing.ImageIcon;
 public class AlphaImageIcon extends ImageIcon {
 
     private Icon icon;
-    private Image image;
     private float alpha;
 
     /**
@@ -138,15 +136,17 @@ public class AlphaImageIcon extends ImageIcon {
      */
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
-        if (icon instanceof ImageIcon) {
-            image = ((ImageIcon) icon).getImage();
+
+        if (alpha < .99) {
+            // Weird: Alpha drawing doesn't work when invoked as a result of print() on an ancestor component
+
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setComposite(AlphaComposite.SrcAtop.derive(alpha));
+            icon.paintIcon(c, g2, x, y);
+            g2.dispose();
         } else {
-            image = null;
+            icon.paintIcon(c, g, x, y);
         }
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setComposite(AlphaComposite.SrcAtop.derive(alpha));
-        icon.paintIcon(c, g2, x, y);
-        g2.dispose();
     }
 
     /**
