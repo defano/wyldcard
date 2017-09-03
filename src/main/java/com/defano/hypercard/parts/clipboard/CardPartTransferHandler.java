@@ -3,10 +3,13 @@ package com.defano.hypercard.parts.clipboard;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
 import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.parts.*;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
@@ -47,6 +50,9 @@ public class CardPartTransferHandler extends TransferHandler {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
             CardLayer layer = CardLayerPart.getActivePartLayer();
             ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importPart(part, layer);
+
+            // Position pasted part over the mouse cursor
+            importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getMouseLoc()));
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

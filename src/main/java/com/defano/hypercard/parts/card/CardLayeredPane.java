@@ -8,27 +8,17 @@ import java.awt.*;
 
 public abstract class CardLayeredPane extends JLayeredPane {
 
-    private boolean foregroundVisible = true;
     private JMonetCanvas foregroundCanvas;
     private JMonetCanvas backgroundCanvas;
     private MouseEventDispatcher mouseEventDispatcher;
 
-    public void setForegroundVisible(boolean isVisible) {
-        foregroundVisible = isVisible;
-
-        if (foregroundCanvas != null) {
-            foregroundCanvas.setVisible(isVisible);
-        }
-
-        for (Component thisComponent : getComponentsInCardLayer(CardLayer.CARD_PARTS)) {
-            thisComponent.setVisible(isVisible);
-        }
-    }
-
-    public boolean isForegroundVisible() {
-        return foregroundVisible;
-    }
-
+    /**
+     * Returns the layer of the card on which the given component exists.
+     *
+     * @param component The component whose layer should be determined.
+     * @return The card layer of the given component.
+     * @throws IllegalArgumentException if the component does not exist on this pane
+     */
     public CardLayer getCardLayer(Component component) {
         int layer = getLayer(component);
         if (layer == DEFAULT_LAYER) {
@@ -38,6 +28,12 @@ public abstract class CardLayeredPane extends JLayeredPane {
         return CardLayer.fromPaneLayer(layer);
     }
 
+    /**
+     * Adds a component to the card pane on the specified card layer.
+     *
+     * @param component The component to be added.
+     * @param layer The layer on which the component should be added.
+     */
     public void addToCardLayer(Component component, CardLayer layer) {
         if (layer == CardLayer.CARD_GRAPHICS || layer == CardLayer.BACKGROUND_GRAPHICS) {
             throw new IllegalArgumentException("Cannot add components to the graphic layer: " + layer);
@@ -47,7 +43,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
         add(component);
     }
 
-    public void setBackgroundCanvas(JMonetCanvas canvas) {
+    protected void setBackgroundCanvas(JMonetCanvas canvas) {
         if (backgroundCanvas != null) {
             remove(backgroundCanvas);
         }
@@ -57,7 +53,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
         add(backgroundCanvas);
     }
 
-    public void setForegroundCanvas(JMonetCanvas canvas) {
+    protected void setForegroundCanvas(JMonetCanvas canvas) {
         if (foregroundCanvas != null) {
             remove(foregroundCanvas);
         }

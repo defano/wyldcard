@@ -45,11 +45,11 @@ public class PartEditor implements AWTEventListener {
                 }
 
                 // User clicked away from part
-                else {
+                else if (theCard.contains(cardLocalMouseLoc)) {
                     PartToolContext.getInstance().deselectAllParts();
                 }
             }
         }
-        
+
     }
 }

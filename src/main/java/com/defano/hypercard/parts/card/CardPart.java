@@ -24,10 +24,7 @@ import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.runtime.WindowManager;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.SystemMessage;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -70,11 +67,6 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     private ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
     private BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
 
-    private CardPart() {
-        super();
-        this.setLayout(null);
-    }
-
     /**
      * Instantiates the CardPart at a specified location in a specified stack.
      *
@@ -85,6 +77,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     public static CardPart fromLocationInStack(int cardIndex, StackModel stack) throws HtException {
         CardPart card = new CardPart();
+
         card.cardModel = stack.getCardModel(cardIndex);
         card.stackModel = stack;
 
@@ -113,7 +106,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
 
-        // Resize Swing component
+        // Resize card (Swing) component
         card.setMaximumSize(stack.getSize());
         card.setSize(stack.getWidth(), stack.getHeight());
 
@@ -145,9 +138,9 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
             return importButton((ButtonPart) part, layer);
         } else if (part instanceof FieldPart) {
             return importField((FieldPart) part, layer);
-        } else {
-            throw new IllegalArgumentException("Bug! Unimplemented import of part type: " + part.getClass());
         }
+
+        throw new IllegalArgumentException("Bug! Unimplemented import of part type: " + part.getClass());
     }
 
     /**
@@ -160,6 +153,8 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         } else if (part instanceof FieldModel) {
             removeField((FieldModel) part);
         }
+
+        throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
     }
 
     /**
@@ -173,7 +168,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
             addButton(newButton, layer);
             PartToolContext.getInstance().setSelectedPart(newButton);
         } catch (PartException ex) {
-            throw new RuntimeException("Bug! Shouldn't be possible.", ex);
+            throw new RuntimeException("Bug! An error occurred creating a new button.", ex);
         }
     }
 
@@ -188,7 +183,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
             addField(newField, layer);
             PartToolContext.getInstance().setSelectedPart(newField);
         } catch (PartException ex) {
-            throw new RuntimeException("Bug! Shouldn't be possible.", ex);
+            throw new RuntimeException("Bug! An error occurred creating a new field.", ex);
         }
     }
 
@@ -249,15 +244,56 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Hides or shows the card foreground.
-     * @param isVisible Shows the foreground when true; hides it otherwise.
+     * Hides or shows the card foreground, including the canvas and all parts. When made visible, only those parts
+     * whose visible property is true will actually become visible.
+     *
+     * @param visible Shows the foreground when true; hides it otherwise.
      */
-    @Override
-    public void setForegroundVisible(boolean isVisible) {
-        super.setForegroundVisible(isVisible);
+    public void setForegroundVisible(boolean visible) {
+        if (getForegroundCanvas() != null) {
+            getForegroundCanvas().setVisible(visible);
+        }
+
+        setPartsOnLayerVisible(Owner.CARD, visible);
 
         // Notify the window manager than background editing changed
         WindowManager.getStackWindow().invalidateWindowTitle();
+    }
+
+    /**
+     * Hides or shows all parts on the card's foreground. When made visible, only those parts whose visible property is
+     * true will actually become visible.
+     *
+     * @param visible True to show card parts; false to hide them
+     */
+    private void setPartsOnLayerVisible(Owner owningLayer, boolean visible) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (PartModel thisPartModel : getParts()) {
+                if (thisPartModel.getOwner() == owningLayer) {
+                    if (!visible) {
+                        getPart(thisPartModel).getComponent().setVisible(false);
+                    } else {
+                        getPart(thisPartModel).getComponent().setVisible(thisPartModel.getKnownProperty(PartModel.PROP_VISIBLE).booleanValue());
+                    }
+                }
+            }
+        });
+    }
+
+    public boolean isForegroundVisible() {
+        return getForegroundCanvas().isVisible();
+    }
+
+    /**
+     * Hides or shows the background layer for this card.
+     * @param isVisible True to show the background; false to hide it.
+     */
+    private void setBackgroundVisible(boolean isVisible) {
+        if (getBackgroundCanvas() != null) {
+            getBackgroundCanvas().setVisible(isVisible);
+        }
+
+        setPartsOnLayerVisible(Owner.BACKGROUND, isVisible);
     }
 
     /**
@@ -274,14 +310,6 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     public StackModel getStackModel() {
         return stackModel;
-    }
-
-    /**
-     * Hides or shows the background layer for this card.
-     * @param isVisible True to show the background; false to hide it.
-     */
-    private void setBackgroundVisible(boolean isVisible) {
-        getBackgroundCanvas().setVisible(isVisible);
     }
 
     /**
@@ -315,7 +343,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     public void onDisplayOrderChanged() {
         SwingUtilities.invokeLater(() -> {
             for (PartModel thisPart : getPartsInDisplayOrder()) {
-                moveToBack(((CardLayerPart)getPart(thisPart)).getComponent());
+                moveToBack(getPart(thisPart).getComponent());
             }
         });
     }
@@ -575,7 +603,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         // Nothing to do
     }
 
-    public Part getPart(PartModel partModel) {
+    private CardLayerPart getPart(PartModel partModel) {
         if (partModel instanceof FieldModel) {
             return fields.getPartForModel(partModel);
         } else if (partModel instanceof ButtonModel) {
@@ -646,13 +674,15 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     private class BackgroundScaleObserver implements Observer {
         @Override
         public void update(Observable o, Object scale) {
-            setForegroundVisible(((Double) scale) == 1.0);
+            setPartsOnLayerVisible(Owner.BACKGROUND, ((Double) scale) == 1.0);
         }
     }
 
     private class ForegroundScaleObserver implements Observer {
         @Override
         public void update(Observable o, Object scale) {
+            setPartsOnLayerVisible(Owner.CARD, ((Double) scale) == 1.0);
+            setPartsOnLayerVisible(Owner.BACKGROUND, ((Double) scale) == 1.0);
             setBackgroundVisible(((Double) scale) == 1.0);
         }
     }
@@ -660,6 +690,14 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     private class EditingBackgroundObserver implements Observer {
         @Override
         public void update(Observable o, Object isEditingBackground) {
+            if (getForegroundCanvas() != null) {
+                getForegroundCanvas().setScale(1.0);
+            }
+
+            if (getBackgroundCanvas() != null) {
+                getBackgroundCanvas().setScale(1.0);
+            }
+
             setForegroundVisible(!(boolean) isEditingBackground);
         }
     }
