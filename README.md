@@ -14,31 +14,31 @@ Apple called it "programming for the rest of us."
 
 ## Features
 
-HyperTalk Java is attempt to recreate HyperCard in the Java programming language while maintaining high fidelity to Apple's original software. By and large, HyperTalk Java has been an effort to clone the original; not to contemporize it.  
+HyperTalk Java is attempt to recreate HyperCard in the Java programming language while maintaining high fidelity to Apple's original software. By and large, HyperTalk Java has been an effort to clone the original, not to contemporize it.  
 
 #### Organize information
 
 * Create, open and save stacks of cards containing text, graphics, buttons, menus, sounds, and animations.
-* Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields may contain richly styled text.
-* Ability to print individual cards, or stacks of cards.
+* Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields can contain richly styled text.
+* Print individual cards, or stacks of cards.
 
 #### Paint and draw
 
-* Use any of HyperCards' original paint tools, patterns and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet).
-* Supports full-color images with alpha transparency with the ability to reduce color depth for a more "vintage feel".
+* Use any of HyperCard's original paint tools, patterns and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet).
+* Supports full-color images with alpha transparency and the ability to reduce color depth for a more "vintage feel."
 * Drag-and-drop graphics onto the card; import and export graphics using the "Import Paint" / "Export Paint" menu commands.
 * Includes many of the original button icons, plus the ability to create new button icons from paint selections.
 
 #### Script your own software
 
-* Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and are trappable for overriding certain UI behaviors.
-* Supports much of the HyperTalk 2.1 language including a variety of built-in commands and functions.
-* Add or remove menus from the menu bar; script behavior for custom or existing menu items.
+* Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and can be trapped to override HyperCard behavior.
+* Supports much of the HyperTalk 2.2 language, including a variety of built-in commands and functions.
+* Customize the application menu bar and script behavior for custom or existing menu items.
 * Powerful expression language supports compound mutable chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 
 #### Play with sounds and effects
 
-* Play original sound effects (`flute`, `harpsichord` and `boing`) and `dial` telephone numbers.
+* Play original sound effects (`flute`, `harpsichord` and `boing`), and `dial` telephone numbers.
 * Synthesize sounds into a sequence of musical notes supporting pitch, octave, accidental, duration and tempo.
 * Animate cards and parts by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
@@ -47,7 +47,7 @@ HyperTalk Java is attempt to recreate HyperCard in the Java programming language
 This is neither a HyperCard replacement nor an open-sourced release of Apple's software. HyperTalk Java is still missing quite a few features present in HyperCard:
 
 * Can't open or import HyperCard stacks.
-* No multi-window stack support (`open stack in new window`) or palettes.
+* No multi-window stack support (`open stack ... in new window`), or palettes.
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No support for external commands or functions (XCMDs/XFCNs).
 * Many commands, functions, and properties have not yet been implemented.
@@ -68,9 +68,9 @@ Glad to have you aboard! Have a look at [the build instructions](doc/BUILDING.md
 
 Use the SheepShaver emulator to run Macintosh System Software on newer Macs and PCs. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
-#### I'm an attorney and looking for new work.
+#### I'm an attorney and I'm looking for new work.
 
-This project represents a homework assignment gone awry and is in no way associated with Apple's long-obsolete, HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of Apple, Inc. and/or their rightful owner(s).
+This project represents a homework assignment gone awry and is in no way associated with Apple's long-obsolete HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of FileMaker, Inc., Apple, Inc. and/or their rightful owner(s).
 
 # The HyperTalk Language
 
