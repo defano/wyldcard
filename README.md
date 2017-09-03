@@ -2,6 +2,8 @@
 
 A toy implementation of Apple's HyperCard written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
+![Hero](doc/images/hero.png)
+
 #### What's HyperCard?
 
 Released in 1987 and included in the box with every Macintosh sold in the late 80's and 90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors using an expressive syntax that mimicked the English language.
@@ -12,13 +14,31 @@ Apple called it "programming for the rest of us."
 
 ## Features
 
-HyperTalk Java is attempt to recreate HyperCard's functionality on any computer that supports Java. It presently supports these features:
+HyperTalk Java is attempt to recreate HyperCard in the Java programming language while maintaining high fidelity to Apple's original software.
 
-* Create, save and open stacks of cards containing graphics, buttons and text fields. Cards support a foreground and background layer; buttons and fields come in a variety of styles similar to HyperCard's; text fields can contain rich (styled) text.
-* Buttons, fields, menus, cards, backgrounds and stacks are scriptable in the HyperTalk language. Messages follow HyperCard's message passing order and can be trapped by scripts.
-* All the original paint tools, patterns, and 2D transforms (i.e., perspective, distort, rotate, invert) plus full color and alpha transparency; integrates with the system clipboard to provide cut-and-paste between applications and drag-and-drop graphics.
+#### Organize
+
+* Create, open and save stacks of cards that contain text, graphics, buttons, menus, sounds, and animations.
+* Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields contain rich (styled) text.
+* Print cards or stacks of cards.
+
+#### Paint and draw
+
+* Provides all of HyperCards' original paint tools, patterns and 2D image transforms via the [JMonet](https://www.github.com/defano/jmonet) library.
+* Supports full-color images with alpha transparency; able to reduce color depth on imported graphics to produce a "vintage feel."
+* Drag-and-drop graphics onto the card; import and export graphics using the "Import Paint" / "Export Paint" menu commands.
+* Includes many of the original button icons, plus the ability to create new button icons (of arbitrary size) from paint selections.
+
+#### Script
+
 * Supports much of the HyperTalk 2.1 language including a variety of commands and functions (`ask "How are you today?"`, `sort the lines of bkgnd field 13 by the last word of each`); flow control (`if`, `repeat`); properties (`the width of me`, `the textFont of`, `the itemDelimiter`); event messaging (`send doSomethingCool to card button id 1`); system messages and script handlers (`the mouseLoc`, `on mouseUp`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
-* UI design maintains high fidelity to original software with window, palette and menu structure similar to HyperCard.
+* Attach scripts to buttons, fields, cards, backgrounds and stacks; messages are trappable
+
+#### Sounds and effects
+
+* Play original sound effects (`flute`, `harpsichord` and `boing`) and "dial" telephone numbers
+* Synthesize sounds into a sequence of musical notes
+* Lock and unlock the screen with one of 23 animated visual effects provided by the [JSegue](https://www.github.com/defano/jsegue) library.
 
 ### Notable absences
 
@@ -941,4 +961,4 @@ repeat while the mouse is down
 end repeat
 ```
 
-#### Nu ??r det slut...
+#### Nu ar det slut...
