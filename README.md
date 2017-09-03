@@ -6,48 +6,51 @@ A toy implementation of Apple's HyperCard written in Java. Originally developed 
 
 #### What's HyperCard?
 
-Released in 1987 and included in the box with every Macintosh sold in the late 80's and 90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors using an expressive syntax that mimicked the English language.
+Released in 1987 and included in the box with every Macintosh sold in the late 80's and 90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors using an expressive syntax that mimicked natural English.
 
 Apple called it "programming for the rest of us."
 
-[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch a screencast tutorial, [here](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
+[Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch a screencast tutorial [here](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
 
 ## Features
 
-HyperTalk Java is attempt to recreate HyperCard in the Java programming language while maintaining high fidelity to Apple's original software.
+HyperTalk Java is attempt to recreate HyperCard in the Java programming language while maintaining high fidelity to Apple's original software. By and large, HyperTalk Java has been an effort to clone the original; not to contemporize it.  
 
-#### Organize
+#### Organize information
 
-* Create, open and save stacks of cards that contain text, graphics, buttons, menus, sounds, and animations.
-* Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields contain rich (styled) text.
-* Print cards or stacks of cards.
+* Create, open and save stacks of cards containing text, graphics, buttons, menus, sounds, and animations.
+* Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields may contain richly styled text.
+* Ability to print individual cards, or stacks of cards.
 
 #### Paint and draw
 
-* Provides all of HyperCards' original paint tools, patterns and 2D image transforms via the [JMonet](https://www.github.com/defano/jmonet) library.
-* Supports full-color images with alpha transparency; able to reduce color depth on imported graphics to produce a "vintage feel."
+* Use any of HyperCards' original paint tools, patterns and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet).
+* Supports full-color images with alpha transparency with the ability to reduce color depth for a more "vintage feel".
 * Drag-and-drop graphics onto the card; import and export graphics using the "Import Paint" / "Export Paint" menu commands.
-* Includes many of the original button icons, plus the ability to create new button icons (of arbitrary size) from paint selections.
+* Includes many of the original button icons, plus the ability to create new button icons from paint selections.
 
-#### Script
+#### Script your own software
 
-* Supports much of the HyperTalk 2.1 language including a variety of commands and functions (`ask "How are you today?"`, `sort the lines of bkgnd field 13 by the last word of each`); flow control (`if`, `repeat`); properties (`the width of me`, `the textFont of`, `the itemDelimiter`); event messaging (`send doSomethingCool to card button id 1`); system messages and script handlers (`the mouseLoc`, `on mouseUp`); and compound prepositional text chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
-* Attach scripts to buttons, fields, cards, backgrounds and stacks; messages are trappable
+* Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and are trappable for overriding certain UI behaviors.
+* Supports much of the HyperTalk 2.1 language including a variety of built-in commands and functions.
+* Add or remove menus from the menu bar; script behavior for custom or existing menu items.
+* Powerful expression language supports compound mutable chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 
-#### Sounds and effects
+#### Play with sounds and effects
 
-* Play original sound effects (`flute`, `harpsichord` and `boing`) and "dial" telephone numbers
-* Synthesize sounds into a sequence of musical notes
-* Lock and unlock the screen with one of 23 animated visual effects provided by the [JSegue](https://www.github.com/defano/jsegue) library.
+* Play original sound effects (`flute`, `harpsichord` and `boing`) and `dial` telephone numbers.
+* Synthesize sounds into a sequence of musical notes supporting pitch, octave, accidental, duration and tempo.
+* Animate cards and parts by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
 ### Notable absences
 
 This is neither a HyperCard replacement nor an open-sourced release of Apple's software. HyperTalk Java is still missing quite a few features present in HyperCard:
 
 * Can't open or import HyperCard stacks.
+* No multi-window stack support (`open stack in new window`) or palettes.
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No support for external commands or functions (XCMDs/XFCNs).
-* Not all commands, functions or properties of HyperTalk have been implemented.
+* Many commands, functions, and properties have not yet been implemented.
 
 ## Getting started
 
