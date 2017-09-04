@@ -6,9 +6,9 @@ A toy implementation of Apple's HyperCard written in Java. Originally developed 
 
 #### What's HyperCard?
 
-Released in 1987 and included in the box with every Macintosh sold in the late 80's and 90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors using an expressive syntax that mimicked natural English.
+Released in 1987 and included in the box with every Macintosh sold during the late 1980's and '90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors using an expressive syntax that mimicked natural English.
 
-Apple called it "programming for the rest of us."
+Apple called it "programming for the rest of us." Steve Wozniak called it ["the best program ever written"](https://www.macworld.com/article/1018126/woz.html).
 
 [Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch a screencast tutorial [here](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
 
@@ -24,7 +24,7 @@ HyperTalk Java is attempt to recreate HyperCard in the Java programming language
 
 #### Paint and draw
 
-* Use any of HyperCard's original paint tools, patterns and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet).
+* Use any of HyperCard's original paint tools, patterns and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet)).
 * Supports full-color images with alpha transparency and the ability to reduce color depth for a more "vintage feel."
 * Drag-and-drop graphics onto the card; import and export graphics using the "Import Paint" / "Export Paint" menu commands.
 * Includes many of the original button icons, plus the ability to create new button icons from paint selections.
@@ -474,7 +474,7 @@ You cannot create two menus that share the same name, nor can you delete a menu 
 
 The value of each menu is treated as a list; you can add, delete, or modify menu items by mutating items in the menu's value. For example, to replace the contents of a menu `put "Item 1,-,Item 2" into menu "My Custom Menu"`. To append items to a menu, `put "Item 3" after the last line of menu "My Custom Menu"`. To delete a menu item, `delete the second line of menu "Edit"`
 
-Use the `reset menuBar` command to restore the application menu bar to eliminate any changes you've made to the menu bar and restore the default menus and menu items.
+Use the `reset menuBar` command to eliminate any changes you've made to the menu bar and restore the default menus and menu items.
 
 #### Responding to user selections in the menu bar
 

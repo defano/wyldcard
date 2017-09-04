@@ -2,7 +2,9 @@ package com.defano.hypertalk.ast.common;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public enum SystemMessage {
     MOUSE_UP("mouseUp", "Sent when the user presses and releases the mouse over this part."),
@@ -10,48 +12,60 @@ public enum SystemMessage {
     MOUSE_ENTER("mouseEnter", "Sent when the mouse enters the rectangle of this part."),
     MOUSE_LEAVE("mouseLeave", "Sent when the mouse leaves the rectangle of this part."),
     MOUSE_DOUBLE_CLICK("mouseDoubleClick", "Send when the user double-clicks this part."),
-    KEY_DOWN("keyDown", "Sent when the user types a key into this part.", "theKey"),
-    ARROW_KEY("arrowKey", "Sent when the user types an arrow key into this part."),
-    COMMAND_KEY("commandKeyDown", "Sent when the user presses the command key."),
-    CONTROL_KEY("controlKey", "Sent when the user presses the control key."),
-    ENTER_KEY("enterKey", "Sent when the user presses the enter key."),
-    ENTER_IN_FIELD("enterInField", "Sent to fields when the user types enter in the field.", PartType.FIELD),
-    RETURN_IN_FIELD("returnInField", "Sent to fields when the user types return in the field.", PartType.FIELD),
-    FUNCTION_KEY("functionKey", "Sent when the user presses a function key."),
-    RETURN_KEY("returnKey", "Sent when the user presses the return key."),
-    TAB_KEY("tabKey", "Sent when the user presses the tab key."),
-    DO_MENU("doMenu", "Sent when the user chooses a menu item from the menu bar.", "theMenu", "theMenuItem");
+    KEY_DOWN("keyDown", "Sent when the user types a key into this part.",
+            new String[] {"theKey"},
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    ARROW_KEY("arrowKey", "Sent when the user types an arrow key into this part.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    COMMAND_KEY("commandKeyDown", "Sent when the user presses the command key.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    CONTROL_KEY("controlKey", "Sent when the user presses the control key.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    ENTER_KEY("enterKey", "Sent when the user presses the enter key.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    ENTER_IN_FIELD("enterInField", "Sent to fields when the user types enter in the field.",
+            new PartType[] {PartType.FIELD}),
+    RETURN_IN_FIELD("returnInField", "Sent to fields when the user types return in the field.",
+            new PartType[] {PartType.FIELD}),
+    FUNCTION_KEY("functionKey", "Sent when the user presses a function key.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    RETURN_KEY("returnKey", "Sent when the user presses the return key.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    TAB_KEY("tabKey", "Sent when the user presses the tab key.",
+            new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    DO_MENU("doMenu", "Sent when the user chooses a menu item from the menu bar.",
+            new String[] {"theMenu", "theMenuItem"},
+            new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK});
 
     public final String messageName;
     public final String description;
-    private final PartType sentOnlyTo;
+    private final List<PartType> sentOnlyTo = new ArrayList<>();
     public final String[] arguments;
 
     SystemMessage(String  messageName, String description) {
         this.messageName = messageName;
         this.description = description;
         this.arguments = null;
-        this.sentOnlyTo = null;
     }
 
-    SystemMessage(String  messageName, String description, String... arguments) {
-        this.messageName = messageName;
-        this.description = description;
-        this.arguments = arguments;
-        this.sentOnlyTo = null;
-    }
-
-    SystemMessage(String messageName, String description, PartType sentOnlyTo) {
+    SystemMessage(String messageName, String description, PartType[] sentOnlyTo) {
         this.messageName = messageName;
         this.description = description;
         this.arguments = null;
-        this.sentOnlyTo = sentOnlyTo;
+        this.sentOnlyTo.addAll(Arrays.asList(sentOnlyTo));
+    }
+
+    SystemMessage(String messageName, String description, String[] arguments, PartType[] sentOnlyTo) {
+        this.messageName = messageName;
+        this.description = description;
+        this.arguments = arguments;
+        this.sentOnlyTo.addAll(Arrays.asList(sentOnlyTo));
     }
 
     public static Collection<SystemMessage> messagesSentTo(PartType partType) {
         ArrayList<SystemMessage> messages = new ArrayList<>();
         for (SystemMessage thisMessage : SystemMessage.values()) {
-            if (thisMessage.sentOnlyTo == null || thisMessage.sentOnlyTo == partType) {
+            if (thisMessage.sentOnlyTo.isEmpty() || thisMessage.sentOnlyTo.contains(partType)) {
                 messages.add(thisMessage);
             }
         }

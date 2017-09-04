@@ -1,6 +1,5 @@
 package com.defano.hypercard.gui.util;
 
-import com.defano.hypertalk.ast.common.SystemMessage;
 import com.google.common.collect.Lists;
 
 import javax.swing.*;
@@ -13,11 +12,11 @@ import java.util.Collections;
 
 public class HandlerComboBox extends JComboBox<String> {
 
-    private final static String SEPARATOR = "[---]";
+    public final static String SEPARATOR = "[---]";
 
     public interface HandlerComboBoxDelegate {
         Collection<String> getImplementedHandlers(HandlerComboBox theComboBox);
-        Collection<SystemMessage> getSystemMessages(HandlerComboBox theComboBox);
+        Collection<String> getSystemMessages(HandlerComboBox theComboBox);
         void jumpToHandler(HandlerComboBox theComboBox, String handler);
     }
 
@@ -49,10 +48,7 @@ public class HandlerComboBox extends JComboBox<String> {
         ArrayList<String> implementedHandlers = Lists.newArrayList(delegate.getImplementedHandlers(this));
         ArrayList<String> systemHandlers = new ArrayList<>();
 
-        for (SystemMessage message : delegate.getSystemMessages(this)) {
-            systemHandlers.add(message.messageName);
-        }
-
+        systemHandlers.addAll(delegate.getSystemMessages(this));
         Collections.sort(implementedHandlers);
 
         for (String thisHandler : implementedHandlers) {

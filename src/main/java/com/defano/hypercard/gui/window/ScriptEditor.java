@@ -30,6 +30,7 @@ import javax.swing.text.Utilities;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate {
 
@@ -131,7 +132,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             scriptField.setText(script.trim());
             checkSyntax();
         } else {
-            throw new RuntimeException("Bug! Don't know how to bind data class to window." + properties);
+            throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
         }
     }
 
@@ -149,22 +150,41 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
-    public Collection<SystemMessage> getSystemMessages(HandlerComboBox theComboBox) {
+    public Collection<String> getSystemMessages(HandlerComboBox theComboBox) {
+        ArrayList<String> messages = new ArrayList<>();
         if (theComboBox == functionsMenu) {
-            return new ArrayList<>();
+            return Collections.singletonList("New Function...");
         } else {
-            return model == null ? new ArrayList<>() : SystemMessage.messagesSentTo(model.getType());
+            if (model != null) {
+                for (SystemMessage message : SystemMessage.messagesSentTo(model.getType())) {
+                    messages.add(message.messageName);
+                }
+            }
         }
+        return messages;
     }
 
     @Override
     public void jumpToHandler(HandlerComboBox theComboBox, String handler) {
+
+        // Script is empty, add selected handler
         if (compiledScript == null) {
-            appendHandler(handler);
-        } else {
+            if (theComboBox == functionsMenu) {
+                appendFunctionTemplate();
+            } else {
+                appendHandler(handler);
+            }
+        }
+
+        // Script is not empty; see if the selected handler exists
+        else {
             Integer lineNumber = compiledScript.getLineNumberForNamedBlock(handler);
             if (lineNumber == null) {
-                appendHandler(handler);
+                if (theComboBox == functionsMenu) {
+                    appendFunctionTemplate();
+                } else {
+                    appendHandler(handler);
+                }
             } else {
                 scriptField.requestFocus();
                 jumpToLine(lineNumber);
@@ -179,38 +199,47 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    private void appendFunctionTemplate() {
+        appendNamedBlock("function", null, "myFunction", new String[]{"arg1", "arg2"});
+    }
+
     /**
      * Appends the handler to the script, including, when available, a description and argument list.
      *
      * @param handlerName The name of the handler to append.
      */
     private void appendHandler(String handlerName) {
-        int lastIndex = scriptField.getDocument().getLength();
-
-        StringBuilder builder = new StringBuilder();
         SystemMessage message = SystemMessage.fromHandlerName(handlerName);
+        appendNamedBlock("on", message.description, message.messageName, message.arguments);
+    }
+
+    private void appendNamedBlock(String blockOpener, String description, String blockName, String[] arguments) {
+        int lastIndex = scriptField.getDocument().getLength();
+        StringBuilder builder = new StringBuilder();
 
         if (scriptField.getText().length() > 0 && !scriptField.getText().endsWith("\n")) {
             builder.append("\n\n");
         }
 
         // Add the handler description if one exists
-        if (message != null) {
+        if (description != null) {
             builder.append("--\n-- ");
-            builder.append(message.description);
+            builder.append(description);
             builder.append("\n--");
         }
 
         // Add the 'on handler' text
-        builder.append("\non ");
-        builder.append(handlerName);
+        builder.append("\n");
+        builder.append(blockOpener);
+        builder.append(" ");
+        builder.append(blockName);
 
         // Add the handler arguments, if they exist
-        if (message != null && message.arguments != null) {
+        if (arguments != null) {
             builder.append(" ");
-            for (int index = 0; index < message.arguments.length; index++) {
-                builder.append(message.arguments[index]);
-                if (index < message.arguments.length - 1) {
+            for (int index = 0; index < arguments.length; index++) {
+                builder.append(arguments[index]);
+                if (index < arguments.length - 1) {
                     builder.append(", ");
                 }
             }
@@ -218,7 +247,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
         // Add the 'end handler' text
         builder.append("\n\nend ");
-        builder.append(handlerName);
+        builder.append(blockName);
 
         try {
             scriptField.getDocument().insertString(lastIndex, builder.toString(), null);
