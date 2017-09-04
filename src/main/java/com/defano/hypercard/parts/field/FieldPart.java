@@ -247,9 +247,9 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
         super.keyPressed(e);
 
         if (getTextPane().hasFocus()) {
-            SystemMessage command = SystemMessage.fromKeyEvent(e, true);
-            if (command != null) {
-                getPartModel().sendAndConsume(command.messageName, new ExpressionList(), e);
+            BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
+            if (bsm != null) {
+                getPartModel().sendAndConsume(bsm.message.messageName, bsm.boundArguments, e);
             }
         }
     }

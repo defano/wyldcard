@@ -16,6 +16,7 @@ public enum SystemMessage {
             new String[] {"theKey"},
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     ARROW_KEY("arrowKey", "Sent when the user types an arrow key into this part.",
+            new String[] {"direction"},
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     COMMAND_KEY("commandKeyDown", "Sent when the user presses the command key.",
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
@@ -28,6 +29,7 @@ public enum SystemMessage {
     RETURN_IN_FIELD("returnInField", "Sent to fields when the user types return in the field.",
             new PartType[] {PartType.FIELD}),
     FUNCTION_KEY("functionKey", "Sent when the user presses a function key.",
+            new String[] {"whichKey"},
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     RETURN_KEY("returnKey", "Sent when the user presses the return key.",
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
@@ -83,49 +85,89 @@ public enum SystemMessage {
         return null;
     }
 
-    public static SystemMessage fromKeyEvent(KeyEvent e, boolean inField) {
+    public static BoundSystemMessage fromKeyEvent(KeyEvent e, boolean inField) {
         if (e.isControlDown()) {
-            return CONTROL_KEY;
+            return new BoundSystemMessage(CONTROL_KEY);
         }
 
         if (e.isMetaDown()) {
-            return COMMAND_KEY;
+            return new BoundSystemMessage(COMMAND_KEY);
         }
 
         if (e.getKeyCode() == KeyEvent.VK_TAB) {
-            return TAB_KEY;
+            return new BoundSystemMessage(TAB_KEY);
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
-            return inField ? ENTER_IN_FIELD : ENTER_KEY;
+            return inField ? new BoundSystemMessage(ENTER_IN_FIELD) : new BoundSystemMessage(ENTER_KEY);
         }
 
         if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getKeyLocation() != KeyEvent.KEY_LOCATION_NUMPAD) {
-            return inField ? RETURN_IN_FIELD : RETURN_KEY;
+            return inField ? new BoundSystemMessage(RETURN_IN_FIELD) : new BoundSystemMessage(RETURN_KEY);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT ||
-            e.getKeyCode() == KeyEvent.VK_RIGHT ||
-            e.getKeyCode() == KeyEvent.VK_UP ||
-            e.getKeyCode() == KeyEvent.VK_DOWN)
-        {
-            return ARROW_KEY;
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("left"));
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_F1 ||
-            e.getKeyCode() == KeyEvent.VK_F2 ||
-            e.getKeyCode() == KeyEvent.VK_F3 ||
-            e.getKeyCode() == KeyEvent.VK_F4 ||
-            e.getKeyCode() == KeyEvent.VK_F5 ||
-            e.getKeyCode() == KeyEvent.VK_F6 ||
-            e.getKeyCode() == KeyEvent.VK_F7 ||
-            e.getKeyCode() == KeyEvent.VK_F8 ||
-            e.getKeyCode() == KeyEvent.VK_F9 ||
-            e.getKeyCode() == KeyEvent.VK_F10 ||
-            e.getKeyCode() == KeyEvent.VK_F11 ||
-            e.getKeyCode() == KeyEvent.VK_F12)
-        {
-            return FUNCTION_KEY;
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("right"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("up"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("down"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F1) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("1"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F2) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("2"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F3) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("3"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F4) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("4"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F5) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("5"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F6) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("6"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F7) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("7"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F8) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("8"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F9) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("9"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F10) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("10"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F11) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("11"));
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_F12) {
+            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("12"));
         }
 
         return null;

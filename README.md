@@ -186,13 +186,13 @@ In addition to `mouseUp`, HyperTalk Java automatically sends the following messa
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
  `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
- `arrowKey`         | Sent when an arrow key is pressed
+ `arrowKey`         | Sent when an arrow key is pressed; sends the arrow key direction as an argument to the message (`on arrowKey direction`, `direction` is one of `up`, `down`, `left` or `right`)
  `commandKeyDown`   | Sent when the command key (the `meta` key, on non-macOS systems) is pressed
  `controlKey`       | Sent when the control key is pressed
  `enterKey`         | Sent when the enter key is pressed over a part
  `enterInField`     | Sent when the enter key is pressed while typing in a field
  `returnInField`    | Sent when the return key is pressed while typing in a field
- `functionKey`      | Sent when a function (i.e, F1) key is pressed
+ `functionKey`      | Sent when a function (i.e, F1) key is pressed; sends the number of the function key pressed as its argument (`on functionKey whichKey`, `whichKey` is a number between 1 and 12).
  `returnKey`        | Sent when the return key is pressed over a part
  `tabKey`           | Sent when the tab key is pressed
  `doMenu`           | Sent to the current card when the user chooses a menu from the menu bar; send the menu name and menu item name as arguments to the message, for example, `on doMenu theMenu, theMenuItem`

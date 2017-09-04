@@ -660,9 +660,9 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
 
     @Override
     public void keyPressed(KeyEvent e) {
-        SystemMessage command = SystemMessage.fromKeyEvent(e, false);
-        if (command != null) {
-            getPartModel().sendAndConsume(command.messageName, new ExpressionList(), e);
+        BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
+        if (bsm != null) {
+            getPartModel().sendAndConsume(bsm.message.messageName, bsm.boundArguments, e);
         }
     }
 
