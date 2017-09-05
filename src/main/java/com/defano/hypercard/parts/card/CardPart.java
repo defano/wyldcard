@@ -152,9 +152,9 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
             removeButton((ButtonModel) part);
         } else if (part instanceof FieldModel) {
             removeField((FieldModel) part);
+        } else {
+            throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
         }
-
-        throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
     }
 
     /**

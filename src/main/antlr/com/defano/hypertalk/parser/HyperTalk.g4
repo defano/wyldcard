@@ -92,6 +92,7 @@ commandStmnt        : answerCmd                                                 
                     | 'delete' menu                                                                                     # deleteMenuCmdStmt
                     | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
                     | 'delete' part                                                                                     # deleteCmdStmt
+                    | 'delete' container                                                                     # deleteChunkCmdStmt
                     | 'play' expression music                                                                           # playCmdStmt
                     | 'dial' expression                                                                                 # dialCmdStmt
                     | 'beep'                                                                                            # beepCmdStmt

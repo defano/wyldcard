@@ -6,11 +6,11 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-public class DeleteCmd extends Statement {
+public class DeletePartCmd extends Statement {
 
     private final PartExp part;
 
-    public DeleteCmd(PartExp part) {
+    public DeletePartCmd(PartExp part) {
         this.part = part;
     }
 

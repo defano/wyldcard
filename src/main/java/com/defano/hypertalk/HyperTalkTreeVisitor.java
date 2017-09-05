@@ -673,7 +673,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
-        return new DeleteCmd((PartExp) visit(ctx.part()));
+        return new DeletePartCmd((PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitDeleteChunkCmdStmt(HyperTalkParser.DeleteChunkCmdStmtContext ctx) {
+        return new DeleteChunkCmd((Container) visit(ctx.container()));
     }
 
     @Override

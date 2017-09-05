@@ -186,13 +186,13 @@ In addition to `mouseUp`, HyperTalk Java automatically sends the following messa
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
  `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
- `arrowKey`         | Sent when an arrow key is pressed; sends the arrow key direction as an argument to the message (`on arrowKey direction`, `direction` is one of `up`, `down`, `left` or `right`)
+ `arrowKey`         | Sent when an arrow key is pressed; sends the arrow key's direction as an argument to the message (`on arrowKey direction`, `direction` is one of `up`, `down`, `left` or `right`)
  `commandKeyDown`   | Sent when the command key (the `meta` key, on non-macOS systems) is pressed
  `controlKey`       | Sent when the control key is pressed
  `enterKey`         | Sent when the enter key is pressed over a part
  `enterInField`     | Sent when the enter key is pressed while typing in a field
  `returnInField`    | Sent when the return key is pressed while typing in a field
- `functionKey`      | Sent when a function (i.e, F1) key is pressed; sends the number of the function key pressed as its argument (`on functionKey whichKey`, `whichKey` is a number between 1 and 12).
+ `functionKey`      | Sent when a function (i.e, F1) key is pressed; sends the number of the function key as its argument (`on functionKey whichKey`, `whichKey` is a number between 1 and 12).
  `returnKey`        | Sent when the return key is pressed over a part
  `tabKey`           | Sent when the tab key is pressed
  `doMenu`           | Sent to the current card when the user chooses a menu from the menu bar; send the menu name and menu item name as arguments to the message, for example, `on doMenu theMenu, theMenuItem`
@@ -761,7 +761,7 @@ Command	         | Description
 `create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
 `dial`           | Produces the sound of a sequence of DTMF dial tones, for example, `dial "1-800-588-2300"`.
 `delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
-`delete`         | Deletes a specified part, for example `delete card button id 0`, `delete bkgnd field "Report"`
+`delete`         | Deletes a part from the card or background, or deletes a chunk of text from a container, for example, `delete the last line of card field "My List"`, `delete card button id 0`, `delete bkgnd field "Report"`
 `disable`        | Disables a part, menu or menu item causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false. For example, `disable card button 3` or `disable menuItem "Bold" of menu "Style"`
 `divide`         | Divides a container by a value; `divide x by it`
 `do`             | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
