@@ -154,7 +154,7 @@ public class TestChunkUtils {
         assertEquals("o", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.FIFTH.intValue(), 0));
         assertEquals(" ", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.SIXTH.intValue(), 0));
         assertEquals("W", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.SEVENTH.intValue(), 0));
-        assertEquals("o", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.EIGTH.intValue(), 0));
+        assertEquals("o", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.EIGHTH.intValue(), 0));
         assertEquals("r", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.NINTH.intValue(), 0));
         assertEquals("l", ChunkUtils.getChunk(ChunkType.CHAR, "Hello World", Ordinal.TENTH.intValue(), 0));
 

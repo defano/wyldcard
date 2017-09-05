@@ -25,6 +25,6 @@ public interface PartSpecifier {
     }
 
     default boolean isHyperCardElementSpecifier() {
-        return type() == PartType.MESSAGEBOX;
+        return type() == PartType.MESSAGE_BOX;
     }
 }

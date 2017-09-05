@@ -17,7 +17,7 @@ package com.defano.hypertalk.ast.common;
 
 public enum Ordinal {
     FIRST(1), SECOND(2), THIRD(3), FOURTH(4), FIFTH(5), SIXTH(6), SEVENTH(7), 
-    EIGTH(8), NINTH(9), TENTH(10), 
+    EIGHTH(8), NINTH(9), TENTH(10),
     
     // MAX_VALUE - 2 is required to support "after the last char of..."
     LAST(Integer.MAX_VALUE - 2),

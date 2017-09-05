@@ -1280,7 +1280,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitEigthOrd(HyperTalkParser.EigthOrdContext ctx) {
-        return Ordinal.EIGTH;
+        return Ordinal.EIGHTH;
     }
 
     @Override

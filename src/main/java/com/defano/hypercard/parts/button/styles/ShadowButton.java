@@ -22,7 +22,8 @@ public class ShadowButton extends AbstractLabelButton {
     public ShadowButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
         setBorder(new DropShadowBorder(OUTLINE_STROKE, SHADOW_STROKE, SHADOW_OFFSET));
-        setOpaque(false);
+        setOpaque(true);
+        setBackground(Color.WHITE);
     }
 
     @Override

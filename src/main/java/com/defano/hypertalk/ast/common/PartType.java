@@ -16,5 +16,5 @@
 package com.defano.hypertalk.ast.common;
 
 public enum PartType {
-    FIELD, BUTTON, MESSAGEBOX, CARD, BACKGROUND, STACK
+    FIELD, BUTTON, MESSAGE_BOX, CARD, BACKGROUND, STACK
 }

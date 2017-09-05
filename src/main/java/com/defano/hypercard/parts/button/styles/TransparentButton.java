@@ -25,7 +25,7 @@ public class TransparentButton extends AbstractLabelButton {
     @Override
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.setPaint(Color.BLACK);
+            g.setPaint(DEFAULT_HILITE_COLOR);
             g.fillRect(0, 0, getWidth(), getHeight());
         }
     }

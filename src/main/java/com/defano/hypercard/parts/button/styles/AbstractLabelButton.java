@@ -23,6 +23,8 @@ import java.awt.*;
 
 public abstract class AbstractLabelButton extends JPanel implements ButtonComponent {
 
+    protected final Color DEFAULT_HILITE_COLOR = new Color(0, 0, 0, 0x90);
+
     protected final ToolEditablePart toolEditablePart;
     private boolean isHilited = false;
     private JLabel label;

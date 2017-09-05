@@ -167,7 +167,7 @@ public interface Messagable {
                 } else {
                     return HyperCard.getInstance().getCard().getCardModel();
                 }
-            case MESSAGEBOX:
+            case MESSAGE_BOX:
                 return HyperCard.getInstance().getCard().getCardModel();
             case CARD:
                 return HyperCard.getInstance().getCard().getCardBackground();

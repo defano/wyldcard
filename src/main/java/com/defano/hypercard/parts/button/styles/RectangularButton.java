@@ -20,7 +20,8 @@ public class RectangularButton extends AbstractLabelButton {
     public RectangularButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
         setBorder(new RectangleBorder(OUTLINE_STROKE));
-        setOpaque(false);
+        setOpaque(true);
+        setBackground(Color.WHITE);
     }
 
     @Override

@@ -55,6 +55,6 @@ public class ContainerMsgBox extends Container {
     }
 
     public PartType type() {
-        return PartType.MESSAGEBOX;
+        return PartType.MESSAGE_BOX;
     }
 }

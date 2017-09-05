@@ -26,7 +26,7 @@ public class OvalButton extends AbstractLabelButton {
     @Override
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
-            g.setColor(Color.BLACK);
+            g.setPaint(DEFAULT_HILITE_COLOR);
             g.fillOval(OUTLINE_STROKE / 2 + OUTLINE_STROKE, OUTLINE_STROKE / 2 + OUTLINE_STROKE,getWidth() - OUTLINE_STROKE * 2 - OUTLINE_STROKE, getHeight() - OUTLINE_STROKE * 2 - OUTLINE_STROKE);
         }
     }

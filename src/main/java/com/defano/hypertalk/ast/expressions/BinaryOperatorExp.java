@@ -37,11 +37,11 @@ public class BinaryOperatorExp extends Expression {
 
         switch (operator) {
         case EQUALS: return new Value(lhs.equals(rhs));
-        case NOTEQUALS: return new Value(!lhs.equals(rhs));
-        case LESSTHAN: return lhs.lessThan(rhs);
-        case GREATERTHAN: return lhs.greaterThan(rhs);
-        case LESSTHANOREQUALS: return lhs.lessThanOrEqualTo(rhs);
-        case GREATERTHANOREQUALS: return lhs.greaterThanOrEqualTo(rhs);
+        case NOT_EQUALS: return new Value(!lhs.equals(rhs));
+        case LESS_THAN: return lhs.lessThan(rhs);
+        case GREATER_THAN: return lhs.greaterThan(rhs);
+        case LESS_THAN_OR_EQUALS: return lhs.lessThanOrEqualTo(rhs);
+        case GREATER_THAN_OR_EQUALS: return lhs.greaterThanOrEqualTo(rhs);
         case PLUS: return lhs.add(rhs);
         case MINUS: return lhs.subtract(rhs);
         case MULTIPLY: return lhs.multiply(rhs);
@@ -54,7 +54,7 @@ public class BinaryOperatorExp extends Expression {
         case IS_IN: return new Value(rhs.contains(lhs));
         case IS_NOT_IN: return new Value(!rhs.contains(lhs));
         case AMP: return lhs.concat(rhs);
-        case AMPAMP: return lhs.concat(new Value(" ").concat(rhs));
+        case AMP_AMP: return lhs.concat(new Value(" ").concat(rhs));
         case IS_WITHIN: return lhs.within(rhs);
         case IS_NOT_WITHIN: return new Value(!lhs.within(rhs).booleanValue());
         case IS_A: return new Value(lhs.isA(rhs));
