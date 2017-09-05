@@ -49,9 +49,11 @@ public class ToolsContext {
     private final Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
     private final Provider<Boolean> drawMultiple = new Provider<>(false);
     private final Provider<Boolean> drawCentered = new Provider<>(false);
-
     private final Provider<Color> foregroundColorProvider = new Provider<>(Color.BLACK);
     private final Provider<Color> backgroundColorProvider = new Provider<>(Color.WHITE);
+
+    // Properties that we provide the canvas
+    private final Provider<Integer> gridSpacingProvider = new Provider<>(1);
 
     // Last font explicitly chosen by the user from the Font/Style menus
     private final Provider<Font> selectedFontProvider = new Provider<>(new Font("Ariel", Font.PLAIN, 24));
@@ -63,10 +65,19 @@ public class ToolsContext {
 
     private ToolsContext() {
         selectedFontProvider.addObserver((o, arg) -> hilitedFontProvider.set((Font) arg));
+        gridSpacingProvider.addObserver((o, arg) -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing((Integer) arg));
     }
 
     public static ToolsContext getInstance() {
         return instance;
+    }
+
+    public void setGridSpacing(int spacing) {
+        gridSpacingProvider.set(spacing);
+    }
+
+    public Provider<Integer> getGridSpacingProvider() {
+        return gridSpacingProvider;
     }
 
     public Provider<Stroke> getLineStrokeProvider() {

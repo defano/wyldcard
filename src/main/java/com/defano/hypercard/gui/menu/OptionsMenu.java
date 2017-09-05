@@ -36,26 +36,26 @@ public class OptionsMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofCheckType()
                         .named("2 px")
-                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 2 ? 1 : 2))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 2))
+                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacingProvider().get() == 2 ? 1 : 2))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getGridSpacingProvider(), t -> t == 2))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
                         .named("5 px")
-                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 5 ? 1 : 5))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 5))
+                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacingProvider().get() == 5 ? 1 : 5))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getGridSpacingProvider(), t -> t == 5))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
                         .named("10 px")
-                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 10 ? 1 : 10))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 10))
+                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacingProvider().get() == 10 ? 1 : 10))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getGridSpacingProvider(), t -> t == 10))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
                         .named("20 px")
-                        .withAction(a -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider().get() == 20 ? 1 : 20))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getCard().getCanvas().getGridSpacingProvider(), t -> t == 20))
+                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacingProvider().get() == 20 ? 1 : 20))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getGridSpacingProvider(), t -> t == 20))
                         .build(grid);
 
         MenuItemBuilder.ofCheckType()
