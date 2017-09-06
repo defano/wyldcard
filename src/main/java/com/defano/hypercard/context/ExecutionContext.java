@@ -39,6 +39,7 @@ public class ExecutionContext {
     private final ThreadLocal<Stack<StackFrame>> stack = new ThreadLocal<>();
     private final ThreadLocal<StackFrame> frame = new ThreadLocal<>();
     private final ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
+    private final ThreadLocal<Value> result = new ThreadLocal<>();
 
     private ExecutionContext() {
         globals = new SymbolTable();
@@ -233,6 +234,14 @@ public class ExecutionContext {
         }
 
         return this.stack.get();
+    }
+
+    public void setResult(Value result) {
+        this.result.set(result);
+    }
+
+    public Value getResult() {
+        return this.result.get() == null ? new Value() : this.result.get();
     }
 
     private void setFrame(StackFrame stackFrame) {

@@ -67,6 +67,8 @@ commandStmnt        : answerCmd                                                 
                     | goCmd                                                                                             # goCmdStmt
                     | enableCmd                                                                                         # enableCmdStmnt
                     | disableCmd                                                                                        # disableCmdStmnt
+                    | readCmd                                                                                           # readCmdStmt
+                    | writeCmd                                                                                          # writeCmdStmt
                     | 'hide' part                                                                                       # hideCmdStmnt
                     | 'show' part                                                                                       # showCmdStmnt
                     | 'add' expression 'to' container                                                                   # addCmdStmnt
@@ -92,10 +94,23 @@ commandStmnt        : answerCmd                                                 
                     | 'delete' menu                                                                                     # deleteMenuCmdStmt
                     | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
                     | 'delete' part                                                                                     # deleteCmdStmt
-                    | 'delete' container                                                                     # deleteChunkCmdStmt
+                    | 'delete' container                                                                                # deleteChunkCmdStmt
                     | 'play' expression music                                                                           # playCmdStmt
                     | 'dial' expression                                                                                 # dialCmdStmt
                     | 'beep'                                                                                            # beepCmdStmt
+                    | 'open' 'file' expression                                                                          # openFileCmdStmt
+                    | 'close' 'file' expression                                                                         # closeFileCmdStmt
+                    ;
+
+writeCmd            : 'write' expression 'to' 'file' factor                                                             # writeFileCmd
+                    | 'write' expression 'to' 'file' factor 'at' ('eof' | 'end')                                        # writeEndFileCmd
+                    | 'write' expression 'to' 'file' factor 'at' factor                                                 # writeAtFileCmd
+                    ;
+
+readCmd             : 'read' 'from' 'file' factor                                                                       # readFileCmd
+                    | 'read' 'from' 'file' factor 'for' factor                                                          # readFileForCmd
+                    | 'read' 'from' 'file' factor 'at' factor 'for' factor                                              # readFileAtCmd
+                    | 'read' 'from' 'file' factor 'until' factor                                                        # readFileUntil
                     ;
 
 music               : expression                                                                                        # musicNotes

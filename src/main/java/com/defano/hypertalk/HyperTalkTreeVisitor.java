@@ -20,6 +20,7 @@ import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
+import com.sun.org.apache.regexp.internal.RE;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
@@ -57,6 +58,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDisableCmdStmnt(HyperTalkParser.DisableCmdStmntContext ctx) {
         return visit(ctx.disableCmd());
+    }
+
+    @Override
+    public Object visitReadCmdStmt(HyperTalkParser.ReadCmdStmtContext ctx) {
+        return visit(ctx.readCmd());
     }
 
     @Override
@@ -694,6 +700,36 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBeepCmdStmt(HyperTalkParser.BeepCmdStmtContext ctx) {
         return new BeepCmd();
+    }
+
+    @Override
+    public Object visitOpenFileCmdStmt(HyperTalkParser.OpenFileCmdStmtContext ctx) {
+        return new OpenCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitCloseFileCmdStmt(HyperTalkParser.CloseFileCmdStmtContext ctx) {
+        return new CloseCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitReadFileCmd(HyperTalkParser.ReadFileCmdContext ctx) {
+        return ReadCmd.ofFile((Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitReadFileForCmd(HyperTalkParser.ReadFileForCmdContext ctx) {
+        return ReadCmd.ofFileFor((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
+    }
+
+    @Override
+    public Object visitReadFileAtCmd(HyperTalkParser.ReadFileAtCmdContext ctx) {
+        return ReadCmd.ofFileAt((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)));
+    }
+
+    @Override
+    public Object visitReadFileUntil(HyperTalkParser.ReadFileUntilContext ctx) {
+        return ReadCmd.ofFileUntil((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)));
     }
 
     @Override
