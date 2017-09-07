@@ -20,7 +20,6 @@ import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
-import com.sun.org.apache.regexp.internal.RE;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
@@ -63,6 +62,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitReadCmdStmt(HyperTalkParser.ReadCmdStmtContext ctx) {
         return visit(ctx.readCmd());
+    }
+
+    @Override
+    public Object visitWriteCmdStmt(HyperTalkParser.WriteCmdStmtContext ctx) {
+        return visit(ctx.writeCmd());
     }
 
     @Override
@@ -713,6 +717,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWriteFileCmd(HyperTalkParser.WriteFileCmdContext ctx) {
+        return WriteCmd.writeFile((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitWriteEndFileCmd(HyperTalkParser.WriteEndFileCmdContext ctx) {
+        return WriteCmd.appendFile((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitWriteAtFileCmd(HyperTalkParser.WriteAtFileCmdContext ctx) {
+        return WriteCmd.writeFileAt((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
+    }
+
+    @Override
     public Object visitReadFileCmd(HyperTalkParser.ReadFileCmdContext ctx) {
         return ReadCmd.ofFile((Expression) visit(ctx.factor()));
     }
@@ -724,12 +743,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitReadFileAtCmd(HyperTalkParser.ReadFileAtCmdContext ctx) {
-        return ReadCmd.ofFileAt((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)));
+        return ReadCmd.ofFileAt((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)), (Expression) visit(ctx.factor(2)));
     }
 
     @Override
     public Object visitReadFileUntil(HyperTalkParser.ReadFileUntilContext ctx) {
-        return ReadCmd.ofFileUntil((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(0)));
+        return ReadCmd.ofFileUntil((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.context.FileTable;
+import com.defano.hypercard.context.FileContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
@@ -19,8 +19,7 @@ public class ReadCmd extends Statement {
     }
 
     public static ReadCmd ofFile(Expression file) {
-        ReadCmd readCmd = new ReadCmd(file);
-        return readCmd;
+        return new ReadCmd(file);
     }
 
     public static ReadCmd ofFileFor(Expression file, Expression count) {
@@ -36,34 +35,41 @@ public class ReadCmd extends Statement {
         return readCmd;
     }
 
-    public static ReadCmd ofFileUntil(Expression file, Expression at, Expression until) {
+    public static ReadCmd ofFileUntil(Expression file, Expression until) {
         ReadCmd readCmd = new ReadCmd(file);
-        readCmd.at = at;
-        readCmd.at = until;
+        readCmd.until = until;
         return readCmd;
     }
 
     @Override
     public void execute() throws HtException {
         try {
-            String filename = file.evaluate().stringValue();
-            FileTable.FileHandle handle = FileTable.getInstance().getOpenFileHandle(filename);
             String contents;
+            String filename = file.evaluate().stringValue();
+            FileContext.FileHandle handle = FileContext.getInstance().getFileHandle(filename);
 
-            if (at != null && until != null) {
-                contents = handle.readUntil(at.evaluate().integerValue(), until.evaluate().stringValue());
+            if (handle == null) {
+                throw new HtSemanticException("Cannot read from file " + filename + " because it is not open.");
             }
 
+            // 'read file x until y'
+            if (until != null) {
+                contents = handle.readUntil(until.evaluate().stringValue(), true);
+            }
+
+            // 'read file x at y for z
             else if (at != null && count != null) {
-                contents = handle.readAt(at.evaluate().integerValue(), at.evaluate().integerValue());
+                contents = handle.readAt(at.evaluate().integerValue(), at.evaluate().integerValue(), true);
             }
 
+            // 'read file x for y
             else if (count != null) {
-                contents = handle.readFor(count.evaluate().integerValue());
+                contents = handle.readFor(count.evaluate().integerValue(), true);
             }
 
+            // 'read file x'
             else {
-                contents = handle.readAll();
+                contents = handle.readAll(true);
             }
 
             ExecutionContext.getContext().setResult(new Value());
