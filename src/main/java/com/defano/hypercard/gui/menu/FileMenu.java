@@ -45,9 +45,16 @@ public class FileMenu extends HyperCardMenu {
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
-                .named("Save Stack...")
-                .withAction(e -> HyperCard.getInstance().getStack().save())
+                .named("Save Stack")
+                .withAction(e -> HyperCard.getInstance().getStack().save(HyperCard.getInstance().getSavedStackFileProvider().get()))
+                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getSavedStackFileProvider(), Objects::isNull))
                 .withShortcut('S')
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Save Stack As...")
+                .withAction(e -> HyperCard.getInstance().getStack().saveAs())
+                .withShiftShortcut('S')
                 .build(this);
 
         this.addSeparator();

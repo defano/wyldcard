@@ -16,6 +16,8 @@ import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.jmonet.model.Provider;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ import java.util.List;
  * not extend a Swing component and is not added to a view hierarchy.
  */
 public class StackPart implements PropertyChangeObserver, PartContainer {
+
+    public final String FILE_EXTENSION = ".stack";
 
     private StackModel stackModel;
     private final List<StackObserver> observers = new ArrayList<>();
@@ -47,10 +51,12 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      */
     public void open() {
         FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
-        fd.setVisible(true);
         fd.setMultipleMode(false);
+        fd.setFilenameFilter((dir, name) -> name.endsWith(FILE_EXTENSION));
+        fd.setVisible(true);
         if (fd.getFiles().length > 0) {
             StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
+            HyperCard.getInstance().setSavedStackFile(fd.getFiles()[0]);
             open(model);
         }
     }
@@ -77,18 +83,35 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     /**
      * Prompts the user to choose a file in which to save the current stack.
      */
-    public void save() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
-        fd.setVisible(true);
-        if (fd.getFiles().length > 0) {
+    public void saveAs() {
+        String defaultName = "Untitled";
 
-            try {
-                Serializer.serialize(fd.getFiles()[0], HyperCard.getInstance().getStack().getStackModel());
-            } catch (IOException e) {
-                HyperCard.getInstance().showErrorDialog(e);
-            }
+        if (HyperCard.getInstance().getSavedStackFileProvider().get() != null) {
+            defaultName = HyperCard.getInstance().getSavedStackFileProvider().get().getName();
+        } else if (stackModel.getStackName() != null && !stackModel.getStackName().isEmpty()) {
+            defaultName = stackModel.getStackName();
         }
 
+        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
+        fd.setFile(defaultName);
+        fd.setVisible(true);
+        if (fd.getFiles().length > 0) {
+            File f = fd.getFiles()[0];
+            save(new File(f.getAbsolutePath() + FILE_EXTENSION));
+        }
+    }
+
+    /**
+     * Writes the serialized stack data into the given file.
+     * @param file The file where the stack should be saved
+     */
+    public void save(File file) {
+        try {
+            Serializer.serialize(file, HyperCard.getInstance().getStack().getStackModel());
+            HyperCard.getInstance().setSavedStackFile(file);
+        } catch (IOException e) {
+            HyperCard.getInstance().showErrorDialog(e);
+        }
     }
 
     /**

@@ -18,8 +18,10 @@ import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,6 +35,7 @@ public class HyperCard {
     private static HyperCard instance;
     private static final ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
     private final StackPart stackPart;
+    private final Provider<File> savedStackFileProvider = new Provider<>();
 
     public static void main(String argv[]) {
         try {
@@ -68,6 +71,14 @@ public class HyperCard {
 
     public static HyperCard getInstance() {
         return instance;
+    }
+
+    public Provider<File> getSavedStackFileProvider() {
+        return savedStackFileProvider;
+    }
+
+    public void setSavedStackFile(File savedStackFileProvider) {
+        this.savedStackFileProvider.set(savedStackFileProvider);
     }
 
     public StackPart getStack() {
