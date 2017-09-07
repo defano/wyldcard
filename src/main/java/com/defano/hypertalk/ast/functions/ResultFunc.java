@@ -6,13 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * ExpResultsFun.java
- * @author matt.defano@gmail.com
- * 
- * Implementation of the built-in function "the result"
- */
-
 package com.defano.hypertalk.ast.functions;
 
 import com.defano.hypercard.context.ExecutionContext;
@@ -24,6 +17,6 @@ public class ResultFunc extends Expression {
     public ResultFunc() {}
     
     public Value evaluate () {
-        return ExecutionContext.getContext().getIt();
+        return ExecutionContext.getContext().getResult();
     }
 }

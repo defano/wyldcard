@@ -20,7 +20,7 @@ HyperTalk Java is attempt to recreate HyperCard in the Java programming language
 
 * Create, open and save stacks of cards containing text, graphics, buttons, menus, sounds, and animations.
 * Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields can contain richly styled text.
-* Print individual cards, or stacks of cards.
+* Read and write text files; print individual cards and stacks of cards.
 
 #### Paint and draw
 
@@ -758,6 +758,7 @@ Command	         | Description
 `beep`           | Causes the system to emit an alert/beep sound. Has no effect if the system has no alert sound.
 `choose`         | Selects a tool from the tool palette; `choose brush tool` or `choose tool 7`. Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).
 `click`          | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
+`close file`     | Closes a previously opened file, writing any changes made via the `write` command to disk. Has no effect if the file is not open. For example, `close file "/Users/matt/myfile.txt"`
 `create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
 `dial`           | Produces the sound of a sequence of DTMF dial tones, for example, `dial "1-800-588-2300"`.
 `delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
@@ -773,8 +774,10 @@ Command	         | Description
 `hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
 `lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
-`play`           | Plays a sound (`boing`, `harpsichord` or `flute`) optionally as a series of notes (`c d# eh`) and with an optional tempo (`play harpsichord tempo 200 "b a g a b b b"`). See the Sound and Music section for details.
+`open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.
+`play`           | Plays a sound (`boing`, `harpsichord` or `flute`) optionally as a series of notes (`c d# eh.`) and with an optional tempo (`play harpsichord tempo 200 "b a g a b b b"`). See the Sound and Music section for details.
 `put`            | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
+`read`           | Reads text from a file that was previously opened with the `open file` command into the variable `it`. Several forms, including `read from file <filename>` (reads the entire file identified by `<filename>` into memory), `read from file <filename> for <count>` (reads `<count>` characters from the current file position), `read from file <filename> at <position> for <count>` (reads `<count>` characters from the file starting at `<position>`), `read file <filename> until <pattern>` (reads the file until the given case-insensitive `<pattern>` is reached).
 `reset menuBar`  | Resets the menu bar to its default state; removes any custom menus added with the `create menu` command and restores any deleted menus to their default state.
 `send`           | Send a message to a part on the current card; `send "mouseUp" to field id 3`
 `set`            | Sets the property of a part to a value (`set the wraptext of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
@@ -785,6 +788,7 @@ Command	         | Description
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
 `visual effect`  | Specifies the visual effect to be used with any subsequent `go` command within the current handler. If the `go` command specifies its own visual effect, the `go` command's visual effect takes precedence. This command only affects navigation that occurs within the function/handler that invokes it.
 `wait`           | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
+`write`          | Writes text into a file that was previously opened with `open file`. Several forms, including `write <data> to file <filename>` (writes the expression `<data>` to the file, *overwriting the contents of the file*), `write <data> to file <filename> at end` (appends data to the end of the given file; `at end` can also be specified as `at eof`), `write <data> to file <filename> at <position>` (writes data to the file starting at the given `<position>`). Note that data is not actually written to disk until the file is closed or HyperTalk Java is quit.  
 
 ## Functions
 

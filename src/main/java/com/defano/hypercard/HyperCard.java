@@ -9,6 +9,7 @@
 package com.defano.hypercard;
 
 import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.context.FileContext;
 import com.defano.hypercard.gui.util.KeyboardManager;
 import com.defano.hypercard.gui.util.MouseManager;
 import com.defano.hypercard.parts.editor.PartEditor;
@@ -56,12 +57,13 @@ public class HyperCard {
         MouseManager.start();
         PartEditor.start();
 
-        // Window manager expects this object to be fully initialized before it can start, thus, we can't invoke
-        // directly from the constructor. This behaves like @PostConstruct
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
             stackPart.open(stackPart.getStackModel());
         });
+
+        // Close all open files before we die
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> FileContext.getInstance().closeAll()));
     }
 
     public static HyperCard getInstance() {

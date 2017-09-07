@@ -18,6 +18,7 @@ import com.defano.hypercard.gui.util.DoubleClickListenable;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.hypercard.runtime.WindowManager;
+import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -84,6 +85,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
+        text.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().setFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", ToolsContext.getInstance().getSelectedFontProvider().get())));
 
         ToolsContext.getInstance().getShapesFilledProvider().addObserverAndUpdate((o, filled) -> {
             boolean isFilled = (Boolean) filled;
