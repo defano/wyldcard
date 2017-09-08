@@ -1414,6 +1414,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitConstantExp(HyperTalkParser.ConstantExpContext ctx) {
+        return visit(ctx.constant());
+    }
+
+    @Override
     public Object visitNotExp(HyperTalkParser.NotExpContext ctx) {
         return new UnaryOperatorExp(UnaryOperator.NOT, (Expression) visit(ctx.expression()));
     }
@@ -1551,6 +1556,51 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitEmptyExp(HyperTalkParser.EmptyExpContext ctx) {
         return new LiteralExp("");
+    }
+
+    @Override
+    public Object visitPiExp(HyperTalkParser.PiExpContext ctx) {
+        return new LiteralExp("3.14159265358979323846");
+    }
+
+    @Override
+    public Object visitQuoteExp(HyperTalkParser.QuoteExpContext ctx) {
+        return new LiteralExp("\"");
+    }
+
+    @Override
+    public Object visitReturnExp(HyperTalkParser.ReturnExpContext ctx) {
+        return new LiteralExp("\n");
+    }
+
+    @Override
+    public Object visitSpaceExp(HyperTalkParser.SpaceExpContext ctx) {
+        return new LiteralExp(" ");
+    }
+
+    @Override
+    public Object visitTabExp(HyperTalkParser.TabExpContext ctx) {
+        return new LiteralExp("\t");
+    }
+
+    @Override
+    public Object visitFormFeedExp(HyperTalkParser.FormFeedExpContext ctx) {
+        return new LiteralExp("\r");
+    }
+
+    @Override
+    public Object visitLineFeedExp(HyperTalkParser.LineFeedExpContext ctx) {
+        return new LiteralExp("\n");
+    }
+
+    @Override
+    public Object visitCommaExp(HyperTalkParser.CommaExpContext ctx) {
+        return new LiteralExp(",");
+    }
+
+    @Override
+    public Object visitColonExp(HyperTalkParser.ColonExpContext ctx) {
+        return new LiteralExp(":");
     }
 
     @Override

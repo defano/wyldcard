@@ -383,7 +383,7 @@ ordinalValue        : 'first'                                                   
                     | 'last'                                                                                            # lastOrd
                     ;
 
-expression          : 'empty'                                                                                           # emptyExp
+expression          : constant                                                                                          # constantExp
                     | builtinFunc                                                                                       # builtinFuncExp
                     | ID '(' expressionList ')'                                                                         # functionExp
                     | factor                                                                                            # factorExp
@@ -399,6 +399,18 @@ expression          : 'empty'                                                   
                     | expression op=('is within' | 'is not within') expression                                          # withinExp
                     | expression 'and' expression                                                                       # andExp
                     | expression 'or' expression                                                                        # orExp
+                    ;
+
+constant            : 'empty'                                                                                           # emptyExp
+                    | 'pi'                                                                                              # piExp
+                    | 'quote'                                                                                           # quoteExp
+                    | 'return'                                                                                          # returnExp
+                    | 'space'                                                                                           # spaceExp
+                    | 'tab'                                                                                             # tabExp
+                    | 'formFeed'                                                                                        # formFeedExp
+                    | 'lineFeed'                                                                                        # lineFeedExp
+                    | 'comma'                                                                                           # commaExp
+                    | 'colon'                                                                                           # colonExp
                     ;
 
 factor              : literal                                                                                           # literalFactor

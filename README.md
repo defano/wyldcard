@@ -578,9 +578,9 @@ put "x" into the second character of the third word of the fourth line of field 
 put the first char of the second word of myContainer into the middle item of the last line of y
 ```
 
-## Arithmetic and Logical Expressions
+### Operators
 
-HyperTalk supports a standard suite of mathematical, text and logical operators, including the following (all operators are binary, excepted where otherwise noted):
+HyperTalk supports a standard suite of mathematical, logical and string operators:
 
 |Precedence  | Operator        | Description
 |------------| ----------------|-------------
@@ -611,17 +611,39 @@ HyperTalk supports a standard suite of mathematical, text and logical operators,
 |10          | `and`           | Logical AND for boolean values
 |11 (lowest) |  `or`           | Logical OR for boolean values
 
-HyperCard uses the following order (top to bottom) to evaluate factors and terms in an expression:
+### Factors
+
+A _factor_ is a term or operand appearing in an expression. HyperCard uses the following precedence when evaluating factors:
 
 Precedence   | Term                    | Description
 -------------|-------------------------|------------
-1 (highest)  | `empty`                 | Keyword expression representing the empty string (e.g., `if x is empty`)
+1 (highest)  | _Constant_              | Evaluation of a built-in constant (e.g., `pi`); see table below
 2            | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
 3            | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
 4            | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
 5            | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
 6            | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
 7 (lowest)   | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+
+### Constants and literals
+
+The table below lists special values that are treated as keyword constants in the language; any unquoted use of these terms evaluates to the specified value.
+
+Any single-word unquoted literal that is not a language keyword and not an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat` displays the word "neat" unless a variable named "neat" is in scope, in which case the variable's value will be displayed. Note that multi-word unquoted literals are not allowed; `put hello world` results in a syntax error.
+
+Constant     | Value
+-------------|---------------------------------------
+`empty`      | The empty string, `""`
+`pi`         | The first 20 digits of pi, `3.14159265358979323846`
+`quote`      | A double-quote character, `"`
+`return`     | The newline character (same as `lineFeed`)
+`space`      | A single space, `" "`
+`tab`        | A tab character
+`formFeed`   | The form feed character (ASCII 0x0c, `\f` in Java)
+`lineFeed`   | The line feed character (ASCII 0x0a, `\n` in Java)
+`comma`      | The comma character, `,`
+`colon`      | The colon character, `:`
+`zero`..`ten`| The integers `0` to `10`
 
 This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as Apple's HyperTalk.  
 
