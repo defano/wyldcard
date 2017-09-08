@@ -95,12 +95,4 @@ public class MusicalNote {
 
         return MusicalDuration.fromString(note.substring(index));
     }
-
-    @Override
-    public String toString() {
-        return "MusicalNote{" +
-                "frequency=" + frequency +
-                ", duration=" + duration +
-                '}';
-    }
 }

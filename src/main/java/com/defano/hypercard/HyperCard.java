@@ -18,10 +18,13 @@ import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.serializer.Serializer;
 import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,6 +47,7 @@ public class HyperCard {
             System.setProperty("com.apple.macos.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
             System.setProperty("apple.awt.application.name", "HyperCard");
+            System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,5 +127,32 @@ public class HyperCard {
     public void showErrorDialog(Exception e) {
         SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
         e.printStackTrace();
+    }
+
+    public void quit() {
+
+        // Prompt to save if user has unsaved changes
+        if (isDirty()) {
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                getStack().save(getSavedStackFileProvider().get());
+            }
+        }
+
+        System.exit(0);
+    }
+
+    /**
+     * A cheesy and expensive mechanism to determine if the user has made a change to the stack since it was last opened.
+     * @return True if the stack has changes; false otherwise
+     */
+    private boolean isDirty() {
+        try {
+            String savedStack = new String(Files.readAllBytes(getSavedStackFileProvider().get().toPath()), StandardCharsets.UTF_8);
+            String currentStack = Serializer.serialize(getStack().getStackModel());
+            return !savedStack.equalsIgnoreCase(currentStack);
+        } catch (Exception e) {
+            return true;
+        }
     }
 }

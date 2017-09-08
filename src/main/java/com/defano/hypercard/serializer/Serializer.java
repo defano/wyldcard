@@ -36,7 +36,7 @@ public class Serializer {
         return (T) deserialize(serialize(t), t.getClass());
     }
 
-    private static String serialize(Object object) {
+    public static String serialize(Object object) {
         return gson.toJson(object);
     }
 

@@ -102,15 +102,19 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     /**
-     * Writes the serialized stack data into the given file.
+     * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
      * @param file The file where the stack should be saved
      */
     public void save(File file) {
-        try {
-            Serializer.serialize(file, HyperCard.getInstance().getStack().getStackModel());
-            HyperCard.getInstance().setSavedStackFile(file);
-        } catch (IOException e) {
-            HyperCard.getInstance().showErrorDialog(e);
+        if (file == null) {
+            saveAs();
+        } else {
+            try {
+                Serializer.serialize(file, HyperCard.getInstance().getStack().getStackModel());
+                HyperCard.getInstance().setSavedStackFile(file);
+            } catch (IOException e) {
+                HyperCard.getInstance().showErrorDialog(e);
+            }
         }
     }
 

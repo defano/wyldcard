@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.gui.window;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.gui.HyperCardDialog;
 import com.defano.hypercard.gui.HyperCardFrame;
 import com.defano.hypercard.gui.HyperCardWindow;
@@ -16,6 +17,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class WindowBuilder<T extends HyperCardWindow> {
 
@@ -25,6 +28,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private boolean resizable = false;
     private HyperCardFrame dock;
     private boolean isPalette = false;
+    private boolean quitOnClose = false;
 
     private WindowBuilder(HyperCardFrame window) {
         this.window = window;
@@ -59,7 +63,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     public WindowBuilder quitOnClose() {
-        this.window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.quitOnClose = true;
         return this;
     }
 
@@ -136,6 +140,15 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
         if (window.getDefaultButton() != null) {
             SwingUtilities.getRootPane(window.getDefaultButton()).setDefaultButton(window.getDefaultButton());
+        }
+
+        if (quitOnClose) {
+            this.window.getWindow().addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    HyperCard.getInstance().quit();
+                }
+            });
         }
 
         window.getWindow().setVisible(initiallyVisible);

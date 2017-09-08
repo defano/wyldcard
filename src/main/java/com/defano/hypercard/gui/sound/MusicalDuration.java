@@ -7,8 +7,8 @@ public enum  MusicalDuration {
     QUARTER(1.0/4.0),
     EIGHTH(1.0/8.0),
     SIXTEENTH(1.0/16.0),
-    THIRTYSECOND(1.0/32.0),
-    SIXTYFOURTH(1.0/64.0);
+    THIRTY_SECOND(1.0/32.0),
+    SIXTY_FOURTH(1.0/64.0);
 
     private final double relativeDuration;
     private boolean dotted = false;
@@ -49,8 +49,8 @@ public enum  MusicalDuration {
             case 'q': value = QUARTER; break;
             case 'e': value = EIGHTH; break;
             case 's': value = SIXTEENTH; break;
-            case 't': value = THIRTYSECOND; break;
-            case 'x': value = SIXTYFOURTH; break;
+            case 't': value = THIRTY_SECOND; break;
+            case 'x': value = SIXTY_FOURTH; break;
 
             default: return MusicalDuration.QUARTER;
         }
@@ -60,13 +60,5 @@ public enum  MusicalDuration {
         }
 
         return value;
-    }
-
-    @Override
-    public String toString() {
-        return "MusicalDuration{" +
-                "relativeDuration=" + relativeDuration +
-                ", dotted=" + dotted +
-                '}';
     }
 }

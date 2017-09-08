@@ -123,7 +123,7 @@ public class FileMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofDefaultType()
                     .named("Quit HyperCard")
-                    .withAction(e -> System.exit(0))
+                    .withAction(e -> HyperCard.getInstance().quit())
                     .withShortcut('Q')
                     .build(this);
         }

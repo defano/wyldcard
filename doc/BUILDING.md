@@ -48,11 +48,11 @@ Any changes made to the HyperTalk grammar file (`HyperTalk.g4`) require the pars
 * Re-executing the `gradle generateGrammarSource` target, or
 * If using InteliJ with the Antlr plugin and you wish to automatically regenerate the parser each time you modify the grammar then right-click inside the `.g4` file, choose "Configure ANTLR..."; set the "Output directory where all output is generated" to `hypertalk-java/generated-src/` and check the "generate parse tree visitor" option.
 
-Once the parser has been regenerated, you'll be ready to make corresponding changes to the tree visitor class (`HyperTalkTreeVisitor`).
+Once the parser has been regenerated, you'll be ready to make corresponding changes to the tree visitor class (`HyperTalkTreeVisitor`). 
 
-## Modifying the UI components
+## Modifying window, palette and dialog layouts
 
-The UI forms are generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
+The UI forms (window layouts) are generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
 
 By default, IntelliJ "hides" the generated code it creates inside of the `.class` files that it compiles. While this technique is quite elegant, it produces source code that is incomplete and which cannot be successfully built by other tools.
 
