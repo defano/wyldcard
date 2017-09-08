@@ -22,7 +22,9 @@ import java.awt.event.WindowEvent;
 
 public class WindowBuilder<T extends HyperCardWindow> {
 
-    private final HyperCardWindow window;
+    private final static int DEFAULT_SEPARATION = 10;
+
+    private final T window;
     private Point location = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
@@ -30,22 +32,15 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private boolean isPalette = false;
     private boolean quitOnClose = false;
 
-    private WindowBuilder(HyperCardFrame window) {
+    private WindowBuilder(T window) {
         this.window = window;
 
         this.window.setContentPane(window.getWindowPanel());
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    private WindowBuilder(HyperCardDialog window) {
-        this.window = window;
-
-        this.window.setContentPane(window.getWindowPanel());
-        this.window.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    }
-
     public static WindowBuilder<HyperCardWindow> make(HyperCardFrame window) {
-        return new WindowBuilder(window);
+        return new WindowBuilder<>(window);
     }
 
     public static WindowBuilder<HyperCardDialog> make(HyperCardDialog window) {
@@ -85,7 +80,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     public WindowBuilder withLocationUnderneath(Component component) {
         this.window.getWindow().pack();
 
-        int targetY = (int) component.getLocation().getY() + component.getHeight() + 10;
+        int targetY = (int) component.getLocation().getY() + component.getHeight() + DEFAULT_SEPARATION;
         int targetX = (int) component.getLocation().getX() - ((window.getWindow().getWidth() / 2) - (component.getWidth() / 2));
         location = new Point(targetX, targetY);
 
@@ -96,7 +91,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.getWindow().pack();
 
         int targetY = (int) component.getLocation().getY();
-        int targetX = (int) component.getLocation().getX() - window.getWindow().getWidth() - 10;
+        int targetX = (int) component.getLocation().getX() - window.getWindow().getWidth() - DEFAULT_SEPARATION;
         location = new Point(targetX, targetY);
 
         return this;
@@ -104,6 +99,13 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
     public WindowBuilder withLocationCenteredOver(Component component) {
         this.window.getWindow().setLocationRelativeTo(component);
+        return this;
+    }
+
+    public WindowBuilder withLocationStaggeredOver(Component component) {
+        this.window.getWindow().pack();
+        JRootPane root = SwingUtilities.getRootPane(component);
+        location = new Point((int) component.getLocationOnScreen().getX() + DEFAULT_SEPARATION, (int) component.getLocationOnScreen().getY() + DEFAULT_SEPARATION);
         return this;
     }
 
@@ -122,7 +124,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
         return this;
     }
 
-    public HyperCardWindow build() {
+    public T build() {
         this.window.getWindow().pack();
 
         if (location == null) {
@@ -130,7 +132,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
         } else {
             this.window.getWindow().setLocation(location);
         }
-
 
         this.window.applyMenuBar();
 

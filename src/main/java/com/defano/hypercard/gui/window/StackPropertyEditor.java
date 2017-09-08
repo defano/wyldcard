@@ -33,7 +33,7 @@ public class StackPropertyEditor extends HyperCardDialog {
                     .withTitle("Script of stack " + model.getKnownProperty(StackModel.PROP_NAME).stringValue())
                     .withModel(model)
                     .resizeable(true)
-                    .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
                     .build();
         });
         resizeButton.addActionListener(e -> model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel())));

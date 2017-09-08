@@ -59,7 +59,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
                     .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
                     .withModel(model)
                     .resizeable(true)
-                    .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
                     .build();
         });
 

@@ -127,7 +127,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
                 .withTitle("Script of button " + partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
                 .withModel(partModel)
                 .resizeable(true)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
                 .build();
     }
 
