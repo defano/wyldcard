@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.exception;
 
-public class PropertyPermissionException extends HtException {
+public class PropertyPermissionException extends HtSemanticException {
 
     public PropertyPermissionException (String message) {
         super(message);

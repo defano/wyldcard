@@ -28,6 +28,7 @@ import com.defano.hypertalk.parser.HyperTalkLexer;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.IntStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
@@ -59,28 +60,25 @@ public class Interpreter {
     }
 
     public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
-        ExecutorService exector = Executors.newSingleThreadExecutor();
-        exector.submit(new Runnable() {
-            @Override
-            public void run() {
-                HtException generatedError = null;
-                Script compiledScript = null;
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            HtException generatedError = null;
+            Script compiledScript = null;
 
-                try {
-                    compiledScript = compile(scriptText);
-                } catch (HtException e) {
-                    generatedError = e;
-                }
-
-                observer.onCompileCompleted(scriptText, compiledScript, generatedError);
+            try {
+                compiledScript = compile(scriptText);
+            } catch (HtException e) {
+                generatedError = e;
             }
+
+            observer.onCompileCompleted(scriptText, compiledScript, generatedError);
         });
     }
 
     public static Script compile(String scriptText) throws HtException {
         HypertalkErrorListener errors = new HypertalkErrorListener();
 
-        HyperTalkLexer lexer = new HyperTalkLexer(new ANTLRInputStream(scriptText));
+        HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         HyperTalkParser parser = new HyperTalkParser(tokens);
         parser.removeErrorListeners();        // don't log to console
@@ -98,7 +96,7 @@ public class Interpreter {
         } catch (HtParseError e) {
             throw new HtSyntaxException("Didn't understand that.", e.lineNumber, e.columnNumber);
         } catch (Throwable e) {
-            throw new HtException("Didn't understand that.");
+            throw new HtException("Didn't understand that.", e);
         }
     }
 
@@ -108,7 +106,9 @@ public class Interpreter {
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            // Nothing to do; okay to evaluate bogus text
+        }
 
         // Value of a non-expression is itself
         return new Value(expression);
@@ -192,6 +192,26 @@ public class Interpreter {
 
     private static NamedBlock getBlockForStatementList(StatementList statementList) {
         return new NamedBlock("", "", new ParameterList(), statementList);
+    }
+
+    private static class CaseInsensitiveInputStream extends ANTLRInputStream {
+        private char[] lowercased;
+
+        private CaseInsensitiveInputStream(String input) {
+            super(input);
+            this.lowercased = input.toLowerCase().toCharArray();
+        }
+
+        @Override
+        public int LA(int i) {
+            int data = super.LA(i);
+
+            if (data == 0 || data == IntStream.EOF) {
+                return data;
+            } else {
+                return lowercased[index() + i - 1];
+            }
+        }
     }
 
 }

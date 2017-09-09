@@ -80,7 +80,7 @@ HyperCard's native language, _HyperTalk_, is an event-driven scripting language.
 
 HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and converted to a number, boolean, or list depending on the context of its use. HyperCard does not allow nonsensical conversions, though: Adding `5` to `hello` produces a syntax error. Comments are preceded by `--`.
 
-Apple's HyperTalk was case insensitive, but keywords in this version are not. For example, `the mouseLoc` returns the coordinates of the mouse, but `the MOUSELOC` yields an error.
+Keywords and symbols (variables) in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is accessible as `myvar`.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -842,6 +842,7 @@ Function        | Description
 `compound`      | Given two arguments; an interest rate, and a number of periods, `compound` returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`. For example, to calculate how much a $1000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years, `1000 * compound(.03, 6)` yields approximately `1194.05`.
 `cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
 `date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields `07/04/16`.
+`diskSpace`     | Returns the number of free bytes on the filesystem containing HyperTalk Java, or any specified filesystem. For example, `the diskSpace` or `the diskSpace of "/Volumes/Macintosh HD"`. Accepts the path of any disk, folder or file.
 `exp`           | Returns the value of _e_ raised to the power of the given argument.
 `exp1`          | Returns the value of _1-e_ raised to the number of the given argument.
 `exp2`          | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.

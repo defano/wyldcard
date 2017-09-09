@@ -17,13 +17,10 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.parts.PartException;
-import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 
 public class ContainerPart extends Container {
@@ -57,20 +54,15 @@ public class ContainerPart extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        try {
-            Value destValue = getValue();
+        Value destValue = getValue();
 
-            // Operating on a chunk of the existing value
-            if (chunk != null)
-                destValue = Value.setChunk(destValue, preposition, chunk, value);
-            else
-                destValue = Value.setValue(destValue, preposition, value);
+        // Operating on a chunk of the existing value
+        if (chunk != null)
+            destValue = Value.setChunk(destValue, preposition, chunk, value);
+        else
+            destValue = Value.setValue(destValue, preposition, value);
 
-            ExecutionContext.getContext().get(part.evaluateAsSpecifier()).setValue(destValue);
-            ExecutionContext.getContext().setIt(destValue);
-
-        } catch (PartException e) {
-            throw new HtSemanticException("Can't put into that part.", e);
-        }
+        ExecutionContext.getContext().get(part.evaluateAsSpecifier()).setValue(destValue);
+        ExecutionContext.getContext().setIt(destValue);
     }
 }

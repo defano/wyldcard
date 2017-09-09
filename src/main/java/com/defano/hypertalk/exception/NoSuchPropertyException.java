@@ -16,7 +16,7 @@
 
 package com.defano.hypertalk.exception;
 
-public class NoSuchPropertyException extends HtException {
+public class NoSuchPropertyException extends HtSemanticException {
     public NoSuchPropertyException(String message) {
         super(message);
     }

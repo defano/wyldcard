@@ -17,7 +17,7 @@ handler             : 'on' blockName NEWLINE statementList 'end' blockName      
                     ;
 
 blockName           : ID
-                    | 'doMenu'      // Need a special rule here to handle 'doMenu' because it's also a command keyword
+                    | 'domenu'      // Need a special rule here to handle 'doMenu' because it's also a command keyword
                     ;
 
 function            : 'function' ID parameterList NEWLINE statementList 'end' ID                                        # populatedFunction
@@ -330,8 +330,8 @@ menu                : 'menu' factor                                             
                     | ordinal 'menu'                                                                                    # ordinalMenu
                     ;
 
-menuItem            : 'menuItem' factor ('of' | 'from') menu                                                            # expressionMenuItem
-                    | ordinal 'menuItem' ('of' | 'from') menu                                                           # ordinalMenuItem
+menuItem            : 'menuitem' factor ('of' | 'from') menu                                                            # expressionMenuItem
+                    | ordinal 'menuitem' ('of' | 'from') menu                                                           # ordinalMenuItem
                     ;
 
 propertySpec        : 'the'? ID                                                                                         # propertySpecGlobal
@@ -407,8 +407,8 @@ constant            : 'empty'                                                   
                     | 'return'                                                                                          # returnExp
                     | 'space'                                                                                           # spaceExp
                     | 'tab'                                                                                             # tabExp
-                    | 'formFeed'                                                                                        # formFeedExp
-                    | 'lineFeed'                                                                                        # lineFeedExp
+                    | 'formfeed'                                                                                        # formFeedExp
+                    | 'linefeed'                                                                                        # lineFeedExp
                     | 'comma'                                                                                           # commaExp
                     | 'colon'                                                                                           # colonExp
                     ;
@@ -439,7 +439,7 @@ oneArgFunc          : 'average'                                                 
                     | 'number of' ('word' | 'words')                                                                    # numberOfWordsFunc
                     | 'number of' ('item' | 'items')                                                                    # numberOfItemsFunc
                     | 'number of' ('line' | 'lines')                                                                    # numberOfLinesFunc
-                    | 'number of' 'menuItems'                                                                           # numberOfMenuItemsFunc
+                    | 'number of' 'menuitems'                                                                           # numberOfMenuItemsFunc
                     | 'random'                                                                                          # randomFunc
                     | 'sqrt'                                                                                            # sqrtFunc
                     | 'trunc'                                                                                           # truncFunc
@@ -454,18 +454,19 @@ oneArgFunc          : 'average'                                                 
                     | 'ln1'                                                                                             # ln1Func
                     | 'log2'                                                                                            # log2Func
                     | 'abs'                                                                                             # absFunc
-                    | 'charToNum'                                                                                       # charToNumFunc
-                    | 'numToChar'                                                                                       # numToCharFunc
+                    | 'chartonum'                                                                                       # charToNumFunc
+                    | 'numtochar'                                                                                       # numToCharFunc
                     | 'value'                                                                                           # valueFunc
                     | 'length'                                                                                          # lengthFunc
+                    | 'diskspace'                                                                                       # diskSpaceFunc
                     ;
 
 noArgFunc           : 'mouse'                                                                                           # mouseFunc
-                    | 'mouseLoc'                                                                                        # mouseLocFunc
+                    | 'mouseloc'                                                                                        # mouseLocFunc
                     | 'result'                                                                                          # resultFunc
-                    | ('commandKey' | 'cmdKey')                                                                         # commandKeyFunc
-                    | 'shiftKey'                                                                                        # shiftKeyFunc
-                    | 'optionKey'                                                                                       # optionKeyFunc
+                    | ('commandkey' | 'cmdkey')                                                                         # commandKeyFunc
+                    | 'shiftkey'                                                                                        # shiftKeyFunc
+                    | 'optionkey'                                                                                       # optionKeyFunc
                     | ('message' | 'message' 'box' | 'message' 'window')                                                # messageFunc
                     | 'ticks'                                                                                           # ticksFunc
                     | 'seconds'                                                                                         # secondsFunc
@@ -484,10 +485,10 @@ noArgFunc           : 'mouse'                                                   
                     | 'number of' ('background' | 'bkgnd') 'fields'                                                     # numberOfBkgndFields
                     | 'number of' 'menus'                                                                               # numberOfMenusFunc
                     | 'menus'                                                                                           # menusFunc
+                    | 'diskspace'                                                                                       # diskSpaceNoArgFunc
                     ;
 
-literal             : STRING_LITERAL
-                    | NUMBER_LITERAL
+literal             : LITERAL
                     | TWO_ITEM_LIST
                     | FOUR_ITEM_LIST
                     ;
@@ -495,10 +496,8 @@ literal             : STRING_LITERAL
 THEN                : NEWLINE 'then' | 'then';
 
 ID                  : (ALPHA (ALPHA | DIGIT)*) ;
-
 LITERAL             : STRING_LITERAL | NUMBER_LITERAL;
 
-STRING_LITERAL      : '"' ~('"' | '\r' | '\n' )* '"' ;
 INTEGER_LITERAL     : DIGIT+ ;
 
 NUMBER_LITERAL      : INTEGER_LITERAL
@@ -511,10 +510,12 @@ NUMBER_LITERAL      : INTEGER_LITERAL
                     | '-' INTEGER_LITERAL '.' INTEGER_LITERAL
                     ;
 
-ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
-DIGIT               : ('0' .. '9')+ ;
+STRING_LITERAL      : '"' ~('"' | '\r' | '\n' )* '"' ;
 TWO_ITEM_LIST       : (LITERAL ',' LITERAL);
 FOUR_ITEM_LIST      : (LITERAL ',' LITERAL ',' LITERAL ',' LITERAL);
+
+ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
+DIGIT               : ('0' .. '9')+ ;
 
 COMMENT             : '--' ~('\r' | '\n')* -> skip;
 NEWLINE             : ('\n' | '\r')+;

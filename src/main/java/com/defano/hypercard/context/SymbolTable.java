@@ -30,14 +30,14 @@ public class SymbolTable {
     }
     
     public Value get (String id) {
-        Value v = table.get(id);
+        Value v = table.get(id.toLowerCase());
         if (v == null)
             return new Value();
         return v;
     }
     
     public void put (String id, Value v) {
-        table.put(id, v);
+        table.put(id.toLowerCase(), v);
     }
     
     public boolean exists (String id) {

@@ -84,7 +84,7 @@ public class VisualEffectFactory {
                 return new CheckerboardEffect();
 
             default:
-                throw new IllegalArgumentException("Unimplemented visual effect: " + name);
+                throw new IllegalArgumentException("Bug! Unimplemented visual effect: " + name);
         }
     }
 
@@ -102,7 +102,7 @@ public class VisualEffectFactory {
                 return invert(to);
 
             default:
-                throw new IllegalArgumentException("Not implemented yet.");
+                throw new IllegalArgumentException("Bug! Not implemented yet.");
         }
     }
 

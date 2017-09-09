@@ -33,7 +33,7 @@ public class RandomFunc extends ArgListFunction {
         if (boundValue.isNatural()) {
             return new Value(new Random().nextInt(boundValue.integerValue()));
         } else {
-            throw new HtSemanticException("Random expects a non-negative integer, but got: " + boundValue.stringValue());
+            throw new HtSemanticException("Random expects a non-negative integer, but got '" + boundValue.stringValue() + "'");
         }
     }
 }

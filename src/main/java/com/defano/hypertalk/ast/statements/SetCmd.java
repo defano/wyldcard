@@ -16,7 +16,6 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypertalk.ast.containers.ContainerVariable;
 import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.ast.containers.PropertySpecifier;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -50,10 +49,9 @@ public class SetCmd extends Statement {
                 ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
             }
 
-        } catch (Exception e) {
-
+        } catch (HtSemanticException e) {
             if (propertySpec.partExp != null) {
-                throw new HtSemanticException("Cannot set the '" + propertySpec.property + "' of this part.", e);
+                throw (e);
             } else {
                 // When all else fails, set the value of a variable container
                 ExecutionContext.getContext().set(propertySpec.property, expression.evaluate());

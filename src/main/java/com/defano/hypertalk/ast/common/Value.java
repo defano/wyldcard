@@ -351,7 +351,7 @@ public class Value implements Comparable<Value> {
         case BEFORE:    return new Value(mutator.toString() + mutable.toString());
         case INTO:        return new Value(mutator.toString());
         case AFTER:        return new Value(mutable.toString() + mutator.toString());
-        default: throw new RuntimeException("Bug! Unhandled preposition");
+        default: throw new RuntimeException("Bug! Unhandled preposition.");
         }
     }
     
@@ -427,7 +427,7 @@ public class Value implements Comparable<Value> {
         if (!isNumber())
             throw new HtSemanticException(value + " cannot be added because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException(value + " cannot be added to the text expression: " + v + ".");
+            throw new HtSemanticException(value + " cannot be added to the text expression '" + v + "'.");
 
         try {
             if (isInteger() && v.isInteger())
@@ -444,7 +444,7 @@ public class Value implements Comparable<Value> {
         if (!isNumber())
             throw new HtSemanticException("'" + value + "' cannot be subtracted because it is not a number.");
         if (!v.isNumber())
-            throw new HtSemanticException("'" + value + "' cannot be subtracted by the text expression: " + v + ".");
+            throw new HtSemanticException("'" + value + "' cannot be subtracted by the text expression '" + v + "'.");
 
         try {
             if (isInteger() && v.isInteger())

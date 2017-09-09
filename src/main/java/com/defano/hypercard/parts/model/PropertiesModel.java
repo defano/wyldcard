@@ -198,7 +198,7 @@ public class PropertiesModel {
     public void setKnownProperty(String property, Value value, boolean quietly) {
         try {
             setProperty(property, value, quietly);
-        } catch (NoSuchPropertyException | PropertyPermissionException | HtSemanticException e) {
+        } catch (HtSemanticException e) {
             throw new RuntimeException("Can't set known property.", e);
         }
     }

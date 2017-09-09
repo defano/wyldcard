@@ -9,7 +9,6 @@
 package com.defano.hypercard.context;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;

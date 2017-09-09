@@ -8,8 +8,9 @@
 
 /**
  * PropertyExp.java
+ *
  * @author matt.defano@gmail.com
- * 
+ * <p>
  * Encapsulation of a property, for example "visible of button id 10"
  */
 
@@ -28,24 +29,20 @@ public class PropertyExp extends Expression {
     public PropertyExp(PropertySpecifier propertySpecifier) {
         this.propertySpecifier = propertySpecifier;
     }
-    
-    public Value evaluate () throws HtSemanticException {
-        try {
-            // Getting a HyperCard property
-            if (propertySpecifier.isGlobalPropertySpecifier()) {
-                return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
-            }
 
-            else if (propertySpecifier.isMenuItemPropertySpecifier()) {
-                return MenuPropertiesDelegate.getProperty(propertySpecifier.property, propertySpecifier.menuItem);
-            }
+    public Value evaluate() throws HtSemanticException {
 
-            // Getting the property of a part
-            else {
-                return ExecutionContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
-            }
-        } catch (Exception e) {
-            throw new HtSemanticException("The property '" + propertySpecifier.property + "' does not exist on this part.", e);
+        // Getting a HyperCard property
+        if (propertySpecifier.isGlobalPropertySpecifier()) {
+            return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
+        } else if (propertySpecifier.isMenuItemPropertySpecifier()) {
+            return MenuPropertiesDelegate.getProperty(propertySpecifier.property, propertySpecifier.menuItem);
         }
-    }    
+
+        // Getting the property of a part
+        else {
+            return ExecutionContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
+        }
+
+    }
 }

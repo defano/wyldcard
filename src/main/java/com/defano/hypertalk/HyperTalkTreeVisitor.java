@@ -1668,6 +1668,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case CHAR_TO_NUM: return new CharToNumFunc((Expression) visit(ctx.factor()));
             case VALUE: return new ValueFunc((Expression) visit(ctx.factor()));
             case LENGTH: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.factor()));
+            case DISK_SPACE: return new DiskSpaceFunc((Expression) visit(ctx.factor()));
 
             default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.oneArgFunc().getText());
         }
@@ -1700,6 +1701,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_BKGND_FIELDS: return new NumberOfFunc(Countable.BKGND_FIELDS);
             case NUMBER_MENUS: return new NumberOfFunc(Countable.MENUS);
             case MENUS: return new MenusFunc();
+            case DISK_SPACE: return new DiskSpaceFunc();
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
         }
@@ -1784,6 +1786,72 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
         return new Value(ctx.getText());
     }
+
+    @Override
+    public Object visitDiskSpaceNoArgFunc(HyperTalkParser.DiskSpaceNoArgFuncContext ctx) {
+        return BuiltInFunction.DISK_SPACE;
+    }
+
+    @Override
+    public Object visitDiskSpaceFunc(HyperTalkParser.DiskSpaceFuncContext ctx) {
+        return BuiltInFunction.DISK_SPACE;
+    }
+
+//    @Override
+//    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
+//        String literal = ctx.getText();
+//
+//        // Drop quotes from quoted string literal when converting a value
+//        if (literal.startsWith("\"") && literal.endsWith("\"")) {
+//            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
+//        }
+//
+//        return new Value(ctx.getText());
+//    }
+//
+//    @Override
+//    public Object visitDiskSpaceNoArgFunc(HyperTalkParser.DiskSpaceNoArgFuncContext ctx) {
+//        return BuiltInFunction.DISK_SPACE;
+//    }
+//
+//    @Override
+//    public Object visitDiskSpaceFunc(HyperTalkParser.DiskSpaceFuncContext ctx) {
+//        return BuiltInFunction.DISK_SPACE;
+//    }
+//
+//    @Override
+//    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
+//        String literal = ctx.getText();
+//
+//        // Drop quotes from quoted string literal when converting a value
+//        if (literal.startsWith("\"") && literal.endsWith("\"")) {
+//            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
+//        }
+//
+//        return new Value(ctx.getText());
+//    }
+//
+//    @Override
+//    public Object visitDiskSpaceNoArgFunc(HyperTalkParser.DiskSpaceNoArgFuncContext ctx) {
+//        return BuiltInFunction.DISK_SPACE;
+//    }
+//
+//    @Override
+//    public Object visitDiskSpaceFunc(HyperTalkParser.DiskSpaceFuncContext ctx) {
+//        return BuiltInFunction.DISK_SPACE;
+//    }
+//
+//    @Override
+//    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
+//        String literal = ctx.getText();
+//
+//        // Drop quotes from quoted string literal when converting a value
+//        if (literal.startsWith("\"") && literal.endsWith("\"")) {
+//            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
+//        }
+//
+//        return new Value(ctx.getText());
+//    }
 
     @Override
     public Object visitNumberOfCardParts(HyperTalkParser.NumberOfCardPartsContext ctx) {

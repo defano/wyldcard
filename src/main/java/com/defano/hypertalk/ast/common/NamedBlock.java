@@ -30,7 +30,7 @@ public class NamedBlock {
 
     public NamedBlock (String onName, String endName, ParameterList parameters, StatementList body) {
         if (!onName.equalsIgnoreCase(endName)) {
-            throw new IllegalArgumentException("Handler on ID " + onName + " does not match ed ID " + endName);
+            throw new IllegalArgumentException("Handler on ID " + onName + " does not match end ID " + endName);
         }
 
         this.name = onName;
