@@ -46,8 +46,17 @@ public class ExpressionList {
         return this;
     }
 
-    public List<Value> evaluate() throws HtSemanticException {
+    public List<Value> divingEvaluate() throws HtSemanticException {
+        List<Value> evaluatedList = new ArrayList<>();
 
+        for (Expression expr : list) {
+            evaluatedList.addAll(expr.evaluate().getItems());
+        }
+
+        return evaluatedList;
+    }
+
+    public List<Value> evaluate() throws HtSemanticException {
         List<Value> evaluatedList = new ArrayList<>();
 
         for (Expression expr : list) {

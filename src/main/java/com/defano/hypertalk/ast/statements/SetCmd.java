@@ -55,8 +55,8 @@ public class SetCmd extends Statement {
             if (propertySpec.partExp != null) {
                 throw new HtSemanticException("Cannot set the '" + propertySpec.property + "' of this part.", e);
             } else {
-                // When all else fails, set the value of a container
-                ExecutionContext.getContext().put(expression.evaluate(), Preposition.INTO, new ContainerVariable(propertySpec.property));
+                // When all else fails, set the value of a variable container
+                ExecutionContext.getContext().set(propertySpec.property, expression.evaluate());
             }
         }
     }

@@ -20,6 +20,7 @@ import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 public class ContainerVariable extends Container {
 
@@ -52,6 +53,17 @@ public class ContainerVariable extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        ExecutionContext.getContext().put(value, preposition, this);
+
+        Value mutable = ExecutionContext.getContext().get(symbol);
+
+        // Operating on a chunk of the existing value
+        if (chunk != null)
+            mutable = Value.setChunk(mutable, preposition, chunk, value);
+        else
+            mutable = Value.setValue(mutable, preposition, value);
+
+        ExecutionContext.getContext().set(symbol, mutable);
+        ExecutionContext.getContext().setIt(mutable);
     }
+
 }

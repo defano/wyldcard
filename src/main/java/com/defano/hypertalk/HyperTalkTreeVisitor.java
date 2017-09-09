@@ -1585,7 +1585,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFormFeedExp(HyperTalkParser.FormFeedExpContext ctx) {
-        return new LiteralExp("\r");
+        return new LiteralExp("\f");
     }
 
     @Override
@@ -1707,13 +1707,30 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBuiltinFuncArgList(HyperTalkParser.BuiltinFuncArgListContext ctx) {
-        switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
+        switch ((BuiltInFunction) visit(ctx.argFunc())) {
             case MIN: return new MinFunc((ExpressionList) visit(ctx.expressionList()));
             case MAX: return new MaxFunc((ExpressionList) visit(ctx.expressionList()));
             case AVERAGE: return new AverageFunc((ExpressionList) visit(ctx.expressionList()));
             case RANDOM: return new RandomFunc((ExpressionList) visit(ctx.expressionList()));
-            default: throw new RuntimeException("Bug! Unimplemented arg-list function: " + ctx.oneArgFunc().getText());
+            case ANNUITY: return new AnnuityFunc((ExpressionList) visit(ctx.expressionList()));
+            case COMPOUND: return new CompoundFunc((ExpressionList) visit(ctx.expressionList()));
+            default: throw new RuntimeException("Bug! Unimplemented arg-list function: " + ctx.argFunc().getText());
         }
+    }
+
+    @Override
+    public Object visitOneArgArgFunc(HyperTalkParser.OneArgArgFuncContext ctx) {
+        return visit(ctx.oneArgFunc());
+    }
+
+    @Override
+    public Object visitAnnuityArgFunc(HyperTalkParser.AnnuityArgFuncContext ctx) {
+        return BuiltInFunction.ANNUITY;
+    }
+
+    @Override
+    public Object visitCompoundArgFunc(HyperTalkParser.CompoundArgFuncContext ctx) {
+        return BuiltInFunction.COMPOUND;
     }
 
     @Override
@@ -1754,6 +1771,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenusFunc(HyperTalkParser.MenusFuncContext ctx) {
         return BuiltInFunction.MENUS;
+    }
+
+    @Override
+    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
+        String literal = ctx.getText();
+
+        // Drop quotes from quoted string literal when converting a value
+        if (literal.startsWith("\"") && literal.endsWith("\"")) {
+            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
+        }
+
+        return new Value(ctx.getText());
     }
 
     @Override
@@ -1879,60 +1908,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitAbsFunc(HyperTalkParser.AbsFuncContext ctx) {
         return BuiltInFunction.ABS;
-    }
-
-    @Override
-    public Object visitStringLiteral(HyperTalkParser.StringLiteralContext ctx) {
-        String quotedLiteral = ctx.getText();
-
-        if (!quotedLiteral.startsWith("\"") || !quotedLiteral.endsWith("\"")) {
-            throw new IllegalStateException("Bug! No quotes around quoted literal.");
-        }
-
-        return new Value(String.valueOf(quotedLiteral.substring(1, quotedLiteral.length() - 1)));
-    }
-
-    @Override
-    public Object visitNegNumberLiteral(HyperTalkParser.NegNumberLiteralContext ctx) {
-        return new Value("-" + ctx.INTEGER_LITERAL().getText());
-    }
-
-    @Override
-    public Object visitDotNumberLiteral(HyperTalkParser.DotNumberLiteralContext ctx) {
-        Object fractional = ctx.INTEGER_LITERAL().getText();
-        return new Value("0." + String.valueOf(fractional));
-    }
-
-    @Override
-    public Object visitNegDotNumberLiteral(HyperTalkParser.NegDotNumberLiteralContext ctx) {
-        return new Value("-0." + ctx.INTEGER_LITERAL().getText());
-    }
-
-    @Override
-    public Object visitNumberDotNumberLiteral(HyperTalkParser.NumberDotNumberLiteralContext ctx) {
-        Object whole = ctx.INTEGER_LITERAL(0).getText();
-        Object fractional = ctx.INTEGER_LITERAL(1).getText();
-        return new Value(String.valueOf(whole) + "." + String.valueOf(fractional));
-    }
-
-    @Override
-    public Object visitNumberDotLiteral(HyperTalkParser.NumberDotLiteralContext ctx) {
-        return new Value(ctx.getText());
-    }
-
-    @Override
-    public Object visitNegNumberDotLiteral(HyperTalkParser.NegNumberDotLiteralContext ctx) {
-        return new Value("-" + ctx.INTEGER_LITERAL().getText());
-    }
-
-    @Override
-    public Object visitNegNumberDotNumberLiteral(HyperTalkParser.NegNumberDotNumberLiteralContext ctx) {
-        return new Value("-" + ctx.INTEGER_LITERAL(0).getText() + "." + ctx.INTEGER_LITERAL(1).getText());
-    }
-
-    @Override
-    public Object visitNumberLiteral(HyperTalkParser.NumberLiteralContext ctx) {
-        return new Value(ctx.getText());
     }
 
     @Override

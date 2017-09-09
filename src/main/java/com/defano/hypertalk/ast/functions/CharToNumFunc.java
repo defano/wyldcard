@@ -25,7 +25,7 @@ public class CharToNumFunc extends Expression {
         Value evaluated = expression.evaluate();
 
         if (evaluated.stringValue().length() == 0) {
-            throw new HtSemanticException("charToNum expects a string value here, but got: " + evaluated.stringValue());
+            throw new HtSemanticException("charToNum expects a string value, but got empty.");
         }
 
         return new Value((int)evaluated.stringValue().charAt(0));

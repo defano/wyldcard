@@ -37,12 +37,12 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> ExecutionContext.getContext().getCard().getCanvas().undo())
+                .withAction(e -> HyperCard.getInstance().getCard().getCanvas().undo())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> ExecutionContext.getContext().getCard().getCanvas().redo())
+                .withAction(e -> HyperCard.getInstance().getCard().getCanvas().redo())
                 .build(this);
 
         this.addSeparator();

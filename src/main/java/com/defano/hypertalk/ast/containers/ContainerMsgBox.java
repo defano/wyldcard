@@ -23,6 +23,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
 
@@ -50,7 +51,17 @@ public class ContainerMsgBox extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        ExecutionContext.getContext().put(value, preposition, this);
+        Value destValue = new Value(HyperCard.getInstance().getMessageBoxText());
+
+        // Operating on a chunk of the existing value
+        if (chunk != null)
+            destValue = Value.setChunk(destValue, preposition, chunk, value);
+        else
+            destValue = Value.setValue(destValue, preposition, value);
+
+        HyperCard.getInstance().setMessageBoxText(destValue);
+        ExecutionContext.getContext().setIt(destValue);
+
         SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setVisible(true));
     }
 

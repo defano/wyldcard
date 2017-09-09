@@ -117,7 +117,7 @@ public class RepeatStatement extends Statement {
                 }
             }
         } else
-            throw new RuntimeException("Unknown repeat type");
+            throw new IllegalStateException("Bug! Unknown repeat type.");
     }
 
     private void rest() throws HtException {

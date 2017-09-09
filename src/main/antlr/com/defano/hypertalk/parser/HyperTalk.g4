@@ -424,7 +424,12 @@ factor              : literal                                                   
 
 builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs
                     | 'the' noArgFunc                                                                                   # builtinFuncNoArg
-                    | oneArgFunc '(' expressionList ')'                                                                 # builtinFuncArgList
+                    | argFunc '(' expressionList ')'                                                                    # builtinFuncArgList
+                    ;
+
+argFunc             : oneArgFunc                                                                                        # oneArgArgFunc
+                    | 'annuity'                                                                                         # annuityArgFunc
+                    | 'compound'                                                                                        # compoundArgFunc
                     ;
 
 oneArgFunc          : 'average'                                                                                         # averageFunc
@@ -481,31 +486,37 @@ noArgFunc           : 'mouse'                                                   
                     | 'menus'                                                                                           # menusFunc
                     ;
 
-literal             : STRING_LITERAL                                                                                    # stringLiteral
-                    | INTEGER_LITERAL                                                                                   # numberLiteral
-                    | '-' INTEGER_LITERAL                                                                               # negNumberLiteral
-                    | '.' INTEGER_LITERAL                                                                               # dotNumberLiteral
-                    | '-' '.' INTEGER_LITERAL                                                                           # negDotNumberLiteral
-                    | INTEGER_LITERAL '.'                                                                               # numberDotLiteral
-                    | '-' INTEGER_LITERAL '.'                                                                           # negNumberDotLiteral
-                    | INTEGER_LITERAL '.' INTEGER_LITERAL                                                               # numberDotNumberLiteral
-                    | '-' INTEGER_LITERAL '.' INTEGER_LITERAL                                                           # negNumberDotNumberLiteral
+literal             : STRING_LITERAL
+                    | NUMBER_LITERAL
+                    | TWO_ITEM_LIST
+                    | FOUR_ITEM_LIST
                     ;
 
 THEN                : NEWLINE 'then' | 'then';
 
-ID                  : POINT | RECT | (ALPHA (ALPHA | DIGIT)*) ;
+ID                  : (ALPHA (ALPHA | DIGIT)*) ;
+
+LITERAL             : STRING_LITERAL | NUMBER_LITERAL;
 
 STRING_LITERAL      : '"' ~('"' | '\r' | '\n' )* '"' ;
 INTEGER_LITERAL     : DIGIT+ ;
 
+NUMBER_LITERAL      : INTEGER_LITERAL
+                    | '-' INTEGER_LITERAL
+                    | '.' INTEGER_LITERAL
+                    | '-' '.' INTEGER_LITERAL
+                    | INTEGER_LITERAL '.'
+                    | '-' INTEGER_LITERAL '.'
+                    | INTEGER_LITERAL '.' INTEGER_LITERAL
+                    | '-' INTEGER_LITERAL '.' INTEGER_LITERAL
+                    ;
+
 ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
 DIGIT               : ('0' .. '9')+ ;
-POINT               : (DIGIT ',' DIGIT);
-RECT                : (DIGIT ',' DIGIT ',' DIGIT ',' DIGIT);
+TWO_ITEM_LIST       : (LITERAL ',' LITERAL);
+FOUR_ITEM_LIST      : (LITERAL ',' LITERAL ',' LITERAL ',' LITERAL);
 
 COMMENT             : '--' ~('\r' | '\n')* -> skip;
 NEWLINE             : ('\n' | '\r')+;
 WHITESPACE          : (' ' | '\t')+ -> skip;
-
 UNLEXED_CHAR        : . ;

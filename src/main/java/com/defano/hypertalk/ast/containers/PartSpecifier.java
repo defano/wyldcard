@@ -23,8 +23,4 @@ public interface PartSpecifier {
     default boolean isStackElementSpecifier() {
         return type() == PartType.CARD || type() == PartType.BACKGROUND;
     }
-
-    default boolean isHyperCardElementSpecifier() {
-        return type() == PartType.MESSAGE_BOX;
-    }
 }

@@ -19,6 +19,7 @@ import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -34,7 +35,11 @@ public class UserFunctionExp extends Expression {
     }
     
     public Value evaluate () throws HtSemanticException {
-        
+
+        if (!ExecutionContext.getContext().hasMe()) {
+            throw new HtSemanticException("Cannot invoke user-defined functions here.");
+        }
+
         try {
             PartSpecifier ps = ExecutionContext.getContext().getMe();
             PartModel part = ExecutionContext.getContext().get(ps);

@@ -831,6 +831,7 @@ Function        | Description
 `abbrev date`   | Returns the current date spelled out using abbreviations. For example, `Sat, Jul 02, 2016`. Also available as `abbreviated date`.
 `abs`           | Returns the absolute value of the given numerical argument.
 `atan`          | Returns the trigonometric arctangent of the given argument, represented in radians.
+`annuity`       | Given two arguments; an interest rate, and a number of periods, `annuity` returns the total value of an annuity that makes one payment per period at the given interest rate. Equivalent to `(1 - (1 + rate) ^ -periods) / rate`. For example, to calculate the monthly payment on a 30-year mortgage loan of a $100,000 at 3% interest, `100000 / annuity(.03 / 12, 30 * 12)` yields approximately `421.60`.  
 `average`       | Returns the statistical mean of a list of numerical items. Example: `the average of "1,2,3,4,5"` (returns 3) or `average (93, 26, 77)` returns `65.33`.
 `charToNum`     | Return the numerical _codepoint_ associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`
 `clickH`        | Returns the x-coordinate of the last location the user clicked the mouse.
@@ -838,6 +839,7 @@ Function        | Description
 `clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
 `clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.
 `commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
+`compound`      | Given two arguments; an interest rate, and a number of periods, `compound` returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`. For example, to calculate how much a $1000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years, `1000 * compound(.03, 6)` yields approximately `1194.05`.
 `cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
 `date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields `07/04/16`.
 `exp`           | Returns the value of _e_ raised to the power of the given argument.
