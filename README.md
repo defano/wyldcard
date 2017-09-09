@@ -1,10 +1,10 @@
 # HyperTalk Java
 
-A toy implementation of Apple's HyperCard written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+An effort to recreate Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
 ![Hero](doc/images/hero.png)
 
-#### What's HyperCard?
+#### Wait, what's HyperCard?
 
 Released in 1987 and included in the box with every Macintosh sold during the late 1980's and '90s, HyperCard was an [Erector Set](https://en.wikipedia.org/wiki/Erector_Set) for building software: part programming language, part "paint" program, part database. With HyperCard, you could draw a user interface with [MacPaint](https://en.wikipedia.org/wiki/MacPaint)-like tools, then apply scripts and behaviors using an expressive syntax that mimicked natural English.
 
@@ -74,7 +74,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Variables](#containers) | [Parts](#parts-and-properties) | [Expressions](#expressions) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [If-Then](#control-structures) | [Repeat](#loop-constructs)
+[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Expressions](#expressions) | [Variables](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#control-structures)
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. (There is no singular "main" script in HyperTalk.)
 
@@ -228,9 +228,133 @@ end keyDownInField
 
 This works by passing the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing a `keyDown` handler and only conditionally passing the `keyDown` message back to HyperCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the field).
 
+## Expressions
+
+An expression is anything in HyperTalk that produces or represents a value. Constants (like `3.14`, `quote` or `"Hello world!"`), containers and variables (`myVar`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `fibonacci(empty, 0, 1, 200)`) are all expressions.
+
+Perhaps the most powerful aspect of HyperTalk's expression language is its ability to address a portion of an expression (called a _chunk_). A script can get or set any range of words, characters, lines, or comma-delimited items in a value by specifying them numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
+
+Consider the following chunked expressions:
+
+```
+the first character of the second word of the last line of field id 24
+character 19 to 27 of the message box
+the second item of "Hello,Goodbye" -- yields "Goodbye"
+the middle word of "one two three" -- yields "two"
+```
+
+When mutating a chunk of text within a container, a preposition (`before`, `into`, or `after`) may be included in the expression. For example:
+
+```
+put word 2 of "Hello Goodbye" into the first word of field id 0
+put "blah" after the third character of the middle item of myVar
+put 29 before the message box
+```
+
+Chunks may be used as terms in an expression to produce powerful, easy to understand logic:
+
+```
+multiply the first character of card field "numbers" by 9
+if item 1 of the mouseLoc > item 2 of the mouseLoc then answer "Move left, captain!"
+sort the lines of bkgnd field 3 by the last word of each
+```
+
+Want to impress your friends? HyperTalk lets you to modify a chunk-of-a-chunk inside a container. For example:
+
+```
+put "x" into the second character of the third word of the fourth line of field id 1
+put the first char of the second word of myContainer into the middle item of the last line of y
+```
+
+Some examples of valid expressions include:
+
+```
+item 1 of the mouseLoc < 100 -- true if the mouse is towards the left of the card
+4 * (2 + 3) -- yields 20
+"hello" contains "el" and "goodbye" contains "bye" -- true
+3 * 5 is not 15 -- false
+"Hello" && "World" -- produces "Hello World"
+"Hyper" > "Card" -- true, "Hyper" is alphabetically after "Card"
+not "nonsense" -- syntax error, "nonsense" is not a boolean
+false is not "tr" & "ue" -- true, concatenating 'tr' with 'ue' produces a logical value
+```
+
+### Operators
+
+An operator is an expression that takes one (unary) or two (binary) values, applies some _operation_ to, and yields a new value.
+
+HyperTalk supports a standard suite of mathematical, logical and string operators:
+
+|Precedence  | Operator        | Description
+|------------| ----------------|-------------
+|1 (highest) | `( )`           | Grouping
+|2           | `-`             | Negation for numbers (unary)
+|            | `not`	         | Negation for boolean values (unary)
+|3           | `^`             | Exponentiation for numbers
+|4           | `*`             | Multiplication for numbers
+|            | `/`             | Division for numbers
+|            | `div`	         | Division for numbers
+|            | `mod`	         | Modulus division for numbers; returns the remainder
+|5           | `+`             | Addition for numbers
+|            | `-`             | Subtraction for numbers
+|6           | `&`, `&&`       | Text concatenation; `&&` adds a space between operands; `&` does not
+|7           | `>`             | Greater than comparison for numbers and text
+|            | `<`             | Less than comparison for numbers and text
+|            | `<=`            | Less than or equal to comparison for numbers and text
+|            | `>=`            | Greater than or equal to comparison for numbers and text
+|            | `contains`      | Substring comparison for text
+|            | `is a`, `is an` | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
+|            | `is not a`, `is not an` | The logical inverse of `is a`, `is an`
+|8           | `=`             | Equality comparison for text
+|            | `is`            | Equality comparison for text
+|            | `is not`        | Negative equality comparison for text
+|            | `<>`	           | Synonym for is not
+|9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
+|            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
+|10          | `and`           | Logical AND for boolean values
+|11 (lowest) |  `or`           | Logical OR for boolean values
+
+### Factors
+
+A _factor_ is an evaluated term or operand appearing in an expression. The nature of HyperTalk's syntax produces cases where the value of a term could be ambiguous.
+
+HyperCard uses the following precedence when evaluating factors to eliminate ambiguity:
+
+Precedence   | Term                    | Description
+-------------|-------------------------|------------
+1 (highest)  | _Constant_              | Evaluation of a built-in constant (e.g., `pi`); see table below
+2            | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
+3            | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
+4            | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
+5            | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
+6            | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
+7 (lowest)   | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+
+### Constants and literals
+
+The table below lists special values that are treated as keyword constants in the language; any unquoted use of these terms evaluates to the specified value.
+
+Additionally, any single-word unquoted literal that is not a language keyword and not an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat` displays the word "neat" unless a variable named "neat" is in scope, in which case the variable's value will be displayed.
+
+Multi-word unquoted literals are not allowed; `put hello world` results in a syntax error.
+
+Constant     | Value
+-------------|---------------------------------------
+`empty`      | The empty string, equivalent to `""`
+`pi`         | The first 20 digits of pi, `3.14159265358979323846`
+`quote`      | A double-quote character, `"`
+`return`     | The newline character (`\n` in Java)
+`space`      | A single space, equivalent to `" "`
+`tab`        | A tab character
+`formFeed`   | The form feed character (ASCII 0x0c, `\f` in Java)
+`lineFeed`   | The line feed character (ASCII 0x0a, `\n` in Java)
+`comma`      | The comma character, `,`
+`colon`      | The colon character, `:`
+`zero`..`ten`| The integers `0` to `10`
+
 ## Containers
 
-A _container_ is anything in HyperCard that can hold a value: Parts, variables, properties, menus and the message box are containers.
+A _container_ is anything in HyperCard that you can put a value into: Parts, variables, properties, menus and the message box are containers.
 
 #### Variable containers
 
@@ -317,7 +441,7 @@ Note that the message box is HyperTalk's "default container". When a container i
 
 #### The `it` container
 
-HyperTalk provides an implicit variable named `it`. Most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated expression's result. In this implementation, the value of `it` may also be retrieved using `the result` function (this is not true in Apple's HyperCard).
+HyperTalk provides an implicit variable named `it`. Most expressions and some commands mutate the value of this variable so that it always contains the most recently evaluated expression's result.
 
 For example:
 
@@ -429,14 +553,16 @@ Property    | Description
 
 ### Fields
 
-In this implementation, fields come in only two flavors: transparent and opaque:
+In HyperTalk Java, fields come in four styles. Unlike Apple's HyperCard, however, every style of field is scrollable.
 
-Style                                        | Name          | Notes
----------------------------------------------|---------------|-------------------------
-![Opaque](doc/images/opaque_field.png)       | `opaque`      | An opaque, etched-border editable text field that can be filled with formatted text.
-![Default](doc/images/transparent_field.png) | `transparent` | Functionally identical to an opaque field, but whose background and border is transparent.
+Style                                            | Name          | Notes
+-------------------------------------------------|---------------|-------------------------
+![Default](doc/images/rectangle-field.png)       | `rectangle`   | An opaque field drawn with a rectangular border (drawn in the style of the operating system).
+![Default](doc/images/shadow-field.png)          | `shadow`      | An opaque field drawn with a drop-shadow border.
+![Opaque](doc/images/opaque-field.png)           | `opaque`      | An opaque field drawn without a border.
+![Transparent](doc/images/transparent-field.png) | `transparent` | A transparent field drawn without a border.
 
-A field has these properties:
+A field has these unique properties:
 
 Property   | Description
 -----------|----------------------
@@ -533,132 +659,6 @@ Global Property | Description
 `itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yields 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 
 Note that these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
-
-## Expressions
-
-HyperCard contains a rich expression language that includes support for complex prepositional chunk operations. A script can fetch or mutate a range of words, characters, lines, or comma-delimited items in a value (called a _chunk_). Chunks may be specified numerically (`line 3 of`), by ordinal (`the third line of`), or relatively (`the last line of`; `the middle word of`).
-
-Chunk expressions follow the form:
-
-```
-::= [the] { <ordinal> | <relation> } <chunk> of <value>
-|   <chunk> <integer> of <value>
-|   <chunk> <integer> to <integer> of <value>
-```
-
-Where:
-
-```
-<chunk>    ::= char | character | word | item | line
-<relation> ::= middle | last
-<ordinal>  ::= first | second | third | ... | tenth
-```
-
-Consider the following chunked expressions:
-
-```
-the first character of the second word of the last line of field id 24
-character 19 to 27 of the message box
-the second item of "Hello,Goodbye" -- yields "Goodbye"
-the middle word of "one two three" -- yields "two"
-```
-
-When mutating a chunk of text within a container, a preposition (`before`, `into`, or `after`) may be included in the expression. For example:
-
-```
-put word 2 of "Hello Goodbye" into the first word of field id 0
-put "blah" after the third character of the middle item of myVar
-put 29 before the message box
-```
-
-Want to impress your friends? HyperTalk lets you to modify a chunk-of-a-chunk of text within a container. For example:
-
-```
-put "x" into the second character of the third word of the fourth line of field id 1
-put the first char of the second word of myContainer into the middle item of the last line of y
-```
-
-### Operators
-
-HyperTalk supports a standard suite of mathematical, logical and string operators:
-
-|Precedence  | Operator        | Description
-|------------| ----------------|-------------
-|1 (highest) | `( )`           | Grouping
-|2           | `-`             | Negation for numbers (unary)
-|            | `not`	         | Negation for boolean values (unary)
-|3           | `^`             | Exponentiation for numbers
-|4           | `*`             | Multiplication for numbers
-|            | `/`             | Division for numbers
-|            | `div`	         | Division for numbers
-|            | `mod`	         | Modulus division for numbers; returns the remainder
-|5           | `+`             | Addition for numbers
-|            | `-`             | Subtraction for numbers
-|6           | `&`, `&&`       | Text concatenation; `&&` adds a space between operands; `&` does not
-|7           | `>`             | Greater than comparison for numbers and text
-|            | `<`             | Less than comparison for numbers and text
-|            | `<=`            | Less than or equal to comparison for numbers and text
-|            | `>=`            | Greater than or equal to comparison for numbers and text
-|            | `contains`      | Substring comparison for text
-|            | `is a`, `is an` | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
-|            | `is not a`, `is not an` | The logical inverse of `is a`, `is an`
-|8           | `=`             | Equality comparison for text
-|            | `is`            | Equality comparison for text
-|            | `is not`        | Negative equality comparison for text
-|            | `<>`	           | Synonym for is not
-|9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
-|            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
-|10          | `and`           | Logical AND for boolean values
-|11 (lowest) |  `or`           | Logical OR for boolean values
-
-### Factors
-
-A _factor_ is a term or operand appearing in an expression. HyperCard uses the following precedence when evaluating factors:
-
-Precedence   | Term                    | Description
--------------|-------------------------|------------
-1 (highest)  | _Constant_              | Evaluation of a built-in constant (e.g., `pi`); see table below
-2            | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
-3            | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
-4            | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
-5            | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
-6            | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
-7 (lowest)   | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
-
-### Constants and literals
-
-The table below lists special values that are treated as keyword constants in the language; any unquoted use of these terms evaluates to the specified value.
-
-Any single-word unquoted literal that is not a language keyword and not an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat` displays the word "neat" unless a variable named "neat" is in scope, in which case the variable's value will be displayed. Note that multi-word unquoted literals are not allowed; `put hello world` results in a syntax error.
-
-Constant     | Value
--------------|---------------------------------------
-`empty`      | The empty string, `""`
-`pi`         | The first 20 digits of pi, `3.14159265358979323846`
-`quote`      | A double-quote character, `"`
-`return`     | The newline character (same as `lineFeed`)
-`space`      | A single space, `" "`
-`tab`        | A tab character
-`formFeed`   | The form feed character (ASCII 0x0c, `\f` in Java)
-`lineFeed`   | The line feed character (ASCII 0x0a, `\n` in Java)
-`comma`      | The comma character, `,`
-`colon`      | The colon character, `:`
-`zero`..`ten`| The integers `0` to `10`
-
-This implementation supports nearly the full expression language (all of the aforementioned operators), and follows the same order of precedence as Apple's HyperTalk.  
-
-Valid expressions include:
-
-```
-item 1 of the mouseLoc < 100 -- true if the mouse is towards the left of the card
-4 * (2 + 3) -- yields 20
-"hello" contains "el" and "goodbye" contains "bye" -- true
-3 * 5 is not 15 -- false
-"Hello" && " World" -- produces "Hello World"
-"Hyper" > "Card" -- true, "Hyper" is alphabetically after "Card"
-not "nonsense" -- syntax error, "nonsense" is not a boolean
-false is not "tr" && "ue" -- true, concatenating 'tr' with 'ue' produces a logical value
-```
 
 ## Audio Visual Effects
 

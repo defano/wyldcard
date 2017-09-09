@@ -1797,62 +1797,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         return BuiltInFunction.DISK_SPACE;
     }
 
-//    @Override
-//    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
-//        String literal = ctx.getText();
-//
-//        // Drop quotes from quoted string literal when converting a value
-//        if (literal.startsWith("\"") && literal.endsWith("\"")) {
-//            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
-//        }
-//
-//        return new Value(ctx.getText());
-//    }
-//
-//    @Override
-//    public Object visitDiskSpaceNoArgFunc(HyperTalkParser.DiskSpaceNoArgFuncContext ctx) {
-//        return BuiltInFunction.DISK_SPACE;
-//    }
-//
-//    @Override
-//    public Object visitDiskSpaceFunc(HyperTalkParser.DiskSpaceFuncContext ctx) {
-//        return BuiltInFunction.DISK_SPACE;
-//    }
-//
-//    @Override
-//    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
-//        String literal = ctx.getText();
-//
-//        // Drop quotes from quoted string literal when converting a value
-//        if (literal.startsWith("\"") && literal.endsWith("\"")) {
-//            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
-//        }
-//
-//        return new Value(ctx.getText());
-//    }
-//
-//    @Override
-//    public Object visitDiskSpaceNoArgFunc(HyperTalkParser.DiskSpaceNoArgFuncContext ctx) {
-//        return BuiltInFunction.DISK_SPACE;
-//    }
-//
-//    @Override
-//    public Object visitDiskSpaceFunc(HyperTalkParser.DiskSpaceFuncContext ctx) {
-//        return BuiltInFunction.DISK_SPACE;
-//    }
-//
-//    @Override
-//    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
-//        String literal = ctx.getText();
-//
-//        // Drop quotes from quoted string literal when converting a value
-//        if (literal.startsWith("\"") && literal.endsWith("\"")) {
-//            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
-//        }
-//
-//        return new Value(ctx.getText());
-//    }
-
     @Override
     public Object visitNumberOfCardParts(HyperTalkParser.NumberOfCardPartsContext ctx) {
         return BuiltInFunction.NUMBER_CARD_PARTS;
