@@ -27,22 +27,26 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.swing.*;
 
-public class AskCmd extends Statement {
+public class AskCmd extends Command {
 
     public final Expression question;
     public final Expression suggestion;
     
     public AskCmd(Expression question, Expression suggestion) {
+        super("ask");
+
         this.question = question;
         this.suggestion = suggestion;
     }
     
     public AskCmd(Expression question) {
+        super("ask");
+
         this.question = question;
         this.suggestion = new LiteralExp("");
     }
     
-    public void execute () throws HtSemanticException {
+    public void onExecute () throws HtSemanticException {
         if (suggestion != null)
             ask(question.evaluate(), suggestion.evaluate());
         else

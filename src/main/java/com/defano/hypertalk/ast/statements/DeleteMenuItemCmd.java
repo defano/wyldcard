@@ -3,16 +3,17 @@ package com.defano.hypertalk.ast.statements;
 import com.defano.hypertalk.ast.common.MenuItemSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
-public class DeleteMenuItemCmd extends Statement {
+public class DeleteMenuItemCmd extends Command {
 
     private MenuItemSpecifier menuItem;
 
     public DeleteMenuItemCmd(MenuItemSpecifier menuItem) {
+        super("delete");
         this.menuItem = menuItem;
     }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         menuItem.getSpecifiedMenu().remove(menuItem.getSpecifiedItemIndex());
     }
 }

@@ -13,17 +13,19 @@ import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 
-public class DivideCmd extends Statement {
+public class DivideCmd extends Command {
 
     private final Expression expression;
     private final Container container;
 
     public DivideCmd(Expression source, Container container) {
+        super("divide");
+
         this.expression = source;
         this.container = container;
     }
 
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         container.putValue(container.getValue().divide(expression.evaluate()), Preposition.INTO);
     }
 }

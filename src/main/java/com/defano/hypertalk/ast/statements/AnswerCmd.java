@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.swing.*;
 
-public class AnswerCmd extends Statement {
+public class AnswerCmd extends Command {
 
     public final Expression message;
     public final Expression ch1;
@@ -34,6 +34,8 @@ public class AnswerCmd extends Statement {
     public final Expression ch3;
     
     public AnswerCmd(Expression message, Expression ch1, Expression ch2, Expression ch3) {
+        super("answer");
+
         this.message = message;
         this.ch1 = ch1;
         this.ch2 = ch2;
@@ -41,6 +43,8 @@ public class AnswerCmd extends Statement {
     }
     
     public AnswerCmd(Expression message, Expression ch1, Expression ch2) {
+        super("answer");
+
         this.message = message;
         this.ch1 = ch1;
         this.ch2 = ch2;
@@ -48,6 +52,8 @@ public class AnswerCmd extends Statement {
     }
     
     public AnswerCmd(Expression message, Expression ch1) {
+        super("answer");
+
         this.message = message;
         this.ch1 = ch1;
         this.ch2 = null;
@@ -55,13 +61,15 @@ public class AnswerCmd extends Statement {
     }
 
     public AnswerCmd(Expression message) {
+        super("answer");
+
         this.message = message;
         this.ch1 = null;
         this.ch2 = null;
         this.ch3 = null;
     }
     
-    public void execute () throws HtSemanticException {
+    public void onExecute () throws HtSemanticException {
         if (ch1 != null && ch2 != null && ch3 != null)
             answer(message.evaluate(), ch1.evaluate(), ch2.evaluate(), ch3.evaluate());
         else if (ch1 != null && ch2 != null)

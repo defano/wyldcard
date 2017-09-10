@@ -4,16 +4,17 @@ import com.defano.hypercard.context.FileContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 
-public class OpenCmd extends Statement {
+public class OpenCmd extends Command {
 
     private final Expression file;
 
     public OpenCmd(Expression file) {
+        super("open");
         this.file = file;
     }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         FileContext.getInstance().open(file.evaluate().stringValue());
     }
 }

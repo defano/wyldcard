@@ -6,16 +6,17 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-public class DeletePartCmd extends Statement {
+public class DeletePartCmd extends Command {
 
     private final PartExp part;
 
     public DeletePartCmd(PartExp part) {
+        super("delete");
         this.part = part;
     }
 
     @Override
-    public void execute() throws HtSemanticException {
+    public void onExecute() throws HtSemanticException {
         try {
             PartModel p = HyperCard.getInstance().getCard().findPart(part.evaluateAsSpecifier());
             HyperCard.getInstance().getCard().removePart(p);

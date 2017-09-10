@@ -22,17 +22,19 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 
-public class SetCmd extends Statement {
+public class SetCmd extends Command {
 
     public final Expression expression;
     public final PropertySpecifier propertySpec;
 
     public SetCmd(PropertySpecifier propertySpec, Expression expression) {
+        super("set");
+
         this.propertySpec = propertySpec;
         this.expression = expression;
     }
     
-    public void execute () throws HtSemanticException {
+    public void onExecute () throws HtSemanticException {
         try {
             
             // Setting the property of HyperCard

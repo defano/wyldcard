@@ -21,7 +21,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import java.util.Comparator;
 import java.util.List;
 
-public class SortCmd extends Statement {
+public class SortCmd extends Command {
 
     public final SortDirection direction;
     public final ChunkType chunkType;
@@ -29,6 +29,8 @@ public class SortCmd extends Statement {
     public final Expression expression;
 
     public SortCmd(Container container, ChunkType chunkType, Expression expression) {
+        super("sort");
+
         this.container = container;
         this.chunkType = chunkType;
         this.expression = expression;
@@ -36,13 +38,15 @@ public class SortCmd extends Statement {
     }
 
     public SortCmd(Container container, ChunkType chunkType, SortDirection direction) {
+        super("sort");
+
         this.container = container;
         this.chunkType = chunkType;
         this.direction = direction;
         this.expression = null;
     }
 
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         List<Value> items = getItemsToSort();
 
         // Sort by direction

@@ -74,7 +74,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Scripts](#scripts-and-handlers) | [Expressions](#expressions) | [Variables](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#control-structures)
+[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Variables](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#control-structures)
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. (There is no singular "main" script in HyperTalk.)
 
@@ -162,7 +162,7 @@ go to the next background -- next card in the stack with a different background 
 go to background 3 -- first card with the third unique background in the stack
 ```
 
-## Scripts and Handlers
+## Messages and Handlers
 
 Stacks, backgrounds, cards, buttons and fields can be scripted in the HyperTalk language. A script is a set of _handlers_ and _functions_ that describe how the part reacts when HyperCard (or another script) sends a message to it.
 
@@ -176,7 +176,7 @@ end mouseUp
 
 In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog box).
 
-In addition to `mouseUp`, HyperTalk Java automatically sends the following messages to parts as the user interacts with the stack:
+HyperTalk Java automatically sends the following messages to parts as the user interacts with the stack:
 
  Event Message      | Description
 --------------------|-----------------------------------------------------------------------------
@@ -227,6 +227,8 @@ end keyDownInField
 ```
 
 This works by passing the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing a `keyDown` handler and only conditionally passing the `keyDown` message back to HyperCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the field).
+
+Additionally, anytime a command is executed in HyperTalk a message of the same name is sent to the current card, providing the same capability for trapping command behavior.
 
 ## Expressions
 
@@ -770,7 +772,9 @@ put "Finally, peace and quiet!"
 
 ## Commands
 
-HyperTalk Java implements the following commands:
+A command is a directive to HyperTalk to perform some task. Some commands may place a value into the implicit variable, `it`, but unlike functions, a command does not represent a value and cannot be used as a term in an expression. HyperTalk Java provides all of the commands shown in the table below.
+
+Note that the execution of a command results in a message of the same name being sent to the current card, enabling the card, background or stack to intercept command messages and trap its behavior as needed. See the section on message passing for more information.
 
 Command	         | Description
 -----------------|------------------------------
@@ -814,7 +818,9 @@ Command	         | Description
 
 ## Functions
 
-HyperCard provides both a suite of built-in functions as well as the ability for a user to script new ones. Note that the calling syntax differs between built-in and user-defined functions.
+A function is similar to a command in that both direct HyperTalk to perform some task. However, functions represent (_return_) a value, and therefore can appear as a term in an expression.
+
+HyperCard provides a suite of built-in functions as well as the ability for a user to script new ones of their own creation.
 
 ### Built-in Functions
 
@@ -892,7 +898,11 @@ function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
 end <functionName>
 ```
 
-When calling a user defined function, use the calling syntax `<functionName>(<arg1>, <arg2>, ...)`. Note that the number of arguments passed to the function must match the number declared in the definition. HyperTalk does not support function overloading; each function defined in a script must have a unique name.
+Note that the calling syntax differs between built-in and user-defined functions.
+
+When calling a user-defined function, use the syntax `<functionName>(<arg1>, <arg2>, ...)`. Note that the number of arguments passed to the function must match the number declared in the definition.
+
+HyperTalk does not support function overloading or function overriding; each function defined in a script must have a unique name, and a user-defined function cannot have the same name as a built-in function.
 
 Consider this recursive function for generating the Fibonacci sequence:
 

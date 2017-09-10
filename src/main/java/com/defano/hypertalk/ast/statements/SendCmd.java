@@ -20,17 +20,19 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
 
-public class SendCmd extends Statement {
+public class SendCmd extends Command {
 
     public final PartExp part;
     public final Expression message;
     
     public SendCmd(PartExp part, Expression message) {
+        super("send");
+
         this.part = part;
         this.message = message;
     }
     
-    public void execute () {
+    public void onExecute () {
         try {
             ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
         } catch (Exception e) {

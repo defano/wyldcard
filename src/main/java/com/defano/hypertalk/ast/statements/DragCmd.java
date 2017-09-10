@@ -16,26 +16,30 @@ import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 
-public class DragCmd extends Statement {
+public class DragCmd extends Command {
 
     private final Expression from;
     private final Expression to;
     private final ExpressionList modifierKeys;
 
     public DragCmd(Expression from, Expression to) {
+        super("drag");
+
         this.from = from;
         this.to = to;
         this.modifierKeys = null;
     }
 
     public DragCmd(Expression from, Expression to, ExpressionList modifierKeys) {
+        super("drag");
+
         this.from = from;
         this.to = to;
         this.modifierKeys = modifierKeys;
     }
 
     @Override
-    public void execute() throws HtSemanticException {
+    public void onExecute() throws HtSemanticException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;

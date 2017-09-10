@@ -48,14 +48,14 @@ public class HyperCardMenuBar extends JMenuBar {
         add(StyleMenu.instance);
     }
 
-    public void doMenu(String theMenuItem) throws HtSemanticException {
+    public String doMenu(String theMenuItem) throws HtSemanticException {
         JMenuItem foundMenuItem = findMenuItemByName(theMenuItem);
         if (foundMenuItem != null) {
             for (ActionListener thisAction : foundMenuItem.getActionListeners()) {
                 thisAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doMenu"));
             }
 
-            return;
+            return foundMenuItem.getParent().getName();
         }
 
         throw new HtSemanticException("Can't find menu item " + theMenuItem);
@@ -99,7 +99,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return null;
     }
 
-    private JMenuItem findMenuItemByName(String name) {
+    public JMenuItem findMenuItemByName(String name) {
         for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
             JMenu thisMenu = this.getMenu(thisMenuIndex);
 

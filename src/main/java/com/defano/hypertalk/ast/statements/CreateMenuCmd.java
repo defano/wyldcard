@@ -4,16 +4,17 @@ import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 
-public class CreateMenuCmd extends Statement {
+public class CreateMenuCmd extends Command {
 
     private final Expression menuName;
 
     public CreateMenuCmd(Expression menuName) {
+        super("create");
         this.menuName = menuName;
     }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         HyperCardMenuBar.instance.createMenu(menuName.evaluate().stringValue());
     }
 }

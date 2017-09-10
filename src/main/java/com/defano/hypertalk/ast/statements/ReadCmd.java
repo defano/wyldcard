@@ -7,7 +7,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-public class ReadCmd extends Statement {
+public class ReadCmd extends Command {
 
     private final Expression file;
     private Expression count = null;
@@ -15,6 +15,7 @@ public class ReadCmd extends Statement {
     private Expression until = null;
 
     private ReadCmd(Expression file) {
+        super("read");
         this.file = file;
     }
 
@@ -42,7 +43,7 @@ public class ReadCmd extends Statement {
     }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         try {
             String contents;
             String filename = file.evaluate().stringValue();

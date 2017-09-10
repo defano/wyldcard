@@ -7,7 +7,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-public class WriteCmd extends Statement {
+public class WriteCmd extends Command {
 
     private final Expression file;
     private final Expression data;
@@ -15,6 +15,8 @@ public class WriteCmd extends Statement {
     private final boolean append;
 
     private WriteCmd(Expression data, Expression file, Expression at, boolean append) {
+        super("write");
+
         this.data = data;
         this.file = file;
         this.at = at;
@@ -34,7 +36,7 @@ public class WriteCmd extends Statement {
     }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         try {
             String filename = file.evaluate().stringValue();
             FileContext.FileHandle handle = FileContext.getInstance().getFileHandle(filename);

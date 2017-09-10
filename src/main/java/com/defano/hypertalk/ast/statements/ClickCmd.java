@@ -16,23 +16,27 @@ import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 
-public class ClickCmd extends Statement {
+public class ClickCmd extends Command {
 
     private final Expression clickLoc;
     private final ExpressionList modifierKeys;
 
     public ClickCmd(Expression clickLoc) {
+        super("click");
+
         this.clickLoc = clickLoc;
         this.modifierKeys = null;
     }
 
     public ClickCmd(Expression clickLoc, ExpressionList modifierKeys) {
+        super("click");
+
         this.clickLoc = clickLoc;
         this.modifierKeys = modifierKeys;
     }
 
     @Override
-    public void execute() throws HtSemanticException {
+    public void onExecute() throws HtSemanticException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;

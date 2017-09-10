@@ -11,13 +11,17 @@ script              : handler (NEWLINE+ | EOF)                                  
                     ;
 
 handler             : 'on' blockName NEWLINE statementList 'end' blockName                                              # populatedHandler
-                    | 'on' blockName parameterList NEWLINE statementList 'end'blockName                                 # populatedArgHandler
+                    | 'on' blockName parameterList NEWLINE statementList 'end' blockName                                # populatedArgHandler
                     | 'on' blockName NEWLINE 'end' blockName                                                            # emptyHandler
                     | 'on' blockName parameterList NEWLINE 'end' blockName                                              # emptyArgHandler
                     ;
 
 blockName           : ID
-                    | 'domenu'      // Need a special rule here to handle 'doMenu' because it's also a command keyword
+                    // Need a special rules here to handle command names because they're also lexed keywords
+                    | 'answer' | 'ask' | 'put' | 'get' | 'set' | 'send' | 'wait' | 'sort' | 'go' | 'enable' | 'disable'
+                    | 'read' | 'write' | 'hide' | 'show' | 'add' | 'subtract' | 'multiply' | 'divide' | 'choose'
+                    | 'click' | 'drag' | 'type' | 'lock' | 'unlock' | 'pass' | 'domenu' | 'visual' | 'reset' | 'create'
+                    | 'delete' | 'play' | 'dial' | 'beep' | 'open' | 'close'
                     ;
 
 function            : 'function' ID parameterList NEWLINE statementList 'end' ID                                        # populatedFunction

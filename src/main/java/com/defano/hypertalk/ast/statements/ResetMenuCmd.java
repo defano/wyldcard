@@ -3,10 +3,14 @@ package com.defano.hypertalk.ast.statements;
 import com.defano.hypercard.gui.menu.HyperCardMenuBar;
 import com.defano.hypertalk.exception.HtException;
 
-public class ResetMenuCmd extends Statement {
+public class ResetMenuCmd extends Command {
+
+    public ResetMenuCmd() {
+        super("reset");
+    }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         HyperCardMenuBar.instance.reset();
     }
 }

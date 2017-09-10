@@ -4,10 +4,14 @@ import com.defano.hypertalk.exception.HtException;
 
 import java.awt.*;
 
-public class BeepCmd extends Statement {
+public class BeepCmd extends Command {
+
+    public BeepCmd() {
+        super("beep");
+    }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         Toolkit.getDefaultToolkit().beep();
     }
 }

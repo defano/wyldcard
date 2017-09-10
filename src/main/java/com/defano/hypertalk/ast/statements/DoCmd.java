@@ -19,15 +19,16 @@ import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 
-public class DoCmd extends Statement {
+public class DoCmd extends Command {
 
     public final Expression script;
     
     public DoCmd(Expression script) {
+        super("do");
         this.script = script;
     }
     
-    public void execute () throws HtException {
+    public void onExecute () throws HtException {
         Interpreter.executeString(null, script.evaluate().toString());
     }
 }

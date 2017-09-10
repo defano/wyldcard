@@ -32,8 +32,10 @@ public class ExpressionList {
     }
 
     public ExpressionList(String... boundValues) {
-        for (String thisValue : boundValues) {
-            addArgument(new LiteralExp(thisValue));
+        if (boundValues != null) {
+            for (String thisValue : boundValues) {
+                addArgument(new LiteralExp(thisValue));
+            }
         }
     }
 

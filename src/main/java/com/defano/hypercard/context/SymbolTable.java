@@ -6,14 +6,6 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * SymbolTable.java
- * @author matt.defano@motorola.com
- * 
- * Implements a list of symbols (variables) and methods for getting and setting
- * their value.
- */
-
 package com.defano.hypercard.context;
 
 import com.defano.hypertalk.ast.common.Value;
@@ -21,6 +13,10 @@ import com.defano.hypertalk.ast.common.Value;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implements a list of symbols (variables) and methods for getting and setting
+ * their value.
+ */
 public class SymbolTable {
 
     private final Map<String, Value> table;
@@ -41,6 +37,6 @@ public class SymbolTable {
     }
     
     public boolean exists (String id) {
-        return table.containsKey(id);
+        return table.containsKey(id.toLowerCase());
     }
 }

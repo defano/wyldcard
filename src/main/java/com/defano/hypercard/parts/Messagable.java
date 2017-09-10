@@ -47,6 +47,15 @@ public interface Messagable {
     }
 
     /**
+     * Sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
+     * @param message The message to be passed
+     * @param arguments The arguments to the message
+     */
+    default void sendMessage(String message, String... arguments) {
+        sendMessage(message, new ExpressionList(arguments), (command, trapped) -> {});
+    }
+
+    /**
      * Sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing hierarchy.
      *
      * @param command The name of the command; cannot be null.

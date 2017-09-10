@@ -4,16 +4,17 @@ import com.defano.hypercard.gui.fx.CurtainManager;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
-public class UnlockScreenCmd extends Statement {
+public class UnlockScreenCmd extends Command {
 
     private final VisualEffectSpecifier effect;
 
     public UnlockScreenCmd(VisualEffectSpecifier effect) {
+        super("unlock");
         this.effect = effect;
     }
 
     @Override
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
         CurtainManager.getInstance().unlockScreenWithEffect(effect);
 
         try {

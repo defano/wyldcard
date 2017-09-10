@@ -16,7 +16,7 @@ import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-public class GoCmd extends Statement {
+public class GoCmd extends Command {
 
     private final Destination destination;
     private VisualEffectSpecifier visualEffect;
@@ -26,11 +26,13 @@ public class GoCmd extends Statement {
     }
 
     public GoCmd(Destination destination, VisualEffectSpecifier visualEffect) {
+        super("go");
+
         this.destination = destination;
         this.visualEffect = visualEffect;
     }
 
-    public void execute() throws HtException {
+    public void onExecute() throws HtException {
 
         if (visualEffect == null) {
             visualEffect = ExecutionContext.getContext().getVisualEffect();

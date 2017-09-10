@@ -20,22 +20,26 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 
-public class GetCmd extends Statement {
+public class GetCmd extends Command {
 
     public final Expression expression;
     public final PartSpecifier part;
     
     public GetCmd(Expression e) {
+        super("get");
+
         expression = e;
         part = null;
     }
     
     public GetCmd(PartSpecifier ps) {
+        super("get");
+
         expression = null;
         part = ps;
     }
     
-    public void execute () throws HtSemanticException {
+    public void onExecute () throws HtSemanticException {
         if (expression != null) {
             ExecutionContext.getContext().setIt(expression.evaluate());
         }
