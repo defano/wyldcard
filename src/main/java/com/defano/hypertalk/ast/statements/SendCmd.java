@@ -6,40 +6,51 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-/**
- * SendCmd.java
- * @author matt.defano@gmail.com
- * 
- * Encapsulation of the "send" command (for passing an event message to a part)
- */
-
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.common.Script;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.exception.HtException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SendCmd extends Command {
 
     public final PartExp part;
     public final Expression message;
-    
+
     public SendCmd(PartExp part, Expression message) {
         super("send");
 
         this.part = part;
         this.message = message;
     }
-    
-    public void onExecute () {
-        try {
-            ExecutionContext.getContext().setMe(part.evaluateAsSpecifier());
+
+    public void onExecute() throws HtException {
+        ExecutionContext.getContext().setMe(part.evaluateAsSpecifier());
+
+        MessageCmd messageCmd = interpretMessage(message.evaluate().stringValue());
+        if (messageCmd == null) {
             ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue(), new ArrayList<>());
-        } catch (Exception e) {
-            HyperCard.getInstance().showErrorDialog(e);
+        } else {
+            messageCmd.execute();
         }
     }
+
+    private MessageCmd interpretMessage(String message) {
+        try {
+            Script compiled = Interpreter.compile(message);
+            return (MessageCmd) compiled.getStatements().list.get(0);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }
