@@ -12,6 +12,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.containers.*;
@@ -19,6 +20,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
 
+import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -287,9 +289,21 @@ public class ExecutionContext {
      * @param message The message to be sent
      * @throws PartException Thrown if the specified part does not exist
      */
-    public void sendMessage (PartSpecifier ps, String message) throws PartException
+    public void sendMessage (PartSpecifier ps, String message, List<Value> messageArgs) throws PartException
     {
-        HyperCard.getInstance().getCard().findPart(ps).sendMessage(message);
+        PartModel thePart;
+
+        if (ps.isStackElementSpecifier()) {
+            thePart = HyperCard.getInstance().getStack().findPart(ps);
+        } else {
+            thePart = HyperCard.getInstance().getCard().findPart(ps);
+        }
+
+        if (thePart != null) {
+            thePart.sendMessage(message, messageArgs);
+        } else {
+            throw new PartException("No such part.");
+        }
     }
 
     private Stack<StackFrame> getStack() {

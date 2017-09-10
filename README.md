@@ -206,6 +206,14 @@ send mouseUp to button 1   -- Make 'button 1' act as though user clicked it
 send doSomethingCool to field "myField" -- call the 'on doSomethingCool' handler
 ```
 
+Similarly, a message can be sent directly to the current part by invoking its name with an optional list of arguments,
+for example:
+
+```
+doSomethingCool   -- invokes the on doSomethingCool handler with no arguments
+doSomethingComplex "Some Value", "Another Value" -- invokes handler with two arguments
+```
+
 Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
 
 ### Message passing order

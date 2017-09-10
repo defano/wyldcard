@@ -63,9 +63,9 @@ doStmnt             : 'do' expression
 commandStmnt        : answerCmd                                                                                         # answerCmdStmnt
                     | askCmd                                                                                            # askCmdStmnt
                     | putCmd                                                                                            # putCmdStmnt
-                    | getCmd                                                                                            # getCmdStmnt
-                    | setCmd                                                                                            # setCmdStmnt
-                    | sendCmd                                                                                           # sendCmdStmnt
+                    | 'get' expression                                                                                  # getCmdStmnt
+                    | 'set' propertySpec 'to' expression                                                                # setCmdStmnt
+                    | 'send' expression 'to' part                                                                       # sendCmdStmnt
                     | waitCmd                                                                                           # waitCmdStmnt
                     | sortCmd                                                                                           # sortCmdStmnt
                     | goCmd                                                                                             # goCmdStmt
@@ -104,6 +104,8 @@ commandStmnt        : answerCmd                                                 
                     | 'beep'                                                                                            # beepCmdStmt
                     | 'open' 'file' expression                                                                          # openFileCmdStmt
                     | 'close' 'file' expression                                                                         # closeFileCmdStmt
+                    | ID                                                                                                # noArgMsgCmdStmt
+                    | ID expressionList                                                                                 # argMsgCmdStmt
                     ;
 
 writeCmd            : 'write' expression 'to' 'file' factor                                                             # writeFileCmd
@@ -152,15 +154,6 @@ askCmd              : 'ask' expression 'with' expression                        
 
 putCmd              : 'put' expression                                                                                  # putIntoCmd
                     | 'put' expression preposition container                                                            # putPrepositionCmd
-                    ;
-
-getCmd              : 'get' expression
-                    ;
-
-setCmd              : 'set' propertySpec 'to' expression                                                                # setPropertyCmd
-                    ;
-
-sendCmd             : 'send' expression 'to' part
                     ;
 
 waitCmd             : 'wait' factor timeUnit                                                                            # waitCountCmd

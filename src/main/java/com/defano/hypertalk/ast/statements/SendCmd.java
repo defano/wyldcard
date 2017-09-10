@@ -20,6 +20,8 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
 
+import java.util.ArrayList;
+
 public class SendCmd extends Command {
 
     public final PartExp part;
@@ -34,7 +36,8 @@ public class SendCmd extends Command {
     
     public void onExecute () {
         try {
-            ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue());
+            ExecutionContext.getContext().setMe(part.evaluateAsSpecifier());
+            ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue(), new ArrayList<>());
         } catch (Exception e) {
             HyperCard.getInstance().showErrorDialog(e);
         }

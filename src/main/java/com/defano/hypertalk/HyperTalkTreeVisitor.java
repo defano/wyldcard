@@ -608,17 +608,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGetCmdStmnt(HyperTalkParser.GetCmdStmntContext ctx) {
-        return visit(ctx.getCmd());
+        return new GetCmd((Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitSetCmdStmnt(HyperTalkParser.SetCmdStmntContext ctx) {
-        return visit(ctx.setCmd());
+        return new SetCmd((PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitSendCmdStmnt(HyperTalkParser.SendCmdStmntContext ctx) {
-        return visit(ctx.sendCmd());
+        return new SendCmd((PartExp) visit(ctx.part()), (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -714,6 +714,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCloseFileCmdStmt(HyperTalkParser.CloseFileCmdStmtContext ctx) {
         return new CloseCmd((Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitNoArgMsgCmdStmt(HyperTalkParser.NoArgMsgCmdStmtContext ctx) {
+        return new MessageCmd((String) visit(ctx.ID()), new ExpressionList());
+    }
+
+    @Override
+    public Object visitArgMsgCmdStmt(HyperTalkParser.ArgMsgCmdStmtContext ctx) {
+        return new MessageCmd((String) visit(ctx.ID()), (ExpressionList) visit(ctx.expressionList()));
     }
 
     @Override
@@ -1004,21 +1014,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPutPrepositionCmd(HyperTalkParser.PutPrepositionCmdContext ctx) {
         return new PutCmd((Expression) visit(ctx.expression()), (Preposition) visit(ctx.preposition()), (Container) visit(ctx.container()));
-    }
-
-    @Override
-    public Object visitGetCmd(HyperTalkParser.GetCmdContext ctx) {
-        return new GetCmd((Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitSetPropertyCmd(HyperTalkParser.SetPropertyCmdContext ctx) {
-        return new SetCmd((PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitSendCmd(HyperTalkParser.SendCmdContext ctx) {
-        return new SendCmd((PartExp) visit(ctx.part()), (Expression) visit(ctx.expression()));
     }
 
     @Override

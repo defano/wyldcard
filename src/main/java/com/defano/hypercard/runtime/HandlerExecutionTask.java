@@ -48,7 +48,9 @@ public class HandlerExecutionTask implements Callable<String> {
                 // Bind argument values to parameter variables in this context
                 for (int index = 0; index < handler.parameters.list.size(); index++) {
                     String theParam = handler.parameters.list.get(index);
-                    Value theArg = evaluatedArguments.get(index);
+
+                    // Handlers may be invoked with missing arguments; assume empty for missing args
+                    Value theArg = index >= evaluatedArguments.size() ? new Value() : evaluatedArguments.get(index);
 
                     ExecutionContext.getContext().set(theParam, theArg);
                 }

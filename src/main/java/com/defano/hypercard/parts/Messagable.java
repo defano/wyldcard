@@ -14,6 +14,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.awt.event.InputEvent;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -51,7 +52,7 @@ public interface Messagable {
      * @param message The message to be passed
      * @param arguments The arguments to the message
      */
-    default void sendMessage(String message, String... arguments) {
+    default void sendMessage(String message, List<Value> arguments) {
         sendMessage(message, new ExpressionList(arguments), (command, trapped) -> {});
     }
 
