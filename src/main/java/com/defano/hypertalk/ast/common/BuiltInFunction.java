@@ -61,5 +61,8 @@ public enum BuiltInFunction {
     MENUS,
     ANNUITY,
     COMPOUND,
-    DISK_SPACE
+    DISK_SPACE,
+    PARAMS,
+    PARAM_COUNT,
+    PARAM
 }

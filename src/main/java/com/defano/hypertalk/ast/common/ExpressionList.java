@@ -47,21 +47,44 @@ public class ExpressionList {
         list.add(expr);
     }
 
-    public ExpressionList addArgument(Expression expr) {
+    public void addArgument(Expression expr) {
         list.add(expr);
-        return this;
     }
 
-    public List<Value> divingEvaluate() throws HtSemanticException {
+    /**
+     * Evaluates each expression in the expression list replacing any value that could be interpreted as a point or
+     * rectangle value with a discreet value for each coordinate.
+     *
+     * For example, given the input (1,2,3,4) this method returns a list of four values, ["1", "2", "3", "4"], whereas
+     * {@link #evaluate()} returns a list containing a single, value "1,2,3,4".
+     *
+     * @return A list of values representing the evaluation of each expression in this ExpressionList.
+     * @throws HtSemanticException Thrown if an error occurs evaluating any expression in the list.
+     */
+    public List<Value> evaluateDisallowingCoordinates() throws HtSemanticException {
         List<Value> evaluatedList = new ArrayList<>();
 
         for (Expression expr : list) {
-            evaluatedList.addAll(expr.evaluate().getItems());
+            if (expr instanceof LiteralExp) {
+                evaluatedList.addAll(expr.evaluate().getItems());
+            } else {
+                evaluatedList.add(expr.evaluate());
+            }
         }
 
         return evaluatedList;
     }
 
+    /**
+     * Evaluates each expression in the expression list. Note that expression lists in HyperTalk are inherently
+     * ambiguous; the list (1,2) could be interpreted as two values ("1", and "2"), or a single point value ("1,2").
+     *
+     * This method evaluates the expressions as they are parsed by Antlr (allowing for integer literals to be combined
+     * into points and rectangles). Use {@link #evaluateDisallowingCoordinates()} when desiring simple lists.
+     *
+     * @return A list of values representing the evaluation of each expression in this ExpressionList.
+     * @throws HtSemanticException Thrown if an error occurs evaluating any expression in the list.
+     */
     public List<Value> evaluate() throws HtSemanticException {
         List<Value> evaluatedList = new ArrayList<>();
 
@@ -70,9 +93,5 @@ public class ExpressionList {
         }
 
         return evaluatedList;
-    }
-
-    public int getArgumentCount() {
-        return list.size();
     }
 }

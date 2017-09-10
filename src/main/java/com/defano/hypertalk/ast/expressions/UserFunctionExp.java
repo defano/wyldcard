@@ -8,8 +8,9 @@
 
 /**
  * UserFunctionExp.java
+ *
  * @author matt.defano@gmail.com
- * 
+ * <p>
  * Encapsulation of a user-defined function call, for example: "myfunction(arg)"
  */
 
@@ -33,21 +34,16 @@ public class UserFunctionExp extends Expression {
         this.function = function;
         this.arguments = arguments;
     }
-    
-    public Value evaluate () throws HtSemanticException {
+
+    public Value evaluate() throws HtSemanticException {
 
         if (!ExecutionContext.getContext().hasMe()) {
             throw new HtSemanticException("Cannot invoke user-defined functions here.");
         }
 
-        try {
-            PartSpecifier ps = ExecutionContext.getContext().getMe();
-            PartModel part = ExecutionContext.getContext().get(ps);
-            
-            arguments.evaluate();
-            return part.invokeFunction(function, arguments);
-        } catch (PartException e) {
-            throw new HtSemanticException(e.getMessage());
-        }                        
+        PartSpecifier ps = ExecutionContext.getContext().getMe();
+        PartModel part = ExecutionContext.getContext().get(ps);
+
+        return part.invokeFunction(function, arguments);
     }
 }

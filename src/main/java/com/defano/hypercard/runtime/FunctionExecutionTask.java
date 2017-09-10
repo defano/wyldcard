@@ -29,19 +29,22 @@ public class FunctionExecutionTask implements Callable<Value> {
         this.function = function;
         this.arguments = arguments;
         this.me = me;
-
-        if (function.parameters.list.size() != arguments.getArgumentCount())
-            HyperCard.getInstance().showErrorDialog(new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + arguments.getArgumentCount() + "."));
     }
 
     @Override
     public Value call() throws Exception {
 
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-        List<Value> evaluatedArguments = arguments.evaluate();
+        List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();
 
         ExecutionContext.getContext().pushContext();
         ExecutionContext.getContext().setMe(me);
+        ExecutionContext.getContext().setParams(evaluatedArguments);
+        ExecutionContext.getContext().setMessage(function.name);
+
+        if (function.parameters.list.size() != evaluatedArguments.size()) {
+            throw new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + evaluatedArguments.size() + ".");
+        }
 
         try {
             // Bind argument values to parameter variables in this context

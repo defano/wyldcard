@@ -39,10 +39,12 @@ public class HandlerExecutionTask implements Callable<String> {
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
             // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-            List<Value> evaluatedArguments = arguments.evaluate();
+            List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();
 
             ExecutionContext.getContext().pushContext();
             ExecutionContext.getContext().setMe(me);
+            ExecutionContext.getContext().setParams(evaluatedArguments);
+            ExecutionContext.getContext().setMessage(handler.name);
 
             try {
                 // Bind argument values to parameter variables in this context

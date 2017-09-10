@@ -35,7 +35,10 @@ public class PropertyExp extends Expression {
         // Getting a HyperCard property
         if (propertySpecifier.isGlobalPropertySpecifier()) {
             return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
-        } else if (propertySpecifier.isMenuItemPropertySpecifier()) {
+        }
+
+        // Getting a menu property
+        else if (propertySpecifier.isMenuItemPropertySpecifier()) {
             return MenuPropertiesDelegate.getProperty(propertySpecifier.property, propertySpecifier.menuItem);
         }
 

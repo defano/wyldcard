@@ -23,7 +23,7 @@ public class MessageCmd extends Statement {
         }
 
         try {
-            ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs.divingEvaluate());
+            ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs.evaluateDisallowingCoordinates());
         } catch (Exception e) {
             HyperCard.getInstance().showErrorDialog(e);
         }

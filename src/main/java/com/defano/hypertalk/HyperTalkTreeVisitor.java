@@ -1664,6 +1664,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case VALUE: return new ValueFunc((Expression) visit(ctx.factor()));
             case LENGTH: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.factor()));
             case DISK_SPACE: return new DiskSpaceFunc((Expression) visit(ctx.factor()));
+            case PARAM: return new ParamFunc((Expression) visit(ctx.factor()));
 
             default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.oneArgFunc().getText());
         }
@@ -1697,6 +1698,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_MENUS: return new NumberOfFunc(Countable.MENUS);
             case MENUS: return new MenusFunc();
             case DISK_SPACE: return new DiskSpaceFunc();
+            case PARAM_COUNT: return new ParamCountFunc();
+            case PARAMS: return new ParamsFunc();
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.noArgFunc().getText());
         }
@@ -1788,8 +1791,23 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitParamsFunc(HyperTalkParser.ParamsFuncContext ctx) {
+        return BuiltInFunction.PARAMS;
+    }
+
+    @Override
+    public Object visitParamCountFunc(HyperTalkParser.ParamCountFuncContext ctx) {
+        return BuiltInFunction.PARAM_COUNT;
+    }
+
+    @Override
     public Object visitDiskSpaceFunc(HyperTalkParser.DiskSpaceFuncContext ctx) {
         return BuiltInFunction.DISK_SPACE;
+    }
+
+    @Override
+    public Object visitParamFunc(HyperTalkParser.ParamFuncContext ctx) {
+        return BuiltInFunction.PARAM;
     }
 
     @Override

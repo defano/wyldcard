@@ -50,7 +50,7 @@ public abstract class ArgListFunction extends Expression {
         if (expression != null) {
             return expression.evaluate().getItems();
         } else {
-            return argumentList.divingEvaluate();
+            return argumentList.evaluateDisallowingCoordinates();
         }
     }
 

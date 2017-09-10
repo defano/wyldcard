@@ -153,7 +153,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     public Collection<String> getSystemMessages(HandlerComboBox theComboBox) {
         ArrayList<String> messages = new ArrayList<>();
         if (theComboBox == functionsMenu) {
-            return Collections.singletonList("New Function...");
+            return Collections.singletonList("New function...");
         } else {
             if (model != null) {
                 for (SystemMessage message : SystemMessage.messagesSentTo(model.getType())) {

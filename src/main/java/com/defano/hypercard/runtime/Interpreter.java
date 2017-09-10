@@ -133,7 +133,7 @@ public class Interpreter {
      * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
      * scripts attempts to pass a message other than the message being handled.
      */
-    public static ListenableFuture<Boolean> executeCommandHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) {
+    public static ListenableFuture<Boolean> executeCommandHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
         NamedBlock handler = script.getHandler(command);
 
         if (handler == null) {
@@ -162,7 +162,7 @@ public class Interpreter {
         return executeNamedBlock(me, getBlockForStatementList(compile(statementList).getStatements()), new ExpressionList());
     }
 
-    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) {
+    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtSemanticException {
         FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
 
         try {
@@ -172,11 +172,11 @@ public class Interpreter {
             else
                 return functionTask.call();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HtSemanticException(e.getMessage(), e);
         }
     }
 
-    private static ListenableFuture<String> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) {
+    private static ListenableFuture<String> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) throws HtSemanticException {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler, arguments);
 
         try {
@@ -186,7 +186,7 @@ public class Interpreter {
                 return Futures.immediateFuture(handlerTask.call());
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new HtSemanticException(e.getMessage(), e);
         }
     }
 

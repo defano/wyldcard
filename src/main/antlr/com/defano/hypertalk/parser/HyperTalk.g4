@@ -44,13 +44,13 @@ statementList       : statementList nonEmptyStmnt NEWLINE                       
                     | NEWLINE                                                                                           # newlineStmntList
                     ;
 
-nonEmptyStmnt       : commandStmnt                                                                                      # nonEmptyCommandStmnt
-                    | globalStmnt                                                                                       # nonEmptyGlobalStmnt
-                    | ifStatement                                                                                       # nonEmptyIfStmnt
+nonEmptyStmnt       : ifStatement                                                                                       # nonEmptyIfStmnt
                     | repeatStatement                                                                                   # nonEmptyRepeatStmnt
                     | doStmnt                                                                                           # nonEmptyDoStmnt
+                    | globalStmnt                                                                                       # nonEmptyGlobalStmnt
                     | returnStmnt                                                                                       # nonEmptyReturnStmnt
                     | expression                                                                                        # nonEmptyExpStmnt
+                    | commandStmnt                                                                                      # nonEmptyCommandStmnt
                     ;
 
 returnStmnt         : 'return' expression                                                                               # eprReturnStmnt
@@ -456,6 +456,7 @@ oneArgFunc          : 'average'                                                 
                     | 'value'                                                                                           # valueFunc
                     | 'length'                                                                                          # lengthFunc
                     | 'diskspace'                                                                                       # diskSpaceFunc
+                    | 'param'                                                                                           # paramFunc
                     ;
 
 noArgFunc           : 'mouse'                                                                                           # mouseFunc
@@ -483,6 +484,8 @@ noArgFunc           : 'mouse'                                                   
                     | 'number of' 'menus'                                                                               # numberOfMenusFunc
                     | 'menus'                                                                                           # menusFunc
                     | 'diskspace'                                                                                       # diskSpaceNoArgFunc
+                    | 'params'                                                                                          # paramsFunc
+                    | 'paramcount'                                                                                      # paramCountFunc
                     ;
 
 literal             : LITERAL

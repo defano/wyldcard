@@ -20,6 +20,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -201,8 +202,7 @@ public class ExecutionContext {
         return get(ps).getProperty(property);
     }
 
-    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value)
-    throws NoSuchPropertyException, PropertyPermissionException, PartException, HtSemanticException
+    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtSemanticException
     {
         Value mutable = get(ps).getProperty(property);
 
@@ -221,6 +221,22 @@ public class ExecutionContext {
     
     public Value getIt () {
         return globals.get("it");
+    }
+
+    public void setMessage(String message) {
+        this.getFrame().setMessage(message);
+    }
+
+    public String getMessage() {
+        return getFrame().getMessage();
+    }
+
+    public void setParams(List<Value> params) {
+        this.getFrame().setParams(params);
+    }
+
+    public List<Value> getParams() {
+        return this.getFrame().getParams();
     }
 
     /**
@@ -321,5 +337,4 @@ public class ExecutionContext {
     private StackFrame getFrame() {
         return frame.get();
     }
-
 }

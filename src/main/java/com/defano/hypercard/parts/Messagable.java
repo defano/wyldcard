@@ -10,6 +10,7 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -71,28 +72,32 @@ public interface Messagable {
             return;
         }
 
-        // Attempt to invoke command handler in this part and listen for completion
-        ListenableFuture<Boolean> trapped = Interpreter.executeCommandHandler(getMe(), getScript(), command, arguments);
-        trapped.addListener(() -> {
-            try {
+        try {
+            // Attempt to invoke command handler in this part and listen for completion
+            ListenableFuture<Boolean> trapped = Interpreter.executeCommandHandler(getMe(), getScript(), command, arguments);
+            trapped.addListener(() -> {
+                try {
 
-                // Did this part trap this command?
-                if (trapped.get()) {
-                    onCompletion.onMessagePassingCompletion(command, true);
-                } else {
-                    // Get next recipient in message passing order; null no other parts
-                    Messagable nextRecipient = getNextMessageRecipient();
-                    if (nextRecipient == null) {
-                        onCompletion.onMessagePassingCompletion(command, false);
+                    // Did this part trap this command?
+                    if (trapped.get()) {
+                        onCompletion.onMessagePassingCompletion(command, true);
                     } else {
-                        nextRecipient.sendMessage(command, arguments, onCompletion);
+                        // Get next recipient in message passing order; null no other parts
+                        Messagable nextRecipient = getNextMessageRecipient();
+                        if (nextRecipient == null) {
+                            onCompletion.onMessagePassingCompletion(command, false);
+                        } else {
+                            nextRecipient.sendMessage(command, arguments, onCompletion);
+                        }
                     }
+                } catch (InterruptedException | ExecutionException e) {
+                    // Thread was interrupted; nothing else we can do.
+                    onCompletion.onMessagePassingCompletion(command, false);
                 }
-            } catch (InterruptedException | ExecutionException e) {
-                // Thread was interrupted; nothing else we can do.
-                onCompletion.onMessagePassingCompletion(command, false);
-            }
-        }, Executors.newSingleThreadExecutor());
+            }, Executors.newSingleThreadExecutor());
+        } catch (HtSemanticException e) {
+            HyperCard.getInstance().showErrorDialog(e);
+        }
     }
 
     /**
