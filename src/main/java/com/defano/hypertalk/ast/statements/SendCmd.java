@@ -9,17 +9,13 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Script;
-import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtException;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SendCmd extends Command {
 

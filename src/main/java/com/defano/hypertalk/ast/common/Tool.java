@@ -36,8 +36,8 @@ public enum Tool {
     LINE(9, "line"),
     TEXT(16, "text");
 
-    private final int toolNumber;
-    private final List<String> toolNames;
+    public final int toolNumber;
+    public final List<String> toolNames;
 
     Tool(int toolNumber, String... names) {
         this.toolNumber = toolNumber;

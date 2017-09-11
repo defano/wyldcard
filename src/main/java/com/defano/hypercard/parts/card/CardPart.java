@@ -32,7 +32,6 @@ import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.clipboard.CanvasTransferDelegate;
 import com.defano.jmonet.clipboard.CanvasTransferHandler;
-import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
@@ -384,7 +383,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION, false);
+        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().setSelectedTool(Tool.SELECT, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 

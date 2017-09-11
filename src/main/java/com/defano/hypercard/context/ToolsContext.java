@@ -101,14 +101,6 @@ public class ToolsContext {
         return paintToolProvider;
     }
 
-    public void setToolMode(ToolMode mode) {
-        if (mode != ToolMode.PAINT) {
-            selectPaintTool(PaintToolType.ARROW, false);
-        }
-
-        toolModeProvider.set(mode);
-    }
-
     public Provider<ToolMode> getToolModeProvider() {
         return toolModeProvider;
     }
@@ -119,44 +111,6 @@ public class ToolsContext {
 
     public PaintTool getPaintTool() {
         return paintToolProvider.get();
-    }
-
-    public PaintTool selectPaintTool(PaintToolType selectedToolType, boolean keepSelection) {
-
-        PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
-                .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
-                .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
-                .withFontProvider(selectedFontProvider)
-                .withShapeSidesProvider(shapeSidesProvider)
-                .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
-                .build();
-
-        if (keepSelection) {
-            PaintTool lastTool = paintToolProvider.get();
-            if (lastTool instanceof AbstractSelectionTool && selectedTool instanceof AbstractSelectionTool) {
-                ((AbstractSelectionTool) lastTool).morphSelection((AbstractSelectionTool) selectedTool);
-            }
-        }
-
-        lastToolType = paintToolProvider.get().getToolType();
-        paintToolProvider.get().deactivate();
-
-        if (selectedTool instanceof AbstractSelectionTool) {
-            selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
-        }
-
-        if (selectedTool instanceof AbstractBoundsTool) {
-            ((AbstractBoundsTool)selectedTool).setDrawMultiple(drawMultiple);
-            ((AbstractBoundsTool)selectedTool).setDrawCentered(drawCentered);
-        }
-
-        if (selectedToolType != PaintToolType.ARROW) {
-            setToolMode(ToolMode.PAINT);
-        }
-
-        paintToolProvider.set(selectedTool);
-        return selectedTool;
     }
 
     public void selectAll() {
@@ -320,67 +274,96 @@ public class ToolsContext {
         return shapesFilled;
     }
 
-    public void setSelectedTool (Tool tool) {
+    public PaintTool setSelectedTransform(PaintToolType transformTool) {
+        return selectPaintTool(transformTool, true);
+    }
+
+    public PaintTool setSelectedTool (Tool tool, boolean keepSelection) {
         switch (tool) {
             case BROWSE:
-                setToolMode(ToolMode.BROWSE);
-                break;
+                toolModeProvider.set(ToolMode.BROWSE);
+                return selectPaintTool(PaintToolType.ARROW, keepSelection);
             case OVAL:
-                selectPaintTool(PaintToolType.OVAL, false);
-                break;
+                return selectPaintTool(PaintToolType.OVAL, keepSelection);
             case BRUSH:
-                selectPaintTool(PaintToolType.PAINTBRUSH, false);
-                break;
+                return selectPaintTool(PaintToolType.PAINTBRUSH, keepSelection);
             case PENCIL:
-                selectPaintTool(PaintToolType.PENCIL, false);
-                break;
+                return selectPaintTool(PaintToolType.PENCIL, keepSelection);
             case BUCKET:
-                selectPaintTool(PaintToolType.FILL, false);
-                break;
+                return selectPaintTool(PaintToolType.FILL, keepSelection);
             case POLYGON:
-                selectPaintTool(PaintToolType.POLYGON, false);
-                break;
+                return selectPaintTool(PaintToolType.POLYGON, keepSelection);
             case BUTTON:
                 toolModeProvider.set(ToolMode.BUTTON);
-                break;
+                return selectPaintTool(PaintToolType.ARROW, keepSelection);
             case RECTANGLE:
-                selectPaintTool(PaintToolType.RECTANGLE, false);
-                break;
+                return selectPaintTool(PaintToolType.RECTANGLE, keepSelection);
             case CURVE:
-                selectPaintTool(PaintToolType.FREEFORM, false);
-                break;
+                return selectPaintTool(PaintToolType.FREEFORM, keepSelection);
             case SHAPE:
-                selectPaintTool(PaintToolType.SHAPE, false);
-                break;
+                return selectPaintTool(PaintToolType.SHAPE, keepSelection);
             case ERASER:
-                selectPaintTool(PaintToolType.ERASER, false);
-                break;
+                return selectPaintTool(PaintToolType.ERASER, keepSelection);
             case ROUNDRECT:
-                selectPaintTool(PaintToolType.ROUND_RECTANGLE, false);
-                break;
+                return selectPaintTool(PaintToolType.ROUND_RECTANGLE, keepSelection);
             case FIELD:
                 toolModeProvider.set(ToolMode.FIELD);
-                break;
+                return selectPaintTool(PaintToolType.ARROW, keepSelection);
             case SELECT:
-                selectPaintTool(PaintToolType.SELECTION, false);
-                break;
+                return selectPaintTool(PaintToolType.SELECTION, keepSelection);
             case LASSO:
-                selectPaintTool(PaintToolType.LASSO, false);
-                break;
+                return selectPaintTool(PaintToolType.LASSO, keepSelection);
             case SPRAY:
-                selectPaintTool(PaintToolType.AIRBRUSH, false);
-                break;
+                return selectPaintTool(PaintToolType.AIRBRUSH, keepSelection);
             case LINE:
-                selectPaintTool(PaintToolType.LINE, false);
-                break;
+                return selectPaintTool(PaintToolType.LINE, keepSelection);
             case TEXT:
-                selectPaintTool(PaintToolType.TEXT, false);
-                break;
+                return selectPaintTool(PaintToolType.TEXT, keepSelection);
         }
+
+        throw new IllegalStateException("Bug! Unimplemented tool.");
     }
 
     public Tool getSelectedTool() {
         return Tool.fromToolMode(getToolMode(), getPaintTool().getToolType());
+    }
+
+    private PaintTool selectPaintTool(PaintToolType selectedToolType, boolean keepSelection) {
+
+        PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
+                .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
+                .withStrokePaintProvider(linePaintProvider)
+                .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
+                .withFontProvider(selectedFontProvider)
+                .withShapeSidesProvider(shapeSidesProvider)
+                .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
+                .build();
+
+        if (keepSelection) {
+            PaintTool lastTool = paintToolProvider.get();
+            if (lastTool instanceof AbstractSelectionTool && selectedTool instanceof AbstractSelectionTool) {
+                ((AbstractSelectionTool) lastTool).morphSelection((AbstractSelectionTool) selectedTool);
+            }
+        }
+
+        lastToolType = paintToolProvider.get().getToolType();
+        paintToolProvider.get().deactivate();
+
+        if (selectedTool instanceof AbstractSelectionTool) {
+            selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
+        }
+
+        if (selectedTool instanceof AbstractBoundsTool) {
+            ((AbstractBoundsTool)selectedTool).setDrawMultiple(drawMultiple);
+            ((AbstractBoundsTool)selectedTool).setDrawCentered(drawCentered);
+        }
+
+        if (selectedToolType != PaintToolType.ARROW) {
+            toolModeProvider.set(ToolMode.PAINT);
+        }
+
+        paintToolProvider.set(selectedTool);
+        return selectedTool;
     }
 
     private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {

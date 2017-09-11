@@ -23,7 +23,6 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
 

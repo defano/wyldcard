@@ -3,8 +3,8 @@ package com.defano.hypercard.gui.util;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.Tool;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.SelectionTool;
 
 import javax.imageio.ImageIO;
@@ -62,7 +62,7 @@ public class ArtVandelay {
                     importedImage = scaleImageToDimension(importedImage, cardWidth, cardHeight);
                 }
 
-                SelectionTool tool = (SelectionTool) ToolsContext.getInstance().selectPaintTool(PaintToolType.SELECTION, false);
+                SelectionTool tool = (SelectionTool) ToolsContext.getInstance().setSelectedTool(Tool.SELECT, false);
                 tool.createSelection(importedImage, new Point(cardCenterX - importedImage.getWidth() / 2, cardCenterY - importedImage.getHeight() / 2));
             }
         } catch (IOException e) {

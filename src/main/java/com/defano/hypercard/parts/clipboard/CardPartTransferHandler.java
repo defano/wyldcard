@@ -56,7 +56,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected
-                ToolsContext.getInstance().setSelectedTool(importedPart.getEditTool());
+                ToolsContext.getInstance().setSelectedTool(importedPart.getEditTool(), false);
                 PartToolContext.getInstance().setSelectedPart(importedPart);
             });
 

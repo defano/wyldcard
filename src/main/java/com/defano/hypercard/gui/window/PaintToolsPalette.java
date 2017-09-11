@@ -9,6 +9,7 @@
 package com.defano.hypercard.gui.window;
 
 import com.defano.hypercard.gui.HyperCardDialog;
+import com.defano.hypertalk.ast.common.Tool;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.HyperCard;
@@ -53,25 +54,25 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
         // Single click actions
-        finger.addActionListener(e -> ToolsContext.getInstance().setToolMode(ToolMode.BROWSE));
-        button.addActionListener(e -> ToolsContext.getInstance().setToolMode(ToolMode.BUTTON));
-        field.addActionListener(e -> ToolsContext.getInstance().setToolMode(ToolMode.FIELD));
+        finger.addActionListener(e -> toolSelected(Tool.BROWSE));
+        button.addActionListener(e -> toolSelected(Tool.BUTTON));
+        field.addActionListener(e -> toolSelected(Tool.FIELD));
 
-        pencil.addActionListener(e -> toolSelected(PaintToolType.PENCIL));
-        paintbrush.addActionListener(e -> toolSelected(PaintToolType.PAINTBRUSH));
-        eraser.addActionListener(e -> toolSelected(PaintToolType.ERASER));
-        line.addActionListener(e -> toolSelected(PaintToolType.LINE));
-        rectangle.addActionListener(e -> toolSelected(PaintToolType.RECTANGLE));
-        roundRectangle.addActionListener(e -> toolSelected(PaintToolType.ROUND_RECTANGLE));
-        polygon.addActionListener(e -> toolSelected(PaintToolType.POLYGON));
-        selection.addActionListener(e -> toolSelected(PaintToolType.SELECTION));
-        oval.addActionListener(e -> toolSelected(PaintToolType.OVAL));
-        shape.addActionListener(e -> toolSelected(PaintToolType.SHAPE));
-        text.addActionListener(e -> toolSelected(PaintToolType.TEXT));
-        fill.addActionListener(e -> toolSelected(PaintToolType.FILL));
-        spraypaint.addActionListener(e -> toolSelected(PaintToolType.AIRBRUSH));
-        curve.addActionListener(e -> toolSelected(PaintToolType.FREEFORM));
-        lasso.addActionListener(e -> toolSelected(PaintToolType.LASSO));
+        pencil.addActionListener(e -> toolSelected(Tool.PENCIL));
+        paintbrush.addActionListener(e -> toolSelected(Tool.BRUSH));
+        eraser.addActionListener(e -> toolSelected(Tool.ERASER));
+        line.addActionListener(e -> toolSelected(Tool.LINE));
+        rectangle.addActionListener(e -> toolSelected(Tool.RECTANGLE));
+        roundRectangle.addActionListener(e -> toolSelected(Tool.ROUNDRECT));
+        polygon.addActionListener(e -> toolSelected(Tool.POLYGON));
+        selection.addActionListener(e -> toolSelected(Tool.SELECT));
+        oval.addActionListener(e -> toolSelected(Tool.OVAL));
+        shape.addActionListener(e -> toolSelected(Tool.SHAPE));
+        text.addActionListener(e -> toolSelected(Tool.TEXT));
+        fill.addActionListener(e -> toolSelected(Tool.BUCKET));
+        spraypaint.addActionListener(e -> toolSelected(Tool.SPRAY));
+        curve.addActionListener(e -> toolSelected(Tool.CURVE));
+        lasso.addActionListener(e -> toolSelected(Tool.LASSO));
 
         // Double-click actions
         eraser.addMouseListener((DoubleClickListenable) e -> HyperCard.getInstance().getCard().getCanvas().clearCanvas());
@@ -123,8 +124,8 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         // Nothing to do
     }
 
-    private void toolSelected(PaintToolType toolType) {
-        ToolsContext.getInstance().selectPaintTool(toolType, false);
+    private void toolSelected(Tool tool) {
+        ToolsContext.getInstance().setSelectedTool(tool, false);
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {

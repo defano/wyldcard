@@ -19,7 +19,6 @@ package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.PartToolContext;
-import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.gui.window.ButtonPropertyEditor;
 import com.defano.hypercard.gui.window.ScriptEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
@@ -72,7 +71,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
 
         // When a new button is created, make the button tool active and select the newly created button
-        ToolsContext.getInstance().setToolMode(ToolMode.BUTTON);
+        ToolsContext.getInstance().setSelectedTool(Tool.BUTTON, false);
         PartToolContext.getInstance().setSelectedPart(newButton);
 
         return newButton;

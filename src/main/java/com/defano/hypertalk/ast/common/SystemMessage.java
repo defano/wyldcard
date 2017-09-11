@@ -37,6 +37,9 @@ public enum SystemMessage {
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     DO_MENU("doMenu", "Sent when the user chooses a menu item from the menu bar.",
             new String[] {"theMenu", "theMenuItem"},
+            new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    CHOOSE("choose", "Sent when the tool selection changes.",
+            new String[] {"what", "toolNumber"},
             new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK});
 
     public final String messageName;

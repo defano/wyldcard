@@ -3,7 +3,6 @@ package com.defano.hypertalk.ast.statements;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class MessageCmd extends Statement {
