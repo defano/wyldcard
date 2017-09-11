@@ -629,40 +629,40 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-            getPartModel().sendMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        getPartModel().sendMessage(SystemMessage.MOUSE_DOWN.messageName);
+        getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        getPartModel().sendMessage(SystemMessage.MOUSE_UP.messageName);
+        getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        getPartModel().sendMessage(SystemMessage.MOUSE_ENTER.messageName);
+        getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        getPartModel().sendMessage(SystemMessage.MOUSE_LEAVE.messageName);
+        getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
     }
 
     @Override
     public void keyTyped(KeyEvent e) {
-        getPartModel().sendAndConsume(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e);
+        getPartModel().receiveAndConsume(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
         if (bsm != null) {
-            getPartModel().sendAndConsume(bsm.message.messageName, bsm.boundArguments, e);
+            getPartModel().receiveAndConsume(bsm.message.messageName, bsm.boundArguments, e);
         }
     }
 

@@ -12,15 +12,12 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
-import com.defano.hypertalk.exception.PropertyPermissionException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
@@ -316,7 +313,7 @@ public class ExecutionContext {
         }
 
         if (thePart != null) {
-            thePart.sendMessage(message, messageArgs);
+            thePart.receiveMessage(message, messageArgs);
         } else {
             throw new PartException("No such part.");
         }

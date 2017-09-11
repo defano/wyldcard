@@ -10,7 +10,6 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -44,8 +43,8 @@ public interface Messagable {
      * Sends a message (i.e., 'mouseUp') to this part's message passing hierarchy.
      * @param message The message to be passed.
      */
-    default void sendMessage(String message) {
-        sendMessage(message, new ExpressionList(), (command, trapped) -> {});
+    default void receiveMessage(String message) {
+        receiveMessage(message, new ExpressionList(), (command, trapped) -> {});
     }
 
     /**
@@ -53,8 +52,8 @@ public interface Messagable {
      * @param message The message to be passed
      * @param arguments The arguments to the message
      */
-    default void sendMessage(String message, List<Value> arguments) {
-        sendMessage(message, new ExpressionList(arguments), (command, trapped) -> {});
+    default void receiveMessage(String message, List<Value> arguments) {
+        receiveMessage(message, new ExpressionList(arguments), (command, trapped) -> {});
     }
 
     /**
@@ -64,10 +63,10 @@ public interface Messagable {
      * @param arguments The arguments to pass to this command; cannot be null.
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
      */
-    default void sendMessage(String command, ExpressionList arguments, MessageCompletionObserver onCompletion) {
+    default void receiveMessage(String command, ExpressionList arguments, MessageCompletionObserver onCompletion) {
 
         // No commands are sent to parts when not in browse mode
-        if (ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE) {
+        if (ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isCardElementSpecifier()) {
             onCompletion.onMessagePassingCompletion(command, false);
             return;
         }
@@ -87,7 +86,7 @@ public interface Messagable {
                         if (nextRecipient == null) {
                             onCompletion.onMessagePassingCompletion(command, false);
                         } else {
-                            nextRecipient.sendMessage(command, arguments, onCompletion);
+                            nextRecipient.receiveMessage(command, arguments, onCompletion);
                         }
                     }
                 } catch (InterruptedException | ExecutionException e) {
@@ -121,8 +120,8 @@ public interface Messagable {
      * @param e The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
      *          a short period of time).
      */
-    default void sendAndConsume(String command, ExpressionList arguments, InputEvent e) {
-        boolean success = sendAndWait(command, arguments, (c, wasTrapped) -> {
+    default void receiveAndConsume(String command, ExpressionList arguments, InputEvent e) {
+        boolean success = receiveAndWait(command, arguments, (c, wasTrapped) -> {
             if (wasTrapped) e.consume();
         }, 500);
 
@@ -132,16 +131,16 @@ public interface Messagable {
     /**
      * Sends a message to this part's message passing hierarchy and blocks the current thread until the command
      * completes or until the timeout is reached (whichever is first). See
-     * {@link #sendMessage(String, ExpressionList, MessageCompletionObserver)} for details about sending commands.
+     * {@link #receiveMessage(String, ExpressionList, MessageCompletionObserver)} for details about sending commands.
      *
      * @param command The name of the command
      * @param arguments The arguments to pass to this command
      * @param onCompletion A callback that will fire as soon as the command has been executed in script.
      * @param timeoutMs The number of milliseconds to allow the script to execute before releasing the current thread.
      */
-    default boolean sendAndWait(String command, ExpressionList arguments, MessageCompletionObserver onCompletion, int timeoutMs) {
+    default boolean receiveAndWait(String command, ExpressionList arguments, MessageCompletionObserver onCompletion, int timeoutMs) {
         CountDownLatch cdl = new CountDownLatch(1);
-        sendMessage(command, arguments, (command1, trappedInScript) -> {
+        receiveMessage(command, arguments, (command1, trappedInScript) -> {
             cdl.countDown();
             onCompletion.onMessagePassingCompletion(command1, trappedInScript);
         });
@@ -175,6 +174,12 @@ public interface Messagable {
         switch (getMe().type()) {
             case BACKGROUND:
                 return HyperCard.getInstance().getStack().getStackModel();
+            case MESSAGE_BOX:
+                return HyperCard.getInstance().getCard().getCardModel();
+            case CARD:
+                return HyperCard.getInstance().getCard().getCardBackground();
+            case STACK:
+                return null;
             case FIELD:
             case BUTTON:
                 if (getMe().owner() == Owner.BACKGROUND) {
@@ -182,12 +187,6 @@ public interface Messagable {
                 } else {
                     return HyperCard.getInstance().getCard().getCardModel();
                 }
-            case MESSAGE_BOX:
-                return HyperCard.getInstance().getCard().getCardModel();
-            case CARD:
-                return HyperCard.getInstance().getCard().getCardBackground();
-            case STACK:
-                return null;
         }
 
         throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe().owner());

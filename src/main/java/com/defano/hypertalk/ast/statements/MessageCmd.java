@@ -17,7 +17,7 @@ public class MessageCmd extends Statement {
     }
 
     @Override
-    public void execute() throws HtException {
+    public void execute() throws HtSemanticException {
         if (!ExecutionContext.getContext().hasMe()) {
             throw new HtSemanticException("Cannot send messages from here.");
         }

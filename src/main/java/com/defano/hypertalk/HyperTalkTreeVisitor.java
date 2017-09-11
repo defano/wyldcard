@@ -1630,7 +1630,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBuiltinFuncExp(HyperTalkParser.BuiltinFuncExpContext ctx) {
-        return visit(ctx.builtinFunc());
+        return visit(ctx.builtInFunc());
     }
 
     @Override

@@ -36,7 +36,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
         cdl = new CountDownLatch(1);
 
         // Send command message to current card
-        HyperCard.getInstance().getCard().getPartModel().sendMessage(messageName, getEvaluatedMessageArguments(), this);
+        HyperCard.getInstance().getCard().getPartModel().receiveMessage(messageName, getEvaluatedMessageArguments(), this);
 
         // Wait for command handler to finish executing
         try {

@@ -381,7 +381,7 @@ ordinalValue        : 'first'                                                   
                     ;
 
 expression          : constant                                                                                          # constantExp
-                    | builtinFunc                                                                                       # builtinFuncExp
+                    | builtInFunc                                                                                       # builtinFuncExp
                     | ID '(' expressionList ')'                                                                         # functionExp
                     | factor                                                                                            # factorExp
                     | chunk expression                                                                                  # chunkExp
@@ -419,7 +419,7 @@ factor              : literal                                                   
                     | menuItem                                                                                          # menuItemFactor
                     ;
 
-builtinFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs
+builtInFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs
                     | 'the' noArgFunc                                                                                   # builtinFuncNoArg
                     | argFunc '(' expressionList ')'                                                                    # builtinFuncArgList
                     ;
