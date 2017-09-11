@@ -17,8 +17,11 @@ public class HyperCardMenu extends JMenu {
     }
 
     public void setVisible(boolean visible) {
-        super.setVisible(visible);
-        refreshMenuBar();
+        // Don't flicker the menubar when nothing is happening
+        if (visible != super.isVisible()) {
+            super.setVisible(visible);
+            refreshMenuBar();
+        }
     }
 
     public void refreshMenuBar() {

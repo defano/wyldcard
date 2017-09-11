@@ -71,7 +71,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
 
         // When a new button is created, make the button tool active and select the newly created button
-        ToolsContext.getInstance().setSelectedTool(Tool.BUTTON, false);
+        ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
         PartToolContext.getInstance().setSelectedPart(newButton);
 
         return newButton;
@@ -152,8 +152,8 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
-    public Tool getEditTool() {
-        return Tool.BUTTON;
+    public ToolType getEditTool() {
+        return ToolType.BUTTON;
     }
 
     @Override

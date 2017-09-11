@@ -62,7 +62,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
         FieldPart newField = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
 
         // When a new field is created, make the field tool active and select the newly created part
-        ToolsContext.getInstance().setSelectedTool(Tool.FIELD, false);
+        ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
         PartToolContext.getInstance().setSelectedPart(newField);
 
         return newField;
@@ -136,8 +136,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
 
     /** {@inheritDoc} */
     @Override
-    public Tool getEditTool() {
-        return Tool.FIELD;
+    public ToolType getEditTool() {
+        return ToolType.FIELD;
     }
 
     /** {@inheritDoc} */

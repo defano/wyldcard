@@ -19,7 +19,7 @@ import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Tool;
+import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 
@@ -68,7 +68,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Determines the tool that is used to edit parts of this type (i.e., ButtonTool or FieldTool).
      * @return The appropriate edit tool.
      */
-    Tool getEditTool();
+    ToolType getEditTool();
 
     /**
      * Returns the size of the drag handle square to be rendered in the marching ants.

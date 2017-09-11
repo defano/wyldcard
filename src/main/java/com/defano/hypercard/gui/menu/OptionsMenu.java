@@ -12,6 +12,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ToolMode;
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 
@@ -118,35 +119,35 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Scale")
-                .withAction(e -> ToolsContext.getInstance().setSelectedTransform(PaintToolType.SCALE))
+                .withAction(e -> ToolsContext.getInstance().forceToolSelection(ToolType.SCALE, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SCALE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Rotate")
-                .withAction(e -> ToolsContext.getInstance().setSelectedTransform(PaintToolType.ROTATE))
+                .withAction(e -> ToolsContext.getInstance().forceToolSelection(ToolType.ROTATE, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ROTATE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Slant")
-                .withAction(e -> ToolsContext.getInstance().setSelectedTransform(PaintToolType.SLANT))
+                .withAction(e -> ToolsContext.getInstance().forceToolSelection(ToolType.SLANT, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SLANT))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Distort")
-                .withAction(e -> ToolsContext.getInstance().setSelectedTransform(PaintToolType.PROJECTION))
+                .withAction(e -> ToolsContext.getInstance().forceToolSelection(ToolType.PROJECTION, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PROJECTION))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Perspective")
-                .withAction(e -> ToolsContext.getInstance().setSelectedTransform(PaintToolType.PERSPECTIVE))
+                .withAction(e -> ToolsContext.getInstance().forceToolSelection(ToolType.PERSPECTIVE, true))
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PERSPECTIVE))
                 .build(this);

@@ -11,6 +11,9 @@ package com.defano.hypercard.context;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
+import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.common.SystemMessage;
+import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
@@ -21,7 +24,6 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
-import com.defano.hypertalk.ast.common.Tool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -114,24 +116,24 @@ public class ToolsContext {
     }
 
     public void selectAll() {
-        SelectionTool tool = (SelectionTool) selectPaintTool(PaintToolType.SELECTION, false);
+        SelectionTool tool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
         tool.createSelection(new Rectangle(0, 0, HyperCard.getInstance().getCard().getWidth() - 1, HyperCard.getInstance().getCard().getHeight() - 1));
-    }
-
-    public void setForegroundColor(Color color) {
-        foregroundColorProvider.set(color);
-    }
-
-    public void setBackgroundColor(Color color) {
-        backgroundColorProvider.set(color);
     }
 
     public Color getForegroundColor() {
         return foregroundColorProvider.get();
     }
 
+    public void setForegroundColor(Color color) {
+        foregroundColorProvider.set(color);
+    }
+
     public Color getBackgroundColor() {
         return backgroundColorProvider.get();
+    }
+
+    public void setBackgroundColor(Color color) {
+        backgroundColorProvider.set(color);
     }
 
     public Provider<Color> getBackgroundColorProvider() {
@@ -185,17 +187,12 @@ public class ToolsContext {
     public void toggleMagnifier() {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
             HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
-            selectPaintTool(lastToolType, false);
+            forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
         } else if (HyperCard.getInstance().getCard().getCanvas().getScale() != 1.0) {
             HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
+        } else {
+            forceToolSelection(ToolType.MAGNIFIER, false);
         }
-        else {
-            selectPaintTool(PaintToolType.MAGNIFIER, false);
-        }
-    }
-
-    public void setVisibleFont(Font font) {
-        hilitedFontProvider.set(font);
     }
 
     public void setFont(Font font) {
@@ -238,7 +235,7 @@ public class ToolsContext {
     }
 
     public void setPattern(int patternId) {
-            fillPatternProvider.set(patternId);
+        fillPatternProvider.set(patternId);
     }
 
     public boolean isEditingBackground() {
@@ -267,69 +264,72 @@ public class ToolsContext {
 
     public void toggleShapesFilled() {
         shapesFilled.set(!shapesFilled.get());
-        selectPaintTool(paintToolProvider.get().getToolType(), false);
+        forceToolSelection(ToolType.fromPaintTool(paintToolProvider.get().getToolType()), false);
     }
 
     public Provider<Boolean> getShapesFilledProvider() {
         return shapesFilled;
     }
 
-    public PaintTool setSelectedTransform(PaintToolType transformTool) {
-        return selectPaintTool(transformTool, true);
+    /**
+     * Attempts to make the given tool active on the card. Sends a {@link SystemMessage#CHOOSE} message to the
+     * current card. If any script in the message passing hierarchy traps the message, then the request is ignored
+     * and the tool is not changed.
+     * <p>
+     * For programmatic tool changes that should not be trappable, see {@link #forceToolSelection(ToolType, boolean)}.
+     *
+     * @param toolType The requested tool selection.
+     */
+    public void chooseTool(ToolType toolType) {
+        HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped) -> {
+            if (!wasTrapped) {
+                forceToolSelection(toolType, false);
+            }
+        });
     }
 
-    public PaintTool setSelectedTool (Tool tool, boolean keepSelection) {
+    /**
+     * Make the given tool the active tool on the card. Does not generate a HyperTalk {@link SystemMessage#CHOOSE}
+     * message, and therefore is not overridable in script.
+     * <p>
+     * This method should be used for "programmatic" tool selection where the user/card should have no ability to "see"
+     * the change or prevent it. User-driven changes to the tool selection should use {@link #chooseTool(ToolType)}
+     * instead.
+     *
+     * @param tool          The tool selection
+     * @param keepSelection Attempt to maintain / morph the active selection as the tool changes. Has no effect if
+     *                      the tool transition does not operate on a selection or does not support selection morphing.
+     * @return The instance of the newly activated tool.
+     */
+    public PaintTool forceToolSelection(ToolType tool, boolean keepSelection) {
+        PaintTool selected = activatePaintTool(tool.toPaintTool(), keepSelection);
+
         switch (tool) {
             case BROWSE:
                 toolModeProvider.set(ToolMode.BROWSE);
-                return selectPaintTool(PaintToolType.ARROW, keepSelection);
-            case OVAL:
-                return selectPaintTool(PaintToolType.OVAL, keepSelection);
-            case BRUSH:
-                return selectPaintTool(PaintToolType.PAINTBRUSH, keepSelection);
-            case PENCIL:
-                return selectPaintTool(PaintToolType.PENCIL, keepSelection);
-            case BUCKET:
-                return selectPaintTool(PaintToolType.FILL, keepSelection);
-            case POLYGON:
-                return selectPaintTool(PaintToolType.POLYGON, keepSelection);
+                break;
             case BUTTON:
                 toolModeProvider.set(ToolMode.BUTTON);
-                return selectPaintTool(PaintToolType.ARROW, keepSelection);
-            case RECTANGLE:
-                return selectPaintTool(PaintToolType.RECTANGLE, keepSelection);
-            case CURVE:
-                return selectPaintTool(PaintToolType.FREEFORM, keepSelection);
-            case SHAPE:
-                return selectPaintTool(PaintToolType.SHAPE, keepSelection);
-            case ERASER:
-                return selectPaintTool(PaintToolType.ERASER, keepSelection);
-            case ROUNDRECT:
-                return selectPaintTool(PaintToolType.ROUND_RECTANGLE, keepSelection);
+                break;
             case FIELD:
                 toolModeProvider.set(ToolMode.FIELD);
-                return selectPaintTool(PaintToolType.ARROW, keepSelection);
-            case SELECT:
-                return selectPaintTool(PaintToolType.SELECTION, keepSelection);
-            case LASSO:
-                return selectPaintTool(PaintToolType.LASSO, keepSelection);
-            case SPRAY:
-                return selectPaintTool(PaintToolType.AIRBRUSH, keepSelection);
-            case LINE:
-                return selectPaintTool(PaintToolType.LINE, keepSelection);
-            case TEXT:
-                return selectPaintTool(PaintToolType.TEXT, keepSelection);
+                break;
+
+            default:
+                toolModeProvider.set(ToolMode.PAINT);
+                break;
         }
 
-        throw new IllegalStateException("Bug! Unimplemented tool.");
+        return selected;
     }
 
-    public Tool getSelectedTool() {
-        return Tool.fromToolMode(getToolMode(), getPaintTool().getToolType());
+    public ToolType getSelectedTool() {
+        return ToolType.fromToolMode(getToolMode(), getPaintTool().getToolType());
     }
 
-    private PaintTool selectPaintTool(PaintToolType selectedToolType, boolean keepSelection) {
+    private PaintTool activatePaintTool(PaintToolType selectedToolType, boolean keepSelection) {
 
+        // Create and activate new paint tool
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
@@ -339,6 +339,7 @@ public class ToolsContext {
                 .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
                 .build();
 
+        // When requested, move current selection over to the new tool
         if (keepSelection) {
             PaintTool lastTool = paintToolProvider.get();
             if (lastTool instanceof AbstractSelectionTool && selectedTool instanceof AbstractSelectionTool) {
@@ -346,20 +347,19 @@ public class ToolsContext {
             }
         }
 
+        // Deactivate current tool
         lastToolType = paintToolProvider.get().getToolType();
         paintToolProvider.get().deactivate();
 
+        // Update selected image provider (so UI can tell when a selection exists)
         if (selectedTool instanceof AbstractSelectionTool) {
             selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
         }
 
+        // Setup "Draw Multiple" and "Draw Centered" options on tools that support them
         if (selectedTool instanceof AbstractBoundsTool) {
-            ((AbstractBoundsTool)selectedTool).setDrawMultiple(drawMultiple);
-            ((AbstractBoundsTool)selectedTool).setDrawCentered(drawCentered);
-        }
-
-        if (selectedToolType != PaintToolType.ARROW) {
-            toolModeProvider.set(ToolMode.PAINT);
+            ((AbstractBoundsTool) selectedTool).setDrawMultiple(drawMultiple);
+            ((AbstractBoundsTool) selectedTool).setDrawCentered(drawCentered);
         }
 
         paintToolProvider.set(selectedTool);

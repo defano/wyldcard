@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.gui.menu;
 
-import com.defano.hypertalk.ast.common.Tool;
+import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.hypercard.context.ToolMode;
@@ -65,128 +65,128 @@ public class ToolsMenu extends HyperCardMenu {
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
-                .named("Finger")
+                .named("Browse")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/finger.png")))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.BROWSE))
-                .withAction(a -> ToolsContext.getInstance().setSelectedTool(Tool.BROWSE, false))
+                .withAction(a -> ToolsContext.getInstance().chooseTool(ToolType.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Button")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/button.png")))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.BUTTON))
-                .withAction(a -> ToolsContext.getInstance().setSelectedTool(Tool.BUTTON, false))
+                .withAction(a -> ToolsContext.getInstance().chooseTool(ToolType.BUTTON))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Field")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/field.png")))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value == ToolMode.FIELD))
-                .withAction(a -> ToolsContext.getInstance().setSelectedTool(Tool.FIELD, false))
+                .withAction(a -> ToolsContext.getInstance().chooseTool(ToolType.FIELD))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
-                .named("Selection")
+                .named("Select")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/selection.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.SELECT, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.SELECT))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SELECTION))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Lasso")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/lasso.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.LASSO, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.LASSO))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.LASSO))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Bucket")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/fill.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.BUCKET, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.BUCKET))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.FILL))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Pencil")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/pencil.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.PENCIL, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.PENCIL))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PENCIL))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Rectangle")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/rectangle.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.RECTANGLE, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.RECTANGLE))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.RECTANGLE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Round Rectangle")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/roundrect.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.ROUNDRECT, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.ROUNDRECT))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ROUND_RECTANGLE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Oval")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/oval.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.OVAL, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.OVAL))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.OVAL))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
-                .named("Paintbrush")
+                .named("Brush")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/paintbrush.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.BRUSH, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.BRUSH))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.PAINTBRUSH))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
-                .named("Spray")
+                .named("Spray Can")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/spraypaint.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.SPRAY, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.SPRAY))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.AIRBRUSH))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Eraser")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/eraser.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.ERASER, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.ERASER))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.ERASER))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Line")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/line.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.LINE, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.LINE))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.LINE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Curve")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/curve.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.CURVE, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.CURVE))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.CURVE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Polygon")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/polygon.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.POLYGON, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.POLYGON))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.POLYGON))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Shape")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/shape.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.SHAPE, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.SHAPE))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.SHAPE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Text")
                 .withIcon(new ImageIcon(getClass().getResource("/icons/text.png")))
-                .withAction(e -> ToolsContext.getInstance().setSelectedTool(Tool.TEXT, false))
+                .withAction(e -> ToolsContext.getInstance().chooseTool(ToolType.TEXT))
                 .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getPaintToolProvider(), t -> t.getToolType() == PaintToolType.TEXT))
                 .build(this);
     }

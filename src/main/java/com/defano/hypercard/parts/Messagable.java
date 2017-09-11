@@ -81,7 +81,7 @@ public interface Messagable {
                     if (trapped.get()) {
                         onCompletion.onMessagePassingCompletion(command, true);
                     } else {
-                        // Get next recipient in message passing order; null no other parts
+                        // Get next recipient in message passing order; null if no other parts receive message
                         Messagable nextRecipient = getNextMessageRecipient();
                         if (nextRecipient == null) {
                             onCompletion.onMessagePassingCompletion(command, false);

@@ -383,7 +383,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().setSelectedTool(Tool.SELECT, false);
+        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().forceToolSelection(ToolType.SELECT, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 

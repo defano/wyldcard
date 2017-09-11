@@ -10,7 +10,7 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.Tool;
+import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
@@ -27,21 +27,21 @@ public class ChooseCmd extends Command {
     }
 
     public void onExecute() throws HtException {
-        ToolsContext.getInstance().setSelectedTool(getChosenTool(), false);
+        ToolsContext.getInstance().forceToolSelection(getChosenTool(), false);
     }
 
     protected ExpressionList getEvaluatedMessageArguments() throws HtSemanticException {
-        Tool theTool = getChosenTool();
+        ToolType theTool = getChosenTool();
         ExpressionList arguments = new ExpressionList();
 
-        arguments.addArgument(new LiteralExp(theTool.toolNames.get(0)));
-        arguments.addArgument(new LiteralExp(theTool.toolNumber));
+        arguments.addArgument(new LiteralExp(theTool.getPrimaryToolName()));
+        arguments.addArgument(new LiteralExp(theTool.getToolNumber()));
 
         return arguments;
     }
 
-    private Tool getChosenTool() throws HtSemanticException {
+    private ToolType getChosenTool() throws HtSemanticException {
         Value toolId = toolExpression.evaluate();
-        return toolId.isInteger() ? Tool.byNumber(toolId.integerValue()) : Tool.byName(toolId.stringValue());
+        return toolId.isInteger() ? ToolType.byNumber(toolId.integerValue()) : ToolType.byName(toolId.stringValue());
     }
 }

@@ -44,12 +44,13 @@ public class PartEditor implements AWTEventListener {
                     new PartMover(part, theCard).startMoving();
                 }
 
-                // User clicked away from part
-                else if (theCard.contains(cardLocalMouseLoc)) {
+                // User clicked away from part (and not a menu item)
+                else if (theCard.contains(cardLocalMouseLoc) &&
+                        MenuSelectionManager.defaultManager().getSelectedPath().length == 0)
+                {
                     PartToolContext.getInstance().deselectAllParts();
                 }
             }
         }
-
     }
 }
