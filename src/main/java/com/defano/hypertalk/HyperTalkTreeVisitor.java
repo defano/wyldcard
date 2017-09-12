@@ -1711,6 +1711,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case RANDOM: return new RandomFunc((ExpressionList) visit(ctx.expressionList()));
             case ANNUITY: return new AnnuityFunc((ExpressionList) visit(ctx.expressionList()));
             case COMPOUND: return new CompoundFunc((ExpressionList) visit(ctx.expressionList()));
+            case OFFSET: return new OffsetFunc((ExpressionList) visit(ctx.expressionList()));
             default: throw new RuntimeException("Bug! Unimplemented arg-list function: " + ctx.argFunc().getText());
         }
     }
@@ -1728,6 +1729,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCompoundArgFunc(HyperTalkParser.CompoundArgFuncContext ctx) {
         return BuiltInFunction.COMPOUND;
+    }
+
+    @Override
+    public Object visitOffsetArgFunc(HyperTalkParser.OffsetArgFuncContext ctx) {
+        return BuiltInFunction.OFFSET;
     }
 
     @Override

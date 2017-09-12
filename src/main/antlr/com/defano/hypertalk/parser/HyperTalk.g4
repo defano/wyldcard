@@ -427,6 +427,7 @@ builtInFunc         : 'the'? oneArgFunc ('of' | 'in') factor                    
 argFunc             : oneArgFunc                                                                                        # oneArgArgFunc
                     | 'annuity'                                                                                         # annuityArgFunc
                     | 'compound'                                                                                        # compoundArgFunc
+                    | 'offset'                                                                                          # offsetArgFunc
                     ;
 
 oneArgFunc          : 'average'                                                                                         # averageFunc

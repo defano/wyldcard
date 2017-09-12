@@ -65,5 +65,6 @@ public enum BuiltInFunction {
     DISK_SPACE,
     PARAMS,
     PARAM_COUNT,
-    PARAM
+    PARAM,
+    OFFSET
 }
