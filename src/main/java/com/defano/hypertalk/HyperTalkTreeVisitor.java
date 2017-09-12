@@ -1633,6 +1633,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
             case MIN: return new MinFunc((Expression) visit(ctx.factor()));
             case MAX: return new MaxFunc((Expression) visit(ctx.factor()));
+            case SUM: return new SumFunc((Expression) visit(ctx.factor()));
             case AVERAGE: return new AverageFunc((Expression) visit(ctx.factor()));
             case NUMBER_CHARS: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.factor()));
             case NUMBER_ITEMS: return new NumberOfFunc(Countable.ITEM, (Expression) visit(ctx.factor()));
@@ -1705,6 +1706,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         switch ((BuiltInFunction) visit(ctx.argFunc())) {
             case MIN: return new MinFunc((ExpressionList) visit(ctx.expressionList()));
             case MAX: return new MaxFunc((ExpressionList) visit(ctx.expressionList()));
+            case SUM: return new SumFunc((ExpressionList) visit(ctx.expressionList()));
             case AVERAGE: return new AverageFunc((ExpressionList) visit(ctx.expressionList()));
             case RANDOM: return new RandomFunc((ExpressionList) visit(ctx.expressionList()));
             case ANNUITY: return new AnnuityFunc((ExpressionList) visit(ctx.expressionList()));
@@ -1741,6 +1743,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMaxFunc(HyperTalkParser.MaxFuncContext ctx) {
         return BuiltInFunction.MAX;
+    }
+
+    @Override
+    public Object visitSumFunc(HyperTalkParser.SumFuncContext ctx) {
+        return BuiltInFunction.SUM;
     }
 
     @Override

@@ -12,6 +12,7 @@ public enum BuiltInFunction {
     AVERAGE,
     MIN,
     MAX,
+    SUM,
     MOUSE,
     MOUSELOC,
     RESULT,

@@ -889,6 +889,7 @@ Function        | Description
 `sin`           | Returns the trigonometric sine of the given argument, represented in radians.
 `sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.
 `sound`         | Returns the name of the currently playing sound, or `done` if no sound is being played.
+`sum`           | Returns the sum of the arguments. For example, `sum(1,3,8)` yields `9`.
 `tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
 `ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
 `time`          | Returns the time of day in a variety of formats. Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` to yield a time in the format `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.

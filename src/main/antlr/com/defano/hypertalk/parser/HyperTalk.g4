@@ -432,6 +432,7 @@ argFunc             : oneArgFunc                                                
 oneArgFunc          : 'average'                                                                                         # averageFunc
                     | 'min'                                                                                             # minFunc
                     | 'max'                                                                                             # maxFunc
+                    | 'sum'                                                                                             # sumFunc
                     | 'number of' ('char' | 'character' | 'chars' | 'characters')                                       # numberOfCharsFunc
                     | 'number of' ('word' | 'words')                                                                    # numberOfWordsFunc
                     | 'number of' ('item' | 'items')                                                                    # numberOfItemsFunc
