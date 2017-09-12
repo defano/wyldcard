@@ -18,7 +18,7 @@ public class DialCmd extends Command {
     public void onExecute() throws HtException {
         for (char thisChar : expression.evaluate().stringValue().toCharArray()) {
             if ((thisChar >= '0' && thisChar <= '9') || thisChar == '*' || thisChar == '#') {
-                SoundSample sample = SoundSample.fromName("dial" + thisChar);
+                SoundSample sample = SoundSample.ofTouchTone(thisChar);
                 SoundPlayer.play(sample);
             }
         }

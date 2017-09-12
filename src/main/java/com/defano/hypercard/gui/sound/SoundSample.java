@@ -18,8 +18,8 @@ public enum SoundSample {
     DIAL_7("dial7", MusicalPitch.C4),
     DIAL_8("dial8", MusicalPitch.C4),
     DIAL_9("dial9", MusicalPitch.C4),
-    DIAL_STAR("dial*", MusicalPitch.C4),
-    DIAL_HASH("dial#", MusicalPitch.C4);
+    DIAL_STAR("dial_star", MusicalPitch.C4),
+    DIAL_HASH("dial_hash", MusicalPitch.C4);
 
     private final String resource;
     private final MusicalPitch dominantFrequency;
@@ -55,6 +55,25 @@ public enum SoundSample {
 
     public MusicalPitch getDominantFrequency() {
         return dominantFrequency;
+    }
+
+    public static SoundSample ofTouchTone(char c) {
+        switch (c) {
+            case '0': return DIAL_0;
+            case '1': return DIAL_1;
+            case '2': return DIAL_2;
+            case '3': return DIAL_3;
+            case '4': return DIAL_4;
+            case '5': return DIAL_5;
+            case '6': return DIAL_6;
+            case '7': return DIAL_7;
+            case '8': return DIAL_8;
+            case '9': return DIAL_9;
+            case '*': return DIAL_STAR;
+            case '#': return DIAL_HASH;
+        }
+
+        throw new IllegalArgumentException("No TouchTone for: " + c);
     }
 
     public static SoundSample fromName(String name) {
