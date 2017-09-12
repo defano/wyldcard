@@ -174,7 +174,7 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
         final Spacer spacer1 = new Spacer();
         propertiesPanel.add(spacer1, new GridConstraints(10, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         saveButton = new JButton();
-        saveButton.setText("Save");
+        saveButton.setText("OK");
         propertiesPanel.add(saveButton, new GridConstraints(10, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         contentsButton = new JButton();
         contentsButton.setEnabled(true);

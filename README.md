@@ -78,9 +78,9 @@ This project represents a homework assignment gone awry and is in no way associa
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts are associated with user interface elements called _parts_ and are triggered by user actions called _events_. (There is no singular "main" script in HyperTalk.)
 
-HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and converted to a number, boolean, or list depending on the context of its use. HyperCard does not allow nonsensical conversions, though: Adding `5` to `hello` produces a syntax error. Comments are preceded by `--`.
+HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and converted to a number, boolean, or list depending on the context of its use. HyperCard does not allow nonsensical conversions, though: Adding `5` to `hello` produces a syntax error.
 
-Keywords and symbols (variables) in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is accessible as `myvar`.
+Keywords and symbols (variables) in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is accessible as `myvar`. Comments are preceded by `--`.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -891,7 +891,7 @@ Function        | Description
 `sound`         | Returns the name of the currently playing sound, or `done` if no sound is being played.
 `tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
 `ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
-`time`          | Returns the time of date in a variety of formats. Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` for `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.
+`time`          | Returns the time of day in a variety of formats. Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` to yield a time in the format `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.
 `tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
