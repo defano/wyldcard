@@ -856,7 +856,7 @@ Function        | Description
 `commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
 `compound`      | Given two arguments; an interest rate, and a number of periods, `compound` returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`. For example, to calculate how much a $1000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years, `1000 * compound(.03, 6)` yields approximately `1194.05`.
 `cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
-`date`<br>`short date` | Returns the current date in _dd/mm/yy_ format. For example `put the date` yields `07/04/16`.
+`date`          | Returns the current date in a variety of formats. Use `the date` or `the short date` to yield a date in the format `07/04/16`; use `the long date` or `the English date` for `Sunday, July 4, 2016`; use `the abbrev date` or `the abbreviated date` for `Sun, Jul 4, 2016`.
 `diskSpace`     | Returns the number of free bytes on the filesystem containing HyperTalk Java, or any specified filesystem. For example, `the diskSpace` or `the diskSpace of "/Volumes/Macintosh HD"`. Accepts the path of any disk, folder or file.
 `exp`           | Returns the value of _e_ raised to the power of the given argument.
 `exp1`          | Returns the value of _1-e_ raised to the number of the given argument.
@@ -891,6 +891,7 @@ Function        | Description
 `sound`         | Returns the name of the currently playing sound, or `done` if no sound is being played.
 `tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
 `ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
+`time`          | Returns the time of date in a variety of formats. Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` for `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.
 `tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.

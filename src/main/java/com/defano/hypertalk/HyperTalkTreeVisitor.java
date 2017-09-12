@@ -1479,11 +1479,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitShortTimeFormatFunc(HyperTalkParser.ShortTimeFormatFuncContext ctx) {
-        return BuiltInFunction.SHORT_TIME;
-    }
-
-    @Override
     public Object visitAbbrevTimeFormatFunc(HyperTalkParser.AbbrevTimeFormatFuncContext ctx) {
         return BuiltInFunction.ABBREV_TIME;
     }

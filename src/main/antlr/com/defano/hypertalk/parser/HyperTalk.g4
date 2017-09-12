@@ -468,12 +468,11 @@ noArgFunc           : 'mouse'                                                   
                     | ('message' | 'message' 'box' | 'message' 'window')                                                # messageFunc
                     | 'ticks'                                                                                           # ticksFunc
                     | 'seconds'                                                                                         # secondsFunc
-                    | 'long date'                                                                                       # longDateFormatFunc
-                    | 'short date'                                                                                      # shortDateFormatFunc
+                    | ('english date' | 'long date')                                                                    # longDateFormatFunc
+                    | ('date' | 'short date')                                                                           # shortDateFormatFunc
                     | ('abbrev date' | 'abbreviated date')                                                              # abbrevDateFormatFunc
-                    | 'long time'                                                                                       # longTimeFormatFunc
-                    | 'short time'                                                                                      # shortTimeFormatFunc
-                    | ('abbrev time' | 'abbreviated time')                                                              # abbrevTimeFormatFunc
+                    | ('english time' | 'long time')                                                                    # longTimeFormatFunc
+                    | ('time' | 'short time' | 'abbrev time' | 'abbreviated time')                                      # abbrevTimeFormatFunc
                     | 'tool'                                                                                            # toolFunc
                     | 'number of' ('card' | 'cd') 'parts'                                                               # numberOfCardParts
                     | 'number of' ('background' | 'bkgnd') 'parts'                                                      # numberOfBkgndParts
