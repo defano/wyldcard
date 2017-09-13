@@ -40,6 +40,9 @@ public enum SystemMessage {
             new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     CHOOSE("choose", "Sent when the tool selection changes.",
             new String[] {"what", "toolNumber"},
+            new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
+    IDLE("idle", "Sent repeatedly whenever no scripts are executing.",
+            new String[] {},
             new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK});
 
     public final String messageName;

@@ -91,7 +91,7 @@ commandStmnt        : answerCmd                                                 
                     | 'unlock' 'screen'                                                                                 # unlockScreenCmdStmt
                     | 'unlock' 'screen' 'with' 'visual' visualEffect                                                    # unlockScreenVisualCmdStmt
                     | 'pass' blockName                                                                                  # passCmdStmt
-                    | 'doMenu' factor                                                                                   # doMenuCmdStmt
+                    | 'domenu' factor                                                                                   # doMenuCmdStmt
                     | 'visual' visualEffect                                                                             # visualEffectCmdStmt
                     | 'reset' 'the'? 'menuBar'                                                                          # resetMenuCmdStmt
                     | 'create' 'menu' factor                                                                            # createMenuCmdStmt

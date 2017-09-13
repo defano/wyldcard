@@ -10,6 +10,8 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.context.ToolMode;
+import com.defano.hypercard.context.ToolsContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
@@ -54,6 +56,10 @@ public class Interpreter {
             int pendingHandlers = scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
             if (pendingHandlers == 0) {
                 ExecutionContext.getContext().getGlobalProperties().resetProperties();
+
+                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+                    HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.IDLE.messageName);
+                }
             }
 
         }, 0, 200, TimeUnit.MILLISECONDS);
@@ -194,12 +200,19 @@ public class Interpreter {
         return new NamedBlock("", "", new ParameterList(), statementList);
     }
 
+    /**
+     * Enables case-insensitive language parsing without changing the actual script text or affecting literal
+     * values (i.e., converting script to all-lowercase).
+     *
+     * Requires all keywords in the grammar to be lowercase (i.e., grammar rule 'mouseh' is correct, but 'mouseH' will
+     * never match).
+     */
     private static class CaseInsensitiveInputStream extends ANTLRInputStream {
-        private char[] lowercased;
+        private char[] lowercase;
 
         private CaseInsensitiveInputStream(String input) {
             super(input);
-            this.lowercased = input.toLowerCase().toCharArray();
+            this.lowercase = input.toLowerCase().toCharArray();
         }
 
         @Override
@@ -209,7 +222,7 @@ public class Interpreter {
             if (data == 0 || data == IntStream.EOF) {
                 return data;
             } else {
-                return lowercased[index() + i - 1];
+                return lowercase[index() + i - 1];
             }
         }
     }

@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The HyperCard runtime environment; this is the program's main class and is
@@ -39,6 +40,7 @@ public class HyperCard {
     private static final ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
     private final StackPart stackPart;
     private final Provider<File> savedStackFileProvider = new Provider<>();
+    private AtomicBoolean errorDialogVisible = new AtomicBoolean(false);
 
     public static void main(String argv[]) {
         try {
@@ -125,7 +127,13 @@ public class HyperCard {
     }
 
     public void showErrorDialog(Exception e) {
-        SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage()));
+        if (!errorDialogVisible.get()) {
+            SwingUtilities.invokeLater(() -> {
+                errorDialogVisible.set(true);
+                JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage());
+                errorDialogVisible.set(false);
+            });
+        }
         e.printStackTrace();
     }
 

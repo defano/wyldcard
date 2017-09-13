@@ -29,8 +29,14 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
+/**
+ * The class instructs Gson to invoke @PostConstruct-annotated methods on classes that are deserialized. Useful when
+ * deserializing objects the require initialization after deserialization.
+ *
+ * From: https://gist.github.com/swankjesse/20df26adaf639ed7fd160f145a0b661a
+ */
 public class PostConstructAdapterFactory implements TypeAdapterFactory {
-    // copied from https://gist.github.com/swankjesse/20df26adaf639ed7fd160f145a0b661a
+
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         for (Class<?> t = type.getRawType(); (t != Object.class) && (t.getSuperclass() != null); t = t.getSuperclass()) {
