@@ -8,11 +8,11 @@
 
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.context.PartToolContext;
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.util.KeyListenable;
-import com.defano.hypercard.gui.util.MouseListenable;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.awt.KeyListenable;
+import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;

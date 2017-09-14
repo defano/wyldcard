@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.context.FileContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.FileContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;

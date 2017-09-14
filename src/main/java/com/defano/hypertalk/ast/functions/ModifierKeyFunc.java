@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.functions;
 
-import com.defano.hypercard.gui.util.KeyboardManager;
+import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.common.ModifierKey;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;

@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.functions;
 
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;

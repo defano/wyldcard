@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.gui.menu.MenuItemBuilder;
+import com.defano.hypercard.menu.MenuItemBuilder;
 import com.defano.hypertalk.ast.common.MenuItemSpecifier;
 import com.defano.hypertalk.ast.common.MenuSpecifier;
 import com.defano.hypertalk.ast.common.Value;

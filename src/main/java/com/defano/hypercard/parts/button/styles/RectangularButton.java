@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.gui.border.RectangleBorder;
+import com.defano.hypercard.border.RectangleBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import java.awt.*;

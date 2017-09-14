@@ -9,7 +9,7 @@
 package com.defano.hypertalk.ast.functions;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.gui.menu.HyperCardMenuBar;
+import com.defano.hypercard.menu.HyperCardMenuBar;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;

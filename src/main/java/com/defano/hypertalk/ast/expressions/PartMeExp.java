@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;

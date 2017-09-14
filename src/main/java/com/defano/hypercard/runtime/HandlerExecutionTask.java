@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.runtime;
 
-import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.NamedBlock;
 import com.defano.hypertalk.ast.common.Value;

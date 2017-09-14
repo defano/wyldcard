@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.gui.border.DropShadowBorder;
+import com.defano.hypercard.border.DropShadowBorder;
 
 public class ShadowField extends AbstractTextField {
 

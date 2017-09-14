@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Value;

@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.gui.border.RoundRectBorder;
+import com.defano.hypercard.border.RoundRectBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.button.ButtonModel;

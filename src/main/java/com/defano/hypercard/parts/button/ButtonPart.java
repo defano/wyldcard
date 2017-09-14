@@ -18,17 +18,17 @@
 package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.PartToolContext;
-import com.defano.hypercard.gui.window.ButtonPropertyEditor;
-import com.defano.hypercard.gui.window.ScriptEditor;
-import com.defano.hypercard.gui.window.WindowBuilder;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.window.forms.ButtonPropertyEditor;
+import com.defano.hypercard.window.forms.ScriptEditor;
+import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

@@ -1,9 +1,9 @@
 package com.defano.hypercard.parts.clipboard;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.PartToolContext;
-import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.*;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;

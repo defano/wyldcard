@@ -8,8 +8,8 @@
 
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;

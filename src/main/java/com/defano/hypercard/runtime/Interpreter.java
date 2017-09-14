@@ -9,9 +9,9 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;

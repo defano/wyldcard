@@ -8,7 +8,6 @@
 
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypercard.parts.DeferredKeyEventComponent;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
@@ -16,15 +15,15 @@ import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.stack.StackModel;
-import com.defano.hypercard.serializer.Serializer;
-import com.defano.hypercard.context.PartToolContext;
-import com.defano.hypercard.context.PartsTable;
-import com.defano.hypercard.context.ToolsContext;
-import com.defano.hypercard.gui.util.ThreadUtils;
+import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.runtime.context.PartsTable;
+import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.parts.button.ButtonModel;
-import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;

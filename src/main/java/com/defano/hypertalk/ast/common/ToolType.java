@@ -9,9 +9,8 @@
 package com.defano.hypertalk.ast.common;
 
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.*;
 import com.google.common.collect.Lists;
-import com.defano.hypercard.context.ToolMode;
+import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.ArrayList;

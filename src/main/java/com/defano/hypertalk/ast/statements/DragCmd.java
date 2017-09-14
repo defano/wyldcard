@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;

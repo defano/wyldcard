@@ -8,13 +8,13 @@
 
 package com.defano.hypercard.parts.stack;
 
-import com.defano.hypercard.gui.icons.ButtonIcon;
-import com.defano.hypercard.gui.icons.UserIcon;
+import com.defano.hypercard.icons.ButtonIcon;
+import com.defano.hypercard.icons.UserIcon;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.WindowManager;
-import com.defano.hypercard.serializer.Serializer;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;

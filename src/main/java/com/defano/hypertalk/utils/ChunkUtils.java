@@ -16,12 +16,12 @@
 
 package com.defano.hypertalk.utils;
 
-import com.defano.hypercard.context.HyperCardProperties;
+import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.common.CompositeChunk;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.google.common.collect.Lists;
-import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
 

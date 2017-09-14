@@ -8,10 +8,10 @@
 
 package com.defano.hypercard.parts.editor;
 
-import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.gui.util.KeyboardManager;
+import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;

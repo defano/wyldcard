@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.expressions.Expression;

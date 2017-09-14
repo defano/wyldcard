@@ -16,9 +16,9 @@
 
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;

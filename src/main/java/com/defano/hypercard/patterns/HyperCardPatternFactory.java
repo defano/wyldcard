@@ -8,7 +8,7 @@
 
 package com.defano.hypercard.patterns;
 
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolsContext;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

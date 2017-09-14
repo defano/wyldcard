@@ -1,9 +1,9 @@
 package com.defano.hypercard.parts.editor;
 
-import com.defano.hypercard.context.PartToolContext;
+import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.runtime.WindowManager;
+import com.defano.hypercard.window.WindowManager;
 
 import javax.swing.*;
 import java.awt.*;

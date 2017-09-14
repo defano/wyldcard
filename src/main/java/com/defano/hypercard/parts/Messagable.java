@@ -1,8 +1,8 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.*;
@@ -62,7 +62,7 @@ public interface Messagable {
 
         // No commands are sent to buttons or fields when not in browse mode
         if (ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isCardElementSpecifier()) {
-            onCompletion.onMessagePassingCompletion(command, false, null);
+            onCompletion.onMessagePassed(command, false, null);
             return;
         }
 
@@ -74,23 +74,23 @@ public interface Messagable {
 
                     // Did this part trap this command?
                     if (trapped.get()) {
-                        onCompletion.onMessagePassingCompletion(command, true, null);
+                        onCompletion.onMessagePassed(command, true, null);
                     } else {
                         // Get next recipient in message passing order; null if no other parts receive message
                         Messagable nextRecipient = getNextMessageRecipient();
                         if (nextRecipient == null) {
-                            onCompletion.onMessagePassingCompletion(command, false, null);
+                            onCompletion.onMessagePassed(command, false, null);
                         } else {
                             nextRecipient.receiveMessage(command, arguments, onCompletion);
                         }
                     }
                 } catch (InterruptedException | ExecutionException e) {
                     // Thread was interrupted; nothing else we can do.
-                    onCompletion.onMessagePassingCompletion(command, false, null);
+                    onCompletion.onMessagePassed(command, false, null);
                 }
             }, Executors.newSingleThreadExecutor());
         } catch (HtSemanticException e) {
-            onCompletion.onMessagePassingCompletion(command, false, e);
+            onCompletion.onMessagePassed(command, false, e);
             HyperCard.getInstance().showErrorDialog(e);
         }
     }

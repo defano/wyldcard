@@ -8,11 +8,11 @@
 
 package com.defano.hypercard.parts.field.styles;
 
-import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.context.ToolMode;
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.gui.util.ThreadUtils;
+import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;

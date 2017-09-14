@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.context.ToolsContext;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.hypertalk.ast.common.Value;

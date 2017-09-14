@@ -8,17 +8,17 @@
 
 package com.defano.hypercard;
 
-import com.defano.hypercard.context.ExecutionContext;
-import com.defano.hypercard.context.FileContext;
-import com.defano.hypercard.gui.util.KeyboardManager;
-import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.FileContext;
+import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.editor.PartEditor;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypercard.runtime.WindowManager;
-import com.defano.hypercard.serializer.Serializer;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;

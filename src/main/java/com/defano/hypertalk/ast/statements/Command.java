@@ -64,7 +64,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
 
     /** {@inheritDoc */
     @Override
-    public void onMessagePassingCompletion(String command, boolean wasTrapped, HtException err) {
+    public void onMessagePassed(String message, boolean wasTrapped, HtException err) {
         this.trapped = wasTrapped;
         cdl.countDown();
     }

@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.functions;
 
-import com.defano.hypercard.gui.util.MouseManager;
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 

@@ -12,7 +12,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.serializer.Serializer;
+import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
