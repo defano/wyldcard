@@ -325,7 +325,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         if (scriptFieldFont != null) scriptField.setFont(scriptFieldFont);
         scriptField.setTabSize(4);
         scrollPane1.setViewportView(scriptField);
-        handlersMenu = new com.defano.hypercard.util.HandlerComboBox();
+        handlersMenu = new HandlerComboBox();
+        handlersMenu.setName("Handlers:");
         scriptEditor.add(handlersMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Handlers: ");
@@ -335,7 +336,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         scriptEditor.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        functionsMenu = new com.defano.hypercard.util.HandlerComboBox();
+        functionsMenu = new HandlerComboBox();
         scriptEditor.add(functionsMenu, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         scriptEditor.add(spacer2, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));

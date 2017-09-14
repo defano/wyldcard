@@ -24,8 +24,6 @@ public class HandlerExecutionTask implements Callable<String> {
     private final PartSpecifier me;
     private final ExpressionList arguments;
 
-    private HtException exception = null;
-
     public HandlerExecutionTask(PartSpecifier me, NamedBlock handler, ExpressionList arguments) {
         this.handler = handler;
         this.me = me;
@@ -33,7 +31,7 @@ public class HandlerExecutionTask implements Callable<String> {
     }
 
     @Override
-    public String call() throws Exception {
+    public String call() throws HtException {
 
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 

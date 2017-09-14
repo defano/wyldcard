@@ -28,9 +28,7 @@ import com.defano.hypertalk.exception.HtParseError;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.parser.HyperTalkLexer;
 import com.defano.hypertalk.parser.HyperTalkParser;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.IntStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
@@ -175,13 +173,13 @@ public class Interpreter {
      * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
      * scripts attempts to pass a message other than the message being handled.
      */
-    public static ListenableFuture<Boolean> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
+    public static CheckedFuture<Boolean,HtException> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
         NamedBlock handler = script.getHandler(command);
 
         if (handler == null) {
-            return Futures.immediateFuture(false);
+            return Futures.makeChecked(Futures.immediateFuture(false), HtException::new);
         } else {
-            return Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
+            return Futures.makeChecked(Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
 
                 // Did not invoke pass: handler trapped message
                 if (passedMessage == null || passedMessage.isEmpty()) {
@@ -196,7 +194,7 @@ public class Interpreter {
                 // Semantic error: Passing a message other than the handled message is disallowed.
                 HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
                 return true;
-            });
+            }), HtException::new);
         }
     }
 
@@ -246,14 +244,14 @@ public class Interpreter {
      * @return A future to the name of the message passed from the block or null if no message was passed.
      * @throws HtSemanticException Thrown if an error occurs executing the block
      */
-    private static ListenableFuture<String> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) throws HtSemanticException {
+    private static CheckedFuture<String, HtException> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) throws HtSemanticException {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler, arguments);
 
         try {
             if (SwingUtilities.isEventDispatchThread())
-                return listeningScriptExecutor.submit(handlerTask);
+                return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), HtException::new);
             else {
-                return Futures.immediateFuture(handlerTask.call());
+                return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), HtException::new);
             }
         } catch (Exception e) {
             throw new HtSemanticException(e.getMessage(), e);
@@ -267,33 +265,6 @@ public class Interpreter {
      */
     private static NamedBlock getAnonymousBlock(StatementList statementList) {
         return new NamedBlock("", "", new ParameterList(), statementList);
-    }
-
-    /**
-     * Enables case-insensitive language parsing without changing the actual script text or affecting literal
-     * values (i.e., does'nt blindly convert all input to lowercase).
-     *
-     * Requires all keywords in the grammar to be lowercase (i.e., grammar rule 'mouseh' is correct, but 'mouseH' will
-     * never match).
-     */
-    private static class CaseInsensitiveInputStream extends ANTLRInputStream {
-        private char[] lowercase;
-
-        private CaseInsensitiveInputStream(String input) {
-            super(input);
-            this.lowercase = input.toLowerCase().toCharArray();
-        }
-
-        @Override
-        public int LA(int i) {
-            int data = super.LA(i);
-
-            if (data == 0 || data == IntStream.EOF) {
-                return data;
-            } else {
-                return lowercase[index() + i - 1];
-            }
-        }
     }
 
 }

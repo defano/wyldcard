@@ -775,7 +775,7 @@ put "Finally, peace and quiet!"
 
 ## Commands
 
-A command is a directive to HyperTalk to perform a task. Some commands may place a value into the implicit variable, `it`, but unlike functions, a command does not represent a value and cannot be used as a term in an expression (for example, `divide x by 3 > 5` is illegal, because `divide x by 3` is an imperative and does not represent a value). HyperTalk Java provides all of the commands shown in the table below.
+A command is a directive to HyperTalk to perform a task. Some commands may place a value into the implicit variable, `it`, but unlike functions, a command does not represent a value and cannot be used as a term in an expression (for example, `(divide x by 3) + 2` is illegal, because `divide x by 3` is an imperative and does not represent or return a value). HyperTalk Java provides all of the commands shown in the table below.
 
 Note that the execution of a command results in a message of the same name being sent to the current card, enabling the card, background or stack to intercept command messages and trap its behavior as needed. See the section on message passing for more information.
 
@@ -821,7 +821,7 @@ Command	         | Description
 
 ## Functions
 
-Like a command, a function directs HyperTalk to perform some task. However, functions represent (return) a value, and therefore can appear as a term in an expression. For example, `3 / the average of "1, 2, 3"` is a legal expression.
+Like a command, a function directs HyperTalk to perform some task. However, functions return a value and can therefore appear as a term in an expression. For example, `3 / the average of "1, 2, 3"` is a legal expression.
 
 HyperCard provides a suite of built-in functions as well as the ability for a user to script new ones of their own creation.
 
@@ -892,16 +892,17 @@ Function        | Description
 
 ### User-defined Functions
 
-A user-defined function is subroutine scripted by the user that performs some action and optionally returns a value. Or, perhaps more accurately, all user-defined functions return a value, but those which do not explicitly call `return` implicitly return `empty`.
+A user-defined function handler is a subroutine scripted by the user that performs some action and optionally returns a value. More accurately, all user-defined functions return a value, but those which do not explicitly call `return` implicitly return `empty` (equivalent to `return ""`).
 
-Note that user-defined functions may not...
+Note that user-defined function handlers may not...
 
-* Be nested inside of other functions or handlers
-* Be accessed outside of the script in which they're defined (this is not true in HyperCard)
 * Be invoked using the `[the] <function> of ...` syntax (like you'd use for a built-in function)
-* Have the same name as another command or function (user-defined or built-in). HyperTalk does not support function overloading or function overriding.
+* Have the same name as another function in the same script, or the same name as a HyperTalk command or keyword. HyperTalk does not support function overloading (two functions with the same name but having different parameters).
+* Be nested inside of other functions or handlers
 
-The syntax for defining a function is:
+If a function handler is not defined in the same script in which it is invoked, the message passing order is used to locate the function handler. Thus, if a card button attempts to invoke `myFunction()` and the button's script does not define `function myFunction` then the card's script is searched, then the background's, then the stack's. But unlike handlers, invoking a function for which no function handler can be found results in a syntax error.
+
+The syntax for defining a function handler is:
 
 ```
 function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
@@ -910,7 +911,7 @@ function <functionName> [<arg1> [, <arg2>] ... [, <argN>]]]
 end <functionName>
 ```
 
-When calling a user-defined function, use the syntax `<functionName>(<arg1>, <arg2>, ...)`. The number of arguments passed to the function must match the number declared in the definition.
+When calling a user-defined function, use the syntax `<functionName>(<arg1>, <arg2>, ...)`. The number of arguments passed to the function must match the number declared in the handler.
 
 Consider this recursive function for generating the Fibonacci sequence:
 

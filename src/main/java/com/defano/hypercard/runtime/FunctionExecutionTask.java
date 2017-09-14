@@ -14,6 +14,7 @@ import com.defano.hypertalk.ast.common.NamedBlock;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class FunctionExecutionTask implements Callable<Value> {
     }
 
     @Override
-    public Value call() throws Exception {
+    public Value call() throws HtException {
 
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();

@@ -11,7 +11,7 @@ package com.defano.hypertalk.exception;
 public class HtException extends Exception {
 
     public HtException(Throwable cause) {
-        super(cause);
+        super(getRootCause(cause).getMessage(), cause);
     }
 
     public HtException(String message) {
@@ -20,6 +20,14 @@ public class HtException extends Exception {
 
     public HtException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    private static Throwable getRootCause(Throwable cause) {
+        if (cause.getCause() == null) {
+            return cause;
+        } else {
+            return getRootCause(cause.getCause());
+        }
     }
 
 }

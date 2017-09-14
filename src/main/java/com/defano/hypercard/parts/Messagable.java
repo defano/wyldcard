@@ -7,7 +7,10 @@ import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.functions.UserFunction;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.awt.event.InputEvent;
@@ -39,7 +42,11 @@ public interface Messagable {
      * @param message The message to be passed.
      */
     default void receiveMessage(String message) {
-        receiveMessage(message, new ExpressionList(), (command, trapped, err) -> {});
+        receiveMessage(message, new ExpressionList(), (command, trapped, err) -> {
+            if (err != null) {
+                HyperCard.getInstance().showErrorDialog(err);
+            }
+        });
     }
 
     /**
@@ -48,7 +55,11 @@ public interface Messagable {
      * @param arguments The arguments to the message
      */
     default void receiveMessage(String message, ExpressionList arguments) {
-        receiveMessage(message, arguments, (command, trapped, err) -> {});
+        receiveMessage(message, arguments, (command, trapped, err) -> {
+            if (err != null) {
+                HyperCard.getInstance().showErrorDialog(err);
+            }
+        });
     }
 
     /**
@@ -68,30 +79,28 @@ public interface Messagable {
 
         try {
             // Attempt to invoke command handler in this part and listen for completion
-            ListenableFuture<Boolean> trapped = Interpreter.executeHandler(getMe(), getScript(), command, arguments);
+            CheckedFuture<Boolean,HtException> trapped = Interpreter.executeHandler(getMe(), getScript(), command, arguments);
             trapped.addListener(() -> {
                 try {
 
                     // Did this part trap this command?
-                    if (trapped.get()) {
+                    if (trapped.checkedGet()) {
                         onCompletion.onMessagePassed(command, true, null);
                     } else {
                         // Get next recipient in message passing order; null if no other parts receive message
-                        Messagable nextRecipient = getNextMessageRecipient();
+                        Messagable nextRecipient = getNextMessageRecipient(getMe().type());
                         if (nextRecipient == null) {
                             onCompletion.onMessagePassed(command, false, null);
                         } else {
                             nextRecipient.receiveMessage(command, arguments, onCompletion);
                         }
                     }
-                } catch (InterruptedException | ExecutionException e) {
-                    // Thread was interrupted; nothing else we can do.
-                    onCompletion.onMessagePassed(command, false, null);
+                } catch (HtException e) {
+                    onCompletion.onMessagePassed(command, false, e);
                 }
             }, Executors.newSingleThreadExecutor());
         } catch (HtSemanticException e) {
             onCompletion.onMessagePassed(command, false, e);
-            HyperCard.getInstance().showErrorDialog(e);
         }
     }
 
@@ -128,13 +137,29 @@ public interface Messagable {
     /**
      * Invokes a function defined in the part's script, blocking until the function completes.
      *
-     * @param function The name of the function to execute.
+     * @param functionName The name of the function to execute.
      * @param arguments The arguments to the function.
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
-    default Value invokeFunction(String function, ExpressionList arguments) throws HtSemanticException {
-        return Interpreter.executeFunction(getMe(), getScript().getFunction(function), arguments);
+    default Value invokeFunction(String functionName, ExpressionList arguments) throws HtSemanticException {
+        UserFunction function = getScript().getFunction(functionName);
+        Messagable target = this;
+
+        while (function == null) {
+            // Get next part is message passing hierarchy
+            target = getNextMessageRecipient(target.getMe().type());
+
+            // No more scripts to search; error!
+            if (target == null) {
+                throw new HtSemanticException("No such function " + functionName + ".");
+            }
+
+            // Look for function in this script
+            function = target.getScript().getFunction(functionName);
+        }
+
+        return Interpreter.executeFunction(target.getMe(), function, arguments);
     }
 
     /**
@@ -142,9 +167,9 @@ public interface Messagable {
      * @return The next messagable part in the message passing order, or null, if we've reached the last object in the
      * hierarchy.
      */
-    default Messagable getNextMessageRecipient() {
+    default Messagable getNextMessageRecipient(PartType type) {
 
-        switch (getMe().type()) {
+        switch (type) {
             case BACKGROUND:
                 return HyperCard.getInstance().getStack().getStackModel();
             case MESSAGE_BOX:
