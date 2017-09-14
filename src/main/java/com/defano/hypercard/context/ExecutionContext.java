@@ -12,6 +12,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.containers.*;
@@ -313,7 +314,7 @@ public class ExecutionContext {
         }
 
         if (thePart != null) {
-            thePart.receiveMessage(message, messageArgs);
+            thePart.receiveMessage(message, new ExpressionList(messageArgs));
         } else {
             throw new PartException("No such part.");
         }

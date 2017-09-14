@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-public class HypertalkErrorListener extends BaseErrorListener {
+public class HyperTalkErrorListener extends BaseErrorListener {
 
     public final List<HtSyntaxException> errors = new ArrayList<>();
 

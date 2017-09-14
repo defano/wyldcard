@@ -281,7 +281,7 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped) -> {
+        HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 forceToolSelection(toolType, false);
             }

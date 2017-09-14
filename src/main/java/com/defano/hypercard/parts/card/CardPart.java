@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts.card;
 
+import com.defano.hypercard.parts.DeferredKeyEventComponent;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
@@ -654,14 +655,14 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
 
     @Override
     public void keyTyped(KeyEvent e) {
-        getPartModel().receiveAndConsume(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e);
+        getPartModel().receiveMessage(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())));
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
         if (bsm != null) {
-            getPartModel().receiveAndConsume(bsm.message.messageName, bsm.boundArguments, e);
+            getPartModel().receiveMessage(bsm.message.messageName, bsm.boundArguments);
         }
     }
 

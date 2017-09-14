@@ -19,7 +19,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
-import com.defano.hypertalk.HypertalkErrorListener;
+import com.defano.hypertalk.HyperTalkErrorListener;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.ast.statements.Statement;
@@ -43,9 +43,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class Interpreter {
 
+    private final static int IDLE_PERIOD_MS = 200;
+    private final static int IDLE_DEFERRAL_CYCLES = 50;
+
     private static final ThreadPoolExecutor scriptExecutor;
     private static final ListeningExecutorService listeningScriptExecutor;
     private static final ScheduledExecutorService idleTimeExecutor;
+    private static int deferIdleCycles = 0;
 
     static {
         scriptExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
@@ -57,17 +61,30 @@ public class Interpreter {
             if (pendingHandlers == 0) {
                 ExecutionContext.getContext().getGlobalProperties().resetProperties();
 
-                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
-                    HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.IDLE.messageName);
+                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferIdleCycles < 1) {
+                    HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.IDLE.messageName, new ExpressionList(), (command, wasTrapped, error) -> {
+                        if (error != null) {
+                            deferIdleCycles = IDLE_DEFERRAL_CYCLES;
+                        }
+                    });
+                }
+
+                if (deferIdleCycles > 0) {
+                    --deferIdleCycles;
                 }
             }
 
-        }, 0, 200, TimeUnit.MILLISECONDS);
+        }, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Compiles the given script on a new thread and invokes the CompileCompletionObserver when complete.
+     *
+     * @param scriptText The script to compile.
+     * @param observer A non-null callback to fire when compilation is complete.
+     */
     public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
+        Executors.newSingleThreadExecutor().submit(() -> {
             HtException generatedError = null;
             Script compiledScript = null;
 
@@ -81,8 +98,15 @@ public class Interpreter {
         });
     }
 
+    /**
+     * Compiles the given script on the current thread.
+     *
+     * @param scriptText The script text to compile
+     * @return The compiled Script object
+     * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
+     */
     public static Script compile(String scriptText) throws HtException {
-        HypertalkErrorListener errors = new HypertalkErrorListener();
+        HyperTalkErrorListener errors = new HyperTalkErrorListener();
 
         HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -106,6 +130,13 @@ public class Interpreter {
         }
     }
 
+    /**
+     * Evaluates a string as a HyperTalk expression.
+     *
+     * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
+     *                   evaluated or is not a legal expression evaluates to itself.
+     * @return The Value of the evaluated expression.
+     */
     public static Value evaluate(String expression) {
         try {
             Statement statement = compile(expression).getStatements().list.get(0);
@@ -120,18 +151,23 @@ public class Interpreter {
         return new Value(expression);
     }
 
+    /**
+     * Determines if the given Script text represents a valid HyperTalk expression.
+     *
+     * @param statement Text to evaluate
+     * @return True if the statement is a valid expression; false if it is not.
+     * @throws HtException Thrown if the statement cannot be compiled (due to a syntax/semantic error).
+     */
     public static boolean isExpressionStatement(String statement) throws HtException {
         return compile(statement).getStatements().list.get(0) instanceof ExpressionStatement;
     }
 
     /**
-     * Executes a "command" handler in the given script. A command handler is a special handler whose
-     * name is passed like a message from HyperCard, but represents a special event that can be trapped
-     * and overridden in the script. (Command handlers include 'keyDown', 'returnInField', 'returnKey', etc.)
+     * Executes a handler in the given script, returning a future indicating whether or not the script trapped the
+     * message.
      *
-     * Any part that implements a command handler must 'pass' the command handler back to HyperCard, otherwise
-     * the default behavior of that command will not be executed. A script that does not override the command
-     * is assumed to 'pass' it.
+     * Any handler that does not 'pass' the command traps its behavior and prevents other scripts (or HyperCard) from
+     * acting upon it. A script that does not implement the handler is assumed to 'pass' it.
      *
      * @param me The part whose script is being executed.
      * @param script The script of the part
@@ -139,7 +175,7 @@ public class Interpreter {
      * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
      * scripts attempts to pass a message other than the message being handled.
      */
-    public static ListenableFuture<Boolean> executeCommandHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
+    public static ListenableFuture<Boolean> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
         NamedBlock handler = script.getHandler(command);
 
         if (handler == null) {
@@ -164,15 +200,34 @@ public class Interpreter {
         }
     }
 
-    public static Future executeString(PartSpecifier me, String statementList) throws HtException  {
-        return executeNamedBlock(me, getBlockForStatementList(compile(statementList).getStatements()), new ExpressionList());
+    /**
+     * Executes a list of HyperTalk statements.
+     *
+     * @param me The part that the 'me' keyword refers to.
+     * @param statementList The list of statements.
+     * @return A future to the name passed from the script or null if no name was passed.
+     * @throws HtException Thrown if an error occurs compiling the statements.
+     */
+    public static Future<String> executeString(PartSpecifier me, String statementList) throws HtException  {
+        return executeNamedBlock(me, getAnonymousBlock(compile(statementList).getStatements()), new ExpressionList());
     }
 
+    /**
+     * Synchronously executes a compiled user function on the current thread unless the current thread is the dispatch
+     * thread (in which case the function executes on a new thread, but the current thread is blocked pending its
+     * completion).
+     *
+     * @param me The part that the 'me' keyword refers to.
+     * @param function The compiled UserFunction
+     * @param arguments The arguments to be passed to the function
+     * @return The value returned by the function (an empty string if the function does not invoke 'return')
+     * @throws HtSemanticException Thrown if an error occurs executing the function.
+     */
     public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtSemanticException {
         FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
 
         try {
-            // Not normally possible user functions are always executed in the context of a handler
+            // Not normally possible, since user functions are always executed in the context of a handler
             if (SwingUtilities.isEventDispatchThread())
                 return scriptExecutor.submit(functionTask).get();
             else
@@ -182,6 +237,15 @@ public class Interpreter {
         }
     }
 
+    /**
+     * Executes a named block and returns a future to the name of the message passed from the block (if any).
+     *
+     * @param me The part that the 'me' keyword refers to.
+     * @param handler The block to execute
+     * @param arguments The arguments to be passed to the block
+     * @return A future to the name of the message passed from the block or null if no message was passed.
+     * @throws HtSemanticException Thrown if an error occurs executing the block
+     */
     private static ListenableFuture<String> executeNamedBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) throws HtSemanticException {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, handler, arguments);
 
@@ -196,13 +260,18 @@ public class Interpreter {
         }
     }
 
-    private static NamedBlock getBlockForStatementList(StatementList statementList) {
+    /**
+     * Wraps a list of statements in an anonymous named block.
+     * @param statementList The list of statements
+     * @return A NamedBlock representing the
+     */
+    private static NamedBlock getAnonymousBlock(StatementList statementList) {
         return new NamedBlock("", "", new ParameterList(), statementList);
     }
 
     /**
      * Enables case-insensitive language parsing without changing the actual script text or affecting literal
-     * values (i.e., converting script to all-lowercase).
+     * values (i.e., does'nt blindly convert all input to lowercase).
      *
      * Requires all keywords in the grammar to be lowercase (i.e., grammar rule 'mouseh' is correct, but 'mouseH' will
      * never match).

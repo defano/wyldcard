@@ -216,7 +216,7 @@ For example, add the following script to a field to disallow entry any of any ch
 ```
 on keyDown theKey
   if theKey is a number and theKey mod 2 is 0 then pass keyDown
-end keyDownInField
+end keyDown
 ```
 
 This works by passing the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing a `keyDown` handler and only conditionally passing the `keyDown` message back to HyperCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the field).

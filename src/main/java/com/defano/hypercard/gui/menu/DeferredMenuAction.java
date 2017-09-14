@@ -27,7 +27,7 @@ public class DeferredMenuAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, new ExpressionList(theMenu, theMenuItem), (command, wasTrapped) -> {
+        HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, new ExpressionList(theMenu, theMenuItem), (command, wasTrapped, err) -> {
 
             if (!wasTrapped) {
                 for (ActionListener thisAction : actionListeners) {

@@ -1,5 +1,7 @@
 package com.defano.hypertalk.ast.common;
 
+import com.google.common.collect.Lists;
+
 public class BoundSystemMessage {
 
     public final SystemMessage message;
@@ -10,8 +12,8 @@ public class BoundSystemMessage {
         this.boundArguments = new ExpressionList();
     }
 
-    public BoundSystemMessage(SystemMessage message, ExpressionList boundArguments) {
+    public BoundSystemMessage(SystemMessage message, Value... boundArguments) {
         this.message = message;
-        this.boundArguments = boundArguments;
+        this.boundArguments = new ExpressionList(Lists.newArrayList(boundArguments));
     }
 }

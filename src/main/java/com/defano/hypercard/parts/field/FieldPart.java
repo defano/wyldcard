@@ -10,9 +10,11 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.context.*;
+import com.defano.hypercard.gui.util.ThreadUtils;
 import com.defano.hypercard.gui.window.FieldPropertyEditor;
 import com.defano.hypercard.gui.window.ScriptEditor;
 import com.defano.hypercard.gui.window.WindowBuilder;
+import com.defano.hypercard.parts.DeferredKeyEventComponent;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
@@ -30,6 +32,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The controller object associated with a field on the card.
@@ -37,7 +40,7 @@ import java.lang.ref.WeakReference;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart, PropertyChangeObserver {
+public class FieldPart extends StyleableField implements CardLayerPart, PropertyChangeObserver, DeferredKeyEventComponent {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -45,6 +48,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     private final Owner owner;
     private FieldModel partModel;
     private final WeakReference<CardPart> parent;
+    private AtomicBoolean redispatchInProgress = new AtomicBoolean(false);
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
@@ -236,8 +240,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
 
-        if (getTextPane().hasFocus()) {
-            getPartModel().receiveAndConsume(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e);
+        if (getTextPane().hasFocus() && !redispatchInProgress.get()) {
+            getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e, this);
         }
     }
 
@@ -246,10 +250,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (getTextPane().hasFocus()) {
+        if (getTextPane().hasFocus() && !redispatchInProgress.get()) {
             BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
             if (bsm != null) {
-                getPartModel().receiveAndConsume(bsm.message.messageName, bsm.boundArguments, e);
+                getPartModel().receiveAndDeferKeyEvent(bsm.message.messageName, bsm.boundArguments, e, this);
             }
         }
     }
@@ -307,4 +311,13 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
         partModel.addPropertyChangedObserver(this);
     }
 
+    @Override
+    public void setPendingRedispatch(boolean redispatchInProcess) {
+        this.redispatchInProgress.set(redispatchInProcess);
+    }
+
+    @Override
+    public void dispatchEvent(AWTEvent event) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> getTextPane().dispatchEvent(event));
+    }
 }

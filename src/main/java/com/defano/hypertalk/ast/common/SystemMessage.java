@@ -113,67 +113,67 @@ public enum SystemMessage {
         }
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("left"));
+            return new BoundSystemMessage(ARROW_KEY, new Value("left"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("right"));
+            return new BoundSystemMessage(ARROW_KEY, new Value("right"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("up"));
+            return new BoundSystemMessage(ARROW_KEY, new Value("up"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            return new BoundSystemMessage(ARROW_KEY, new ExpressionList("down"));
+            return new BoundSystemMessage(ARROW_KEY, new Value("down"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F1) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("1"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("1"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F2) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("2"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("2"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F3) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("3"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("3"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F4) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("4"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("4"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F5) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("5"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("5"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F6) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("6"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("6"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F7) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("7"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("7"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F8) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("8"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("8"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F9) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("9"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("9"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F10) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("10"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("10"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F11) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("11"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("11"));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_F12) {
-            return new BoundSystemMessage(FUNCTION_KEY, new ExpressionList("12"));
+            return new BoundSystemMessage(FUNCTION_KEY, new Value("12"));
         }
 
         return null;
