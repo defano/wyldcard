@@ -17,6 +17,7 @@ import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.functions.*;
 import com.defano.hypertalk.ast.statements.*;
+import com.defano.hypertalk.ast.commands.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;

@@ -17,7 +17,6 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.constructs.ThenElseBlock;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 
 public class IfStatement extends Statement {

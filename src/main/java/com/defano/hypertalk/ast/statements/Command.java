@@ -21,7 +21,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
      *
      * @throws HtException Thrown to indicate a syntax or semantic error occurred when executing the command.
      */
-    abstract void onExecute() throws HtException;
+    public abstract void onExecute() throws HtException;
 
     private final String messageName;
     private boolean trapped = false;
