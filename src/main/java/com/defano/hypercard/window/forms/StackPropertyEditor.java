@@ -1,6 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.util.StringUtils;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.stack.StackModel;
@@ -62,13 +63,13 @@ public class StackPropertyEditor extends HyperCardDialog {
         File stackFile = HyperCard.getInstance().getSavedStackFileProvider().get();
 
         stackName.setText(model.getStackName());
-        cardCountLabel.setText("Stack contains " + model.getCardCount() + " cards.");
+        cardCountLabel.setText(StringUtils.pluralize(model.getCardCount(), "Stack contains %d card.", "Stack contains %d cards."));
+        backgroundCountLabel.setText(StringUtils.pluralize(model.getBackgroundCount(), "Stack contains %d background.", "Stack contains %d backgrounds."));
         locationLabel.setText(stackFile == null ? "(Not saved)" : stackFile.getAbsolutePath());
-        backgroundCountLabel.setText("Stack contains " + model.getBackgroundCount() + " backgrounds.");
         sizeLabel.setText(humanReadableFileSize(Serializer.serialize(model).length()));
     }
 
-    protected String humanReadableFileSize(long size) {
+    private String humanReadableFileSize(long size) {
         if (size <= 0) {
             return "0";
         }
@@ -77,7 +78,6 @@ public class StackPropertyEditor extends HyperCardDialog {
         int magnitude = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, magnitude)) + " " + units[magnitude];
     }
-
 
     private void updateProperties() {
         model.setStackName(stackName.getText());

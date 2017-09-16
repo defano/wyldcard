@@ -1,6 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.util.StringUtils;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.card.CardPart;
@@ -88,8 +89,8 @@ public class CardPropertyEditor extends HyperCardDialog {
         int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().get();
 
         cardNumberLabel.setText(cardNumber + " out of " + cardCount);
-        buttonCountLabel.setText("Contains " + buttonCount + " card buttons.");
-        fieldCountLabel.setText("Contains " + fieldCount + " card fields.");
+        buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d card button.", "Contains %d card buttons."));
+        fieldCountLabel.setText(StringUtils.pluralize(fieldCount, "Contains %d card field.", "Contains %d card fields."));
     }
 
     private void showContentsEditor() {
