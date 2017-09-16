@@ -19,6 +19,7 @@ package com.defano.hypertalk.ast.containers;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.MessageWindow;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
@@ -61,7 +62,15 @@ public class ContainerMsgBox extends Container {
         HyperCard.getInstance().setMessageBoxText(destValue);
         ExecutionContext.getContext().setIt(destValue);
 
-        SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setVisible(true));
+        // If message is hidden, show it but don't focus it
+        if (!WindowManager.getMessageWindow().isVisible()) {
+            SwingUtilities.invokeLater(() -> {
+                MessageWindow message = WindowManager.getMessageWindow();
+                message.setFocusableWindowState(false);
+                message.setVisible(true);
+                message.setFocusableWindowState(true);
+            });
+        }
     }
 
     public PartType type() {
