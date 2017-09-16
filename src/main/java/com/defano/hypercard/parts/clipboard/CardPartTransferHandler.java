@@ -49,7 +49,7 @@ public class CardPartTransferHandler extends TransferHandler {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
             CardLayer layer = CardLayerPart.getActivePartLayer();
-            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getCard().importPart(part, layer);
+            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getDisplayedCard().importPart(part, layer);
 
             // Position pasted part over the mouse cursor
             importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getMouseLoc()));

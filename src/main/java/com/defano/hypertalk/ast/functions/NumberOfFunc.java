@@ -8,8 +8,8 @@
 
 package com.defano.hypertalk.ast.functions;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.menu.HyperCardMenuBar;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -44,17 +44,17 @@ public class NumberOfFunc extends Expression {
             case ITEM:
                 return new Value(expression.evaluate().itemCount());
             case CARD_PARTS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(null, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(null, Owner.CARD));
             case BKGND_PARTS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(null, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(null, Owner.BACKGROUND));
             case CARD_BUTTONS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.BUTTON, Owner.CARD));
             case BKGND_BUTTONS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
             case CARD_FIELDS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
                 return new Value(HyperCardMenuBar.instance.getMenuCount());
             default:

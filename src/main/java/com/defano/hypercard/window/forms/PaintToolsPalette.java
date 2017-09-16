@@ -75,7 +75,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         lasso.addActionListener(e -> toolSelected(ToolType.LASSO));
 
         // Double-click actions
-        eraser.addMouseListener((DoubleClickListenable) e -> HyperCard.getInstance().getCard().getCanvas().clearCanvas());
+        eraser.addMouseListener((DoubleClickListenable) e -> HyperCard.getInstance().getDisplayedCard().getCanvas().clearCanvas());
         shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getShapesPalette().setVisible(true));
         line.addMouseListener((DoubleClickListenable) e -> WindowManager.getLinesPalette().setVisible(true));
         paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getBrushesPalette().setVisible(true));

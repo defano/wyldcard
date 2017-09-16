@@ -3,6 +3,7 @@ package com.defano.hypercard.parts;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
@@ -150,7 +151,7 @@ public interface PartContainer {
             throw new PartException("Cannot find " + ps.type().toString().toLowerCase() + " by position.");
         }
 
-        int thisCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+        int thisCard = ExecutionContext.getContext().getCurrentCard().getCardIndexInStack();
 
         try {
             if (ps.type() == PartType.CARD) {
@@ -171,7 +172,7 @@ public interface PartContainer {
                     case PREV:
                         return HyperCard.getInstance().getStack().getStackModel().getBackground(findPrevBackground().getBackgroundId());
                     case THIS:
-                        return HyperCard.getInstance().getCard().getCardBackground();
+                        return ExecutionContext.getContext().getCurrentCard().getCardBackground();
                 }
             }
 
@@ -188,7 +189,7 @@ public interface PartContainer {
      * @throws PartException Thrown if no such card can be found.
      */
     default CardModel findPrevBackground() throws PartException {
-        int thisCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+        int thisCard = ExecutionContext.getContext().getCurrentCard().getCardIndexInStack();
         List<CardModel> prevCards = Lists.reverse(HyperCard.getInstance().getStack().getStackModel().getCardModels().subList(0, thisCard + 1));
 
         return findNextBackground(prevCards);
@@ -200,7 +201,7 @@ public interface PartContainer {
      * @throws PartException Thrown if no such card can be found.
      */
     default CardModel findNextBackground() throws PartException {
-        int thisCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+        int thisCard = ExecutionContext.getContext().getCurrentCard().getCardIndexInStack();
         int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().get();
         List<CardModel> nextCards = HyperCard.getInstance().getStack().getStackModel().getCardModels().subList(thisCard, cardCount);
 

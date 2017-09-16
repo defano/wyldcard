@@ -10,6 +10,7 @@ package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.ExpressionList;
@@ -179,7 +180,7 @@ public class ExecutionContext {
      */
     public PartModel get(PartSpecifier ps) throws PartException {
         if (ps.isCardElementSpecifier()) {
-            return HyperCard.getInstance().getCard().findPart(ps);
+            return getCurrentCard().findPart(ps);
         } else if (ps.isStackElementSpecifier()) {
             return HyperCard.getInstance().getStack().findPart(ps);
         }
@@ -212,7 +213,11 @@ public class ExecutionContext {
 
         get(ps).setProperty(property, mutable);
     }
-    
+
+    public CardPart getCurrentCard() {
+        return HyperCard.getInstance().getDisplayedCard();
+    }
+
     public void setIt (Object value) {
         globals.put("it", new Value(value.toString()));
     }
@@ -310,7 +315,7 @@ public class ExecutionContext {
         if (ps.isStackElementSpecifier()) {
             thePart = HyperCard.getInstance().getStack().findPart(ps);
         } else {
-            thePart = HyperCard.getInstance().getCard().findPart(ps);
+            thePart = getCurrentCard().findPart(ps);
         }
 
         if (thePart != null) {

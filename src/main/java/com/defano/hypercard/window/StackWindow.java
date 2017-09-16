@@ -97,7 +97,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
     public void bindModel(Object data) {
         if (data instanceof StackPart) {
             this.stack = (StackPart) data;
-            this.card = this.stack.getCurrentCard();
+            this.card = this.stack.getDisplayedCard();
 
             this.getWindowPanel().setPreferredSize(this.stack.getStackModel().getSize());
             this.stack.addObserver(this);
@@ -109,10 +109,10 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
     @Override
     public void onStackOpened(StackPart newStack) {
         this.stack = newStack;
-        this.card = this.stack.getCurrentCard();
+        this.card = this.stack.getDisplayedCard();
         cardPanel.setPreferredSize(this.stack.getStackModel().getSize());
 
-        displayCard(this.stack.getCurrentCard());
+        displayCard(this.stack.getDisplayedCard());
         invalidateWindowTitle();
     }
 

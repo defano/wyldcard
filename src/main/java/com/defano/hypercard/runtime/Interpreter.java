@@ -60,7 +60,7 @@ public class Interpreter {
                 ExecutionContext.getContext().getGlobalProperties().resetProperties();
 
                 if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferIdleCycles < 1) {
-                    HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.IDLE.messageName, new ExpressionList(), (command, wasTrapped, error) -> {
+                    ExecutionContext.getContext().getCurrentCard().getCardModel().receiveMessage(SystemMessage.IDLE.messageName, new ExpressionList(), (command, wasTrapped, error) -> {
                         if (error != null) {
                             deferIdleCycles = IDLE_DEFERRAL_CYCLES;
                         }

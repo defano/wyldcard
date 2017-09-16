@@ -103,11 +103,11 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     public void bindModel(Object data) {
         this.model = (PartModel) data;
 
-        PartModel part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-        long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
-        long buttonNumber = HyperCard.getInstance().getCard().getButtonNumber((ButtonModel) part);
-        long buttonCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getOwner());
-        long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getOwner());
+        PartModel part = HyperCard.getInstance().getDisplayedCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+        long partNumber = HyperCard.getInstance().getDisplayedCard().getPartNumber(part);
+        long buttonNumber = HyperCard.getInstance().getDisplayedCard().getButtonNumber((ButtonModel) part);
+        long buttonCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
+        long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
         String layer = part.getOwner().friendlyName;
 
         buttonLabel.setText(layer + " Button:");

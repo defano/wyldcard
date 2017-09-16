@@ -91,11 +91,11 @@ public class FieldPropertyEditor extends HyperCardDialog {
         if (data instanceof PartModel) {
             this.model = (PartModel) data;
 
-            PartModel part = HyperCard.getInstance().getCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-            long partNumber = HyperCard.getInstance().getCard().getPartNumber(part);
-            long fieldNumber = HyperCard.getInstance().getCard().getFieldNumber((FieldModel) part);
-            long fieldCount = HyperCard.getInstance().getCard().getPartCount(model.getType(), part.getOwner());
-            long partCount = HyperCard.getInstance().getCard().getPartCount(null, part.getOwner());
+            PartModel part = HyperCard.getInstance().getDisplayedCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+            long partNumber = HyperCard.getInstance().getDisplayedCard().getPartNumber(part);
+            long fieldNumber = HyperCard.getInstance().getDisplayedCard().getFieldNumber((FieldModel) part);
+            long fieldCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
+            long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
             String layer = part.getOwner().friendlyName;
 
             fieldLabel.setText(layer + " Field:");

@@ -74,8 +74,8 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
-        getCurrentCard().openCard();
-        fireOnCardOpened(getCurrentCard());
+        getDisplayedCard().openCard();
+        fireOnCardOpened(getDisplayedCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
 
@@ -266,7 +266,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * stack).
      */
     public void cutCard() {
-        cardClipboardProvider.set(getCurrentCard());
+        cardClipboardProvider.set(getDisplayedCard());
         cardCountProvider.set(stackModel.getCardCount());
 
         deleteCard();
@@ -276,7 +276,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * Copies the current card to the card clipboard for pasting elsewhere in the stack.
      */
     public void copyCard() {
-        cardClipboardProvider.set(getCurrentCard());
+        cardClipboardProvider.set(getDisplayedCard());
     }
 
     /**
@@ -306,7 +306,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * Gets the currently displayed card.
      * @return The current card
      */
-    public CardPart getCurrentCard() {
+    public CardPart getDisplayedCard() {
         if (currentCard == null) {
             currentCard = getCard(getStackModel().getCurrentCardIndex());
         }
@@ -413,7 +413,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     private CardPart go(int cardIndex, boolean addToBackstack) {
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
-            return getCurrentCard();
+            return getDisplayedCard();
         }
 
         deactivateCard(addToBackstack);
@@ -434,8 +434,8 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         }
 
         // Notify observers that current card is going away
-        fireOnCardClosing(getCurrentCard());
-        getCurrentCard().closeCard();
+        fireOnCardClosing(getDisplayedCard());
+        getDisplayedCard().closeCard();
     }
 
     private CardPart activateCard (int cardIndex) {
@@ -460,11 +460,11 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     private boolean canDeleteCard() {
-        long cardCountInBackground = stackModel.getCardCountInBackground(getCurrentCard().getCardModel().getBackgroundId());
+        long cardCountInBackground = stackModel.getCardCountInBackground(getDisplayedCard().getCardModel().getBackgroundId());
 
         return stackModel.getCardCount() > 1 &&
-                !getCurrentCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
-                (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+                !getDisplayedCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
+                (cardCountInBackground > 1 || !getDisplayedCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
 }

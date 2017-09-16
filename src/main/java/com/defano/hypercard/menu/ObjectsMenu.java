@@ -51,7 +51,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .withAction(e -> WindowBuilder.make(new CardPropertyEditor())
                         .asModal()
                         .withTitle("Card Properties")
-                        .withModel(HyperCard.getInstance().getCard())
+                        .withModel(HyperCard.getInstance().getDisplayedCard())
                         .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                         .build())
                 .build(this);
@@ -61,7 +61,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .withAction(e -> WindowBuilder.make(new BackgroundPropertyEditor())
                         .withTitle("Background Properties")
                         .asModal()
-                        .withModel(HyperCard.getInstance().getCard())
+                        .withModel(HyperCard.getInstance().getDisplayedCard())
                         .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                         .build())
                 .build(this);
@@ -96,12 +96,12 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Button")
-                .withAction(e -> HyperCard.getInstance().getCard().newButton())
+                .withAction(e -> HyperCard.getInstance().getDisplayedCard().newButton())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Field")
-                .withAction(e -> HyperCard.getInstance().getCard().newField())
+                .withAction(e -> HyperCard.getInstance().getDisplayedCard().newField())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

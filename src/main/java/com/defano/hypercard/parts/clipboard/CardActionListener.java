@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 public class CardActionListener implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
-        CardPart focusedCard = HyperCard.getInstance().getCard();
+        CardPart focusedCard = HyperCard.getInstance().getDisplayedCard();
 
         if (focusedCard != null) {
             Action a = focusedCard.getActionMap().get(e.getActionCommand());
