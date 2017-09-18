@@ -10,9 +10,12 @@ package com.defano.hypertalk.ast.common;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import com.defano.hypertalk.comparator.SortStyle;
+import com.defano.hypertalk.comparator.StyledComparable;
 import com.defano.hypertalk.utils.ChunkUtils;
 import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -25,7 +28,7 @@ import com.defano.hypertalk.utils.DateUtils;
  *
  * The Value object is immutable; once created it cannot change value.
  */
-public class Value implements Comparable<Value> {
+public class Value implements StyledComparable<Value> {
 
     private final String value;
 
@@ -595,5 +598,30 @@ public class Value implements Comparable<Value> {
         } else {
             return this.stringValue().toLowerCase().trim().compareTo(o.stringValue().toLowerCase().trim());
         }
+    }
+
+    @Override
+    public int compareTo(Value to, SortStyle style) {
+        switch (style) {
+            case INTERNATIONAL:
+            case TEXT:
+                return this.stringValue().compareTo(to.stringValue());
+            case NUMERIC:
+                return Double.compare(this.doubleValue(), to.doubleValue());
+            case DATE_TIME:
+                Date thisDate = DateUtils.dateOf(this);
+                if (thisDate == null) {
+                    return 1;
+                }
+
+                Date toDateTime = DateUtils.dateOf(to);
+                if (toDateTime == null) {
+                    return -1;
+                }
+
+                return thisDate.compareTo(toDateTime);
+        }
+
+        throw new IllegalArgumentException("Bug! Unimplemented comparison style.");
     }
 }

@@ -162,8 +162,8 @@ waitCmd             : 'wait' factor timeUnit                                    
                     | 'wait while' expression                                                                           # waitWhileCmd
                     ;
 
-sortCmd             : 'sort' sortChunkType container sortDirection                                                      # sortDirectionCmd
-                    | 'sort' sortChunkType container 'by' expression                                                    # sortExpressionCmd
+sortCmd             : 'sort' sortChunkType container sortDirection sortStyle                                            # sortDirectionCmd
+                    | 'sort' sortChunkType container sortStyle 'by' expression                                          # sortExpressionCmd
                     ;
 
 sortDirection       : 'ascending'                                                                                       # sortDirectionAsc
@@ -174,6 +174,13 @@ sortDirection       : 'ascending'                                               
 sortChunkType       : 'the'? ('line' | 'lines') ('of' | 'in')                                                           # sortChunkLines
                     | 'the'? ('item' | 'items') ('of' | 'in')                                                           # sortChunkItems
                     |                                                                                                   # sortChunkDefault
+                    ;
+
+sortStyle           : 'text'                                                                                            # sortStyleText
+                    | 'numeric'                                                                                         # sortStyleNumeric
+                    | 'international'                                                                                   # sortStyleInternational
+                    | 'datetime'                                                                                        # sortStyleDateTime
+                    |                                                                                                   # sortStyleDefault
                     ;
 
 visualEffect        : 'effect'? effect                                                                                  # effectDefault

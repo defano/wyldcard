@@ -10,9 +10,11 @@ import java.util.Comparator;
 public class ExpressionValueComparator implements Comparator<Value> {
 
     private final Expression expression;
+    private final SortStyle sortStyle;
 
-    public ExpressionValueComparator(Expression expression) {
+    public ExpressionValueComparator(Expression expression, SortStyle sortStyle) {
         this.expression = expression;
+        this.sortStyle = sortStyle;
     }
 
     @Override
@@ -24,9 +26,10 @@ public class ExpressionValueComparator implements Comparator<Value> {
             ExecutionContext.getContext().set("each", o2);
             Value o2Evaluated = expression.evaluate();
 
-            return o1Evaluated.compareTo(o2Evaluated);
+            return o1Evaluated.compareTo(o2Evaluated, sortStyle);
         } catch (HtSemanticException e) {
-            throw new RuntimeException(e);
+            // TODO: How best to handle semantic error during comparison?
+            return 0;
         }
     }
 }
