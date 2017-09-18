@@ -18,6 +18,7 @@ import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.functions.*;
 import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.ast.commands.*;
+import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
@@ -92,12 +93,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSortDirectionCmd(HyperTalkParser.SortDirectionCmdContext ctx) {
-        return new SortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (SortDirection) visit(ctx.sortDirection()));
+        return new SortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (SortDirection) visit(ctx.sortDirection()), (SortStyle) visit(ctx.sortStyle()));
     }
 
     @Override
     public Object visitSortExpressionCmd(HyperTalkParser.SortExpressionCmdContext ctx) {
-        return new SortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (Expression) visit(ctx.expression()));
+        return new SortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (Expression) visit(ctx.expression()), (SortStyle) visit(ctx.sortStyle()));
     }
 
     @Override
@@ -128,6 +129,31 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitSortChunkDefault(HyperTalkParser.SortChunkDefaultContext ctx) {
         return ChunkType.LINE;
+    }
+
+    @Override
+    public Object visitSortStyleText(HyperTalkParser.SortStyleTextContext ctx) {
+        return SortStyle.TEXT;
+    }
+
+    @Override
+    public Object visitSortStyleNumeric(HyperTalkParser.SortStyleNumericContext ctx) {
+        return SortStyle.NUMERIC;
+    }
+
+    @Override
+    public Object visitSortStyleInternational(HyperTalkParser.SortStyleInternationalContext ctx) {
+        return SortStyle.INTERNATIONAL;
+    }
+
+    @Override
+    public Object visitSortStyleDateTime(HyperTalkParser.SortStyleDateTimeContext ctx) {
+        return SortStyle.DATE_TIME;
+    }
+
+    @Override
+    public Object visitSortStyleDefault(HyperTalkParser.SortStyleDefaultContext ctx) {
+        return SortStyle.TEXT;
     }
 
     @Override

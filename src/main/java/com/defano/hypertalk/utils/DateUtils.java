@@ -17,6 +17,9 @@ import java.util.Date;
 
 public class DateUtils {
 
+    public final static SimpleDateFormat LONG_TIME = new SimpleDateFormat("h:mm:ss a");
+    public final static SimpleDateFormat SHORT_TIME = new SimpleDateFormat("h:mm a");
+
     public final static SimpleDateFormat LONG_DATE = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy");
     public final static SimpleDateFormat SHORT_DATE = new SimpleDateFormat("MM/dd/yy");
     public final static SimpleDateFormat ABBREV_DATE = new SimpleDateFormat("EEE, MMM dd, yyyy");
@@ -36,29 +39,29 @@ public class DateUtils {
     }
 
     public static Date dateOf(Value value) {
-        Date date = null;
+        String text = value.stringValue();
 
         try {
-            date = LONG_DATE.parse(value.stringValue());
+            return LONG_TIME.parse(text);
         } catch (ParseException e) {}
-
-        if (date != null) {
-            return date;
-        }
 
         try {
-            date = SHORT_DATE.parse(value.stringValue());
+            return SHORT_TIME.parse(text);
         } catch (ParseException e) {}
-
-        if (date != null) {
-            return date;
-        }
 
         try {
-            date = ABBREV_DATE.parse(value.stringValue());
+            return LONG_DATE.parse(text);
         } catch (ParseException e) {}
 
-        return date;
+        try {
+            return SHORT_DATE.parse(text);
+        } catch (ParseException e) {}
+
+        try {
+            return ABBREV_DATE.parse(text);
+        } catch (ParseException e) {}
+
+        return null;
     }
 
 }
