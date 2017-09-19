@@ -37,7 +37,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class HyperCard {
 
     private static HyperCard instance;
-    private static final ExecutorService messageBoxExecutor = Executors.newSingleThreadExecutor();
     private final StackPart stackPart;
     private final Provider<File> savedStackFileProvider = new Provider<>();
     private AtomicBoolean errorDialogVisible = new AtomicBoolean(false);
@@ -109,7 +108,7 @@ public class HyperCard {
     }
 
     public void evaluateMessageBox() {
-        messageBoxExecutor.submit(() -> {
+        Interpreter.getMessageExecutor().execute(() -> {
             try {
                 if (!getMessageBoxText().trim().isEmpty()) {
                     String messageText = getMessageBoxText();

@@ -36,21 +36,33 @@ import java.util.concurrent.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Interpreter class provides static methods for compiling a script (translate
- * into an AST) as well as executing a string as a script.
+ * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through
+ * this class to assure proper threading.
  */
 public class Interpreter {
 
-    private final static int IDLE_PERIOD_MS = 200;
-    private final static int IDLE_DEFERRAL_CYCLES = 50;
+    private final static int MAX_COMPILE_THREADS = 4;           // Simultaneous background compile tasks
+    private final static int MAX_EXECUTOR_THREADS = 12;         // Simultaneous scripts executing
+    private final static int MAX_LISTENER_THREADS = 12;         // Simultaneous listeners waiting for handler completion
 
+    private final static int IDLE_PERIOD_MS = 200;              // Frequency that 'idle' message is sent to card
+    private final static int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
+
+    private static final Executor messageExecutor;
+    private static final ThreadPoolExecutor backgroundCompileExecutor;
     private static final ThreadPoolExecutor scriptExecutor;
+    private static final ThreadPoolExecutor completionListenerExecutor;
+
     private static final ListeningExecutorService listeningScriptExecutor;
     private static final ScheduledExecutorService idleTimeExecutor;
     private static int deferIdleCycles = 0;
 
     static {
-        scriptExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
+        messageExecutor = Executors.newSingleThreadExecutor();
+        completionListenerExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_LISTENER_THREADS, new ThreadFactoryBuilder().setNameFormat("completion-listener-%d").build());
+        backgroundCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("compiler-%d").build());
+        scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
+
         listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
         idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("idle-executor-%d").build());
 
@@ -76,13 +88,13 @@ public class Interpreter {
     }
 
     /**
-     * Compiles the given script on a new thread and invokes the CompileCompletionObserver when complete.
+     * Compiles the given script on a background compile thread and invokes the CompileCompletionObserver when complete.
      *
      * @param scriptText The script to compile.
      * @param observer A non-null callback to fire when compilation is complete.
      */
     public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
-        Executors.newSingleThreadExecutor().submit(() -> {
+        backgroundCompileExecutor.submit(() -> {
             HtException generatedError = null;
             Script compiledScript = null;
 
@@ -129,7 +141,7 @@ public class Interpreter {
     }
 
     /**
-     * Evaluates a string as a HyperTalk expression.
+     * Evaluates a string as a HyperTalk expression on the current thread.
      *
      * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
      *                   evaluated or is not a legal expression evaluates to itself.
@@ -150,7 +162,7 @@ public class Interpreter {
     }
 
     /**
-     * Determines if the given Script text represents a valid HyperTalk expression.
+     * Determines if the given Script text represents a valid HyperTalk expression on the current thread.
      *
      * @param statement Text to evaluate
      * @return True if the statement is a valid expression; false if it is not.
@@ -161,8 +173,8 @@ public class Interpreter {
     }
 
     /**
-     * Executes a handler in the given script, returning a future indicating whether or not the script trapped the
-     * message.
+     * Executes a handler in the given script on a background thread, returning a future indicating whether or not the
+     * script trapped the message.
      *
      * Any handler that does not 'pass' the command traps its behavior and prevents other scripts (or HyperCard) from
      * acting upon it. A script that does not implement the handler is assumed to 'pass' it.
@@ -199,7 +211,7 @@ public class Interpreter {
     }
 
     /**
-     * Executes a list of HyperTalk statements.
+     * Executes a list of HyperTalk statements on a background thread and returns the name of message passed (if any).
      *
      * @param me The part that the 'me' keyword refers to.
      * @param statementList The list of statements.
@@ -211,9 +223,10 @@ public class Interpreter {
     }
 
     /**
-     * Synchronously executes a compiled user function on the current thread unless the current thread is the dispatch
-     * thread (in which case the function executes on a new thread, but the current thread is blocked pending its
-     * completion).
+     * Synchronously executes a compiled user function (blocks the current thread until execution is complete).
+     *
+     * Executes the function on the current thread, unless the current thread is the dispatch thread (in which case the
+     * function executes on a new thread, but the current thread is blocked pending its completion).
      *
      * @param me The part that the 'me' keyword refers to.
      * @param function The compiled UserFunction
@@ -236,7 +249,28 @@ public class Interpreter {
     }
 
     /**
+     * Gets the executor used to execute scripts handling a HyperCard system message (i.e., when 'mouseUp' or 'idle'
+     * is sent to a part).
+     *
+     * @return The message handler executor.
+     */
+    public static Executor getCompletionListenerExecutor() {
+        return completionListenerExecutor;
+    }
+
+    /**
+     * Gets the executor used to evaluate the contents of the message box.
+     * @return The message box executor.
+     */
+    public static Executor getMessageExecutor() {
+        return messageExecutor;
+    }
+
+    /**
      * Executes a named block and returns a future to the name of the message passed from the block (if any).
+     *
+     * Executes on the current thread if the current thread is not the dispatch thread. If the current thread is the
+     * dispatch thread, then submits execution to the scriptExecutor.
      *
      * @param me The part that the 'me' keyword refers to.
      * @param handler The block to execute
@@ -259,7 +293,8 @@ public class Interpreter {
     }
 
     /**
-     * Wraps a list of statements in an anonymous named block.
+     * Wraps a list of statements in an anonymous NamedBlock object.
+     *
      * @param statementList The list of statements
      * @return A NamedBlock representing the
      */

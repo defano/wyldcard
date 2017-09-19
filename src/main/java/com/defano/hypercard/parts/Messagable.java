@@ -98,7 +98,7 @@ public interface Messagable {
                 } catch (HtException e) {
                     onCompletion.onMessagePassed(command, false, e);
                 }
-            }, Executors.newSingleThreadExecutor());
+            }, Interpreter.getCompletionListenerExecutor());
         } catch (HtSemanticException e) {
             onCompletion.onMessagePassed(command, false, e);
         }
