@@ -8,7 +8,7 @@
 
 package com.defano.hypertalk.ast.common;
 
-public enum DateFormat {
+public enum DateLength {
     LONG,
     SHORT,
     ABBREVIATED

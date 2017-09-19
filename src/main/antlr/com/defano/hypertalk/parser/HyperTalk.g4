@@ -73,6 +73,7 @@ commandStmnt        : answerCmd                                                 
                     | disableCmd                                                                                        # disableCmdStmnt
                     | readCmd                                                                                           # readCmdStmt
                     | writeCmd                                                                                          # writeCmdStmt
+                    | convertCmd                                                                                        # convertCmdStmt
                     | 'hide' part                                                                                       # hideCmdStmnt
                     | 'show' part                                                                                       # showCmdStmnt
                     | 'add' expression 'to' container                                                                   # addCmdStmnt
@@ -106,6 +107,12 @@ commandStmnt        : answerCmd                                                 
                     | 'close' 'file' expression                                                                         # closeFileCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
+                    ;
+
+convertCmd          : 'convert' container 'to' convertible                                                              # convertContainerToCmd
+                    | 'convert' container 'from' convertible 'to' convertible                                           # convertContainerFromToCmd
+                    | 'convert' expression 'to' convertible                                                             # convertToCmd
+                    | 'convert' expression 'from' convertible 'to' convertible                                          # convertFromToCmd
                     ;
 
 writeCmd            : 'write' expression 'to' 'file' factor                                                             # writeFileCmd
@@ -164,6 +171,19 @@ waitCmd             : 'wait' factor timeUnit                                    
 
 sortCmd             : 'sort' sortChunkType container sortDirection sortStyle                                            # sortDirectionCmd
                     | 'sort' sortChunkType container sortStyle 'by' expression                                          # sortExpressionCmd
+                    ;
+
+convertible         : conversionFormat                                                                                  # singleFormatConvertible
+                    | conversionFormat 'and' conversionFormat                                                           # dualFormatConvertible
+                    ;
+
+conversionFormat    : 'seconds'                                                                                         # secondsConvFormat
+                    | 'dateitems'                                                                                       # dateItemsConvFormat
+                    | ('long date' | 'english date')                                                                    # longDateConvFormat
+                    | ('date' | 'short date')                                                                           # shortDateConvFormat
+                    | ('abbrev date' | 'abbreviated date')                                                              # abbrevDateConvFormat
+                    | ('time' | 'short time' | 'abbrev time' | 'abbreviated time')                                      # shortTimeConvFormat
+                    | ('english time' | 'long time')                                                                    # longTimeConvFormat
                     ;
 
 sortDirection       : 'ascending'                                                                                       # sortDirectionAsc
