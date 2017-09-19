@@ -171,6 +171,13 @@ waitCmd             : 'wait' factor timeUnit                                    
 
 sortCmd             : 'sort' sortChunkType container sortDirection sortStyle                                            # sortDirectionCmd
                     | 'sort' sortChunkType container sortStyle 'by' expression                                          # sortExpressionCmd
+                    | 'sort' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
+                    | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                    # sortStackCmd
+                    | 'sort' 'cards' ('of' 'this' 'stack')? sortDirection sortStyle 'by' expression                     # sortStackCmd
+                    | 'sort' 'the'? 'marked' 'cards' ('of' 'this' 'stack')? sortDirection sortStyle 'by' expression     # sortMarkedCardsCmd
+                    | 'sort' bkgndPart sortDirection sortStyle 'by' expression                                          # sortBkgndCardsCmd
+                    | 'sort' 'the'? 'cards' 'of' bkgndPart sortDirection sortStyle 'by' expression                      # sortBkgndCardsCmd
+                    | 'sort' 'the'? 'marked' 'cards' 'of' bkgndPart sortDirection sortStyle 'by' expression             # sortMarkedBkgndCardsCmd
                     ;
 
 convertible         : conversionFormat                                                                                  # singleFormatConvertible
@@ -363,31 +370,43 @@ propertySpec        : 'the'? ID                                                 
                     | 'the'? ID 'of' menuItem                                                                           # propertySpecMenuItem
                     ;
 
-part                : ('background' | 'bkgnd')? 'field' factor                                                          # bkgndFieldPart
-                    | ordinal ('background' | 'bkgnd')? 'field'                                                         # bkgndFieldOrdinalPart
-                    | ('background' | 'bkgnd')? 'field' 'id' factor                                                     # bkgndFieldIdPart
-                    | ('background' | 'bkgnd')? 'button' factor                                                         # bkgndButtonPart
-                    | ordinal ('background' | 'bkgnd')? 'button'                                                        # bkgndButtonOrdinalPart
-                    | ('background' | 'bkgnd')? 'button' 'id' factor                                                    # bkgndButtonIdPart
-                    | ('card' | 'cd')? 'field' factor                                                                   # cardFieldPart
-                    | ordinal ('card' | 'cd')? 'field'                                                                  # cardFieldOrdinalPart
-                    | ('card' | 'cd')? 'field' 'id' factor                                                              # cardFieldIdPart
-                    | ('card' | 'cd')? 'button' factor                                                                  # cardButtonPart
-                    | ordinal ('card' | 'cd')? 'button'                                                                 # cardButtonOrdinalPart
-                    | ('card' | 'cd')? 'button' 'id' factor                                                             # cardButtonIdPart
+part                : buttonPart                                                                                        # buttonPartPart
+                    | fieldPart                                                                                         # fieldPartPart
+                    | bkgndPart                                                                                         # bkgndPartPart
+                    | cardPart                                                                                          # cardPartPart
                     | ('card' | 'cd') 'part' factor                                                                     # cardPartNumberPart
                     | ('background' | 'bkgnd') 'part' factor                                                            # bkgndPartNumberPart
                     | 'me'                                                                                              # mePart
-                    | 'this' ('card' | 'cd')                                                                            # thisCardPart
-                    | 'this' ('background' | 'bkgnd')                                                                   # thisBkgndPart
+                    ;
+
+buttonPart          : ('background' | 'bkgnd')? 'button' factor                                                         # bkgndButtonPart
+                    | ordinal ('background' | 'bkgnd')? 'button'                                                        # bkgndButtonOrdinalPart
+                    | ('background' | 'bkgnd')? 'button' 'id' factor                                                    # bkgndButtonIdPart
+                    | ('card' | 'cd')? 'button' factor                                                                  # cardButtonPart
+                    | ordinal ('card' | 'cd')? 'button'                                                                 # cardButtonOrdinalPart
+                    | ('card' | 'cd')? 'button' 'id' factor                                                             # cardButtonIdPart
+                    ;
+
+fieldPart           : ('background' | 'bkgnd')? 'field' factor                                                          # bkgndFieldPart
+                    | ordinal ('background' | 'bkgnd')? 'field'                                                         # bkgndFieldOrdinalPart
+                    | ('background' | 'bkgnd')? 'field' 'id' factor                                                     # bkgndFieldIdPart
+                    | ('card' | 'cd')? 'field' factor                                                                   # cardFieldPart
+                    | ordinal ('card' | 'cd')? 'field'                                                                  # cardFieldOrdinalPart
+                    | ('card' | 'cd')? 'field' 'id' factor                                                              # cardFieldIdPart
+                    ;
+
+cardPart            : 'this' ('card' | 'cd')                                                                            # thisCardPart
                     | position ('card' | 'cd')                                                                          # positionCardPart
-                    | position ('background' | 'bkgnd')                                                                 # positionBkgndPart
                     | ordinal ('card' | 'cd')                                                                           # ordinalCardPart
-                    | ordinal ('background' | 'bkgnd')                                                                  # ordinalBkgndPart
-                    | ('card' | 'cd') factor                                                                            # cardPart
+                    | ('card' | 'cd') factor                                                                            # expressionCardPart
                     | ('card' | 'cd') 'id' factor                                                                       # cardIdPart
-                    | ('background' | 'bkgnd') factor                                                                   # bkgndPart
+                    ;
+
+bkgndPart           : ('background' | 'bkgnd') factor                                                                   # expressionBkgndPart
                     | ('background' | 'bkgnd') 'id' factor                                                              # bkgndIdPart
+                    | ordinal ('background' | 'bkgnd')                                                                  # ordinalBkgndPart
+                    | position ('background' | 'bkgnd')                                                                 # positionBkgndPart
+                    | 'this' ('background' | 'bkgnd')                                                                   # thisBkgndPart
                     ;
 
 ordinal             : 'the'? ordinalValue                                                                               # theOrdinalVal
