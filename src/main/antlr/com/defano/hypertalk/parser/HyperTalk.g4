@@ -173,7 +173,7 @@ sortCmd             : 'sort' sortChunkType container sortDirection sortStyle    
                     | 'sort' sortChunkType container sortStyle 'by' expression                                          # sortExpressionCmd
                     | 'sort' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
                     | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                    # sortStackCmd
-                    | 'sort' 'cards' ('of' 'this' 'stack')? sortDirection sortStyle 'by' expression                     # sortStackCmd
+                    | 'sort' 'the'? 'cards' ('of' 'this' 'stack')? sortDirection sortStyle 'by' expression              # sortStackCmd
                     | 'sort' 'the'? 'marked' 'cards' ('of' 'this' 'stack')? sortDirection sortStyle 'by' expression     # sortMarkedCardsCmd
                     | 'sort' bkgndPart sortDirection sortStyle 'by' expression                                          # sortBkgndCardsCmd
                     | 'sort' 'the'? 'cards' 'of' bkgndPart sortDirection sortStyle 'by' expression                      # sortBkgndCardsCmd

@@ -102,6 +102,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSortMarkedCardsCmd(HyperTalkParser.SortMarkedCardsCmdContext ctx) {
+        return new SortCardsCmd(true, (SortDirection) visit(ctx.sortDirection()), (SortStyle) visit(ctx.sortStyle()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitSortStackCmd(HyperTalkParser.SortStackCmdContext ctx) {
+        return new SortCardsCmd(false, (SortDirection) visit(ctx.sortDirection()), (SortStyle) visit(ctx.sortStyle()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitSortBkgndCardsCmd(HyperTalkParser.SortBkgndCardsCmdContext ctx) {
+        return new SortCardsCmd(false, (PartExp) visit(ctx.bkgndPart()), (SortDirection) visit(ctx.sortDirection()), (SortStyle) visit(ctx.sortStyle()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitSortMarkedBkgndCardsCmd(HyperTalkParser.SortMarkedBkgndCardsCmdContext ctx) {
+        return new SortCardsCmd(true, (PartExp) visit(ctx.bkgndPart()), (SortDirection) visit(ctx.sortDirection()), (SortStyle) visit(ctx.sortStyle()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitConvertContainerFromToCmd(HyperTalkParser.ConvertContainerFromToCmdContext ctx) {
         return new ConvertCmd((Container) visit(ctx.container()), (Convertible) visit(ctx.convertible(0)), (Convertible) visit(ctx.convertible(1)));
     }
@@ -1211,6 +1231,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitButtonPartPart(HyperTalkParser.ButtonPartPartContext ctx) {
+        return visit(ctx.buttonPart());
+    }
+
+    @Override
+    public Object visitFieldPartPart(HyperTalkParser.FieldPartPartContext ctx) {
+        return visit(ctx.fieldPart());
+    }
+
+    @Override
+    public Object visitBkgndPartPart(HyperTalkParser.BkgndPartPartContext ctx) {
+        return visit(ctx.bkgndPart());
+    }
+
+    @Override
+    public Object visitCardPartPart(HyperTalkParser.CardPartPartContext ctx) {
+        return visit(ctx.cardPart());
+    }
+
+    @Override
     public Object visitBkgndFieldPart(HyperTalkParser.BkgndFieldPartContext ctx) {
         return new PartNameExp(Owner.BACKGROUND, PartType.FIELD, (Expression)visit(ctx.factor()));
     }
@@ -1316,7 +1356,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitCardPart(HyperTalkParser.CardPartContext ctx) {
+    public Object visitExpressionCardPart(HyperTalkParser.ExpressionCardPartContext ctx) {
         return new PartNameExp(PartType.CARD, (Expression) visit(ctx.factor()));
     }
 
@@ -1326,7 +1366,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitBkgndPart(HyperTalkParser.BkgndPartContext ctx) {
+    public Object visitExpressionBkgndPart(HyperTalkParser.ExpressionBkgndPartContext ctx) {
         return new PartNameExp(PartType.BACKGROUND, (Expression) visit(ctx.factor()));
     }
 
