@@ -54,7 +54,7 @@ public class ContainerPart extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        Value destValue = getValue();
+        Value destValue = ExecutionContext.getContext().get(part.evaluateAsSpecifier()).getValue();
 
         // Operating on a chunk of the existing value
         if (chunk != null)

@@ -102,6 +102,76 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitConvertContainerFromToCmd(HyperTalkParser.ConvertContainerFromToCmdContext ctx) {
+        return new ConvertCmd((Container) visit(ctx.container()), (Convertible) visit(ctx.convertible(0)), (Convertible) visit(ctx.convertible(1)));
+    }
+
+    @Override
+    public Object visitConvertContainerToCmd(HyperTalkParser.ConvertContainerToCmdContext ctx) {
+        return new ConvertCmd((Container) visit(ctx.container()), (Convertible) visit(ctx.convertible()));
+    }
+
+    @Override
+    public Object visitConvertToCmd(HyperTalkParser.ConvertToCmdContext ctx) {
+        return new ConvertCmd((Expression) visit(ctx.expression()), (Convertible) visit(ctx.convertible()));
+    }
+
+    @Override
+    public Object visitConvertFromToCmd(HyperTalkParser.ConvertFromToCmdContext ctx) {
+        return new ConvertCmd((Expression) visit(ctx.expression()), (Convertible) visit(ctx.convertible(0)), (Convertible) visit(ctx.convertible(1)));
+    }
+
+    @Override
+    public Object visitConvertCmdStmt(HyperTalkParser.ConvertCmdStmtContext ctx) {
+        return visit(ctx.convertCmd());
+    }
+
+    @Override
+    public Object visitDualFormatConvertible(HyperTalkParser.DualFormatConvertibleContext ctx) {
+        return new Convertible((ConvertibleDateFormat) visit(ctx.conversionFormat(0)), (ConvertibleDateFormat) visit(ctx.conversionFormat(1)));
+    }
+
+    @Override
+    public Object visitSingleFormatConvertible(HyperTalkParser.SingleFormatConvertibleContext ctx) {
+        return new Convertible((ConvertibleDateFormat) visit(ctx.conversionFormat()));
+    }
+
+    @Override
+    public Object visitLongTimeConvFormat(HyperTalkParser.LongTimeConvFormatContext ctx) {
+        return ConvertibleDateFormat.LONG_TIME;
+    }
+
+    @Override
+    public Object visitShortTimeConvFormat(HyperTalkParser.ShortTimeConvFormatContext ctx) {
+        return ConvertibleDateFormat.SHORT_TIME;
+    }
+
+    @Override
+    public Object visitDateItemsConvFormat(HyperTalkParser.DateItemsConvFormatContext ctx) {
+        return ConvertibleDateFormat.DATE_ITEMS;
+    }
+
+    @Override
+    public Object visitAbbrevDateConvFormat(HyperTalkParser.AbbrevDateConvFormatContext ctx) {
+        return ConvertibleDateFormat.ABBREV_DATE;
+    }
+
+    @Override
+    public Object visitShortDateConvFormat(HyperTalkParser.ShortDateConvFormatContext ctx) {
+        return ConvertibleDateFormat.SHORT_DATE;
+    }
+
+    @Override
+    public Object visitLongDateConvFormat(HyperTalkParser.LongDateConvFormatContext ctx) {
+        return ConvertibleDateFormat.LONG_DATE;
+    }
+
+    @Override
+    public Object visitSecondsConvFormat(HyperTalkParser.SecondsConvFormatContext ctx) {
+        return ConvertibleDateFormat.SECONDS;
+    }
+
+    @Override
     public Object visitSortDirectionAsc(HyperTalkParser.SortDirectionAscContext ctx) {
         return SortDirection.ASCENDING;
     }
@@ -1702,12 +1772,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case MESSAGE: return new MessageBoxFunc();
             case TICKS: return new TicksFunc();
             case SECONDS: return new SecondsFunc();
-            case ABBREV_DATE: return new DateFunc(DateFormat.ABBREVIATED);
-            case SHORT_DATE: return new DateFunc(DateFormat.SHORT);
-            case LONG_DATE: return new DateFunc(DateFormat.LONG);
-            case ABBREV_TIME: return new TimeFunc(DateFormat.ABBREVIATED);
-            case LONG_TIME: return new TimeFunc(DateFormat.LONG);
-            case SHORT_TIME: return new TimeFunc(DateFormat.SHORT);
+            case ABBREV_DATE: return new DateFunc(DateLength.ABBREVIATED);
+            case SHORT_DATE: return new DateFunc(DateLength.SHORT);
+            case LONG_DATE: return new DateFunc(DateLength.LONG);
+            case ABBREV_TIME: return new TimeFunc(DateLength.ABBREVIATED);
+            case LONG_TIME: return new TimeFunc(DateLength.LONG);
+            case SHORT_TIME: return new TimeFunc(DateLength.SHORT);
             case OPTION_KEY: return new ModifierKeyFunc(ModifierKey.OPTION);
             case COMMAND_KEY: return new ModifierKeyFunc(ModifierKey.COMMAND);
             case SHIFT_KEY: return new ModifierKeyFunc(ModifierKey.SHIFT);
