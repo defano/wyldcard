@@ -75,9 +75,13 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * @throws HtException Thrown if an error occurs creating the card.
      */
     public static CardPart fromLocationInStack(int cardIndex, StackModel stack) throws HtException {
+        return fromCardModel(stack.getCardModel(cardIndex), stack);
+    }
+
+    public static CardPart fromCardModel(CardModel model, StackModel stack) throws HtException {
         CardPart card = new CardPart();
 
-        card.cardModel = stack.getCardModel(cardIndex);
+        card.cardModel = model;
         card.stackModel = stack;
 
         // Add card parts to this card

@@ -12,10 +12,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -41,6 +38,7 @@ public class ExecutionContext {
     private final ThreadLocal<StackFrame> frame = new ThreadLocal<>();
     private final ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
     private final ThreadLocal<Value> result = new ThreadLocal<>();
+    private final ThreadLocal<CardPart> card = new ThreadLocal<>();
 
     private ExecutionContext() {
         globals = new SymbolTable();
@@ -214,8 +212,17 @@ public class ExecutionContext {
         get(ps).setProperty(property, mutable);
     }
 
+    public void setCurrentCard(CardPart card) {
+        this.card.set(card);
+    }
+
     public CardPart getCurrentCard() {
-        return HyperCard.getInstance().getDisplayedCard();
+        CardPart currentCard = this.card.get();
+        if (currentCard == null) {
+            return HyperCard.getInstance().getDisplayedCard();
+        } else {
+            return currentCard;
+        }
     }
 
     public void setIt (Object value) {

@@ -32,7 +32,7 @@ public class StackModel extends PartModel {
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
     private Stack<Integer> backStack = new Stack<>();
-    private final List<CardModel> cardModels;
+    private List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
     private final Map<String, byte[]> userIcons;
 
@@ -93,7 +93,11 @@ public class StackModel extends PartModel {
     }
 
     public List<CardModel> getCardModels() {
-        return cardModels;
+        return new ArrayList<>(cardModels);
+    }
+
+    public void setCardModels(List<CardModel> cardModels) {
+        this.cardModels = cardModels;
     }
 
     public CardModel getCardModel(int index) {

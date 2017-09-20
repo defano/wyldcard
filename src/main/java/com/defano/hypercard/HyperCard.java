@@ -99,10 +99,6 @@ public class HyperCard {
         return stackPart.getDisplayedCard();
     }
 
-//    public CardPart getCard() {
-//        return stackPart.getCurrentCard();
-//    }
-
     public void setMessageBoxText(Object theMsg) {
         SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setMsgBoxText(theMsg.toString()));
     }
