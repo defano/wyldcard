@@ -287,7 +287,10 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         if (cardClipboardProvider.get() != null) {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
-            stackModel.insertCard(cardClipboardProvider.get().getCardModel().copyOf());
+            CardModel card = cardClipboardProvider.get().getCardModel().copyOf();
+            card.defineProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
+
+            stackModel.insertCard(card);
             cardCountProvider.set(stackModel.getCardCount());
 
             goNextCard(null);
