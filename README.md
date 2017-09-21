@@ -146,6 +146,40 @@ go to the next background  -- next card in the stack with a different background
 go to background 3         -- first card with the third unique background in the stack
 ```
 
+### Sorting cards
+
+HyperTalk provides a powerful and flexible construct for sorting the cards in a stack, or sorting the items or lines in a container.
+
+The cards in a stack may be sorted by some expression that typically compares an element of each card's contents using the syntax `sort [the] cards [of this stack] by <expression>`. For example:
+
+```
+-- Sort all cards in alphabetical order of the contents the first card field
+sort the cards of this stack by the first card field
+```
+
+Cards are sorted by evaluating `<expression>` in the context of each card (`<expression>` being `the first card field` in the previous example). For example, if a stack has two cards, the contents of `the first card field` from each card will be compared; if the text of the second card's field is alphabetically before that of first card's, then the two card's will be switch positions. If the sort expression cannot be evaluated on each card (perhaps because one of the two cards has no fields) then the sort fails and no cards change position.
+
+When sorting things, you can specify how HyperTalk should interpret the data it compares. Possible formats are `text` (alphabetical order), `numeric` (numerical order), `dateTime` (interpret values as dates or times and order them chronologically) or `international` (same as `text` in HyperTalk Java).  
+
+```
+sort cards dateTime by field "Timestamp"    -- Sort chronologically
+sort the cards numeric by bottomLine()      -- Sort numerically
+```
+
+By default, sorting orders things in ascending order (from first to last). You can reverse this order (or explicitly call for it) by specifying a sort direction:
+
+```
+sort cards descending numeric by the number of card buttons
+sort cards ascending by the name of this card  
+```
+
+Additionally, a subset of cards identified by background or their `marked` property can be sorted without affecting the order of other cards in the stack (even if those cards are not contiguous).
+
+```
+sort the marked cards of this stack by the width of card button 2
+sort cards of background id 2 by the random of 2 
+```
+
 ## Messages and Handlers
 
 Stacks, backgrounds, cards, buttons and fields can be scripted in the HyperTalk language. A script is a set of _handlers_ and _functions_ that describe how the part reacts when HyperCard (or another script) sends a message to it. A _handler_ handles incoming messages; a _function_ is a subroutine that optionally returns a value to its caller.
@@ -812,7 +846,7 @@ Command	         | Description
 `send`           | Send a message with optional arguments to a part; `send "mouseUp" to field id 3` or `send "myMessage 1,2" to this card`
 `set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `show`           | Makes a part visible on the card, for example `show button "My Button"`.
-`sort`           | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items,lines} of] <container> [{{ascending,descending} by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
+`sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
 `type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
