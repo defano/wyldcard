@@ -365,9 +365,13 @@ menuItem            : 'menuitem' factor ('of' | 'from') menu                    
                     | ordinal 'menuitem' ('of' | 'from') menu                                                           # ordinalMenuItem
                     ;
 
-propertySpec        : 'the'? ID                                                                                         # propertySpecGlobal
-                    | 'the'? ID ('of' | 'in') part                                                                      # propertySpecPart
-                    | 'the'? ID 'of' menuItem                                                                           # propertySpecMenuItem
+propertySpec        : 'the'? propertyName                                                                               # propertySpecGlobal
+                    | 'the'? propertyName ('of' | 'in') part                                                            # propertySpecPart
+                    | 'the'? propertyName 'of' menuItem                                                                 # propertySpecMenuItem
+                    ;
+
+propertyName        : 'marked'          // Requires special rule because 'marked' is also a lexed token
+                    | ID
                     ;
 
 part                : buttonPart                                                                                        # buttonPartPart

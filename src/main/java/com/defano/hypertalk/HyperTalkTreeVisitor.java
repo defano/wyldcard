@@ -1217,17 +1217,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertySpecGlobal(HyperTalkParser.PropertySpecGlobalContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.ID()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()));
     }
 
     @Override
     public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.ID()), (PartExp) visit(ctx.part()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (PartExp) visit(ctx.part()));
     }
 
     @Override
     public Object visitPropertySpecMenuItem(HyperTalkParser.PropertySpecMenuItemContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.ID()), (MenuItemSpecifier) visit(ctx.menuItem()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitPropertyName(HyperTalkParser.PropertyNameContext ctx) {
+        return ctx.getText();
     }
 
     @Override

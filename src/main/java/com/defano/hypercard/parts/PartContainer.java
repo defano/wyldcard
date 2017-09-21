@@ -64,7 +64,7 @@ public interface PartContainer {
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase() + ".");
+            throw new PartException("No " + ps.toString().toLowerCase() + " found.");
         }
     }
 
@@ -85,7 +85,7 @@ public interface PartContainer {
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase() + ".");
+            throw new PartException("No " + ps.toString().toLowerCase() + " found.");
         }
     }
 
@@ -105,7 +105,7 @@ public interface PartContainer {
         int partIndex = ps.number - 1;
 
         if (partIndex >= foundParts.size() || partIndex < 0) {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase() + ".");
+            throw new PartException("No " + ps.toString().toLowerCase() + " found.");
         } else {
             return foundParts.get(partIndex);
         }

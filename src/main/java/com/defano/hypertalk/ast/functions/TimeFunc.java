@@ -13,7 +13,6 @@ import com.defano.hypertalk.ast.common.DateLength;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.DateUtils;
 
 import java.util.Date;
 

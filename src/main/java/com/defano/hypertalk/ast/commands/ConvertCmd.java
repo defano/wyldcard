@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Convertible;
-import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.Container;
 import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.ast.expressions.Expression;

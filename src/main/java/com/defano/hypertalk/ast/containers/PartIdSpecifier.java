@@ -48,6 +48,10 @@ public class PartIdSpecifier implements PartSpecifier {
 
     @Override
     public String toString () {
-        return owner().name() + " " + type + " id " + id;
+        if (owner() == null) {
+            return type + " id " + id;
+        } else {
+            return owner().name() + " " + type + " id " + id;
+        }
     }
 }

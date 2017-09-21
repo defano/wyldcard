@@ -139,10 +139,10 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         CardPart destination;
 
         if (visualEffect == null) {
-            destination = go(cardIndex, true);
+            destination = go(cardIndex);
         } else {
             CurtainManager.getInstance().setScreenLocked(true);
-            destination = go(cardIndex, true);
+            destination = go(cardIndex);
             CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
         }
 
@@ -318,6 +318,14 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     /**
+     * Invalidates the card cache; useful only if modifying this stack's underlying stack model (i.e., as a
+     * result of card sorting or re-ordering).
+     */
+    public void invalidateCache() {
+        this.currentCard = null;
+    }
+
+    /**
      * Gets an observable object containing the number of card in the stack.
      * @return The card count provider
      */
@@ -407,19 +415,19 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
     private CardPart getCard(int index) {
         try {
-            return CardPart.fromLocationInStack(index, stackModel);
+            return CardPart.fromPositionInStack(index, stackModel);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
     }
 
-    private CardPart go(int cardIndex, boolean addToBackstack) {
+    private CardPart go(int cardIndex) {
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
             return getDisplayedCard();
         }
 
-        deactivateCard(addToBackstack);
+        deactivateCard(true);
         return activateCard(cardIndex);
     }
 
@@ -463,7 +471,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     private boolean canDeleteCard() {
-        long cardCountInBackground = stackModel.getCardCountInBackground(getDisplayedCard().getCardModel().getBackgroundId());
+        long cardCountInBackground = stackModel.getCardsInBackground(getDisplayedCard().getCardModel().getBackgroundId()).size();
 
         return stackModel.getCardCount() > 1 &&
                 !getDisplayedCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&

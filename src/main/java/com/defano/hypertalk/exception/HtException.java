@@ -8,6 +8,9 @@
 
 package com.defano.hypertalk.exception;
 
+/**
+ * A base class for all HyperTalk-related checked exceptions.
+ */
 public class HtException extends Exception {
 
     public HtException(Throwable cause) {
@@ -22,7 +25,7 @@ public class HtException extends Exception {
         super(message, cause);
     }
 
-    private static Throwable getRootCause(Throwable cause) {
+    public static Throwable getRootCause(Throwable cause) {
         if (cause.getCause() == null) {
             return cause;
         } else {

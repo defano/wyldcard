@@ -15,7 +15,6 @@ import com.google.common.util.concurrent.CheckedFuture;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.Executors;
 
 /**
  * Represents an object that can receive HyperTalk messages.
