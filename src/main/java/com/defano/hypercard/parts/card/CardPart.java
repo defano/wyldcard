@@ -555,10 +555,15 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private void removeField(FieldModel fieldModel) {
         FieldPart field = fields.getPartForModel(fieldModel);
-        cardModel.removePartModel(fieldModel);
         fields.removePart(field);
         removeSwingComponent(field.getComponent());
         field.partClosed();
+
+        if (field.getCardLayer() == CardLayer.CARD_PARTS) {
+            cardModel.removePartModel(fieldModel);
+        } else if (field.getCardLayer() == CardLayer.BACKGROUND_PARTS) {
+            getCardBackground().removePartModel(fieldModel);
+        }
     }
 
     /**
@@ -584,10 +589,16 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private void removeButton(ButtonModel buttonModel) {
         ButtonPart button = buttons.getPartForModel(buttonModel);
-        cardModel.removePartModel(buttonModel);
         buttons.removePart(button);
         removeSwingComponent(button.getComponent());
         button.partClosed();
+
+        if (button.getCardLayer() == CardLayer.CARD_PARTS) {
+            cardModel.removePartModel(buttonModel);
+        } else if (button.getCardLayer() == CardLayer.BACKGROUND_PARTS) {
+            getCardBackground().removePartModel(buttonModel);
+        }
+
     }
 
     /**

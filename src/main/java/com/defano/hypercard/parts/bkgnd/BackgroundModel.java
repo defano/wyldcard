@@ -78,6 +78,20 @@ public class BackgroundModel extends PartModel {
         this.buttonModels.add(model);
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
+    public void removePartModel(PartModel model) {
+        switch (model.getType()) {
+            case FIELD:
+                fieldModels.remove(model);
+                break;
+            case BUTTON:
+                buttonModels.remove(model);
+                break;
+            default:
+                throw new IllegalArgumentException("Bug! Can't delete this kind of part from a background: " + model.getType());
+        }
+    }
+
     public void setBackgroundImage(BufferedImage image) {
         this.backgroundImage = Serializer.serializeImage(image);
     }
