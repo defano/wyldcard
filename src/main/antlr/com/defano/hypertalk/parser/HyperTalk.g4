@@ -170,7 +170,7 @@ waitCmd             : 'wait' factor timeUnit                                    
                     ;
 
 sortCmd             : 'sort' sortChunkType container sortDirection sortStyle                                            # sortDirectionCmd
-                    | 'sort' sortChunkType container sortStyle 'by' expression                                          # sortExpressionCmd
+                    | 'sort' sortChunkType container sortDirection sortStyle 'by' expression                            # sortExpressionCmd
                     | 'sort' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
                     | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                    # sortStackCmd
                     | 'sort' 'the'? 'cards' ('of' 'this' 'stack')? sortDirection sortStyle 'by' expression              # sortStackCmd
@@ -371,6 +371,7 @@ propertySpec        : 'the'? propertyName                                       
                     ;
 
 propertyName        : 'marked'          // Requires special rule because 'marked' is also a lexed token
+                    | 'id'
                     | ID
                     ;
 
@@ -489,6 +490,7 @@ oneArgFunc          : 'average'                                                 
                     | 'number of' ('item' | 'items')                                                                    # numberOfItemsFunc
                     | 'number of' ('line' | 'lines')                                                                    # numberOfLinesFunc
                     | 'number of' 'menuitems'                                                                           # numberOfMenuItemsFunc
+                    | 'number of' 'cards'                                                                               # numberOfBkgndCardsFunc
                     | 'random'                                                                                          # randomFunc
                     | 'sqrt'                                                                                            # sqrtFunc
                     | 'trunc'                                                                                           # truncFunc
@@ -526,13 +528,16 @@ noArgFunc           : 'mouse'                                                   
                     | ('english time' | 'long time')                                                                    # longTimeFormatFunc
                     | ('time' | 'short time' | 'abbrev time' | 'abbreviated time')                                      # abbrevTimeFormatFunc
                     | 'tool'                                                                                            # toolFunc
-                    | 'number of' ('card' | 'cd') 'parts'                                                               # numberOfCardParts
+                    | 'number of' ('card' | 'cd')? 'parts'                                                              # numberOfCardParts
                     | 'number of' ('background' | 'bkgnd') 'parts'                                                      # numberOfBkgndParts
-                    | 'number of' ('card' | 'cd') 'buttons'                                                             # numberOfCardButtons
+                    | 'number of' ('card' | 'cd')? 'buttons'                                                            # numberOfCardButtons
                     | 'number of' ('background' | 'bkgnd') 'buttons'                                                    # numberOfBkgndButtons
                     | 'number of' ('card' | 'cd') 'fields'                                                              # numberOfCardFields
-                    | 'number of' ('background' | 'bkgnd') 'fields'                                                     # numberOfBkgndFields
+                    | 'number of' ('background' | 'bkgnd')? 'fields'                                                    # numberOfBkgndFields
                     | 'number of' 'menus'                                                                               # numberOfMenusFunc
+                    | 'number of' 'cards'                                                                               # numberOfCardsFunc
+                    | 'number of' 'marked' 'cards'                                                                      # numberOfMarkedCards
+                    | 'number of' ('backgrounds' | 'bkgnds') ('in' 'this' 'stack')?                                     # numberOfBackgrounds
                     | 'menus'                                                                                           # menusFunc
                     | 'diskspace'                                                                                       # diskSpaceNoArgFunc
                     | 'params'                                                                                          # paramsFunc
@@ -568,7 +573,8 @@ FOUR_ITEM_LIST      : (LITERAL ',' LITERAL ',' LITERAL ',' LITERAL);
 ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
 DIGIT               : ('0' .. '9')+ ;
 
-COMMENT             : '--' ~('\r' | '\n')* -> skip;
+COMMENT             : '--' ~('\r' | '\n' | '|')* -> skip;
+BREAK               : '|' NEWLINE -> skip;
 NEWLINE             : ('\n' | '\r')+;
 WHITESPACE          : (' ' | '\t')+ -> skip;
 UNLEXED_CHAR        : . ;

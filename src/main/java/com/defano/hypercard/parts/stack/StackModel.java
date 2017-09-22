@@ -168,6 +168,12 @@ public class StackModel extends PartModel {
         return backgroundModels.size();
     }
 
+    public List<CardModel> getMarkedCards() {
+        return getCardModels().stream()
+                .filter(c -> c.getKnownProperty(CardModel.PROP_MARKED).booleanValue())
+                .collect(Collectors.toList());
+    }
+
     public List<CardModel> getCardsInBackground(int backgroundId) {
         return getCardModels().stream()
                 .filter(c -> c.getBackgroundId() == backgroundId)

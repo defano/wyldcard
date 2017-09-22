@@ -88,11 +88,13 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public JComponent getWindowPanel() {
         return cardPanel;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void bindModel(Object data) {
         if (data instanceof StackPart) {
@@ -106,6 +108,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onStackOpened(StackPart newStack) {
         this.stack = newStack;
@@ -116,30 +119,41 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         invalidateWindowTitle();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCardClosed(CardPart oldCard) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCardOpened(CardPart newCard) {
         displayCard(newCard);
         invalidateWindowTitle();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCardDimensionChanged(Dimension newDimension) {
         getWindowPanel().setPreferredSize(newDimension);
         getWindow().pack();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onStackNameChanged(String newName) {
         invalidateWindowTitle();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCurtainUpdated(BufferedImage screenCurtain) {
         this.screenCurtain.setCurtainImage(screenCurtain);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onCardOrderChanged() {
+        invalidateWindowTitle();
     }
 }

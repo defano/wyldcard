@@ -98,7 +98,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSortExpressionCmd(HyperTalkParser.SortExpressionCmdContext ctx) {
-        return new SortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (Expression) visit(ctx.expression()), (SortStyle) visit(ctx.sortStyle()));
+        return new SortCmd((Container) visit(ctx.container()), (ChunkType) visit(ctx.sortChunkType()), (Expression) visit(ctx.expression()), (SortDirection) visit(ctx.sortDirection()), (SortStyle) visit(ctx.sortStyle()));
     }
 
     @Override
@@ -1782,6 +1782,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_LINES: return new NumberOfFunc(Countable.LINE, (Expression) visit(ctx.factor()));
             case NUMBER_WORDS: return new NumberOfFunc(Countable.WORD, (Expression) visit(ctx.factor()));
             case NUMBER_MENUITEMS: return new NumberOfFunc(Countable.MENU_ITEMS, (Expression) visit(ctx.factor()));
+            case NUMBER_BKGND_CARDS: return new NumberOfFunc(Countable.BKGND_CARDS, (Expression) visit(ctx.factor()));
             case RANDOM: return new RandomFunc((Expression) visit(ctx.factor()));
             case SQRT:
             case TRUNC:
@@ -1834,6 +1835,9 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_CARD_FIELDS: return new NumberOfFunc(Countable.CARD_FIELDS);
             case NUMBER_BKGND_FIELDS: return new NumberOfFunc(Countable.BKGND_FIELDS);
             case NUMBER_MENUS: return new NumberOfFunc(Countable.MENUS);
+            case NUMBER_CARDS: return new NumberOfFunc(Countable.CARDS);
+            case NUMBER_MARKED_CARDS: return new NumberOfFunc(Countable.MARKED_CARDS);
+            case NUMBER_BKGNDS: return new NumberOfFunc(Countable.BKGNDS);
             case MENUS: return new MenusFunc();
             case DISK_SPACE: return new DiskSpaceFunc();
             case PARAM_COUNT: return new ParamCountFunc();
@@ -1996,8 +2000,28 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNumberOfBkgndCardsFunc(HyperTalkParser.NumberOfBkgndCardsFuncContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_CARDS;
+    }
+
+    @Override
     public Object visitNumberOfMenusFunc(HyperTalkParser.NumberOfMenusFuncContext ctx) {
         return BuiltInFunction.NUMBER_MENUS;
+    }
+
+    @Override
+    public Object visitNumberOfCardsFunc(HyperTalkParser.NumberOfCardsFuncContext ctx) {
+        return BuiltInFunction.NUMBER_CARDS;
+    }
+
+    @Override
+    public Object visitNumberOfMarkedCards(HyperTalkParser.NumberOfMarkedCardsContext ctx) {
+        return BuiltInFunction.NUMBER_MARKED_CARDS;
+    }
+
+    @Override
+    public Object visitNumberOfBackgrounds(HyperTalkParser.NumberOfBackgroundsContext ctx) {
+        return BuiltInFunction.NUMBER_BKGNDS;
     }
 
     @Override

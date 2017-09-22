@@ -93,6 +93,16 @@ public class HyperCard {
         stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex(), null);
     }
 
+
+    /**
+     * Gets the card currently displayed in the stack window (no accounting for screen lock).
+     *
+     * Note that scripts should always use {@link ExecutionContext#getCurrentCard()} to retrieve a reference to the
+     * current card, since, from the perspective of a script the active card may differ from the displayed card under
+     * certain conditions.
+     *
+     * @return The card currently displayed in the stack window. 
+     */
     public CardPart getDisplayedCard() {
         return stackPart.getDisplayedCard();
     }

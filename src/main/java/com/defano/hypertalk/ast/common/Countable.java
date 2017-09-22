@@ -12,5 +12,9 @@ public enum Countable {
     BKGND_FIELDS,
     CARD_FIELDS,
     MENU_ITEMS,
-    MENUS
+    MENUS,
+    CARDS,
+    MARKED_CARDS,
+    BKGNDS,
+    BKGND_CARDS
 }

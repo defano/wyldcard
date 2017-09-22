@@ -41,5 +41,15 @@ public interface StackObserver {
      */
     void onCardDimensionChanged(Dimension newDimension);
 
+    /**
+     * Fired to indicate the name of this stack has changed.
+     * @param newName The new name of the stack.
+     */
     void onStackNameChanged(String newName);
+
+    /**
+     * Fired to indicate that the set or order of cards has changed (typically as a result of sorting).
+     */
+    void onCardOrderChanged();
+
 }

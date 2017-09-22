@@ -223,6 +223,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
             int deletedCardIndex = stackModel.getCurrentCardIndex();
             stackModel.deleteCardModel();
             cardCountProvider.set(stackModel.getCardCount());
+            fireOnCardOrderChanged();
 
             return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
         }
@@ -242,6 +243,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         stackModel.newCardWithNewBackground();
         cardCountProvider.set(stackModel.getCardCount());
+        fireOnCardOrderChanged();
 
         return goNextCard(null);
     }
@@ -257,6 +259,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.set(stackModel.getCardCount());
+        fireOnCardOrderChanged();
 
         return goNextCard(null);
     }
@@ -292,6 +295,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
             stackModel.insertCard(card);
             cardCountProvider.set(stackModel.getCardCount());
+            fireOnCardOrderChanged();
 
             goNextCard(null);
         }
@@ -323,6 +327,9 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      */
     public void invalidateCache() {
         this.currentCard = null;
+        this.cardCountProvider.set(stackModel.getCardCount());
+
+        fireOnCardOrderChanged();
     }
 
     /**
@@ -410,6 +417,12 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     private void fireOnStackNameChanged(String newName) {
         for (StackObserver observer : observers) {
             observer.onStackNameChanged(newName);
+        }
+    }
+
+    private void fireOnCardOrderChanged() {
+        for (StackObserver observer : observers) {
+            observer.onCardOrderChanged();
         }
     }
 

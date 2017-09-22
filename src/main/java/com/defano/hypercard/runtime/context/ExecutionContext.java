@@ -216,6 +216,19 @@ public class ExecutionContext {
         this.card.set(card);
     }
 
+    /**
+     * Returns the card in scope of this execution context. That is, the card that the currently executing script should
+     * interrogate when looking for parts and properties.
+     *
+     * In most cases, this method returns the card visible to the user (not accounting for screen lock; equivalent to
+     * {@link HyperCard#getDisplayedCard()} but during certain operations (like card sorting) this method may return a
+     * different value.
+     *
+     * In general, scripts should always use this method for getting a reference to the active card; UI elements (like
+     * menus and palettes) should use {@link HyperCard#getDisplayedCard()}.
+     *
+     * @return The active card in the context of this script execution.
+     */
     public CardPart getCurrentCard() {
         CardPart currentCard = this.card.get();
         if (currentCard == null) {

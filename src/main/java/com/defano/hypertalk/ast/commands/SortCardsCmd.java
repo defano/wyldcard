@@ -13,6 +13,7 @@ import com.defano.hypertalk.comparator.CardExpressionComparator;
 import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -52,18 +53,25 @@ public class SortCardsCmd extends Command {
         List<CardModel> sortCards = filterCards(allCards);
 
         // Sort the indicated cards
-        StackModel stackModel = HyperCard.getInstance().getStack().getStackModel();
-        sortCards.sort(new CardExpressionComparator(stackModel, expression, style, direction));
+        try {
+            StackModel stackModel = HyperCard.getInstance().getStack().getStackModel();
+            sortCards.sort(new CardExpressionComparator(stackModel, expression, style, direction));
 
-        // Insert the sorted cards back into the full stack
-        List<CardModel> orderedCards = mergeCards(allCards, sortCards);
+            // Insert the sorted cards back into the full stack
+            List<CardModel> orderedCards = mergeCards(allCards, sortCards);
 
-        // Update the stack with the modified card order and invalidate the card cache
-        HyperCard.getInstance().getStack().getStackModel().setCardModels(orderedCards);
-        HyperCard.getInstance().getStack().invalidateCache();
+            // Update the stack with the modified card order and invalidate the card cache
+            HyperCard.getInstance().getStack().getStackModel().setCardModels(orderedCards);
 
-        // Finally, because card order changed, lets navigate back to where we started
-        HyperCard.getInstance().getStack().goCard(indexOfCardId(orderedCards, thisCardId), null);
+        } catch (HtUncheckedSemanticException e) {
+            // Error occurred sorting; revert all changes
+            HyperCard.getInstance().getStack().getStackModel().setCardModels(allCards);
+            HyperCard.getInstance().showErrorDialog(e);
+        } finally {
+            // Because card order  may have changed, lets navigate back to where we started
+            HyperCard.getInstance().getStack().goCard(indexOfCardId(HyperCard.getInstance().getStack().getStackModel().getCardModels(), thisCardId), null);
+            HyperCard.getInstance().getStack().invalidateCache();
+        }
     }
 
     private List<CardModel> filterCards(List<CardModel> cards) throws HtSemanticException {
