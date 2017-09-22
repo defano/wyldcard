@@ -9,6 +9,7 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;
 import com.defano.hypercard.window.forms.ScriptEditor;
@@ -134,6 +135,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     @Override
     public void partClosed() {
         super.partClosed();
+        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
 
     /** {@inheritDoc} */
@@ -218,6 +220,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
         getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
+        PeriodicMessageManager.getInstance().addWithin(getPartModel());
     }
 
     /** {@inheritDoc} */
@@ -225,6 +228,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
         getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
+        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
 
     /** {@inheritDoc} */

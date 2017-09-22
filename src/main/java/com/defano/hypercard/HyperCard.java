@@ -8,6 +8,7 @@
 
 package com.defano.hypercard;
 
+import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.FileContext;
 import com.defano.hypercard.awt.KeyboardManager;
@@ -62,6 +63,7 @@ public class HyperCard {
         KeyboardManager.start();
         MouseManager.start();
         PartEditor.start();
+        PeriodicMessageManager.getInstance().start();
 
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();

@@ -177,6 +177,7 @@ HyperTalk Java automatically sends the following messages to parts as the user i
  `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
+ `mouseWithin`      | Send repeatedly to buttons and fields while the mouse is within their bounds
  `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
  `arrowKey`         | Sent when an arrow key is pressed; sends the arrow key's direction as an argument to the message (`on arrowKey direction`, where `direction` is one of `up`, `down`, `left` or `right`)
  `commandKeyDown`   | Sent when the command key (or the _meta_ key, on non-macOS systems) is pressed

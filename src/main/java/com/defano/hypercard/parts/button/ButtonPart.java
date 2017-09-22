@@ -18,6 +18,7 @@
 package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.window.forms.ButtonPropertyEditor;
 import com.defano.hypercard.window.forms.ScriptEditor;
@@ -118,6 +119,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void partClosed() {
         super.partClosed();
         partModel.removePropertyChangedObserver(this);
+        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
 
     @Override
@@ -198,12 +200,14 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
         getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
+        PeriodicMessageManager.getInstance().addWithin(getPartModel());
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
         getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
+        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
 
     @Override

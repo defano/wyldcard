@@ -41,12 +41,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Interpreter {
 
-    private final static int MAX_COMPILE_THREADS = 4;           // Simultaneous background compile tasks
+    private final static int MAX_COMPILE_THREADS  = 4;          // Simultaneous background compile tasks
     private final static int MAX_EXECUTOR_THREADS = 12;         // Simultaneous scripts executing
     private final static int MAX_LISTENER_THREADS = 12;         // Simultaneous listeners waiting for handler completion
-
-    private final static int IDLE_PERIOD_MS = 200;              // Frequency that 'idle' message is sent to card
-    private final static int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
 
     private static final Executor messageExecutor;
     private static final ThreadPoolExecutor backgroundCompileExecutor;
@@ -54,37 +51,13 @@ public class Interpreter {
     private static final ThreadPoolExecutor completionListenerExecutor;
 
     private static final ListeningExecutorService listeningScriptExecutor;
-    private static final ScheduledExecutorService idleTimeExecutor;
-    private static int deferIdleCycles = 0;
 
     static {
         messageExecutor = Executors.newSingleThreadExecutor();
         completionListenerExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_LISTENER_THREADS, new ThreadFactoryBuilder().setNameFormat("completion-listener-%d").build());
         backgroundCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("compiler-%d").build());
         scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
-
         listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
-        idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("idle-executor-%d").build());
-
-        idleTimeExecutor.scheduleAtFixedRate(() -> {
-            int pendingHandlers = scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
-            if (pendingHandlers == 0) {
-                ExecutionContext.getContext().getGlobalProperties().resetProperties();
-
-                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferIdleCycles < 1) {
-                    ExecutionContext.getContext().getCurrentCard().getCardModel().receiveMessage(SystemMessage.IDLE.messageName, new ExpressionList(), (command, wasTrapped, error) -> {
-                        if (error != null) {
-                            deferIdleCycles = IDLE_DEFERRAL_CYCLES;
-                        }
-                    });
-                }
-
-                if (deferIdleCycles > 0) {
-                    --deferIdleCycles;
-                }
-            }
-
-        }, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -264,6 +237,10 @@ public class Interpreter {
      */
     public static Executor getMessageExecutor() {
         return messageExecutor;
+    }
+
+    public static int getPendingScriptCount() {
+        return scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
     }
 
     /**
