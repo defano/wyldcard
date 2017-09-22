@@ -15,12 +15,13 @@ import com.defano.hypercard.icons.IconFactory;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypercard.parts.button.IconAlignable;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class DefaultButton extends JButton implements ButtonComponent {
+public class DefaultButton extends JButton implements ButtonComponent, IconAlignable {
 
     private final ToolEditablePart toolEditablePart;
 
@@ -70,6 +71,15 @@ public class DefaultButton extends JButton implements ButtonComponent {
                 ButtonIcon icon = IconFactory.findIconForValue(newValue);
                 setIcon(icon == null ? null : icon.getImage());
                 break;
+
+            case ButtonModel.PROP_ICONALIGN:
+                setIconAlignment(newValue);
+                break;
         }
+    }
+
+    @Override
+    public JComponent getIconComponent() {
+        return this;
     }
 }

@@ -562,9 +562,10 @@ In addition to the properties common to all parts, a button has these additional
 
 Property    | Description
 ------------|------------
-`showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
-`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
 `autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
+`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
+`iconAlign` | Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property does not exist in HyperCard.
+`showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
 
 ### Fields
 
