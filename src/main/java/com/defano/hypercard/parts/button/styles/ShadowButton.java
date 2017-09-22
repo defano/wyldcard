@@ -15,9 +15,10 @@ import java.awt.*;
 
 public class ShadowButton extends AbstractLabelButton {
 
-    private final static int OUTLINE_STROKE = 1;
-    private final static int SHADOW_STROKE = 2;
-    private final static int SHADOW_OFFSET = 5;
+    private final static int OUTLINE_STROKE = 1;    // Width of button outline
+    private final static int SHADOW_STROKE = 2;     // Depth of shadow
+    private final static int SHADOW_OFFSET = 5;     // Shadow offset from bottom-left and top-right
+    private final static int HILITE_INSET = 1;      // Inset of fill-hilite
 
     public ShadowButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
@@ -30,7 +31,12 @@ public class ShadowButton extends AbstractLabelButton {
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
             g.setPaint(Color.BLACK);
-            g.fillRect(Math.floorDiv(OUTLINE_STROKE, 2) + OUTLINE_STROKE, Math.floorDiv(OUTLINE_STROKE, 2) + OUTLINE_STROKE,getWidth() - OUTLINE_STROKE * 2 - OUTLINE_STROKE - SHADOW_STROKE, getHeight() - OUTLINE_STROKE * 2 - OUTLINE_STROKE - SHADOW_STROKE);
+            g.fillRect(
+                    getInsets().left + HILITE_INSET,
+                    getInsets().top + HILITE_INSET,
+                    getWidth() - getInsets().left - getInsets().right - HILITE_INSET * 2,
+                    getHeight() - getInsets().top - getInsets().bottom - HILITE_INSET * 2
+            );
         }
     }
 

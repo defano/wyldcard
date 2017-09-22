@@ -15,7 +15,7 @@ public class RectangleBorder implements Border {
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         g.setColor(c.isEnabled() ? Color.BLACK : Color.GRAY);
         ((Graphics2D)g).setStroke(new BasicStroke(outlineStroke));
-        g.drawRect(outlineStroke / 2, outlineStroke / 2, width - outlineStroke, height - outlineStroke);
+        g.drawRect(outlineStroke / 2, outlineStroke / 2, width - outlineStroke / 2, height - outlineStroke / 2);
     }
 
     @Override

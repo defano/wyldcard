@@ -15,7 +15,8 @@ import java.awt.*;
 
 public class OvalButton extends AbstractLabelButton {
 
-    private final static int OUTLINE_STROKE = 2;
+    private final static int OUTLINE_STROKE = 1;    // Width of button outline
+    private final static int HILITE_INSET = 1;      // Inset of fill hilite
 
     public OvalButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
@@ -27,7 +28,12 @@ public class OvalButton extends AbstractLabelButton {
     protected void paintHilite(boolean isHilited, Graphics2D g) {
         if (isHilited) {
             g.setPaint(DEFAULT_HILITE_COLOR);
-            g.fillOval(OUTLINE_STROKE / 2 + OUTLINE_STROKE, OUTLINE_STROKE / 2 + OUTLINE_STROKE,getWidth() - OUTLINE_STROKE * 2 - OUTLINE_STROKE, getHeight() - OUTLINE_STROKE * 2 - OUTLINE_STROKE);
+            g.fillOval(
+                    getInsets().left + HILITE_INSET,
+                    getInsets().top + HILITE_INSET,
+                    getWidth() - getInsets().left - getInsets().right - HILITE_INSET * 2,
+                    getHeight() - getInsets().top - getInsets().bottom - HILITE_INSET * 2
+            );
         }
     }
 
