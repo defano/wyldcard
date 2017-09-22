@@ -13,7 +13,7 @@ public class PrintCardAction extends PrintActionDelegate {
         StringBuilder jobNameBuilder = new StringBuilder();
 
         jobNameBuilder.append("Card ");
-        jobNameBuilder.append(HyperCard.getInstance().getCard().getCardIndexInStack() + 1);
+        jobNameBuilder.append(HyperCard.getInstance().getDisplayedCard().getCardIndexInStack() + 1);
         jobNameBuilder.append(" in ");
         jobNameBuilder.append(HyperCard.getInstance().getStack().getStackModel().getStackName());
 
@@ -31,7 +31,7 @@ public class PrintCardAction extends PrintActionDelegate {
         Graphics2D g2d = (Graphics2D)g;
         g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
-        HyperCard.getInstance().getCard().printAll(g);
+        HyperCard.getInstance().getDisplayedCard().printAll(g);
 
         return PAGE_EXISTS;
     }

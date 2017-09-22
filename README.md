@@ -14,32 +14,32 @@ Apple called it "programming for the rest of us." Steve Wozniak called it ["the 
 
 ## Features
 
-HyperTalk Java attempts to maintain high-fidelity to Apple's original software. By and large, HyperTalk Java has been an effort to clone the original, not to contemporize it.  
+HyperTalk Java attempts to maintain high-fidelity to Apple's original software. By and large, HyperTalk Java has been an effort to clone the original, not to modernize it.  
 
 #### Organize information
 
-* Create, open, and save stacks of cards that can contain text, graphics, buttons, menus, sounds, and animations.
-* Supports foreground and background layers; styled buttons and fields similar to HyperCard's; text fields can hold richly styled text.
-* Read and write text files from script; print individual cards and stacks of cards.
+* Create, open, and save stacks of cards containing text, graphics, buttons, menus, sounds, and animations.
+* Utilize foreground and background layers; styled buttons and fields similar to HyperCard's (text fields hold richly styled text).
+* Sort cards and data; read and write text files from script; print individual cards or entire stacks of cards.
 
 #### Paint and draw
 
 * Use any of HyperCard's original paint tools, patterns, and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet)).
 * Full-color graphics with alpha transparency, plus the ability to reduce color depth to give images a more "vintage feel."
-* Drag-and-drop graphics onto the card; import and export graphics using the "Import Paint" / "Export Paint" menu commands.
-* Includes many of the original button icons, plus the ability to create new icons from paint selections.
+* Drag-and-drop graphics onto the card; import and export graphics from the filesystem.
+* Includes many of the original button icons, plus the ability to create new icons from card graphics.
 
 #### Script your own software
 
 * Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and can be trapped to override system behavior.
-* Supports much of the HyperTalk 2.2 language (almost all of the built-in commands and functions have been implemented).
-* Customize the application menu bar; author scripts that determine behavior of menu items.
+* Supports much of the HyperTalk 2.x language (most of the built-in commands and functions have been implemented).
+* Customize the application menu bar and author scripts that determine behavior of menu items.
 * Powerful expression language sports compound mutable chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 
 #### Play with sounds and effects
 
 * Play HyperCard's original sound effects (`flute`, `harpsichord` and `boing`), and `dial` telephone numbers.
-* Synthesize sounds into a sequence of musical notes; supports pitch, octave, accidental, duration and tempo.
+* Synthesize sounds into a sequence of musical notes supporting pitch, octave, accidental, duration and tempo.
 * Animate cards and parts by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
 ### Notable absences
@@ -47,7 +47,7 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software. 
 This is neither a HyperCard replacement nor an open-sourced release of Apple's software. HyperTalk Java is still missing quite a few features present in HyperCard:
 
 * Can't open or import old HyperCard stacks. Maybe in the future...
-* No multi-window stack support (`open stack ... in new window`), or palettes.
+* No multi-window stack support (`open stack ... in new window`), or scriptable palettes.
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No support for external commands or functions (XCMDs/XFCNs).
 * Many commands, functions, and properties have not yet been implemented.
@@ -66,9 +66,9 @@ Glad to have you aboard! Have a look at [the build instructions](doc/BUILDING.md
 
 #### I don't care about your dumb homework assignment. I want to run the real HyperCard.
 
-Use the SheepShaver emulator to run Macintosh System Software on newer Macs and PCs. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
+Use the SheepShaver emulator to run Macintosh System Software on modern Macs and PCs. See [this tutorial](https://jamesfriend.com.au/running-hypercard-stack-2014) for details.
 
-#### I'm an attorney and I'm looking for new work.
+#### I'm an attorney looking for new work.
 
 This project represents a homework assignment gone awry and is in no way associated with Apple's long-obsolete HyperCard application program. HyperCard&trade;, HyperTalk&trade; and any other trademarks used within are the property of FileMaker, Inc., Apple, Inc. and/or their rightful owner(s).
 
@@ -78,9 +78,9 @@ This project represents a homework assignment gone awry and is in no way associa
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts are attached to user interface elements called _parts_ and are triggered by user actions called _events_. (There is no singular "main" script in HyperTalk.)
 
-HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and converted to a number, boolean, or list depending on the context of its use. HyperCard does not allow nonsensical conversions: Adding `5` to `hello` produces a syntax error.
+HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and converted to a number, boolean, or list depending on the context of its use. HyperCard does not allow nonsensical conversions: `5 + "huh?"` produces a syntax error.
 
-Keywords and symbols (variables) in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is no different from `myvar`. Comments are preceded by `--`.
+Keywords and symbols in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is no different from `myvar`; `field "my field"` refers to the same part as `field "My Field"`. Comments are preceded by `--`.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -117,7 +117,13 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-Apple's HyperCard supported a newline character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block))) that could be used to break a long statement across multiple lines but this implementation does not.
+Apple's HyperCard supported a newline character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block))) that could be used to break a long statement across multiple lines. This version uses the pipe character (`|`) instead (which must be immediately followed by a newline):
+
+```
+answer "This is totally acceptable!" |
+  with "Love it" |
+  or "Hate it"
+```
 
 As you enter script text into the script editor or message box, HyperTalk Java will flag syntax errors as you type by underlining the offending text with a red squiggle.
 
@@ -132,8 +138,8 @@ Every card is comprised of two layers of graphics and user interface elements: a
 Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or use the HyperTalk `go` command:
 
 ```
-go to card "MyCard" -- navigates to next card named "MyCard"
-go to card 13       -- no effect if there are fewer than 13 cards
+go to card "MyCard"   -- navigates to first card named "MyCard"
+go to card 13         -- no effect if there are fewer than 13 cards
 go next card
 go to the third card
 go to card id 7
@@ -665,6 +671,61 @@ Global Property | Description
 
 Note that these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
 
+## Sorting
+
+HyperTalk provides a powerful and flexible construct for sorting cards in a stack, or the items or lines in a container.
+
+### Sorting cards
+
+The cards in a stack may be sorted by some expression using the syntax `sort [the] cards [of this stack] by <expression>`. For example:
+
+```
+-- Sort all cards based on the contents the first card field
+sort the cards of this stack by the first card field
+```
+
+Cards are sorted by evaluating `<expression>` in the context of each card (`<expression>` being `the first card field` in the previous example). For example, if a stack has two cards, the contents of `the first card field` from each card will be compared; if the text of the second card's field is alphabetically before that of first card's, then the two card's will be switch positions. If the sort expression cannot be evaluated on each card (perhaps because one of the two cards has no fields) then the sort fails and no cards change position.
+
+When sorting things, you can specify how HyperTalk should interpret the data it compares. Possible formats are `text` (alphabetical order), `numeric` (numerical order), `dateTime` (interpret values as dates or times and order them chronologically) or `international` (same as `text` in HyperTalk Java).  
+
+```
+sort cards dateTime by field "Timestamp"    -- Sort chronologically
+sort the cards numeric by bottomLine()      -- Sort numerically
+```
+
+By default, sorting orders things in ascending order (from first to last). You can reverse this order (or explicitly call for it) by specifying a sort direction:
+
+```
+sort cards descending numeric by the number of card buttons
+sort cards ascending by the name of this card  
+```
+
+Additionally, a subset of cards identified by background or their `marked` property can be sorted without affecting the order of other cards in the stack (even if those cards are not contiguous).
+
+```
+sort the marked cards of this stack by the width of card button 2
+sort cards of background id 2 by the random of 2
+```
+
+### Sorting the contents of a container
+
+The contents of a HyperTalk container can also be sorted using the command `sort <chunks> {of / in} <container> [<direction>] [<style>] [by <expression>]` where:
+
+* `<chunks>` is `[the] lines` or `[the] words`
+* `<container>` identifies a HyperTalk variable, part, or property
+* `<direction>` is either `ascending` or `descending`
+* `<style>` is `text`, `numeric`, `dateTime` or `international` (as described earlier)
+* `<expression>` is a HyperTalk expression in which `each` contains the value of each `line` or `item` being compared
+
+Consider these examples,
+
+```
+sort the lines of menu "Edit"                                    -- alphabetize items of Edit menu
+sort the items of myListVar descending numeric
+sort the lines of card field "Names" by the last word of each    -- sort names by last name
+sort the lines of card field "Names" by the middle word of each  -- or by middle name
+```
+
 ## Audio Visual Effects
 
 HyperTalk Java supports a nearly identical set of visual and sound effects as HyperCard.
@@ -734,7 +795,7 @@ go to card 3 with visual effect iris open to black very fast
 
 ### Sound Effects and Music
 
-HyperTalk Java has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes using the `play` command. Additionally, Touch-Tone phone sounds can be produced with the `dial` command, and the system alert sound can be emitted with `beep`.
+HyperTalk Java has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes with the `play` command. Additionally, Touch-Tone phone sounds can be produced with the `dial` command, and the system alert sound can be emitted with `beep`.
 
 ```
 play harpsichord
@@ -812,7 +873,7 @@ Command	         | Description
 `send`           | Send a message with optional arguments to a part; `send "mouseUp" to field id 3` or `send "myMessage 1,2" to this card`
 `set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `show`           | Makes a part visible on the card, for example `show button "My Button"`.
-`sort`           | Sorts the `lines` or `items` of a container based on value or expression using the syntax `sort [[the] {items,lines} of] <container> [{{ascending,descending} by <expression>}]` For example, `sort field id 0` or `sort the items of myContainer descending` or `sort lines of myField by the third character of each`. In the last syntax form, a local variable called `each` is implicitly declared and contains the chunk (the line or item) that is being compared.
+`sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
 `type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
@@ -848,7 +909,7 @@ Function        | Description
 `clickText`     | The last word that was clicked in a text field, or the empty string if no text has been clicked. For example, `put "You clicked " & the clickText`.
 `clickV`        | Returns the y-coordinate of the last location the user clicked the mouse.
 `commandKey`    | Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either `up` or `down`. Also available as `the cmdKey`
-`compound`      | Given two arguments; an interest rate, and a number of periods, `compound` returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`. For example, to calculate how much a $1000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years, `1000 * compound(.03, 6)` yields approximately `1194.05`.
+`compound`      | Given two arguments; an interest rate, and a number of periods, `compound` returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`. For example, to calculate how much a $1,000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years, `1000 * compound(.03, 6)` yields approximately `1194.05`.
 `cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
 `date`          | Returns the current date in a variety of formats. Use `the date` or `the short date` to yield a date in the format `07/04/16`; use `the long date` or `the English date` for `Sunday, July 4, 2016`; use `the abbrev date` or `the abbreviated date` for `Sun, Jul 4, 2016`.
 `diskSpace`     | Returns the number of free bytes on the filesystem containing HyperTalk Java, or any specified filesystem. For example, `the diskSpace` or `the diskSpace of "/Volumes/Macintosh HD"`. Accepts the path of any disk, folder or file.
@@ -867,7 +928,7 @@ Function        | Description
 `mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
 `mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
 `mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.
-`number of`     | Returns the count of something within a given container. Several usages including: `number of words [of,in] <container>`, `number of chars [of,in] <container>`, `number of lines [of,in] <container>`, `number of items [of,in] <container>`, `number of card buttons`, `number of card fields`, `number of background buttons`, `number of background fields`, `number of card parts`, `number of background parts`, `number of menuItems in menu <menuName>`, `number of menus`. For example, `repeat with n = 1 to the number of items in myList`
+`number of`     | Returns the count of something within a given container. Several usages including: `number of words in <container>`, `number of chars in <container>`, `number of lines in <container>`, `number of items in <container>`, `number of card { buttons / fields / parts}`, `number of background {buttons / fields / parts}`, `number of menuItems in menu <menuName>`, `number of menus`, `number of cards`, `number of marked cards`, `number of backgrounds`, `number of cards in background <background>`.
 `numToChar`     | Returns the character value associated with the given character _codepoint_. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`
 `offset`        | Accepts two values as arguments, `text1` and `text2`. Returns `0` if `text1` does not appear in `text2`, otherwise, returns the number of characters in `text2` where `text1` appears, counting from 1. For example, `offset("world", "Hello world")` yields `7`.
 `optionKey`     | Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`. For example, `repeat while the optionKey is up`

@@ -15,14 +15,13 @@ import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.runtime.serializer.Serializer;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.common.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StackModel extends PartModel {
 
@@ -32,7 +31,7 @@ public class StackModel extends PartModel {
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
     private Stack<Integer> backStack = new Stack<>();
-    private final List<CardModel> cardModels;
+    private List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
     private final Map<String, byte[]> userIcons;
 
@@ -93,7 +92,11 @@ public class StackModel extends PartModel {
     }
 
     public List<CardModel> getCardModels() {
-        return cardModels;
+        return new ArrayList<>(cardModels);
+    }
+
+    public void setCardModels(List<CardModel> cardModels) {
+        this.cardModels = cardModels;
     }
 
     public CardModel getCardModel(int index) {
@@ -165,11 +168,16 @@ public class StackModel extends PartModel {
         return backgroundModels.size();
     }
 
-    public long getCardCountInBackground(int backgroundId) {
-        return getCardModels()
-                .stream()
+    public List<CardModel> getMarkedCards() {
+        return getCardModels().stream()
+                .filter(c -> c.getKnownProperty(CardModel.PROP_MARKED).booleanValue())
+                .collect(Collectors.toList());
+    }
+
+    public List<CardModel> getCardsInBackground(int backgroundId) {
+        return getCardModels().stream()
                 .filter(c -> c.getBackgroundId() == backgroundId)
-                .count();
+                .collect(Collectors.toList());
     }
 
     public void createIcon(String name, BufferedImage image) {

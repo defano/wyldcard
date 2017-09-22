@@ -67,7 +67,7 @@ public class ToolsContext {
 
     private ToolsContext() {
         selectedFontProvider.addObserver((o, arg) -> hilitedFontProvider.set((Font) arg));
-        gridSpacingProvider.addObserver((o, arg) -> HyperCard.getInstance().getCard().getCanvas().setGridSpacing((Integer) arg));
+        gridSpacingProvider.addObserver((o, arg) -> HyperCard.getInstance().getDisplayedCard().getCanvas().setGridSpacing((Integer) arg));
     }
 
     public static ToolsContext getInstance() {
@@ -117,7 +117,7 @@ public class ToolsContext {
 
     public void selectAll() {
         SelectionTool tool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-        tool.createSelection(new Rectangle(0, 0, HyperCard.getInstance().getCard().getWidth() - 1, HyperCard.getInstance().getCard().getHeight() - 1));
+        tool.createSelection(new Rectangle(0, 0, HyperCard.getInstance().getDisplayedCard().getWidth() - 1, HyperCard.getInstance().getDisplayedCard().getHeight() - 1));
     }
 
     public Color getForegroundColor() {
@@ -186,10 +186,10 @@ public class ToolsContext {
 
     public void toggleMagnifier() {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
-            HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
+            HyperCard.getInstance().getDisplayedCard().getCanvas().setScale(1.0);
             forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
-        } else if (HyperCard.getInstance().getCard().getCanvas().getScale() != 1.0) {
-            HyperCard.getInstance().getCard().getCanvas().setScale(1.0);
+        } else if (HyperCard.getInstance().getDisplayedCard().getCanvas().getScale() != 1.0) {
+            HyperCard.getInstance().getDisplayedCard().getCanvas().setScale(1.0);
         } else {
             forceToolSelection(ToolType.MAGNIFIER, false);
         }
@@ -249,13 +249,13 @@ public class ToolsContext {
     public void toggleIsEditingBackground() {
         getPaintTool().deactivate();
         isEditingBackground.set(!isEditingBackground.get());
-        reactivateTool(HyperCard.getInstance().getCard().getCanvas());
+        reactivateTool(HyperCard.getInstance().getDisplayedCard().getCanvas());
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {
         getPaintTool().deactivate();
         this.isEditingBackground.set(isEditingBackground);
-        reactivateTool(HyperCard.getInstance().getCard().getCanvas());
+        reactivateTool(HyperCard.getInstance().getDisplayedCard().getCanvas());
     }
 
     public boolean isShapesFilled() {
@@ -281,7 +281,7 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        HyperCard.getInstance().getCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        HyperCard.getInstance().getDisplayedCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 forceToolSelection(toolType, false);
             }
@@ -336,7 +336,7 @@ public class ToolsContext {
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
                 .withFontProvider(selectedFontProvider)
                 .withShapeSidesProvider(shapeSidesProvider)
-                .makeActiveOnCanvas(HyperCard.getInstance().getCard().getCanvas())
+                .makeActiveOnCanvas(HyperCard.getInstance().getDisplayedCard().getCanvas())
                 .build();
 
         // When requested, move current selection over to the new tool

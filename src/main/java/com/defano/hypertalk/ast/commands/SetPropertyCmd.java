@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.commands;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.PartExp;
@@ -30,7 +29,7 @@ public class SetPropertyCmd extends Command {
         if (this.part == null) {
             ExecutionContext.getContext().getGlobalProperties().setProperty(property, value);
         } else {
-            HyperCard.getInstance().getCard().findPart(part.evaluateAsSpecifier()).setKnownProperty(property, value);
+            ExecutionContext.getContext().getCurrentCard().findPart(part.evaluateAsSpecifier()).setKnownProperty(property, value);
         }
     }
 }

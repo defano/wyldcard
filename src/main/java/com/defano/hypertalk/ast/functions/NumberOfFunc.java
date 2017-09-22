@@ -10,8 +10,11 @@ package com.defano.hypertalk.ast.functions;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.menu.HyperCardMenuBar;
+import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 /**
@@ -19,21 +22,21 @@ import com.defano.hypertalk.exception.HtSemanticException;
  */
 public class NumberOfFunc extends Expression {
 
-    public final Countable itemtype;
+    public final Countable itemType;
     public final Expression expression;
 
-    public NumberOfFunc(Countable itemtype) {
-        this.itemtype = itemtype;
+    public NumberOfFunc(Countable itemType) {
+        this.itemType = itemType;
         this.expression = null;
     }
 
-    public NumberOfFunc(Countable itemtype, Expression expression) {
-        this.itemtype = itemtype;
+    public NumberOfFunc(Countable itemType, Expression expression) {
+        this.itemType = itemType;
         this.expression = expression;
     }
 
     public Value evaluate() throws HtSemanticException {
-        switch (itemtype) {
+        switch (itemType) {
             case CHAR:
                 return new Value(expression.evaluate().charCount());
             case WORD:
@@ -44,21 +47,30 @@ public class NumberOfFunc extends Expression {
             case ITEM:
                 return new Value(expression.evaluate().itemCount());
             case CARD_PARTS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(null, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(null, Owner.CARD));
             case BKGND_PARTS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(null, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(null, Owner.BACKGROUND));
             case CARD_BUTTONS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.BUTTON, Owner.CARD));
             case BKGND_BUTTONS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
             case CARD_FIELDS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
-                return new Value(HyperCard.getInstance().getCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
                 return new Value(HyperCardMenuBar.instance.getMenuCount());
+            case CARDS:
+                return new Value(HyperCard.getInstance().getStack().getCardCountProvider().get());
+            case MARKED_CARDS:
+                return new Value(HyperCard.getInstance().getStack().getStackModel().getMarkedCards().size());
+            case BKGNDS:
+                return new Value(HyperCard.getInstance().getStack().getStackModel().getBackgroundCount());
+            case BKGND_CARDS:
+                BackgroundModel model = (BackgroundModel) HyperCard.getInstance().getStack().findPart(((PartExp) expression).evaluateAsSpecifier());
+                return new Value(HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(model.getId()).size());
             default:
-                throw new RuntimeException("Bug! Unimplemented countable item type: " + itemtype);
+                throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }
     }
 }

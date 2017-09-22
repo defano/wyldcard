@@ -17,7 +17,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     public void onPrintStarted() {
-        this.currentCard = HyperCard.getInstance().getCard().getCardIndexInStack();
+        this.currentCard = HyperCard.getInstance().getDisplayedCard().getCardIndexInStack();
     }
 
     @Override

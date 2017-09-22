@@ -49,7 +49,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 /**
- * The "controller" object representing a card in the stack.
+ * The "controller" object representing a card in the stack. Note that a card cannot exist apart from a Stack; this
+ * limitation is imposed by the fact that a CardPart represents the merged view of the card and background (graphics,
+ * buttons, and fields).
  *
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
@@ -67,28 +69,28 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     private BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
 
     /**
-     * Instantiates the CardPart at a specified location in a specified stack.
+     * Instantiates the CardPart occurring at a specified position in a the stack.
      *
      * @param cardIndex The location in the stack whose card should be returned.
      * @param stack The stack data model containing the card to return
      * @return The CardPart.
      * @throws HtException Thrown if an error occurs creating the card.
      */
-    public static CardPart fromLocationInStack(int cardIndex, StackModel stack) throws HtException {
-        CardPart card = new CardPart();
+    public static CardPart fromPositionInStack(int cardIndex, StackModel stack) throws HtException {
+        return fromModel(stack.getCardModel(cardIndex), stack);
+    }
 
-        card.cardModel = stack.getCardModel(cardIndex);
-        card.stackModel = stack;
-
-        // Add card parts to this card
-        for (PartModel thisPart : card.cardModel.getPartModels()) {
-            card.addPartFromModel(thisPart, CardLayer.CARD_PARTS);
-        }
-
-        // Add background parts to this card
-        for (PartModel thisPart : card.getCardBackground().getPartModels()) {
-            card.addPartFromModel(thisPart, CardLayer.BACKGROUND_PARTS);
-        }
+    /**
+     * Instantiates a CardPart given a CardModel and StackModel.
+     *
+     * @param model The model of the card to instantiate.
+     * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
+     *              card's background id).
+     * @return The fully instantiated CardPart.
+     * @throws HtException Thrown if an error occurs instantiating the card.
+     */
+    public static CardPart fromModel(CardModel model, StackModel stack) throws HtException {
+        CardPart card = skeletonFromModel(model, stack);
 
         // Setup part cut, copy and paste
         card.setTransferHandler(new CardPartTransferHandler(card));
@@ -116,6 +118,38 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
 
         for (FieldPart thisField : card.fields.getParts()) {
             thisField.getPartModel().notifyPropertyChangedObserver(thisField);
+        }
+
+        return card;
+    }
+
+    /**
+     * Produces a skeleton CardPart object intended only for programmatic interaction with the card (as used for card
+     * sort operations). Skeleton CardPart objects cannot correctly be displayed onscreen or interacted with.
+     *
+     * Object returned does not contain a built graphics canvas; mouse and keyboard listeners are not registered; and
+     * part components (button and field views) are not updated to reflect the values in their model.
+     *
+     * @param model The model of the card to instantiate.
+     * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
+     *              card's background id).
+     * @return A partially constructed CardPart useful for programmatic inspection
+     * @throws HtException Thrown if an error occurs constructing the CardPart.
+     */
+    public static CardPart skeletonFromModel(CardModel model, StackModel stack) throws HtException {
+        CardPart card = new CardPart();
+
+        card.cardModel = model;
+        card.stackModel = stack;
+
+        // Add card parts to this card
+        for (PartModel thisPart : card.cardModel.getPartModels()) {
+            card.addPartFromModel(thisPart, CardLayer.CARD_PARTS);
+        }
+
+        // Add background parts to this card
+        for (PartModel thisPart : card.getCardBackground().getPartModels()) {
+            card.addPartFromModel(thisPart, CardLayer.BACKGROUND_PARTS);
         }
 
         return card;

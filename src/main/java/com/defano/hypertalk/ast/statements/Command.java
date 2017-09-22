@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -36,7 +36,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
         cdl = new CountDownLatch(1);
 
         // Send command message to current card
-        HyperCard.getInstance().getCard().getPartModel().receiveMessage(messageName, getEvaluatedMessageArguments(), this);
+        ExecutionContext.getContext().getCurrentCard().getPartModel().receiveMessage(messageName, getEvaluatedMessageArguments(), this);
 
         // Wait for command handler to finish executing
         try {

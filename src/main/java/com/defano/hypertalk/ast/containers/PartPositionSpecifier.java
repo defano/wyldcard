@@ -6,9 +6,9 @@ import com.defano.hypertalk.ast.common.Position;
 
 public class PartPositionSpecifier implements PartSpecifier {
 
-    private final Position position;
-    private final Owner layer;
-    private final PartType type;
+    public final Position position;
+    public final Owner layer;
+    public final PartType type;
 
     public PartPositionSpecifier(Owner layer, PartType type, Position position) {
         this.position = position;

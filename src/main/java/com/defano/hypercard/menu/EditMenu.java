@@ -30,18 +30,18 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getDisplayedCard().getCanvas());
         CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> HyperCard.getInstance().getCard().getCanvas().undo())
+                .withAction(e -> HyperCard.getInstance().getDisplayedCard().getCanvas().undo())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> HyperCard.getInstance().getCard().getCanvas().redo())
+                .withAction(e -> HyperCard.getInstance().getDisplayedCard().getCanvas().redo())
                 .build(this);
 
         this.addSeparator();

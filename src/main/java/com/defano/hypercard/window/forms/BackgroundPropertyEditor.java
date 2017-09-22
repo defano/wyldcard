@@ -79,7 +79,7 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
             backgroundName.setText(cardPart.getCardBackground().getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
         }
 
-        long cardCount = cardPart.getStackModel().getCardCountInBackground(backgroundId);
+        long cardCount = cardPart.getStackModel().getCardsInBackground(backgroundId).size();
         long fieldCount = cardPart.getPartCount(PartType.FIELD, Owner.BACKGROUND);
         long buttonCount = cardPart.getPartCount(PartType.BUTTON, Owner.BACKGROUND);
 

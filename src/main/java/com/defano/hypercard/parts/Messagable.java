@@ -5,18 +5,16 @@ import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.CheckedFuture;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
 /**
  * Represents an object that can receive HyperTalk messages.
@@ -173,17 +171,17 @@ public interface Messagable {
             case BACKGROUND:
                 return HyperCard.getInstance().getStack().getStackModel();
             case MESSAGE_BOX:
-                return HyperCard.getInstance().getCard().getCardModel();
+                return ExecutionContext.getContext().getCurrentCard().getCardModel();
             case CARD:
-                return HyperCard.getInstance().getCard().getCardBackground();
+                return ExecutionContext.getContext().getCurrentCard().getCardBackground();
             case STACK:
                 return null;
             case FIELD:
             case BUTTON:
                 if (getMe().owner() == Owner.BACKGROUND) {
-                    return HyperCard.getInstance().getCard().getCardBackground();
+                    return ExecutionContext.getContext().getCurrentCard().getCardBackground();
                 } else {
-                    return HyperCard.getInstance().getCard().getCardModel();
+                    return ExecutionContext.getContext().getCurrentCard().getCardModel();
                 }
         }
 

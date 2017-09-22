@@ -10,6 +10,9 @@ package com.defano.hypertalk.exception;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+/**
+ * Indication that a HyperTalk parse error occurred; encapsulates line and column number where the parser failed.
+ */
 public class HtParseError extends RuntimeException {
     public final int lineNumber, columnNumber;
 

@@ -51,18 +51,21 @@ public class TestDateUtils {
 
     }
 
+    @SuppressWarnings("deprecation")
     private void assertDate(Date d1, Date d2) {
         assertEquals(d1.getYear(), d2.getYear());
         assertEquals(d1.getMonth(), d2.getMonth());
         assertEquals(d1.getDate(), d2.getDate());
     }
 
+    @SuppressWarnings("deprecation")
     private void assertDateTime(Date d1, Date d2) {
         assertDate(d1, d2);
         assertEquals(d1.getHours(), d2.getHours());
         assertEquals(d1.getMinutes(), d2.getMinutes());
     }
 
+    @SuppressWarnings("deprecation")
     private void assertDateTimeSecond(Date d1, Date d2) {
         assertDateTime(d1, d2);
         assertEquals(d1.getSeconds(), d2.getSeconds());

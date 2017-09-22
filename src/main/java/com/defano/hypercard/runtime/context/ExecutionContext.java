@@ -10,11 +10,9 @@ package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -40,6 +38,7 @@ public class ExecutionContext {
     private final ThreadLocal<StackFrame> frame = new ThreadLocal<>();
     private final ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
     private final ThreadLocal<Value> result = new ThreadLocal<>();
+    private final ThreadLocal<CardPart> card = new ThreadLocal<>();
 
     private ExecutionContext() {
         globals = new SymbolTable();
@@ -179,7 +178,7 @@ public class ExecutionContext {
      */
     public PartModel get(PartSpecifier ps) throws PartException {
         if (ps.isCardElementSpecifier()) {
-            return HyperCard.getInstance().getCard().findPart(ps);
+            return getCurrentCard().findPart(ps);
         } else if (ps.isStackElementSpecifier()) {
             return HyperCard.getInstance().getStack().findPart(ps);
         }
@@ -212,7 +211,33 @@ public class ExecutionContext {
 
         get(ps).setProperty(property, mutable);
     }
-    
+
+    public void setCurrentCard(CardPart card) {
+        this.card.set(card);
+    }
+
+    /**
+     * Returns the card in scope of this execution context. That is, the card that the currently executing script should
+     * interrogate when looking for parts and properties.
+     *
+     * In most cases, this method returns the card visible to the user (not accounting for screen lock; equivalent to
+     * {@link HyperCard#getDisplayedCard()} but during certain operations (like card sorting) this method may return a
+     * different value.
+     *
+     * In general, scripts should always use this method for getting a reference to the active card; UI elements (like
+     * menus and palettes) should use {@link HyperCard#getDisplayedCard()}.
+     *
+     * @return The active card in the context of this script execution.
+     */
+    public CardPart getCurrentCard() {
+        CardPart currentCard = this.card.get();
+        if (currentCard == null) {
+            return HyperCard.getInstance().getDisplayedCard();
+        } else {
+            return currentCard;
+        }
+    }
+
     public void setIt (Object value) {
         globals.put("it", new Value(value.toString()));
     }
@@ -310,7 +335,7 @@ public class ExecutionContext {
         if (ps.isStackElementSpecifier()) {
             thePart = HyperCard.getInstance().getStack().findPart(ps);
         } else {
-            thePart = HyperCard.getInstance().getCard().findPart(ps);
+            thePart = getCurrentCard().findPart(ps);
         }
 
         if (thePart != null) {

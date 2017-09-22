@@ -74,8 +74,8 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
-        getCurrentCard().openCard();
-        fireOnCardOpened(getCurrentCard());
+        getDisplayedCard().openCard();
+        fireOnCardOpened(getDisplayedCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
 
@@ -139,10 +139,10 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         CardPart destination;
 
         if (visualEffect == null) {
-            destination = go(cardIndex, true);
+            destination = go(cardIndex);
         } else {
             CurtainManager.getInstance().setScreenLocked(true);
-            destination = go(cardIndex, true);
+            destination = go(cardIndex);
             CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
         }
 
@@ -223,6 +223,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
             int deletedCardIndex = stackModel.getCurrentCardIndex();
             stackModel.deleteCardModel();
             cardCountProvider.set(stackModel.getCardCount());
+            fireOnCardOrderChanged();
 
             return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
         }
@@ -242,6 +243,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         stackModel.newCardWithNewBackground();
         cardCountProvider.set(stackModel.getCardCount());
+        fireOnCardOrderChanged();
 
         return goNextCard(null);
     }
@@ -257,6 +259,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.set(stackModel.getCardCount());
+        fireOnCardOrderChanged();
 
         return goNextCard(null);
     }
@@ -266,7 +269,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * stack).
      */
     public void cutCard() {
-        cardClipboardProvider.set(getCurrentCard());
+        cardClipboardProvider.set(getDisplayedCard());
         cardCountProvider.set(stackModel.getCardCount());
 
         deleteCard();
@@ -276,7 +279,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * Copies the current card to the card clipboard for pasting elsewhere in the stack.
      */
     public void copyCard() {
-        cardClipboardProvider.set(getCurrentCard());
+        cardClipboardProvider.set(getDisplayedCard());
     }
 
     /**
@@ -287,8 +290,12 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         if (cardClipboardProvider.get() != null) {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
-            stackModel.insertCard(cardClipboardProvider.get().getCardModel().copyOf());
+            CardModel card = cardClipboardProvider.get().getCardModel().copyOf();
+            card.defineProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
+
+            stackModel.insertCard(card);
             cardCountProvider.set(stackModel.getCardCount());
+            fireOnCardOrderChanged();
 
             goNextCard(null);
         }
@@ -306,12 +313,23 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * Gets the currently displayed card.
      * @return The current card
      */
-    public CardPart getCurrentCard() {
+    public CardPart getDisplayedCard() {
         if (currentCard == null) {
             currentCard = getCard(getStackModel().getCurrentCardIndex());
         }
 
         return currentCard;
+    }
+
+    /**
+     * Invalidates the card cache; useful only if modifying this stack's underlying stack model (i.e., as a
+     * result of card sorting or re-ordering).
+     */
+    public void invalidateCache() {
+        this.currentCard = null;
+        this.cardCountProvider.set(stackModel.getCardCount());
+
+        fireOnCardOrderChanged();
     }
 
     /**
@@ -402,21 +420,27 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         }
     }
 
+    private void fireOnCardOrderChanged() {
+        for (StackObserver observer : observers) {
+            observer.onCardOrderChanged();
+        }
+    }
+
     private CardPart getCard(int index) {
         try {
-            return CardPart.fromLocationInStack(index, stackModel);
+            return CardPart.fromPositionInStack(index, stackModel);
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
     }
 
-    private CardPart go(int cardIndex, boolean addToBackstack) {
+    private CardPart go(int cardIndex) {
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
-            return getCurrentCard();
+            return getDisplayedCard();
         }
 
-        deactivateCard(addToBackstack);
+        deactivateCard(true);
         return activateCard(cardIndex);
     }
 
@@ -434,8 +458,8 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         }
 
         // Notify observers that current card is going away
-        fireOnCardClosing(getCurrentCard());
-        getCurrentCard().closeCard();
+        fireOnCardClosing(getDisplayedCard());
+        getDisplayedCard().closeCard();
     }
 
     private CardPart activateCard (int cardIndex) {
@@ -460,11 +484,11 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
     }
 
     private boolean canDeleteCard() {
-        long cardCountInBackground = stackModel.getCardCountInBackground(getCurrentCard().getCardModel().getBackgroundId());
+        long cardCountInBackground = stackModel.getCardsInBackground(getDisplayedCard().getCardModel().getBackgroundId()).size();
 
         return stackModel.getCardCount() > 1 &&
-                !getCurrentCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
-                (cardCountInBackground > 1 || !getCurrentCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+                !getDisplayedCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
+                (cardCountInBackground > 1 || !getDisplayedCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
 }

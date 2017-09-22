@@ -31,13 +31,13 @@ public class SortCmd extends Command {
     public final Expression expression;
     public final SortStyle sortStyle;
 
-    public SortCmd(Container container, ChunkType chunkType, Expression expression, SortStyle sortStyle) {
+    public SortCmd(Container container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
         super("sort");
 
         this.container = container;
         this.chunkType = chunkType;
         this.expression = expression;
-        this.direction = null;
+        this.direction = direction;
         this.sortStyle = sortStyle;
     }
 
@@ -61,7 +61,7 @@ public class SortCmd extends Command {
 
         // Sort by expression
         else {
-            items.sort(new ExpressionValueComparator(expression, sortStyle));
+            items.sort(new ExpressionValueComparator(expression, direction, sortStyle));
         }
 
         putSortedItems(items);
