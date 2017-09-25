@@ -68,27 +68,14 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
      * @return The newly created FieldPart
      */
     public static FieldPart newField(CardPart parent, Owner owner) {
-        FieldPart newField = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
+        FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
+        newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
         // When a new field is created, make the field tool active and select the newly created part
         ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
         PartToolContext.getInstance().setSelectedPart(newField);
 
         return newField;
-    }
-
-    /**
-     * Creates a new field of the given size and location on the provided card.
-     * @param parent The card in which to create the field.
-     * @param geometry The size and location of the field.
-     * @return The newly created field.
-     */
-    public static FieldPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
-        FieldPart field = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
-
-        field.initProperties(geometry);
-
-        return field;
     }
 
     /**
@@ -102,6 +89,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public static FieldPart fromModel(CardPart parent, FieldModel model, Owner owner) throws HtException {
         FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent, owner);
 
+        model.setCurrentCardId(parent.getId());
         field.partModel = model;
         field.partModel.addPropertyChangedObserver(field);
 
@@ -314,7 +302,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     private void initProperties(Rectangle geometry) {
         int id = parent.get().getStackModel().getNextFieldId();
 
-        partModel = FieldModel.newFieldModel(id, geometry, owner);
+        partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
+        partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
         partModel.setFont(ToolsContext.getInstance().getSelectedFontProvider().get());
         partModel.addPropertyChangedObserver(this);
     }

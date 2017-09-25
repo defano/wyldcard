@@ -1,5 +1,8 @@
 package com.defano.hypercard.parts.field.styles;
 
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.paint.ToolsContext;
+
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import javax.swing.text.BadLocationException;
@@ -24,7 +27,9 @@ public class HyperCardTextPane extends JTextPane {
         super.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                expandContentsToClickLoc(e.getPoint());
+                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+                    expandContentsToClickLoc(e.getPoint());
+                }
             }
         });
     }

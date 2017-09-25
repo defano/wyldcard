@@ -105,11 +105,11 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
     @Override
     public void partOpened() {
-        fieldComponent.partOpened();
-
         getPartModel().addPropertyChangedObserver(fieldComponent);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
+
+        fieldComponent.partOpened();
     }
 
     @Override

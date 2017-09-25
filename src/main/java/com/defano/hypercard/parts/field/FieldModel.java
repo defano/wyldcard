@@ -13,7 +13,13 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.StyledDocument;
+import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A data model representing a field part on a card. See {@link FieldPart} for the associated
@@ -26,15 +32,21 @@ public class FieldModel extends CardLayerPartModel {
     public static final String PROP_LOCKTEXT = "locktext";
     public static final String PROP_SHOWLINES = "showlines";
     public static final String PROP_STYLE = "style";
+    public static final String PROP_SHAREDTEXT = "sharedtext";
 
-    private byte[] styleData;
+    private byte[] sharedRtf;
+    private Map<Integer, byte[]> unsharedRtf = new HashMap<>();
+
+    private transient int currentCardId = 0;
 
     public FieldModel (Owner owner) {
         super(PartType.FIELD, owner);
     }
 
-    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner) {
+    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, int parentCardId) {
         FieldModel partModel = new FieldModel(owner);
+
+        partModel.currentCardId = parentCardId;
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -48,19 +60,50 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_LOCKTEXT, new Value(false), false);
         partModel.defineProperty(PROP_SHOWLINES, new Value(true), false);
         partModel.defineProperty(PROP_STYLE, new Value(FieldStyle.TRANSPARENT.getName()), false);
-        partModel.defineProperty(PROP_TEXT, new Value(""), false);
         partModel.defineProperty(PROP_TEXTALIGN, new Value("left"), false);
         partModel.defineProperty(PROP_CONTENTS, new Value(""), false);
+        partModel.defineProperty(PROP_SHAREDTEXT, new Value(false), false);
+
+        partModel.defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(partModel.getPlainText()));
 
         return partModel;
     }
 
-    public byte[] getStyleData() {
-        return styleData;
+    public byte[] getRtf() {
+        if (useSharedText()) {
+            return sharedRtf;
+        } else {
+            return unsharedRtf.getOrDefault(getCurrentCardId(), new byte[0]);
+        }
     }
 
-    public void setStyleData(byte[] styleData) {
-        this.styleData = styleData;
+    public void setRtf(byte[] rtf) {
+        if (useSharedText()) {
+            this.sharedRtf = rtf;
+        } else {
+            unsharedRtf.put(getCurrentCardId(), rtf);
+        }
+    }
+
+    private boolean useSharedText() {
+        return getOwner() == Owner.CARD || getKnownProperty(PROP_SHAREDTEXT).booleanValue();
+    }
+
+    private String getPlainText() {
+
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(getRtf());
+            StyledDocument doc = new DefaultStyledDocument();
+
+            new RTFEditorKit().read(bais, doc, 0);
+            bais.close();
+
+            // RTFEditorKit appears to (erroneously) append a newline when we deserialize; get rid of that.
+            return doc.getText(0, doc.getLength() - 1);
+
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     /** {@inheritDoc} */
@@ -68,4 +111,18 @@ public class FieldModel extends CardLayerPartModel {
     public String getValueProperty() {
         return PROP_TEXT;
     }
+
+    /**
+     * For the purposes of background fields that do not have the sharedText property set, this value determines which
+     * card's text is actively displayed in the field.
+     * @param cardId
+     */
+    public void setCurrentCardId(int cardId) {
+        this.currentCardId = cardId;
+    }
+
+    private int getCurrentCardId() {
+        return currentCardId;
+    }
 }
+

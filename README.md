@@ -580,12 +580,12 @@ Style                                            | Name          | Notes
 
 A field has these unique properties:
 
-Property   | Description
------------|----------------------
-`text`     | Returns or sets the text contained within this field
-`lockText` | Returns or sets whether the text contained by the field can be edited by the user.
-`showLines`| Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
-`dontWrap` | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
+Property     | Description
+-------------|----------------------
+`lockText`   | Returns or sets whether the text contained by the field can be edited by the user.
+`showLines`  | Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
+`dontWrap`   | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
+`sharedText` | Has no effect on card fields; on background fields, when `true` each card in the background shares the same text in this field. When `false`, each card in the background can place a unique value into the field.
 
 ### Menus
 

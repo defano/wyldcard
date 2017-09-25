@@ -15,6 +15,7 @@ import com.defano.hypercard.parts.field.FieldStyle;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypertalk.ast.common.Owner;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -49,6 +50,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
     private JLabel partLabelValue;
     private JLabel fieldLabelValue;
     private JButton textStyleButton;
+    private JCheckBox sharedText;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -116,6 +118,10 @@ public class FieldPropertyEditor extends HyperCardDialog {
             isWrapText.setSelected(model.getKnownProperty(FieldModel.PROP_DONTWRAP).booleanValue());
             showLines.setSelected(model.getKnownProperty(FieldModel.PROP_SHOWLINES).booleanValue());
             style.setSelectedItem(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue());
+
+            sharedText.setEnabled(part.getOwner() == Owner.BACKGROUND);
+            sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
+
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + model);
         }
@@ -132,6 +138,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         model.setKnownProperty(FieldModel.PROP_DONTWRAP, new Value(isWrapText.isSelected()));
         model.setKnownProperty(FieldModel.PROP_SHOWLINES, new Value(showLines.isSelected()));
         model.setKnownProperty(FieldModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
+        model.setKnownProperty(FieldModel.PROP_SHAREDTEXT, new Value(sharedText.isSelected()));
     }
 
     /**
@@ -233,7 +240,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         final Spacer spacer2 = new Spacer();
         panel3.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(3, 3, new Insets(5, 5, 5, 5), -1, -1));
+        panel4.setLayout(new GridLayoutManager(4, 3, new Insets(5, 5, 5, 5), -1, -1));
         fieldEditor.add(panel4, new GridConstraints(1, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Look and Feel"));
         isWrapText = new JCheckBox();
@@ -255,6 +262,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
         showLines = new JCheckBox();
         showLines.setText("Show Lines");
         panel4.add(showLines, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        sharedText = new JCheckBox();
+        sharedText.setText("Shared Text");
+        panel4.add(sharedText, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

@@ -60,38 +60,45 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ToolsContext.getInstance().getSelectedFontProvider().addObserver(this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void insertUpdate(DocumentEvent e) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-        model.setKnownProperty(FieldModel.PROP_TEXT, new Value(getText()), true);
-        model.setStyleData(getRtf());
+        model.setRtf(getRtf());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeUpdate(DocumentEvent e) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-        model.setKnownProperty(FieldModel.PROP_TEXT, new Value(getText()), true);
-        model.setStyleData(getRtf());
+        model.setRtf(getRtf());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void changedUpdate(DocumentEvent e) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-        model.setKnownProperty(FieldModel.PROP_TEXT, new Value(getText()), true);
-        model.setStyleData(getRtf());
+        model.setRtf(getRtf());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void paint(Graphics g) {
         super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onPropertyChanged(String property, Value oldValue, Value newValue) {
         SwingUtilities.invokeLater(() -> {
@@ -120,7 +127,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                 case FieldModel.PROP_TEXTSIZE:
                 case FieldModel.PROP_TEXTSTYLE:
                 case FieldModel.PROP_TEXTFONT:
-                    setActiveFont(((CardLayerPartModel)toolEditablePart.getPartModel()).getFont());
+                    setActiveFont(((CardLayerPartModel) toolEditablePart.getPartModel()).getFont());
                     break;
 
                 case FieldModel.PROP_ENABLED:
@@ -133,13 +140,13 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     /**
      * Replaces the field's text with the given String value, attempting as best as possible to intelligently
      * maintain the field's existing style.
-     *
+     * <p>
      * It is not possible to correctly restyle the new text in every case. This is a result of the {@link FieldModel}
      * not being able to notify us of insert/delete operations.
-     *
+     * <p>
      * This method invokes Google's DiffMatchPatch utility to generate a change set, then attempts to apply each change
      * independently to let the {@link StyledDocument} model best preserve its formatting.
-     *
+     * <p>
      * TODO: Change much infrastructure to allow model to report inserts and deletes instead of using this "cheat".
      *
      * @param newText The text with which to replace the field's existing contents.
@@ -157,7 +164,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         StyledDocument document = textPane.getStyledDocument();
         AttributeSet style = currentStyle;
 
-        // Do not perform incremental model update while we update
+        // Do not perform incremental model updates while we update
         document.removeDocumentListener(this);
 
         try {
@@ -186,7 +193,9 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ThreadUtils.invokeAndWaitAsNeeded(this::repaint);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getText() {
         try {
@@ -197,20 +206,26 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JTextPane getTextPane() {
         return textPane;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setEditable(boolean editable) {
         super.setEnabled(editable);
         textPane.setEnabled(editable);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void partOpened() {
         // Get notified when field tool is selected
@@ -222,10 +237,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
         ToolsContext.getInstance().getToolModeProvider().notifyObservers(toolModeObserver);
-        setRtf(((FieldModel) toolEditablePart.getPartModel()).getStyleData());
+        setRtf(((FieldModel) toolEditablePart.getPartModel()).getRtf());
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void partClosed() {
         textPane.removeMouseListener(toolEditablePart);
@@ -244,7 +261,9 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void caretUpdate(CaretEvent e) {
         // Update selectedText property
@@ -275,11 +294,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                 textPane.getEditorKit().read(bais, doc, 0);
                 bais.close();
 
+                // RTFEditorKit appears to (erroneously) append a newline when we deserialize; get rid of that.
+                doc.remove(doc.getLength() - 1, 1);
+
                 textPane.setStyledDocument(doc);
                 doc.addDocumentListener(this);
-
-                // RTFEditorKit appears to (erroneously) append a newline when we deserialize; get rid of that.
-                textPane.getStyledDocument().remove(doc.getLength() - 1, 1);
 
             } catch (IOException | BadLocationException e) {
                 throw new RuntimeException("An error occurred while restoring field contents.", e);
@@ -323,7 +342,9 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
     private class ToolModeObserver implements Observer {
 
-        /** {@inheritDoc} */
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void update(Observable o, Object arg) {
             setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
