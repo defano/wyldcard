@@ -9,9 +9,6 @@
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
@@ -33,7 +30,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
 import java.util.concurrent.*;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through

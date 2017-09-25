@@ -24,6 +24,17 @@ import java.util.Map;
 /**
  * A data model representing a field part on a card. See {@link FieldPart} for the associated
  * view object.
+ *
+ * This model is weird. Just go with it:
+ *
+ * First: HyperCard mixes rich text (as edited by the user in the view) with plaintext (as written or read via script).
+ * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can
+ * read or write. When a script sets the field's text property, the model takes no action but expects the view objects
+ * to respond to the property change, update their RTF document, then invoke {@link #setRtf(byte[])} on the model.
+ * The produces a more incestuous relationship between the model and the view than one would typically desire.
+ *
+ * Second: Fields placed in the background layer can either share their contents across all cards in the background
+ * or, each card may have its own text (while sharing other field properties like size, location and showLines).
  */
 public class FieldModel extends CardLayerPartModel {
 
@@ -65,10 +76,18 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_SHAREDTEXT, new Value(false), false);
 
         partModel.defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(partModel.getPlainText()));
+        partModel.defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> {
+            // Nothing to do; view must react to this change, update its document and call setRtf()
+        });
 
         return partModel;
     }
 
+    /**
+     * Gets the RTF data persisted in this model. Retrieves either the shared document data, or the unshared data
+     * depending on whether the field is in the background and has the sharedText property.
+     * @return The RTF data persisted into the model, or an empty document if nothing has been persisted.
+     */
     public byte[] getRtf() {
         if (useSharedText()) {
             return sharedRtf;
@@ -77,6 +96,11 @@ public class FieldModel extends CardLayerPartModel {
         }
     }
 
+    /**
+     * Persists the given RTF data into this model. Affects either the shared document data, or the unshared data
+     * depending on whether the field is in the background and has the sharedText property.
+     * @param rtf The RTF data to persist into the model.
+     */
     public void setRtf(byte[] rtf) {
         if (useSharedText()) {
             this.sharedRtf = rtf;
@@ -85,10 +109,34 @@ public class FieldModel extends CardLayerPartModel {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getValueProperty() {
+        return PROP_TEXT;
+    }
+
+    /**
+     * For the purposes of background fields that do not have the sharedText property set, this value determines which
+     * card's text is actively displayed in the field.
+     *
+     * @param cardId The ID of the card on which this field is currently being displayed.
+     */
+    public void setCurrentCardId(int cardId) {
+        this.currentCardId = cardId;
+    }
+
+    /**
+     * Determine if the model should the sharedText document data.
+     * @return True if the model should use sharedText data; false otherwise.
+     */
     private boolean useSharedText() {
         return getOwner() == Owner.CARD || getKnownProperty(PROP_SHAREDTEXT).booleanValue();
     }
 
+    /**
+     * Gets a plaintext representation of the text held in this model.
+     * @return A plaintext representation of the contents of this field.
+     */
     private String getPlainText() {
 
         try {
@@ -104,21 +152,6 @@ public class FieldModel extends CardLayerPartModel {
         } catch (Exception e) {
             return "";
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getValueProperty() {
-        return PROP_TEXT;
-    }
-
-    /**
-     * For the purposes of background fields that do not have the sharedText property set, this value determines which
-     * card's text is actively displayed in the field.
-     * @param cardId
-     */
-    public void setCurrentCardId(int cardId) {
-        this.currentCardId = cardId;
     }
 
     private int getCurrentCardId() {
