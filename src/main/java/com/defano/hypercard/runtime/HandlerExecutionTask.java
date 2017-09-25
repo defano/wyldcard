@@ -8,12 +8,16 @@
 
 package com.defano.hypercard.runtime;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.NamedBlock;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -53,7 +57,15 @@ public class HandlerExecutionTask implements Callable<String> {
             ExecutionContext.getContext().set(theParam, theArg);
         }
 
-        handler.statements.execute();
+        try {
+            handler.statements.execute();
+        } catch (TerminateHandlerBreakpoint e) {
+            if (e.getHandlerName() != null && !e.getHandlerName().equalsIgnoreCase(handler.name)) {
+                HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit '" + e.getHandlerName() + "' from inside '" + handler.name + "'."));
+            }
+        } catch (Breakpoint e) {
+            HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here.", e));
+        }
 
         return ExecutionContext.getContext().getPassedMessage();
     }

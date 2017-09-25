@@ -564,7 +564,7 @@ Property    | Description
 ------------|------------
 `autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
 `hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
-`iconAlign` | Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property does not exist in HyperCard.
+`iconAlign` | Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property did not exist in HyperCard.
 `showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
 
 ### Fields
@@ -862,6 +862,7 @@ Command	         | Description
 `doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that HyperCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
 `drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
 `enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
+`exit`           | Interrupts the flow of execution. Use `exit <message>` to break out of a handler of function (for example, `exit mouseUp`), use `exit repeat` to prematurely end execution of a loop. Note that `exit` message is not sent to card and cannot be trapped in script.
 `get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
@@ -889,7 +890,7 @@ Like a command, a function directs HyperTalk to perform some task. However, func
 
 HyperCard provides a suite of built-in functions as well as the ability for a user to script new ones of their own creation.
 
-### Built-in Functions
+### Built-in functions
 
 There are several equivalent syntax forms that can be used when invoking a built-in function:
 
@@ -954,7 +955,7 @@ Function        | Description
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
 
-### User-defined Functions
+### User-defined functions
 
 A user-defined function handler is a subroutine scripted by the user that performs some action and optionally returns a value. More accurately, all user-defined functions return a value, but those which do not explicitly call `return` implicitly return `empty` (equivalent to `return ""`).
 
@@ -997,9 +998,13 @@ function fibonacci sequence, lastValue, thisValue, maxValue
 end fibonacci
 ```
 
-## Control Structures
+## Flow control
 
-HyperTalk supports simple conditional branching (if-then-else), plus a very flexible syntax for looping. Conditionals have the following syntax:
+HyperTalk supports simple conditional branching (if-then-else; no concept of switch/case), plus a very flexible syntax for looping.
+
+### Conditional branching
+
+Conditionals have the following syntax:
 
 ```
 if <expression> then
@@ -1009,7 +1014,7 @@ if <expression> then
 end if
 ```
 
-Some examples of conditional branching:
+For example,
 
 ```
 if 1 < 2 and 3 < 4 then
@@ -1018,14 +1023,20 @@ end if
 ```
 
 ```
-if the first line of field id 0 contains "hello" then
+if the first line of field "Greeting" contains "hello" then
   put "Hello" into the message box
 else
   put "Goodbye" into the message box
 end if
 ```
 
-To address the [dangling else problem](https://en.wikipedia.org/wiki/Dangling_else), HyperTalk does not support a multi-line else-if construct. That said, nesting complex conditional logic can be achieved by nesting `if` statements. For example:
+Single-statement branches may appear on the same line as the `if` or `else`, clause:
+
+```
+if the first word of the long date is not "Friday" then answer "Don't you wish it were Friday?"
+```
+
+To address the [dangling else problem](https://en.wikipedia.org/wiki/Dangling_else), HyperTalk does not support a multiline else-if construct. That said, nesting complex conditional logic can be achieved by nesting `if` statements. For example:
 
 ```
 ask "Yes, no or maybe?" with ""
@@ -1046,33 +1057,82 @@ end if
 HyperTalk provides a variety of looping constructs. The overall syntax for each of them is
 
 ```
-<repeat-construct>
+repeat <repeat-condition>
   <statement-list>
 end repeat
 ```
 
-The list of available repeat constructs is defined in the table below:
+At any point in the loop, the `next repeat` command may be used to terminate the current iteration (that is, skip all subsequent statements in `<statement-list>`) and continue looping. Similarly, the `exit repeat` command can be used to terminate the loop entirely, returning control to the next statement in the handler after `end repeat`.
 
-Repeat Construct | Description
------------------|------------
-`repeat forever` | Executes the enclosed statement-list forever. Sort of. Type `cmd-.` or `ctrl-.` at anytime to break execution of the loop.
-`repeat until <expression>` | Executes the enclosed statement-list until the Boolean expression is true; if the expression is initially true, the statement-list will not be executed.
-`repeat while <expression>` | Executes the enclosed statement-list as long as the Boolean expression remains true; if the expression is initially false, the statement-list will not be executed.
-`repeat [for] <expression> [times]` | Executes the enclosed statement-list a pre-determined number of times.
-`repeat with <container> = <expression> down to <expression>` | Executes the enclosed statement-list for as long as the first expression remains numerically greater than the second expression. Decrements the first expression by one each time the loop executes and places the decremented value into the given container.
-`repeat with <container> = <expression> to <expression>` | Executes the enclosed statement-list for as long as the first expression remains numerically less than the second expression. Increments the first expression by one each time the loop executes and places the incremented value into the given container.
+#### Repeat forever
 
-For example:
+`repeat forever`
+
+Executes the enclosed statement-list forever. Sort of. Type `cmd-.` or `ctrl-.` at anytime to break execution of the loop. Note that HyperTalk Java intelligently manages thread priority within an infinite loop; creating an infinite loop does not "lock up" the application.
 
 ```
-repeat with myVar = 1 to 10
-  answer myVar
+-- Count to infinity (and beyond!)
+repeat forever
+  add 1 to the message
+end repeat
+```
+
+#### Repeat until
+
+`repeat until <boolean-expression>`
+
+Executes the enclosed statement-list until the Boolean expression is true; if the expression is initially true, the statement-list will not be executed.
+
+```
+-- Make this part follow the mouse
+repeat until the mouse is down
+  set the location of me to the mouseLoc
+end repeat
+```
+
+#### Repeat while
+
+`repeat while <boolean-expression`
+
+Executes the enclosed statement-list as long as the Boolean expression remains true; if the expression is initially false, the statement-list will not be executed.
+
+```
+-- Repeatedly send message to card while mouse hovers
+repeat while the mouse is within the rect of me
+  send hovering to this card
+end repeat
+```
+
+#### Repeat for
+
+`repeat for <numeric-expression> [times]`
+
+Executes the enclosed statement-list a pre-determined number of times.
+
+```
+-- Beep three times
+repeat for 3 times
+  beep
+end repeat
+```
+
+#### Repeat with
+
+`repeat with <container> = <expression> [down] to  <expression>`
+
+Executes the enclosed statement-list for as long as the first expression remains less than the second expression (or vice versa when using `down to`). Increments the first expression by one each time the loop executes and places the incremented value into the given container (decrements when using `down`).
+
+```
+-- Hides all buttons and fields on this card
+repeat with n = 1 to the number of card parts
+  hide card part n
 end repeat
 ```
 
 ```
-repeat while the mouse is down
-  set the top of me to item 2 of the mouseLoc
+-- Shows all buttons and fields on this card
+repeat with n = the number of card parts down to 1
+  show card part n
 end repeat
 ```
 

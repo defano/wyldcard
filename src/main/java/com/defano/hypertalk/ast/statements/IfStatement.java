@@ -15,6 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.constructs.ThenElseBlock;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
@@ -29,7 +30,7 @@ public class IfStatement extends Statement {
         this.then = then;
     }
     
-    public void execute () throws HtException {
+    public void execute () throws HtException, Breakpoint {
         if (condition.evaluate().booleanValue())
             then.thenBranch.execute();
         else

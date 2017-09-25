@@ -105,6 +105,9 @@ commandStmnt        : answerCmd                                                 
                     | 'beep'                                                                                            # beepCmdStmt
                     | 'open' 'file' expression                                                                          # openFileCmdStmt
                     | 'close' 'file' expression                                                                         # closeFileCmdStmt
+                    | 'exit' 'repeat'                                                                                   # exitRepeatCmdStmt
+                    | 'next' 'repeat'                                                                                   # nextRepeatCmdStmt
+                    | 'exit' blockName                                                                                  # exitCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
                     ;

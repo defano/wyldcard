@@ -15,6 +15,7 @@
 
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.exception.HtException;
 
 import java.util.Vector;
@@ -22,7 +23,7 @@ import java.util.Vector;
 public class StatementList {
 
     public final Vector<Statement> list;
-    
+
     public StatementList () {
         list = new Vector<>();
     }
@@ -36,13 +37,10 @@ public class StatementList {
         list.add(s);
         return this;
     }
-    
-    public void execute() throws HtException {
+
+    public void execute() throws HtException, Breakpoint {
         for (Statement s : list) {
             s.execute();
-            
-            if (s.breakExecution)
-                break;
         }
     }
 }

@@ -15,16 +15,14 @@
 
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class Statement {
 
-    // Set by a return statement to indicate that the remainder of the statement
-    // list should not execute. 
-    public boolean breakExecution = false;
-    
-    public void execute() throws HtException {
+    public void execute() throws HtException, Breakpoint {
         throw new HtSemanticException("Bug! Unimplemented execute() for statement.");
     }
+
 }

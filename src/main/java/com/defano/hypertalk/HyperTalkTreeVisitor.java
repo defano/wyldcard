@@ -834,6 +834,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNextRepeatCmdStmt(HyperTalkParser.NextRepeatCmdStmtContext ctx) {
+        return new NextRepeatStatement();
+    }
+
+    @Override
+    public Object visitExitRepeatCmdStmt(HyperTalkParser.ExitRepeatCmdStmtContext ctx) {
+        return new ExitRepeatStatement();
+    }
+
+    @Override
+    public Object visitExitCmdStmt(HyperTalkParser.ExitCmdStmtContext ctx) {
+        return new ExitStatement((String) visit(ctx.blockName()));
+    }
+
+    @Override
     public Object visitNoArgMsgCmdStmt(HyperTalkParser.NoArgMsgCmdStmtContext ctx) {
         return new MessageCmd((String) visit(ctx.ID()), new ExpressionList());
     }

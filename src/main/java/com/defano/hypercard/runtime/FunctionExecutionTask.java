@@ -10,6 +10,7 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.common.NamedBlock;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
@@ -55,8 +56,12 @@ public class FunctionExecutionTask implements Callable<Value> {
 
                 ExecutionContext.getContext().set(theParam, theArg);
             }
-            
-            function.statements.execute();
+
+            try {
+                function.statements.execute();
+            } catch (Breakpoint breakpoint) {
+                // Nothing to do
+            }
         
         } catch (HtSemanticException e) {
             HyperCard.getInstance().showErrorDialog(e);

@@ -16,6 +16,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -32,8 +33,8 @@ public class ReturnStatement extends Statement {
         this.returnValue = returnValue;
     }
 
-    public void execute () throws HtSemanticException {
+    public void execute () throws HtSemanticException, TerminateHandlerBreakpoint {
         ExecutionContext.getContext().setReturnValue(returnValue.evaluate());
-        this.breakExecution = true;
+        throw new TerminateHandlerBreakpoint(null);
     }
 }
