@@ -144,12 +144,12 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
 
         // Add card parts to this card
         for (PartModel thisPart : card.cardModel.getPartModels()) {
-            card.addPartFromModel(thisPart, CardLayer.CARD_PARTS);
+            card.addPartFromModel(thisPart);
         }
 
         // Add background parts to this card
         for (PartModel thisPart : card.getCardBackground().getPartModels()) {
-            card.addPartFromModel(thisPart, CardLayer.BACKGROUND_PARTS);
+            card.addPartFromModel(thisPart);
         }
 
         return card;
@@ -158,7 +158,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     /**
      * Imports an existing part (button or field) into this card.
      *
-     * Note that this differs from {@link #addField(FieldPart, CardLayer)} or {@link #addButton(ButtonPart, CardLayer)}
+     * Note that this differs from {@link #addField(FieldPart)} or {@link #addButton(ButtonPart)}
      * in that a new ID for the part is generated before it is added to the card. This method is typically used to
      * "paste" a copied part from another card onto this card.
      *
@@ -198,7 +198,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         try {
             CardLayer layer = CardLayerPart.getActivePartLayer();
             ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
-            addButton(newButton, layer);
+            addButton(newButton);
             PartToolContext.getInstance().setSelectedPart(newButton);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! An error occurred creating a new button.", ex);
@@ -213,7 +213,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         try {
             CardLayer layer = CardLayerPart.getActivePartLayer();
             FieldPart newField = FieldPart.newField(this, layer.asOwner());
-            addField(newField, layer);
+            addField(newField);
             PartToolContext.getInstance().setSelectedPart(newField);
         } catch (PartException ex) {
             throw new RuntimeException("Bug! An error occurred creating a new field.", ex);
@@ -239,20 +239,19 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     /**
      * Adds a part to a specified layer on this card based on its model.
      * @param thisPart The data model of the part to be added.
-     * @param layer The layer of this card on which the part should be added.
      * @throws HtException Thrown if an error occurs adding the part.
      */
-    private void addPartFromModel(PartModel thisPart, CardLayer layer) throws HtException {
+    private void addPartFromModel(PartModel thisPart) throws HtException {
         switch (thisPart.getType()) {
             case BUTTON:
-                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart, layer.asOwner());
+                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
                 buttons.addPart(button);
-                addSwingComponent(button.getComponent(), button.getRect(), layer);
+                addSwingComponent(button.getComponent(), button.getRect(), thisPart.getLayer());
                 break;
             case FIELD:
-                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart, layer.asOwner());
+                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
                 fields.addPart(field);
-                addSwingComponent(field.getComponent(), field.getRect(), layer);
+                addSwingComponent(field.getComponent(), field.getRect(), thisPart.getLayer());
                 break;
             default:
                 throw new IllegalStateException("Bug! Unimplemented part model: " + thisPart);
@@ -497,38 +496,42 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Imports an existing button into this card. Note that this differs from {@link #addButton(ButtonPart, CardLayer)} in that a
+     * Imports an existing button into this card. Note that this differs from {@link #addButton(ButtonPart)} in that a
      * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
      * copied button from another card onto this card.
      *
      * @param part The button to be imported.
+     * @param layer The card layer (card or background) on which to import this part
      * @return The newly imported button (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
      */
     private ButtonPart importButton(ButtonPart part, CardLayer layer) throws HtException {
         ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
         model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextButtonId()), true);
+        model.setOwner(layer.asOwner());
 
-        ButtonPart newButton = ButtonPart.fromModel(this, model, layer.asOwner());
-        addButton(newButton, layer);
+        ButtonPart newButton = ButtonPart.fromModel(this, model);
+        addButton(newButton);
         return newButton;
     }
 
     /**
-     * Imports an existing field into this card. Note that this differs from {@link #addField(FieldPart, CardLayer)} in that a
+     * Imports an existing field into this card. Note that this differs from {@link #addField(FieldPart)} in that a
      * new ID for the part is generated before it is added to the card. This method is typically used to "paste" a
      * copied field from another card onto this card.
      *
      * @param part The field to be imported.
+     * @param layer The card layer (card or background) on which to import this part
      * @return The newly imported field (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
      */
     private FieldPart importField(FieldPart part, CardLayer layer) throws HtException {
         FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
         model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextFieldId()), true);
+        model.setOwner(layer.asOwner());
 
-        FieldPart newField = FieldPart.fromModel(this, model, layer.asOwner());
-        addField(newField, layer);
+        FieldPart newField = FieldPart.fromModel(this, model);
+        addField(newField);
         return newField;
     }
 
@@ -537,15 +540,15 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * @param field The field to add to this card.
      * @throws PartException Thrown if an error occurs adding the field.
      */
-    private void addField(FieldPart field, CardLayer layer) throws PartException {
-        if (layer == CardLayer.CARD_PARTS) {
+    private void addField(FieldPart field) throws PartException {
+        if (field.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(field.getPartModel());
-        } else if (layer == CardLayer.BACKGROUND_PARTS) {
+        } else if (field.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
             getCardBackground().addFieldModel((FieldModel) field.getPartModel());
         }
 
         fields.addPart(field);
-        addSwingComponent(field.getComponent(), field.getRect(), layer);
+        addSwingComponent(field.getComponent(), field.getRect(), field.getPartModel().getLayer());
         field.partOpened();
     }
 
@@ -571,15 +574,15 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * @param button The button to be added.
      * @throws PartException Thrown if an error occurs adding this button to the card.
      */
-    private void addButton(ButtonPart button, CardLayer layer) throws PartException {
-        if (layer == CardLayer.CARD_PARTS) {
+    private void addButton(ButtonPart button) throws PartException {
+        if (button.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(button.getPartModel());
-        } else if (layer == CardLayer.BACKGROUND_PARTS) {
+        } else if (button.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
             getCardBackground().addButtonModel((ButtonModel) button.getPartModel());
         }
 
         buttons.addPart(button);
-        addSwingComponent(button.getComponent(), button.getRect(), layer);
+        addSwingComponent(button.getComponent(), button.getRect(), button.getPartModel().getLayer());
         button.partOpened();
     }
 

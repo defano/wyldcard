@@ -99,9 +99,9 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @return The new button.
      * @throws Exception Thrown if an error occurs instantiating the button.
      */
-    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel, Owner owner) throws HtException {
+    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel) throws HtException {
         ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
-        ButtonPart button = new ButtonPart(style, parent, owner);
+        ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
         button.partModel = partModel;
         button.partModel.addPropertyChangedObserver(button);

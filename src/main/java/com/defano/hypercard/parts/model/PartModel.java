@@ -9,6 +9,7 @@
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.Messagable;
+import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -191,8 +192,23 @@ public class PartModel extends PropertiesModel implements Messagable {
         return script;
     }
 
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
     public Owner getOwner() {
          return owner;
+    }
+
+    public CardLayer getLayer() {
+        switch (owner) {
+            case BACKGROUND:
+                return CardLayer.BACKGROUND_PARTS;
+            case CARD:
+                return CardLayer.CARD_PARTS;
+            default:
+                throw new IllegalStateException("Bug! Not a card layered part: " + owner);
+        }
     }
 
     public int getId() {

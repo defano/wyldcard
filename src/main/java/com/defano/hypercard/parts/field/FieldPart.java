@@ -86,8 +86,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
      * @return The newly created field.
      * @throws HtException Thrown if an error occurs instantiating this field on the card.
      */
-    public static FieldPart fromModel(CardPart parent, FieldModel model, Owner owner) throws HtException {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent, owner);
+    public static FieldPart fromModel(CardPart parent, FieldModel model) throws HtException {
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent, model.getOwner());
 
         model.setCurrentCardId(parent.getId());
         field.partModel = model;

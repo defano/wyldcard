@@ -27,7 +27,7 @@ public class HyperCardTextPane extends JTextPane {
         super.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE) {
+                if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && isEditable() && isEnabled()) {
                     expandContentsToClickLoc(e.getPoint());
                 }
             }

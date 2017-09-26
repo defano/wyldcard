@@ -38,7 +38,7 @@ public class ButtonModel extends CardLayerPartModel {
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
-        partModel.defineProperty(PROP_NAME, new Value("Button"), false);
+        partModel.defineProperty(PROP_NAME, new Value("New Button"), false);
         partModel.defineProperty(PROP_LEFT, new Value(geometry.x), false);
         partModel.defineProperty(PROP_TOP, new Value(geometry.y), false);
         partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
