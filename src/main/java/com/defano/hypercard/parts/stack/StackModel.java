@@ -16,6 +16,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -117,6 +118,18 @@ public class StackModel extends PartModel {
 
     public int getIndexOfCard(CardModel card) {
         return cardModels.indexOf(card);
+    }
+
+    public int getIndexOfBackground(int backgroundId) {
+        Optional<CardModel> card = cardModels.stream()
+                .filter(c -> c.getBackgroundId() == backgroundId)
+                .findFirst();
+
+        if (card.isPresent()) {
+            return getIndexOfCard(card.get());
+        } else {
+            throw new IllegalArgumentException("No such background.");
+        }
     }
 
     public Dimension getSize() {

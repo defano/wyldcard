@@ -9,10 +9,14 @@
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.card.CardModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Destination;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -39,54 +43,26 @@ public class GoCmd extends Command {
             visualEffect = ExecutionContext.getContext().getVisualEffect();
         }
 
-        // Special case: Go back
+        // Special case: No destination means 'Go back'
         if (destination == null) {
             HyperCard.getInstance().getStack().goBack(visualEffect);
         }
 
-        // e.g., "go to first card", "go ninth card"
-        else if (destination.ordinal != null) {
-            if (destination.ordinal == Ordinal.FIRST) {
-                HyperCard.getInstance().getStack().goFirstCard(visualEffect);
-            } else if (destination.ordinal == Ordinal.LAST) {
-                HyperCard.getInstance().getStack().goLastCard(visualEffect);
+        else {
+            PartSpecifier cardPart = destination.evaluateAsPartSpecifier();
+            PartModel model = HyperCard.getInstance().getStack().findPart(cardPart);
+
+            int destinationIndex;
+            if (model instanceof CardModel) {
+                destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfCard((CardModel) model);
+            } else if (model instanceof BackgroundModel) {
+                destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfBackground(model.getId());
             } else {
-                int destCard = destination.ordinal.intValue();
-                if (destCard == Ordinal.MIDDLE.intValue()) {
-                    destCard = HyperCard.getInstance().getStack().getStackModel().getCardCount() / 2;
-                }
-
-                if (destCard < 0 || destCard > HyperCard.getInstance().getStack().getStackModel().getCardCount()) {
-                    throw new HtSemanticException("No card numbered " + destCard + " in this stack.");
-                }
-
-                HyperCard.getInstance().getStack().goCard(destCard, visualEffect);
-            }
-        }
-
-        // e.g., "go next card", "go back"
-        else if (destination.position != null) {
-            switch (destination.position) {
-                case NEXT:
-                    HyperCard.getInstance().getStack().goNextCard(visualEffect);
-                    break;
-                case PREV:
-                    HyperCard.getInstance().getStack().goPrevCard(visualEffect);
-                    break;
-                case THIS:
-                    HyperCard.getInstance().getStack().goThisCard(visualEffect);
-                    break;
-            }
-        }
-
-        // e.g., "go to card 983", "go myCardNumber"
-        else if (destination.expression != null) {
-            int destCard = destination.expression.evaluate().integerValue() - 1;
-            if (destCard < 0 || destCard >= HyperCard.getInstance().getStack().getStackModel().getCardCount()) {
-                throw new HtSemanticException("No card numbered " + (destCard + 1) + " in this stack.");
+                throw new IllegalStateException("Bug! Expected to find a card but got: " + model);
             }
 
-            HyperCard.getInstance().getStack().goCard(destCard, visualEffect);
+            HyperCard.getInstance().getStack().goCard(destinationIndex, visualEffect);
         }
+
     }
 }

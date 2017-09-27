@@ -74,7 +74,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Variables](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#control-structures)
+[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Variables](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts are attached to user interface elements called _parts_ and are triggered by user actions called _events_. (There is no singular "main" script in HyperTalk.)
 
