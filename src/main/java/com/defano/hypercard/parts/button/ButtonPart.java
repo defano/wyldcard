@@ -240,7 +240,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
                 getButtonComponent().repaint();
                 break;
             case ButtonModel.PROP_ENABLED:
-                getButtonComponent().setEnabled(newValue.booleanValue());
+                setEnabledOnCard(newValue.booleanValue());
                 break;
             case ButtonModel.PROP_VISIBLE:
                 setVisibleOnCard(newValue.booleanValue());

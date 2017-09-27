@@ -12,10 +12,12 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.OpaqueField;
 import com.defano.hypercard.parts.field.styles.RectangleField;
 import com.defano.hypercard.parts.field.styles.ShadowField;
 import com.defano.hypercard.parts.field.styles.TransparentField;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
 
@@ -51,9 +53,6 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
     @Override
     public void setSelectedForEditing(boolean beingEdited) {
-        fieldComponent.setEditable(!beingEdited);
-        isBeingEdited = beingEdited;
-
         isBeingEdited = beingEdited;
 
         if (isSelectedForEditing()) {
@@ -101,6 +100,12 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
     public JTextPane getTextPane() {
         return fieldComponent.getTextPane();
+    }
+
+    @Override
+    public void setEnabledRecursively(boolean enabled) {
+        getComponent().setEnabled(enabled);
+        getTextPane().setEnabled(enabled);
     }
 
     @Override

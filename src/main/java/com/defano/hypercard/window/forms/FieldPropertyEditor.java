@@ -25,6 +25,8 @@ import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @SuppressWarnings("unchecked")
 public class FieldPropertyEditor extends HyperCardDialog {
@@ -51,6 +53,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
     private JLabel fieldLabelValue;
     private JButton textStyleButton;
     private JCheckBox sharedText;
+    private JCheckBox enabled;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -76,6 +79,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         }
         style.setModel(model);
 
+        enabled.addActionListener(e -> onEnabledChanged());
     }
 
     @Override
@@ -118,9 +122,12 @@ public class FieldPropertyEditor extends HyperCardDialog {
             isWrapText.setSelected(model.getKnownProperty(FieldModel.PROP_DONTWRAP).booleanValue());
             showLines.setSelected(model.getKnownProperty(FieldModel.PROP_SHOWLINES).booleanValue());
             style.setSelectedItem(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue());
+            enabled.setSelected(model.getKnownProperty(FieldModel.PROP_ENABLED).booleanValue());
 
             sharedText.setEnabled(part.getOwner() == Owner.BACKGROUND);
             sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
+
+            onEnabledChanged();
 
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + model);
@@ -139,6 +146,16 @@ public class FieldPropertyEditor extends HyperCardDialog {
         model.setKnownProperty(FieldModel.PROP_SHOWLINES, new Value(showLines.isSelected()));
         model.setKnownProperty(FieldModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
         model.setKnownProperty(FieldModel.PROP_SHAREDTEXT, new Value(sharedText.isSelected()));
+        model.setKnownProperty(FieldModel.PROP_ENABLED, new Value(enabled.isSelected()));
+    }
+
+    private void onEnabledChanged() {
+        if (!enabled.isSelected()) {
+            isLockText.setSelected(true);
+            isLockText.setEnabled(false);
+        } else {
+            isLockText.setEnabled(true);
+        }
     }
 
     /**
@@ -265,6 +282,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
         sharedText = new JCheckBox();
         sharedText.setText("Shared Text");
         panel4.add(sharedText, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        enabled = new JCheckBox();
+        enabled.setText("Enabled");
+        panel4.add(enabled, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

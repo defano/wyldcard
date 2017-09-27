@@ -70,6 +70,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      */
     ToolType getEditTool();
 
+    void setEnabledRecursively(boolean enabled);
+
     /**
      * Returns the size of the drag handle square to be rendered in the marching ants.
      * @return The size, in pixels, of the handle
@@ -163,8 +165,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
         // Force disabled when part tool is active
         boolean forceDisabled = isPartToolActive();
-
-        getComponent().setEnabled((enabledOnCard && !forceDisabled));
+        setEnabledRecursively(enabledOnCard && !forceDisabled);
     }
 
     /**

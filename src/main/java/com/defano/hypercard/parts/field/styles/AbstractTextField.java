@@ -130,7 +130,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                     break;
 
                 case FieldModel.PROP_ENABLED:
-                    setEditable(newValue.booleanValue());
+                    toolEditablePart.setEnabledOnCard(newValue.booleanValue());
                     break;
             }
         });
@@ -219,7 +219,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void setEditable(boolean editable) {
         super.setEnabled(editable);
-        textPane.setEnabled(editable);
+        textPane.setEditable(editable);
     }
 
     /**

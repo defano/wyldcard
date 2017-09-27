@@ -186,7 +186,7 @@ public class PropertiesModel {
     }
 
     /**
-     * Sets the value of a known property; throws a RuntimeException if an attempt is made to set an undefined property.
+     * Sets the value of a known property; has no effect if property does not actually exist.
      *
      * @param property The name of the property to set (or one of its aliases)
      * @param value The value to set
@@ -199,7 +199,7 @@ public class PropertiesModel {
         try {
             setProperty(property, value, quietly);
         } catch (HtSemanticException e) {
-            throw new RuntimeException("Can't set known property.", e);
+            // Nothing to do
         }
     }
 

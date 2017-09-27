@@ -107,6 +107,11 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
+    public void setEnabledRecursively(boolean enabled) {
+        getComponent().setEnabled(enabled);
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
         ToolEditablePart.super.mousePressed(e);
 
