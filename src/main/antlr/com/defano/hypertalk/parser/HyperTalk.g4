@@ -87,14 +87,14 @@ commandStmnt        : answerCmd                                                 
                     | 'drag' 'from' expression 'to' expression                                                          # dragCmdStmt
                     | 'drag' 'from' expression 'to' expression 'with' expressionList                                    # dragWithKeyCmdStmt
                     | 'type' expression                                                                                 # typeCmdStmt
-                    | 'type' expression 'with' 'commandKey'                                                             # typeWithCmdKeyCmdStmt
+                    | 'type' expression 'with' 'commandkey'                                                             # typeWithCmdKeyCmdStmt
                     | 'lock' 'screen'                                                                                   # lockScreenCmdStmt
                     | 'unlock' 'screen'                                                                                 # unlockScreenCmdStmt
                     | 'unlock' 'screen' 'with' 'visual' visualEffect                                                    # unlockScreenVisualCmdStmt
                     | 'pass' blockName                                                                                  # passCmdStmt
                     | 'domenu' factor                                                                                   # doMenuCmdStmt
                     | 'visual' visualEffect                                                                             # visualEffectCmdStmt
-                    | 'reset' 'the'? 'menuBar'                                                                          # resetMenuCmdStmt
+                    | 'reset' 'the'? 'menubar'                                                                          # resetMenuCmdStmt
                     | 'create' 'menu' factor                                                                            # createMenuCmdStmt
                     | 'delete' menu                                                                                     # deleteMenuCmdStmt
                     | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
