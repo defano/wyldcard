@@ -293,10 +293,6 @@ public class ExecutionContext {
         return this.me.get();
     }
 
-    public void setSelectedText(Value selectedText) {
-        globalProperties.defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, selectedText, true);
-    }
-
     /**
      * Gets a set of global properties. That is, properties that apply to HyperCard at large.
      * @return The set of global properties.

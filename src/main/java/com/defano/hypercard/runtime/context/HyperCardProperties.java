@@ -19,6 +19,7 @@ public class HyperCardProperties extends PropertiesModel {
 
     public final static String PROP_ITEMDELIMITER = "itemdelimiter";
     public final static String PROP_SELECTEDTEXT = "selectedtext";
+    public final static String PROP_SELECTEDCHUNK = "selectedchunk";
     public final static String PROP_CLICKTEXT = "clicktext";
     public final static String PROP_LOCKSCREEN = "lockscreen";
     public final static String PROP_MOUSEH = "mouseh";

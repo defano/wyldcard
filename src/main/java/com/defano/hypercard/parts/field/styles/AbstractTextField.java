@@ -16,6 +16,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
@@ -265,13 +266,35 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void caretUpdate(CaretEvent e) {
-        // Update selectedText property
+        Value selectedText = textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText());
+
+        // Update selectedText and selectedChunk properties
         toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true);
-        ExecutionContext.getContext().setSelectedText(textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()));
+        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, selectedText, true);
+        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
 
         // Update global font style selection
         AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
         ToolsContext.getInstance().getHilitedFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
+    }
+
+    private Value getSelectedChunk() {
+        int selectionStart = textPane.getSelectionStart();
+        int selectionEnd = textPane.getSelectionEnd();
+
+        if (selectionStart == selectionEnd) {
+            return new Value();
+        }
+
+        return new Value("char " +
+                selectionStart +
+                " to " +
+                selectionEnd +
+                " of " +
+                toolEditablePart.getCardLayer().friendlyName.toLowerCase() +
+                " field id " +
+                toolEditablePart.getPartModel().getId()
+        );
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
