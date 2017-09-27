@@ -451,37 +451,6 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         return stackModel.getWidth();
     }
 
-    public void closeCard() {
-        // Lets parts know they're about to go away
-        notifyPartsClosing();
-
-        // Remove their Swing components from the card to free memory
-        removeAll();
-
-        setTransferHandler(null);
-        ToolsContext.getInstance().isEditingBackgroundProvider().deleteObserver(editingBackgroundObserver);
-        getForegroundCanvas().dispose();
-        getBackgroundCanvas().dispose();
-
-        editingBackgroundObserver = null;
-        foregroundScaleObserver = null;
-        backgroundScaleObserver = null;
-
-        getForegroundCanvas().getSurface().removeMouseListener(this);
-        getForegroundCanvas().getSurface().removeKeyListener(this);
-
-        super.dispose();
-    }
-
-    public void openCard() {
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver(editingBackgroundObserver);
-        getForegroundCanvas().getScaleProvider().addObserver(foregroundScaleObserver);
-        getBackgroundCanvas().getScaleProvider().addObserver(backgroundScaleObserver);
-
-        getForegroundCanvas().getSurface().addMouseListener(this);
-        getForegroundCanvas().getSurface().addKeyListener(this);
-    }
-
     /**
      * Notify all parts in this container that they are closing (ostensibly because the container itself is closing).
      */
@@ -641,13 +610,40 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     /** {@inheritDoc} */
     @Override
     public void partOpened() {
-        // Nothing to do
+        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver(editingBackgroundObserver);
+        getForegroundCanvas().getScaleProvider().addObserver(foregroundScaleObserver);
+        getBackgroundCanvas().getScaleProvider().addObserver(backgroundScaleObserver);
+
+        getForegroundCanvas().getSurface().addMouseListener(this);
+        getForegroundCanvas().getSurface().addKeyListener(this);
+
+        getPartModel().receiveMessage(SystemMessage.OPEN_CARD.messageName);
     }
 
     /** {@inheritDoc} */
     @Override
     public void partClosed() {
-        // Nothing to do
+        getPartModel().receiveMessage(SystemMessage.CLOSE_CARD.messageName);
+
+        // Lets parts know they're about to go away
+        notifyPartsClosing();
+
+        // Remove their Swing components from the card to free memory
+        removeAll();
+
+        setTransferHandler(null);
+        ToolsContext.getInstance().isEditingBackgroundProvider().deleteObserver(editingBackgroundObserver);
+        getForegroundCanvas().dispose();
+        getBackgroundCanvas().dispose();
+
+        editingBackgroundObserver = null;
+        foregroundScaleObserver = null;
+        backgroundScaleObserver = null;
+
+        getForegroundCanvas().getSurface().removeMouseListener(this);
+        getForegroundCanvas().getSurface().removeKeyListener(this);
+
+        super.dispose();
     }
 
     private CardLayerPart getPart(PartModel partModel) {

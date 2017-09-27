@@ -11,6 +11,7 @@ import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.ast.common.SystemMessage;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
 import com.defano.jmonet.model.Provider;
@@ -74,7 +75,9 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         goCard(model.getCurrentCardIndex(), null);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
-        getDisplayedCard().openCard();
+
+        getStackModel().receiveMessage(SystemMessage.OPEN_STACK.messageName);
+        getDisplayedCard().partOpened();
         fireOnCardOpened(getDisplayedCard());
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
@@ -459,7 +462,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         // Notify observers that current card is going away
         fireOnCardClosing(getDisplayedCard());
-        getDisplayedCard().closeCard();
+        getDisplayedCard().partClosed();
     }
 
     private CardPart activateCard (int cardIndex) {
@@ -470,7 +473,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
             stackModel.setCurrentCardIndex(cardIndex);
 
             // Notify observers of new card
-            currentCard.openCard();
+            currentCard.partOpened();
             fireOnCardOpened(currentCard);
 
             // Reactive paint tool on new card's canvas

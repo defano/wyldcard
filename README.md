@@ -170,24 +170,29 @@ HyperTalk Java automatically sends the following messages to parts as the user i
 
  Event Message      | Description
 --------------------|-----------------------------------------------------------------------------
- `choose`           | Sent to the current card when the tool selection changes; passes the tool name and number as arguments, for example, `choose "Brush", 7`
- `doMenu`           | Sent to the current card when the user chooses a menu from the menu bar; passes the menu and menu item name as arguments to the message, for example, `doMenu "Edit", "Undo"`
- `mouseUp`          | Sent when the mouse is pressed and released over a part
- `mouseDown`        | Sent when the mouse is pressed over a part
- `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
- `mouseEnter`       | Sent when the cursor enters the bounds of a part
- `mouseLeave`       | Sent when the cursor leaves the bounds of a part
- `mouseWithin`      | Send repeatedly to buttons and fields while the mouse is within their bounds
- `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
  `arrowKey`         | Sent when an arrow key is pressed; sends the arrow key's direction as an argument to the message (`on arrowKey direction`, where `direction` is one of `up`, `down`, `left` or `right`)
  `commandKeyDown`   | Sent when the command key (or the _meta_ key, on non-macOS systems) is pressed
  `controlKey`       | Sent when the control key is pressed
+ `choose`           | Sent to the current card when the tool selection changes; passes the tool name and number as arguments, for example, `choose "Brush", 7`
+ `closeCard`        | Sent to the current card when navigating away from it
+ `deleteCard`       | Sent to the current card just before it is removed from the stack
+ `doMenu`           | Sent to the current card when the user chooses a menu from the menu bar; passes the menu and menu item name as arguments to the message, for example, `doMenu "Edit", "Undo"`
  `enterKey`         | Sent when the enter key is pressed
  `enterInField`     | Sent when the enter key is pressed while typing in a field
+ `functionKey`      | Sent when a function (i.e, F1) key is pressed; sends the number of the function key as its argument (`on functionKey whichKey`, where `whichKey` is a number between 1 and 12)
+ `idle`             | Periodically sent to the current card when there are no other scripts executing
+ `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
+ `mouseDoubleClick` | Sent when the mouse is double-clicked over a part
+ `mouseDown`        | Sent when the mouse is pressed over a part
+ `mouseEnter`       | Sent when the cursor enters the bounds of a part
+ `mouseLeave`       | Sent when the cursor leaves the bounds of a part
+ `mouseUp`          | Sent when the mouse is pressed and released over a part
+ `mouseWithin`      | Send repeatedly to buttons and fields while the mouse is within their bounds
+ `newCard`          | Sent to new cards when they are added to the stack.
  `returnInField`    | Sent when the return key is pressed while typing in a field
- `functionKey`      | Sent when a function (i.e, F1) key is pressed; sends the number of the function key as its argument (`on functionKey whichKey`, where `whichKey` is a number between 1 and 12).
- `idle`             | Periodically sent to the current card when there are no other scripts executing.
  `returnKey`        | Sent when the return key is pressed
+ `openCard`         | Sent to cards as they are navigated to
+ `openStack`        | Sent to a stack when it is opened
  `tabKey`           | Sent when the tab key is pressed
 
 Messages do not have to originate from HyperCard, nor are they limited to those listed in the table above. A script may send a message of its own creation to another part (or to itself) using the `send` command.
@@ -195,8 +200,8 @@ Messages do not have to originate from HyperCard, nor are they limited to those 
 For example:
 
 ```
-send mouseUp to button 1   -- Make 'button 1' act as though user clicked it
-send doSomethingCool to field "myField" -- call the 'on doSomethingCool' handler
+send mouseUp to button 1                 -- Make 'button 1' act as though user clicked it
+send doSomethingCool to field "myField"  -- call the 'on doSomethingCool' handler
 ```
 
 Alternately, a message can be sent directly to the current part by invoking the message name with an optional list of arguments, for example:

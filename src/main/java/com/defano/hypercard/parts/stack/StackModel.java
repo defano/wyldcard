@@ -63,15 +63,16 @@ public class StackModel extends PartModel {
 
     public int insertCard(CardModel cardModel) {
         cardModels.add(currentCardIndex + 1, cardModel);
+        receiveMessage(SystemMessage.NEW_CARD.messageName);
         return currentCardIndex + 1;
     }
 
-    public int newCard(int backgroundId) {
-        return insertCard(CardModel.emptyCardModel(getNextCardId(), backgroundId));
+    public void newCard(int backgroundId) {
+        insertCard(CardModel.emptyCardModel(getNextCardId(), backgroundId));
     }
 
-    public int newCardWithNewBackground() {
-        return insertCard(CardModel.emptyCardModel(getNextCardId(), newBackgroundModel()));
+    public void newCardWithNewBackground() {
+        insertCard(CardModel.emptyCardModel(getNextCardId(), newBackgroundModel()));
     }
 
     private int newBackgroundModel() {
@@ -82,6 +83,7 @@ public class StackModel extends PartModel {
 
     public void deleteCardModel() {
         cardModels.remove(currentCardIndex);
+        receiveMessage(SystemMessage.DELETE_CARD.messageName);
     }
 
     public String getStackName() {
