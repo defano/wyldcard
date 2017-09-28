@@ -63,7 +63,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         this.card = card;
 
         // Listen for image files that are dropped onto the card
-        new FileDrop(card, files -> ArtVandelay.importPaint(files[0]));
+        new FileDrop(card, files -> ArtVandelay.importPaint(files));
 
         for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
             cardPanel.remove(c);

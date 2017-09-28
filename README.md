@@ -947,8 +947,10 @@ Function        | Description
 `result`        | Returns the current value of the implicit variable `it`, for example: `the result`
 `screenRect`    | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`
 `seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
-`selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
 `selectedChunk` | Returns a chunk expression in the form `char x to y of container` describing the active text selection; returns `empty` if no selection exists.
+`selectedField` | Returns a chunk expression identifying the part containing the active selection, for example `the selectedField` yields `card field id 13`
+`selectedLine`  | Returns a chunk expression identifying the line or lines in a field containing the active selection. For example, `the selectedLine` yields `line 2 to 7 of background field id 4`
+`selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
 `shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
 `sin`           | Returns the trigonometric sine of the given argument, represented in radians.
 `sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.

@@ -266,35 +266,84 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void caretUpdate(CaretEvent e) {
-        Value selectedText = textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText());
-
         // Update selectedText and selectedChunk properties
         toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true);
-        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, selectedText, true);
+        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
         ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
+        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedField(), true);
+        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLine(), true);
 
         // Update global font style selection
         AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
         ToolsContext.getInstance().getHilitedFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
     }
 
-    private Value getSelectedChunk() {
+    private Value getSelectedLine() {
+        int lineStart = getLineOfIndex(textPane.getSelectionStart());
+        int lineEnd = getLineOfIndex(textPane.getSelectionEnd() - 1);
+
+        // No selection; selected line is empty
+        if (getSelectedText().stringValue().length() == 0) {
+            return new Value();
+        }
+
+        return new Value(
+                "line " + lineStart +
+                ((lineEnd == lineStart) ? "" : (" to " + lineEnd)) +
+                " of " + getSelectedField()
+        );
+    }
+
+    private Value getSelectedField() {
         int selectionStart = textPane.getSelectionStart();
         int selectionEnd = textPane.getSelectionEnd();
 
+        // No selection; selected field is empty
         if (selectionStart == selectionEnd) {
             return new Value();
         }
 
-        return new Value("char " +
-                selectionStart +
-                " to " +
-                selectionEnd +
-                " of " +
+        return new Value(
                 toolEditablePart.getCardLayer().friendlyName.toLowerCase() +
                 " field id " +
                 toolEditablePart.getPartModel().getId()
         );
+    }
+
+    private Value getSelectedChunk() {
+        int selectionStart = textPane.getSelectionStart();
+        int selectionEnd = textPane.getSelectionEnd();
+
+        // No selection; selected chunk is empty
+        if (selectionStart == selectionEnd) {
+            return new Value();
+        }
+
+        // Chunk expression counts from 1
+        selectionStart++;
+
+        return new Value("char " +
+                selectionStart +
+                (selectionEnd == selectionStart ? "" : (" to " + selectionEnd)) +
+                " of " +
+                getSelectedField()
+        );
+    }
+
+    private Value getSelectedText() {
+        return textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText());
+    }
+
+    private int getLineOfIndex(int charIndex) {
+        String text = getText();
+        int c = 0, line = 1;
+        while (c <= charIndex && c < text.length()) {
+            if (text.charAt(c++) == '\n') {
+                line++;
+            }
+        }
+
+        return line;
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {

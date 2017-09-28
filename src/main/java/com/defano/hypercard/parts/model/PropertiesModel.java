@@ -62,6 +62,8 @@ public class PropertiesModel {
      *                 {@link #setKnownProperty(String, Value)}
      */
     public void defineProperty (String property, Value value, boolean readOnly) {
+        assertContructed();
+
         property = property.toLowerCase();
         properties.put(property, value);
 
@@ -80,6 +82,7 @@ public class PropertiesModel {
      * @param delegatedProperty The delegate to which requests should be forwarded.
      */
     public void delegateProperty(String property, DelegatedProperty delegatedProperty) {
+        assertContructed();
         delegatedProperties.put(property.toLowerCase(), delegatedProperty);
     }
 
@@ -87,6 +90,8 @@ public class PropertiesModel {
      * Delegates a collection of properties to another properties model. See {@link #delegateProperty(String, DelegatedProperty)}.
      */
     public void delegateProperties(Collection<String> properties, DelegatedProperty delegatedProperty) {
+        assertContructed();
+
         for (String thisProperty : properties) {
             delegateProperty(thisProperty, delegatedProperty);
         }
@@ -100,6 +105,7 @@ public class PropertiesModel {
      * @param alsoKnownAs Another name by which the property can be addressed
      */
     public void definePropertyAlias(String property, String alsoKnownAs) {
+        assertContructed();
         propertyAliases.put(alsoKnownAs.toLowerCase(), property.toLowerCase());
     }
 
@@ -113,6 +119,7 @@ public class PropertiesModel {
      * @param setter The function used to set the property value.
      */
     public void defineComputedSetterProperty(String propertyName, ComputedSetter setter) {
+        assertContructed();
         computerSetters.put(propertyName.toLowerCase(), setter);
     }
 
@@ -126,6 +133,7 @@ public class PropertiesModel {
      * @param getter The function used to get the property value.
      */
     public void defineComputedGetterProperty(String propertyName, ComputedGetter getter) {
+        assertContructed();
         computerGetters.put(propertyName.toLowerCase(), getter);
     }
 
@@ -139,15 +147,14 @@ public class PropertiesModel {
      * @throws PropertyPermissionException If an attempt to set a property marked "read only" is made
      * @throws HtSemanticException If the property cannot accept the value provided
      */
-    public void setProperty (String propertyName, Value value)
-            throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
+    public void setProperty (String propertyName, Value value) throws HtSemanticException
     {
         setProperty(propertyName, value, false);
     }
 
-    private void setProperty (String propertyName, Value value, boolean quietly)
-            throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException
+    private void setProperty (String propertyName, Value value, boolean quietly) throws HtSemanticException
     {
+        assertContructed();
         propertyName = propertyName.toLowerCase();
 
         if (delegatedProperties.containsKey(propertyName)) {
@@ -192,10 +199,13 @@ public class PropertiesModel {
      * @param value The value to set
      */
     public void setKnownProperty (String property, Value value) {
+        assertContructed();
         setKnownProperty(property, value, false);
     }
 
     public void setKnownProperty(String property, Value value, boolean quietly) {
+        assertContructed();
+
         try {
             setProperty(property, value, quietly);
         } catch (HtSemanticException e) {
@@ -210,6 +220,7 @@ public class PropertiesModel {
      * @return The raw value associated with this property or null, if no raw value exists.
      */
     public Value getRawProperty(String property) {
+        assertContructed();
         return properties.get(property.toLowerCase());
     }
 
@@ -222,6 +233,8 @@ public class PropertiesModel {
      * @throws NoSuchPropertyException If no property exists with this name
      */
     public Value getProperty (String property) throws NoSuchPropertyException {
+        assertContructed();
+
         property = property.toLowerCase();
 
         if (delegatedProperties.containsKey(property)) {
@@ -250,6 +263,7 @@ public class PropertiesModel {
      * @return The value of the property
      */
     public Value getKnownProperty (String property) {
+        assertContructed();
         property = property.toLowerCase();
 
         try {
@@ -266,6 +280,7 @@ public class PropertiesModel {
      * @return True if the property exists, false otherwise.
      */
     public boolean hasProperty(String property) {
+        assertContructed();
         property = property.toLowerCase();
         return properties.containsKey(property) || propertyAliases.containsKey(property) || (computerGetters.containsKey(property) && computerSetters.containsKey(property));
     }
@@ -275,6 +290,7 @@ public class PropertiesModel {
      * @param listener The observer
      */
     public void addPropertyWillChangeObserver(PropertyWillChangeObserver listener) {
+        assertContructed();
         willChangeObservers.add(listener);
     }
 
@@ -283,10 +299,12 @@ public class PropertiesModel {
      * @param listener The observer
      */
     public void addPropertyChangedObserver(PropertyChangeObserver listener) {
+        assertContructed();
         changeObservers.add(listener);
     }
 
     public void addAndNotifyPropertyChangeObserver(PropertyChangeObserver listener) {
+        assertContructed();
         changeObservers.add(listener);
         notifyPropertyChangedObserver(listener);
     }
@@ -299,6 +317,7 @@ public class PropertiesModel {
      * @param listener This listener to be notified.
      */
     public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
+        assertContructed();
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (String property : properties.keySet()) {
                 listener.onPropertyChanged(property, properties.get(property), properties.get(property));
@@ -307,6 +326,7 @@ public class PropertiesModel {
     }
 
     public boolean removePropertyChangedObserver(PropertyChangeObserver listener) {
+        assertContructed();
         return changeObservers.remove(listener);
     }
 
@@ -326,5 +346,11 @@ public class PropertiesModel {
                 listener.onPropertyChanged(property, oldValue, value);
             }
         });
+    }
+
+    private void assertContructed() {
+        if (propertyAliases == null || changeObservers == null || willChangeObservers == null || computerGetters == null || computerSetters == null || delegatedProperties == null) {
+            throw new IllegalStateException("PropertiesModel is not properly constructed. Did you forget to call super.initialize()");
+        }
     }
 }

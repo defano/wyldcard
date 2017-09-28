@@ -303,7 +303,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
         int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
-        partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
         partModel.setFont(ToolsContext.getInstance().getSelectedFontProvider().get());
         partModel.addPropertyChangedObserver(this);
     }

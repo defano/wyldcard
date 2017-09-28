@@ -20,6 +20,8 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_ITEMDELIMITER = "itemdelimiter";
     public final static String PROP_SELECTEDTEXT = "selectedtext";
     public final static String PROP_SELECTEDCHUNK = "selectedchunk";
+    public final static String PROP_SELECTEDFIELD = "selectedfield";
+    public final static String PROP_SELECTEDLINE = "selectedline";
     public final static String PROP_CLICKTEXT = "clicktext";
     public final static String PROP_LOCKSCREEN = "lockscreen";
     public final static String PROP_MOUSEH = "mouseh";
@@ -30,11 +32,20 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_CLICKV = "clickv";
     public final static String PROP_SOUND = "sound";
 
-    public HyperCardProperties() {
+    private final static HyperCardProperties instance = new HyperCardProperties();
+
+    public static HyperCardProperties getInstance() {
+        return instance;
+    }
+
+    private HyperCardProperties() {
         super();
 
         defineProperty(PROP_ITEMDELIMITER, new Value(","), false);
-        defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
+        defineProperty(PROP_SELECTEDTEXT, new Value(), true);
+        defineProperty(PROP_SELECTEDCHUNK, new Value(), true);
+        defineProperty(PROP_SELECTEDFIELD, new Value(), true);
+        defineProperty(PROP_SELECTEDLINE, new Value(), true);
         defineProperty(PROP_LOCKSCREEN, new Value("false"), false);
         defineProperty(PROP_CLICKTEXT, new Value(""), true);
         defineProperty(PROP_MOUSEH, new Value(0), true);

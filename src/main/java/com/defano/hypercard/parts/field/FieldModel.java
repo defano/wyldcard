@@ -13,6 +13,7 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 
+import javax.annotation.PostConstruct;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.rtf.RTFEditorKit;
@@ -75,12 +76,20 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_CONTENTS, new Value(""), false);
         partModel.defineProperty(PROP_SHAREDTEXT, new Value(false), false);
 
-        partModel.defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(partModel.getPlainText()));
-        partModel.defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> {
-            // Nothing to do; view must react to this change, update its document and call setRtf()
-        });
+        partModel.initialize();
 
         return partModel;
+    }
+
+    @PostConstruct
+    @Override
+    public void initialize() {
+        super.initialize();
+
+        defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getPlainText()));
+        defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> {
+            // Nothing to do; view must react to this change, update its document and call setRtf()
+        });
     }
 
     /**

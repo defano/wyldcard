@@ -63,11 +63,11 @@ public class HyperCard {
         KeyboardManager.start();
         MouseManager.start();
         PartEditor.start();
-        PeriodicMessageManager.getInstance().start();
 
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
             stackPart.open(stackPart.getStackModel());
+            PeriodicMessageManager.getInstance().start();
         });
 
         // Close all open files before we die

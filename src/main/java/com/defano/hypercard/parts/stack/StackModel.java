@@ -18,6 +18,7 @@ import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtSemanticException;
 
+import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
@@ -48,6 +49,14 @@ public class StackModel extends PartModel {
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
+
+        initialize();
+    }
+
+    @PostConstruct
+    @Override
+    public void initialize() {
+        super.initialize();
 
         defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getStackWindow().getWindow().getLocation().x));
         defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getStackWindow().getWindow().getY()));

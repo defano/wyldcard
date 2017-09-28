@@ -21,7 +21,7 @@ public class ArtVandelay {
         fd.setVisible(true);
 
         if (fd.getFiles().length > 0) {
-            importPaint(fd.getFiles()[0]);
+            importPaint(fd.getFiles());
         }
     }
 
@@ -47,7 +47,14 @@ public class ArtVandelay {
         }
     }
 
+    public static void importPaint(File[] files) {
+        if (files != null && files.length > 0) {
+            importPaint(files[0]);
+        }
+    }
+
     public static void importPaint(File file) {
+
         try {
             BufferedImage importedImage = ImageIO.read(file);
 

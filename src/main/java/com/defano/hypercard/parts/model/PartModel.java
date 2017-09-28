@@ -65,6 +65,7 @@ public class PartModel extends PropertiesModel implements Messagable {
     }
 
     @PostConstruct
+    @Override
     public void initialize() {
         super.initialize();
 

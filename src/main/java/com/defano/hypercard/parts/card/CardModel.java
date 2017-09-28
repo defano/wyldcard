@@ -19,6 +19,7 @@ import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.google.common.collect.Lists;
 
+import javax.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +52,14 @@ public class CardModel extends PartModel {
         defineProperty(PROP_CANTDELETE, new Value(false), false);
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CONTENTS, new Value(""), false);
+
+        initialize();
+    }
+
+    @Override
+    @PostConstruct
+    public void initialize() {
+        super.initialize();
 
         // When no name of card is provided, returns 'card id xxx'
         defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {

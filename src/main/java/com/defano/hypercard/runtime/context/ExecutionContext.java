@@ -27,7 +27,6 @@ public class ExecutionContext {
 
     // Globals are shared across threads. Race condition? What race condition!?
     private final SymbolTable globals;
-    private final HyperCardProperties globalProperties = new HyperCardProperties();
 
     /*
      * In this implementation, when HyperCard sends a system-defined message to a part
@@ -298,7 +297,7 @@ public class ExecutionContext {
      * @return The set of global properties.
      */
     public HyperCardProperties getGlobalProperties() {
-        return globalProperties;
+        return HyperCardProperties.getInstance();
     }
 
     /**
