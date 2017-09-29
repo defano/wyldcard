@@ -646,7 +646,14 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         super.dispose();
     }
 
-    private CardLayerPart getPart(PartModel partModel) {
+    /**
+     * Returns the CardLayerPart represented by the given PartModel.
+     *
+     * @param partModel The PartModel associated with the desired Part.
+     * @throws IllegalArgumentException Thrown if no such part exists on this card
+     * @return The matching CardLayerPart
+     */
+    public CardLayerPart getPart(PartModel partModel) {
         if (partModel instanceof FieldModel) {
             return fields.getPartForModel(partModel);
         } else if (partModel instanceof ButtonModel) {

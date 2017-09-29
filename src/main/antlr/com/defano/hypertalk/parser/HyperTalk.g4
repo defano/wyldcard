@@ -21,7 +21,7 @@ blockName           : ID
                     | 'answer' | 'ask' | 'put' | 'get' | 'set' | 'send' | 'wait' | 'sort' | 'go' | 'enable' | 'disable'
                     | 'read' | 'write' | 'hide' | 'show' | 'add' | 'subtract' | 'multiply' | 'divide' | 'choose'
                     | 'click' | 'drag' | 'type' | 'lock' | 'unlock' | 'pass' | 'domenu' | 'visual' | 'reset' | 'create'
-                    | 'delete' | 'play' | 'dial' | 'beep' | 'open' | 'close'
+                    | 'delete' | 'play' | 'dial' | 'beep' | 'open' | 'close' | 'select'
                     ;
 
 function            : 'function' ID parameterList NEWLINE statementList 'end' ID                                        # populatedFunction
@@ -74,6 +74,7 @@ commandStmnt        : answerCmd                                                 
                     | readCmd                                                                                           # readCmdStmt
                     | writeCmd                                                                                          # writeCmdStmt
                     | convertCmd                                                                                        # convertCmdStmt
+                    | selectCmd                                                                                         # selectCmdStmt
                     | 'hide' part                                                                                       # hideCmdStmnt
                     | 'show' part                                                                                       # showCmdStmnt
                     | 'add' expression 'to' container                                                                   # addCmdStmnt
@@ -110,6 +111,10 @@ commandStmnt        : answerCmd                                                 
                     | 'exit' blockName                                                                                  # exitCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
+                    ;
+
+selectCmd           : 'select' part                                                                                     # selectPartCmd
+                    | 'select' 'empty'                                                                                  # selectEmptyCmd
                     ;
 
 convertCmd          : 'convert' container 'to' convertible                                                              # convertContainerToCmd

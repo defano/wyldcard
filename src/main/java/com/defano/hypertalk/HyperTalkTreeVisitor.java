@@ -147,6 +147,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSelectCmdStmt(HyperTalkParser.SelectCmdStmtContext ctx) {
+        return visit(ctx.selectCmd());
+    }
+
+    @Override
     public Object visitDualFormatConvertible(HyperTalkParser.DualFormatConvertibleContext ctx) {
         return new Convertible((ConvertibleDateFormat) visit(ctx.conversionFormat(0)), (ConvertibleDateFormat) visit(ctx.conversionFormat(1)));
     }
@@ -856,6 +861,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitArgMsgCmdStmt(HyperTalkParser.ArgMsgCmdStmtContext ctx) {
         return new MessageCmd((String) visit(ctx.ID()), (ExpressionList) visit(ctx.expressionList()));
+    }
+
+    @Override
+    public Object visitSelectPartCmd(HyperTalkParser.SelectPartCmdContext ctx) {
+        return new SelectPartCmd((PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitSelectEmptyCmd(HyperTalkParser.SelectEmptyCmdContext ctx) {
+        return new SelectEmptyCmd();
     }
 
     @Override
