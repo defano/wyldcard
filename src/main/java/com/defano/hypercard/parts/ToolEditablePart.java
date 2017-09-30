@@ -21,6 +21,8 @@ import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.ToolType;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartIdSpecifier;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.jmonet.tools.util.MarchingAnts;
 
 import java.awt.*;
@@ -71,6 +73,14 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     ToolType getEditTool();
 
     void setEnabledRecursively(boolean enabled);
+
+    /**
+     * Returns a {@link PartSpecifier} identifying this part in the stack.
+     * @return A PartSpecifier identifying this part.
+     */
+    default PartSpecifier getPartSpecifier() {
+        return new PartIdSpecifier(getCardLayer().asOwner(), getType(), getId());
+    }
 
     /**
      * Returns the size of the drag handle square to be rendered in the marching ants.

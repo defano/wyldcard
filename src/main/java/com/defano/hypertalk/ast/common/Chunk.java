@@ -33,5 +33,6 @@ public class Chunk {
         this.type = type;
         this.start = start;
         this.end = end;
-    }    
+    }
+
 }

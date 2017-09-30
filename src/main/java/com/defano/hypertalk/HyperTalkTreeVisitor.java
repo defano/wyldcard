@@ -1246,6 +1246,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSelectionDest(HyperTalkParser.SelectionDestContext ctx) {
+        return new ContainerSelection();
+    }
+
+    @Override
+    public Object visitChunkSelectionDest(HyperTalkParser.ChunkSelectionDestContext ctx) {
+        return new ContainerSelection((Chunk) visit(ctx.chunk()));
+    }
+
+    @Override
     public Object visitChunkDest(HyperTalkParser.ChunkDestContext ctx) {
         return new ContainerMsgBox((Chunk) visit(ctx.chunk()));
     }
@@ -1651,6 +1661,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSelectionFunc(HyperTalkParser.SelectionFuncContext ctx) {
+        return BuiltInFunction.SELECTION;
+    }
+
+    @Override
     public Object visitShiftKeyFunc(HyperTalkParser.ShiftKeyFuncContext ctx) {
         return BuiltInFunction.SHIFT_KEY;
     }
@@ -1876,6 +1891,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case MOUSELOC: return new MouseLocFunc();
             case RESULT: return new ResultFunc();
             case MESSAGE: return new MessageBoxFunc();
+            case SELECTION: return new SelectionFunc();
             case TICKS: return new TicksFunc();
             case SECONDS: return new SecondsFunc();
             case ABBREV_DATE: return new DateFunc(DateLength.ABBREVIATED);

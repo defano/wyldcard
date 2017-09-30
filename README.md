@@ -371,7 +371,7 @@ Constant     | Value
 
 ## Containers
 
-A _container_ is anything in HyperCard that you can `put` a value into: Parts, variables, properties, menus and the message box are all containers.
+A _container_ is anything in HyperCard that you can `put` a value into: Parts, variables, properties, menus, the message box, and the selection are each containers.
 
 #### Variable containers
 
@@ -468,6 +468,17 @@ on mouseUp
   get 2 * 3
   answer it   -- Responds with 6
 end mouseUp
+```
+
+#### The selection container
+
+The active selection of text within a field can be used as a container. When mutating the selection, the selected text changes making the newly changed text the active selection. 
+
+For example,
+
+```
+if the selection is a number then multiply the selection by 10
+put "[redacted] into the selection"
 ```
 
 ## Parts and Properties

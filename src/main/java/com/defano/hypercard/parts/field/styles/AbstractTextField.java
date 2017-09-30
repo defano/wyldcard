@@ -8,7 +8,6 @@
 
 package com.defano.hypercard.parts.field.styles;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
@@ -18,6 +17,7 @@ import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.utils.Range;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.swing.*;
@@ -267,11 +267,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void caretUpdate(CaretEvent e) {
         // Update selectedText and selectedChunk properties
-        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText()), true);
-        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
-        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
-        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedField(), true);
-        ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLine(), true);
+        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, getSelectedText(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedField(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLine(), true);
+        HyperCardProperties.getInstance().setTheSelection(toolEditablePart.getPartSpecifier(), getSelectedRange());
 
         // Update global font style selection
         AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
@@ -324,6 +325,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                 " field id " +
                 toolEditablePart.getPartModel().getId()
         );
+    }
+
+    private Range getSelectedRange() {
+        return new Range(textPane.getSelectionStart(), textPane.getSelectionEnd());
     }
 
     private Value getSelectedChunk() {

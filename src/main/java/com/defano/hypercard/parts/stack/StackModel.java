@@ -16,7 +16,6 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;

@@ -360,6 +360,8 @@ chunk               : chunk chunk                                               
 container           : ID                                                                                                # variableDest
                     | 'the'? ('message' | 'message' 'box' | 'message' 'window')                                         # messageDest
                     | chunk 'the'? ('message' | 'message' 'box' | 'message' 'window')                                   # chunkMessageDest
+                    | 'the' 'selection'                                                                                 # selectionDest
+                    | chunk 'the' 'selection'                                                                           # chunkSelectionDest
                     | chunk ID                                                                                          # chunkVariableDest
                     | part                                                                                              # partDest
                     | chunk part                                                                                        # chunkPartDest
@@ -533,6 +535,7 @@ noArgFunc           : 'mouse'                                                   
                     | ('commandkey' | 'cmdkey')                                                                         # commandKeyFunc
                     | 'shiftkey'                                                                                        # shiftKeyFunc
                     | 'optionkey'                                                                                       # optionKeyFunc
+                    | 'selection'                                                                                       # selectionFunc
                     | ('message' | 'message' 'box' | 'message' 'window')                                                # messageFunc
                     | 'ticks'                                                                                           # ticksFunc
                     | 'seconds'                                                                                         # secondsFunc

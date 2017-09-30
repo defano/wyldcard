@@ -6,14 +6,11 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackObservable;
-import com.defano.hypercard.parts.stack.StackObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.SystemMessage;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
