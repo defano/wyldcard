@@ -217,6 +217,7 @@ public class ChunkUtils {
     private static String getSeparatorForChunkType(ChunkType chunkType) {
         switch (chunkType) {
             case CHAR:
+            case CHARRANGE:
                 return "";
             case WORD:
                 return " ";
