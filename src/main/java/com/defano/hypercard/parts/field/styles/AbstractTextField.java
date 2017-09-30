@@ -15,6 +15,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.field.SelectableText;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.utils.Range;
@@ -39,7 +40,7 @@ import java.util.Observer;
  * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, Observer, CaretListener {
+public abstract class AbstractTextField extends JScrollPane implements SelectableText, FieldComponent, DocumentListener, Observer, CaretListener {
 
     private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
@@ -280,91 +281,19 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     }
 
     /**
-     * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
-     * text is selected but the caret is moved to the given position.
-     * @param start The selection start, inclusive, counting from 0.
-     * @param end The selection end, exclusive, counting from 0.
+     * {@inheritDoc}
      */
-    public void setSelection(int start, int end) {
-        if (start > end) {
-            throw new IllegalArgumentException("Selection start cannot be after selection end.");
-        }
-
-        textPane.requestFocus();
-        textPane.setSelectionStart(start);
-        textPane.setSelectionEnd(end);
+    @Override
+    public String getHyperTalkAddress() {
+        return toolEditablePart.getCardLayer().friendlyName.toLowerCase() + " field id " + toolEditablePart.getPartModel().getId();
     }
 
-    private Value getSelectedLine() {
-        int lineStart = getLineOfIndex(textPane.getSelectionStart());
-        int lineEnd = getLineOfIndex(textPane.getSelectionEnd() - 1);
-
-        // No selection; selected line is empty
-        if (getSelectedText().stringValue().length() == 0) {
-            return new Value();
-        }
-
-        return new Value(
-                "line " + lineStart +
-                ((lineEnd == lineStart) ? "" : (" to " + lineEnd)) +
-                " of " + getSelectedField()
-        );
-    }
-
-    private Value getSelectedField() {
-        int selectionStart = textPane.getSelectionStart();
-        int selectionEnd = textPane.getSelectionEnd();
-
-        // No selection; selected field is empty
-        if (selectionStart == selectionEnd) {
-            return new Value();
-        }
-
-        return new Value(
-                toolEditablePart.getCardLayer().friendlyName.toLowerCase() +
-                " field id " +
-                toolEditablePart.getPartModel().getId()
-        );
-    }
-
-    private Range getSelectedRange() {
-        return new Range(textPane.getSelectionStart(), textPane.getSelectionEnd());
-    }
-
-    private Value getSelectedChunk() {
-        int selectionStart = textPane.getSelectionStart();
-        int selectionEnd = textPane.getSelectionEnd();
-
-        // No selection; selected chunk is empty
-        if (selectionStart == selectionEnd) {
-            return new Value();
-        }
-
-        // Chunk expression counts from 1
-        selectionStart++;
-
-        return new Value("char " +
-                selectionStart +
-                (selectionEnd == selectionStart ? "" : (" to " + selectionEnd)) +
-                " of " +
-                getSelectedField()
-        );
-    }
-
-    private Value getSelectedText() {
-        return textPane.getSelectedText() == null ? new Value() : new Value(textPane.getSelectedText());
-    }
-
-    private int getLineOfIndex(int charIndex) {
-        String text = getText();
-        int c = 0, line = 1;
-        while (c <= charIndex && c < text.length()) {
-            if (text.charAt(c++) == '\n') {
-                line++;
-            }
-        }
-
-        return line;
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JTextComponent getTextComponent() {
+        return textPane;
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
