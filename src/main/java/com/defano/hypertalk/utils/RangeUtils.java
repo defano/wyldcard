@@ -70,6 +70,33 @@ public class RangeUtils {
         }
     }
 
+    /**
+     * Gets the range of characters identified by a given chunk.
+     *
+     * @param value The string whose characters should be ranged
+     * @param c The chunk identifying a substring (i.e., 'second word of', 'third item of')
+     * @return The range of identified characters.
+     * @throws HtSemanticException Thrown if the chunk is invalid.
+     */
+    public static Range getRange(String value, Chunk c) throws HtSemanticException {
+        Value startVal = null;
+        Value endVal = null;
+
+        if (c.start != null)
+            startVal = c.start.evaluate();
+        if (c.end != null)
+            endVal = c.end.evaluate();
+
+        if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
+            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
+        if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
+            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
+
+        if (endVal != null)
+            return getRange(value, c.type, startVal.integerValue(), endVal.integerValue());
+        else
+            return getRange(value, c.type, startVal.integerValue());
+    }
 
     private static Range getRange(String value, CompositeChunk c, Range in) throws HtSemanticException {
         Range s = getRange(value, (Chunk) c, in);
@@ -95,26 +122,6 @@ public class RangeUtils {
     private static Range getRange(String value, Chunk c, Range in) throws HtSemanticException {
         Range range = getRange(value, c);
         return new Range(in.start + range.start, in.start + range.start + (range.end - range.start));
-    }
-
-    private static Range getRange(String value, Chunk c) throws HtSemanticException {
-        Value startVal = null;
-        Value endVal = null;
-
-        if (c.start != null)
-            startVal = c.start.evaluate();
-        if (c.end != null)
-            endVal = c.end.evaluate();
-
-        if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
-            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
-        if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
-            throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
-
-        if (endVal != null)
-            return getRange(value, c.type, startVal.integerValue(), endVal.integerValue());
-        else
-            return getRange(value, c.type, startVal.integerValue());
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

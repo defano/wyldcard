@@ -115,6 +115,12 @@ commandStmnt        : answerCmd                                                 
 
 selectCmd           : 'select' part                                                                                     # selectPartCmd
                     | 'select' 'empty'                                                                                  # selectEmptyCmd
+                    | 'select' 'text' 'of' part                                                                         # selectTextCmd
+                    | 'select' 'before' 'text' 'of' part                                                                # selectBeforeCmd
+                    | 'select' 'after' 'text' 'of' part                                                                 # selectAfterCmd
+                    | 'select' chunk part                                                                               # selectChunkCmd
+                    | 'select' 'before' chunk part                                                                      # selectBeforeChunkCmd
+                    | 'select' 'after' chunk part                                                                       # selectAfterChunkCmd
                     ;
 
 convertCmd          : 'convert' container 'to' convertible                                                              # convertContainerToCmd

@@ -278,6 +278,22 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         ToolsContext.getInstance().getHilitedFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
     }
 
+    /**
+     * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
+     * text is selected but the caret is moved to the given position.
+     * @param start The selection start, inclusive, counting from 0.
+     * @param end The selection end, exclusive, counting from 0.
+     */
+    public void setSelection(int start, int end) {
+        if (start > end) {
+            throw new IllegalArgumentException("Selection start cannot be after selection end.");
+        }
+
+        textPane.requestFocus();
+        textPane.setSelectionStart(start);
+        textPane.setSelectionEnd(end);
+    }
+
     private Value getSelectedLine() {
         int lineStart = getLineOfIndex(textPane.getSelectionStart());
         int lineEnd = getLineOfIndex(textPane.getSelectionEnd() - 1);

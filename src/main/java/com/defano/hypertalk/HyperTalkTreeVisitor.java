@@ -874,6 +874,36 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSelectTextCmd(HyperTalkParser.SelectTextCmdContext ctx) {
+        return new SelectTextCmd(Preposition.INTO, (PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitSelectAfterChunkCmd(HyperTalkParser.SelectAfterChunkCmdContext ctx) {
+        return new SelectTextCmd(Preposition.AFTER, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitSelectBeforeChunkCmd(HyperTalkParser.SelectBeforeChunkCmdContext ctx) {
+        return new SelectTextCmd(Preposition.BEFORE, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitSelectAfterCmd(HyperTalkParser.SelectAfterCmdContext ctx) {
+        return new SelectTextCmd(Preposition.AFTER, (PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitSelectBeforeCmd(HyperTalkParser.SelectBeforeCmdContext ctx) {
+        return new SelectTextCmd(Preposition.BEFORE, (PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitSelectChunkCmd(HyperTalkParser.SelectChunkCmdContext ctx) {
+        return new SelectTextCmd(Preposition.INTO, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+    }
+
+    @Override
     public Object visitWriteFileCmd(HyperTalkParser.WriteFileCmdContext ctx) {
         return WriteCmd.writeFile((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
     }
