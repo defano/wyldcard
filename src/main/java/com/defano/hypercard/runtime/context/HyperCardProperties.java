@@ -13,6 +13,7 @@ import com.defano.hypercard.sound.SoundPlayer;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
@@ -33,9 +34,6 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_CLICKH = "clickh";
     public final static String PROP_CLICKV = "clickv";
     public final static String PROP_SOUND = "sound";
-
-    private PartSpecifier theSelectionPart;
-    private Range theSelectionRange;
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -77,19 +75,6 @@ public class HyperCardProperties extends PropertiesModel {
             }
         });
 
-    }
-
-    public void setTheSelection(PartSpecifier selectionPart, Range selectionRange) {
-        this.theSelectionPart = selectionPart;
-        this.theSelectionRange = selectionRange;
-    }
-
-    public PartSpecifier getSelectionPartSpecifier() {
-        return theSelectionPart;
-    }
-
-    public Range getSelectionRange() {
-        return theSelectionRange;
     }
 
     public void resetProperties() {

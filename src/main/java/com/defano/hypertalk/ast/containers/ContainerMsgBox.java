@@ -17,7 +17,6 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.window.forms.MessageWindow;
 import com.defano.hypertalk.ast.common.Value;
@@ -45,13 +44,13 @@ public class ContainerMsgBox extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = new Value(HyperCard.getInstance().getMessageBoxText());
+        Value value = new Value(WindowManager.getMessageWindow().getMsgBoxText());
         return chunkOf(value, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        Value destValue = new Value(HyperCard.getInstance().getMessageBoxText());
+        Value destValue = new Value(WindowManager.getMessageWindow().getMsgBoxText());
 
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -59,7 +58,7 @@ public class ContainerMsgBox extends Container {
         else
             destValue = Value.setValue(destValue, preposition, value);
 
-        HyperCard.getInstance().setMessageBoxText(destValue);
+        WindowManager.getMessageWindow().setMsgBoxText(destValue.stringValue());
         ExecutionContext.getContext().setIt(destValue);
 
         // If message is hidden, show it but don't focus it

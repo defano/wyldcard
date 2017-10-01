@@ -28,10 +28,13 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.containers.PartIdSpecifier;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -45,7 +48,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart, PropertyChangeObserver, DeferredKeyEventComponent {
+public class FieldPart extends StyleableField implements ManagedSelection, CardLayerPart, PropertyChangeObserver, DeferredKeyEventComponent {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -124,12 +127,14 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void partClosed() {
         super.partClosed();
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        getTextComponent().removeCaretListener(this);
     }
 
     /** {@inheritDoc} */
     @Override
     public void partOpened() {
         super.partOpened();
+        getTextComponent().addCaretListener(this);
     }
 
     /** {@inheritDoc} */
@@ -315,5 +320,26 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     @Override
     public void dispatchEvent(AWTEvent event) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> getTextPane().dispatchEvent(event));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public JTextComponent getTextComponent() {
+        return super.getTextPane();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getHyperTalkAddress() {
+        return getCardLayer().friendlyName.toLowerCase() + " field id " + getPartModel().getId();
+    }
+
+    @Override
+    public PartSpecifier getPartSpecifier() {
+        return new PartIdSpecifier(getCardLayer().asOwner(), PartType.FIELD, getId());
     }
 }

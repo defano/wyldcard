@@ -21,6 +21,6 @@ public interface PartSpecifier {
     }
 
     default boolean isStackElementSpecifier() {
-        return type() == PartType.CARD || type() == PartType.BACKGROUND;
+        return type() == PartType.CARD || type() == PartType.BACKGROUND || type() == PartType.MESSAGE_BOX;
     }
 }

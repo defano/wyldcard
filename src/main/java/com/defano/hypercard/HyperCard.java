@@ -109,32 +109,6 @@ public class HyperCard {
         return stackPart.getDisplayedCard();
     }
 
-    public void setMessageBoxText(Object theMsg) {
-        SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setMsgBoxText(theMsg.toString()));
-    }
-
-    public String getMessageBoxText() {
-        return WindowManager.getMessageWindow().getMsgBoxText();
-    }
-
-    public void evaluateMessageBox() {
-        Interpreter.getMessageExecutor().execute(() -> {
-            try {
-                if (!getMessageBoxText().trim().isEmpty()) {
-                    String messageText = getMessageBoxText();
-                    Interpreter.executeString(null, messageText).get();
-
-                    // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
-                    if (Interpreter.isExpressionStatement(messageText)) {
-                        HyperCard.getInstance().setMessageBoxText(ExecutionContext.getContext().getIt());
-                    }
-                }
-            } catch (Exception e) {
-                HyperCard.getInstance().showErrorDialog(e);
-            }
-        });
-    }
-
     public void showErrorDialog(Exception e) {
         if (!errorDialogVisible.get()) {
             SwingUtilities.invokeLater(() -> {

@@ -398,6 +398,7 @@ part                : buttonPart                                                
                     | ('card' | 'cd') 'part' factor                                                                     # cardPartNumberPart
                     | ('background' | 'bkgnd') 'part' factor                                                            # bkgndPartNumberPart
                     | 'me'                                                                                              # mePart
+                    | 'the'? ('message' | 'message' 'box' | 'message' 'window')                                         # msgPart
                     ;
 
 buttonPart          : ('background' | 'bkgnd')? 'button' factor                                                         # bkgndButtonPart

@@ -27,4 +27,16 @@ public class Range {
     public Chunk asChunk() {
         return new Chunk(ChunkType.CHARRANGE, new LiteralExp(start + 1), new LiteralExp(end));
     }
+
+    public boolean isEmpty() {
+        return length() == 0;
+    }
+
+    @Override
+    public String toString() {
+        return "Range{" +
+                "start=" + start +
+                ", end=" + end +
+                '}';
+    }
 }

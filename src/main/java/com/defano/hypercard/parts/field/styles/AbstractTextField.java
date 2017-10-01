@@ -15,10 +15,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.FieldModel;
-import com.defano.hypercard.parts.field.SelectableText;
-import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.utils.Range;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.swing.*;
@@ -40,7 +37,7 @@ import java.util.Observer;
  * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements SelectableText, FieldComponent, DocumentListener, Observer, CaretListener {
+public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, Observer, CaretListener {
 
     private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
@@ -267,33 +264,12 @@ public abstract class AbstractTextField extends JScrollPane implements Selectabl
      */
     @Override
     public void caretUpdate(CaretEvent e) {
-        // Update selectedText and selectedChunk properties
-        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, getSelectedText(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedField(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLine(), true);
-        HyperCardProperties.getInstance().setTheSelection(toolEditablePart.getPartSpecifier(), getSelectedRange());
+        // Update selectedText
+        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, new Value(textPane.getSelectedText()), true);
 
         // Update global font style selection
         AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
         ToolsContext.getInstance().getHilitedFontProvider().set(textPane.getStyledDocument().getFont(caretAttributes));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getHyperTalkAddress() {
-        return toolEditablePart.getCardLayer().friendlyName.toLowerCase() + " field id " + toolEditablePart.getPartModel().getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public JTextComponent getTextComponent() {
-        return textPane;
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {

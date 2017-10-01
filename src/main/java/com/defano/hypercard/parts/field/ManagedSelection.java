@@ -1,13 +1,18 @@
 package com.defano.hypercard.parts.field;
 
+import com.defano.hypercard.runtime.context.HyperCardProperties;
+import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-public interface SelectableText {
+public interface ManagedSelection extends CaretListener {
 
     /**
      * Gets the JTextComponent containing the selectable text.
@@ -20,6 +25,8 @@ public interface SelectableText {
      * @return A HyperTalk expression referring to this component
      */
     String getHyperTalkAddress();
+
+    PartSpecifier getPartSpecifier();
 
     /**
      * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
@@ -112,5 +119,16 @@ public interface SelectableText {
         }
 
         return line;
+    }
+
+    @Override
+    default void caretUpdate(CaretEvent e) {
+        System.err.println("IN HERE! " + getSelectedRange());
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedField(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLine(), true);
+
+        SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectedRange());
     }
 }

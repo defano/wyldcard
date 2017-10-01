@@ -4,6 +4,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
@@ -42,6 +43,8 @@ public interface PartContainer {
             return findPartByOrdinal((PartOrdinalSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
+        } else if (ps instanceof PartMessageSpecifier) {
+            return WindowManager.getMessageWindow().getPartModel();
         }
 
         throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);

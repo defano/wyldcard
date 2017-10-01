@@ -1401,6 +1401,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMsgPart(HyperTalkParser.MsgPartContext ctx) {
+        return new PartMessageExp();
+    }
+
+    @Override
     public Object visitThisCardPart(HyperTalkParser.ThisCardPartContext ctx) {
         return new PartPositionExp(PartType.CARD, Position.THIS);
     }
