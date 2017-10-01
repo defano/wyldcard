@@ -33,6 +33,8 @@ import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
@@ -57,6 +59,7 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
     private FieldModel partModel;
     private final WeakReference<CardPart> parent;
     private AtomicBoolean redispatchInProgress = new AtomicBoolean(false);
+    private SelectionUpdater selectionUpdater = new SelectionUpdater();
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
@@ -127,14 +130,14 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
     public void partClosed() {
         super.partClosed();
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
-        getTextComponent().removeCaretListener(this);
+        getTextComponent().removeCaretListener(selectionUpdater);
     }
 
     /** {@inheritDoc} */
     @Override
     public void partOpened() {
         super.partOpened();
-        getTextComponent().addCaretListener(this);
+        getTextComponent().addCaretListener(selectionUpdater);
     }
 
     /** {@inheritDoc} */
@@ -341,5 +344,12 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
     @Override
     public PartSpecifier getPartSpecifier() {
         return new PartIdSpecifier(getCardLayer().asOwner(), PartType.FIELD, getId());
+    }
+
+    private class SelectionUpdater implements CaretListener {
+        @Override
+        public void caretUpdate(CaretEvent e) {
+            FieldPart.this.updateSelectionContext();
+        }
     }
 }

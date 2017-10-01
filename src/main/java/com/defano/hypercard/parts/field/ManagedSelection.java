@@ -6,13 +6,11 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-public interface ManagedSelection extends CaretListener {
+public interface ManagedSelection {
 
     /**
      * Gets the JTextComponent containing the selectable text.
@@ -21,11 +19,15 @@ public interface ManagedSelection extends CaretListener {
     JTextComponent getTextComponent();
 
     /**
-     * Returns a HyperTalk expression that refers to this component, like 'card field id 1' or 'the message box'
+     * Gets a HyperTalk expression that refers to this component, like 'card field id 1' or 'the message box'.
      * @return A HyperTalk expression referring to this component
      */
     String getHyperTalkAddress();
 
+    /**
+     * Gets a part specifier that refers to this component.
+     * @return The part specifier.
+     */
     PartSpecifier getPartSpecifier();
 
     /**
@@ -44,7 +46,13 @@ public interface ManagedSelection extends CaretListener {
         getTextComponent().setSelectionEnd(end);
     }
 
-    default Value getSelectedLine() {
+    /**
+     * Gets a HyperTalk expression representing the current line selection (like 'line 1 to 3 of card field id 7', or
+     * 'empty' if no selection exists.
+     *
+     * @return An expression representing the current line selection
+     */
+    default Value getSelectedLineExpression() {
         int lineStart = getLineAtCharPosition(getTextComponent().getSelectionStart());
         int lineEnd = getLineAtCharPosition(getTextComponent().getSelectionEnd() - 1);
 
@@ -56,11 +64,17 @@ public interface ManagedSelection extends CaretListener {
         return new Value(
                 "line " + lineStart +
                         ((lineEnd == lineStart) ? "" : (" to " + lineEnd)) +
-                        " of " + getSelectedField()
+                        " of " + getSelectedFieldExpression()
         );
     }
 
-    default Value getSelectedField() {
+    /**
+     * Gets a HyperTalk expression representing the current field selection (like 'field id 3' or 'the message'), or
+     * 'empty' if no selection exists.
+     *
+     * @return An expression representing the current field selection.
+     */
+    default Value getSelectedFieldExpression() {
         int selectionStart = getTextComponent().getSelectionStart();
         int selectionEnd = getTextComponent().getSelectionEnd();
 
@@ -72,11 +86,13 @@ public interface ManagedSelection extends CaretListener {
         return new Value(getHyperTalkAddress());
     }
 
-    default Range getSelectedRange() {
-        return new Range(getTextComponent().getSelectionStart(), getTextComponent().getSelectionEnd());
-    }
-
-    default Value getSelectedChunk() {
+    /**
+     * Gets a HyperTalk expression representing the current chunk selection (like 'char 11 to 17 of field id 3'), or
+     * 'empty' if no selection exists.
+     *
+     * @return An expression representing the current chunk selection.
+     */
+    default Value getSelectedChunkExpression() {
         int selectionStart = getTextComponent().getSelectionStart();
         int selectionEnd = getTextComponent().getSelectionEnd();
 
@@ -92,14 +108,30 @@ public interface ManagedSelection extends CaretListener {
                 selectionStart +
                 (selectionEnd == selectionStart ? "" : (" to " + selectionEnd)) +
                 " of " +
-                getSelectedField()
+                getSelectedFieldExpression()
         );
     }
 
+    /**
+     * Gets the range of characters selected on this component.
+     * @return The selection range.
+     */
+    default Range getSelectedRange() {
+        return new Range(getTextComponent().getSelectionStart(), getTextComponent().getSelectionEnd());
+    }
+
+    /**
+     * Gets the text of the current selection or 'empty' if no selection exists.
+     * @return The currently selected text.
+     */
     default Value getSelectedText() {
         return getTextComponent().getSelectedText() == null ? new Value() : new Value(getTextComponent().getSelectedText());
     }
 
+    /**
+     * Gets the entire selectable contents of this component (that is, all of the text, not just the selected text).
+     * @return The entire text of this component.
+     */
     default String getSelectableText() {
         Document doc = getTextComponent().getDocument();
         try {
@@ -109,6 +141,12 @@ public interface ManagedSelection extends CaretListener {
         }
     }
 
+    /**
+     * Gets the line number at which the given position falls.
+     *
+     * @param position The position of character whose line should be determined.
+     * @return The line (counting from 1) where the character is found.
+     */
     default int getLineAtCharPosition(int position) {
         String text = getSelectableText();
         int c = 0, line = 1;
@@ -121,13 +159,14 @@ public interface ManagedSelection extends CaretListener {
         return line;
     }
 
-    @Override
-    default void caretUpdate(CaretEvent e) {
-        System.err.println("IN HERE! " + getSelectedRange());
+    /**
+     * Updates the HyperCard properties and selection context with the active selection.
+     */
+    default void updateSelectionContext() {
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunk(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedField(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLine(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(), true);
+        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
 
         SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectedRange());
     }

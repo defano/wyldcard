@@ -481,6 +481,7 @@ constant            : 'empty'                                                   
 factor              : literal                                                                                           # literalFactor
                     | ID                                                                                                # idFactor
                     | part                                                                                              # partFactor
+                    | 'the'? 'selection'                                                                                # selectionFactor
                     | '(' expression ')'                                                                                # expressionFactor
                     | propertySpec                                                                                      # idOfPartFactor
                     | menu                                                                                              # menuFactor
@@ -536,8 +537,6 @@ noArgFunc           : 'mouse'                                                   
                     | ('commandkey' | 'cmdkey')                                                                         # commandKeyFunc
                     | 'shiftkey'                                                                                        # shiftKeyFunc
                     | 'optionkey'                                                                                       # optionKeyFunc
-                    | 'selection'                                                                                       # selectionFunc
-                    | ('message' | 'message' 'box' | 'message' 'window')                                                # messageFunc
                     | 'ticks'                                                                                           # ticksFunc
                     | 'seconds'                                                                                         # secondsFunc
                     | ('english date' | 'long date')                                                                    # longDateFormatFunc

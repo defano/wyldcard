@@ -16,8 +16,6 @@ public enum BuiltInFunction {
     MOUSE,
     MOUSELOC,
     RESULT,
-    MESSAGE,
-    SELECTION,
     TICKS,
     SECONDS,
     SHORT_DATE,

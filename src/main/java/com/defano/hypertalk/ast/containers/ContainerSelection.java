@@ -36,15 +36,10 @@ public class ContainerSelection extends Container {
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
 
-        // Get the text, part, and range of the active selection
-        Value oldSelection = HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SELECTEDTEXT);
-        PartSpecifier partSpecifier = SelectionContext.getInstance().getSelectionPartSpecifier();
+        Value oldSelection = SelectionContext.getInstance().getSelection();
         Range range = SelectionContext.getInstance().getSelectionRange();
-
-        // No selection exists
-        if (partSpecifier == null || range == null || range.length() == 0) {
-            throw new HtSemanticException("There isn't any selection.");
-        }
+        ManagedSelection field = SelectionContext.getInstance().getManagedSelection();
+        PartModel partModel = SelectionContext.getInstance().getSelectedPart();
 
         // Create the new selectedText
         Value newSelection;
@@ -52,18 +47,6 @@ public class ContainerSelection extends Container {
             newSelection = Value.setChunk(oldSelection, preposition, chunk, value);
         else
             newSelection = Value.setValue(oldSelection, preposition, value);
-
-        // Find the part holding the selection
-        PartModel partModel = ExecutionContext.getContext().getCurrentCard().findPart(partSpecifier);
-        ManagedSelection field;
-
-        if (partModel instanceof FieldModel) {
-            field = (ManagedSelection) ExecutionContext.getContext().getCurrentCard().getPart(partModel);
-        } else if (partModel instanceof MsgBoxModel) {
-            field = WindowManager.getMessageWindow();
-        } else {
-            throw new IllegalStateException("Bug! Unexpected part holding selection: " + partModel);
-        }
 
         // Replace the current selection with the new selection
         partModel.setValue(Value.setChunk(partModel.getValue(), Preposition.INTO, range.asChunk(), newSelection));
