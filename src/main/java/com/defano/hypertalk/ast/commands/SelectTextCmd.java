@@ -1,6 +1,9 @@
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.ButtonPart;
+import com.defano.hypercard.parts.button.styles.MenuButton;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.ManagedSelection;
 import com.defano.hypercard.parts.model.PartModel;
@@ -8,6 +11,7 @@ import com.defano.hypercard.parts.msgbox.MsgBoxModel;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.containers.PartSpecifier;
 import com.defano.hypertalk.ast.containers.Preposition;
@@ -40,10 +44,16 @@ public class SelectTextCmd extends Command {
     public void onExecute() throws HtException {
         PartSpecifier specifier = this.partExp.evaluateAsSpecifier();
 
-        if (specifier.type() == null || (specifier.type() != PartType.FIELD && specifier.type() != PartType.MESSAGE_BOX)) {
+        if (specifier.type() != null && specifier.type() == PartType.BUTTON) {
+            selectMenuButtonItem(specifier);
+        } else if (specifier.type() == null || (specifier.type() != PartType.FIELD && specifier.type() != PartType.MESSAGE_BOX)) {
             throw new HtSemanticException("Expected a field here.");
+        } else {
+            selectManagedText(specifier);
         }
+    }
 
+    private void selectManagedText(PartSpecifier specifier) throws HtSemanticException {
         PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
         ManagedSelection field;
 
@@ -72,6 +82,22 @@ public class SelectTextCmd extends Command {
                     break;
             }
         });
+    }
+
+    private void selectMenuButtonItem(PartSpecifier specifier) throws HtSemanticException {
+        if (chunk.type != ChunkType.LINE) {
+            throw new HtSemanticException("Cannot select " + chunk.type.friendlyName() + " of this button.");
+        }
+
+        PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
+        ButtonPart part = (ButtonPart) HyperCard.getInstance().getDisplayedCard().getPart(partModel);
+
+        ButtonComponent component = (ButtonComponent) part.getButtonComponent();
+        if (component instanceof MenuButton) {
+            ((MenuButton) component).selectItem(chunk.start.evaluate().integerValue());
+        } else {
+            throw new HtSemanticException("Can't select lines of this type of button.");
+        }
     }
 
 }

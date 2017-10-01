@@ -1,5 +1,6 @@
 package com.defano.hypercard.parts.field;
 
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.common.Value;
@@ -29,6 +30,8 @@ public interface ManagedSelection {
      * @return The part specifier.
      */
     PartSpecifier getPartSpecifier();
+
+    PartModel getPartModel();
 
     /**
      * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
@@ -163,6 +166,10 @@ public interface ManagedSelection {
      * Updates the HyperCard properties and selection context with the active selection.
      */
     default void updateSelectionContext() {
+        getPartModel().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
+        getPartModel().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
+        getPartModel().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
+
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(), true);

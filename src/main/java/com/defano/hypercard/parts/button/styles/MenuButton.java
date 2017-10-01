@@ -48,6 +48,13 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
         addActionListener(new MenuButtonItemListener());
     }
 
+    public void selectItem(int item) {
+        int itemIndex = item - 1;
+        if (itemIndex > 0 && itemIndex < getItemCount()) {
+            setSelectedIndex(itemIndex);
+        }
+    }
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -97,7 +104,8 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
             if ("-".equals(getSelectedItem())) {
                 setSelectedIndex(0);
             } else {
-                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(getSelectedItem())), false);
+                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(getSelectedItem())), true);
+                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDLINE, new Value(String.valueOf(getSelectedIndex() + 1)), true);
             }
         }
     }
