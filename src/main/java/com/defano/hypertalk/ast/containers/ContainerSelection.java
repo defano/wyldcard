@@ -1,18 +1,12 @@
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.ManagedSelection;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.msgbox.MsgBoxModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 
 public class ContainerSelection extends Container {
@@ -29,8 +23,7 @@ public class ContainerSelection extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SELECTEDTEXT);
-        return chunkOf(value, chunk);
+        return chunkOf(SelectionContext.getInstance().getSelection(), chunk);
     }
 
     @Override
