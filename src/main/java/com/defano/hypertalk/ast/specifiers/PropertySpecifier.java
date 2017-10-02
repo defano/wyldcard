@@ -6,9 +6,8 @@
  * Copyright © 2017 Matt DeFano. All rights reserved.
  */
 
-package com.defano.hypertalk.ast.containers;
+package com.defano.hypertalk.ast.specifiers;
 
-import com.defano.hypertalk.ast.common.MenuItemSpecifier;
 import com.defano.hypertalk.ast.expressions.PartExp;
 
 public class PropertySpecifier {

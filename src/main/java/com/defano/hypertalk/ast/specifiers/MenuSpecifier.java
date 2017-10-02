@@ -1,6 +1,8 @@
-package com.defano.hypertalk.ast.common;
+package com.defano.hypertalk.ast.specifiers;
 
 import com.defano.hypercard.menu.HyperCardMenuBar;
+import com.defano.hypertalk.ast.common.Ordinal;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
 

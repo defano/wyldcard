@@ -16,6 +16,7 @@ import com.defano.hypertalk.ast.constructs.*;
 import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.functions.*;
+import com.defano.hypertalk.ast.specifiers.*;
 import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.ast.commands.*;
 import com.defano.hypertalk.comparator.SortStyle;
@@ -508,22 +509,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertyDest(HyperTalkParser.PropertyDestContext ctx) {
-        return new ContainerProperty((PropertySpecifier) visit(ctx.propertySpec()));
+        return new PropertyContainer((PropertySpecifier) visit(ctx.propertySpec()));
     }
 
     @Override
     public Object visitChunkPropertyDest(HyperTalkParser.ChunkPropertyDestContext ctx) {
-        return new ContainerProperty((PropertySpecifier) visit(ctx.propertySpec()), (Chunk)visit(ctx.chunk()));
+        return new PropertyContainer((PropertySpecifier) visit(ctx.propertySpec()), (Chunk)visit(ctx.chunk()));
     }
 
     @Override
     public Object visitMenuDest(HyperTalkParser.MenuDestContext ctx) {
-        return new ContainerMenu((MenuSpecifier) visit(ctx.menu()));
+        return new MenuContainer((MenuSpecifier) visit(ctx.menu()));
     }
 
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
-        return new ContainerMenu((MenuItemSpecifier) visit(ctx.menuItem()));
+        return new MenuContainer((MenuItemSpecifier) visit(ctx.menuItem()));
     }
 
     @Override
@@ -1185,7 +1186,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPutIntoCmd(HyperTalkParser.PutIntoCmdContext ctx) {
-        return new PutCmd((Expression) visit(ctx.expression()), Preposition.INTO, new ContainerMsgBox());
+        return new PutCmd((Expression) visit(ctx.expression()), Preposition.INTO, new MsgBoxContainer());
     }
 
     @Override
@@ -1210,7 +1211,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitVariableDest(HyperTalkParser.VariableDestContext ctx) {
-        return new ContainerVariable((String) visit(ctx.ID()));
+        return new VariableContainer((String) visit(ctx.ID()));
     }
 
     @Override
@@ -1222,47 +1223,47 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitChunkVariableDest(HyperTalkParser.ChunkVariableDestContext ctx) {
-        return new ContainerVariable((String) visit(ctx.ID()), (Chunk) visit(ctx.chunk()));
+        return new VariableContainer((String) visit(ctx.ID()), (Chunk) visit(ctx.chunk()));
     }
 
     @Override
     public Object visitPartDest(HyperTalkParser.PartDestContext ctx) {
-        return new ContainerPart((PartExp) visit(ctx.part()));
+        return new PartContainer((PartExp) visit(ctx.part()));
     }
 
     @Override
     public Object visitChunkPartDest(HyperTalkParser.ChunkPartDestContext ctx) {
-        return new ContainerPart((PartExp) visit(ctx.part()), (Chunk) visit(ctx.chunk()));
+        return new PartContainer((PartExp) visit(ctx.part()), (Chunk) visit(ctx.chunk()));
     }
 
     @Override
     public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
-        return new ContainerMsgBox();
+        return new MsgBoxContainer();
     }
 
     @Override
     public Object visitChunkMessageDest(HyperTalkParser.ChunkMessageDestContext ctx) {
-        return new ContainerMsgBox((Chunk) visit(ctx.chunk()));
+        return new MsgBoxContainer((Chunk) visit(ctx.chunk()));
     }
 
     @Override
     public Object visitSelectionDest(HyperTalkParser.SelectionDestContext ctx) {
-        return new ContainerSelection();
+        return new SelectionContainer();
     }
 
     @Override
     public Object visitChunkSelectionDest(HyperTalkParser.ChunkSelectionDestContext ctx) {
-        return new ContainerSelection((Chunk) visit(ctx.chunk()));
+        return new SelectionContainer((Chunk) visit(ctx.chunk()));
     }
 
     @Override
     public Object visitChunkDest(HyperTalkParser.ChunkDestContext ctx) {
-        return new ContainerMsgBox((Chunk) visit(ctx.chunk()));
+        return new MsgBoxContainer((Chunk) visit(ctx.chunk()));
     }
 
     @Override
     public Object visitDefaultDest(HyperTalkParser.DefaultDestContext ctx) {
-        return new ContainerMsgBox();
+        return new MsgBoxContainer();
     }
 
     @Override

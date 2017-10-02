@@ -20,8 +20,8 @@ import com.defano.hypercard.parts.PartException;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartIdSpecifier;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class PartIdExp extends PartExp {

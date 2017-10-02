@@ -10,22 +10,25 @@ package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PropertySpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 
-public class ContainerProperty extends Container {
+public class PropertyContainer extends Container {
 
     public final PropertySpecifier propertySpec;
     public final Chunk chunk;
 
-    public ContainerProperty(PropertySpecifier propertySpec) {
+    public PropertyContainer(PropertySpecifier propertySpec) {
         this.propertySpec = propertySpec;
         this.chunk = null;
     }
 
-    public ContainerProperty(PropertySpecifier propertySpec, Chunk chunk) {
+    public PropertyContainer(PropertySpecifier propertySpec, Chunk chunk) {
         this.propertySpec = propertySpec;
         this.chunk = chunk;
     }

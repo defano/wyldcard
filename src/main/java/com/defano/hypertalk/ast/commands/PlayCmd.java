@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.sound.SoundPlayer;
-import com.defano.hypertalk.ast.common.MusicSpecifier;
+import com.defano.hypertalk.ast.specifiers.MusicSpecifier;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;

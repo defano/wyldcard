@@ -4,7 +4,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
 import javax.swing.text.BadLocationException;

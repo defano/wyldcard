@@ -8,7 +8,7 @@ import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
-import com.defano.hypertalk.ast.containers.*;
+import com.defano.hypertalk.ast.specifiers.*;
 import com.google.common.collect.Lists;
 
 import java.util.List;

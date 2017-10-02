@@ -15,7 +15,7 @@
 
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public abstract class PartExp extends Expression {

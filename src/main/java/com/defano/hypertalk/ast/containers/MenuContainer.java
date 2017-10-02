@@ -1,8 +1,9 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.menu.MenuItemBuilder;
-import com.defano.hypertalk.ast.common.MenuItemSpecifier;
-import com.defano.hypertalk.ast.common.MenuSpecifier;
+import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
+import com.defano.hypertalk.ast.specifiers.MenuSpecifier;
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -12,17 +13,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ContainerMenu extends Container {
+public class MenuContainer extends Container {
 
     private final MenuSpecifier menu;
     private final MenuItemSpecifier item;
 
-    public ContainerMenu(MenuItemSpecifier item) {
+    public MenuContainer(MenuItemSpecifier item) {
         this.item = item;
         this.menu = null;
     }
 
-    public ContainerMenu(MenuSpecifier menu) {
+    public MenuContainer(MenuSpecifier menu) {
         this.menu = menu;
         this.item = null;
     }

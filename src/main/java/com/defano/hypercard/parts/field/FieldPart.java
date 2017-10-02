@@ -28,8 +28,8 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.containers.PartIdSpecifier;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;

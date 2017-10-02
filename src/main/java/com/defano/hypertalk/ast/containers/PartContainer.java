@@ -7,7 +7,7 @@
  */
 
 /**
- * ContainerPart.java
+ * PartContainer.java
  *
  * @author matt.defano@gmail.com
  * <p>
@@ -17,23 +17,24 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
 
 
-public class ContainerPart extends Container {
+public class PartContainer extends Container {
 
     private final PartExp part;
     private final Chunk chunk;
 
-    public ContainerPart(PartExp part) {
+    public PartContainer(PartExp part) {
         this.part = part;
         this.chunk = null;
     }
 
-    public ContainerPart(PartExp part, Chunk chunk) {
+    public PartContainer(PartExp part, Chunk chunk) {
         this.part = part;
         this.chunk = chunk;
     }

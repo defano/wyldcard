@@ -1,5 +1,7 @@
-package com.defano.hypertalk.ast.common;
+package com.defano.hypertalk.ast.specifiers;
 
+import com.defano.hypertalk.ast.common.VisualEffectImage;
+import com.defano.hypertalk.ast.common.VisualEffectSpeed;
 import com.defano.jsegue.SegueName;
 
 public class VisualEffectSpecifier {

@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.Container;
-import com.defano.hypertalk.ast.containers.Preposition;
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 

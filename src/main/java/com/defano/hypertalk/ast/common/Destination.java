@@ -8,8 +8,8 @@
 
 package com.defano.hypertalk.ast.common;
 
-import com.defano.hypertalk.ast.containers.*;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.specifiers.*;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class Destination {

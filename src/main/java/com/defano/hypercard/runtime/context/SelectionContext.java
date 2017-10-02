@@ -7,7 +7,7 @@ import com.defano.hypercard.parts.msgbox.MsgBoxModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 

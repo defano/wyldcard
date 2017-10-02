@@ -1,7 +1,7 @@
 package com.defano.hypercard.fx;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueAnimationObserver;
 import com.defano.jsegue.SegueCompletionObserver;

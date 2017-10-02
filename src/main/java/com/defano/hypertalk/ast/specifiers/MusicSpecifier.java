@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.common;
+package com.defano.hypertalk.ast.specifiers;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 

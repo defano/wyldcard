@@ -7,7 +7,7 @@ import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

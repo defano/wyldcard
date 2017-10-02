@@ -5,7 +5,7 @@ import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.SortDirection;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;

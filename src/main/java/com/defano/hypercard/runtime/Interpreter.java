@@ -17,7 +17,7 @@ import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
 import com.defano.hypertalk.HyperTalkErrorListener;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;

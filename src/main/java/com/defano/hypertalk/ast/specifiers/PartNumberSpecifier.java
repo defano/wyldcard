@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.containers;
+package com.defano.hypertalk.ast.specifiers;
 
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;

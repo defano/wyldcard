@@ -8,7 +8,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;

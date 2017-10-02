@@ -5,19 +5,20 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
 
-public class ContainerSelection extends Container {
+public class SelectionContainer extends Container {
 
     private final Chunk chunk;
 
-    public ContainerSelection(Chunk chunk) {
+    public SelectionContainer(Chunk chunk) {
         this.chunk = chunk;
     }
 
-    public ContainerSelection() {
+    public SelectionContainer() {
         this.chunk = null;
     }
 

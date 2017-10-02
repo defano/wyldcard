@@ -13,7 +13,7 @@ import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.SystemMessage;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.jmonet.model.Provider;
 
 import java.awt.*;

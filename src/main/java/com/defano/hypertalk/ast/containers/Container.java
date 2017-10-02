@@ -17,6 +17,7 @@
 
 package com.defano.hypertalk.ast.containers;
 
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;

@@ -13,7 +13,7 @@
  * Enumeration of acceptable prepositions
  */
 
-package com.defano.hypertalk.ast.containers;
+package com.defano.hypertalk.ast.common;
 
 public enum Preposition {
     BEFORE, AFTER, INTO;

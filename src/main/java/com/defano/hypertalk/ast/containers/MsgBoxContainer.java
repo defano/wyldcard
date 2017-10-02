@@ -7,7 +7,7 @@
  */
 
 /**
- * ContainerMsgBox.java
+ * MsgBoxContainer.java
  *
  * @author matt.defano@gmail.com
  * <p>
@@ -19,6 +19,7 @@ package com.defano.hypertalk.ast.containers;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.window.forms.MessageWindow;
+import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
@@ -26,15 +27,15 @@ import com.defano.hypertalk.ast.common.PartType;
 
 import javax.swing.*;
 
-public class ContainerMsgBox extends Container {
+public class MsgBoxContainer extends Container {
 
     public final Chunk chunk;
 
-    public ContainerMsgBox() {
+    public MsgBoxContainer() {
         this.chunk = null;
     }
 
-    public ContainerMsgBox(Chunk chunk) {
+    public MsgBoxContainer(Chunk chunk) {
         this.chunk = chunk;
     }
 

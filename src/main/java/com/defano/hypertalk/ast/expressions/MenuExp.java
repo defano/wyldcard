@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.common.MenuItemSpecifier;
-import com.defano.hypertalk.ast.common.MenuSpecifier;
+import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
+import com.defano.hypertalk.ast.specifiers.MenuSpecifier;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.ContainerMenu;
+import com.defano.hypertalk.ast.containers.MenuContainer;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class MenuExp extends Expression {
@@ -24,9 +24,9 @@ public class MenuExp extends Expression {
     @Override
     public Value evaluate() throws HtSemanticException {
         if (menuSpecifier != null) {
-            return new ContainerMenu(menuSpecifier).getValue();
+            return new MenuContainer(menuSpecifier).getValue();
         } else {
-            return new ContainerMenu(menuItemSpecifier).getValue();
+            return new MenuContainer(menuItemSpecifier).getValue();
         }
     }
 }

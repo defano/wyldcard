@@ -1,6 +1,6 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.common.MenuItemSpecifier;
+import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 

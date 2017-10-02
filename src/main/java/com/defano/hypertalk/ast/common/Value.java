@@ -17,7 +17,6 @@ import java.util.Vector;
 import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.comparator.StyledComparable;
 import com.defano.hypertalk.utils.ChunkUtils;
-import com.defano.hypertalk.ast.containers.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.DateUtils;
 

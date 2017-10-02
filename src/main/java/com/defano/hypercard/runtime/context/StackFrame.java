@@ -16,7 +16,7 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 
 import java.util.ArrayList;
 import java.util.List;

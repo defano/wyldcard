@@ -17,7 +17,7 @@ package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtSemanticException;
 

@@ -5,9 +5,9 @@ import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartNumberSpecifier;
-import com.defano.hypertalk.ast.containers.PartOrdinalSpecifier;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartNumberSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartOrdinalSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 public class PartNumberExp extends PartExp {

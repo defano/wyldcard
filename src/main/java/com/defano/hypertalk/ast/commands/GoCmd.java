@@ -14,8 +14,8 @@ import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Destination;
-import com.defano.hypertalk.ast.common.VisualEffectSpecifier;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 

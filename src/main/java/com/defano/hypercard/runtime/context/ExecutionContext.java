@@ -13,7 +13,8 @@ import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.containers.*;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
