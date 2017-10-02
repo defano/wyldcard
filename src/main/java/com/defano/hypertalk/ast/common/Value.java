@@ -105,7 +105,7 @@ public class Value implements StyledComparable<Value> {
     }
 
     public Value (String value) {
-        this.value = value;
+        this.value = value == null ? "" : value;
 
         // Special case: empty string is a valid int and float
         if (value == null || value.trim().equals("")) {
