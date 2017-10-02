@@ -41,7 +41,7 @@ public class WaitCmd extends Command {
             try {
                 Thread.sleep(units.toMilliseconds(expression.evaluate().doubleValue()));
             } catch (InterruptedException e) {
-                Thread.interrupted();
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -50,7 +50,7 @@ public class WaitCmd extends Command {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    Thread.interrupted();
+                    Thread.currentThread().interrupt();
                 }
             }
         }

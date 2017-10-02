@@ -115,7 +115,7 @@ public class AnswerCmd extends Command {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
         }
     }
 

@@ -12,7 +12,7 @@ public class ThreadUtils {
             try {
                 SwingUtilities.invokeAndWait(r);
             } catch (InterruptedException| InvocationTargetException e) {
-                Thread.interrupted();
+                Thread.currentThread().interrupt();
             }
         }
     }

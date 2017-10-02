@@ -42,7 +42,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
         try {
             cdl.await();
         } catch (InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
         }
 
         // Do no execute this command if handler trapped the message

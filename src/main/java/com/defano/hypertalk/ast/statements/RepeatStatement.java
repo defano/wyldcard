@@ -156,7 +156,9 @@ public class RepeatStatement extends Statement {
             try {
                 // Flush the Swing UI event queue
                 SwingUtilities.invokeAndWait(() -> {});
-            } catch (InterruptedException | InvocationTargetException e) {
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            } catch (InvocationTargetException e) {
                 // Nothing to do
             }
         }

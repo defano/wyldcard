@@ -21,7 +21,7 @@ public class UnlockScreenCmd extends Command {
         try {
             CurtainManager.getInstance().waitForEffectToFinish();
         } catch (InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
         }
     }
 }
