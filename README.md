@@ -472,7 +472,7 @@ end mouseUp
 
 #### The selection container
 
-The active selection of text within a field can be used as a container. When mutating the selection, the selected text changes making the newly changed text the active selection.
+The active selection of text within a field or the message box can be used as a container. When mutating the selection, the selected text changes making the modified text the active selection.
 
 For example,
 

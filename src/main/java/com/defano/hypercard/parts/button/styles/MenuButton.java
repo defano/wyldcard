@@ -105,8 +105,17 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
                 setSelectedIndex(0);
             } else {
                 toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(getSelectedItem())), true);
-                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDLINE, new Value(String.valueOf(getSelectedIndex() + 1)), true);
+                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDLINE, new Value(getSelectedLineExpression()), true);
             }
+        }
+
+        private String getSelectedLineExpression() {
+            return "line " +
+                    (getSelectedIndex() + 1) +
+                    " of " +
+                    toolEditablePart.getCardLayer().friendlyName.toLowerCase() +
+                    " button id " +
+                    toolEditablePart.getId();
         }
     }
 
