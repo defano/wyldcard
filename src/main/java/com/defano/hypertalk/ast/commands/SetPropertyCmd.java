@@ -1,10 +1,12 @@
 package com.defano.hypertalk.ast.commands;
 
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 public class SetPropertyCmd extends Command {
 
@@ -29,7 +31,13 @@ public class SetPropertyCmd extends Command {
         if (this.part == null) {
             ExecutionContext.getContext().getGlobalProperties().setProperty(property, value);
         } else {
-            ExecutionContext.getContext().getCurrentCard().findPart(part.evaluateAsSpecifier()).setKnownProperty(property, value);
+            PartModel model = ExecutionContext.getContext().getCurrentCard().findPart(part.evaluateAsSpecifier());
+
+            if (model.hasProperty(property)) {
+                model.setKnownProperty(property, value);
+            } else {
+                throw new HtSemanticException("Can't set that property on this part.");
+            }
         }
     }
 }

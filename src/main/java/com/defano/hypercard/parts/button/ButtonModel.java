@@ -29,6 +29,7 @@ public class ButtonModel extends CardLayerPartModel {
     public static final String PROP_ICON = "icon";
     public static final String PROP_ICONALIGN = "iconalign";
 
+
     private ButtonModel(Owner owner) {
         super(PartType.BUTTON, owner);
     }
@@ -49,7 +50,6 @@ public class ButtonModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
         partModel.defineProperty(PROP_CONTENTS, new Value(), false);
-        partModel.defineProperty(PROP_SELECTEDTEXT, new Value(), true);
         partModel.defineProperty(PROP_ICON, new Value(), false);
         partModel.defineProperty(PROP_ICONALIGN, new Value("default"), false);
 

@@ -1401,6 +1401,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMsgPart(HyperTalkParser.MsgPartContext ctx) {
+        return new PartMessageExp();
+    }
+
+    @Override
     public Object visitThisCardPart(HyperTalkParser.ThisCardPartContext ctx) {
         return new PartPositionExp(PartType.CARD, Position.THIS);
     }
@@ -1661,11 +1666,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitSelectionFunc(HyperTalkParser.SelectionFuncContext ctx) {
-        return BuiltInFunction.SELECTION;
-    }
-
-    @Override
     public Object visitShiftKeyFunc(HyperTalkParser.ShiftKeyFuncContext ctx) {
         return BuiltInFunction.SHIFT_KEY;
     }
@@ -1673,11 +1673,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCommandKeyFunc(HyperTalkParser.CommandKeyFuncContext ctx) {
         return BuiltInFunction.COMMAND_KEY;
-    }
-
-    @Override
-    public Object visitMessageFunc(HyperTalkParser.MessageFuncContext ctx) {
-        return BuiltInFunction.MESSAGE;
     }
 
     @Override
@@ -1733,6 +1728,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPartFactor(HyperTalkParser.PartFactorContext ctx) {
         return visit(ctx.part());
+    }
+
+    @Override
+    public Object visitSelectionFactor(HyperTalkParser.SelectionFactorContext ctx) {
+        return new SelectionExp();
     }
 
     @Override
@@ -1890,8 +1890,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case MOUSE: return new MouseFunc();
             case MOUSELOC: return new MouseLocFunc();
             case RESULT: return new ResultFunc();
-            case MESSAGE: return new MessageBoxFunc();
-            case SELECTION: return new SelectionFunc();
             case TICKS: return new TicksFunc();
             case SECONDS: return new SecondsFunc();
             case ABBREV_DATE: return new DateFunc(DateLength.ABBREVIATED);

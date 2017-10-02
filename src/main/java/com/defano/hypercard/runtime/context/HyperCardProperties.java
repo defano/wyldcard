@@ -9,13 +9,13 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.fx.CurtainManager;
+import com.defano.hypercard.parts.model.ComputedGetter;
 import com.defano.hypercard.sound.SoundPlayer;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartSpecifier;
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypertalk.exception.HtSemanticException;
 
 public class HyperCardProperties extends PropertiesModel {
 
@@ -33,9 +33,6 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_CLICKH = "clickh";
     public final static String PROP_CLICKV = "clickv";
     public final static String PROP_SOUND = "sound";
-
-    private PartSpecifier theSelectionPart;
-    private Range theSelectionRange;
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -69,6 +66,38 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedGetterProperty(PROP_CLICKV, (model, propertyName) -> new Value(MouseManager.getClickLoc().y));
         defineComputedGetterProperty(PROP_SOUND, (model, propertyName) -> new Value(SoundPlayer.getSound()));
 
+        defineComputedGetterProperty(PROP_SELECTEDLINE, (model, propertyName) -> {
+            try {
+                return SelectionContext.getInstance().getManagedSelection().getSelectedLineExpression();
+            } catch (HtSemanticException e) {
+                return new Value();
+            }
+        });
+
+        defineComputedGetterProperty(PROP_SELECTEDFIELD, (model, propertyName) -> {
+            try {
+                return SelectionContext.getInstance().getManagedSelection().getSelectedFieldExpression();
+            } catch (HtSemanticException e) {
+                return new Value();
+            }
+        });
+
+        defineComputedGetterProperty(PROP_SELECTEDCHUNK, (model, propertyName) -> {
+            try {
+                return SelectionContext.getInstance().getManagedSelection().getSelectedChunkExpression();
+            } catch (HtSemanticException e) {
+                return new Value();
+            }
+        });
+
+        defineComputedGetterProperty(PROP_SELECTEDTEXT, (model, propertyName) -> {
+            try {
+                return SelectionContext.getInstance().getSelection();
+            } catch (HtSemanticException e) {
+                return new Value();
+            }
+        });
+
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {
                 case PROP_LOCKSCREEN:
@@ -77,19 +106,6 @@ public class HyperCardProperties extends PropertiesModel {
             }
         });
 
-    }
-
-    public void setTheSelection(PartSpecifier selectionPart, Range selectionRange) {
-        this.theSelectionPart = selectionPart;
-        this.theSelectionRange = selectionRange;
-    }
-
-    public PartSpecifier getSelectionPartSpecifier() {
-        return theSelectionPart;
-    }
-
-    public Range getSelectionRange() {
-        return theSelectionRange;
     }
 
     public void resetProperties() {

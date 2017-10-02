@@ -74,7 +74,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Variables](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
+[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_) that contains a script providing a _handler_ for the given message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts or to themselves, too.
 
@@ -472,13 +472,13 @@ end mouseUp
 
 #### The selection container
 
-The active selection of text within a field can be used as a container. When mutating the selection, the selected text changes making the newly changed text the active selection. 
+The active selection of text within a field or the message box can be used as a container. When mutating the selection, the selected text changes making the modified text the active selection.
 
 For example,
 
 ```
 if the selection is a number then multiply the selection by 10
-put "[redacted] into the selection"
+put "[redacted]" into the selection
 ```
 
 ## Parts and Properties

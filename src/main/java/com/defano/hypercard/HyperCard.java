@@ -17,7 +17,6 @@ import com.defano.hypercard.parts.editor.PartEditor;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
-import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.jmonet.model.Provider;
@@ -107,32 +106,6 @@ public class HyperCard {
      */
     public CardPart getDisplayedCard() {
         return stackPart.getDisplayedCard();
-    }
-
-    public void setMessageBoxText(Object theMsg) {
-        SwingUtilities.invokeLater(() -> WindowManager.getMessageWindow().setMsgBoxText(theMsg.toString()));
-    }
-
-    public String getMessageBoxText() {
-        return WindowManager.getMessageWindow().getMsgBoxText();
-    }
-
-    public void evaluateMessageBox() {
-        Interpreter.getMessageExecutor().execute(() -> {
-            try {
-                if (!getMessageBoxText().trim().isEmpty()) {
-                    String messageText = getMessageBoxText();
-                    Interpreter.executeString(null, messageText).get();
-
-                    // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
-                    if (Interpreter.isExpressionStatement(messageText)) {
-                        HyperCard.getInstance().setMessageBoxText(ExecutionContext.getContext().getIt());
-                    }
-                }
-            } catch (Exception e) {
-                HyperCard.getInstance().showErrorDialog(e);
-            }
-        });
     }
 
     public void showErrorDialog(Exception e) {

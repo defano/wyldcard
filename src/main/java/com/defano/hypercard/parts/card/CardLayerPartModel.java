@@ -14,6 +14,8 @@ public abstract class CardLayerPartModel extends PartModel {
 
     public static final String PROP_ZORDER = "zorder";
     public static final String PROP_SELECTEDTEXT = "selectedtext";
+    public static final String PROP_SELECTEDLINE = "selectedline";
+    public static final String PROP_SELECTEDCHUNK = "selectedchunk";
     public static final String PROP_TEXTSIZE = "textsize";
     public static final String PROP_TEXTFONT = "textfont";
     public static final String PROP_TEXTSTYLE = "textstyle";
@@ -25,6 +27,8 @@ public abstract class CardLayerPartModel extends PartModel {
 
         defineProperty(PROP_ZORDER, new Value(0), false);
         defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
+        defineProperty(PROP_SELECTEDLINE, new Value(""), true);
+        defineProperty(PROP_SELECTEDCHUNK, new Value(""), true);
         defineProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
         defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getFamily()), false);
         defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
