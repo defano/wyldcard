@@ -69,8 +69,8 @@ public class SortCardsCmd extends Command {
             HyperCard.getInstance().showErrorDialog(e);
         } finally {
             // Because card order  may have changed, lets navigate back to where we started
-            HyperCard.getInstance().getStack().goCard(indexOfCardId(HyperCard.getInstance().getStack().getStackModel().getCardModels(), thisCardId), null);
             HyperCard.getInstance().getStack().invalidateCache();
+            HyperCard.getInstance().getStack().goCard(indexOfCardId(HyperCard.getInstance().getStack().getStackModel().getCardModels(), thisCardId), null);
         }
     }
 

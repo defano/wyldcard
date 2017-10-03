@@ -281,7 +281,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      *
      * @param visible Shows the foreground when true; hides it otherwise.
      */
-    public void setForegroundVisible(boolean visible) {
+    private void setForegroundVisible(boolean visible) {
         if (getForegroundCanvas() != null) {
             getForegroundCanvas().setVisible(visible);
         }

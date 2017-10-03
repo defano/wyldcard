@@ -12,6 +12,7 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.styles.OpaqueField;
 import com.defano.hypercard.parts.field.styles.RectangleField;
 import com.defano.hypercard.parts.field.styles.ShadowField;
@@ -108,11 +109,11 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
     @Override
     public void partOpened() {
+        fieldComponent.partOpened();
+
         getPartModel().addPropertyChangedObserver(fieldComponent);
         ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
-
-        fieldComponent.partOpened();
     }
 
     @Override

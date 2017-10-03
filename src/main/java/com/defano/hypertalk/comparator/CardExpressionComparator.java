@@ -2,6 +2,8 @@ package com.defano.hypertalk.comparator;
 
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Owner;
@@ -58,7 +60,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
                 return o2Value.compareTo(o1Value, sortStyle);
             }
 
-        } catch (HtException e) {
+        } catch (Exception e) {
             throw new HtUncheckedSemanticException(e);
         }
     }
@@ -68,6 +70,13 @@ public class CardExpressionComparator implements Comparator<CardModel> {
             cache.put(model, CardPart.skeletonFromModel(model, stack));
         }
 
-        return cache.get(model);
+        CardPart part = cache.get(model);
+
+        // Shared background fields in cached cards maintain original text; update the shared text context
+        for (FieldPart thisField : part.getFields()) {
+            ((FieldModel) thisField.getPartModel()).setCurrentCardId(model.getId());
+        }
+
+        return part;
     }
 }

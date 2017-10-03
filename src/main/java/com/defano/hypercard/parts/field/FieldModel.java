@@ -9,6 +9,7 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
@@ -127,6 +128,9 @@ public class FieldModel extends CardLayerPartModel {
     /**
      * For the purposes of background fields that do not have the sharedText property set, this value determines which
      * card's text is actively displayed in the field.
+     *
+     * We cannot simply query the active card ({@link ExecutionContext#getCurrentCard()}) to derive this value because
+     * part models are initialized <i>before</i> the card is changed.
      *
      * @param cardId The ID of the card on which this field is currently being displayed.
      */

@@ -75,6 +75,8 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
      */
     public static FieldPart newField(CardPart parent, Owner owner) {
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
+
+        // Place the field in the center of the card
         newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
 
         // When a new field is created, make the field tool active and select the newly created part
@@ -97,7 +99,6 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
 
         model.setCurrentCardId(parent.getId());
         field.partModel = model;
-        field.partModel.addPropertyChangedObserver(field);
 
         return field;
     }
@@ -129,6 +130,8 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
     @Override
     public void partClosed() {
         super.partClosed();
+
+        partModel.removePropertyChangedObserver(this);
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
         getTextComponent().removeCaretListener(selectionUpdater);
     }
@@ -137,7 +140,9 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
     @Override
     public void partOpened() {
         super.partOpened();
+
         getTextComponent().addCaretListener(selectionUpdater);
+        partModel.addPropertyChangedObserver(this);
     }
 
     /** {@inheritDoc} */

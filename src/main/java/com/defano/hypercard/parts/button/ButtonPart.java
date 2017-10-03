@@ -104,8 +104,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
         button.partModel = partModel;
-        button.partModel.addPropertyChangedObserver(button);
-
         return button;
     }
 
