@@ -20,11 +20,11 @@ import java.util.List;
 
 public enum BinaryOperator {
     EQUALS("=", "is"),
-    NOT_EQUALS("<>", "is not"),
+    NOT_EQUALS("<>", "is not", "≠"),
     LESS_THAN("<"),
     GREATER_THAN(">"),
-    LESS_THAN_OR_EQUALS("<="),
-    GREATER_THAN_OR_EQUALS(">="),
+    LESS_THAN_OR_EQUALS("<=", "≤"),
+    GREATER_THAN_OR_EQUALS(">=", "≥"),
     PLUS("+"),
     MINUS("-"),
     MULTIPLY("*"),

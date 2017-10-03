@@ -291,22 +291,22 @@ destinationType     : ('card' | 'cd')                                           
                     | ('background' | 'bkgnd')                                                                          # bkgndDestinationType
                     ;
 
-ifStatement         : 'if' expression THEN singleThen                                                                   # ifThenSingleLine
-                    | 'if' expression THEN NEWLINE multiThen                                                            # ifThenMultiline
+ifStatement         : 'if' expression NEWLINE? singleThen NEWLINE?                                                         # ifThenSingleLine
+                    | 'if' expression NEWLINE? multiThen NEWLINE?                                                           # ifThenMultiline
                     ;
 
-singleThen          : nonEmptyStmnt NEWLINE elseBlock                                                                   # singleThenNewlineElse
-                    | nonEmptyStmnt elseBlock                                                                           # singleThenElse
-                    | nonEmptyStmnt                                                                                     # singleThenNoElse
+singleThen          : 'then' NEWLINE? nonEmptyStmnt NEWLINE? elseBlock                                                                   # singleThenNewlineElse
+                    | 'then' NEWLINE? nonEmptyStmnt elseBlock                                                                           # singleThenElse
+                    | 'then' NEWLINE? nonEmptyStmnt                                                                                     # singleThenNoElse
                     ;
 
-multiThen           : statementList 'end if'                                                                            # emptyElse
-                    | 'end if'                                                                                          # emptyThenEmptyElse
-                    | statementList elseBlock                                                                           # thenElse
+multiThen           : 'then' statementList 'end if'                                                                            # emptyElse
+                    | 'then' 'end if'                                                                                          # emptyThenEmptyElse
+                    | 'then' statementList elseBlock                                                                           # thenElse
                     ;
 
 elseBlock           : 'else' nonEmptyStmnt                                                                              # elseStmntBlock
-                    | 'else' NEWLINE statementList 'end if'                                                             # elseStmntListBlock
+                    | 'else' NEWLINE? statementList 'end if'                                                             # elseStmntListBlock
                     | 'else' NEWLINE 'end if'                                                                           # elseEmptyBlock
                     ;
 
@@ -315,6 +315,7 @@ repeatStatement     : 'repeat' repeatRange NEWLINE statementList 'end repeat'   
                     ;
 
 repeatRange         : 'forever'                                                                                         # infiniteLoop
+                    |                                                                                                   # infiniteLoop
                     | duration                                                                                          # durationLoop
                     | count                                                                                             # countLoop
                     | 'with' ID '=' range                                                                               # withLoop
@@ -459,8 +460,8 @@ expression          : constant                                                  
                     | expression op=('mod'|'div'|'/'|'*') expression                                                    # multiplicationExp
                     | expression op=('+'|'-') expression                                                                # additionExp
                     | expression op=('&&'|'&') expression                                                               # concatExp
-                    | expression op=('>='|'<='|'<'|'>'|'contains'|'is in'|'is a' | 'is an' | 'is not a' | 'is not an') expression   # equalityExp
-                    | expression op=('='|'is not'|'is'|'<>'|'is not in') expression                                     # comparisonExp
+                    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is a' | 'is an' | 'is not a' | 'is not an') expression   # equalityExp
+                    | expression op=('='|'is not'|'is'|'<>' | '≠' |'is not in') expression                              # comparisonExp
                     | expression op=('is within' | 'is not within') expression                                          # withinExp
                     | expression 'and' expression                                                                       # andExp
                     | expression 'or' expression                                                                        # orExp
@@ -489,6 +490,7 @@ factor              : literal                                                   
                     ;
 
 builtInFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs
+                    | oneArgFunc '(' factor ')'                                                                         # builtinFuncOneArgs
                     | 'the' noArgFunc                                                                                   # builtinFuncNoArg
                     | argFunc '(' expressionList ')'                                                                    # builtinFuncArgList
                     ;
@@ -561,12 +563,19 @@ noArgFunc           : 'mouse'                                                   
                     | 'paramcount'                                                                                      # paramCountFunc
                     ;
 
-literal             : LITERAL
+literal             : knownType
+                    | LITERAL
                     | TWO_ITEM_LIST
                     | FOUR_ITEM_LIST
                     ;
 
-THEN                : NEWLINE 'then' | 'then';
+knownType           : 'number'
+                    | 'integer'
+                    | 'point'
+                    | 'rect' | 'rectangle'
+                    | 'date'
+                    | 'logical' | 'boolean' | 'bool'
+                    ;
 
 ID                  : (ALPHA (ALPHA | DIGIT)*) ;
 LITERAL             : STRING_LITERAL | NUMBER_LITERAL;
@@ -591,7 +600,7 @@ ALPHA               : ('a' .. 'z' | 'A' .. 'Z')+ ;
 DIGIT               : ('0' .. '9')+ ;
 
 COMMENT             : '--' ~('\r' | '\n' | '|')* -> skip;
-BREAK               : '|' NEWLINE -> skip;
+BREAK               : ('|' | '¬') NEWLINE -> skip;
 NEWLINE             : ('\n' | '\r')+;
 WHITESPACE          : (' ' | '\t')+ -> skip;
 UNLEXED_CHAR        : . ;

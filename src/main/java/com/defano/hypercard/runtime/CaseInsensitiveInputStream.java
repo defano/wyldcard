@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.IntStream;
  * Requires all tokens in the grammar to be lowercase (i.e., lexer rule 'mouseh' is correct, but 'mouseH' will
  * never match).
  */
+@SuppressWarnings("deprecation")
 public class CaseInsensitiveInputStream extends ANTLRInputStream {
     private char[] lowercase;
 

@@ -117,11 +117,11 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-HyperCard supported a soft-wrap character (_logical negation_ symbol, [Unicode U+00AC](https://en.wikipedia.org/wiki/Latin-1_Supplement_(Unicode_block))) that could be used to break a long statement across multiple lines. This application uses the pipe character (`|`) instead (which must be immediately followed by a newline). For example:
+HyperCard supported a soft-wrap character (the logical negation symbol, `¬`) that could be used to break a long statement across multiple lines. To simplify data entry, this application also supports using the pipe character (`|`) to soft-wrap a line. Both symbols must be immediately followed by a carriage-return to be valid. For example:
 
 ```
 answer "This is totally acceptable!" |
-  with "Love it" |
+  with "Love it" ¬
   or "Hate it"
 ```
 
@@ -319,19 +319,19 @@ An operator is an expression that takes one or two values (_operands_), applies 
 |6           | `&`, `&&`       | Text concatenation; `&&` adds a space between operands; `&` does not
 |7           | `>`             | Greater than comparison for numbers and text
 |            | `<`             | Less than comparison for numbers and text
-|            | `<=`            | Less than or equal to comparison for numbers and text
-|            | `>=`            | Greater than or equal to comparison for numbers and text
+|            | `<=`, `≤`       | Less than or equal to comparison for numbers and text
+|            | `>=`, '≥'       | Greater than or equal to comparison for numbers and text
 |            | `contains`      | Substring comparison for text
 |            | `is a`, `is an` | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
 |            | `is not a`, `is not an` | The logical inverse of `is a`, `is an`
 |8           | `=`             | Equality comparison for text
 |            | `is`            | Equality comparison for text
-|            | `is not`        | Negative equality comparison for text
-|            | `<>`	           | Synonym for is not
+|            | `is not`        | Negative equality comparison
+|            | `<>`, `≠`	     | Synonym for is not
 |9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
 |            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
 |10          | `and`           | Logical AND for boolean values
-|11 (lowest) |  `or`           | Logical OR for boolean values
+|11 (lowest) | `or`            | Logical OR for boolean values
 
 ### Factors
 
