@@ -449,7 +449,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
-        return new GoCmd((Destination) visit(ctx.destination()));
+        return new GoCmd((DestinationExp) visit(ctx.destination()));
     }
 
     @Override
@@ -464,7 +464,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd((Destination) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
+        return new GoCmd((DestinationExp) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override
@@ -484,17 +484,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardNumber(HyperTalkParser.CardNumberContext ctx) {
-        return new Destination((Expression) visit(ctx.expression()), (DestinationType) visit(ctx.destinationType()));
+        return new DestinationNumberExp((Expression) visit(ctx.expression()), (DestinationType) visit(ctx.destinationType()));
     }
 
     @Override
     public Object visitCardOrdinal(HyperTalkParser.CardOrdinalContext ctx) {
-        return new Destination((Ordinal) visit(ctx.ordinal()), (DestinationType) visit(ctx.destinationType()));
+        return new DestinationOrdinalExp((Ordinal) visit(ctx.ordinal()), (DestinationType) visit(ctx.destinationType()));
     }
 
     @Override
     public Object visitCardPosition(HyperTalkParser.CardPositionContext ctx) {
-        return new Destination((Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
+        return new DestinationPositionExp((Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
+    }
+
+    @Override
+    public Object visitDestinationRef(HyperTalkParser.DestinationRefContext ctx) {
+        return new DestinationReferenceExp((Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -1404,6 +1409,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMsgPart(HyperTalkParser.MsgPartContext ctx) {
         return new PartMessageExp();
+    }
+
+    @Override
+    public Object visitPartRef(HyperTalkParser.PartRefContext ctx) {
+        return new PartReferenceExp(ctx.ID().getText());
     }
 
     @Override

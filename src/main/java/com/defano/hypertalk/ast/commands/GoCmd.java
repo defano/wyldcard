@@ -13,7 +13,7 @@ import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.Destination;
+import com.defano.hypertalk.ast.expressions.DestinationExp;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
@@ -21,17 +21,17 @@ import com.defano.hypertalk.exception.HtException;
 
 public class GoCmd extends Command {
 
-    private final Destination destination;
+    private final DestinationExp destinationExp;
     private VisualEffectSpecifier visualEffect;
 
-    public GoCmd(Destination destination) {
-        this(destination, null);
+    public GoCmd(DestinationExp destinationExp) {
+        this(destinationExp, null);
     }
 
-    public GoCmd(Destination destination, VisualEffectSpecifier visualEffect) {
+    public GoCmd(DestinationExp destinationExp, VisualEffectSpecifier visualEffect) {
         super("go");
 
-        this.destination = destination;
+        this.destinationExp = destinationExp;
         this.visualEffect = visualEffect;
     }
 
@@ -42,12 +42,12 @@ public class GoCmd extends Command {
         }
 
         // Special case: No destination means 'Go back'
-        if (destination == null) {
+        if (destinationExp == null) {
             HyperCard.getInstance().getStack().goBack(visualEffect);
         }
 
         else {
-            PartSpecifier cardPart = destination.evaluateAsPartSpecifier();
+            PartSpecifier cardPart = destinationExp.evaluateAsSpecifier();
             PartModel model = HyperCard.getInstance().getStack().findPart(cardPart);
 
             int destinationIndex;

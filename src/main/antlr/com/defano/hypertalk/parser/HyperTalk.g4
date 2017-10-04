@@ -285,28 +285,29 @@ position            : 'the'? 'next'                                             
 destination         : destinationType expression                                                                        # cardNumber
                     | ordinal destinationType                                                                           # cardOrdinal
                     | position destinationType                                                                          # cardPosition
+                    | factor                                                                                            # destinationRef
                     ;
 
 destinationType     : ('card' | 'cd')                                                                                   # cardDestinationType
                     | ('background' | 'bkgnd')                                                                          # bkgndDestinationType
                     ;
 
-ifStatement         : 'if' expression NEWLINE? singleThen NEWLINE?                                                         # ifThenSingleLine
-                    | 'if' expression NEWLINE? multiThen NEWLINE?                                                           # ifThenMultiline
+ifStatement         : 'if' expression NEWLINE? singleThen NEWLINE?                                                      # ifThenSingleLine
+                    | 'if' expression NEWLINE? multiThen NEWLINE?                                                       # ifThenMultiline
                     ;
 
-singleThen          : 'then' NEWLINE? nonEmptyStmnt NEWLINE? elseBlock                                                                   # singleThenNewlineElse
-                    | 'then' NEWLINE? nonEmptyStmnt elseBlock                                                                           # singleThenElse
-                    | 'then' NEWLINE? nonEmptyStmnt                                                                                     # singleThenNoElse
+singleThen          : 'then' NEWLINE? nonEmptyStmnt NEWLINE? elseBlock                                                  # singleThenNewlineElse
+                    | 'then' NEWLINE? nonEmptyStmnt elseBlock                                                           # singleThenElse
+                    | 'then' NEWLINE? nonEmptyStmnt                                                                     # singleThenNoElse
                     ;
 
-multiThen           : 'then' statementList 'end if'                                                                            # emptyElse
-                    | 'then' 'end if'                                                                                          # emptyThenEmptyElse
-                    | 'then' statementList elseBlock                                                                           # thenElse
+multiThen           : 'then' statementList 'end if'                                                                     # emptyElse
+                    | 'then' 'end if'                                                                                   # emptyThenEmptyElse
+                    | 'then' statementList elseBlock                                                                    # thenElse
                     ;
 
 elseBlock           : 'else' nonEmptyStmnt                                                                              # elseStmntBlock
-                    | 'else' NEWLINE? statementList 'end if'                                                             # elseStmntListBlock
+                    | 'else' NEWLINE? statementList 'end if'                                                            # elseStmntListBlock
                     | 'else' NEWLINE 'end if'                                                                           # elseEmptyBlock
                     ;
 
@@ -400,6 +401,7 @@ part                : buttonPart                                                
                     | ('background' | 'bkgnd') 'part' factor                                                            # bkgndPartNumberPart
                     | 'me'                                                                                              # mePart
                     | 'the'? ('message' | 'message' 'box' | 'message' 'window')                                         # msgPart
+                    | ID                                                                                                # partRef
                     ;
 
 buttonPart          : ('background' | 'bkgnd')? 'button' factor                                                         # bkgndButtonPart
@@ -461,7 +463,7 @@ expression          : constant                                                  
                     | expression op=('+'|'-') expression                                                                # additionExp
                     | expression op=('&&'|'&') expression                                                               # concatExp
                     | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is a' | 'is an' | 'is not a' | 'is not an') expression   # equalityExp
-                    | expression op=('='|'is not'|'is'|'<>' | '≠' |'is not in') expression                              # comparisonExp
+                    | expression op=('='|'is not'|'is'|'<>'|'≠'|'is not in') expression                              # comparisonExp
                     | expression op=('is within' | 'is not within') expression                                          # withinExp
                     | expression 'and' expression                                                                       # andExp
                     | expression 'or' expression                                                                        # orExp

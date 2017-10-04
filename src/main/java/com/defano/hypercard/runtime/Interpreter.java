@@ -10,6 +10,7 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -128,6 +129,46 @@ public class Interpreter {
 
         // Value of a non-expression is itself
         return new Value(expression);
+    }
+
+    /**
+     * Attempts to evaluate the given value as an AST node identified by klass. That is, the given value is compiled
+     * as a HyperTalk script and the first and only statement in the script in coerced to the requested type. Returns
+     * null if the value is not a valid HyperTalk script or contains a script fragment that cannot be coerced to
+     * the requested type.
+     *
+     * For example, if value contains the text 'card field id 1', and klass is PartExp.class then an instance of
+     * PartIdExp will be returned referring to the requested part.
+     *
+     * @param value The value to dereference; may be any non-null value, but only Values containing valid HyperTalk
+     *              can be dereferenced.
+     * @param klass The Class to coerce/dereference the value into (may return a subtype of this class).
+     * @param <T> The type of the requested class.
+     * @return Null if dereference fails for any reason, otherwise an instance of the requested class representing
+     * the dereferenced value.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T dereference(Value value, Class<T> klass) {
+        try {
+            Statement statement = Interpreter.compile(value.stringValue()).getStatements().list.get(0);
+
+            // Simple case; statement matches requested type
+            if (statement.getClass().isAssignableFrom(klass)) {
+                return (T) statement;
+            }
+
+            else if (Expression.class.isAssignableFrom(klass)) {
+                Expression expression = ((ExpressionStatement) statement).expression;
+                if (klass.isAssignableFrom(expression.getClass())) {
+                    return (T) expression;
+                }
+            }
+
+        } catch (Exception e) {
+            // Nothing to do
+        }
+
+        return null;
     }
 
     /**

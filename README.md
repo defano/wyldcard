@@ -320,14 +320,14 @@ An operator is an expression that takes one or two values (_operands_), applies 
 |7           | `>`             | Greater than comparison for numbers and text
 |            | `<`             | Less than comparison for numbers and text
 |            | `<=`, `≤`       | Less than or equal to comparison for numbers and text
-|            | `>=`, '≥'       | Greater than or equal to comparison for numbers and text
+|            | `>=`, `≥`       | Greater than or equal to comparison for numbers and text
 |            | `contains`      | Substring comparison for text
 |            | `is a`, `is an` | Determines if the left-hand value is a `number`, `integer`, `date`, `point`, `rect` (or `rectangle`), `logical` (or `boolean`, `bool`). Returns an error if the right-hand value is not an expression yielding one of these types.
 |            | `is not a`, `is not an` | The logical inverse of `is a`, `is an`
 |8           | `=`             | Equality comparison for text
 |            | `is`            | Equality comparison for text
 |            | `is not`        | Negative equality comparison
-|            | `<>`, `≠`	     | Synonym for is not
+|            | `<>`, `≠`	     | Synonym for `is not`
 |9           | `is within`     | Determines if the left-hand point value is contained within the right-hand rectangle value.
 |            | `is not within` | Determines if the left-hand point value is not contained within the right-hand rectangle value.
 |10          | `and`           | Logical AND for boolean values
@@ -335,17 +335,22 @@ An operator is an expression that takes one or two values (_operands_), applies 
 
 ### Factors
 
-A _factor_ is a single, evaluated term or operand appearing in an expression. To eliminate ambiguity, HyperCard uses the following precedence when evaluating factors:
+A _factor_ is a single, evaluated term appearing in an expression. HyperTalk is somewhat unusual in its use of _context sensitive_ evaluation of terms.
 
-Precedence   | Term                    | Description
--------------|-------------------------|------------
-1 (highest)  | _Constant_              | Evaluation of a built-in constant (e.g., `pi`); see table below
-2            | _Built-in Function_     | Evaluation of a built-in function (e.g., `the mouse`)
-3            | _User-defined Function_ | Evaluation of a user-defined function (e.g., `fact(10)`)
-4            | _Literal_               | Evaluation of a literal value (e.g., `"Hello world!"`)
-5            | _Variable Container_    | Evaluation of a variable container (e.g., `x` in `get x + 3`)
-6            | _Part_                  | Evaluation of a part specifier (e.g., `card field id 0`)
-7 (lowest)   | _Property_              | Evaluation of a property of a part (e.g., `the width of me`)
+When referring to parts and destinations, if a symbol bound to a variable exists in the context of its usage then the value of that variable will be evaluated as if it were "in-lined" HyperTalk.
+
+For example, in this usage HyperTalk assumes `someCard` to be an unquoted literal and looks for a card named `someCard`:
+
+```
+go to card someCard  -- Looks for first card named 'someCard'
+```
+
+But in this example, HyperTalk evaluates the contents of `someCard` and discovers that it contains a valid HyperTalk expression referring to a card in the stack:
+
+```
+put "the last card" into someCard
+go someCard          -- Same behavior as 'go the last card'!
+```
 
 ### Constants and literals
 
