@@ -491,8 +491,8 @@ factor              : literal                                                   
                     | menuItem                                                                                          # menuItemFactor
                     ;
 
-builtInFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs
-                    | oneArgFunc '(' factor ')'                                                                         # builtinFuncOneArgs
+builtInFunc         : 'the'? oneArgFunc ('of' | 'in') expression                                                        # builtinFuncOneArgs
+                    | oneArgFunc '(' expression ')'                                                                     # builtinFuncOneArgs
                     | 'the' noArgFunc                                                                                   # builtinFuncNoArg
                     | argFunc '(' expressionList ')'                                                                    # builtinFuncArgList
                     ;

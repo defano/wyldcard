@@ -1859,17 +1859,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBuiltinFuncOneArgs(HyperTalkParser.BuiltinFuncOneArgsContext ctx) {
         switch ((BuiltInFunction) visit(ctx.oneArgFunc())) {
-            case MIN: return new MinFunc((Expression) visit(ctx.factor()));
-            case MAX: return new MaxFunc((Expression) visit(ctx.factor()));
-            case SUM: return new SumFunc((Expression) visit(ctx.factor()));
-            case AVERAGE: return new AverageFunc((Expression) visit(ctx.factor()));
-            case NUMBER_CHARS: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.factor()));
-            case NUMBER_ITEMS: return new NumberOfFunc(Countable.ITEM, (Expression) visit(ctx.factor()));
-            case NUMBER_LINES: return new NumberOfFunc(Countable.LINE, (Expression) visit(ctx.factor()));
-            case NUMBER_WORDS: return new NumberOfFunc(Countable.WORD, (Expression) visit(ctx.factor()));
-            case NUMBER_MENUITEMS: return new NumberOfFunc(Countable.MENU_ITEMS, (Expression) visit(ctx.factor()));
-            case NUMBER_BKGND_CARDS: return new NumberOfFunc(Countable.BKGND_CARDS, (Expression) visit(ctx.factor()));
-            case RANDOM: return new RandomFunc((Expression) visit(ctx.factor()));
+            case MIN: return new MinFunc((Expression) visit(ctx.expression()));
+            case MAX: return new MaxFunc((Expression) visit(ctx.expression()));
+            case SUM: return new SumFunc((Expression) visit(ctx.expression()));
+            case AVERAGE: return new AverageFunc((Expression) visit(ctx.expression()));
+            case NUMBER_CHARS: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.expression()));
+            case NUMBER_ITEMS: return new NumberOfFunc(Countable.ITEM, (Expression) visit(ctx.expression()));
+            case NUMBER_LINES: return new NumberOfFunc(Countable.LINE, (Expression) visit(ctx.expression()));
+            case NUMBER_WORDS: return new NumberOfFunc(Countable.WORD, (Expression) visit(ctx.expression()));
+            case NUMBER_MENUITEMS: return new NumberOfFunc(Countable.MENU_ITEMS, (Expression) visit(ctx.expression()));
+            case NUMBER_BKGND_CARDS: return new NumberOfFunc(Countable.BKGND_CARDS, (Expression) visit(ctx.expression()));
+            case RANDOM: return new RandomFunc((Expression) visit(ctx.expression()));
             case SQRT:
             case TRUNC:
             case SIN:
@@ -1884,12 +1884,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case LOG2:
             case ABS:
             case NUM_TO_CHAR:
-                return new MathFunc((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.factor()));
-            case CHAR_TO_NUM: return new CharToNumFunc((Expression) visit(ctx.factor()));
-            case VALUE: return new ValueFunc((Expression) visit(ctx.factor()));
-            case LENGTH: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.factor()));
-            case DISK_SPACE: return new DiskSpaceFunc((Expression) visit(ctx.factor()));
-            case PARAM: return new ParamFunc((Expression) visit(ctx.factor()));
+                return new MathFunc((BuiltInFunction) visit(ctx.oneArgFunc()), (Expression) visit(ctx.expression()));
+            case CHAR_TO_NUM: return new CharToNumFunc((Expression) visit(ctx.expression()));
+            case VALUE: return new ValueFunc((Expression) visit(ctx.expression()));
+            case LENGTH: return new NumberOfFunc(Countable.CHAR, (Expression) visit(ctx.expression()));
+            case DISK_SPACE: return new DiskSpaceFunc((Expression) visit(ctx.expression()));
+            case PARAM: return new ParamFunc((Expression) visit(ctx.expression()));
 
             default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.oneArgFunc().getText());
         }
