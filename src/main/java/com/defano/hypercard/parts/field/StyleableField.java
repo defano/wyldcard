@@ -12,7 +12,6 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.styles.OpaqueField;
 import com.defano.hypercard.parts.field.styles.RectangleField;
 import com.defano.hypercard.parts.field.styles.ShadowField;

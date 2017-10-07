@@ -9,7 +9,6 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.fx.CurtainManager;
-import com.defano.hypercard.parts.model.ComputedGetter;
 import com.defano.hypercard.sound.SoundPlayer;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.model.PropertiesModel;

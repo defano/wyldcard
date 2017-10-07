@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.hypercard.window.forms.ScriptEditor">
-  <grid id="27dc6" binding="scriptEditor" layout-manager="GridLayoutManager" row-count="4" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
+  <grid id="27dc6" binding="scriptEditor" layout-manager="GridLayoutManager" row-count="4" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -10,19 +10,9 @@
     </properties>
     <border type="none"/>
     <children>
-      <component id="97301" class="javax.swing.JButton" binding="saveButton">
+      <scrollpane id="ae4fe" binding="scrollPane">
         <constraints>
-          <grid row="3" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <hideActionText value="false"/>
-          <opaque value="true"/>
-          <text value="Save"/>
-        </properties>
-      </component>
-      <scrollpane id="ae4fe">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="8" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="9" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font name="Monaco"/>
@@ -33,6 +23,7 @@
             <constraints/>
             <properties>
               <font name="Monaco"/>
+              <margin top="0" left="10" bottom="0" right="0"/>
               <tabSize value="4"/>
             </properties>
           </component>
@@ -80,10 +71,10 @@
       </hspacer>
       <component id="5a8ef" class="javax.swing.JLabel" binding="charCount">
         <constraints>
-          <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="7" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Label"/>
+          <text value="Line 0, column 0"/>
         </properties>
       </component>
       <component id="7895" class="javax.swing.JLabel" binding="syntaxErrorText">
@@ -95,6 +86,16 @@
           <foreground color="-4516074"/>
           <name value=""/>
           <text value=""/>
+        </properties>
+      </component>
+      <component id="f0958" class="javax.swing.JButton" binding="saveButton">
+        <constraints>
+          <grid row="3" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <hideActionText value="false"/>
+          <opaque value="true"/>
+          <text value="Save"/>
         </properties>
       </component>
     </children>

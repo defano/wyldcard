@@ -42,6 +42,10 @@ public class HtSyntaxException extends HtException {
     }
 
     private static String getFriendlyMessage(Token t) {
+        if (t.getText().equals("<EOF>")) {
+            return "Missing 'end' on line " + t.getLine() + ", column " + t.getCharPositionInLine() + ".";
+        }
+
         return "Don't understand '" + t.getText() + "' on line " + t.getLine() + ", column " + t.getCharPositionInLine() + ".";
     }
 }

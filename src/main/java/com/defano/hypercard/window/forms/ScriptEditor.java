@@ -9,6 +9,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.util.HandlerComboBox;
+import com.defano.hypercard.util.TextLineNumber;
 import com.defano.hypercard.window.HyperCardFrame;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Script;
@@ -47,6 +48,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private HandlerComboBox functionsMenu;
     private JLabel charCount;
     private JLabel syntaxErrorText;
+    private JScrollPane scrollPane;
 
     public ScriptEditor() {
 
@@ -73,10 +75,14 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         });
 
         scriptField.addCaretListener(e -> updateActiveHandler());
+        scriptField.addCaretListener(e -> updateCaretPositionLabel());
+
+        TextLineNumber tln = new TextLineNumber(scriptField);
+        tln.setUpdateFont(true);
+        scrollPane.setRowHeaderView(tln);
     }
 
     private void checkSyntax() {
-        charCount.setText(String.valueOf(scriptField.getText().length()) + " characters, " + String.valueOf(scriptField.getText().split("\n").length) + " lines.");
         Interpreter.compileInBackground(scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
             if (compiledScript != null) {
                 ScriptEditor.this.compiledScript = compiledScript;
@@ -206,6 +212,19 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    private void updateCaretPositionLabel() {
+        try {
+            int caretpos = scriptField.getCaretPosition();
+            int row = scriptField.getLineOfOffset(caretpos);
+            int column = caretpos - scriptField.getLineStartOffset(row);
+
+            charCount.setText("Line " + (row + 1) + ", column " + column);
+
+        } catch (BadLocationException e1) {
+            charCount.setText("");
+        }
+    }
+
     private void updateActiveHandler() {
         if (compiledScript != null) {
             handlersMenu.setActiveHandler(compiledScript.getNamedBlockForLine(currentLine()));
@@ -323,22 +342,18 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
      */
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
-        scriptEditor.setLayout(new GridLayoutManager(4, 8, new Insets(10, 10, 10, 10), 0, -1));
+        scriptEditor.setLayout(new GridLayoutManager(4, 9, new Insets(10, 10, 10, 10), 0, -1));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
-        saveButton = new JButton();
-        saveButton.setHideActionText(false);
-        saveButton.setOpaque(true);
-        saveButton.setText("Save");
-        scriptEditor.add(saveButton, new GridConstraints(3, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        Font scrollPane1Font = this.$$$getFont$$$("Monaco", -1, -1, scrollPane1.getFont());
-        if (scrollPane1Font != null) scrollPane1.setFont(scrollPane1Font);
-        scriptEditor.add(scrollPane1, new GridConstraints(2, 0, 1, 8, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        scrollPane = new JScrollPane();
+        Font scrollPaneFont = this.$$$getFont$$$("Monaco", -1, -1, scrollPane.getFont());
+        if (scrollPaneFont != null) scrollPane.setFont(scrollPaneFont);
+        scriptEditor.add(scrollPane, new GridConstraints(2, 0, 1, 9, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scriptField = new JTextArea();
         Font scriptFieldFont = this.$$$getFont$$$("Monaco", -1, -1, scriptField.getFont());
         if (scriptFieldFont != null) scriptField.setFont(scriptFieldFont);
+        scriptField.setMargin(new Insets(0, 10, 0, 0));
         scriptField.setTabSize(4);
-        scrollPane1.setViewportView(scriptField);
+        scrollPane.setViewportView(scriptField);
         handlersMenu = new HandlerComboBox();
         handlersMenu.setName("Handlers:");
         scriptEditor.add(handlersMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -355,8 +370,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         final Spacer spacer2 = new Spacer();
         scriptEditor.add(spacer2, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         charCount = new JLabel();
-        charCount.setText("Label");
-        scriptEditor.add(charCount, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        charCount.setText("Line 0, column 0");
+        scriptEditor.add(charCount, new GridConstraints(1, 7, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         syntaxErrorText = new JLabel();
         Font syntaxErrorTextFont = this.$$$getFont$$$(null, Font.BOLD, -1, syntaxErrorText.getFont());
         if (syntaxErrorTextFont != null) syntaxErrorText.setFont(syntaxErrorTextFont);
@@ -364,6 +379,11 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         syntaxErrorText.setName("");
         syntaxErrorText.setText("");
         scriptEditor.add(syntaxErrorText, new GridConstraints(3, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setHideActionText(false);
+        saveButton.setOpaque(true);
+        saveButton.setText("Save");
+        scriptEditor.add(saveButton, new GridConstraints(3, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

@@ -38,7 +38,7 @@ import java.util.concurrent.*;
  */
 public class Interpreter {
 
-    private final static int MAX_COMPILE_THREADS  = 4;          // Simultaneous background compile tasks
+    private final static int MAX_COMPILE_THREADS  = 1;          // Simultaneous background compile tasks
     private final static int MAX_EXECUTOR_THREADS = 12;         // Simultaneous scripts executing
     private final static int MAX_LISTENER_THREADS = 12;         // Simultaneous listeners waiting for handler completion
 
@@ -58,12 +58,23 @@ public class Interpreter {
     }
 
     /**
-     * Compiles the given script on a background compile thread and invokes the CompileCompletionObserver when complete.
+     * Preemptively compiles the given script on a background compile thread and invokes the CompileCompletionObserver
+     * when complete.
+     *
+     * Note that this method cancels any previously requested compilation except the currently executing compilation,
+     * if one is executing. Thus, invocation of the observer to indicate completion is not guaranteed. Some jobs will
+     * be canceled before they run and thus never complete.
+     *
+     * This method is primarily useful for compile-as-you-type syntax checking.
      *
      * @param scriptText The script to compile.
      * @param observer A non-null callback to fire when compilation is complete.
      */
     public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
+
+        // Preempt any previously enqueued compile jobs
+        backgroundCompileExecutor.getQueue().clear();
+
         backgroundCompileExecutor.submit(() -> {
             HtException generatedError = null;
             Script compiledScript = null;
