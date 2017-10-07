@@ -390,6 +390,7 @@ propertySpec        : 'the'? propertyName                                       
 
 propertyName        : 'marked'          // Requires special rule because 'marked' is also a lexed token
                     | 'id'
+                    | 'rect' | 'rectangle'
                     | ID
                     ;
 
