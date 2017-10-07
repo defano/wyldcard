@@ -86,11 +86,17 @@
           <text value="Label"/>
         </properties>
       </component>
-      <hspacer id="26f83">
+      <component id="7895" class="javax.swing.JLabel" binding="syntaxErrorText">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="7" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
-      </hspacer>
+        <properties>
+          <font style="1"/>
+          <foreground color="-4516074"/>
+          <name value=""/>
+          <text value=""/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

@@ -14,6 +14,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtSyntaxException;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
@@ -22,11 +23,10 @@ import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.functions.UserFunction;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtParseError;
-import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.parser.HyperTalkLexer;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
@@ -102,11 +102,8 @@ public class Interpreter {
             }
 
             return (Script) new HyperTalkTreeVisitor().visit(tree);
-
-        } catch (HtParseError e) {
-            throw new HtSyntaxException("Didn't understand that.", e.lineNumber, e.columnNumber);
-        } catch (Throwable e) {
-            throw new HtException("Didn't understand that.", e);
+        } catch (RecognitionException e) {
+            throw new HtSyntaxException(e);
         }
     }
 

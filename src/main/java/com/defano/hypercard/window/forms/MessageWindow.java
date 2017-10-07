@@ -20,6 +20,8 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSyntaxException;
+import com.defano.hypertalk.utils.Range;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -102,18 +104,30 @@ public class MessageWindow extends HyperCardFrame implements ManagedSelection, P
 
     private void checkSyntax() {
         try {
-            Interpreter.compile(messageBox.getText());
             messageBox.getHighlighter().removeAllHighlights();
+            Interpreter.compile(messageBox.getText());
         } catch (HtException e) {
-            squiggleHighlight();
+            squiggleHighlight(e);
         }
     }
 
-    private void squiggleHighlight() {
+    private void squiggleHighlight(HtException e) {
+
+        int squiggleStart = 0;
+        int squiggleEnd = messageBox.getText().length();
+
+        if (e instanceof HtSyntaxException) {
+            Range offendingRange = ((HtSyntaxException) e).getOffendingRange();
+            if (offendingRange != null) {
+                squiggleStart = offendingRange.start;
+                squiggleEnd = offendingRange.end;
+            }
+        }
+
         try {
-            messageBox.getHighlighter().addHighlight(0, messageBox.getText().length(), ERROR_HIGHLIGHTER);
+            messageBox.getHighlighter().addHighlight(squiggleStart, squiggleEnd, ERROR_HIGHLIGHTER);
         } catch (BadLocationException e1) {
-            // Nothing to do
+            throw new RuntimeException("Bug! Miscalculated text range.", e1);
         }
     }
 

@@ -13,6 +13,7 @@ import com.defano.hypercard.window.HyperCardFrame;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.SystemMessage;
+import com.defano.hypertalk.utils.Range;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -20,6 +21,7 @@ import com.defano.hypercard.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSyntaxException;
+import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -44,6 +46,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private HandlerComboBox handlersMenu;
     private HandlerComboBox functionsMenu;
     private JLabel charCount;
+    private JLabel syntaxErrorText;
 
     public ScriptEditor() {
 
@@ -83,9 +86,20 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             functionsMenu.invalidateDataset();
 
             if (generatedError instanceof HtSyntaxException) {
-                setHighlightedLine(((HtSyntaxException) generatedError).lineNumber - 1);
+                Range offendingRange = ((HtSyntaxException) generatedError).getOffendingRange();
+                Token offendingToken = ((HtSyntaxException) generatedError).getOffendingToken();
+
+                if (offendingRange != null) {
+                    setHighlightedSelection(offendingRange.start, offendingRange.end);
+                } else {
+                    setHighlightedLine(offendingToken.getLine());
+                }
+
+                syntaxErrorText.setText(generatedError.getMessage());
             } else if (generatedError != null) {
                 setHighlightedLine();
+            } else {
+                syntaxErrorText.setText("");
             }
         });
     }
@@ -343,8 +357,13 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         charCount = new JLabel();
         charCount.setText("Label");
         scriptEditor.add(charCount, new GridConstraints(1, 7, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer3 = new Spacer();
-        scriptEditor.add(spacer3, new GridConstraints(3, 0, 1, 7, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        syntaxErrorText = new JLabel();
+        Font syntaxErrorTextFont = this.$$$getFont$$$(null, Font.BOLD, -1, syntaxErrorText.getFont());
+        if (syntaxErrorTextFont != null) syntaxErrorText.setFont(syntaxErrorTextFont);
+        syntaxErrorText.setForeground(new Color(-4516074));
+        syntaxErrorText.setName("");
+        syntaxErrorText.setText("");
+        scriptEditor.add(syntaxErrorText, new GridConstraints(3, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
