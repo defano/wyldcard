@@ -16,16 +16,18 @@
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.common.Value;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class LiteralExp extends Expression {
 
     public final String literal;
 
-    public LiteralExp(Object literal) {
+    public LiteralExp(ParserRuleContext context, Object literal) {
+        super(context);
         this.literal = String.valueOf(literal);
     }
     
-    public Value evaluate () {
+    public Value onEvaluate() {
         return new Value(literal);
     }
 }

@@ -20,21 +20,22 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class GetCmd extends Command {
 
     public final Expression expression;
     public final PartSpecifier part;
     
-    public GetCmd(Expression e) {
-        super("get");
+    public GetCmd(ParserRuleContext context, Expression e) {
+        super(context, "get");
 
         expression = e;
         part = null;
     }
     
-    public GetCmd(PartSpecifier ps) {
-        super("get");
+    public GetCmd(ParserRuleContext context, PartSpecifier ps) {
+        super(context, "get");
 
         expression = null;
         part = ps;

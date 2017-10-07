@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SetPropertyCmd extends Command {
 
@@ -14,12 +15,12 @@ public class SetPropertyCmd extends Command {
     public final String property;
     public final Value value;
 
-    public SetPropertyCmd(String property, Value value) {
-        this(null, property, value);
+    public SetPropertyCmd(ParserRuleContext context, String property, Value value) {
+        this(context, null, property, value);
     }
 
-    public SetPropertyCmd(PartExp part, String property, Value value) {
-        super("set");
+    public SetPropertyCmd(ParserRuleContext context, PartExp part, String property, Value value) {
+        super(context, "set");
 
         this.part = part;
         this.property = property;

@@ -148,7 +148,7 @@ public class MenuContainer extends Container {
     private void addValueToMenu(Value v, JMenu menu, int index) {
         List<Value> menuItems = v.getLines();
 
-        // If value contains a single line, then attempt to evaluate it as items
+        // If value contains a single line, then attempt to onEvaluate it as items
         if (menuItems.size() == 1) {
             menuItems = menuItems.get(0).getItems();
         }

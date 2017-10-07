@@ -14,6 +14,7 @@ import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
@@ -27,12 +28,12 @@ public class SortCardsCmd extends Command {
     private final Expression expression;
     private final PartExp background;
 
-    public SortCardsCmd(boolean markedCards, SortDirection direction, SortStyle style, Expression expression) {
-        this(markedCards, null, direction, style, expression);
+    public SortCardsCmd(ParserRuleContext context, boolean markedCards, SortDirection direction, SortStyle style, Expression expression) {
+        this(context, markedCards, null, direction, style, expression);
     }
 
-    public SortCardsCmd(boolean markedCards, PartExp background, SortDirection direction, SortStyle style, Expression expression) {
-        super("sort");
+    public SortCardsCmd(ParserRuleContext context, boolean markedCards, PartExp background, SortDirection direction, SortStyle style, Expression expression) {
+        super(context, "sort");
 
         this.markedCards = markedCards;
         this.direction = direction;

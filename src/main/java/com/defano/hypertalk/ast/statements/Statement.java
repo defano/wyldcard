@@ -15,14 +15,26 @@
 
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-public class Statement {
+public abstract class Statement extends ASTNode {
 
-    public void execute() throws HtException, Breakpoint {
-        throw new HtSemanticException("Bug! Unimplemented execute() for statement.");
+    public Statement(ParserRuleContext context) {
+        super(context);
     }
 
+    protected abstract void onExecute() throws HtException, Breakpoint;
+
+    public void execute() throws HtException, Breakpoint {
+        try {
+            onExecute();
+        } catch (HtException e) {
+            // TODO: Wrap exception with parse context
+            throw e;
+        }
+    }
 }

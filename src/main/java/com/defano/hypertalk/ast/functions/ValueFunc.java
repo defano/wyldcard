@@ -12,17 +12,19 @@ import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ValueFunc extends Expression {
 
     public final Expression expression;
 
-    public ValueFunc(Expression expression) {
+    public ValueFunc(ParserRuleContext context, Expression expression) {
+        super(context);
         this.expression = expression;
     }
 
     @Override
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         String toEvaluate = expression.evaluate().stringValue();
         return Interpreter.evaluate(toEvaluate);
     }

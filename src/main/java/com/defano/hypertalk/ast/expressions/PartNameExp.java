@@ -24,6 +24,7 @@ import com.defano.hypertalk.ast.specifiers.PartNameSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartNameExp extends PartExp {
 
@@ -31,17 +32,18 @@ public class PartNameExp extends PartExp {
     public final PartType type;
     public final Expression name;
 
-    public PartNameExp(PartType type, Expression name) {
-        this(null, type, name);
+    public PartNameExp(ParserRuleContext context, PartType type, Expression name) {
+        this(context, null, type, name);
     }
 
-    public PartNameExp(Owner layer, PartType type, Expression name) {
+    public PartNameExp(ParserRuleContext context, Owner layer, PartType type, Expression name) {
+        super(context);
         this.layer = layer;
         this.type = type;
         this.name = name;
     }
 
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         try {
             return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
         } catch (Exception e) {

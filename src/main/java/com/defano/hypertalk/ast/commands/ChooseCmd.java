@@ -17,13 +17,14 @@ import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ChooseCmd extends Command {
 
     private final Expression toolExpression;
 
-    public ChooseCmd(Expression toolExpression) {
-        super("choose");
+    public ChooseCmd(ParserRuleContext context, Expression toolExpression) {
+        super(context, "choose");
         this.toolExpression = toolExpression;
     }
 
@@ -35,8 +36,8 @@ public class ChooseCmd extends Command {
         ToolType theTool = getChosenTool();
         ExpressionList arguments = new ExpressionList();
 
-        arguments.addArgument(new LiteralExp(theTool.getPrimaryToolName()));
-        arguments.addArgument(new LiteralExp(theTool.getToolNumber()));
+        arguments.addArgument(new LiteralExp(context, theTool.getPrimaryToolName()));
+        arguments.addArgument(new LiteralExp(context, theTool.getToolNumber()));
 
         return arguments;
     }

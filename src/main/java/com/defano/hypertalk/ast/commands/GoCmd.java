@@ -18,18 +18,19 @@ import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class GoCmd extends Command {
 
     private final DestinationExp destinationExp;
     private VisualEffectSpecifier visualEffect;
 
-    public GoCmd(DestinationExp destinationExp) {
-        this(destinationExp, null);
+    public GoCmd(ParserRuleContext context, DestinationExp destinationExp) {
+        this(context, destinationExp, null);
     }
 
-    public GoCmd(DestinationExp destinationExp, VisualEffectSpecifier visualEffect) {
-        super("go");
+    public GoCmd(ParserRuleContext context, DestinationExp destinationExp, VisualEffectSpecifier visualEffect) {
+        super(context, "go");
 
         this.destinationExp = destinationExp;
         this.visualEffect = visualEffect;

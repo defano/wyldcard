@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 
@@ -12,8 +13,8 @@ public class EnableMenuItemCmd extends Command {
     private MenuItemSpecifier menuItem;
     private boolean enabled;
 
-    public EnableMenuItemCmd(MenuItemSpecifier menuItem, boolean enabled) {
-        super("enable");
+    public EnableMenuItemCmd(ParserRuleContext context, MenuItemSpecifier menuItem, boolean enabled) {
+        super(context, "enable");
 
         this.menuItem = menuItem;
         this.enabled = enabled;

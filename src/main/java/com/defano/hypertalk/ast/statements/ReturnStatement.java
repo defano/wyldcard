@@ -20,20 +20,23 @@ import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ReturnStatement extends Statement {
 
     public final Expression returnValue;
     
-    public ReturnStatement() {
-        this.returnValue = new LiteralExp("");
+    public ReturnStatement(ParserRuleContext context) {
+        super(context);
+        this.returnValue = new LiteralExp(null, "");
     }
     
-    public ReturnStatement(Expression returnValue) {
+    public ReturnStatement(ParserRuleContext context, Expression returnValue) {
+        super(context);
         this.returnValue = returnValue;
     }
 
-    public void execute () throws HtSemanticException, TerminateHandlerBreakpoint {
+    public void onExecute() throws HtSemanticException, TerminateHandlerBreakpoint {
         ExecutionContext.getContext().setReturnValue(returnValue.evaluate());
         throw new TerminateHandlerBreakpoint(null);
     }

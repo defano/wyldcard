@@ -21,6 +21,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 import java.util.concurrent.CountDownLatch;
@@ -34,8 +35,8 @@ public class AnswerCmd extends Command {
     public final Expression ch2;
     public final Expression ch3;
     
-    public AnswerCmd(Expression message, Expression ch1, Expression ch2, Expression ch3) {
-        super("answer");
+    public AnswerCmd(ParserRuleContext context, Expression message, Expression ch1, Expression ch2, Expression ch3) {
+        super(context, "answer");
 
         this.message = message;
         this.ch1 = ch1;
@@ -43,31 +44,16 @@ public class AnswerCmd extends Command {
         this.ch3 = ch3;
     }
     
-    public AnswerCmd(Expression message, Expression ch1, Expression ch2) {
-        super("answer");
-
-        this.message = message;
-        this.ch1 = ch1;
-        this.ch2 = ch2;
-        this.ch3 = null;
+    public AnswerCmd(ParserRuleContext context, Expression message, Expression ch1, Expression ch2) {
+        this(context, message, ch1, ch2, null);
     }
     
-    public AnswerCmd(Expression message, Expression ch1) {
-        super("answer");
-
-        this.message = message;
-        this.ch1 = ch1;
-        this.ch2 = null;
-        this.ch3 = null;
+    public AnswerCmd(ParserRuleContext context, Expression message, Expression ch1) {
+        this(context, message, ch1, null, null);
     }
 
-    public AnswerCmd(Expression message) {
-        super("answer");
-
-        this.message = message;
-        this.ch1 = null;
-        this.ch2 = null;
-        this.ch3 = null;
+    public AnswerCmd(ParserRuleContext context, Expression message) {
+        this(context, message, null, null, null);
     }
     
     public void onExecute () throws HtSemanticException {

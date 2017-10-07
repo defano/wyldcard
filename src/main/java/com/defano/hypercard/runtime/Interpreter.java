@@ -132,7 +132,7 @@ public class Interpreter {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
         } catch (Exception e) {
-            // Nothing to do; okay to evaluate bogus text
+            // Nothing to do; okay to onEvaluate bogus text
         }
 
         // Value of a non-expression is itself
@@ -140,7 +140,7 @@ public class Interpreter {
     }
 
     /**
-     * Attempts to evaluate the given value as an AST node identified by klass. That is, the given value is compiled
+     * Attempts to onEvaluate the given value as an AST node identified by klass. That is, the given value is compiled
      * as a HyperTalk script and the first and only statement in the script in coerced to the requested type. Returns
      * null if the value is not a valid HyperTalk script or contains a script fragment that cannot be coerced to
      * the requested type.
@@ -182,7 +182,7 @@ public class Interpreter {
     /**
      * Determines if the given Script text represents a valid HyperTalk expression on the current thread.
      *
-     * @param statement Text to evaluate
+     * @param statement Text to onEvaluate
      * @return True if the statement is a valid expression; false if it is not.
      * @throws HtException Thrown if the statement cannot be compiled (due to a syntax/semantic error).
      */
@@ -277,7 +277,7 @@ public class Interpreter {
     }
 
     /**
-     * Gets the executor used to evaluate the contents of the message box.
+     * Gets the executor used to onEvaluate the contents of the message box.
      * @return The message box executor.
      */
     public static Executor getMessageExecutor() {

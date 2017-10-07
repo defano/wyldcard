@@ -20,6 +20,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.containers.Container;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 
@@ -31,8 +32,8 @@ public class SortCmd extends Command {
     public final Expression expression;
     public final SortStyle sortStyle;
 
-    public SortCmd(Container container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
-        super("sort");
+    public SortCmd(ParserRuleContext context, Container container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
+        super(context, "sort");
 
         this.container = container;
         this.chunkType = chunkType;
@@ -41,8 +42,8 @@ public class SortCmd extends Command {
         this.sortStyle = sortStyle;
     }
 
-    public SortCmd(Container container, ChunkType chunkType, SortDirection direction, SortStyle sortStyle) {
-        super("sort");
+    public SortCmd(ParserRuleContext context, Container container, ChunkType chunkType, SortDirection direction, SortStyle sortStyle) {
+        super(context, "sort");
 
         this.container = container;
         this.chunkType = chunkType;

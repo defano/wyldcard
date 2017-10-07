@@ -16,26 +16,30 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.commands.MessageCmd;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VariableExp;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ExpressionStatement extends Statement {
 
     public final Expression expression;
     
-    public ExpressionStatement(Expression expression) {
+    public ExpressionStatement(ParserRuleContext context, Expression expression) {
+        super(context);
         this.expression = expression;
     }
     
-    public void execute () throws HtSemanticException {
+    public void onExecute() throws HtException, Breakpoint {
 
         // Special case: A variable name used as a statement should be interpreted as a message command
         if (expression instanceof VariableExp) {
-            MessageCmd messageCmd = new MessageCmd(expression.evaluate().stringValue(), new ExpressionList());
+            MessageCmd messageCmd = new MessageCmd(context, expression.evaluate().stringValue(), new ExpressionList());
             messageCmd.execute();
         }
 

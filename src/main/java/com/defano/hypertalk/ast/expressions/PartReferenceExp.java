@@ -5,12 +5,14 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartReferenceExp extends PartExp {
 
     private final String symbol;
 
-    public PartReferenceExp (String symbol) {
+    public PartReferenceExp (ParserRuleContext context, String symbol) {
+        super(context);
         this.symbol = symbol;
     }
 
@@ -20,7 +22,7 @@ public class PartReferenceExp extends PartExp {
     }
 
     @Override
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         return dereference().evaluate();
     }
 

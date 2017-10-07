@@ -22,6 +22,7 @@ import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 import java.util.concurrent.CountDownLatch;
@@ -33,18 +34,18 @@ public class AskCmd extends Command {
     public final Expression question;
     public final Expression suggestion;
     
-    public AskCmd(Expression question, Expression suggestion) {
-        super("ask");
+    public AskCmd(ParserRuleContext context, Expression question, Expression suggestion) {
+        super(context, "ask");
 
         this.question = question;
         this.suggestion = suggestion;
     }
     
-    public AskCmd(Expression question) {
-        super("ask");
+    public AskCmd(ParserRuleContext context,  Expression question) {
+        super(context, "ask");
 
         this.question = question;
-        this.suggestion = new LiteralExp("");
+        this.suggestion = new LiteralExp(context, "");
     }
     
     public void onExecute () throws HtSemanticException {

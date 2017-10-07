@@ -21,6 +21,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 import com.defano.hypertalk.utils.RangeUtils;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SelectTextCmd extends Command {
 
@@ -28,16 +29,16 @@ public class SelectTextCmd extends Command {
     private final Chunk chunk;
     private final PartExp partExp;
 
-    public SelectTextCmd(Preposition preposition, Chunk chunkExp, PartExp partExp) {
-        super("select");
+    public SelectTextCmd(ParserRuleContext context, Preposition preposition, Chunk chunkExp, PartExp partExp) {
+        super(context, "select");
 
         this.preposition = preposition;
         this.chunk = chunkExp;
         this.partExp = partExp;
     }
 
-    public SelectTextCmd(Preposition preposition, PartExp partExp) {
-        this(preposition, null, partExp);
+    public SelectTextCmd(ParserRuleContext context, Preposition preposition, PartExp partExp) {
+        this(context, preposition, null, partExp);
     }
 
     @Override

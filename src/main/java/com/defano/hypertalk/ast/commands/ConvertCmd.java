@@ -9,6 +9,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.DateUtils;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Date;
 
@@ -19,12 +20,12 @@ public class ConvertCmd extends Command {
     private final Convertible from;
     private final Convertible to;
 
-    public ConvertCmd (Container container, Convertible to) {
-        this(container, null, to);
+    public ConvertCmd (ParserRuleContext context, Container container, Convertible to) {
+        this(context, container, null, to);
     }
 
-    public ConvertCmd(Container container, Convertible from, Convertible to) {
-        super("convert");
+    public ConvertCmd(ParserRuleContext context, Container container, Convertible from, Convertible to) {
+        super(context, "convert");
 
         this.container = container;
         this.expression = null;
@@ -32,12 +33,12 @@ public class ConvertCmd extends Command {
         this.to = to;
     }
 
-    public ConvertCmd(Expression expression, Convertible to) {
-        this(expression, null, to);
+    public ConvertCmd(ParserRuleContext context, Expression expression, Convertible to) {
+        this(context, expression, null, to);
     }
 
-    public ConvertCmd(Expression expression, Convertible from, Convertible to) {
-        super("convert");
+    public ConvertCmd(ParserRuleContext context, Expression expression, Convertible from, Convertible to) {
+        super(context, "convert");
 
         this.container = null;
         this.expression = expression;

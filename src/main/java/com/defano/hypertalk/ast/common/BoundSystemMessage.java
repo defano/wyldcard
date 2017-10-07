@@ -14,6 +14,6 @@ public class BoundSystemMessage {
 
     public BoundSystemMessage(SystemMessage message, Value... boundArguments) {
         this.message = message;
-        this.boundArguments = new ExpressionList(Lists.newArrayList(boundArguments));
+        this.boundArguments = new ExpressionList(null, Lists.newArrayList(boundArguments));
     }
 }

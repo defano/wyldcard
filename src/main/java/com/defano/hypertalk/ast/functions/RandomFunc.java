@@ -12,21 +12,22 @@ import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Random;
 
 public class RandomFunc extends ArgListFunction {
 
-    public RandomFunc(Expression bound) {
-        super(bound);
+    public RandomFunc(ParserRuleContext context, Expression bound) {
+        super(context, bound);
     }
 
-    public RandomFunc(ExpressionList argumentList) {
-        super(argumentList);
+    public RandomFunc(ParserRuleContext context, ExpressionList argumentList) {
+        super(context, argumentList);
     }
 
     @Override
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
 
         Value boundValue = evaluateSingleArgumentList();
 

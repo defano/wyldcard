@@ -9,6 +9,7 @@ import com.defano.hypertalk.ast.specifiers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartOrdinalSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartNumberExp extends PartExp {
 
@@ -17,26 +18,27 @@ public class PartNumberExp extends PartExp {
     public final Expression number;
     public final Ordinal ordinal;
 
-    public PartNumberExp(Owner owner, PartType type, Ordinal ordinal) {
-        this(owner, type, null, ordinal);
+    public PartNumberExp(ParserRuleContext context, Owner owner, PartType type, Ordinal ordinal) {
+        this(context, owner, type, null, ordinal);
     }
 
-    public PartNumberExp(Owner owner, Expression expression) {
-        this(owner, PartType.CARD, expression, null);
+    public PartNumberExp(ParserRuleContext context, Owner owner, Expression expression) {
+        this(context, owner, PartType.CARD, expression, null);
     }
 
-    public PartNumberExp(PartType type, Ordinal ordinal) {
-        this(null, type, null, ordinal);
+    public PartNumberExp(ParserRuleContext context, PartType type, Ordinal ordinal) {
+        this(context, null, type, null, ordinal);
     }
 
-    private PartNumberExp(Owner layer, PartType type, Expression number, Ordinal ordinal) {
+    private PartNumberExp(ParserRuleContext context, Owner layer, PartType type, Expression number, Ordinal ordinal) {
+        super(context);
         this.layer = layer;
         this.number = number;
         this.type = type;
         this.ordinal = ordinal;
     }
 
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         try {
             return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
         } catch (Exception e) {

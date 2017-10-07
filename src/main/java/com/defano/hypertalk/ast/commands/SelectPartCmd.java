@@ -13,13 +13,14 @@ import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SelectPartCmd extends Command {
 
     private final PartExp part;
 
-    public SelectPartCmd(PartExp part) {
-        super("select");
+    public SelectPartCmd(ParserRuleContext context, PartExp part) {
+        super(context, "select");
         this.part = part;
     }
 

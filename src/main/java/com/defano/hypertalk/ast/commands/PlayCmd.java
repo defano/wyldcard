@@ -6,14 +6,15 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PlayCmd extends Command {
 
     private final Expression sound;
     private final MusicSpecifier ofMusic;
 
-    public PlayCmd(Expression sound, MusicSpecifier ofMusic) {
-        super("play");
+    public PlayCmd(ParserRuleContext context, Expression sound, MusicSpecifier ofMusic) {
+        super(context, "play");
 
         this.sound = sound;
         this.ofMusic = ofMusic;

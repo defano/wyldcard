@@ -335,7 +335,7 @@ public class ExecutionContext {
         }
 
         if (thePart != null) {
-            thePart.receiveMessage(message, new ExpressionList(messageArgs));
+            thePart.receiveMessage(message, new ExpressionList(null, messageArgs));
         } else {
             throw new PartException("No such part.");
         }

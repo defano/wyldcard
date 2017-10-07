@@ -6,13 +6,14 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class DeletePartCmd extends Command {
 
     private final PartExp part;
 
-    public DeletePartCmd(PartExp part) {
-        super("delete");
+    public DeletePartCmd(ParserRuleContext context, PartExp part) {
+        super(context, "delete");
         this.part = part;
     }
 

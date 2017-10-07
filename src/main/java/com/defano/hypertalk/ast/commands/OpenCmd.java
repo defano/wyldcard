@@ -4,13 +4,14 @@ import com.defano.hypercard.runtime.context.FileContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class OpenCmd extends Command {
 
     private final Expression file;
 
-    public OpenCmd(Expression file) {
-        super("open");
+    public OpenCmd(ParserRuleContext context, Expression file) {
+        super(context, "open");
         this.file = file;
     }
 

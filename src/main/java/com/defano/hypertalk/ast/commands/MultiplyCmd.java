@@ -13,14 +13,15 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.containers.Container;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class MultiplyCmd extends Command {
 
     private final Expression expression;
     private final Container container;
 
-    public MultiplyCmd(Expression source, Container container) {
-        super("multiply");
+    public MultiplyCmd(ParserRuleContext context, Expression source, Container container) {
+        super(context, "multiply");
 
         this.expression = source;
         this.container = container;

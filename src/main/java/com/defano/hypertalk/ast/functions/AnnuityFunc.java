@@ -3,17 +3,18 @@ package com.defano.hypertalk.ast.functions;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 
 public class AnnuityFunc extends ArgListFunction {
 
-    public AnnuityFunc(ExpressionList expressionList) {
-        super(expressionList);
+    public AnnuityFunc(ParserRuleContext context, ExpressionList expressionList) {
+        super(context, expressionList);
     }
 
     @Override
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         List<Value> evaluatedArgs = evaluateArgumentList();
 
         if (evaluatedArgs.size() != 2) {

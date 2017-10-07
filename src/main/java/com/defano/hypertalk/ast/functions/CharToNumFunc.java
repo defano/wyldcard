@@ -11,17 +11,19 @@ package com.defano.hypertalk.ast.functions;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class CharToNumFunc extends Expression {
 
     public final Expression expression;
 
-    public CharToNumFunc(Expression expression) {
+    public CharToNumFunc(ParserRuleContext context, Expression expression) {
+        super(context);
         this.expression = expression;
     }
 
     @Override
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         Value evaluated = expression.evaluate();
 
         if (evaluated.stringValue().length() == 0) {

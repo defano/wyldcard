@@ -2,37 +2,32 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.concurrent.CountDownLatch;
 
 /**
  * Represents a HyperTalk command statement. HyperTalk commands are somewhat unusual in that their execution causes
  * a message to be sent the current card message hierarchy, and if the card, background or stack traps the message,
- * then the command does execute.
+ * then the command does not execute.
  */
 public abstract class Command extends Statement implements MessageCompletionObserver {
-
-    /**
-     * Called to execute the command. Subclasses should implement this method as they would {@link Statement#execute()},
-     * that is, this method should perform the function of the command.
-     *
-     * @throws HtException Thrown to indicate a syntax or semantic error occurred when executing the command.
-     */
-    public abstract void onExecute() throws HtException;
 
     private final String messageName;
     private boolean trapped = false;
     private CountDownLatch cdl = new CountDownLatch(1);
 
-    protected Command(String messageName) {
+    protected Command(ParserRuleContext context, String messageName) {
+        super(context);
         this.messageName = messageName;
     }
 
     @Override
-    public final void execute() throws HtException {
+    public final void execute() throws HtException, Breakpoint {
         cdl = new CountDownLatch(1);
 
         // Send command message to current card
@@ -45,7 +40,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
             Thread.currentThread().interrupt();
         }
 
-        // Do no execute this command if handler trapped the message
+        // Do not execute this command if handler trapped the message
         if (!trapped) {
             onExecute();
         }

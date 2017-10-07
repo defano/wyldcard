@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ReadCmd extends Command {
 
@@ -15,30 +16,30 @@ public class ReadCmd extends Command {
     private Expression at = null;
     private Expression until = null;
 
-    private ReadCmd(Expression file) {
-        super("read");
+    private ReadCmd(ParserRuleContext context, Expression file) {
+        super(context, "read");
         this.file = file;
     }
 
-    public static ReadCmd ofFile(Expression file) {
-        return new ReadCmd(file);
+    public static ReadCmd ofFile(ParserRuleContext context, Expression file) {
+        return new ReadCmd(context, file);
     }
 
-    public static ReadCmd ofFileFor(Expression file, Expression count) {
-        ReadCmd readCmd = new ReadCmd(file);
+    public static ReadCmd ofFileFor(ParserRuleContext context, Expression file, Expression count) {
+        ReadCmd readCmd = new ReadCmd(context, file);
         readCmd.count = count;
         return readCmd;
     }
 
-    public static ReadCmd ofFileAt(Expression file, Expression at, Expression count) {
-        ReadCmd readCmd = new ReadCmd(file);
+    public static ReadCmd ofFileAt(ParserRuleContext context, Expression file, Expression at, Expression count) {
+        ReadCmd readCmd = new ReadCmd(context, file);
         readCmd.at = at;
         readCmd.count = count;
         return readCmd;
     }
 
-    public static ReadCmd ofFileUntil(Expression file, Expression until) {
-        ReadCmd readCmd = new ReadCmd(file);
+    public static ReadCmd ofFileUntil(ParserRuleContext context, Expression file, Expression until) {
+        ReadCmd readCmd = new ReadCmd(context, file);
         readCmd.until = until;
         return readCmd;
     }

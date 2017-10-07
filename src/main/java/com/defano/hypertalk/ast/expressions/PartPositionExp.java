@@ -9,13 +9,16 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartPositionSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartPositionExp extends PartExp {
 
     private final PartType type;
     private final Position position;
 
-    public PartPositionExp(PartType type, Position position) {
+    public PartPositionExp(ParserRuleContext context, PartType type, Position position) {
+        super(context);
+
         if (type != PartType.BACKGROUND && type != PartType.CARD) {
             throw new IllegalArgumentException("Cannot specify this type by position: " + type);
         }
@@ -30,7 +33,7 @@ public class PartPositionExp extends PartExp {
     }
 
     @Override
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtSemanticException {
         try {
             return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
         } catch (PartException e) {

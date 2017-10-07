@@ -20,6 +20,7 @@ package com.defano.hypertalk.ast.common;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +32,15 @@ public class ExpressionList {
     public ExpressionList() {
     }
 
-    public ExpressionList(String... boundValues) {
+    public ExpressionList(ParserRuleContext context, String... boundValues) {
         for (String thisValue : boundValues) {
-            addArgument(new LiteralExp(thisValue));
+            addArgument(new LiteralExp(context, thisValue));
         }
     }
 
-    public ExpressionList(List<Value> boundValues) {
+    public ExpressionList(ParserRuleContext context, List<Value> boundValues) {
         for (Value thisValue : boundValues) {
-            addArgument(new LiteralExp(thisValue));
+            addArgument(new LiteralExp(context, thisValue));
         }
     }
 
