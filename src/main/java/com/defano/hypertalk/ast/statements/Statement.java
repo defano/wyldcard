@@ -32,7 +32,7 @@ public abstract class Statement extends ASTNode {
     public void execute() throws HtException, Breakpoint {
         try {
             onExecute();
-        } catch (HtSemanticException e) {
+        } catch (HtException e) {
             rethrowContextualizedException(e);
         }
     }

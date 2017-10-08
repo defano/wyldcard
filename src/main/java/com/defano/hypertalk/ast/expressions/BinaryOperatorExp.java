@@ -35,8 +35,8 @@ public class BinaryOperatorExp extends Expression {
     }
 
     public Value onEvaluate() throws HtException {
-        Value lhs = this.lhs.onEvaluate();
-        Value rhs = this.rhs.onEvaluate();
+        Value lhs = this.lhs.evaluate();
+        Value rhs = this.rhs.evaluate();
 
         switch (operator) {
         case EQUALS: return new Value(lhs.equals(rhs));

@@ -33,9 +33,10 @@ public abstract class Expression extends ASTNode {
     public Value evaluate() throws HtException {
         try {
             return onEvaluate();
-        } catch (HtSemanticException e) {
+        } catch (HtException e) {
             rethrowContextualizedException(e);
-            throw new IllegalStateException("Bug! Contextualized exception not thrown.");
         }
+
+        throw new IllegalStateException("Bug! Contextualized exception not thrown.");
     }
 }

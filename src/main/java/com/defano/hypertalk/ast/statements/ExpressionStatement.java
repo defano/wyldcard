@@ -38,7 +38,7 @@ public class ExpressionStatement extends Statement {
 
         // Special case: A variable name used as a statement should be interpreted as a message command
         if (expression instanceof VariableExp) {
-            MessageCmd messageCmd = new MessageCmd(null, expression.evaluate().stringValue(), new ExpressionList());
+            MessageCmd messageCmd = new MessageCmd(super.getContext(), expression.evaluate().stringValue(), new ExpressionList());
             messageCmd.execute();
         }
 

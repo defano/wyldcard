@@ -8,28 +8,28 @@ import org.antlr.v4.runtime.Token;
 
 public abstract class ASTNode {
 
-    // The staring Antlr token associated with this node in the abstract syntax tree; held as a debugging breadcrumb
-    private final Token token;
+    private final ParserRuleContext context;
 
     public ASTNode(ParserRuleContext context) {
-        this.token = context == null ? null : context.getStart();
+        this.context = context;
     }
 
     /**
-     * Gets the starting Antlr token associated with this AST node.
-     * @return The beginning token of this node.
+     * Gets the starting Antlr token associated with this AST node, or null if this node was generated outside of a
+     * parsed script text.
+     *
+     * @return The beginning token of this node, or null if it cannot be determined.
      */
     protected Token getToken() {
-        return token;
+        return context == null ? null : context.getStart();
+    }
+
+    protected ParserRuleContext getContext() {
+        return context;
     }
 
     protected void rethrowContextualizedException(HtException e) throws HtException {
-        try {
-            e.setBreadcrumb(new Breadcrumb(getToken(), ExecutionContext.getContext().getMe()));
-        } catch (Throwable t) {
-            // Nothing to do
-        }
-
+        e.setBreadcrumb(new Breadcrumb(getToken(), ExecutionContext.getContext().getMe()));
         throw e;
     }
 

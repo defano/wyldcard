@@ -18,7 +18,7 @@ public class HtException extends Exception {
     private Breadcrumb breadcrumb;
 
     public HtException(HtException cause) {
-        this(getRootCause(cause).getMessage(), cause);
+        this(getRootCause(cause).getMessage(), getRootCause(cause));
     }
 
     public HtException(String message) {

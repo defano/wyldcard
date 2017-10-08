@@ -316,7 +316,7 @@ public class Interpreter {
                 return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());
             }
         } catch (HtException e) {
-            throw new HtSemanticException(e.getMessage(), e);
+            throw new HtSemanticException(e);
         }
     }
 

@@ -80,6 +80,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         TextLineNumber tln = new TextLineNumber(scriptField);
         tln.setUpdateFont(true);
         scrollPane.setRowHeaderView(tln);
+
+        scriptField.requestFocus();
     }
 
     private void checkSyntax() {
@@ -132,6 +134,11 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         } catch (BadLocationException e) {
             // Nothing to do
         }
+    }
+
+    public void moveCaretToPosition(int position) {
+        scriptField.setCaretPosition(position);
+        scriptField.requestFocus();
     }
 
     @Override
