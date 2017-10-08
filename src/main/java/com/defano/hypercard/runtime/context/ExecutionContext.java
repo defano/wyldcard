@@ -182,6 +182,8 @@ public class ExecutionContext {
             return getCurrentCard().findPart(ps);
         } else if (ps.isStackElementSpecifier()) {
             return HyperCard.getInstance().getStack().findPart(ps);
+        } else if (ps.isStackSpecifier()) {
+            return HyperCard.getInstance().getStack().getStackModel();
         }
 
         throw new IllegalStateException("Bug! Unhandled part type: " + ps);
@@ -327,13 +329,7 @@ public class ExecutionContext {
      */
     public void sendMessage (PartSpecifier ps, String message, List<Value> messageArgs) throws PartException
     {
-        PartModel thePart;
-
-        if (ps.isStackElementSpecifier()) {
-            thePart = HyperCard.getInstance().getStack().findPart(ps);
-        } else {
-            thePart = getCurrentCard().findPart(ps);
-        }
+        PartModel thePart = get(ps);
 
         if (thePart != null) {
             thePart.receiveMessage(message, new ExpressionList(null, messageArgs));

@@ -24,5 +24,9 @@ public interface PartSpecifier {
         return type() == PartType.CARD || type() == PartType.BACKGROUND || type() == PartType.MESSAGE_BOX;
     }
 
+    default boolean isStackSpecifier() {
+        return type() == PartType.STACK;
+    }
+
     String getHyperTalkIdentifier();
 }
