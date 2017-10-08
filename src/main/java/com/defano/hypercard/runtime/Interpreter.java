@@ -203,28 +203,32 @@ public class Interpreter {
      * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
      * scripts attempts to pass a message other than the message being handled.
      */
-    public static CheckedFuture<Boolean,HtException> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
+    public static CheckedFuture<Boolean,HtException> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) {
         NamedBlock handler = script.getHandler(command);
 
         if (handler == null) {
-            return Futures.makeChecked(Futures.immediateFuture(false), HtException::new);
+            return Futures.makeChecked(Futures.immediateFuture(false), new CheckedFutureExceptionMapper());
         } else {
-            return Futures.makeChecked(Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
+            try {
+                return Futures.makeChecked(Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
 
-                // Did not invoke pass: handler trapped message
-                if (passedMessage == null || passedMessage.isEmpty()) {
+                    // Did not invoke pass: handler trapped message
+                    if (passedMessage == null || passedMessage.isEmpty()) {
+                        return true;
+                    }
+
+                    // Invoked pass; did not trap message
+                    if (passedMessage.equalsIgnoreCase(command)) {
+                        return false;
+                    }
+
+                    // Semantic error: Passing a message other than the handled message is disallowed.
+                    HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
                     return true;
-                }
-
-                // Invoked pass; did not trap message
-                if (passedMessage.equalsIgnoreCase(command)) {
-                    return false;
-                }
-
-                // Semantic error: Passing a message other than the handled message is disallowed.
-                HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
-                return true;
-            }), HtException::new);
+                }), new CheckedFutureExceptionMapper());
+            } catch (HtSemanticException e) {
+                return Futures.immediateFailedCheckedFuture(e);
+            }
         }
     }
 
@@ -252,7 +256,7 @@ public class Interpreter {
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtSemanticException {
+    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtException {
         FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
 
         try {
@@ -261,8 +265,10 @@ public class Interpreter {
                 return scriptExecutor.submit(functionTask).get();
             else
                 return functionTask.call();
-        } catch (Exception e) {
+        } catch (HtException e) {
             throw new HtSemanticException(e.getMessage(), e);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new HtException("An unexpected error occurred executing the function.");
         }
     }
 
@@ -305,11 +311,11 @@ public class Interpreter {
 
         try {
             if (SwingUtilities.isEventDispatchThread())
-                return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), HtException::new);
+                return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
             else {
-                return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), HtException::new);
+                return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());
             }
-        } catch (Exception e) {
+        } catch (HtException e) {
             throw new HtSemanticException(e.getMessage(), e);
         }
     }

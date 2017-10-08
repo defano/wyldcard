@@ -42,7 +42,11 @@ public abstract class Command extends Statement implements MessageCompletionObse
 
         // Do not execute this command if handler trapped the message
         if (!trapped) {
-            onExecute();
+            try {
+                onExecute();
+            } catch (HtException e) {
+                rethrowContextualizedException(e);
+            }
         }
     }
 
@@ -53,7 +57,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
      * @return The argument list
      * @throws HtSemanticException Thrown if an error occurs evaluating arguments
      */
-    protected ExpressionList getEvaluatedMessageArguments() throws HtSemanticException {
+    protected ExpressionList getEvaluatedMessageArguments() throws HtException {
         return new ExpressionList();
     }
 

@@ -19,7 +19,7 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ReturnStatement extends Statement {
@@ -36,7 +36,7 @@ public class ReturnStatement extends Statement {
         this.returnValue = returnValue;
     }
 
-    public void onExecute() throws HtSemanticException, TerminateHandlerBreakpoint {
+    public void onExecute() throws HtException, TerminateHandlerBreakpoint {
         ExecutionContext.getContext().setReturnValue(returnValue.evaluate());
         throw new TerminateHandlerBreakpoint(null);
     }

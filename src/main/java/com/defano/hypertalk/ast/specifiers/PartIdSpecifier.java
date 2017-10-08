@@ -47,11 +47,11 @@ public class PartIdSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String toString () {
+    public String getHyperTalkIdentifier () {
         if (owner() == null) {
-            return type + " id " + id;
+            return type.toString().toLowerCase() + " id " + id;
         } else {
-            return owner().name() + " " + type + " id " + id;
+            return owner().name().toLowerCase() + " " + type.toString().toLowerCase() + " id " + id;
         }
     }
 }

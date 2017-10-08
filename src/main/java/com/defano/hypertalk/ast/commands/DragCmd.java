@@ -13,6 +13,7 @@ import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -41,7 +42,7 @@ public class DragCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtSemanticException {
+    public void onExecute() throws HtException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;

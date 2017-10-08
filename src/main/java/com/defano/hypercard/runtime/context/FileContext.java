@@ -1,5 +1,6 @@
 package com.defano.hypercard.runtime.context;
 
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.io.*;
@@ -50,7 +51,7 @@ public class FileContext {
      * @throws HtSemanticException Thrown if the file is not open or if an error occurs writing buffered data to the
      * file
      */
-    public void close(String filename) throws HtSemanticException {
+    public void close(String filename) throws HtException {
         FileHandle handle = getFileHandle(filename);
         if (handle != null) {
             handle.close();
@@ -85,7 +86,7 @@ public class FileContext {
         for (FileHandle thisOpenFile : openFiles) {
             try {
                 thisOpenFile.close();
-            } catch (HtSemanticException e) {
+            } catch (HtException e) {
                 // Nothing to do
             }
         }
@@ -109,14 +110,14 @@ public class FileContext {
          * Flushes the buffer and closes the file associated with this handle. Has no effect if the file is not open.
          * @throws HtSemanticException If an error occurs closing the file or writing its buffer to disk
          */
-        private void close() throws HtSemanticException {
+        private void close() throws HtException {
             if (writer != null) {
                 try {
                     writer.write(contents.toString());
                     writer.flush();
                     writer.close();
                 } catch (IOException e) {
-                    throw new HtSemanticException("An error occurred writing to file " + file.getName(), e);
+                    throw new HtSemanticException("An error occurred writing to file " + file.getName());
                 }
             }
         }

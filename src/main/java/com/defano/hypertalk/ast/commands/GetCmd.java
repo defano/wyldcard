@@ -19,7 +19,7 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class GetCmd extends Command {
@@ -41,7 +41,7 @@ public class GetCmd extends Command {
         part = ps;
     }
     
-    public void onExecute () throws HtSemanticException {
+    public void onExecute () throws HtException {
         if (expression != null) {
             ExecutionContext.getContext().setIt(expression.evaluate());
         }

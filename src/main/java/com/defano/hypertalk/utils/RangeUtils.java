@@ -9,6 +9,7 @@
 package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.regex.Matcher;
@@ -24,7 +25,7 @@ public class RangeUtils {
      * @return The range of characters in value identified by c.
      * @throws HtSemanticException If an expression in the composite chunk cannot be correctly evaluated.
      */
-    public static Range getRange(String value, CompositeChunk c) throws HtSemanticException {
+    public static Range getRange(String value, CompositeChunk c) throws HtException {
         return getRange(value, c, new Range(0, value.length()));
     }
 
@@ -78,7 +79,7 @@ public class RangeUtils {
      * @return The range of identified characters.
      * @throws HtSemanticException Thrown if the chunk is invalid.
      */
-    public static Range getRange(String value, Chunk c) throws HtSemanticException {
+    public static Range getRange(String value, Chunk c) throws HtException {
         Value startVal = null;
         Value endVal = null;
 
@@ -98,7 +99,7 @@ public class RangeUtils {
             return getRange(value, c.type, startVal.integerValue());
     }
 
-    private static Range getRange(String value, CompositeChunk c, Range in) throws HtSemanticException {
+    private static Range getRange(String value, CompositeChunk c, Range in) throws HtException {
         Range s = getRange(value, (Chunk) c, in);
 
         value = new Value(value).getChunk(new Chunk(c.type, c.start, c.end)).stringValue();
@@ -119,7 +120,7 @@ public class RangeUtils {
     }
 
 
-    private static Range getRange(String value, Chunk c, Range in) throws HtSemanticException {
+    private static Range getRange(String value, Chunk c, Range in) throws HtException {
         Range range = getRange(value, c);
         return new Range(in.start + range.start, in.start + range.start + (range.end - range.start));
     }

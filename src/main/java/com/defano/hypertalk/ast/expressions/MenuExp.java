@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.specifiers.MenuSpecifier;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.MenuContainer;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class MenuExp extends Expression {
@@ -25,7 +25,7 @@ public class MenuExp extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
         if (menuSpecifier != null) {
             return new MenuContainer(menuSpecifier).getValue();
         } else {

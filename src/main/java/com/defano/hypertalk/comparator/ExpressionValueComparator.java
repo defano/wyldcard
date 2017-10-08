@@ -4,7 +4,7 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.SortDirection;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 
 import java.util.Comparator;
@@ -36,7 +36,7 @@ public class ExpressionValueComparator implements Comparator<Value> {
                 return o2Evaluated.compareTo(o1Evaluated, sortStyle);
             }
 
-        } catch (HtSemanticException e) {
+        } catch (HtException e) {
             throw new HtUncheckedSemanticException(e);
         }
     }

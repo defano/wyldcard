@@ -32,9 +32,8 @@ public abstract class Statement extends ASTNode {
     public void execute() throws HtException, Breakpoint {
         try {
             onExecute();
-        } catch (HtException e) {
-            // TODO: Wrap exception with parse context
-            throw e;
+        } catch (HtSemanticException e) {
+            rethrowContextualizedException(e);
         }
     }
 }

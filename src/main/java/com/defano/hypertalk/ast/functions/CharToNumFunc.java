@@ -10,6 +10,7 @@ package com.defano.hypertalk.ast.functions;
 
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -23,7 +24,7 @@ public class CharToNumFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
         Value evaluated = expression.evaluate();
 
         if (evaluated.stringValue().length() == 0) {

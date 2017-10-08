@@ -15,6 +15,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
@@ -199,7 +200,7 @@ public class ExecutionContext {
         return get(ps).getProperty(property);
     }
 
-    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtSemanticException
+    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtException
     {
         Value mutable = get(ps).getProperty(property);
 

@@ -6,7 +6,14 @@ package com.defano.hypertalk.exception;
  */
 public class HtUncheckedSemanticException extends RuntimeException {
 
-    public HtUncheckedSemanticException(Throwable cause) {
+    private final HtException cause;
+
+    public HtUncheckedSemanticException(HtException cause) {
         super(HtException.getRootCause(cause).getMessage(), cause);
+        this.cause = cause;
+    }
+
+    public HtException getHtCause() {
+        return cause;
     }
 }

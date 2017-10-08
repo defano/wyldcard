@@ -33,7 +33,7 @@ public class SoundPlayer {
         try {
             SoundPlayer.playAudio(SoundPlayer.getAudioForSample(sample));
         } catch (Exception e) {
-            throw new HtSemanticException("An error occurred playing the sound.", e);
+            throw new HtSemanticException("An error occurred playing the sound.");
         }
     }
 

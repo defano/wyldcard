@@ -23,7 +23,6 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VariableExp;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ExpressionStatement extends Statement {
@@ -39,7 +38,7 @@ public class ExpressionStatement extends Statement {
 
         // Special case: A variable name used as a statement should be interpreted as a message command
         if (expression instanceof VariableExp) {
-            MessageCmd messageCmd = new MessageCmd(context, expression.evaluate().stringValue(), new ExpressionList());
+            MessageCmd messageCmd = new MessageCmd(null, expression.evaluate().stringValue(), new ExpressionList());
             messageCmd.execute();
         }
 

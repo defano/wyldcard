@@ -21,7 +21,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
@@ -48,7 +48,7 @@ public class AskCmd extends Command {
         this.suggestion = new LiteralExp(context, "");
     }
     
-    public void onExecute () throws HtSemanticException {
+    public void onExecute () throws HtException {
         if (suggestion != null)
             ask(question.evaluate(), suggestion.evaluate());
         else

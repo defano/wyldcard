@@ -54,7 +54,7 @@ public class SelectTextCmd extends Command {
         }
     }
 
-    private void selectManagedText(PartSpecifier specifier) throws HtSemanticException {
+    private void selectManagedText(PartSpecifier specifier) throws HtException {
         PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
         ManagedSelection field;
 
@@ -85,7 +85,7 @@ public class SelectTextCmd extends Command {
         });
     }
 
-    private void selectMenuButtonItem(PartSpecifier specifier) throws HtSemanticException {
+    private void selectMenuButtonItem(PartSpecifier specifier) throws HtException {
         if (chunk.type != ChunkType.LINE) {
             throw new HtSemanticException("Cannot select " + chunk.type.friendlyName() + " of this button.");
         }

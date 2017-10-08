@@ -60,7 +60,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
                 return o2Value.compareTo(o1Value, sortStyle);
             }
 
-        } catch (Exception e) {
+        } catch (HtException e) {
             throw new HtUncheckedSemanticException(e);
         }
     }

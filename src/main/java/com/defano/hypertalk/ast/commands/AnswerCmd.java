@@ -20,7 +20,7 @@ import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
@@ -56,7 +56,7 @@ public class AnswerCmd extends Command {
         this(context, message, null, null, null);
     }
     
-    public void onExecute () throws HtSemanticException {
+    public void onExecute () throws HtException {
         if (ch1 != null && ch2 != null && ch3 != null)
             answer(message.evaluate(), ch1.evaluate(), ch2.evaluate(), ch3.evaluate());
         else if (ch1 != null && ch2 != null)

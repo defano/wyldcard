@@ -92,8 +92,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             functionsMenu.invalidateDataset();
 
             if (generatedError instanceof HtSyntaxException) {
-                Range offendingRange = ((HtSyntaxException) generatedError).getOffendingRange();
-                Token offendingToken = ((HtSyntaxException) generatedError).getOffendingToken();
+                Range offendingRange = generatedError.getBreadcrumb().getCharRange();
+                Token offendingToken = generatedError.getBreadcrumb().getToken();
 
                 if (offendingRange != null) {
                     setHighlightedSelection(offendingRange.start, offendingRange.end);

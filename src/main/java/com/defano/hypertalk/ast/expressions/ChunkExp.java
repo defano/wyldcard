@@ -17,7 +17,7 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ChunkExp extends Expression {
@@ -31,7 +31,7 @@ public class ChunkExp extends Expression {
         this.expression = expression;
     }
     
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
         return expression.onEvaluate().getChunk(chunk);
     }
 }

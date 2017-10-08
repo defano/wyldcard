@@ -16,7 +16,7 @@ package com.defano.hypertalk.exception;
  */
 public class HtSemanticException extends HtException {
 
-    public HtSemanticException(Throwable cause) {
+    public HtSemanticException(HtException cause) {
         super(cause);
     }
 
@@ -24,7 +24,7 @@ public class HtSemanticException extends HtException {
         super(message);
     }
 
-    public HtSemanticException(String message, Throwable cause) {
+    public HtSemanticException(String message, HtException cause) {
         super(message, cause);
     }
 }

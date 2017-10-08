@@ -11,6 +11,7 @@ package com.defano.hypertalk.ast.functions;
 import com.defano.hypertalk.ast.common.BuiltInFunction;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -26,7 +27,7 @@ public class MathFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
         Value operand = expression.evaluate();
 
         if (!operand.isNumber()) {

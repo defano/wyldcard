@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.expressions;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -16,7 +17,7 @@ public class DestinationReferenceExp extends DestinationExp {
     }
 
     @Override
-    public PartSpecifier evaluateAsSpecifier() throws HtSemanticException {
+    public PartSpecifier evaluateAsSpecifier() throws HtException {
         Value value = expression.onEvaluate();
         PartExp expression = Interpreter.dereference(value, PartExp.class);
 

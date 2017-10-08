@@ -67,7 +67,7 @@ public class SortCardsCmd extends Command {
         } catch (HtUncheckedSemanticException e) {
             // Error occurred sorting; revert all changes
             HyperCard.getInstance().getStack().getStackModel().setCardModels(allCards);
-            HyperCard.getInstance().showErrorDialog(e);
+            HyperCard.getInstance().showErrorDialog(e.getHtCause());
         } finally {
             // Because card order  may have changed, lets navigate back to where we started
             HyperCard.getInstance().getStack().invalidateCache();
@@ -75,7 +75,7 @@ public class SortCardsCmd extends Command {
         }
     }
 
-    private List<CardModel> filterCards(List<CardModel> cards) throws HtSemanticException {
+    private List<CardModel> filterCards(List<CardModel> cards) throws HtException {
         ArrayList<CardModel> filteredCards = new ArrayList<>();
 
         for (CardModel thisCard : cards) {
@@ -87,7 +87,7 @@ public class SortCardsCmd extends Command {
         return filteredCards;
     }
 
-    private List<CardModel> mergeCards(List<CardModel> allCards, List<CardModel> filteredCards) throws HtSemanticException {
+    private List<CardModel> mergeCards(List<CardModel> allCards, List<CardModel> filteredCards) throws HtException {
         List<CardModel> merged = new ArrayList<>(allCards);
         int matched = 0;
 
@@ -104,7 +104,7 @@ public class SortCardsCmd extends Command {
         return merged;
     }
 
-    private boolean cardMatchesSortCriteria(CardModel cardModel) throws HtSemanticException {
+    private boolean cardMatchesSortCriteria(CardModel cardModel) throws HtException {
         return cardMatchesBackground(cardModel) && cardMatchesMarked(cardModel);
     }
 
@@ -112,7 +112,7 @@ public class SortCardsCmd extends Command {
         return !markedCards || cardModel.getKnownProperty(CardModel.PROP_MARKED).booleanValue();
     }
 
-    private boolean cardMatchesBackground(CardModel cardModel) throws HtSemanticException {
+    private boolean cardMatchesBackground(CardModel cardModel) throws HtException {
         if (background == null) {
             return true;
         }

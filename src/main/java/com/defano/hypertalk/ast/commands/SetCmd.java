@@ -20,6 +20,7 @@ import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.specifiers.PropertySpecifier;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -36,7 +37,7 @@ public class SetCmd extends Command {
         this.expression = expression;
     }
     
-    public void onExecute () throws HtSemanticException {
+    public void onExecute () throws HtException {
         try {
             
             // Setting the property of HyperCard

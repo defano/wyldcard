@@ -15,7 +15,7 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -38,7 +38,7 @@ public class NumberOfFunc extends Expression {
         this.expression = expression;
     }
 
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
         switch (itemType) {
             case CHAR:
                 return new Value(expression.evaluate().charCount());

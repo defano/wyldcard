@@ -17,8 +17,8 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.exception.HtSyntaxException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 
@@ -28,14 +28,14 @@ public abstract class Expression extends ASTNode {
         super(context);
     }
 
-    protected abstract Value onEvaluate() throws HtSemanticException;
+    protected abstract Value onEvaluate() throws HtException;
 
-    public Value evaluate() throws HtSemanticException {
+    public Value evaluate() throws HtException {
         try {
             return onEvaluate();
         } catch (HtSemanticException e) {
-            // TODO: Wrap exception with parse context
-            throw e;
+            rethrowContextualizedException(e);
+            throw new IllegalStateException("Bug! Contextualized exception not thrown.");
         }
     }
 }

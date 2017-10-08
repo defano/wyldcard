@@ -30,4 +30,15 @@ public class PartPositionSpecifier implements PartSpecifier {
     public PartType type() {
         return type;
     }
+
+    @Override
+    public String getHyperTalkIdentifier() {
+        if (layer == null) {
+            return position.name().toLowerCase() + " " + type.toString().toLowerCase();
+        } else if (type == null) {
+            return position.name().toLowerCase() + " " + owner().name() + " part";
+        } else {
+            return position.name().toLowerCase() + " " + owner().name() + " " + type.toString().toLowerCase();
+        }
+    }
 }

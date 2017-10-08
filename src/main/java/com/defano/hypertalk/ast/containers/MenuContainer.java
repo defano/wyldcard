@@ -29,7 +29,7 @@ public class MenuContainer extends Container {
     }
 
     @Override
-    public Value getValue() throws HtSemanticException {
+    public Value getValue() throws HtException {
         if (item != null) {
             return getMenuItemValue(item.getSpecifiedMenu(), item.getSpecifiedItemIndex());
         } else if (menu != null) {
@@ -94,7 +94,7 @@ public class MenuContainer extends Container {
      * @param preposition The preposition representing where items should be added relative to the given menu item.
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
-    private void putMenuItemValue(Value value, Preposition preposition) throws HtSemanticException {
+    private void putMenuItemValue(Value value, Preposition preposition) throws HtException {
         JMenu menu = item.getSpecifiedMenu();
         int itemIndex = item.getSpecifiedItemIndex();       // Location of specified item
 
@@ -120,7 +120,7 @@ public class MenuContainer extends Container {
      * @param preposition The preposition representing where items should be added
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
-    private void putMenuValue(Value value, Preposition preposition) throws HtSemanticException {
+    private void putMenuValue(Value value, Preposition preposition) throws HtException {
         JMenu menu = this.menu.getSpecifiedMenu();
 
         switch (preposition) {

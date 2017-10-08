@@ -4,6 +4,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -26,7 +27,7 @@ public class MessageCmd extends Statement {
 
         try {
             ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs.evaluateDisallowingCoordinates());
-        } catch (Exception e) {
+        } catch (HtException e) {
             HyperCard.getInstance().showErrorDialog(e);
         }
     }

@@ -19,6 +19,7 @@ package com.defano.hypertalk.ast.common;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -62,7 +63,7 @@ public class ExpressionList {
      * @return A list of values representing the evaluation of each expression in this ExpressionList.
      * @throws HtSemanticException Thrown if an error occurs evaluating any expression in the list.
      */
-    public List<Value> evaluateDisallowingCoordinates() throws HtSemanticException {
+    public List<Value> evaluateDisallowingCoordinates() throws HtException {
         List<Value> evaluatedList = new ArrayList<>();
 
         for (Expression expr : list) {
@@ -86,7 +87,7 @@ public class ExpressionList {
      * @return A list of values representing the evaluation of each expression in this ExpressionList.
      * @throws HtSemanticException Thrown if an error occurs evaluating any expression in the list.
      */
-    public List<Value> evaluate() throws HtSemanticException {
+    public List<Value> evaluate() throws HtException {
         List<Value> evaluatedList = new ArrayList<>();
 
         for (Expression expr : list) {

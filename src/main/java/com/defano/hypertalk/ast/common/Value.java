@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.comparator.StyledComparable;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.ChunkUtils;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.DateUtils;
@@ -281,7 +282,7 @@ public class Value implements StyledComparable<Value> {
         return ChunkUtils.getCount(ChunkType.LINE, value);
     }
     
-    public Value getChunk (Chunk c) throws HtSemanticException {
+    public Value getChunk (Chunk c) throws HtException {
 
         Value startVal = null;
         Value endVal = null;
@@ -314,7 +315,7 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtSemanticException {
+    public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtException {
 
         if (c instanceof CompositeChunk) {
             return new Value(ChunkUtils.putCompositeChunk((CompositeChunk) c, p, mutable.stringValue(), String.valueOf(mutator)));

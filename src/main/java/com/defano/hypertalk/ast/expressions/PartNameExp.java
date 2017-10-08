@@ -23,6 +23,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartNameSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -51,7 +52,7 @@ public class PartNameExp extends PartExp {
         }
     }
 
-    public PartSpecifier evaluateAsSpecifier() throws HtSemanticException {
+    public PartSpecifier evaluateAsSpecifier() throws HtException {
         Value evaluatedName = name.evaluate();
 
         if (evaluatedName.isInteger()) {

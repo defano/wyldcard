@@ -21,14 +21,13 @@ import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 public abstract class Container {
 
     public abstract Value getValue() throws HtException;
     public abstract void putValue(Value value, Preposition preposition) throws HtException;
 
-    protected Value chunkOf (Value v, Chunk chunk) throws HtSemanticException {
+    protected Value chunkOf (Value v, Chunk chunk) throws HtException {
         if (chunk == null) {
             return v;
         } else {
