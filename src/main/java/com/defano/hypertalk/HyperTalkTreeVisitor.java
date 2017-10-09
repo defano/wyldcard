@@ -1827,6 +1827,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCardninalExp(HyperTalkParser.CardninalExpContext ctx) {
+        return LiteralExp.ofCardinal(ctx, ctx.getText());
+    }
+
+    @Override
     public Object visitConcatExp(HyperTalkParser.ConcatExpContext ctx) {
         return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
     }

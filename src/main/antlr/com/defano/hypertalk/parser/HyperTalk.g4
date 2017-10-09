@@ -480,6 +480,7 @@ constant            : 'empty'                                                   
                     | 'linefeed'                                                                                        # lineFeedExp
                     | 'comma'                                                                                           # commaExp
                     | 'colon'                                                                                           # colonExp
+                    | ('one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten')          # cardninalExp
                     ;
 
 factor              : literal                                                                                           # literalFactor
