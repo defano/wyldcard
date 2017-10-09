@@ -20,6 +20,7 @@ import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.common.CompositeChunk;
 import com.defano.hypertalk.ast.common.Ordinal;
+import com.defano.hypertalk.exception.HtException;
 import com.google.common.collect.Lists;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Preposition;
@@ -114,7 +115,7 @@ public class ChunkUtils {
      * @return The string resulting from this put operation.
      * @throws HtSemanticException If an expression present in the composite chunk cannot be evaluated correctly.
      */
-    public static String putCompositeChunk(CompositeChunk c, Preposition p, String mutableString, String mutatorString) throws HtSemanticException {
+    public static String putCompositeChunk(CompositeChunk c, Preposition p, String mutableString, String mutatorString) throws HtException {
         Range s = RangeUtils.getRange(mutableString, c);
 
         switch (p) {

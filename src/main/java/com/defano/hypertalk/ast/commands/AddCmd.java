@@ -13,14 +13,15 @@ import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class AddCmd extends Command {
 
     private final Expression expression;
     private final Container container;
 
-    public AddCmd(Expression source, Container container) {
-        super("add");
+    public AddCmd(ParserRuleContext context, Expression source, Container container) {
+        super(context, "add");
 
         this.expression = source;
         this.container = container;

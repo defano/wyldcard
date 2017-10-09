@@ -13,7 +13,9 @@ import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 
@@ -22,22 +24,22 @@ public class ClickCmd extends Command {
     private final Expression clickLoc;
     private final ExpressionList modifierKeys;
 
-    public ClickCmd(Expression clickLoc) {
-        super("click");
+    public ClickCmd(ParserRuleContext context, Expression clickLoc) {
+        super(context,"click");
 
         this.clickLoc = clickLoc;
         this.modifierKeys = null;
     }
 
-    public ClickCmd(Expression clickLoc, ExpressionList modifierKeys) {
-        super("click");
+    public ClickCmd(ParserRuleContext context, Expression clickLoc, ExpressionList modifierKeys) {
+        super(context, "click");
 
         this.clickLoc = clickLoc;
         this.modifierKeys = modifierKeys;
     }
 
     @Override
-    public void onExecute() throws HtSemanticException {
+    public void onExecute() throws HtException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;

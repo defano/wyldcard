@@ -30,6 +30,7 @@ import com.defano.hypertalk.ast.constructs.RepeatRange;
 import com.defano.hypertalk.ast.constructs.RepeatSpecifier;
 import com.defano.hypertalk.ast.constructs.RepeatWith;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -39,13 +40,14 @@ public class RepeatStatement extends Statement {
     public final RepeatSpecifier range;
     public final StatementList statements;
 
-    public RepeatStatement(RepeatSpecifier range, StatementList statements) {
+    public RepeatStatement(ParserRuleContext context, RepeatSpecifier range, StatementList statements) {
+        super(context);
         this.range = range;
         this.statements = statements;
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
-    public void execute() throws HtException, Breakpoint {
+    public void onExecute() throws HtException, Breakpoint {
         try {
             if (range instanceof RepeatForever) {
                 executeRepeatForever();

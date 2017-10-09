@@ -20,6 +20,7 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.utils.Range;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -33,6 +34,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class MessageWindow extends HyperCardFrame implements ManagedSelection, PropertyChangeObserver {
 
@@ -117,7 +119,7 @@ public class MessageWindow extends HyperCardFrame implements ManagedSelection, P
         int squiggleEnd = messageBox.getText().length();
 
         if (e instanceof HtSyntaxException) {
-            Range offendingRange = ((HtSyntaxException) e).getOffendingRange();
+            Range offendingRange = e.getBreadcrumb().getCharRange();
             if (offendingRange != null) {
                 squiggleStart = offendingRange.start;
                 squiggleEnd = offendingRange.end;
@@ -166,7 +168,7 @@ public class MessageWindow extends HyperCardFrame implements ManagedSelection, P
         return getTextComponent().getText();
     }
 
-    public void evaluateMessageBox() {
+    private void evaluateMessageBox() {
         Interpreter.getMessageExecutor().execute(() -> {
             try {
                 if (!getMsgBoxText().trim().isEmpty()) {
@@ -178,8 +180,10 @@ public class MessageWindow extends HyperCardFrame implements ManagedSelection, P
                         setMsgBoxText(ExecutionContext.getContext().getIt().stringValue());
                     }
                 }
-            } catch (Exception e) {
+            } catch (HtException e) {
                 HyperCard.getInstance().showErrorDialog(e);
+            } catch (InterruptedException | ExecutionException e) {
+                HyperCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred while executing the message."));
             }
         });
     }

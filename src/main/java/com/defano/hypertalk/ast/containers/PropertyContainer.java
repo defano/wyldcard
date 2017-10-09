@@ -59,7 +59,7 @@ public class PropertyContainer extends Container {
         }
     }
 
-    public PartSpecifier getPartSpecifier() throws HtSemanticException {
+    public PartSpecifier getPartSpecifier() throws HtException {
         return propertySpec.partExp.evaluateAsSpecifier();
     }
 

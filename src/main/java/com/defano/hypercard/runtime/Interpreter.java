@@ -132,7 +132,7 @@ public class Interpreter {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
         } catch (Exception e) {
-            // Nothing to do; okay to evaluate bogus text
+            // Nothing to do; okay to onEvaluate bogus text
         }
 
         // Value of a non-expression is itself
@@ -140,7 +140,7 @@ public class Interpreter {
     }
 
     /**
-     * Attempts to evaluate the given value as an AST node identified by klass. That is, the given value is compiled
+     * Attempts to onEvaluate the given value as an AST node identified by klass. That is, the given value is compiled
      * as a HyperTalk script and the first and only statement in the script in coerced to the requested type. Returns
      * null if the value is not a valid HyperTalk script or contains a script fragment that cannot be coerced to
      * the requested type.
@@ -182,7 +182,7 @@ public class Interpreter {
     /**
      * Determines if the given Script text represents a valid HyperTalk expression on the current thread.
      *
-     * @param statement Text to evaluate
+     * @param statement Text to onEvaluate
      * @return True if the statement is a valid expression; false if it is not.
      * @throws HtException Thrown if the statement cannot be compiled (due to a syntax/semantic error).
      */
@@ -203,28 +203,32 @@ public class Interpreter {
      * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the
      * scripts attempts to pass a message other than the message being handled.
      */
-    public static CheckedFuture<Boolean,HtException> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) throws HtSemanticException {
+    public static CheckedFuture<Boolean,HtException> executeHandler(PartSpecifier me, Script script, String command, ExpressionList arguments) {
         NamedBlock handler = script.getHandler(command);
 
         if (handler == null) {
-            return Futures.makeChecked(Futures.immediateFuture(false), HtException::new);
+            return Futures.makeChecked(Futures.immediateFuture(false), new CheckedFutureExceptionMapper());
         } else {
-            return Futures.makeChecked(Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
+            try {
+                return Futures.makeChecked(Futures.transform(executeNamedBlock(me, handler, arguments), (Function<String, Boolean>) passedMessage -> {
 
-                // Did not invoke pass: handler trapped message
-                if (passedMessage == null || passedMessage.isEmpty()) {
+                    // Did not invoke pass: handler trapped message
+                    if (passedMessage == null || passedMessage.isEmpty()) {
+                        return true;
+                    }
+
+                    // Invoked pass; did not trap message
+                    if (passedMessage.equalsIgnoreCase(command)) {
+                        return false;
+                    }
+
+                    // Semantic error: Passing a message other than the handled message is disallowed.
+                    HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
                     return true;
-                }
-
-                // Invoked pass; did not trap message
-                if (passedMessage.equalsIgnoreCase(command)) {
-                    return false;
-                }
-
-                // Semantic error: Passing a message other than the handled message is disallowed.
-                HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
-                return true;
-            }), HtException::new);
+                }), new CheckedFutureExceptionMapper());
+            } catch (HtSemanticException e) {
+                return Futures.immediateFailedCheckedFuture(e);
+            }
         }
     }
 
@@ -252,7 +256,7 @@ public class Interpreter {
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtSemanticException {
+    public static Value executeFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtException {
         FunctionExecutionTask functionTask = new FunctionExecutionTask(me, function, arguments);
 
         try {
@@ -261,8 +265,10 @@ public class Interpreter {
                 return scriptExecutor.submit(functionTask).get();
             else
                 return functionTask.call();
-        } catch (Exception e) {
+        } catch (HtException e) {
             throw new HtSemanticException(e.getMessage(), e);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new HtException("An unexpected error occurred executing the function.");
         }
     }
 
@@ -277,7 +283,7 @@ public class Interpreter {
     }
 
     /**
-     * Gets the executor used to evaluate the contents of the message box.
+     * Gets the executor used to onEvaluate the contents of the message box.
      * @return The message box executor.
      */
     public static Executor getMessageExecutor() {
@@ -305,12 +311,12 @@ public class Interpreter {
 
         try {
             if (SwingUtilities.isEventDispatchThread())
-                return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), HtException::new);
+                return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
             else {
-                return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), HtException::new);
+                return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());
             }
-        } catch (Exception e) {
-            throw new HtSemanticException(e.getMessage(), e);
+        } catch (HtException e) {
+            throw new HtSemanticException(e);
         }
     }
 

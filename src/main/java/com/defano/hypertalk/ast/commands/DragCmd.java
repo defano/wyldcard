@@ -13,7 +13,9 @@ import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 
@@ -23,16 +25,16 @@ public class DragCmd extends Command {
     private final Expression to;
     private final ExpressionList modifierKeys;
 
-    public DragCmd(Expression from, Expression to) {
-        super("drag");
+    public DragCmd(ParserRuleContext context, Expression from, Expression to) {
+        super(context, "drag");
 
         this.from = from;
         this.to = to;
         this.modifierKeys = null;
     }
 
-    public DragCmd(Expression from, Expression to, ExpressionList modifierKeys) {
-        super("drag");
+    public DragCmd(ParserRuleContext context, Expression from, Expression to, ExpressionList modifierKeys) {
+        super(context, "drag");
 
         this.from = from;
         this.to = to;
@@ -40,7 +42,7 @@ public class DragCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtSemanticException {
+    public void onExecute() throws HtException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;

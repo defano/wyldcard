@@ -19,18 +19,20 @@ package com.defano.hypertalk.ast.expressions;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PropertySpecifier;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PropertyExp extends Expression {
 
     public final PropertySpecifier propertySpecifier;
 
-    public PropertyExp(PropertySpecifier propertySpecifier) {
+    public PropertyExp(ParserRuleContext context, PropertySpecifier propertySpecifier) {
+        super(context);
         this.propertySpecifier = propertySpecifier;
     }
 
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
 
         // Getting a HyperCard property
         if (propertySpecifier.isGlobalPropertySpecifier()) {

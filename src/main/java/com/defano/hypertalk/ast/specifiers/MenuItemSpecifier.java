@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.specifiers;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class MenuItemSpecifier {
         this.expression = null;
     }
 
-    public JMenuItem getSpecifiedMenuItem() throws HtSemanticException {
+    public JMenuItem getSpecifiedMenuItem() throws HtException {
         JMenu menu = getSpecifiedMenu();
         int itemIndex = getSpecifiedItemIndex();
 
@@ -36,11 +37,11 @@ public class MenuItemSpecifier {
         throw new HtSemanticException("No such menu item.");
     }
 
-    public JMenu getSpecifiedMenu() throws HtSemanticException {
+    public JMenu getSpecifiedMenu() throws HtException {
         return this.menu.getSpecifiedMenu();
     }
 
-    public int getSpecifiedItemIndex() throws HtSemanticException {
+    public int getSpecifiedItemIndex() throws HtException {
         JMenu menu = getSpecifiedMenu();
 
         if (expression != null) {

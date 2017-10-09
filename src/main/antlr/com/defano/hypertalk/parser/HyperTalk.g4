@@ -490,10 +490,11 @@ factor              : literal                                                   
                     | propertySpec                                                                                      # idOfPartFactor
                     | menu                                                                                              # menuFactor
                     | menuItem                                                                                          # menuItemFactor
+                    | chunk factor                                                                                      # chunkFactorChunk
                     ;
 
-builtInFunc         : 'the'? oneArgFunc ('of' | 'in') expression                                                        # builtinFuncOneArgs
-                    | oneArgFunc '(' expression ')'                                                                     # builtinFuncOneArgs
+builtInFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs
+                    | oneArgFunc '(' factor ')'                                                                         # builtinFuncOneArgs
                     | 'the' noArgFunc                                                                                   # builtinFuncNoArg
                     | argFunc '(' expressionList ')'                                                                    # builtinFuncArgList
                     ;

@@ -8,37 +8,20 @@
 
 package com.defano.hypertalk.exception;
 
-import com.defano.hypertalk.utils.Range;
+import com.defano.hypercard.runtime.Breadcrumb;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Token;
 
 public class HtSyntaxException extends HtException {
 
-    private final Token offendingToken;
-
     public HtSyntaxException(RecognitionException e) {
         super(getFriendlyMessage(e.getOffendingToken()));
-        this.offendingToken = e.getOffendingToken();
+        super.setBreadcrumb(new Breadcrumb(e.getOffendingToken()));
     }
 
     public HtSyntaxException(Token offendingToken) {
         super(getFriendlyMessage(offendingToken));
-        this.offendingToken = offendingToken;
-    }
-
-    public Token getOffendingToken() {
-        return offendingToken;
-    }
-
-    public Range getOffendingRange() {
-        int start = getOffendingToken().getStartIndex();
-        int end = getOffendingToken().getStopIndex();
-
-        if (end > start) {
-            return new Range(start, end + 1);
-        }
-
-        return null;
+        super.setBreadcrumb(new Breadcrumb(offendingToken));
     }
 
     private static String getFriendlyMessage(Token t) {

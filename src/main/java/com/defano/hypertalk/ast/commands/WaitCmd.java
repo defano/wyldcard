@@ -12,6 +12,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.TimeUnit;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class WaitCmd extends Command {
 
@@ -19,16 +20,16 @@ public class WaitCmd extends Command {
     private final TimeUnit units;
     private final Boolean polarity;
 
-    public WaitCmd(Expression expression, TimeUnit units) {
-        super("wait");
+    public WaitCmd(ParserRuleContext context, Expression expression, TimeUnit units) {
+        super(context, "wait");
 
         this.expression = expression;
         this.units = units;
         this.polarity = null;
     }
 
-    public WaitCmd(Expression expression, boolean polarity) {
-        super("wait");
+    public WaitCmd(ParserRuleContext context, Expression expression, boolean polarity) {
+        super(context, "wait");
 
         this.expression = expression;
         this.units = null;

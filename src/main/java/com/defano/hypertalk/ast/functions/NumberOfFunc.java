@@ -15,7 +15,8 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  * Implementation of a HyperTalk function that counts the number of elements in a given container.
@@ -25,17 +26,19 @@ public class NumberOfFunc extends Expression {
     public final Countable itemType;
     public final Expression expression;
 
-    public NumberOfFunc(Countable itemType) {
+    public NumberOfFunc(ParserRuleContext context, Countable itemType) {
+        super(context);
         this.itemType = itemType;
         this.expression = null;
     }
 
-    public NumberOfFunc(Countable itemType, Expression expression) {
+    public NumberOfFunc(ParserRuleContext context, Countable itemType, Expression expression) {
+        super(context);
         this.itemType = itemType;
         this.expression = expression;
     }
 
-    public Value evaluate() throws HtSemanticException {
+    public Value onEvaluate() throws HtException {
         switch (itemType) {
             case CHAR:
                 return new Value(expression.evaluate().charCount());

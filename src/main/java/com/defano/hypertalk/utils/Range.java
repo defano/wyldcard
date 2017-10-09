@@ -25,7 +25,7 @@ public class Range {
     }
 
     public Chunk asChunk() {
-        return new Chunk(ChunkType.CHARRANGE, new LiteralExp(start + 1), new LiteralExp(end));
+        return new Chunk(ChunkType.CHARRANGE, new LiteralExp(null, start + 1), new LiteralExp(null, end));
     }
 
     public boolean isEmpty() {

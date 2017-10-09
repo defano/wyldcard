@@ -5,13 +5,14 @@ import com.defano.hypercard.sound.SoundSample;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class DialCmd extends Command {
 
     private final Expression expression;
 
-    public DialCmd(Expression expression) {
-        super("dial");
+    public DialCmd(ParserRuleContext context, Expression expression) {
+        super(context, "dial");
         this.expression = expression;
     }
 

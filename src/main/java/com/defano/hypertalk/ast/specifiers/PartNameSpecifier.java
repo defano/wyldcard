@@ -47,7 +47,7 @@ public class PartNameSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String toString() {
-        return owner().name() + " " + type + " " + name;
+    public String getHyperTalkIdentifier() {
+        return owner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + name;
     }
 }

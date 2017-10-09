@@ -15,6 +15,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
@@ -181,6 +182,8 @@ public class ExecutionContext {
             return getCurrentCard().findPart(ps);
         } else if (ps.isStackElementSpecifier()) {
             return HyperCard.getInstance().getStack().findPart(ps);
+        } else if (ps.isStackSpecifier()) {
+            return HyperCard.getInstance().getStack().getStackModel();
         }
 
         throw new IllegalStateException("Bug! Unhandled part type: " + ps);
@@ -199,7 +202,7 @@ public class ExecutionContext {
         return get(ps).getProperty(property);
     }
 
-    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtSemanticException
+    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtException
     {
         Value mutable = get(ps).getProperty(property);
 
@@ -326,16 +329,10 @@ public class ExecutionContext {
      */
     public void sendMessage (PartSpecifier ps, String message, List<Value> messageArgs) throws PartException
     {
-        PartModel thePart;
-
-        if (ps.isStackElementSpecifier()) {
-            thePart = HyperCard.getInstance().getStack().findPart(ps);
-        } else {
-            thePart = getCurrentCard().findPart(ps);
-        }
+        PartModel thePart = get(ps);
 
         if (thePart != null) {
-            thePart.receiveMessage(message, new ExpressionList(messageArgs));
+            thePart.receiveMessage(message, new ExpressionList(null, messageArgs));
         } else {
             throw new PartException("No such part.");
         }

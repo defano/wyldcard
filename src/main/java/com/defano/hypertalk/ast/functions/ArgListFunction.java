@@ -11,7 +11,9 @@ package com.defano.hypertalk.ast.functions;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 
@@ -20,12 +22,14 @@ public abstract class ArgListFunction extends Expression {
     private final ExpressionList argumentList;
     private final Expression expression;
 
-    public ArgListFunction(ExpressionList argumentList) {
+    public ArgListFunction(ParserRuleContext context, ExpressionList argumentList) {
+        super(context);
         this.argumentList = argumentList;
         this.expression = null;
     }
 
-    public ArgListFunction(Expression singleArgument) {
+    public ArgListFunction(ParserRuleContext context, Expression singleArgument) {
+        super(context);
         this.expression = singleArgument;
         this.argumentList = null;
     }
@@ -46,7 +50,7 @@ public abstract class ArgListFunction extends Expression {
      * @return A list of evaluated arguments passed to the arg list function.
      * @throws HtSemanticException If an error occurs evaluating the expressions.
      */
-    public List<Value> evaluateArgumentList() throws HtSemanticException {
+    public List<Value> evaluateArgumentList() throws HtException {
         if (expression != null) {
             return expression.evaluate().getItems();
         } else {
@@ -61,7 +65,7 @@ public abstract class ArgListFunction extends Expression {
      * @return The evaluated singleton argument value.
      * @throws HtSemanticException If an error occurs evaluating the expressions.
      */
-    public Value evaluateSingleArgumentList() throws HtSemanticException {
+    public Value evaluateSingleArgumentList() throws HtException {
         if (expression != null) {
             return expression.evaluate();
         } else {

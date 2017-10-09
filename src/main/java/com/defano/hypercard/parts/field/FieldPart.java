@@ -250,7 +250,7 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
         super.keyTyped(e);
 
         if (getTextPane().hasFocus() && !redispatchInProgress.get()) {
-            getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())), e, this);
+            getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ExpressionList(null, String.valueOf(e.getKeyChar())), e, this);
         }
     }
 

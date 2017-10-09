@@ -20,6 +20,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.containers.Container;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PutCmd extends Command {
 
@@ -27,8 +28,8 @@ public class PutCmd extends Command {
     public final Preposition preposition;
     public final Container container;
     
-    public PutCmd(Expression e, Preposition p, Container d) {
-        super("put");
+    public PutCmd(ParserRuleContext context, Expression e, Preposition p, Container d) {
+        super(context, "put");
 
         expression = e;
         preposition = p;

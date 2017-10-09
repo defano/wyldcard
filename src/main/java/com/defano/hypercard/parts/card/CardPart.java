@@ -705,7 +705,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
 
     @Override
     public void keyTyped(KeyEvent e) {
-        getPartModel().receiveMessage(SystemMessage.KEY_DOWN.messageName, new ExpressionList(String.valueOf(e.getKeyChar())));
+        getPartModel().receiveMessage(SystemMessage.KEY_DOWN.messageName, new ExpressionList(null, String.valueOf(e.getKeyChar())));
     }
 
     @Override

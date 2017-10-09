@@ -14,6 +14,7 @@ import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.SystemMessage;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jmonet.model.Provider;
 
 import java.awt.*;
@@ -115,7 +116,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
                 Serializer.serialize(file, HyperCard.getInstance().getStack().getStackModel());
                 HyperCard.getInstance().setSavedStackFile(file);
             } catch (IOException e) {
-                HyperCard.getInstance().showErrorDialog(e);
+                HyperCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
             }
         }
     }
@@ -231,7 +232,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
             return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
         }
 
-        HyperCard.getInstance().showErrorDialog(new IllegalStateException("This card cannot be deleted because it or its background is marked as \"Can't Delete\"."));
+        HyperCard.getInstance().showErrorDialog(new HtSemanticException("This card cannot be deleted because it or its background is marked as \"Can't Delete\"."));
         return null;
     }
 

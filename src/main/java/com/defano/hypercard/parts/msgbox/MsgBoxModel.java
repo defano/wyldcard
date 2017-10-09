@@ -11,6 +11,7 @@ public class MsgBoxModel extends PartModel {
     public MsgBoxModel() {
         super(PartType.MESSAGE_BOX, Owner.HYPERCARD);
 
+        defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_CONTENTS, new Value(), false);
         defineComputedGetterProperty(PROP_CONTENTS, (model, propertyName) -> new Value(WindowManager.getMessageWindow().getMsgBoxText()));
 

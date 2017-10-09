@@ -4,6 +4,7 @@ import com.defano.hypercard.menu.HyperCardMenuBar;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -23,7 +24,7 @@ public class MenuSpecifier {
         this.menuExpr = null;
     }
 
-    public JMenu getSpecifiedMenu() throws HtSemanticException {
+    public JMenu getSpecifiedMenu() throws HtException {
 
         if (menuExpr != null) {
             JMenu foundMenu;

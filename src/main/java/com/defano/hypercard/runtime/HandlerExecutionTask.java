@@ -64,7 +64,7 @@ public class HandlerExecutionTask implements Callable<String> {
                 HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit '" + e.getHandlerName() + "' from inside '" + handler.name + "'."));
             }
         } catch (Breakpoint e) {
-            HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here.", e));
+            HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
         }
 
         return ExecutionContext.getContext().getPassedMessage();

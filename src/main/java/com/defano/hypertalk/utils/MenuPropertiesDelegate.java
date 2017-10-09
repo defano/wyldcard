@@ -2,6 +2,7 @@ package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
@@ -24,7 +25,7 @@ public class MenuPropertiesDelegate {
     private static final String PROP_COMMANDCHAR = "commandchar";
     private static final String PROP_NAME = "name";
 
-    public static Value getProperty(String name, MenuItemSpecifier menuItem) throws HtSemanticException {
+    public static Value getProperty(String name, MenuItemSpecifier menuItem) throws HtException {
         switch (name.toLowerCase()) {
             case PROP_ENABLED:
                 return new Value(menuItem.getSpecifiedMenuItem().isEnabled());
@@ -39,7 +40,7 @@ public class MenuPropertiesDelegate {
         }
     }
 
-    public static void setProperty(String name, Value value, MenuItemSpecifier menuItem) throws HtSemanticException {
+    public static void setProperty(String name, Value value, MenuItemSpecifier menuItem) throws HtException {
         switch (name.toLowerCase()) {
             case PROP_ENABLED:
                 menuItem.getSpecifiedMenuItem().setEnabled(value.booleanValue());

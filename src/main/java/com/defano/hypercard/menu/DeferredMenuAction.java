@@ -31,7 +31,7 @@ public class DeferredMenuAction implements ActionListener {
         CountDownLatch cdl = new CountDownLatch(1);
         final boolean[] trapped = new boolean[1];
 
-        HyperCard.getInstance().getDisplayedCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, new ExpressionList(theMenu, theMenuItem), (command, wasTrapped, err) -> {
+        HyperCard.getInstance().getDisplayedCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, new ExpressionList(null, theMenu, theMenuItem), (command, wasTrapped, err) -> {
             trapped[0] = wasTrapped;
             cdl.countDown();
         });

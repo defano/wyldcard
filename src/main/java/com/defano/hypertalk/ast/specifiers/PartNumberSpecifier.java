@@ -31,13 +31,13 @@ public class PartNumberSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String toString() {
+    public String getHyperTalkIdentifier() {
         if (layer == null) {
-            return type + " " + number;
+            return type.toString().toLowerCase() + " " + number;
         } else if (type == null) {
-            return owner().name() + " part " + number;
+            return owner().name().toLowerCase() + " part " + number;
         } else {
-            return owner().name() + " " + type + " " + number;
+            return owner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + number;
         }
     }
 }

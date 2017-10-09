@@ -15,6 +15,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 
@@ -23,8 +24,8 @@ public class SendCmd extends Command {
     public final PartExp part;
     public final Expression message;
 
-    public SendCmd(PartExp part, Expression message) {
-        super("send");
+    public SendCmd(ParserRuleContext context, PartExp part, Expression message) {
+        super(context, "send");
 
         this.part = part;
         this.message = message;
@@ -37,7 +38,7 @@ public class SendCmd extends Command {
         if (messageCmd == null) {
             ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue(), new ArrayList<>());
         } else {
-            messageCmd.execute();
+            messageCmd.onExecute();
         }
     }
 

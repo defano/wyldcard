@@ -17,8 +17,10 @@ import com.defano.hypercard.parts.editor.PartEditor;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.window.HyperTalkErrorDialog;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.model.Provider;
 
 import javax.swing.*;
@@ -37,7 +39,6 @@ public class HyperCard {
     private static HyperCard instance;
     private final StackPart stackPart;
     private final Provider<File> savedStackFileProvider = new Provider<>();
-    private AtomicBoolean errorDialogVisible = new AtomicBoolean(false);
 
     public static void main(String argv[]) {
         try {
@@ -108,15 +109,8 @@ public class HyperCard {
         return stackPart.getDisplayedCard();
     }
 
-    public void showErrorDialog(Exception e) {
-        if (!errorDialogVisible.get()) {
-            SwingUtilities.invokeLater(() -> {
-                errorDialogVisible.set(true);
-                JOptionPane.showMessageDialog(WindowManager.getStackWindow().getWindowPanel(), e.getMessage());
-                errorDialogVisible.set(false);
-            });
-        }
-        e.printStackTrace();
+    public void showErrorDialog(HtException e) {
+        HyperTalkErrorDialog.getInstance().showError(e);
     }
 
     public void quit() {

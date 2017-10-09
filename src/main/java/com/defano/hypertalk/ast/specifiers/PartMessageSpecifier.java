@@ -19,4 +19,9 @@ public class PartMessageSpecifier implements PartSpecifier {
     public PartType type() {
         return PartType.MESSAGE_BOX;
     }
+
+    @Override
+    public String getHyperTalkIdentifier() {
+        return "the message";
+    }
 }

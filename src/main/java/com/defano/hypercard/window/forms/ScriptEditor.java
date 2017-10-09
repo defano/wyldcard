@@ -80,6 +80,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         TextLineNumber tln = new TextLineNumber(scriptField);
         tln.setUpdateFont(true);
         scrollPane.setRowHeaderView(tln);
+
+        scriptField.requestFocus();
     }
 
     private void checkSyntax() {
@@ -92,8 +94,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             functionsMenu.invalidateDataset();
 
             if (generatedError instanceof HtSyntaxException) {
-                Range offendingRange = ((HtSyntaxException) generatedError).getOffendingRange();
-                Token offendingToken = ((HtSyntaxException) generatedError).getOffendingToken();
+                Range offendingRange = generatedError.getBreadcrumb().getCharRange();
+                Token offendingToken = generatedError.getBreadcrumb().getToken();
 
                 if (offendingRange != null) {
                     setHighlightedSelection(offendingRange.start, offendingRange.end);
@@ -132,6 +134,11 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         } catch (BadLocationException e) {
             // Nothing to do
         }
+    }
+
+    public void moveCaretToPosition(int position) {
+        scriptField.setCaretPosition(position);
+        scriptField.requestFocus();
     }
 
     @Override

@@ -6,13 +6,15 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.specifiers.PartOrdinalSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class DestinationOrdinalExp extends DestinationExp {
 
     private final DestinationType type;
     private final Ordinal ordinal;
 
-    public DestinationOrdinalExp(Ordinal ordinal, DestinationType type) {
+    public DestinationOrdinalExp(ParserRuleContext context, Ordinal ordinal, DestinationType type) {
+        super(context);
         this.type = type;
         this.ordinal = ordinal;
     }
