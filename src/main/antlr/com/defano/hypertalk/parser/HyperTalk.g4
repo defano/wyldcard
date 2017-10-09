@@ -490,6 +490,7 @@ factor              : literal                                                   
                     | propertySpec                                                                                      # idOfPartFactor
                     | menu                                                                                              # menuFactor
                     | menuItem                                                                                          # menuItemFactor
+                    | chunk factor                                                                                      # chunkFactorChunk
                     ;
 
 builtInFunc         : 'the'? oneArgFunc ('of' | 'in') factor                                                            # builtinFuncOneArgs

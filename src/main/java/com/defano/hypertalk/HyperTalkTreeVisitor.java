@@ -1767,6 +1767,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitChunkFactorChunk(HyperTalkParser.ChunkFactorChunkContext ctx) {
+        return new ChunkExp(ctx, (Chunk) visit(ctx.chunk()), (Expression) visit(ctx.factor()));
+    }
+
+    @Override
     public Object visitTruncFunc(HyperTalkParser.TruncFuncContext ctx) {
         return BuiltInFunction.TRUNC;
     }
