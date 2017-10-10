@@ -1,19 +1,3 @@
-/*
- * PartMover
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * PartMover.java
- * @author matt.defano@motorola.com
- * 
- * Provides the ability for the user to move a part around the card panel
- * of the main window. (Not nearly as trivial as one might assume.)
- */
-
 package com.defano.hypercard.parts.editor;
 
 import com.defano.hypercard.awt.MouseManager;

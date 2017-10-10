@@ -261,7 +261,9 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
     }
 
     /**
-     * Find the front-most background component which is underneath the point of the given MouseEvent.
+     * Find the front-most background component which is underneath the point of the given MouseEvent. That is, the
+     * next component in the z-order behind this component.
+     *
      * @param e The mouse event
      * @return The component "hit" by the event or null if no component is underneath the event.
      */

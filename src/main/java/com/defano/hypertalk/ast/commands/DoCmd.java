@@ -1,18 +1,3 @@
-/*
- * StatDo
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * DoCmd.java
- * @author matt.defano@gmail.com
- * 
- * Implementation of the "do" statement (for executing strings)
- */
-
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.runtime.Interpreter;

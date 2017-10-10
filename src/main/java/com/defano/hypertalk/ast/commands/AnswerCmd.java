@@ -1,18 +1,3 @@
-/*
- * StatAnswerCmd
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:12 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * AnswerCmd.java
- * @author matt.defano@gmail.com
- * 
- * Implementation of the "answer" statement
- */
-
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;

@@ -1,20 +1,3 @@
-/*
- * ExpressionList
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * ExpressionList.java
- *
- * @author matt.defano@gmail.com
- * <p>
- * Encapsulation of a function's argument list. Arguments in the
- * list are not evaluated until the function is called.
- */
-
 package com.defano.hypertalk.ast.common;
 
 import com.defano.hypertalk.ast.expressions.Expression;

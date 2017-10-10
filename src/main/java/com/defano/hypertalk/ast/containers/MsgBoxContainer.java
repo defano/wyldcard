@@ -1,19 +1,3 @@
-/*
- * ContainerMsgBox
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * MsgBoxContainer.java
- *
- * @author matt.defano@gmail.com
- * <p>
- * Representation of the message box as a container for Value
- */
-
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;

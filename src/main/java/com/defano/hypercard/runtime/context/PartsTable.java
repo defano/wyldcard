@@ -1,19 +1,3 @@
-/*
- * PartsTable
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * PartsTable.java
- * @author matt.defano@gmail.com
- * 
- * This class implements a table of HyperCard parts (buttons, fields, etc). Provides
- * methods for adding, removing or modifying the name of existing parts. 
- */
-
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.parts.Part;

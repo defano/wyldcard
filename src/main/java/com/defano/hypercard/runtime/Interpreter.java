@@ -1,11 +1,3 @@
-/*
- * Interpreter
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
 package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
@@ -132,7 +124,7 @@ public class Interpreter {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
         } catch (Exception e) {
-            // Nothing to do; okay to onEvaluate bogus text
+            // Nothing to do; okay to evaluate bogus text
         }
 
         // Value of a non-expression is itself
@@ -140,8 +132,8 @@ public class Interpreter {
     }
 
     /**
-     * Attempts to onEvaluate the given value as an AST node identified by klass. That is, the given value is compiled
-     * as a HyperTalk script and the first and only statement in the script in coerced to the requested type. Returns
+     * Attempts to evaluate the given value as an AST node identified by klass. That is, the given value is compiled
+     * as a HyperTalk script and the first and only statement in the script is coerced to the requested type. Returns
      * null if the value is not a valid HyperTalk script or contains a script fragment that cannot be coerced to
      * the requested type.
      *
@@ -197,7 +189,7 @@ public class Interpreter {
      * Any handler that does not 'pass' the command traps its behavior and prevents other scripts (or HyperCard) from
      * acting upon it. A script that does not implement the handler is assumed to 'pass' it.
      *
-     * @param me The part whose script is being executed.
+     * @param me The part whose script is being executed (for the purposes of the 'me' keyword).
      * @param script The script of the part
      * @param command The command handler name.
      * @return A future containing a boolean indicating if the handler has "trapped" the message. Returns null if the

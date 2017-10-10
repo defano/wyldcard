@@ -1,19 +1,3 @@
-/*
- * ExpPartName
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * PartNameExp.java
- *
- * @author matt.defano@gmail.com
- * <p>
- * Encapsulation of name-based part specification, for example: "field myField"
- */
-
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;

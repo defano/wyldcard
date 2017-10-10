@@ -1,19 +1,3 @@
-/*
- * ChunkUtils
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:12 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * ChunkUtils.java
- *
- * @author matt.defano@gmail.com
- * <p>
- * A library of static methods used in performing chunked operations.
- */
-
 package com.defano.hypertalk.utils;
 
 import com.defano.hypercard.runtime.context.HyperCardProperties;

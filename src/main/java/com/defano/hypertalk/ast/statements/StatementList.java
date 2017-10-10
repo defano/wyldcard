@@ -1,18 +1,3 @@
-/*
- * StatementList
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * StatementList.java
- * @author matt.defano@gmail.com
- * 
- * Encapsulation of a list of statements (e.g., the body of a function or handler)
- */
-
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;

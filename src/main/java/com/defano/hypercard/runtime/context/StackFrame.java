@@ -1,18 +1,3 @@
-/*
- * Frame
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * StackFrame.java
- * @author matt.defano@gmail.com
- * 
- * Maintains the current local context; analagous to the current stack frame.
- */
-
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypertalk.ast.common.Value;

@@ -1,18 +1,3 @@
-/*
- * ExpPartMe
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:12 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * PartMeExp.java
- * @author matt.defano@gmail.com
- * 
- * Encapsulation of a part self-reference, for example: "me"
- */
-
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;

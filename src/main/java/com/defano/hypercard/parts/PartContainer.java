@@ -67,7 +67,7 @@ public interface PartContainer {
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.toString().toLowerCase() + " found.");
+            throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
         }
     }
 
@@ -88,7 +88,7 @@ public interface PartContainer {
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.toString().toLowerCase() + " found.");
+            throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
         }
     }
 
@@ -108,7 +108,7 @@ public interface PartContainer {
         int partIndex = ps.number - 1;
 
         if (partIndex >= foundParts.size() || partIndex < 0) {
-            throw new PartException("No " + ps.toString().toLowerCase() + " found.");
+            throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
         } else {
             return foundParts.get(partIndex);
         }
@@ -136,7 +136,7 @@ public interface PartContainer {
         }
 
         if (index < 0 || index >= foundParts.size()) {
-            throw new PartException("No " + ps.toString().toLowerCase() + " exists on this " + ps.layer.friendlyName.toLowerCase() + ".");
+            throw new PartException("No " + ps.getHyperTalkIdentifier() + " exists on this " + ps.layer.friendlyName.toLowerCase() + ".");
         } else {
             return foundParts.get(index);
         }

@@ -1,14 +1,7 @@
-/*
- * StatGoCmd
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
@@ -48,19 +41,23 @@ public class GoCmd extends Command {
         }
 
         else {
-            PartSpecifier cardPart = destinationExp.evaluateAsSpecifier();
-            PartModel model = HyperCard.getInstance().getStack().findPart(cardPart);
+            try {
+                PartSpecifier cardPart = destinationExp.evaluateAsSpecifier();
+                PartModel model = HyperCard.getInstance().getStack().findPart(cardPart);
 
-            int destinationIndex;
-            if (model instanceof CardModel) {
-                destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfCard((CardModel) model);
-            } else if (model instanceof BackgroundModel) {
-                destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfBackground(model.getId());
-            } else {
-                throw new IllegalStateException("Bug! Expected to find a card but got: " + model);
+                int destinationIndex;
+                if (model instanceof CardModel) {
+                    destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfCard((CardModel) model);
+                } else if (model instanceof BackgroundModel) {
+                    destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfBackground(model.getId());
+                } else {
+                    throw new IllegalStateException("Bug! Expected to find a card but got: " + model);
+                }
+
+                HyperCard.getInstance().getStack().goCard(destinationIndex, visualEffect);
+            } catch (PartException e) {
+                // Nothing to do; going to a non-existent card or bkgnd has no effect
             }
-
-            HyperCard.getInstance().getStack().goCard(destinationIndex, visualEffect);
         }
 
     }

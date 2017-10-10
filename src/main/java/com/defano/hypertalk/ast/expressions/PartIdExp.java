@@ -1,18 +1,3 @@
-/*
- * ExpPartId
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:12 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * PartIdExp.java
- * @author matt.defano@gmail.com
- * 
- * Encapsulation of an id-based part specification, for example: "button id 12"
- */
-
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;

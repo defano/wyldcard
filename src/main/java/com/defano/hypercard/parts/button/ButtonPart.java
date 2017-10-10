@@ -1,20 +1,3 @@
-/*
- * ButtonPart
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * ButtonPart.java
- *
- * @author matt.defano@motorola.com
- * <p>
- * Implements the user interface for a HyperCard button part by extending the
- * Swing push button class.
- */
-
 package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;

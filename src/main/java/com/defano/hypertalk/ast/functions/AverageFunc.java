@@ -1,18 +1,3 @@
-/*
- * ExpAverageFun
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:12 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * AverageFunc.java
- * @author matt.defano@gmail.com
- * 
- * Implementation for the built-in function "average"
- */
-
 package com.defano.hypertalk.ast.functions;
 
 import com.defano.hypertalk.ast.common.ExpressionList;

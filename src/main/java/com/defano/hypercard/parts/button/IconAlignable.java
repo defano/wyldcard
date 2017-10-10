@@ -23,6 +23,7 @@ public interface IconAlignable {
                 setHorizontalTextPosition(SwingConstants.RIGHT);
                 setVerticalTextPosition(SwingConstants.CENTER);
                 break;
+
             case "right":
                 setHorizontalTextPosition(SwingConstants.LEFT);
                 setVerticalTextPosition(SwingConstants.CENTER);

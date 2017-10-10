@@ -289,7 +289,7 @@ destination         : destinationType expression                                
                     ;
 
 destinationType     : ('card' | 'cd')                                                                                   # cardDestinationType
-                    | ('background' | 'bkgnd')                                                                          # bkgndDestinationType
+                    | ('background' | 'bkgnd' | 'bg')                                                                   # bkgndDestinationType
                     ;
 
 ifStatement         : 'if' expression NEWLINE? singleThen NEWLINE?                                                      # ifThenSingleLine
@@ -404,23 +404,23 @@ part                : buttonPart                                                
                     | bkgndPart                                                                                         # bkgndPartPart
                     | cardPart                                                                                          # cardPartPart
                     | ('card' | 'cd') 'part' factor                                                                     # cardPartNumberPart
-                    | ('background' | 'bkgnd') 'part' factor                                                            # bkgndPartNumberPart
+                    | ('background' | 'bkgnd' | 'bg') 'part' factor                                                     # bkgndPartNumberPart
                     | 'me'                                                                                              # mePart
                     | 'the'? ('message' | 'message' 'box' | 'message' 'window')                                         # msgPart
                     | ID                                                                                                # partRef
                     ;
 
-buttonPart          : ('background' | 'bkgnd')? 'button' factor                                                         # bkgndButtonPart
-                    | ordinal ('background' | 'bkgnd')? 'button'                                                        # bkgndButtonOrdinalPart
-                    | ('background' | 'bkgnd')? 'button' 'id' factor                                                    # bkgndButtonIdPart
+buttonPart          : ('background' | 'bkgnd' | 'bg')? 'button' factor                                                  # bkgndButtonPart
+                    | ordinal ('background' | 'bkgnd' | 'bg')? 'button'                                                 # bkgndButtonOrdinalPart
+                    | ('background' | 'bkgnd' | 'bg')? 'button' 'id' factor                                             # bkgndButtonIdPart
                     | ('card' | 'cd')? 'button' factor                                                                  # cardButtonPart
                     | ordinal ('card' | 'cd')? 'button'                                                                 # cardButtonOrdinalPart
                     | ('card' | 'cd')? 'button' 'id' factor                                                             # cardButtonIdPart
                     ;
 
-fieldPart           : ('background' | 'bkgnd')? 'field' factor                                                          # bkgndFieldPart
-                    | ordinal ('background' | 'bkgnd')? 'field'                                                         # bkgndFieldOrdinalPart
-                    | ('background' | 'bkgnd')? 'field' 'id' factor                                                     # bkgndFieldIdPart
+fieldPart           : ('background' | 'bkgnd' | 'bg')? 'field' factor                                                   # bkgndFieldPart
+                    | ordinal ('background' | 'bkgnd' | 'bg')? 'field'                                                  # bkgndFieldOrdinalPart
+                    | ('background' | 'bkgnd' | 'bg')? 'field' 'id' factor                                              # bkgndFieldIdPart
                     | ('card' | 'cd')? 'field' factor                                                                   # cardFieldPart
                     | ordinal ('card' | 'cd')? 'field'                                                                  # cardFieldOrdinalPart
                     | ('card' | 'cd')? 'field' 'id' factor                                                              # cardFieldIdPart
@@ -433,11 +433,11 @@ cardPart            : 'this' ('card' | 'cd')                                    
                     | ('card' | 'cd') 'id' factor                                                                       # cardIdPart
                     ;
 
-bkgndPart           : ('background' | 'bkgnd') factor                                                                   # expressionBkgndPart
-                    | ('background' | 'bkgnd') 'id' factor                                                              # bkgndIdPart
-                    | ordinal ('background' | 'bkgnd')                                                                  # ordinalBkgndPart
-                    | position ('background' | 'bkgnd')                                                                 # positionBkgndPart
-                    | 'this' ('background' | 'bkgnd')                                                                   # thisBkgndPart
+bkgndPart           : ('background' | 'bkgnd' | 'bg') factor                                                            # expressionBkgndPart
+                    | ('background' | 'bkgnd' | 'bg') 'id' factor                                                       # bkgndIdPart
+                    | ordinal ('background' | 'bkgnd' | 'bg')                                                           # ordinalBkgndPart
+                    | position ('background' | 'bkgnd' | 'bg')                                                          # positionBkgndPart
+                    | 'this' ('background' | 'bkgnd' | 'bg')                                                            # thisBkgndPart
                     ;
 
 ordinal             : 'the'? ordinalValue                                                                               # theOrdinalVal
@@ -558,15 +558,15 @@ noArgFunc           : 'mouse'                                                   
                     | ('time' | 'short time' | 'abbrev time' | 'abbreviated time')                                      # abbrevTimeFormatFunc
                     | 'tool'                                                                                            # toolFunc
                     | 'number of' ('card' | 'cd')? 'parts'                                                              # numberOfCardParts
-                    | 'number of' ('background' | 'bkgnd') 'parts'                                                      # numberOfBkgndParts
+                    | 'number of' ('background' | 'bkgnd' | 'bg') 'parts'                                               # numberOfBkgndParts
                     | 'number of' ('card' | 'cd')? 'buttons'                                                            # numberOfCardButtons
-                    | 'number of' ('background' | 'bkgnd') 'buttons'                                                    # numberOfBkgndButtons
+                    | 'number of' ('background' | 'bkgnd' | 'bg') 'buttons'                                             # numberOfBkgndButtons
                     | 'number of' ('card' | 'cd') 'fields'                                                              # numberOfCardFields
-                    | 'number of' ('background' | 'bkgnd')? 'fields'                                                    # numberOfBkgndFields
+                    | 'number of' ('background' | 'bkgnd' | 'bg')? 'fields'                                             # numberOfBkgndFields
                     | 'number of' 'menus'                                                                               # numberOfMenusFunc
                     | 'number of' 'cards'                                                                               # numberOfCardsFunc
                     | 'number of' 'marked' 'cards'                                                                      # numberOfMarkedCards
-                    | 'number of' ('backgrounds' | 'bkgnds') ('in' 'this' 'stack')?                                     # numberOfBackgrounds
+                    | 'number of' ('backgrounds' | 'bkgnds' | 'bgs') ('in' 'this' 'stack')?                             # numberOfBackgrounds
                     | 'menus'                                                                                           # menusFunc
                     | 'diskspace'                                                                                       # diskSpaceNoArgFunc
                     | 'params'                                                                                          # paramsFunc

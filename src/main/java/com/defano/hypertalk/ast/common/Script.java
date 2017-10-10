@@ -1,19 +1,3 @@
-/*
- * Script
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
-/**
- * Script.java
- * @author matt.defano@gmail.com
- * 
- * Encapsulation of a HyperTalk script; might include user defined functions,
- * handlers, or loose statements.
- */
-
 package com.defano.hypertalk.ast.common;
 
 import com.defano.hypertalk.ast.functions.UserFunction;
