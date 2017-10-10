@@ -606,6 +606,22 @@ Property     | Description
 `dontWrap`   | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
 `sharedText` | When `true`, each card in the background shares the same text in the field. When `false`, each card in the background can place a unique value into the field. Has no effect on card fields.
 
+#### Text properties
+
+In addition to the properties that affect a field's look-and-feel at large, HyperTalk can also get and set the font, size and style of a chunk of text within a field.
+
+Property     | Description
+-------------|----------------------
+`textFont`   | Returns or sets the font family of the identified chunk of text
+`textSize`   | Returns or sets the text size of the identified chunk of text
+`textStyle`  | Returns or sets the style (`bold`, `italic` or `plain`) of the identified range of text
+
+For example,
+
+```
+set the textSize of the last word of card field "Some Text" to 24
+```
+
 ### Menus
 
 HyperTalk can control the menus that appear in the application menu bar and also define their behavior. Unlike buttons or fields, however, changes to the menu bar are not "saved" as part of the stack, nor are they restricted to the current stack. Modifications to the menu bar will not be automatically restored when opening a saved stack document, and opening a new stack does not restore the menu bar to its default state.

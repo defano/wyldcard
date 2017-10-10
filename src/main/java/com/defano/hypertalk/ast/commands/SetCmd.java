@@ -23,6 +23,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
+import com.defano.hypertalk.utils.ChunkPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SetCmd extends Command {
@@ -45,8 +46,13 @@ public class SetCmd extends Command {
                 ExecutionContext.getContext().getGlobalProperties().setProperty(propertySpec.property, expression.evaluate());
             }
 
+            // Setting the property of menu / menu item
             else if (propertySpec.isMenuItemPropertySpecifier()) {
                 MenuPropertiesDelegate.setProperty(propertySpec.property, expression.evaluate(), propertySpec.menuItem);
+            }
+
+            else if (propertySpec.isChunkPropertySpecifier()) {
+                ChunkPropertiesDelegate.setProperty(propertySpec.property, expression.evaluate(), propertySpec.chunk, propertySpec.partExp.evaluateAsSpecifier());
             }
 
             // Setting the property of a part

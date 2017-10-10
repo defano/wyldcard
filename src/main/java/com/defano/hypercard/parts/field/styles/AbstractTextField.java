@@ -8,6 +8,7 @@
 
 package com.defano.hypercard.parts.field.styles;
 
+import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.fonts.FontUtils;
@@ -195,6 +196,97 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      * {@inheritDoc}
      */
     @Override
+    public void setTextFontFamily(int startPosition, int length, Value fontFamily) {
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        sas.addAttribute(StyleConstants.FontFamily, fontFamily.stringValue());
+        textPane.getStyledDocument().setCharacterAttributes(startPosition, length, sas, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTextFontSize(int startPosition, int length, Value fontSize) {
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        sas.addAttribute(StyleConstants.Size, fontSize.integerValue());
+        textPane.getStyledDocument().setCharacterAttributes(startPosition, length, sas, false);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setTextFontStyle(int startPosition, int length, Value fontStyle) {
+        textPane.getStyledDocument().setCharacterAttributes(startPosition, length, getAttributesForValue(fontStyle), true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Value getTextFontFamily(int startPosition, int length) {
+        for (int index = startPosition; index < startPosition + length - 1; index++) {
+            if (!getTextFontFamily(index).equals(getTextFontFamily(index + 1))) {
+                return new Value("mixed");
+            }
+        }
+        return new Value(getTextFontFamily(startPosition));
+    }
+
+    private Value getTextFontFamily(int position) {
+        return new Value(textPane.getStyledDocument().getCharacterElement(position).getAttributes().getAttribute(StyleConstants.FontFamily));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Value getTextFontSize(int startPosition, int length) {
+        for (int index = startPosition; index < startPosition + length - 1; index++) {
+            if (!getTextFontSize(index).equals(getTextFontSize(index + 1))) {
+                return new Value("mixed");
+            }
+        }
+        return new Value(getTextFontSize(startPosition));
+    }
+
+    private Value getTextFontSize(int position) {
+        return new Value(textPane.getStyledDocument().getCharacterElement(position).getAttributes().getAttribute(StyleConstants.FontSize));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Value getTextFontStyle(int startPosition, int length) {
+        for (int index = startPosition; index < startPosition + length - 1; index++) {
+            if (!getTextFontStyle(index).equals(getTextFontStyle(index + 1))) {
+                return new Value("mixed");
+            }
+        }
+        return new Value(getTextFontStyle(startPosition));
+    }
+
+    private Value getTextFontStyle(int position) {
+        AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(position).getAttributes();
+        boolean italic = (boolean) attributes.getAttribute(StyleConstants.Italic);
+        boolean bold = (boolean) attributes.getAttribute(StyleConstants.Bold);
+
+        if (italic && bold) {
+            return new Value("bold, italic");
+        } else if (italic) {
+            return new Value("italic");
+        } else if (bold) {
+            return new Value("bold");
+        } else {
+            return new Value("plain");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getText() {
         try {
             String text = textPane.getStyledDocument().getText(0, textPane.getStyledDocument().getLength());
@@ -323,16 +415,43 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
     }
 
+    private AttributeSet getAttributesForValue(Value v) {
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        int style = FontUtils.getStyleForValue(v);
+        if ((style & Font.BOLD) != 0) {
+            sas.addAttribute(StyleConstants.Bold, true);
+        }
+
+        if ((style & Font.ITALIC) != 0) {
+            sas.addAttribute(StyleConstants.Italic, true);
+        }
+
+        return sas;
+    }
+
+    private SimpleAttributeSet getAttributesForFont(Font font) {
+        SimpleAttributeSet sas = new SimpleAttributeSet();
+        sas.addAttribute(StyleConstants.FontFamily, font.getFamily());
+        sas.addAttribute(StyleConstants.Size, font.getSize());
+        sas.addAttribute(StyleConstants.Bold, font.isBold());
+        sas.addAttribute(StyleConstants.Italic, font.isItalic());
+
+        return sas;
+    }
+
+    private Font getFontFromAttributes(AttributeSet as) {
+        return FontFactory.byNameStyleSize(
+                (String) as.getAttribute(StyleConstants.FontFamily),
+                (int) as.getAttribute(StyleConstants.Bold) | (int) as.getAttribute(StyleConstants.Italic),
+                (int) as.getAttribute(StyleConstants.FontSize)
+        );
+    }
+
     private void setActiveFont(Font font) {
         if (getText().length() == 0) {
             textPane.setFont(font);
         } else {
-            currentStyle = new SimpleAttributeSet();
-            currentStyle.addAttribute(StyleConstants.FontFamily, font.getFamily());
-            currentStyle.addAttribute(StyleConstants.Size, font.getSize());
-            currentStyle.addAttribute(StyleConstants.Bold, font.isBold());
-            currentStyle.addAttribute(StyleConstants.Italic, font.isItalic());
-
+            currentStyle = getAttributesForFont(font);
             textPane.setCharacterAttributes(currentStyle, true);
         }
     }

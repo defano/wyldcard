@@ -27,7 +27,6 @@ import javax.swing.*;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * The HyperCard runtime environment; this is the program's main class and is

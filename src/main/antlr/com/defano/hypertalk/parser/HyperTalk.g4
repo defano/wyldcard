@@ -64,7 +64,7 @@ commandStmnt        : answerCmd                                                 
                     | askCmd                                                                                            # askCmdStmnt
                     | putCmd                                                                                            # putCmdStmnt
                     | 'get' expression                                                                                  # getCmdStmnt
-                    | 'set' propertySpec 'to' expression                                                                # setCmdStmnt
+                    | 'set' propertySpec 'to' propertyValue                                                             # setCmdStmnt
                     | 'send' expression 'to' part                                                                       # sendCmdStmnt
                     | waitCmd                                                                                           # waitCmdStmnt
                     | sortCmd                                                                                           # sortCmdStmnt
@@ -383,8 +383,13 @@ menuItem            : 'menuitem' factor ('of' | 'from') menu                    
                     | ordinal 'menuitem' ('of' | 'from') menu                                                           # ordinalMenuItem
                     ;
 
+propertyValue       : 'plain'                                                                                           # propertyValueLiteral
+                    | expression                                                                                        # propertyValueExp
+                    ;
+
 propertySpec        : 'the'? propertyName                                                                               # propertySpecGlobal
                     | 'the'? propertyName ('of' | 'in') part                                                            # propertySpecPart
+                    | 'the'? propertyName ('of' | 'in') chunk part                                                      # propertySpecChunkPart
                     | 'the'? propertyName 'of' menuItem                                                                 # propertySpecMenuItem
                     ;
 

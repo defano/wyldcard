@@ -8,30 +8,37 @@
 
 package com.defano.hypertalk.ast.specifiers;
 
+import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.expressions.PartExp;
 
 public class PropertySpecifier {
 
     public final String property;
+    public final Chunk chunk;
     public final PartExp partExp;
     public final MenuItemSpecifier menuItem;
 
     public PropertySpecifier (String globalProperty) {
-        this.property = globalProperty;
-        this.partExp = null;
-        this.menuItem = null;
+        this(globalProperty, null, null, null);
+    }
+
+    public PropertySpecifier (String property, Chunk chunk, PartExp partSpecifier) {
+        this(property, chunk, partSpecifier, null);
     }
 
     public PropertySpecifier (String property, PartExp partSpecifier) {
-        this.property = property;
-        this.partExp = partSpecifier;
-        this.menuItem = null;
+        this(property, null, partSpecifier, null);
     }
 
     public PropertySpecifier (String property, MenuItemSpecifier menuItem) {
+        this(property, null, null, menuItem);
+    }
+
+    private PropertySpecifier (String property, Chunk chunk, PartExp part, MenuItemSpecifier menuItem) {
         this.property = property;
+        this.chunk = chunk;
+        this.partExp = part;
         this.menuItem = menuItem;
-        this.partExp = null;
     }
 
     public boolean isGlobalPropertySpecifier() {
@@ -40,5 +47,9 @@ public class PropertySpecifier {
 
     public boolean isMenuItemPropertySpecifier() {
         return menuItem != null;
+    }
+
+    public boolean isChunkPropertySpecifier() {
+        return chunk != null;
     }
 }

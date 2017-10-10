@@ -741,7 +741,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSetCmdStmnt(HyperTalkParser.SetCmdStmntContext ctx) {
-        return new SetCmd(ctx, (PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.expression()));
+        return new SetCmd(ctx, (PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.propertyValue()));
     }
 
     @Override
@@ -1292,6 +1292,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPropertyValueLiteral(HyperTalkParser.PropertyValueLiteralContext ctx) {
+        return new LiteralExp(ctx, ctx.getText());
+    }
+
+    @Override
+    public Object visitPropertyValueExp(HyperTalkParser.PropertyValueExpContext ctx) {
+        return visit(ctx.expression());
+    }
+
+    @Override
     public Object visitPropertySpecGlobal(HyperTalkParser.PropertySpecGlobalContext ctx) {
         return new PropertySpecifier((String) visit(ctx.propertyName()));
     }
@@ -1299,6 +1309,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
         return new PropertySpecifier((String) visit(ctx.propertyName()), (PartExp) visit(ctx.part()));
+    }
+
+    @Override
+    public Object visitPropertySpecChunkPart(HyperTalkParser.PropertySpecChunkPartContext ctx) {
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
     }
 
     @Override
