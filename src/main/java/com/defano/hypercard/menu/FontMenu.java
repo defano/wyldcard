@@ -16,7 +16,7 @@ public class FontMenu extends HyperCardMenu {
             MenuItemBuilder.ofCheckType()
                     .named(thisFamily)
                     .withAction(e -> ToolsContext.getInstance().setFontFamily(thisFamily))
-                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedFontProvider(), f -> f.getFamily().equalsIgnoreCase(thisFamily)))
+                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getHilitedTextStyleProvider(), f -> thisFamily.equalsIgnoreCase(f.getFontFamily())))
                     .fontFamily(thisFamily)
                     .build(this);
         }

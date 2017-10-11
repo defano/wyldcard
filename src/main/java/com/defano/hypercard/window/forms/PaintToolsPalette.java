@@ -78,7 +78,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
-        text.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().setFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", ToolsContext.getInstance().getSelectedFontProvider().get())));
+        text.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().setFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", ToolsContext.getInstance().getSelectedTextStyleProvider().get().toFont())));
 
         ToolsContext.getInstance().getShapesFilledProvider().addObserverAndUpdate((o, filled) -> {
             boolean isFilled = (Boolean) filled;

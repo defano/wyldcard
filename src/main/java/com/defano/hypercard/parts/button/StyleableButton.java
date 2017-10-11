@@ -5,6 +5,7 @@ import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.styles.*;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
@@ -51,7 +52,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            ToolsContext.getInstance().getHilitedFontProvider().set(((ButtonModel) getPartModel()).getFont());
+            ToolsContext.getInstance().getHilitedTextStyleProvider().set((((CardLayerPartModel) getPartModel()).getFont()));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }

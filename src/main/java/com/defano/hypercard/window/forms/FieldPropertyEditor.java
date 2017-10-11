@@ -1,6 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.field.FieldStyle;
@@ -61,7 +62,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
-        textStyleButton.addActionListener(e -> ((CardLayerPartModel) model).setFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont())));
+        textStyleButton.addActionListener(e -> ((CardLayerPartModel) model).setTextStyle(TextStyleSpecifier.fromFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont().toFont()))));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (FieldStyle thisStyle : FieldStyle.values()) {

@@ -34,7 +34,7 @@ public class FontUtils {
         }
     }
 
-    public static int getStyleForValue(Value v) {
+    public static int getFontStyleForValue(Value v) {
         int style = Font.PLAIN;
 
         for (Value thisValue : v.getItems()) {

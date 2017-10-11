@@ -1,7 +1,6 @@
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.fonts.FontFactory;
+import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -37,19 +36,21 @@ public abstract class CardLayerPartModel extends PartModel {
 
     }
 
-    public Font getFont() {
-        String family = getKnownProperty(PROP_TEXTFONT).stringValue();
-        int style = FontUtils.getStyleForValue(getKnownProperty(PROP_TEXTSTYLE));
-        int size = getKnownProperty(PROP_TEXTSIZE).integerValue();
-
-        return FontFactory.byNameStyleSize(family, style, size);
+    public TextStyleSpecifier getFont() {
+        return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(PROP_TEXTFONT), getKnownProperty(PROP_TEXTSTYLE), getKnownProperty(PROP_TEXTSIZE));
     }
 
-    public void setFont(Font font) {
-        if (font != null) {
-            setKnownProperty(PROP_TEXTSIZE, new Value(font.getSize()));
-            setKnownProperty(PROP_TEXTFONT, new Value(font.getFamily()));
-            setKnownProperty(PROP_TEXTSTYLE, FontUtils.getValueForStyle(font.getStyle()));
+    public void setTextStyle(TextStyleSpecifier style) {
+        if (style != null) {
+            if (style.getFontSize() > 0) {
+                setKnownProperty(PROP_TEXTSIZE, new Value(style.getFontSize()));
+            }
+
+            if (style.getFontFamily() != null) {
+                setKnownProperty(PROP_TEXTFONT, new Value(style.getFontFamily()));
+            }
+
+            setKnownProperty(PROP_TEXTSTYLE, style.toHyperTalkStyleIdentifier());
         }
     }
 

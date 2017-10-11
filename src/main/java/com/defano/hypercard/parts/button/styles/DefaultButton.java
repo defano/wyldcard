@@ -52,7 +52,7 @@ public class DefaultButton extends JButton implements ButtonComponent, IconAlign
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:

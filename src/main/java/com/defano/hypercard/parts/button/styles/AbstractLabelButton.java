@@ -78,7 +78,7 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                label.setFont(FontFactory.byNameStyleSize(label.getFont().getFamily(), FontUtils.getStyleForValue(newValue), label.getFont().getSize()));
+                label.setFont(FontFactory.byNameStyleSize(label.getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), label.getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:

@@ -69,7 +69,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getStyleForValue(newValue), getFont().getSize()));
+                setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), getFont().getSize()));
                 break;
         }
     }

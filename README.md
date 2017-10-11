@@ -554,7 +554,7 @@ Property      | Description
 `textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
 `textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
 `textSize`    | Returns or sets the size (in points) of the part's text.
-`textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic`. Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
+`textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic` (plus `strikeThrough`, `underline`, `subscript` and `superscript` when addressing fields). Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
 `top`         | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
 `topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the part is not drawn on the screen and receives no messages from HyperCard. This value can also be accessed using the `hide` and `show` commands.
@@ -614,7 +614,7 @@ Property     | Description
 -------------|----------------------
 `textFont`   | Returns or sets the font family of the identified chunk of text
 `textSize`   | Returns or sets the text size of the identified chunk of text
-`textStyle`  | Returns or sets the style (`bold`, `italic` or `plain`) of the identified range of text
+`textStyle`  | Returns or sets the style (`bold`, `italic` or `plain`, `underline`, `strikeThrough`, `superscript` or `subscript`) of the identified range of text
 
 For example,
 

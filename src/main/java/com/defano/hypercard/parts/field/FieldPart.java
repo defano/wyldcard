@@ -308,7 +308,7 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
         int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
-        partModel.setFont(ToolsContext.getInstance().getSelectedFontProvider().get());
+        partModel.setTextStyle(ToolsContext.getInstance().getSelectedTextStyleProvider().get());
         partModel.addPropertyChangedObserver(this);
     }
 

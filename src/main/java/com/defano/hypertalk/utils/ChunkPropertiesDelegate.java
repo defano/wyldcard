@@ -28,7 +28,7 @@ public class ChunkPropertiesDelegate {
         Range range = RangeUtils.getRange(partModel.getValue().stringValue(), chunk);
         FieldPart field = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(partModel);
 
-        switch (property) {
+        switch (property.toLowerCase()) {
             case PROP_TEXTSIZE:
                 return ((FieldComponent) field.getComponent()).getTextFontSize(range.start, range.length());
             case PROP_TEXTFONT:
@@ -51,7 +51,7 @@ public class ChunkPropertiesDelegate {
         Range range = RangeUtils.getRange(partModel.getValue().stringValue(), chunk);
         FieldPart field = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(partModel);
 
-        switch (property) {
+        switch (property.toLowerCase()) {
             case PROP_TEXTSIZE:
                 if (!value.isInteger()) {
                     throw new HtSemanticException("The value '" + value.stringValue() + "' is not a valid font size.");
