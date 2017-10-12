@@ -50,7 +50,7 @@ public abstract class CardLayerPartModel extends PartModel {
                 setKnownProperty(PROP_TEXTFONT, new Value(style.getFontFamily()));
             }
 
-            setKnownProperty(PROP_TEXTSTYLE, style.toHyperTalkStyleIdentifier());
+            setKnownProperty(PROP_TEXTSTYLE, style.getHyperTalkStyle());
         }
     }
 

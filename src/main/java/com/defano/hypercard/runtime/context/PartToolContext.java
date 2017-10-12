@@ -2,6 +2,7 @@ package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
@@ -10,18 +11,22 @@ import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.ToolEditablePart;
 
+import java.util.Observable;
+import java.util.Observer;
+
 public class PartToolContext {
 
     private final static PartToolContext instance = new PartToolContext();
 
     private final Provider<ToolEditablePart> selectedPart = new Provider<>(null);
+    private final TextStyleObserver textStyleObserver = new TextStyleObserver();
 
     private PartToolContext() {
         // Deselect all parts when user changes tool mode
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> deselectAllParts());
 
         // Change part font when user chooses a font/style from the menubar
-        ToolsContext.getInstance().getSelectedTextStyleProvider().addObserver((o, arg) -> setSelectedPartTextStyle((TextStyleSpecifier) arg));
+        FontContext.getInstance().getHilitedTextStyleProvider().addObserver(textStyleObserver);
     }
 
     public static PartToolContext getInstance() {
@@ -77,5 +82,13 @@ public class PartToolContext {
 
     public Provider<ToolEditablePart> getSelectedPartProvider() {
         return selectedPart;
+    }
+
+    private class TextStyleObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            setSelectedPartTextStyle(FontContext.getInstance().getHilitedTextStyleProvider().get());
+
+        }
     }
 }

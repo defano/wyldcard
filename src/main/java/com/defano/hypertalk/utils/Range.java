@@ -8,8 +8,8 @@ public class Range {
     public final int start, end;
 
     public Range(int start, int end) {
-        this.start = start;
-        this.end = end;
+        this.start = start < end ? start : end;
+        this.end = start < end ? end : start;
     }
 
     public int length() {
@@ -21,7 +21,7 @@ public class Range {
     }
 
     public boolean isEmpty() {
-        return length() == 0;
+        return length() < 1;
     }
 
     @Override

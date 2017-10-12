@@ -1,13 +1,15 @@
 package com.defano.hypercard.parts.field.styles;
 
+import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
-import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.utils.Range;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.swing.*;
@@ -29,10 +31,13 @@ import java.util.Observer;
  * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, Observer, CaretListener {
+public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener {
 
     private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
+    private final FontSizeObserver fontSizeObserver = new FontSizeObserver();
+    private final FontStyleObserver fontStyleObserver = new FontStyleObserver();
+    private final FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
 
     private final ToolEditablePart toolEditablePart;
     private AttributeSet currentStyle = new SimpleAttributeSet();
@@ -44,10 +49,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane = new HyperCardTextPane(new DefaultStyledDocument());
         textPane.setEditorKit(new RTFEditorKit());
         this.setViewportView(textPane);
-
-        // Listen for changes to the field's contents
-        textPane.getStyledDocument().addDocumentListener(this);
-        ToolsContext.getInstance().getSelectedTextStyleProvider().addObserver(this);
     }
 
     /**
@@ -191,10 +192,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void setTextFontFamily(int startPosition, int length, Value fontFamily) {
-        for (int index = startPosition; index < startPosition + length; index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getStyledDocument().getCharacterElement(index).getAttributes());
-            tss.setFontFamily(fontFamily.stringValue());
-            textPane.getStyledDocument().setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+        TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
+
+        if (length > 0) {
+            textPane.getStyledDocument().setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+        } else {
+            textPane.setCharacterAttributes(tss.toAttributeSet(), false);
         }
     }
 
@@ -203,10 +206,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void setTextFontSize(int startPosition, int length, Value fontSize) {
-        for (int index = startPosition; index < startPosition + length; index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getStyledDocument().getCharacterElement(index).getAttributes());
-            tss.setFontSize(fontSize.integerValue());
-            textPane.getStyledDocument().setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+        TextStyleSpecifier tss = TextStyleSpecifier.fromFontSize(fontSize.integerValue());
+
+        if (length > 0) {
+            textPane.getStyledDocument().setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+        } else {
+            textPane.setCharacterAttributes(tss.toAttributeSet(), false);
         }
     }
 
@@ -215,11 +220,18 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void setTextFontStyle(int startPosition, int length, Value fontStyle) {
-        for (int index = startPosition; index < startPosition + length; index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getStyledDocument().getCharacterElement(index).getAttributes());
+        if (length > 0) {
+            for (int index = startPosition; index < startPosition + length; index++) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getStyledDocument().getCharacterElement(index).getAttributes());
+                tss.setFontStyle(fontStyle);
+                textPane.getStyledDocument().setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            }
+        } else {
+            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
             tss.setFontStyle(fontStyle);
-            textPane.getStyledDocument().setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
         }
+
     }
 
     /**
@@ -271,7 +283,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
     private Value getTextFontStyle(int position) {
         TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getStyledDocument().getCharacterElement(position).getAttributes());
-        return tss.toHyperTalkStyleIdentifier();
+        return tss.getHyperTalkStyle();
     }
 
     /**
@@ -309,6 +321,14 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void partOpened() {
+
+        // Listen for changes to the field's contents
+        textPane.getStyledDocument().addDocumentListener(this);
+
+        FontContext.getInstance().getSelectedFontFamilyProvider().addObserver(fontFamilyObserver);
+        FontContext.getInstance().getSelectedFontStyleProvider().addObserver(fontStyleObserver);
+        FontContext.getInstance().getSelectedFontSizeProvider().addObserver(fontSizeObserver);
+
         // Get notified when field tool is selected
         ToolsContext.getInstance().getToolModeProvider().addObserver(toolModeObserver);
 
@@ -316,9 +336,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.addMouseListener(toolEditablePart);
         textPane.addCaretListener(this);
 
-        toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
         ToolsContext.getInstance().getToolModeProvider().notifyObservers(toolModeObserver);
         setRtf(((FieldModel) toolEditablePart.getPartModel()).getRtf());
+
+        // Finally, update view with model data
+        toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
     }
 
     /**
@@ -326,20 +348,18 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void partClosed() {
+        textPane.getStyledDocument().removeDocumentListener(this);
+
         textPane.removeMouseListener(toolEditablePart);
         textPane.removeCaretListener(this);
 
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
 
-        ToolsContext.getInstance().getSelectedTextStyleProvider().deleteObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
-    }
+        FontContext.getInstance().getSelectedFontFamilyProvider().deleteObserver(fontFamilyObserver);
+        FontContext.getInstance().getSelectedFontStyleProvider().deleteObserver(fontStyleObserver);
+        FontContext.getInstance().getSelectedFontSizeProvider().deleteObserver(fontSizeObserver);
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg instanceof TextStyleSpecifier) {
-            setActiveFont((TextStyleSpecifier) arg);
-        }
+        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
     }
 
     /**
@@ -351,8 +371,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, new Value(textPane.getSelectedText()), true);
 
         // Update global font style selection
-        AttributeSet caretAttributes = textPane.getStyledDocument().getCharacterElement(e.getMark()).getAttributes();
-        ToolsContext.getInstance().getHilitedTextStyleProvider().set(TextStyleSpecifier.fromAttributeSet(caretAttributes));
+        Range selection = getSelectedTextRange();
+        AttributeSet caretAttributes = selection.isEmpty() ?
+                textPane.getCharacterAttributes() :
+                textPane.getStyledDocument().getCharacterElement(selection.start + ((selection.end - selection.start) / 2)).getAttributes();
+
+        FontContext.getInstance().setHilitedTextStyle(TextStyleSpecifier.fromAttributeSet(caretAttributes));
     }
 
     private LinkedList<DiffMatchPatch.Diff> getTextDifferences(String existing, String replacement) {
@@ -362,6 +386,20 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         dmp.diffCleanupSemantic(diffs);
 
         return diffs;
+    }
+
+    private byte[] getRtf() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            Document doc = textPane.getStyledDocument();
+            textPane.getEditorKit().write(baos, doc, 0, doc.getLength());
+            baos.close();
+
+            return baos.toByteArray();
+
+        } catch (IOException | BadLocationException e) {
+            throw new RuntimeException("An error occurred while saving field contents.", e);
+        }
     }
 
     private void setRtf(byte[] rtfData) {
@@ -386,18 +424,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
     }
 
-    private byte[] getRtf() {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            Document doc = textPane.getStyledDocument();
-            textPane.getEditorKit().write(baos, doc, 0, doc.getLength());
-            baos.close();
-
-            return baos.toByteArray();
-
-        } catch (IOException | BadLocationException e) {
-            throw new RuntimeException("An error occurred while saving field contents.", e);
-        }
+    private Range getSelectedTextRange() {
+        return new Range(textPane.getCaret().getDot(), textPane.getCaret().getMark());
     }
 
     private void setActiveTextAlign(Value v) {
@@ -406,13 +434,40 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
     }
 
-    private void setActiveFont(TextStyleSpecifier tss) {
-        currentStyle = tss.toAttributeSet();
-        textPane.setCharacterAttributes(currentStyle, true);
+    private class FontStyleObserver implements Observer {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void update(Observable o, Object arg) {
+            Range selection = getSelectedTextRange();
+            setTextFontStyle(selection.start, selection.length(), (Value) arg);
+        }
+    }
+
+    private class FontSizeObserver implements Observer {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void update(Observable o, Object arg) {
+            Range selection = getSelectedTextRange();
+            setTextFontSize(selection.start, selection.length(), (Value) arg);
+        }
+    }
+
+    private class FontFamilyObserver implements Observer {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void update(Observable o, Object arg) {
+            Range selection = getSelectedTextRange();
+            setTextFontFamily(selection.start, selection.length(), (Value) arg);
+        }
     }
 
     private class ToolModeObserver implements Observer {
-
         /**
          * {@inheritDoc}
          */

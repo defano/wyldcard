@@ -20,7 +20,26 @@ public class TextStyleSpecifier {
     private boolean isSuperscript;
     private boolean isSubscript;
 
-    private TextStyleSpecifier() {}
+    private TextStyleSpecifier() {
+    }
+
+    public static TextStyleSpecifier fromHyperTalkFontStyle(Value fontStyle) {
+        TextStyleSpecifier tss = new TextStyleSpecifier();
+        tss.setFontStyle(fontStyle);
+        return tss;
+    }
+
+    public static TextStyleSpecifier fromFontFamily(String fontFamily) {
+        TextStyleSpecifier tss = new TextStyleSpecifier();
+        tss.setFontFamily(fontFamily);
+        return tss;
+    }
+
+    public static TextStyleSpecifier fromFontSize(int fontSize) {
+        TextStyleSpecifier tss = new TextStyleSpecifier();
+        tss.setFontSize(fontSize);
+        return tss;
+    }
 
     public static TextStyleSpecifier fromNameStyleSize(Value fontName, Value fontStyle, Value fontSize) {
         TextStyleSpecifier tss = new TextStyleSpecifier();
@@ -35,7 +54,7 @@ public class TextStyleSpecifier {
     public static TextStyleSpecifier fromFont(Font font) {
         TextStyleSpecifier tss = new TextStyleSpecifier();
 
-        tss.fontFamily = font.getFontName();
+        tss.fontFamily = font.getFamily();
         tss.fontSize = font.getSize();
         tss.isBold = (font.getStyle() & Font.BOLD) != 0;
         tss.isItalic = (font.getStyle() & Font.ITALIC) != 0;
@@ -60,6 +79,8 @@ public class TextStyleSpecifier {
     }
 
     public Font toFont() {
+
+
         int fontStyle = Font.PLAIN;
 
         if (isBold) {
@@ -73,7 +94,7 @@ public class TextStyleSpecifier {
         return FontFactory.byNameStyleSize(fontFamily, fontStyle, fontSize);
     }
 
-    public Value toHyperTalkStyleIdentifier() {
+    public Value getHyperTalkStyle() {
         StringBuilder id = new StringBuilder();
         if (isBold) {
             id.append(", bold");
@@ -85,7 +106,7 @@ public class TextStyleSpecifier {
             id.append(", underline");
         }
         if (isSuperscript) {
-            id.append(", super");
+            id.append(", superscript");
         }
         if (isSubscript) {
             id.append(", subscript");
@@ -152,12 +173,12 @@ public class TextStyleSpecifier {
         return sas;
     }
 
-    public void setFontFamily(String fontFamily) {
-        this.fontFamily = fontFamily;
-    }
-
     public String getFontFamily() {
         return fontFamily;
+    }
+
+    public void setFontFamily(String fontFamily) {
+        this.fontFamily = fontFamily;
     }
 
     public void toggleFontStyle(Value value) {
@@ -204,16 +225,16 @@ public class TextStyleSpecifier {
         isStrikeThrough = v.contains("strikethrough");
     }
 
-    public void setFontSize(int fontSize) {
-        this.fontSize = fontSize;
-    }
-
     public int getFontSize() {
         return fontSize;
     }
 
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+    }
+
     public boolean isPlain() {
-        return !isBold && !isItalic && !isUnderline && !isStrikeThrough && !isSuperscript && !isSubscript;
+        return !isBold() && !isItalic() && !isUnderline() && !isStrikeThrough() && !isSuperscript() && !isSubscript();
     }
 
     public boolean isBold() {
@@ -255,33 +276,5 @@ public class TextStyleSpecifier {
         if (isSuperscript != that.isSuperscript) return false;
         if (isSubscript != that.isSubscript) return false;
         return fontFamily != null ? fontFamily.equals(that.fontFamily) : that.fontFamily == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = fontFamily != null ? fontFamily.hashCode() : 0;
-        result = 31 * result + fontSize;
-        result = 31 * result + (isBold ? 1 : 0);
-        result = 31 * result + (isItalic ? 1 : 0);
-        result = 31 * result + (isUnderline ? 1 : 0);
-        result = 31 * result + (isStrikeThrough ? 1 : 0);
-        result = 31 * result + (isSuperscript ? 1 : 0);
-        result = 31 * result + (isSubscript ? 1 : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "TextStyleSpecifier{" +
-                "attributes=" + attributes +
-                ", fontFamily='" + fontFamily + '\'' +
-                ", fontSize=" + fontSize +
-                ", isBold=" + isBold +
-                ", isItalic=" + isItalic +
-                ", isUnderline=" + isUnderline +
-                ", isStrikeThrough=" + isStrikeThrough +
-                ", isSuperscript=" + isSuperscript +
-                ", isSubscript=" + isSubscript +
-                '}';
     }
 }

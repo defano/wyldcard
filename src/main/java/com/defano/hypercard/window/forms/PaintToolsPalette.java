@@ -1,5 +1,6 @@
 package com.defano.hypercard.window.forms;
 
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypertalk.ast.common.ToolType;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -78,7 +79,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
-        text.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().setFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", ToolsContext.getInstance().getSelectedTextStyleProvider().get().toFont())));
+        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", FontContext.getInstance().getHilitedTextStyleProvider().get().toFont())));
 
         ToolsContext.getInstance().getShapesFilledProvider().addObserverAndUpdate((o, filled) -> {
             boolean isFilled = (Boolean) filled;

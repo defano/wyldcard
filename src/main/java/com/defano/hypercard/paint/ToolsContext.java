@@ -1,12 +1,10 @@
 package com.defano.hypercard.paint;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.SystemMessage;
 import com.defano.hypertalk.ast.common.ToolType;
-import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
@@ -20,8 +18,6 @@ import com.defano.jmonet.tools.builder.PaintToolBuilder;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Observable;
-import java.util.Observer;
 
 
 public class ToolsContext {
@@ -52,16 +48,9 @@ public class ToolsContext {
     // Properties that we provide the canvas
     private final Provider<Integer> gridSpacingProvider = new Provider<>(1);
 
-    // Last font explicitly chosen by the user from the Font/Style menus
-    private final Provider<TextStyleSpecifier> selectedTextStyleProvider = new Provider<>(TextStyleSpecifier.fromFont(new Font("Ariel", Font.PLAIN, 12)));
-
-    // Last hilited font in text field or active button
-    private final Provider<TextStyleSpecifier> hilitedTextStyleProvider = new Provider<>(TextStyleSpecifier.fromFont(new Font("Ariel", Font.PLAIN, 12)));
-
     private PaintToolType lastToolType;
 
     private ToolsContext() {
-        selectedTextStyleProvider.addObserver((o, arg) -> hilitedTextStyleProvider.set((TextStyleSpecifier) arg));
         gridSpacingProvider.addObserver((o, arg) -> HyperCard.getInstance().getDisplayedCard().getCanvas().setGridSpacing((Integer) arg));
     }
 
@@ -190,38 +179,6 @@ public class ToolsContext {
         }
     }
 
-    public void setFont(Font font) {
-        if (font != null) {
-            selectedTextStyleProvider.set(TextStyleSpecifier.fromFont(font));
-        }
-    }
-
-    public void setFontSize(int size) {
-        TextStyleSpecifier tss = hilitedTextStyleProvider.get();
-        tss.setFontSize(size);
-        selectedTextStyleProvider.set(tss);
-    }
-
-    public void toggleFontStyle(Value style) {
-        TextStyleSpecifier tss = hilitedTextStyleProvider.get();
-        tss.toggleFontStyle(style);
-        selectedTextStyleProvider.set(tss);
-    }
-
-    public void setFontFamily(String fontName) {
-        TextStyleSpecifier tss = hilitedTextStyleProvider.get();
-        tss.setFontFamily(fontName);
-        selectedTextStyleProvider.set(tss);
-    }
-
-    public Provider<TextStyleSpecifier> getSelectedTextStyleProvider() {
-        return selectedTextStyleProvider;
-    }
-
-    public Provider<TextStyleSpecifier> getHilitedTextStyleProvider() {
-        return hilitedTextStyleProvider;
-    }
-
     public void setLineWidth(int width) {
         lineStrokeProvider.set(new BasicStroke(width));
     }
@@ -326,7 +283,7 @@ public class ToolsContext {
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
-                .withFontProvider(Provider.derivedFrom(selectedTextStyleProvider, TextStyleSpecifier::toFont))
+                .withFontProvider(FontContext.getInstance().getSelectedFontProvider())
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getInstance().getDisplayedCard().getCanvas())
                 .build();

@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;
@@ -308,7 +309,7 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
         int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
-        partModel.setTextStyle(ToolsContext.getInstance().getSelectedTextStyleProvider().get());
+        partModel.setTextStyle(FontContext.getInstance().getHilitedTextStyleProvider().get());
         partModel.addPropertyChangedObserver(this);
     }
 
