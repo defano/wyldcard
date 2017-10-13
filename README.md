@@ -620,7 +620,7 @@ Property     | Description
 -------------|----------------------
 `textFont`   | Returns or sets the font family of the identified chunk of text
 `textSize`   | Returns or sets the text size of the identified chunk of text
-`textStyle`  | Returns or sets the style (`bold`, `italic` or `plain`, `underline`, `strikeThrough`, `superscript` or `subscript`) of the identified range of text
+`textStyle`  | Returns or sets the style (`bold`, `italic` or `plain`, `underline`, `strikeThrough`, `superscript` or `subscript`) of the identified range of text.
 
 For example,
 

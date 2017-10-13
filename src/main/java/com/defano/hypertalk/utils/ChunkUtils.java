@@ -204,10 +204,13 @@ public class ChunkUtils {
             case CHAR:
             case CHARRANGE:
                 return "";
+            case WORDRANGE:
             case WORD:
                 return " ";
+            case LINERANGE:
             case LINE:
                 return "\n";
+            case ITEMRANGE:
             case ITEM:
                 return ExecutionContext.getContext().getGlobalProperties().getKnownProperty(HyperCardProperties.PROP_ITEMDELIMITER).stringValue();
             default:

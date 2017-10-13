@@ -67,7 +67,7 @@ public class TextStyleSpecifier {
 
         tss.attributes = as;
         tss.fontFamily = (String) as.getAttribute(StyleConstants.FontFamily);
-        tss.fontSize = Integer.valueOf(String.valueOf(as.getAttribute(StyleConstants.FontSize)));
+        tss.fontSize = as.isDefined(StyleConstants.FontSize) ? Integer.valueOf(String.valueOf(as.getAttribute(StyleConstants.FontSize))) : 0;
         tss.isBold = Boolean.valueOf(String.valueOf(as.getAttribute(StyleConstants.Bold)));
         tss.isItalic = Boolean.valueOf(String.valueOf(as.getAttribute(StyleConstants.Italic)));
         tss.isUnderline = Boolean.valueOf(String.valueOf(as.getAttribute(StyleConstants.Underline)));
