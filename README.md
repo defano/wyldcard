@@ -611,6 +611,7 @@ Property     | Description
 `showLines`  | Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
 `dontWrap`   | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
 `sharedText` | When `true`, each card in the background shares the same text in the field. When `false`, each card in the background can place a unique value into the field. Has no effect on card fields.
+`wideMargins`| Returns or sets whether the field is drawn with a wider, 15-pixel margin between its text and border.
 
 #### Text properties
 

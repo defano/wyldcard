@@ -1,15 +1,13 @@
 package com.defano.hypercard.runtime.context;
 
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.cursor.CursorManager;
 import com.defano.hypercard.cursor.HyperCardCursor;
 import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.paint.ToolsContext;
-import com.defano.hypercard.parts.model.ComputedGetter;
-import com.defano.hypercard.parts.model.ComputedSetter;
-import com.defano.hypercard.sound.SoundPlayer;
-import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.sound.SoundPlayer;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;

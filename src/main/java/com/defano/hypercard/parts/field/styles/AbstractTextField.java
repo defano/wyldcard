@@ -30,6 +30,9 @@ import java.util.Observer;
  */
 public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldDocumentObserver {
 
+    public final static int WIDE_MARGIN_PX = 15;
+    public final static int NARROW_MARGIN_PX = 0;
+
     private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private final FontSizeObserver fontSizeObserver = new FontSizeObserver();
@@ -104,6 +107,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
             case FieldModel.PROP_ENABLED:
                 toolEditablePart.setEnabledOnCard(newValue.booleanValue());
+                break;
+
+            case FieldModel.PROP_WIDEMARGINS:
+                setWideMargins(newValue.booleanValue());
                 break;
         }
     }
@@ -241,6 +248,16 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
+    }
+
+    protected void setWideMargins(boolean isWideMargins) {
+        if (isWideMargins) {
+            textPane.setMargin(new Insets(WIDE_MARGIN_PX, WIDE_MARGIN_PX, WIDE_MARGIN_PX, WIDE_MARGIN_PX));
+        } else {
+            textPane.setMargin(new Insets(NARROW_MARGIN_PX, NARROW_MARGIN_PX, NARROW_MARGIN_PX, NARROW_MARGIN_PX));
+        }
+
+        textPane.invalidate(); textPane.repaint();
     }
 
     private void updateModel() {

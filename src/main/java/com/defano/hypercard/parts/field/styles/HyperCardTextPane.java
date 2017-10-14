@@ -79,7 +79,10 @@ public class HyperCardTextPane extends JTextPane {
 
         if (showLines) {
             float lastLineHeight = 0;
-            int dottedLineY = 0;
+            int dottedLineY = getInsets().top;
+            int minX = getInsets().left;
+            int maxX = getWidth() - getInsets().right;
+
             int lineCount = getWrappedLineCount();
 
             Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
@@ -89,13 +92,13 @@ public class HyperCardTextPane extends JTextPane {
             for (int line = 0; line < lineCount; line++) {
                 lastLineHeight = getLineHeight(line);
                 dottedLineY += lastLineHeight;
-                g.drawLine(0, dottedLineY, getWidth(), dottedLineY);
+                g.drawLine(minX, dottedLineY, maxX, dottedLineY);
             }
 
             // Interpolate dotted lines under unused lines
             while (dottedLineY < getHeight()) {
                 dottedLineY += lastLineHeight;
-                g.drawLine(0, dottedLineY, getWidth(), dottedLineY);
+                g.drawLine(minX, dottedLineY, maxX, dottedLineY);
             }
         }
     }

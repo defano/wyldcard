@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class TransparentField extends AbstractTextField {
 
-    private final static Color TRANSPARENT = new Color(0,0,0,0);
+    private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     public TransparentField(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
@@ -34,5 +34,17 @@ public class TransparentField extends AbstractTextField {
             ((Graphics2D) g).setPaint(Color.GRAY);
             g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
         }
+    }
+
+    @Override
+    protected void setWideMargins(boolean isWideMargins) {
+        if (isWideMargins) {
+            setBorder(BorderFactory.createEmptyBorder(WIDE_MARGIN_PX, WIDE_MARGIN_PX, WIDE_MARGIN_PX, WIDE_MARGIN_PX));
+        } else {
+            setBorder(BorderFactory.createEmptyBorder(NARROW_MARGIN_PX, NARROW_MARGIN_PX, NARROW_MARGIN_PX, NARROW_MARGIN_PX));
+        }
+
+        invalidate();
+        repaint();
     }
 }
