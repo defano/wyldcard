@@ -1,5 +1,7 @@
 package com.defano.hypercard.window.forms;
 
+import com.defano.hypercard.fonts.FontFactory;
+import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.util.HandlerComboBox;
 import com.defano.hypercard.util.TextLineNumber;
 import com.defano.hypercard.window.HyperCardFrame;
@@ -68,6 +70,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
         scriptField.addCaretListener(e -> updateActiveHandler());
         scriptField.addCaretListener(e -> updateCaretPositionLabel());
+
+        scriptField.setFont(FontFactory.byNameStyleSize(
+                HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
+                Font.PLAIN,
+                HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+        ));
 
         TextLineNumber tln = new TextLineNumber(scriptField);
         tln.setUpdateFont(true);

@@ -41,6 +41,8 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_TEXTFONT = "textfont";
     public final static String PROP_TEXTSIZE = "textsize";
     public final static String PROP_TEXTSTYLE = "textstyle";
+    public final static String PROP_SCRIPTTEXTFONT = "scripttextfont";
+    public final static String PROP_SCRIPTTEXTSIZE = "scripttextsize";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -65,6 +67,8 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_CLICKH, new Value("0"), true);
         defineProperty(PROP_CLICKV, new Value("0"), true);
         defineProperty(PROP_SOUND, new Value("done"), true);
+        defineProperty(PROP_SCRIPTTEXTFONT, new Value("Monaco"), false);
+        defineProperty(PROP_SCRIPTTEXTSIZE, new Value(12), false);
 
         defineComputedSetterProperty(PROP_TEXTFONT, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
         defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamilyProvider().get()));

@@ -722,6 +722,8 @@ Global Property | Description
 `multiple`      | A boolean value indicating whether shapes are being drawn multiple (equivalent to "Draw Multiple" in the "Options" menu).
 `pattern`       | Gets or sets the number of selected paint pattern. Patterns are numbered 0 to 39. Setting to a value outside this range has no effect.
 `polySides`     | An integer represeting the number of sides drawn using the polygon tool.
+`scriptTextFont'| The name of the font family used in the script editor; default is `Monaco`.
+`scriptTextSize`| The size, in points, of the text of the script editor; default is `12`.
 `textFont`      | The currently active font family, as indicated by the selection in the "Font" menu.
 `textSize`      | The currently active font size, as indicated by the selection in the "Style" menu.
 `textStyle`     | The currently active font style, as indicated by the selection in the "Style" menu.
