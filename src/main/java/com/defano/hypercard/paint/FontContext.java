@@ -52,6 +52,9 @@ public class FontContext {
             TextStyleSpecifier tss = hilitedTextStyleProvider.get();
             tss.setFontFamily(((Value) arg).stringValue());
             hilitedTextStyleProvider.set(tss);
+
+            tss = TextStyleSpecifier.fromFont(selectedFontProvider.get());
+            tss.setFontFamily(((Value) arg).stringValue());
             selectedFontProvider.set(tss.toFont());
         });
 
@@ -59,6 +62,9 @@ public class FontContext {
             TextStyleSpecifier tss = hilitedTextStyleProvider.get();
             tss.setFontSize(((Value) arg).integerValue());
             hilitedTextStyleProvider.set(tss);
+
+            tss = TextStyleSpecifier.fromFont(selectedFontProvider.get());
+            tss.setFontSize(((Value) arg).integerValue());
             selectedFontProvider.set(tss.toFont());
         });
 
@@ -66,6 +72,9 @@ public class FontContext {
             TextStyleSpecifier tss = hilitedTextStyleProvider.get();
             tss.setFontStyle((Value) arg);
             hilitedTextStyleProvider.set(tss);
+
+            tss = TextStyleSpecifier.fromFont(selectedFontProvider.get());
+            tss.setFontStyle((Value) arg);
             selectedFontProvider.set(tss.toFont());
         });
     }
