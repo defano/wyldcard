@@ -3,6 +3,7 @@ package com.defano.hypercard.runtime.context;
 import com.defano.hypercard.cursor.CursorManager;
 import com.defano.hypercard.cursor.HyperCardCursor;
 import com.defano.hypercard.fx.CurtainManager;
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.model.ComputedGetter;
 import com.defano.hypercard.parts.model.ComputedSetter;
@@ -36,6 +37,9 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_GRID = "grid";
     public final static String PROP_POLYSIDES = "polysides";
     public final static String PROP_PATTERN = "pattern";
+    public final static String PROP_TEXTFONT = "textfont";
+    public final static String PROP_TEXTSIZE = "textsize";
+    public final static String PROP_TEXTSTYLE = "textstyle";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -60,6 +64,15 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_CLICKH, new Value("0"), true);
         defineProperty(PROP_CLICKV, new Value("0"), true);
         defineProperty(PROP_SOUND, new Value("done"), true);
+
+        defineComputedSetterProperty(PROP_TEXTFONT, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
+        defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamilyProvider().get()));
+
+        defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontStyle(value));
+        defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontStyleProvider().get()));
+
+        defineComputedSetterProperty(PROP_TEXTSIZE, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontSize(value.integerValue()));
+        defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontSizeProvider().get()));
 
         defineComputedSetterProperty(PROP_FILLED, (model, propertyName, value) -> ToolsContext.getInstance().getShapesFilledProvider().set(value.booleanValue()));
         defineComputedGetterProperty(PROP_FILLED, (model, propertyName) -> new Value(ToolsContext.getInstance().isShapesFilled()));
