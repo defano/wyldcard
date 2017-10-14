@@ -129,6 +129,15 @@ public class PropertiesModel {
         computerGetters.put(propertyName.toLowerCase(), getter);
     }
 
+
+    public void defineComputedReadOnlyProperty(String propertName, ComputedGetter getter) {
+        assertContructed();
+        computerGetters.put(propertName.toLowerCase(), getter);
+        computerSetters.put(propertName.toLowerCase(), (model, propertyName, value) -> {
+            throw new PropertyPermissionException("Cannot set the property " + propertyName + " because it is immutable.");
+        });
+    }
+
     /**
      * Sets the value of a property.
      *
