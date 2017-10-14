@@ -115,11 +115,14 @@ public class PatternPalette extends HyperCardDialog implements Observer {
     @Override
     public void update(Observable o, Object newValue) {
         if (newValue instanceof Integer) {
-            for (JButton thisButton : allPatterns) {
-                thisButton.setEnabled(true);
-            }
+            if ((int) newValue >= 0 && (int) newValue < 40) {
 
-            allPatterns[(int) newValue].setEnabled(false);
+                for (JButton thisButton : allPatterns) {
+                    thisButton.setEnabled(true);
+                }
+
+                allPatterns[(int) newValue].setEnabled(false);
+            }
         } else if (newValue instanceof Color) {
             redrawPatternButtons();
             ToolsContext.getInstance().setPattern(selectedPattern);

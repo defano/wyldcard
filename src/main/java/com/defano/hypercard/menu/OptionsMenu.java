@@ -40,9 +40,9 @@ public class OptionsMenu extends HyperCardMenu {
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()
-                        .named("10 px")
-                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacingProvider().get() == 10 ? 1 : 10))
-                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getGridSpacingProvider(), t -> t == 10))
+                        .named("8 px")
+                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacingProvider().get() == 8 ? 1 : 8))
+                        .withCheckmarkProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getGridSpacingProvider(), t -> t == 8))
                         .build(grid);
 
                 MenuItemBuilder.ofCheckType()

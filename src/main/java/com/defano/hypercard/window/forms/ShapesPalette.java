@@ -58,7 +58,7 @@ public class ShapesPalette extends HyperCardDialog implements Observer {
                 return octogon;
         }
 
-        throw new IllegalStateException("Bug! Unimplemented shape.");
+        return null;
     }
 
     public void selectShape(int sides) {
@@ -72,7 +72,10 @@ public class ShapesPalette extends HyperCardDialog implements Observer {
                 thisShape.setEnabled(true);
             }
 
-            getButtonForShape((int) newValue).setEnabled(false);
+            JButton selectedButton = getButtonForShape((int) newValue);
+            if (selectedButton != null) {
+                selectedButton.setEnabled(false);
+            }
         }
     }
 

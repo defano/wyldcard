@@ -1,5 +1,6 @@
 package com.defano.hypercard;
 
+import com.defano.hypercard.cursor.CursorManager;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.FileContext;
@@ -57,6 +58,8 @@ public class HyperCard {
 
         SwingUtilities.invokeLater(() -> {
             WindowManager.start();
+            CursorManager.getInstance().start();
+
             stackPart.open(stackPart.getStackModel());
             PeriodicMessageManager.getInstance().start();
         });

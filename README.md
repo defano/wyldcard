@@ -706,14 +706,21 @@ set the itemDelimiter to ","
 get the itemDelimiter
 ```
 
-This implementation supports these HyperCard properties:
+HyperTalk Java supports these HyperCard properties:
 
 Global Property | Description
 ----------------|---------------
-`lockScreen`    | A boolean value indicating whether or not the screen is locked. Reset to false at idle. See the "Visual Effects" section for more details.
+`centered`      | A boolean value indicating whether shapes from center out, or corner-to-corner (equivalent to "Draw Centered" in the "Options" menu).
+`cursor`        | The name of the cursor to be displayed in place of the default, `hand` cursor; one of `ibeam`, `cross`, `plus` (same as `busy`), `watch`, `hand`, `arrow`, `busy` or `none`. Does not effect paint tool, button tool or field tool cursors. Resets to `hand` on idle. Some cursors may not be supported on all operating systems.
+`filled`        | A boolean value indicating whether shapes are being drawn filled (equivalent to "Draw Filled" in the "Options" menu).
+`grid`          | A boolean value indicating whether the paint tool grid is enabled. When `true`, enables an eight pixel grid.
+`lockScreen`    | A boolean value indicating whether or not the screen is locked. Reset to `false` at idle. See the "Visual Effects" section for more details.
 `itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yields 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
+`multiple`      | A boolean value indicating whether shapes are being drawn multiple (equivalent to "Draw Multiple" in the "Options" menu).
+`pattern`       | Gets or sets the number of selected paint pattern. Patterns are numbered 0 to 39. Setting to a value outside this range has no effect.
+`polySides`     | An integer represeting the number of sides drawn using the polygon tool.
 
-Note that these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
+As noted in the table above, some of these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
 
 ## Sorting
 

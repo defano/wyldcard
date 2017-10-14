@@ -80,6 +80,10 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         }
     }
 
+    public ScreenCurtain getScreenCurtain() {
+        return screenCurtain;
+    }
+
     /** {@inheritDoc} */
     @Override
     public JComponent getWindowPanel() {
