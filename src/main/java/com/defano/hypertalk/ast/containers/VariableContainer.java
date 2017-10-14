@@ -31,14 +31,14 @@ public class VariableContainer extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = ExecutionContext.getContext().get(symbol);
+        Value value = ExecutionContext.getContext().getVariable(symbol);
         return chunkOf(value, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
 
-        Value mutable = ExecutionContext.getContext().get(symbol);
+        Value mutable = ExecutionContext.getContext().getVariable(symbol);
 
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -46,7 +46,7 @@ public class VariableContainer extends Container {
         else
             mutable = Value.setValue(mutable, preposition, value);
 
-        ExecutionContext.getContext().set(symbol, mutable);
+        ExecutionContext.getContext().setVariable(symbol, mutable);
         ExecutionContext.getContext().setIt(mutable);
     }
 

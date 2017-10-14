@@ -35,7 +35,7 @@ public class PartPositionExp extends PartExp {
     @Override
     public Value onEvaluate() throws HtSemanticException {
         try {
-            return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
+            return ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
         } catch (PartException e) {
             throw new HtSemanticException("Can't get that part.");
         }

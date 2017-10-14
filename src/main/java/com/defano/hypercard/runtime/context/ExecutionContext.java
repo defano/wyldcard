@@ -131,7 +131,7 @@ public class ExecutionContext {
      * @param symbol The name of the variable to assign
      * @param v The value to assign it
      */
-    public void set (String symbol, Value v) {
+    public void setVariable(String symbol, Value v) {
         if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
             globals.put(symbol, v);
         else
@@ -147,7 +147,7 @@ public class ExecutionContext {
      * @param symbol The symbol/variable whose value should be retrieved.
      * @return The value of the requested symbol.
      */
-    public Value get (String symbol) {
+    public Value getVariable(String symbol) {
         Value value;
 
         if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
@@ -169,7 +169,7 @@ public class ExecutionContext {
      * @return The part's model
      * @throws PartException Thrown if no such part exists
      */
-    public PartModel get(PartSpecifier ps) throws PartException {
+    public PartModel getPart(PartSpecifier ps) throws PartException {
         if (ps.isCardElementSpecifier()) {
             return getCurrentCard().findPart(ps);
         } else if (ps.isStackElementSpecifier()) {
@@ -185,18 +185,32 @@ public class ExecutionContext {
      * Gets the value of a property assigned to a given part.
      *
      * @param property The name of the property to retrieve
-     * @param ps A part's specifier
+     * @param ps A part's specifier, or null to indicate a HyperCard property
      * @return The value of the requested property
      * @throws NoSuchPropertyException Thrown if the property does not exist on the given part
      * @throws PartException Thrown if the part does not exist
      */
-    public Value get (String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
-        return get(ps).getProperty(property);
+    public Value getProperty(String property, PartSpecifier ps) throws NoSuchPropertyException, PartException {
+        if (ps == null) {
+            return HyperCardProperties.getInstance().getProperty(property);
+        } else {
+            return getPart(ps).getProperty(property);
+        }
     }
 
-    public void set (String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtException
+    /**
+     * Sets the value of a property assigned to a given part.
+     *
+     * @param property The name of the property to set
+     * @param ps The PartSpecifier identifying the part, or null to specify a HyperCard property
+     * @param preposition A preposition indicating where to place the value
+     * @param chunk When non-null, indicates that a chunk of the property should be mutated
+     * @param value The value to place into the property
+     * @throws HtException Thrown if an error occurs setting the property
+     */
+    public void setProperty(String property, PartSpecifier ps, Preposition preposition, Chunk chunk, Value value) throws HtException
     {
-        Value mutable = get(ps).getProperty(property);
+        Value mutable = getProperty(property, ps);
 
         if (chunk != null) {
             mutable = Value.setChunk(mutable, preposition, chunk, value);
@@ -204,9 +218,21 @@ public class ExecutionContext {
             mutable = Value.setValue(mutable, preposition, value);
         }
 
-        get(ps).setProperty(property, mutable);
+        if (ps == null) {
+            HyperCardProperties.getInstance().setProperty(property, mutable);
+        } else {
+            getPart(ps).setProperty(property, mutable);
+        }
     }
 
+    /**
+     * Sets the card context in which the current script is executing. That is, when a script calls for "card field 1"
+     * the script is referring to the first card on the CardPart passed to this method.
+     *
+     * This is typically the same card as the one being displayed, but can vary during sort and find commands.
+     *
+     * @param card The card representing the context in which the current script is executing.
+     */
     public void setCurrentCard(CardPart card) {
         this.card.set(card);
     }
@@ -233,18 +259,37 @@ public class ExecutionContext {
         }
     }
 
+    /**
+     * Sets the current value of the implicit 'it' variable in this context.
+     * // TODO: This is not correctly implemented. It should not be global, but bound locally in each frame.
+     * @param value The value of 'it'.
+     */
     public void setIt (Object value) {
         globals.put("it", new Value(value.toString()));
     }
-    
+
+    /**
+     * Gets the current value of the implicit variable 'it' in this context.
+     * @return The value of 'it'.
+     */
     public Value getIt () {
         return globals.get("it");
     }
 
+    /**
+     * Sets the message (i.e., the name of the handler or function) that was invoked to cause this script to execute.
+     *
+     * @param message The message name invoked.
+     */
     public void setMessage(String message) {
         this.getFrame().setMessage(message);
     }
 
+    /**
+     * Gets the message (i.e., the name of the handler or function) that was invoked to cause this script to execute.
+     *
+     * @return The name of message.
+     */
     public String getMessage() {
         return getFrame().getMessage();
     }
@@ -253,6 +298,12 @@ public class ExecutionContext {
         this.getFrame().setParams(params);
     }
 
+    /**
+     * Gets the arguments passed to this handler or function. Does not return the parameter names, but is named this
+     * way to correspond with HyperTalk's 'the params' function (which also ought to be called 'the args', but alas).
+     *
+     * @return A list of arguments passed to this handler in the order they were passed.
+     */
     public List<Value> getParams() {
         return this.getFrame().getParams();
     }
@@ -269,6 +320,7 @@ public class ExecutionContext {
 
     /**
      * Sets the value of me in this context.
+     *
      * @param me The part referred to as 'me'
      */
     public void setMe (PartSpecifier me) {
@@ -276,7 +328,8 @@ public class ExecutionContext {
     }
 
     /**
-     * Gets the part referred to as 'me'.
+     * Gets a specifier referencing the part referred to as 'me'.
+     *
      * @return The part referred to as me.
      * @throws HtSemanticException Thrown if no part is bound to 'me' in this context
      */
@@ -297,7 +350,7 @@ public class ExecutionContext {
     }
 
     /**
-     * Sets the "result" (a special property holding the last produced error message; mutated only by certain commands).
+     * Sets "the result" (a special property holding the last produced error message; mutated only by certain commands).
      * @param result An error message
      */
     public void setResult(Value result) {
@@ -305,7 +358,8 @@ public class ExecutionContext {
     }
 
     /**
-     * Gets the "result" (a special property holding the last produced error message; mutated only by certain commands).
+     * Gets "the result" (a special property holding the last produced error message; mutated only by certain commands).
+     *
      * @return The result; may be the empty string to denote no error.
      */
     public Value getResult() {
@@ -321,7 +375,7 @@ public class ExecutionContext {
      */
     public void sendMessage (PartSpecifier ps, String message, List<Value> messageArgs) throws PartException
     {
-        PartModel thePart = get(ps);
+        PartModel thePart = getPart(ps);
 
         if (thePart != null) {
             thePart.receiveMessage(message, new ExpressionList(null, messageArgs));

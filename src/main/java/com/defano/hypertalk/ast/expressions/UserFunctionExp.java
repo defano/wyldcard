@@ -27,7 +27,7 @@ public class UserFunctionExp extends Expression {
         }
 
         PartSpecifier ps = ExecutionContext.getContext().getMe();
-        PartModel part = ExecutionContext.getContext().get(ps);
+        PartModel part = ExecutionContext.getContext().getPart(ps);
 
         return part.invokeFunction(function, arguments);
     }

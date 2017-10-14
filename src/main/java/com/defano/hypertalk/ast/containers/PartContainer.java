@@ -33,13 +33,13 @@ public class PartContainer extends Container {
 
     @Override
     public Value getValue() throws HtException {
-        Value value = ExecutionContext.getContext().get(part.evaluateAsSpecifier()).getValue();
+        Value value = ExecutionContext.getContext().getPart(part.evaluateAsSpecifier()).getValue();
         return chunkOf(value, this.chunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        Value destValue = ExecutionContext.getContext().get(part.evaluateAsSpecifier()).getValue();
+        Value destValue = ExecutionContext.getContext().getPart(part.evaluateAsSpecifier()).getValue();
 
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -47,7 +47,7 @@ public class PartContainer extends Container {
         else
             destValue = Value.setValue(destValue, preposition, value);
 
-        ExecutionContext.getContext().get(part.evaluateAsSpecifier()).setValue(destValue);
+        ExecutionContext.getContext().getPart(part.evaluateAsSpecifier()).setValue(destValue);
         ExecutionContext.getContext().setIt(destValue);
     }
 }

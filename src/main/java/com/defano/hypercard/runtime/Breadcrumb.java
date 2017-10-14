@@ -61,7 +61,7 @@ public class Breadcrumb {
 
         if (getPart() != null) {
             try {
-                partModel = ExecutionContext.getContext().get(getPart());
+                partModel = ExecutionContext.getContext().getPart(getPart());
             } catch (PartException e) {
                 // Nothing to do
             }

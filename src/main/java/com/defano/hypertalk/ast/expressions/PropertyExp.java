@@ -36,7 +36,7 @@ public class PropertyExp extends Expression {
 
         // Getting the property of a part
         else {
-            return ExecutionContext.getContext().get(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
+            return ExecutionContext.getContext().getProperty(propertySpecifier.property, propertySpecifier.partExp.evaluateAsSpecifier());
         }
 
     }

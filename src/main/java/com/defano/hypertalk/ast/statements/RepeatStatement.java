@@ -71,7 +71,7 @@ public class RepeatStatement extends Statement {
                 throw new HtSemanticException("Start of repeat range is greater than end: " + from + " > " + to);
 
             for (int index = from; index <= to; index++) {
-                ExecutionContext.getContext().set(symbol, new Value(index));
+                ExecutionContext.getContext().setVariable(symbol, new Value(index));
                 iterate();
             }
         }
@@ -81,7 +81,7 @@ public class RepeatStatement extends Statement {
                 throw new HtSemanticException("End of repeat range is less than start: " + to + " > " + from);
 
             for (int index = from; index >= to; index--) {
-                ExecutionContext.getContext().set(symbol, new Value(index));
+                ExecutionContext.getContext().setVariable(symbol, new Value(index));
                 iterate();
             }
         }

@@ -672,7 +672,7 @@ on doMenu theMenu, theMenuItem
     answer "Are you sure you want to edit the background?" with "OK" or "Cancel"
     if it is "OK" then pass doMenu
   else
-	  pass doMenu  -- Don't interrupt other menu selections
+    pass doMenu  -- Don't interrupt other menu selections
   end if
 end doMenu
 ```
@@ -724,7 +724,7 @@ Global Property | Description
 `polySides`     | An integer represeting the number of sides drawn using the polygon tool.
 `scriptTextFont'| The name of the font family used in the script editor; default is `Monaco`.
 `scriptTextSize`| The size, in points, of the text of the script editor; default is `12`.
-`systemVersion` | The version number of the Java Virtual Machine executing HyperTalk Java, for example, "1.8.0_131".
+`systemVersion` | The read-only version number of the Java Virtual Machine executing HyperTalk Java, for example, `1.8.0_131`.
 `textFont`      | The currently active font family, as indicated by the selection in the "Font" menu.
 `textSize`      | The currently active font size, as indicated by the selection in the "Style" menu.
 `textStyle`     | The currently active font style, as indicated by the selection in the "Style" menu.

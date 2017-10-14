@@ -16,7 +16,7 @@ public class PartMeExp extends PartExp {
     public Value onEvaluate() throws HtSemanticException {
         try {
             PartSpecifier part = ExecutionContext.getContext().getMe();
-            return ExecutionContext.getContext().get(part).getValue();
+            return ExecutionContext.getContext().getPart(part).getValue();
         } catch (PartException e) {
             throw new HtSemanticException(e.getMessage());
         }

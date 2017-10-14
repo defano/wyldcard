@@ -39,7 +39,7 @@ public class PropertyContainer extends Container {
         } else if (propertySpec.isMenuItemPropertySpecifier()) {
             propertyValue = MenuPropertiesDelegate.getProperty(propertySpec.property, propertySpec.menuItem);
         } else {
-            propertyValue = ExecutionContext.getContext().get(getPartSpecifier()).getProperty(getPropertyName());
+            propertyValue = ExecutionContext.getContext().getPart(getPartSpecifier()).getProperty(getPropertyName());
         }
 
         return chunkOf(propertyValue, this.chunk());
@@ -53,12 +53,12 @@ public class PropertyContainer extends Container {
         } else if (propertySpec.isMenuItemPropertySpecifier()) {
             throw new HtSemanticException("Cannot put a value into this kind of property.");
         } else {
-            ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), preposition, chunk, value);
+            ExecutionContext.getContext().setProperty(propertySpec.property, getPartSpecifier(), preposition, chunk, value);
         }
     }
 
-    public PartSpecifier getPartSpecifier() throws HtException {
-        return propertySpec.partExp.evaluateAsSpecifier();
+    private PartSpecifier getPartSpecifier() throws HtException {
+        return propertySpec.partExp == null ? null : propertySpec.partExp.evaluateAsSpecifier();
     }
 
     public String getPropertyName() {

@@ -28,7 +28,7 @@ public class PartReferenceExp extends PartExp {
     }
 
     private PartExp dereference() throws HtSemanticException {
-        Value value = ExecutionContext.getContext().get(symbol);
+        Value value = ExecutionContext.getContext().getVariable(symbol);
         Expression expression = Interpreter.dereference(value, PartExp.class);
 
         if (expression == null) {

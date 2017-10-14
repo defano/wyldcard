@@ -30,7 +30,7 @@ public class PartIdExp extends PartExp {
     
     public Value onEvaluate() throws HtException {
         try {
-            return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
+            return ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
         } catch (PartException e) {
             throw new HtSemanticException("Can't get that part.");
         }

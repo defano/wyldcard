@@ -42,7 +42,7 @@ public class SetCmd extends Command {
 
             // Setting the property of a part
             else {
-                ExecutionContext.getContext().set(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
+                ExecutionContext.getContext().setProperty(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
             }
 
         } catch (HtSemanticException e) {
@@ -50,7 +50,7 @@ public class SetCmd extends Command {
                 throw (e);
             } else {
                 // When all else fails, set the value of a variable container
-                ExecutionContext.getContext().set(propertySpec.property, expression.evaluate());
+                ExecutionContext.getContext().setVariable(propertySpec.property, expression.evaluate());
             }
         }
     }

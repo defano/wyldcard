@@ -14,6 +14,6 @@ public class VariableExp extends Expression {
     }
     
     public Value onEvaluate() {
-        return ExecutionContext.getContext().get(identifier);
+        return ExecutionContext.getContext().getVariable(identifier);
     }
 }

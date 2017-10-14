@@ -24,10 +24,10 @@ public class ExpressionValueComparator implements Comparator<Value> {
     @Override
     public int compare(Value o1, Value o2) {
         try {
-            ExecutionContext.getContext().set("each", o1);
+            ExecutionContext.getContext().setVariable("each", o1);
             Value o1Evaluated = expression.evaluate();
 
-            ExecutionContext.getContext().set("each", o2);
+            ExecutionContext.getContext().setVariable("each", o2);
             Value o2Evaluated = expression.evaluate();
 
             if (sortDirection == SortDirection.ASCENDING) {

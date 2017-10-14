@@ -41,7 +41,7 @@ public class PartNumberExp extends PartExp {
 
     public Value onEvaluate() throws HtSemanticException {
         try {
-            return ExecutionContext.getContext().get(evaluateAsSpecifier()).getValue();
+            return ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
         } catch (Exception e) {
             throw new HtSemanticException("Can't get that part.");
         }

@@ -46,7 +46,7 @@ public class FunctionExecutionTask implements Callable<Value> {
                 String theParam = function.parameters.list.get(index);
                 Value theArg = evaluatedArguments.get(index);
 
-                ExecutionContext.getContext().set(theParam, theArg);
+                ExecutionContext.getContext().setVariable(theParam, theArg);
             }
 
             try {

@@ -17,7 +17,7 @@ public class ChunkPropertiesDelegate {
 
     public static Value getProperty(String property, Chunk chunk, PartSpecifier part) throws HtException {
 
-        PartModel partModel = ExecutionContext.getContext().get(part);
+        PartModel partModel = ExecutionContext.getContext().getPart(part);
 
         if (!(partModel instanceof FieldModel)) {
             throw new HtSemanticException("Can't get that property from this part.");
@@ -40,7 +40,7 @@ public class ChunkPropertiesDelegate {
 
     public static void setProperty(String property, Value value, Chunk chunk, PartSpecifier part) throws HtException {
 
-        PartModel partModel = ExecutionContext.getContext().get(part);
+        PartModel partModel = ExecutionContext.getContext().getPart(part);
 
         if (!(partModel instanceof FieldModel)) {
             throw new HtSemanticException("Can't set that property on this part.");
