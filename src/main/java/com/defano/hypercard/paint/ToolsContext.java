@@ -183,6 +183,10 @@ public class ToolsContext {
         lineStrokeProvider.set(new BasicStroke(width));
     }
 
+    public int getLineWidth() {
+        return Math.round((int) ((BasicStroke) lineStrokeProvider.get()).getLineWidth());
+    }
+
     public void setPattern(int patternId) {
         fillPatternProvider.set(patternId);
     }

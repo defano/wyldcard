@@ -7,6 +7,7 @@ import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.patterns.BasicBrushResolver;
 import com.defano.hypercard.sound.SoundPlayer;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Value;
@@ -35,6 +36,8 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_GRID = "grid";
     public final static String PROP_POLYSIDES = "polysides";
     public final static String PROP_PATTERN = "pattern";
+    public final static String PROP_LINESIZE = "linesize";
+    public final static String PROP_BRUSH = "brush";
     public final static String PROP_TEXTFONT = "textfont";
     public final static String PROP_TEXTSIZE = "textsize";
     public final static String PROP_TEXTSTYLE = "textstyle";
@@ -71,6 +74,12 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedSetterProperty(PROP_TEXTSIZE, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontSize(value.integerValue()));
         defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontSizeProvider().get()));
+
+        defineComputedGetterProperty(PROP_BRUSH, (model, propertyName) -> BasicBrushResolver.valueOfBasicBrush(ToolsContext.getInstance().getSelectedBrushProvider().get()));
+        defineComputedSetterProperty(PROP_BRUSH, (model, propertyName, value) -> ToolsContext.getInstance().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));
+
+        defineComputedSetterProperty(PROP_LINESIZE, (model, propertyName, value) -> ToolsContext.getInstance().setLineWidth(value.integerValue()));
+        defineComputedGetterProperty(PROP_LINESIZE, (model, propertyName) -> new Value(ToolsContext.getInstance().getLineWidth()));
 
         defineComputedSetterProperty(PROP_FILLED, (model, propertyName, value) -> ToolsContext.getInstance().getShapesFilledProvider().set(value.booleanValue()));
         defineComputedGetterProperty(PROP_FILLED, (model, propertyName) -> new Value(ToolsContext.getInstance().isShapesFilled()));
