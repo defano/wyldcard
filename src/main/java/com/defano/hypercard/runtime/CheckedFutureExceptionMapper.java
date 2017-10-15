@@ -1,5 +1,6 @@
 package com.defano.hypercard.runtime;
 
+import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 import com.google.common.base.Function;
 
@@ -21,7 +22,10 @@ public class CheckedFutureExceptionMapper implements Function<Exception, HtExcep
             return (HtException) input;
         } else if (input.getCause() instanceof HtException) {
             return (HtException) input.getCause();
-        } else {
+        } else if (input.getCause() instanceof ExitToHyperCardException) {
+            throw new ExitToHyperCardException();
+        }
+        else {
             return new HtException("An unexpected error occurred while executing the script: " + input.getMessage());
         }
     }

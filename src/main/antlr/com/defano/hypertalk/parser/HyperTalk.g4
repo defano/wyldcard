@@ -109,6 +109,7 @@ commandStmnt        : answerCmd                                                 
                     | 'exit' 'repeat'                                                                                   # exitRepeatCmdStmt
                     | 'next' 'repeat'                                                                                   # nextRepeatCmdStmt
                     | 'exit' blockName                                                                                  # exitCmdStmt
+                    | 'exit' 'to' 'hypercard'                                                                           # exitToHyperCardCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
                     ;

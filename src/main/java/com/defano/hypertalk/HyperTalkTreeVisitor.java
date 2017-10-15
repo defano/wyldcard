@@ -868,6 +868,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitExitToHyperCardCmdStmt(HyperTalkParser.ExitToHyperCardCmdStmtContext ctx) {
+        return new ExitToHyperCardStatement(ctx);
+    }
+
+    @Override
     public Object visitNoArgMsgCmdStmt(HyperTalkParser.NoArgMsgCmdStmtContext ctx) {
         return new MessageCmd(ctx, (String) visit(ctx.ID()), new ExpressionList());
     }

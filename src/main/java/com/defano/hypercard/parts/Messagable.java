@@ -95,6 +95,7 @@ public interface Messagable {
                         nextRecipient.receiveMessage(command, arguments, onCompletion);
                     }
                 }
+
             } catch (HtException e) {
                 onCompletion.onMessagePassed(command, false, e);
             }
