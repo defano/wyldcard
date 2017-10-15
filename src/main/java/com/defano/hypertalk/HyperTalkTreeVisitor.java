@@ -1013,6 +1013,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitResetPaintCmdStmt(HyperTalkParser.ResetPaintCmdStmtContext ctx) {
+        return new ResetPaintCmd(ctx);
+    }
+
+    @Override
     public Object visitCreateMenuCmdStmt(HyperTalkParser.CreateMenuCmdStmtContext ctx) {
         return new CreateMenuCmd(ctx, (Expression) visit(ctx.factor()));
     }

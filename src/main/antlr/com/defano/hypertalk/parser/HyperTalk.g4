@@ -96,6 +96,7 @@ commandStmnt        : answerCmd                                                 
                     | 'domenu' factor                                                                                   # doMenuCmdStmt
                     | 'visual' visualEffect                                                                             # visualEffectCmdStmt
                     | 'reset' 'the'? 'menubar'                                                                          # resetMenuCmdStmt
+                    | 'reset' 'paint'                                                                                   # resetPaintCmdStmt
                     | 'create' 'menu' factor                                                                            # createMenuCmdStmt
                     | 'delete' menu                                                                                     # deleteMenuCmdStmt
                     | 'delete' menuItem                                                                                 # deleteMenuItemCmdStmt
