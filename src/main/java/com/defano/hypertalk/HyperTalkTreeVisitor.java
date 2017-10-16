@@ -873,6 +873,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPopCardCmdStmt(HyperTalkParser.PopCardCmdStmtContext ctx) {
+        return new PopCardCmd(ctx);
+    }
+
+    @Override
+    public Object visitPushCardCmdStmt(HyperTalkParser.PushCardCmdStmtContext ctx) {
+        return new PushCardCmd(ctx);
+    }
+
+    @Override
+    public Object visitPushDestCmdStmt(HyperTalkParser.PushDestCmdStmtContext ctx) {
+        return new PushCardCmd(ctx, (DestinationExp) visit(ctx.destination()));
+    }
+
+    @Override
     public Object visitNoArgMsgCmdStmt(HyperTalkParser.NoArgMsgCmdStmtContext ctx) {
         return new MessageCmd(ctx, (String) visit(ctx.ID()), new ExpressionList());
     }

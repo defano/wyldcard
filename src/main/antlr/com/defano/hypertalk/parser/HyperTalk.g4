@@ -111,6 +111,9 @@ commandStmnt        : answerCmd                                                 
                     | 'next' 'repeat'                                                                                   # nextRepeatCmdStmt
                     | 'exit' blockName                                                                                  # exitCmdStmt
                     | 'exit' 'to' 'hypercard'                                                                           # exitToHyperCardCmdStmt
+                    | 'pop' 'card'                                                                                      # popCardCmdStmt
+                    | 'push' 'card'                                                                                     # pushCardCmdStmt
+                    | 'push' destination                                                                                # pushDestCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
                     ;

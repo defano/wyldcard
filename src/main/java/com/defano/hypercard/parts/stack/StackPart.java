@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartContainer;
+import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
@@ -11,8 +12,11 @@ import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.SystemMessage;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jmonet.model.Provider;
@@ -73,7 +77,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         this.stackModel.addPropertyChangedObserver(this);
 
-        goCard(model.getCurrentCardIndex(), null);
+        goCard(model.getCurrentCardIndex(), null, false);
         fireOnStackOpened();
         fireOnCardDimensionChanged(model.getDimension());
 
@@ -139,14 +143,14 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * @param visualEffect The visual effect to apply to the transition
      * @return The destination card (now visible in the stack window).
      */
-    public CardPart goCard(int cardIndex, VisualEffectSpecifier visualEffect) {
+    public CardPart goCard(int cardIndex, VisualEffectSpecifier visualEffect, boolean pushToBackstack) {
         CardPart destination;
 
         if (visualEffect == null) {
-            destination = go(cardIndex);
+            destination = go(cardIndex, pushToBackstack);
         } else {
             CurtainManager.getInstance().setScreenLocked(true);
-            destination = go(cardIndex);
+            destination = go(cardIndex, pushToBackstack);
             CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
         }
 
@@ -159,7 +163,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      */
     public CardPart goNextCard(VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() + 1 < stackModel.getCardCount()) {
-            return goCard(stackModel.getCurrentCardIndex() + 1, visualEffect);
+            return goCard(stackModel.getCurrentCardIndex() + 1, visualEffect, true);
         } else {
             return null;
         }
@@ -171,7 +175,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      */
     public CardPart goPrevCard(VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() - 1 >= 0) {
-            return goCard(stackModel.getCurrentCardIndex() - 1, visualEffect);
+            return goCard(stackModel.getCurrentCardIndex() - 1, visualEffect, true);
         } else {
             return null;
         }
@@ -181,9 +185,14 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * Navigates to the last card on the backstack; has no affect if the backstack is empty.
      * @return The card now visible in the stack window, or null if no card available to pop
      */
-    public CardPart goBack(VisualEffectSpecifier visualEffect) {
+    public CardPart popCard(VisualEffectSpecifier visualEffect) {
         if (!stackModel.getBackStack().isEmpty()) {
-            return goCard(stackModel.getBackStack().pop(), visualEffect);
+            try {
+                CardModel model = (CardModel) findPart(new PartIdSpecifier(Owner.STACK, PartType.CARD, stackModel.getBackStack().pop()));
+                return goCard(getStackModel().getIndexOfCard(model), visualEffect, false);
+            } catch (PartException e) {
+                return null;
+            }
         } else {
             return null;
         }
@@ -196,7 +205,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * @return The current card
      */
     public CardPart goThisCard(VisualEffectSpecifier visualEffectSpecifier) {
-        return goCard(stackModel.getCurrentCardIndex(), visualEffectSpecifier);
+        return goCard(stackModel.getCurrentCardIndex(), visualEffectSpecifier, false);
     }
 
     /**
@@ -204,7 +213,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * @return The first card in the stack
      */
     public CardPart goFirstCard(VisualEffectSpecifier visualEffect) {
-        return goCard(0, visualEffect);
+        return goCard(0, visualEffect, true);
     }
 
     /**
@@ -212,7 +221,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
      * @return The last card in the stack
      */
     public CardPart goLastCard(VisualEffectSpecifier visualEffect) {
-        return goCard(stackModel.getCardCount() - 1, visualEffect);
+        return goCard(stackModel.getCardCount() - 1, visualEffect, true);
     }
 
     /**
@@ -438,13 +447,13 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
         }
     }
 
-    private CardPart go(int cardIndex) {
+    private CardPart go(int cardIndex, boolean pushToBackstack) {
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
             return getDisplayedCard();
         }
 
-        deactivateCard(true);
+        deactivateCard(pushToBackstack);
         return activateCard(cardIndex);
     }
 
@@ -458,7 +467,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
         // When requested, push the current card onto the backstack
         if (addToBackstack) {
-            stackModel.getBackStack().push(stackModel.getCurrentCardIndex());
+            stackModel.getBackStack().push(getDisplayedCard().getId());
         }
 
         // Notify observers that current card is going away

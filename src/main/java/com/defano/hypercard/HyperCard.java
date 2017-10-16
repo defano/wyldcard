@@ -86,7 +86,7 @@ public class HyperCard {
 
     public void openStack(StackModel model) {
         stackPart.open(model);
-        stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex(), null);
+        stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex(), null, false);
     }
 
 

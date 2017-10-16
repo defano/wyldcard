@@ -37,7 +37,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'Go back'
         if (destinationExp == null) {
-            HyperCard.getInstance().getStack().goBack(visualEffect);
+            HyperCard.getInstance().getStack().popCard(visualEffect);
         }
 
         else {
@@ -54,7 +54,7 @@ public class GoCmd extends Command {
                     throw new IllegalStateException("Bug! Expected to find a card but got: " + model);
                 }
 
-                HyperCard.getInstance().getStack().goCard(destinationIndex, visualEffect);
+                HyperCard.getInstance().getStack().goCard(destinationIndex, visualEffect, true);
             } catch (PartException e) {
                 // Nothing to do; going to a non-existent card or bkgnd has no effect
             }

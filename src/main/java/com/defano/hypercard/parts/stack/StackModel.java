@@ -5,6 +5,7 @@ import com.defano.hypercard.icons.UserIcon;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.util.LimitedDepthStack;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.*;
@@ -18,12 +19,14 @@ import java.util.stream.Collectors;
 
 public class StackModel extends PartModel {
 
+    private static final int BACKSTACK_DEPTH = 20;
+
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
     private int nextCardId = 0;
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
-    private Stack<Integer> backStack = new Stack<>();
+    private LimitedDepthStack<Integer> backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
     private List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
     private final Map<String, byte[]> userIcons;
@@ -34,7 +37,7 @@ public class StackModel extends PartModel {
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
-        this.backStack = new Stack<>();
+        this.backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
@@ -159,7 +162,7 @@ public class StackModel extends PartModel {
         return backgroundModels.get(backgroundId);
     }
 
-    public Stack<Integer> getBackStack() {
+    public LimitedDepthStack<Integer> getBackStack() {
         return backStack;
     }
 

@@ -12,7 +12,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> HyperCard.getInstance().getStack().goBack(null))
+                .withAction(e -> HyperCard.getInstance().getStack().popCard(null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
