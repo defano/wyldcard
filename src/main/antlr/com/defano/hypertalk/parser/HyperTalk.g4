@@ -17,7 +17,7 @@ handler             : 'on' blockName NEWLINE statementList 'end' blockName      
                     ;
 
 blockName           : ID
-                    // Need a special rules here to handle command names because they're also lexed keywords
+                    // Need a special rules here to handle command names because they're also lexed tokens
                     | 'answer' | 'ask' | 'put' | 'get' | 'set' | 'send' | 'wait' | 'sort' | 'go' | 'enable' | 'disable'
                     | 'read' | 'write' | 'hide' | 'show' | 'add' | 'subtract' | 'multiply' | 'divide' | 'choose'
                     | 'click' | 'drag' | 'type' | 'lock' | 'unlock' | 'pass' | 'domenu' | 'visual' | 'reset' | 'create'
@@ -81,8 +81,8 @@ commandStmnt        : answerCmd                                                 
                     | 'subtract' expression 'from' container                                                            # subtractCmdStmnt
                     | 'multiply' container 'by' expression                                                              # multiplyCmdStmnt
                     | 'divide' container 'by' expression                                                                # divideCmdStmnt
-                    | 'choose' expression 'tool'                                                                        # chooseToolCmdStmt
-                    | 'choose' 'tool' expression                                                                        # chooseToolNumberCmdStmt
+                    | 'choose' toolExpression 'tool'                                                                    # chooseToolCmdStmt
+                    | 'choose' 'tool' toolExpression                                                                    # chooseToolNumberCmdStmt
                     | 'click' 'at' expression                                                                           # clickCmdStmt
                     | 'click' 'at' expression 'with' expressionList                                                     # clickWithKeyCmdStmt
                     | 'drag' 'from' expression 'to' expression                                                          # dragCmdStmt
@@ -197,6 +197,13 @@ sortCmd             : 'sort' sortChunkType container sortDirection sortStyle    
                     | 'sort' bkgndPart sortDirection sortStyle 'by' expression                                          # sortBkgndCardsCmd
                     | 'sort' 'the'? 'cards' 'of' bkgndPart sortDirection sortStyle 'by' expression                      # sortBkgndCardsCmd
                     | 'sort' 'the'? 'marked' 'cards' 'of' bkgndPart sortDirection sortStyle 'by' expression             # sortMarkedBkgndCardsCmd
+                    ;
+
+toolExpression      : ('text' | 'select' | 'field' | 'button')                                                          # keywordToolExpr
+                    | ('reg' | 'regular') ('poly' | 'polygon')                                                          # keywordToolExpr
+                    | 'round'? ('rect' | 'rectangle')                                                                   # keywordToolExpr
+                    | 'spray' 'can'?                                                                                    # keywordToolExpr
+                    | expression                                                                                        # toolExpr
                     ;
 
 convertible         : conversionFormat                                                                                  # singleFormatConvertible

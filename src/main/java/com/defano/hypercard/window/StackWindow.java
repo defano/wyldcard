@@ -18,8 +18,8 @@ import java.awt.image.BufferedImage;
 
 public class StackWindow extends HyperCardFrame implements StackObserver, CurtainObserver {
 
-    private final int CARD_LAYER = 0;
-    private final int CURTAIN_LAYER = 1;
+    private final static int CARD_LAYER = 0;
+    private final static int CURTAIN_LAYER = 1;
 
     private StackPart stack;
     private CardPart card;
@@ -55,7 +55,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         this.card = card;
 
         // Listen for image files that are dropped onto the card
-        new FileDrop(card, files -> ArtVandelay.importPaint(files));
+        new FileDrop(card, ArtVandelay::importPaint);
 
         for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
             cardPanel.remove(c);

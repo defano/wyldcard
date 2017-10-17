@@ -124,8 +124,11 @@ public enum ToolType {
 
     public static ToolType byName(String toolName) throws HtSemanticException {
         for (ToolType thisTool : ToolType.values()) {
-            if (thisTool.toolNames.contains(toolName.toLowerCase())) {
-                return thisTool;
+            for (String thisToolName : thisTool.toolNames) {
+                // Discard whitespace when searching for tool by name
+                if (thisToolName.replaceAll("\\s","").equalsIgnoreCase(toolName.replaceAll("\\s",""))) {
+                    return thisTool;
+                }
             }
         }
 

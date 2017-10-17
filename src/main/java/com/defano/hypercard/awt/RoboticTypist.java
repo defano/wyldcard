@@ -130,6 +130,12 @@ public class RoboticTypist {
                 robot.keyPress(KeyEvent.VK_HOME);
                 robot.keyRelease(KeyEvent.VK_HOME);
             }
+
+            try {
+                robot.waitForIdle();
+            } catch (IllegalThreadStateException e) {
+                // Nothing to do; thrown if executing on dispatch thread
+            }
         }
     }
 

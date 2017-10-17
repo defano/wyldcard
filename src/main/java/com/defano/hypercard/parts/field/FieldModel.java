@@ -1,11 +1,3 @@
-/*
- * FieldModel
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:10 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
@@ -30,7 +22,7 @@ import java.util.Map;
 
 /**
  * A data model representing a field part on a card. See {@link FieldPart} for the associated
- * view object. This model is a mess. Just go with it:
+ * controller object. This model is a mess. Just go with it:
  * <p>
  * First: HyperCard mixes rich text (as edited by the user in the view) with plaintext (as written or read via script).
  * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can

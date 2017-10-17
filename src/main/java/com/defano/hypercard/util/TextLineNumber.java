@@ -33,7 +33,7 @@ public class TextLineNumber extends JPanel
     public final static float CENTER = 0.5f;
     public final static float RIGHT = 1.0f;
 
-    private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
+    private final static Border OUTER = new MatteBorder(0, 0, 0, 1, Color.GRAY);
 
     private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
 
@@ -178,7 +178,6 @@ public class TextLineNumber extends JPanel
      *  <li>TextLineNumber.CENTER
      *  <li>TextLineNumber.RIGHT (default)
      *	</ul>
-     *  @param currentLineForeground  the Color used to render the current line
      */
     public void setDigitAlignment(float digitAlignment)
     {
@@ -260,9 +259,9 @@ public class TextLineNumber extends JPanel
             try
             {
                 if (isCurrentLine(rowStartOffset))
-                    g.setColor( getCurrentLineForeground() );
+                    g.setColor(Color.BLACK);
                 else
-                    g.setColor( getForeground() );
+                    g.setColor(Color.GRAY);
 
                 //  Get the line number as a string and then determine the
                 //  "X" and "Y" offsets for drawing the string.

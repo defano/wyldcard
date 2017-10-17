@@ -17,7 +17,7 @@ public class WindowManager {
     private final static BrushesPalette brushesPalette = new BrushesPalette();
     private final static ColorPalette colorPalette = new ColorPalette();
 
-    private final static Provider<String> lookAndFeelClassProvider = new Provider();
+    private final static Provider<String> lookAndFeelClassProvider = new Provider<>();
 
     public static void start() {
         lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
