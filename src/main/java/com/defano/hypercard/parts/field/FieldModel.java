@@ -51,6 +51,7 @@ public class FieldModel extends CardLayerPartModel {
     public static final String PROP_STYLE = "style";
     public static final String PROP_SHAREDTEXT = "sharedtext";
     public static final String PROP_WIDEMARGINS = "widemargins";
+    public static final String PROP_AUTOTAB = "autotab";
 
     private byte[] sharedRtf;
     private Map<Integer, byte[]> unsharedRtf = new HashMap<>();
@@ -83,6 +84,7 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_CONTENTS, new Value(""), false);
         partModel.defineProperty(PROP_SHAREDTEXT, new Value(false), false);
         partModel.defineProperty(PROP_WIDEMARGINS, new Value(false), false);
+        partModel.defineProperty(PROP_AUTOTAB, new Value(false), false);
 
         partModel.initialize();
 

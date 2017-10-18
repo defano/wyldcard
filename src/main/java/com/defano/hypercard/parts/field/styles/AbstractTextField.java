@@ -1,5 +1,6 @@
 package com.defano.hypercard.parts.field.styles;
 
+import com.defano.hypercard.awt.KeyListenable;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
@@ -21,6 +22,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -38,6 +40,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final FontSizeObserver fontSizeObserver = new FontSizeObserver();
     private final FontStyleObserver fontStyleObserver = new FontStyleObserver();
     private final FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
+    private final AutoTabKeyObserver autoTabKeyObserver = new AutoTabKeyObserver();
 
     private final ToolEditablePart toolEditablePart;
 
@@ -152,6 +155,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         // Add mouse and keyboard listeners
         textPane.addMouseListener(toolEditablePart);
         textPane.addCaretListener(this);
+        textPane.addKeyListener(autoTabKeyObserver);
 
         // Finally, update view with model data
         displayStyledDocument(((FieldModel) toolEditablePart.getPartModel()).getStyledDocument());
@@ -168,6 +172,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         textPane.removeMouseListener(toolEditablePart);
         textPane.removeCaretListener(this);
+        textPane.addKeyListener(autoTabKeyObserver);
 
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(null);
@@ -305,5 +310,21 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
             setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
         }
+    }
+
+    private class AutoTabKeyObserver implements KeyListenable {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_TAB &&
+                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOTAB).booleanValue())
+            {
+                e.consume();
+                KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
+            }
+        }
+
     }
 }

@@ -607,6 +607,7 @@ A field has these unique properties:
 
 Property     | Description
 -------------|----------------------
+`autoTab`    | When true, typing tab in the field causes focus to move to the next focusable UI component; when false, typing tab inserts a tab character into the field contents.
 `lockText`   | Returns or sets whether the text contained by the field can be edited by the user.
 `showLines`  | Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
 `dontWrap`   | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.

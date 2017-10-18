@@ -46,6 +46,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
     private JCheckBox sharedText;
     private JCheckBox enabled;
     private JCheckBox isWideMargins;
+    private JCheckBox autoTab;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -116,6 +117,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
             style.setSelectedItem(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue());
             enabled.setSelected(model.getKnownProperty(FieldModel.PROP_ENABLED).booleanValue());
             isWideMargins.setSelected(model.getKnownProperty(FieldModel.PROP_WIDEMARGINS).booleanValue());
+            autoTab.setSelected(model.getKnownProperty(FieldModel.PROP_AUTOTAB).booleanValue());
 
             sharedText.setEnabled(part.getOwner() == Owner.BACKGROUND);
             sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
@@ -141,6 +143,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         model.setKnownProperty(FieldModel.PROP_SHAREDTEXT, new Value(sharedText.isSelected()));
         model.setKnownProperty(FieldModel.PROP_ENABLED, new Value(enabled.isSelected()));
         model.setKnownProperty(FieldModel.PROP_WIDEMARGINS, new Value(isWideMargins.isSelected()));
+        model.setKnownProperty(FieldModel.PROP_AUTOTAB, new Value(autoTab.isSelected()));
     }
 
     private void onEnabledChanged() {
@@ -282,6 +285,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
         isWideMargins = new JCheckBox();
         isWideMargins.setText("Wide Margins");
         panel4.add(isWideMargins, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        autoTab = new JCheckBox();
+        autoTab.setText("Auto Tab");
+        panel4.add(autoTab, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
