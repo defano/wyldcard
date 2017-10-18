@@ -174,14 +174,14 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
      */
     default void bringCloser() {
-        getPart().setDisplayOrder(getZOrder() - 1);
+        getPart().setDisplayOrder(getZOrder() + 1);
     }
 
     /**
      * Adjust the z-order of this part, moving it one part further from the front of the part stack.
      */
     default void sendFurther() {
-        getPart().setDisplayOrder(getZOrder() + 1);
+        getPart().setDisplayOrder(getZOrder() - 1);
     }
 
     /**

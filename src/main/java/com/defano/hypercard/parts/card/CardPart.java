@@ -358,6 +358,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         removeSwingComponent(oldButtonComponent);
         addSwingComponent(newButtonComponent, forPart.getRect(), partLayer);
         forPart.partOpened();
+        onDisplayOrderChanged();
     }
 
     /**
@@ -367,7 +368,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     public void onDisplayOrderChanged() {
         SwingUtilities.invokeLater(() -> {
             for (PartModel thisPart : getPartsInDisplayOrder()) {
-                moveToBack(getPart(thisPart).getComponent());
+                moveToFront(getPart(thisPart).getComponent());
             }
         });
     }
