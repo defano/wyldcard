@@ -28,14 +28,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents the "virtual" view object of the stack itself. See {@link StackModel} for the data model.
+ * Represents the controller object of the stack itself. See {@link StackModel} for the data model.
  * <p>
- * This view is "virtual" because a stack has no view aside from the card that comprise it. Thus, this class does
- * not extend a Swing component and is not added to a view hierarchy.
+ * This view is "virtual" because a stack has no view aside from the card that is currently displayed in it. Thus, this
+ * class has no associated Swing component and cannot be added to a view hierarchy.
  */
 public class StackPart implements PropertyChangeObserver, PartContainer {
 
-    public final String FILE_EXTENSION = ".stack";
+    public final static String FILE_EXTENSION = ".stack";
 
     private StackModel stackModel;
     private final List<StackObserver> observers = new ArrayList<>();
@@ -503,5 +503,4 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
                 !getDisplayedCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
                 (cardCountInBackground > 1 || !getDisplayedCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
-
 }

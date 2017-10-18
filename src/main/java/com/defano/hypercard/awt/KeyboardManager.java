@@ -6,6 +6,10 @@ import java.awt.event.KeyListener;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Provides an AWT-level view of keyboard events; see {@link RoboticTypist} for a utility to produce keystroke events
+ * from a String.
+ */
 public class KeyboardManager {
 
     public static boolean isShiftDown;

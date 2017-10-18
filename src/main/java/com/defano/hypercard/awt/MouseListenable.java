@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * A mixin providing a default implementation of the {@link MouseListener} API for classes that wish to listen
+ * A mix-in providing a default implementation of the {@link MouseListener} API for classes that wish to listen
  * to mouse events but don't need all the callbacks and cannot extend from {@link java.awt.event.MouseAdapter}.
  */
 public interface MouseListenable extends MouseListener {

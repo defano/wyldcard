@@ -16,8 +16,7 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 
 /**
- * Implements a table of model associated with a partSpecifier object. Provides methods for defining, getting and
- * setting model, as well as notifying listeners of changes.
+ * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
 public class PartModel extends PropertiesModel implements Messagable {
 

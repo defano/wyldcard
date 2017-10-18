@@ -12,6 +12,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * A utility class providing import and export routines for card graphics.
+ * For the Seinfeld-impaired: http://seinfeld.wikia.com/wiki/Art_Vandelay
+ */
 public class ArtVandelay {
 
     public static void importPaint() {

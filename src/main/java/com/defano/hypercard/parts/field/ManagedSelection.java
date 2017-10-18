@@ -50,7 +50,7 @@ public interface ManagedSelection {
     }
 
     /**
-     * Gets a HyperTalk expression representing the current line selection (like 'line 1 to 3 of card field id 7', or
+     * Gets a HyperTalk expression representing the current line selection (like 'line 1 to 3 of card field id 7'), or
      * 'empty' if no selection exists.
      *
      * @return An expression representing the current line selection

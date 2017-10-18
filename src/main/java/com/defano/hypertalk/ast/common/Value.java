@@ -70,7 +70,7 @@ public class Value implements StyledComparable<Value> {
     }
 
     public Value (Object v) {
-        this(String.valueOf(v));
+        this(v == null ? "" : String.valueOf(v));
     }
 
     public Value (long v) {
@@ -388,10 +388,9 @@ public class Value implements StyledComparable<Value> {
     
     public Value multiply (Object val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be multiplied because it is not a number.");
-        if (!v.isNumber())
+        if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be multiplied by '" + v + "'.");
+        }
 
         try {
             if (isInteger() && v.isInteger())
@@ -405,10 +404,9 @@ public class Value implements StyledComparable<Value> {
     
     public Value divide (Object val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be divided because it is not a number.");
-        if (!v.isNumber())
+        if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be divided by " + v + '.');
+        }
 
         try {
             return new Value(doubleValue() / v.doubleValue());
@@ -419,10 +417,9 @@ public class Value implements StyledComparable<Value> {
 
     public Value add (Object val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be added because it is not a number.");
-        if (!v.isNumber())
+        if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be added to '" + v + "'.");
+        }
 
         try {
             if (isInteger() && v.isInteger())
@@ -436,10 +433,9 @@ public class Value implements StyledComparable<Value> {
     
     public Value subtract (Object val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be subtracted because it is not a number.");
-        if (!v.isNumber())
+        if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be subtracted by '" + v + "'.");
+        }
 
         try {
             if (isInteger() && v.isInteger())
@@ -453,21 +449,19 @@ public class Value implements StyledComparable<Value> {
     
     public Value exponentiate (Object val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be raised to a power because it is not a number.");
-        if (!v.isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be raised to '" + v + "' because it is not a number.");
+        if (!isNumber() || !v.isNumber()) {
+            throw new HtSemanticException("The value '" + value + "' cannot be raised to the power of '" + v + "'.");
+        }
 
         return new Value(Math.pow(doubleValue(), v.doubleValue()));
     }
 
     public Value mod (Object val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isNumber())
-            throw new HtSemanticException("The value '" + value + "' cannot be divided because it is not a number.");
-        if (!v.isNumber())
+        if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be divided by '" + v + "'.");
-        
+        }
+
         if (isInteger() && v.isInteger())
             return new Value(longValue() % v.longValue());
         else
@@ -476,7 +470,7 @@ public class Value implements StyledComparable<Value> {
     
     public Value not () throws HtSemanticException {
         if (!isBoolean())
-            throw new HtSemanticException("The value '" + value + "' cannot be negated because it is not a boolean.");
+            throw new HtSemanticException("The value '" + value + "' cannot be logically negated because it is not a boolean value.");
         
         return new Value(!booleanValue());
     }
@@ -493,21 +487,19 @@ public class Value implements StyledComparable<Value> {
 
     public Value and (Value val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isBoolean())
-            throw new HtSemanticException("The value '" + value + "' cannot be and'ed because it is not boolean.");
-        if (!v.isBoolean())
-            throw new HtSemanticException("The value '" + value + "' cannot be and'ed with text value " + v + ".");
-        
+        if (!isBoolean() || !v.isBoolean()) {
+            throw new HtSemanticException("The value '" + value + "' cannot be logically combined with '" + v + "'.");
+        }
+
         return new Value(booleanValue() && v.booleanValue());
     }
     
     public Value or (Value val) throws HtSemanticException {
         Value v = new Value(val);
-        if (!isBoolean())
-            throw new HtSemanticException("The value '" + value + "' cannot be or'd because it is not boolean.");
-        if (!v.isBoolean())
-            throw new HtSemanticException("The value '" + value + "' cannot be or'd with value " + v + " because it is not boolean.");
-        
+        if (!isBoolean() || !v.isBoolean()) {
+            throw new HtSemanticException("The value '" + value + "' cannot be logically combined with '" + v + "'.");
+        }
+
         return new Value(booleanValue() || v.booleanValue());
     }
 
@@ -516,11 +508,8 @@ public class Value implements StyledComparable<Value> {
     }
 
     public Value within(Value val) throws HtSemanticException {
-        if (!isPoint()) {
-            throw new HtSemanticException("Cannot determine if '" + value + "' is within '" + val.stringValue() + "' because it is not a point value.");
-        }
-        if (!val.isRect()) {
-            throw new HtSemanticException("Cannot determine if '" + value + "' is within '" + val.stringValue() + "' because it is not a rectangle value.");
+        if (!isPoint() || !val.isRect()) {
+            throw new HtSemanticException("Cannot determine if '" + value + "' is within the bounds of '" + val.stringValue() + "'.");
         }
 
         return new Value(val.rectangleValue().contains(pointValue()));

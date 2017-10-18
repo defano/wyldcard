@@ -118,7 +118,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
         isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue());
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
-        style.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
+        style.setSelectedItem(getNormalizedStyle(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
         family.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
         autoHilite.setSelected(model.getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue());
     }
@@ -142,6 +142,10 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         if (contents != null) {
             model.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));
         }
+    }
+
+    private String getNormalizedStyle(String style) {
+        return style.substring(0, 1).toUpperCase() + style.substring(1).toLowerCase();
     }
 
     /**

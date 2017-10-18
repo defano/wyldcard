@@ -4,14 +4,14 @@ import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 /**
- * Represents a writable attribute whose value is computationally derived from one or more other attributes.
+ * Represents a writable attribute whose value is computationally derived.
  */
 public interface ComputedSetter {
 
     /**
-     * Computes and sets the value of a property, either by modifying the provided value in some way, or by
-     * converting the set operation into constituent property writes (e.g., converting a rectangle into top, left
-     * height and width coordinates).
+     * Performs whatever action is required when setting the value of a computed property. In most cases, setting a
+     * computed property results in setting one more other, non-computed properties. For example, setting a computed
+     * rectangle value might result in setting non-computed top-left and bottom-right point attributes.
      *
      * @param model        The {@link PropertiesModel} whose property is being set.
      * @param propertyName The name of the property which is to be set.

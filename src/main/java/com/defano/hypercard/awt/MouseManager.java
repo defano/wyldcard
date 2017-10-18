@@ -14,6 +14,9 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Provides an AWT-level view of mouse actions, plus routines for scripted control of the mouse.
+ */
 public class MouseManager {
 
     private static boolean mouseIsDown;

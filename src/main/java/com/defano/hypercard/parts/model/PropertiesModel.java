@@ -67,8 +67,8 @@ public class PropertiesModel {
     }
 
     /**
-     * Delegates gets/sets to a property to a property of the same name held in another model. Useful in cases where
-     * one part inherits a property from another part (i.e., the rectangle of a card is actually defined by its stack).
+     * Delegates gets/sets of a property to another model. Useful in cases where one part inherits a property from
+     * another part (i.e., the rectangle of a card is actually defined by its stack).
      *
      * @param property The name of the delegated property
      * @param delegatedProperty The delegate to which requests should be forwarded.
@@ -79,7 +79,8 @@ public class PropertiesModel {
     }
 
     /**
-     * Delegates a collection of properties to another properties model. See {@link #delegateProperty(String, DelegatedProperty)}.
+     * Delegates a collection of properties to another properties model. See
+     * {@link #delegateProperty(String, DelegatedProperty)}.
      */
     public void delegateProperties(Collection<String> properties, DelegatedProperty delegatedProperty) {
         assertContructed();
@@ -102,9 +103,13 @@ public class PropertiesModel {
     }
 
     /**
-     * Defines a new writable property with a computed setter, or, overrides the setter behavior of an existing
+     * Defines a new writable property with a computed setter, or, overrides the write behavior of an existing
      * property. When a value is set into this property, the computed setter function will be invoked to compute and
-     * write the actual value.
+     * take whatever action is required to persist the value.
+     *
+     * Note that write-only properties are disallowed. Created a computer-setter requires a corresponding
+     * call to {@link #defineComputedGetterProperty(String, ComputedGetter)} or
+     * {@link #defineProperty(String, Value, boolean)}.
      *
      * @param propertyName The name the property on which the computed setter function should apply; may be an existing
      *                     property or a new property name.
@@ -116,9 +121,12 @@ public class PropertiesModel {
     }
 
     /**
-     * Defines a new readable property with a computed getter, or, overrides the getter behavior of an existing
+     * Defines a new readable property with a computed getter, or, overrides the read behavior of an existing
      * property. When this property's value is read, the computed getter function will be invoked to retrieve the
      * actual value.
+     *
+     * Note, for computed read-only properties, use Use {@link #defineComputedReadOnlyProperty(String, ComputedGetter)}
+     * instead.
      *
      * @param propertyName The name the property on which the computed getter function should apply; may be an existing
      *                     property or a new property name.
@@ -129,12 +137,17 @@ public class PropertiesModel {
         computerGetters.put(propertyName.toLowerCase(), getter);
     }
 
-
-    public void defineComputedReadOnlyProperty(String propertName, ComputedGetter getter) {
+    /**
+     * Defines a new, read-only property whose value is computed each time the value is requested.
+     *
+     * @param propertyName The name of the new read-only property
+     * @param getter The compute function invoked to determine the property's value
+     */
+    public void defineComputedReadOnlyProperty(String propertyName, ComputedGetter getter) {
         assertContructed();
-        computerGetters.put(propertName.toLowerCase(), getter);
-        computerSetters.put(propertName.toLowerCase(), (model, propertyName, value) -> {
-            throw new PropertyPermissionException("Cannot set the property " + propertyName + " because it is immutable.");
+        computerGetters.put(propertyName.toLowerCase(), getter);
+        computerSetters.put(propertyName.toLowerCase(), (model, property, value) -> {
+            throw new PropertyPermissionException("Cannot set the property " + property + " because it is immutable.");
         });
     }
 
@@ -194,7 +207,10 @@ public class PropertiesModel {
     }
 
     /**
-     * Sets the value of a known property; has no effect if property does not actually exist.
+     * Sets the value of a known property; has no effect if property does not actually exist. This method exists for
+     * programmatic modifications of properties; HyperTalk modification of properties should use
+     * {@link #setProperty(String, Value)} which produces an exception if a script attempts to write a non-existent
+     * property.
      *
      * @param property The name of the property to set (or one of its aliases)
      * @param value The value to set
@@ -204,6 +220,16 @@ public class PropertiesModel {
         setKnownProperty(property, value, false);
     }
 
+    /**
+     * Sets the value of a known property; has no effect if property does not actually exist. This method exists for
+     * programmatic modifications of properties; HyperTalk modification of properties should use
+     * {@link #setProperty(String, Value)} which produces an exception if a script attempts to write a non-existent
+     * property.
+     *
+     * @param property The name of the property to set (or one of its aliases)
+     * @param value The value to set
+     * @param quietly When true, observers of this model will not be notified of the change.
+     */
     public void setKnownProperty(String property, Value value, boolean quietly) {
         assertContructed();
 
@@ -304,18 +330,12 @@ public class PropertiesModel {
         changeObservers.add(listener);
     }
 
-    public void addAndNotifyPropertyChangeObserver(PropertyChangeObserver listener) {
-        assertContructed();
-        changeObservers.add(listener);
-        notifyPropertyChangedObserver(listener);
-    }
-
     /**
      * Invokes the {@link PropertyChangeObserver#onPropertyChanged(String, Value, Value)} method for all properties on
      * the provided observer. Useful for listeners that wish to initialize themselves with the current state of the
-     * mode.
+     * model.
      *
-     * @param listener This listener to be notified.
+     * @param listener This listener to be notified; does not have to be an active listener of this model.
      */
     public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
         assertContructed();

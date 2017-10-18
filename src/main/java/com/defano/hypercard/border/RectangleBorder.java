@@ -1,30 +1,18 @@
 package com.defano.hypercard.border;
 
+import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
-public class RectangleBorder implements Border {
-
-    private final int outlineStroke;
+/**
+ * Draws a configurable-width rectangular boarder on Swing components.
+ */
+public class RectangleBorder extends LineBorder {
 
     public RectangleBorder(int outlineStroke) {
-        this.outlineStroke = outlineStroke;
+        super(Color.BLACK, outlineStroke);
     }
 
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        g.setColor(c.isEnabled() ? Color.BLACK : Color.GRAY);
-        ((Graphics2D)g).setStroke(new BasicStroke(outlineStroke));
-        g.drawRect(outlineStroke / 2, outlineStroke / 2, width - outlineStroke / 2, height - outlineStroke / 2);
-    }
-
-    @Override
-    public Insets getBorderInsets(Component c) {
-        return new Insets(outlineStroke, outlineStroke, outlineStroke, outlineStroke);
-    }
-
-    @Override
-    public boolean isBorderOpaque() {
-        return false;
-    }
 }

@@ -5,6 +5,9 @@ import com.defano.hypertalk.ast.common.Value;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * An enumeration of HyperCard mouse cursors.
+ */
 public enum HyperCardCursor {
     I_BEAM("ibeam", Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR)),
     CROSS("cross", Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR)),

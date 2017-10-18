@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 /**
- * A data model representing a field part on a card. See {@link FieldPart} for the associated
- * controller object. This model is a mess. Just go with it:
+ * A data model representing a field part on a card. See {@link FieldPart} for the associated controller object. This
+ * model is a mess. Just go with it:
  * <p>
  * First: HyperCard mixes rich text (as edited by the user in the view) with plaintext (as written or read via script).
  * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can
@@ -320,7 +320,7 @@ public class FieldModel extends CardLayerPartModel {
      * multiple fonts
      */
     public Value getTextFontFamily(int startPosition, int length) {
-        for (int index = startPosition; index <= startPosition + length; index++) {
+        for (int index = startPosition; index < startPosition + length - 1; index++) {
             if (!getTextFontFamily(index).equals(getTextFontFamily(index + 1))) {
                 return new Value("mixed");
             }
@@ -342,7 +342,7 @@ public class FieldModel extends CardLayerPartModel {
      * sizes.
      */
     public Value getTextFontSize(int startPosition, int length) {
-        for (int index = startPosition; index <= startPosition + length; index++) {
+        for (int index = startPosition; index < startPosition + length - 1; index++) {
             if (!getTextFontSize(index).equals(getTextFontSize(index + 1))) {
                 return new Value("mixed");
             }
@@ -363,7 +363,7 @@ public class FieldModel extends CardLayerPartModel {
      * @return              The font style present in the range of characters or 'mixed' if there are multiple styles
      */
     public Value getTextFontStyle(int startPosition, int length) {
-        for (int index = startPosition; index <= startPosition + length; index++) {
+        for (int index = startPosition; index < startPosition + length - 1; index++) {
             if (!getTextFontStyle(index).equals(getTextFontStyle(index + 1))) {
                 return new Value("mixed");
             }

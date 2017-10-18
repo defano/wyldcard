@@ -313,11 +313,17 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
         partModel.addPropertyChangedObserver(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setPendingRedispatch(boolean redispatchInProcess) {
         this.redispatchInProgress.set(redispatchInProcess);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void dispatchEvent(AWTEvent event) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> getTextPane().dispatchEvent(event));
@@ -339,6 +345,9 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
         return getCardLayer().friendlyName.toLowerCase() + " field id " + getPartModel().getId();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PartSpecifier getPartSpecifier() {
         return new PartIdSpecifier(getCardLayer().asOwner(), PartType.FIELD, getId());

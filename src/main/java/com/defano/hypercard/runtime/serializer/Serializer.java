@@ -14,6 +14,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
 
+/**
+ * A utility for serializing/de-serializing HyperTalk Java objects.
+ */
 public class Serializer {
 
     private final static Gson gson = new GsonBuilder()
@@ -122,7 +125,7 @@ public class Serializer {
      * Used to serialize/deserialize a Value object as a primitive. Replaces JSON like "visible":{"value":"true"} with
      * "visible":true.
      */
-    public static class ValueSerializer implements JsonSerializer<Value>, JsonDeserializer<Value> {
+    private static class ValueSerializer implements JsonSerializer<Value>, JsonDeserializer<Value> {
         @Override
         public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             return new Value(json.getAsString());

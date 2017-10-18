@@ -2,8 +2,15 @@ package com.defano.hypercard.awt;
 
 import java.awt.event.*;
 
+/**
+ * A utility mix-in for objects wishing to notified of double-click MouseEvents.
+ */
 public interface DoubleClickListenable extends MouseListenable {
 
+    /**
+     * Called to indicate that the mouse was double-clicked.
+     * @param e The corresponding MouseEvent.
+     */
     void onDoubleClick(MouseEvent e);
 
     @Override

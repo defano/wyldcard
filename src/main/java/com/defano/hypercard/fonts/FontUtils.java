@@ -53,17 +53,4 @@ public class FontUtils {
 
         return style;
     }
-
-    public static Value getValueForStyle(int fontStyle) {
-        if (fontStyle == Font.ITALIC) {
-            return new Value("italic");
-        } else if (fontStyle == Font.BOLD) {
-            return new Value("bold");
-        } else if (fontStyle == (Font.BOLD | Font.ITALIC)) {
-            return new Value("bold, italic");
-        }
-
-        return new Value("plain");
-    }
-
 }
