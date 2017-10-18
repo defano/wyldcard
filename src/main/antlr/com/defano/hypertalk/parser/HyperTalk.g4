@@ -111,8 +111,8 @@ commandStmnt        : answerCmd                                                 
                     | 'next' 'repeat'                                                                                   # nextRepeatCmdStmt
                     | 'exit' blockName                                                                                  # exitCmdStmt
                     | 'exit' 'to' 'hypercard'                                                                           # exitToHyperCardCmdStmt
-                    | 'pop' 'card'                                                                                      # popCardCmdStmt
-                    | 'push' 'card'                                                                                     # pushCardCmdStmt
+                    | 'pop' ('card' | 'cd')                                                                             # popCardCmdStmt
+                    | 'push' ('card' | 'cd')                                                                            # pushCardCmdStmt
                     | 'push' destination                                                                                # pushDestCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
@@ -396,6 +396,7 @@ menuItem            : 'menuitem' factor ('of' | 'from') menu                    
                     ;
 
 propertyValue       : 'plain'                                                                                           # propertyValueLiteral
+                    | 'menu'                                                                                            # propertyValueLiteral
                     | expression                                                                                        # propertyValueExp
                     ;
 
