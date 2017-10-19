@@ -2,24 +2,28 @@ package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.View;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An extension to {@link JTextPane} that adds the ability to disable auto-wrapping of text, to draw dotted lines
- * underneath each line of text, and to position the cursor beyond the bounds of the field contents.
+ * underneath each line of text, to position the cursor beyond the bounds of the field contents, and to support
+ * "auto-selection" features.
  */
 public class HyperCardTextPane extends JTextPane {
 
     private boolean wrapText = true;
     private boolean showLines = false;
+    private Set<Integer> autoSelection = new HashSet<>();
 
     HyperCardTextPane(StyledDocument doc) {
         super(doc);
@@ -48,6 +52,43 @@ public class HyperCardTextPane extends JTextPane {
             return parent == null || (ui.getPreferredSize(this).width <= parent.getSize().width);
         }
     }
+
+    @Override
+    public String getText() {
+        try {
+            return getStyledDocument().getText(0, getStyledDocument().getLength());
+        } catch (BadLocationException e) {
+            return "";
+        }
+    }
+
+    @Override
+    public String getSelectedText() {
+        if (isAutoSelection()) {
+            return getText().substring(getAutoSelectionRange().start, getAutoSelectionRange().end);
+        } else {
+            return super.getSelectedText();
+        }
+    }
+
+    @Override
+    public int getSelectionStart() {
+        if (isAutoSelection()) {
+            return getAutoSelectionRange().start;
+        } else {
+            return super.getSelectionStart();
+        }
+    }
+
+    @Override
+    public int getSelectionEnd() {
+        if (isAutoSelection()) {
+            return getAutoSelectionRange().end;
+        } else {
+            return super.getSelectionEnd();
+        }
+    }
+
 
     public boolean isWrapText() {
         return wrapText;
@@ -181,7 +222,7 @@ public class HyperCardTextPane extends JTextPane {
      * @param clickLoc A point within the bounds of this component
      * @return The line number where the give point is located
      */
-    private int getClickedLine(Point clickLoc) {
+    public int getClickedLine(Point clickLoc) {
         float cumulativeLineHeight = 0;
         float thisLineHeight = 0;
 
@@ -196,4 +237,63 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    private Range getLineRange(int line) {
+        try {
+            Element root = getDocument().getDefaultRootElement();
+            int start = root.getElement(line - 1).getStartOffset();
+            int end = Utilities.getRowEnd(this, start);
+
+            return new Range(start, end);
+        } catch (Exception e) {
+            return new Range();
+        }
+    }
+
+    private Range getAutoSelectionRange() {
+        if (isAutoSelection()) {
+            return getLineRange((Integer) autoSelection.toArray()[0]);
+        } else {
+            return new Range();
+        }
+    }
+
+    public void autoSelectLines(Set<Integer> selectedLines) {
+        this.autoSelection = selectedLines;
+        removeAutoSelections();
+
+        for (int thisLine : selectedLines) {
+            autoSelectLine(thisLine);
+        }
+    }
+
+    private void autoSelectLine(int selectedLine) {
+        Range clickRange = getLineRange(selectedLine);
+        if (!clickRange.isEmpty()) {
+            autoSelect(getLineRange(selectedLine));
+        }
+    }
+
+    private void autoSelect(Range range) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            SimpleAttributeSet sas = new SimpleAttributeSet();
+            sas.addAttribute(StyleConstants.Background, Color.BLACK);
+            sas.addAttribute(StyleConstants.Foreground, Color.WHITE);
+
+            getStyledDocument().setCharacterAttributes(range.start, range.length(), sas, false);
+        });
+    }
+
+    protected void removeAutoSelections() {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            SimpleAttributeSet sas = new SimpleAttributeSet();
+            sas.addAttribute(StyleConstants.Background, new Color(0xff, 0x00, 0x00, 0x00));
+            sas.addAttribute(StyleConstants.Foreground, Color.BLACK);
+
+            getStyledDocument().setCharacterAttributes(0, getStyledDocument().getLength(), sas, false);
+        });
+    }
+
+    private boolean isAutoSelection() {
+        return autoSelection.size() > 0;
+    }
 }

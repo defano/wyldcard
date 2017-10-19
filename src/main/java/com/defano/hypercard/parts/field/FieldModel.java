@@ -16,9 +16,7 @@ import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A data model representing a field part on a card. See {@link FieldPart} for the associated controller object. This
@@ -52,9 +50,11 @@ public class FieldModel extends CardLayerPartModel {
     public static final String PROP_SHAREDTEXT = "sharedtext";
     public static final String PROP_WIDEMARGINS = "widemargins";
     public static final String PROP_AUTOTAB = "autotab";
+    public static final String PROP_AUTOSELECT = "autoselect";
 
     private byte[] sharedRtf;
     private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
+    private Set<Integer> selectedLines = new HashSet<>();
 
     private transient int currentCardId = 0;
     private transient FieldDocumentObserver observer;
@@ -85,6 +85,7 @@ public class FieldModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_SHAREDTEXT, new Value(false), false);
         partModel.defineProperty(PROP_WIDEMARGINS, new Value(false), false);
         partModel.defineProperty(PROP_AUTOTAB, new Value(false), false);
+        partModel.defineProperty(PROP_AUTOSELECT, new Value(true), false);
 
         partModel.initialize();
 
@@ -233,7 +234,7 @@ public class FieldModel extends CardLayerPartModel {
         }
 
         setStyledDocument(document);        // Save our changes
-        fireDocumentObserver(document);     // ... and let the view know know about 'em
+        fireDocumentChangeObserver(document);     // ... and let the view know know about 'em
     }
 
     /**
@@ -277,7 +278,7 @@ public class FieldModel extends CardLayerPartModel {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
         StyledDocument doc = getStyledDocument();
         doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
-        fireDocumentObserver(doc);
+        fireDocumentChangeObserver(doc);
     }
 
     /**
@@ -291,7 +292,7 @@ public class FieldModel extends CardLayerPartModel {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontSize(fontSize.integerValue());
         StyledDocument doc = getStyledDocument();
         doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
-        fireDocumentObserver(doc);
+        fireDocumentChangeObserver(doc);
     }
 
     /**
@@ -309,7 +310,7 @@ public class FieldModel extends CardLayerPartModel {
             tss.setFontStyle(fontStyle);
             doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
         }
-        fireDocumentObserver(doc);
+        fireDocumentChangeObserver(doc);
     }
 
     /**
@@ -378,6 +379,17 @@ public class FieldModel extends CardLayerPartModel {
         return tss.getHyperTalkStyle();
     }
 
+    public void autoSelectLine(int lineNumber) {
+        selectedLines.clear();
+        selectedLines.add(lineNumber);
+
+        fireAutoSelectChangeObserver(selectedLines);
+    }
+
+    public Set<Integer> getAutoSelectedLines() {
+        return selectedLines;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -413,7 +425,13 @@ public class FieldModel extends CardLayerPartModel {
         }
     }
 
-    private void fireDocumentObserver(StyledDocument document) {
+    private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
+        if (observer != null) {
+            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onAutoSelectedLinesChanged(selectedLines));
+        }
+    }
+
+    private void fireDocumentChangeObserver(StyledDocument document) {
         if (observer != null) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onStyledDocumentChanged(document));
         }

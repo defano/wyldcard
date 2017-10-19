@@ -7,6 +7,10 @@ import com.defano.hypertalk.ast.expressions.LiteralExp;
 public class Range {
     public final int start, end;
 
+    public Range() {
+        this(0, 0);
+    }
+
     public Range(int start, int end) {
         this.start = start < end ? start : end;
         this.end = start < end ? end : start;
