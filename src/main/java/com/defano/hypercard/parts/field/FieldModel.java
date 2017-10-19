@@ -54,7 +54,7 @@ public class FieldModel extends CardLayerPartModel {
     public static final String PROP_AUTOTAB = "autotab";
 
     private byte[] sharedRtf;
-    private Map<Integer, byte[]> unsharedRtf = new HashMap<>();
+    private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
 
     private transient int currentCardId = 0;
     private transient FieldDocumentObserver observer;

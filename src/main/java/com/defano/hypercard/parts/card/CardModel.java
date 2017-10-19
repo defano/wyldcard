@@ -30,8 +30,8 @@ public class CardModel extends PartModel {
     public final static String PROP_NAME = "name";
 
     private int backgroundId = 0;
-    private Collection<FieldModel> fields = new ArrayList<>();
-    private Collection<ButtonModel> buttons = new ArrayList<>();
+    private final Collection<FieldModel> fields = new ArrayList<>();
+    private final Collection<ButtonModel> buttons = new ArrayList<>();
     private byte[] cardImage;
 
     private CardModel (int cardId, int backgroundId) {
@@ -88,15 +88,12 @@ public class CardModel extends PartModel {
      * @param partModel The part to remove from this card.
      */
     public void removePartModel(PartModel partModel) {
-        switch (partModel.getType()) {
-            case FIELD:
-                fields.remove(partModel);
-                break;
-            case BUTTON:
-                buttons.remove(partModel);
-                break;
-            default:
-                throw new IllegalArgumentException("Bug! Can't delete this kind of part from a card: " + partModel.getType());
+        if (partModel instanceof FieldModel) {
+            fields.remove(partModel);
+        } else if (partModel instanceof ButtonModel) {
+            buttons.remove(partModel);
+        } else {
+            throw new IllegalArgumentException("Bug! Can't delete this kind of part from a card: " + partModel.getType());
         }
     }
 
@@ -107,15 +104,12 @@ public class CardModel extends PartModel {
      * @throws PartException Thrown if part type is unsupported.
      */
     public void addPartModel(PartModel partModel) throws PartException {
-        switch (partModel.getType()) {
-            case FIELD:
-                fields.add((FieldModel)partModel);
-                break;
-            case BUTTON:
-                buttons.add((ButtonModel)partModel);
-                break;
-            default:
-                throw new IllegalArgumentException("Bug! Can't add this kind of part to a card: " + partModel.getType());
+        if (partModel instanceof FieldModel) {
+            fields.add((FieldModel)partModel);
+        } else if (partModel instanceof ButtonModel) {
+            buttons.add((ButtonModel)partModel);
+        } else {
+            throw new IllegalArgumentException("Bug! Can't add this kind of part to a card: " + partModel.getType());
         }
     }
 

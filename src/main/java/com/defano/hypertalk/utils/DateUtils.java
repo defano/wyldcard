@@ -77,7 +77,9 @@ public class DateUtils {
                 case SHORT_TIME:
                     return mergeDates(new Date(), format.dateFormat.parse(text, parsePosition), ConvertibleDateFormat.SHORT_TIME);
             }
-        } catch (ParseException e) {}
+        } catch (ParseException e) {
+            return null;
+        }
 
         return null;
     }

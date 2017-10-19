@@ -304,8 +304,8 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         });
     }
 
-    public boolean isForegroundVisible() {
-        return getForegroundCanvas() == null || getForegroundCanvas().isVisible();
+    public boolean isForegroundHidden() {
+        return getForegroundCanvas() != null && !getForegroundCanvas().isVisible();
     }
 
     /**

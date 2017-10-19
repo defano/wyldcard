@@ -46,7 +46,7 @@ public interface Part {
      * @throws PropertyPermissionException Thrown when attempting to write a read-only property (like ID)
      * @throws HtSemanticException Thrown if value provided is invalid for this property
      */
-    default void setProperty(String property, Value value) throws NoSuchPropertyException, PropertyPermissionException, HtSemanticException {
+    default void setProperty(String property, Value value) throws HtSemanticException {
         getPartModel().setProperty(property, value);
     }
 

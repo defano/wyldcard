@@ -39,7 +39,7 @@ public class PartModel extends PropertiesModel implements Messagable {
     public static final String PROP_CONTENTS = "contents";
     public static final String PROP_SCRIPTTEXT = "scripttext";
 
-    private PartType type;
+    private final PartType type;
     private Owner owner;
     private transient Script script = new Script();
 

@@ -71,7 +71,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         String stackName = card.getStackModel().getStackName();
         int cardNumber = card.getCardIndexInStack() + 1;
         int cardCount = stack.getCardCountProvider().get();
-        boolean isEditingBackground = !card.isForegroundVisible();
+        boolean isEditingBackground = card.isForegroundHidden();
 
         if (isEditingBackground) {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
