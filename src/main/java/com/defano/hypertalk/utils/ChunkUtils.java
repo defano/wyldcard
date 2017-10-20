@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class ChunkUtils {
 
-    private final static Pattern CHAR_REGEX = Pattern.compile(".");
+    private final static Pattern CHAR_REGEX = Pattern.compile("[\\s\\S]");
     private final static Pattern WORD_REGEX = Pattern.compile("\\w+");
     private final static Pattern LINE_REGEX = Pattern.compile("(?m)^.*$");
 

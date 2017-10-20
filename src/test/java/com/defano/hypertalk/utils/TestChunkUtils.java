@@ -1,11 +1,3 @@
-/*
- * TestChunkUtils
- * hypertalk-java
- *
- * Created by Matt DeFano on 2/19/17 3:11 PM.
- * Copyright © 2017 Matt DeFano. All rights reserved.
- */
-
 package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.ast.common.Ordinal;
@@ -107,12 +99,25 @@ public class TestChunkUtils {
     }
 
     @Test
+    public void testPutIntoCharRange() {
+        assertEquals("xCD", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 1, 2, "x"));
+        assertEquals("AxxD", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 2, 3, "xx"));
+        assertEquals("ABxx", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 3, 4, "xx"));
+        assertEquals("xxxx", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 1, 4, "xxxx"));
+        assertEquals("One\n2\nThree", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "One\nTwo\nThree", 5, 7, "2"));
+    }
+
+    @Test
     public void testPutIntoChar() {
         // By integer
         assertEquals("xBCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", 1, 0, "x"));
         assertEquals("AxCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", 2, 0, "x"));
         assertEquals("ABxD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", 3, 0, "x"));
         assertEquals("ABCx", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", 4, 0, "x"));
+
+        // Multiline
+        assertEquals("AB\nCx", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "AB\nCD", 5, 0, "x"));
+
 
         // By position
         assertEquals("xBCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", Ordinal.FIRST.intValue(), 0, "x"));
