@@ -1,6 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.msgbox.MsgBoxModel;
 import com.defano.hypercard.runtime.Interpreter;
@@ -132,7 +133,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     }
 
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case MsgBoxModel.PROP_CONTENTS:
                 getTextComponent().setText(newValue.stringValue());

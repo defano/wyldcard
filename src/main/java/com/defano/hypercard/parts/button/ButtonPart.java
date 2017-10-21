@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.window.forms.ButtonPropertyEditor;
@@ -200,7 +201,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:
                 setStyle(ButtonStyle.fromName(newValue.stringValue()));

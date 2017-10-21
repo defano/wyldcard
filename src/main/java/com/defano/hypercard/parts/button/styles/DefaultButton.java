@@ -8,6 +8,7 @@ import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.IconAlignable;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -31,7 +32,7 @@ public class DefaultButton extends JButton implements ButtonComponent, IconAlign
     }
 
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:

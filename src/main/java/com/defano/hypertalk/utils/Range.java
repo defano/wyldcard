@@ -20,7 +20,7 @@ public class Range {
      * start and end.
      *
      * @param start The first character in the range, counting from 0, inclusive.
-     * @param end The last character in the range, counting from 0, exclusive.
+     * @param end   The last character in the range, counting from 0, exclusive.
      */
     public Range(int start, int end) {
         this.start = start < end ? start : end;
@@ -28,18 +28,14 @@ public class Range {
     }
 
     public static Range ofMarkAndDot(int dot, int mark) {
-        if (dot == mark) {
-            return new Range();
-        } else {
-            return new Range(dot, mark);
-        }
+        return new Range(dot, mark);
     }
 
     /**
      * Constructs a range from a start and inclusive end character index.
      *
      * @param start The first character in the range, counting from 0, inclusive.
-     * @param end The last character in the range, counting from 0, inclusive.
+     * @param end   The last character in the range, counting from 0, inclusive.
      * @return The Range
      */
     public static Range inclusive(int start, int end) {
@@ -51,6 +47,7 @@ public class Range {
 
     /**
      * Gets the number of characters encompassed by this range.
+     *
      * @return The length of the range.
      */
     public int length() {
@@ -59,6 +56,7 @@ public class Range {
 
     /**
      * Gets a HyperTalk character range chunk specifier identifying the characters in this range.
+     *
      * @return A HyperTalk chunk specifier.
      */
     public Chunk asChunk() {
@@ -67,6 +65,7 @@ public class Range {
 
     /**
      * Determines if this range represents an empty selection
+     *
      * @return True if the range is empty
      */
     public boolean isEmpty() {

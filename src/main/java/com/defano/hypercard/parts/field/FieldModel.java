@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.parts.model.LogicalLinkObserver;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -62,6 +63,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_WIDEMARGINS = "widemargins";
     public static final String PROP_AUTOTAB = "autotab";
     public static final String PROP_AUTOSELECT = "autoselect";
+    public static final String PROP_MULTIPLELINES = "multiplelines";
 
     private byte[] sharedRtf;
     private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
@@ -98,6 +100,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         partModel.defineProperty(PROP_WIDEMARGINS, new Value(false), false);
         partModel.defineProperty(PROP_AUTOTAB, new Value(false), false);
         partModel.defineProperty(PROP_AUTOSELECT, new Value(false), false);
+        partModel.defineProperty(PROP_MULTIPLELINES, new Value(false), false);
 
         partModel.initialize();
 
@@ -121,6 +124,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length())));
         defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length(), value));
+
+        addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
     }
 
     /**
@@ -399,13 +404,26 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      *
      * @param lineNumber The line number to auto-select
      */
-    public void autoSelectLine(int lineNumber) {
+    public void autoSelectLine(int lineNumber, boolean appendSelection) {
         if (lineNumber <= new Value(getText()).getLines().size()) {
-            autoSelection.clear();
+
+            if (!appendSelection) {
+                autoSelection.clear();
+            }
+
             autoSelection.add(lineNumber);
 
             fireAutoSelectChangeObserver(autoSelection);
         }
+    }
+
+    public void autoSelectLines(int startLine, int endLine) {
+        autoSelection.clear();
+        for (int line = startLine; line <= endLine; line++) {
+            autoSelection.add(line);
+        }
+
+        fireAutoSelectChangeObserver(autoSelection);
     }
 
     /**
@@ -430,7 +448,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     private Range getAutoSelectionRange() {
         if (isAutoSelection()) {
-            return FieldUtilities.getLineRange(getText(), (Integer) autoSelection.toArray()[0]);
+            int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
+            return FieldUtilities.getLinesRange(getText(), lines);
         } else {
             return new Range();
         }
@@ -450,7 +469,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public void setSelection(Range selection) {
         if (isAutoSelection()) {
-            autoSelectLine(FieldUtilities.getLineOfChar(selection.start, getText()));
+            autoSelectLines(FieldUtilities.getLineOfChar(selection.start, getText()), FieldUtilities.getLineOfChar(selection.end, getText()));
         } else {
             this.selection = selection;
             fireSelectionChange(selection);

@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.FontContext;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;
@@ -24,13 +25,9 @@ import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -259,7 +256,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
                 setStyle(FieldStyle.fromName(newValue.stringValue()));

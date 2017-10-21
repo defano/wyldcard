@@ -341,7 +341,7 @@ public class PropertiesModel {
         assertContructed();
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (String property : properties.keySet()) {
-                listener.onPropertyChanged(property, properties.get(property), properties.get(property));
+                listener.onPropertyChanged(this, property, properties.get(property), properties.get(property));
             }
         });
     }
@@ -364,7 +364,7 @@ public class PropertiesModel {
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (PropertyChangeObserver listener : listeners) {
-                listener.onPropertyChanged(property, oldValue, value);
+                listener.onPropertyChanged(this, property, oldValue, value);
             }
         });
     }

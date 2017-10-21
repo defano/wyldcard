@@ -240,7 +240,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Auto Hilite"/>
-              <toolTipText value="When selected the system will automatically hilite the button when the mouse is pressed over it. Deselect to control this behavior in script."/>
+              <toolTipText value="Automatically hilite this button when the user clicks on it."/>
             </properties>
           </component>
           <component id="c3985" class="javax.swing.JCheckBox" binding="isVisible">
@@ -250,7 +250,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Visible"/>
-              <toolTipText value="When selected the button will be visible on the card (note that buttons are always visible when the button tool is selected)."/>
+              <toolTipText value="Hide or show this button on the card."/>
             </properties>
           </component>
           <component id="57746" class="javax.swing.JCheckBox" binding="isShowTitle">
@@ -260,7 +260,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Show Name"/>
-              <toolTipText value="When selected the button's name will be drawn on the button."/>
+              <toolTipText value="Display the button's name inside the part."/>
             </properties>
           </component>
           <hspacer id="ec6d2">
@@ -275,7 +275,7 @@
             <properties>
               <margin top="0" left="1" bottom="0" right="1"/>
               <text value="Enabled"/>
-              <toolTipText value="When selected, button will appear enabled (not &quot;greyed out&quot;). Note that buttons continue to receive HyperTalk messages even when they're disabled."/>
+              <toolTipText value="Enable or disable (grey-out) the button."/>
             </properties>
           </component>
         </children>

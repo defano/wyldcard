@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.awt.KeyListenable;
 import com.defano.hypercard.awt.MouseListenable;
+import com.defano.hypercard.awt.MouseMotionListenable;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
@@ -11,6 +12,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.utils.Range;
@@ -54,6 +56,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         // Create the editor component
         textPane = new HyperCardTextPane(new DefaultStyledDocument());
         textPane.setEditorKit(new RTFEditorKit());
+        textPane.setTransferHandler(null);      // Disallow drag-and-drop; causes issues with auto-select
+
         this.setViewportView(textPane);
     }
 
@@ -94,7 +98,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      * {@inheritDoc}
      */
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_DONTWRAP:
                 textPane.setWrapText(!newValue.booleanValue());
@@ -162,6 +166,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.addCaretListener(this);
         textPane.addKeyListener(autoTabKeyObserver);
         textPane.addMouseListener(autoSelectObserver);
+        textPane.addMouseMotionListener(autoSelectObserver);
 
         // Update view with model data
         displayStyledDocument(model.getStyledDocument());
@@ -224,11 +229,17 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         displayStyledDocument(document);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onAutoSelectedLinesChanged(Set<Integer> selectedLines) {
         textPane.autoSelectLines(selectedLines);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onSelectionChange(Range selection) {
         textPane.requestFocus();
@@ -354,14 +365,24 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
     }
 
-    private class AutoSelectObserver implements MouseListenable {
+    private class AutoSelectObserver implements MouseListenable, MouseMotionListenable {
 
         /** {@inheritDoc} */
         @Override
         public void mousePressed(MouseEvent e) {
             if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue()) {
                 FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-                model.autoSelectLine(textPane.getClickedLine(e));
+                model.autoSelectLine(textPane.getClickedLine(e), false);
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue() &&
+                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_MULTIPLELINES).booleanValue())
+            {
+                FieldModel model = (FieldModel) toolEditablePart.getPartModel();
+                model.autoSelectLine(textPane.getClickedLine(e), true);
             }
         }
     }

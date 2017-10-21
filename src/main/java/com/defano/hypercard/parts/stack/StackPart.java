@@ -380,7 +380,7 @@ public class StackPart implements PropertyChangeObserver, PartContainer {
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case StackModel.PROP_NAME:
                 fireOnStackNameChanged(newValue.stringValue());

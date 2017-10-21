@@ -48,6 +48,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
     private JCheckBox isWideMargins;
     private JCheckBox autoTab;
     private JCheckBox autoSelect;
+    private JCheckBox multipleLines;
 
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
@@ -74,6 +75,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         style.setModel(model);
 
         enabled.addActionListener(e -> onEnabledChanged());
+        autoSelect.addActionListener(e -> onAutoSelectChanged());
     }
 
     @Override
@@ -120,9 +122,11 @@ public class FieldPropertyEditor extends HyperCardDialog {
             isWideMargins.setSelected(model.getKnownProperty(FieldModel.PROP_WIDEMARGINS).booleanValue());
             autoTab.setSelected(model.getKnownProperty(FieldModel.PROP_AUTOTAB).booleanValue());
             autoSelect.setSelected(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
+            multipleLines.setSelected(model.getKnownProperty(FieldModel.PROP_MULTIPLELINES).booleanValue());
 
             sharedText.setEnabled(part.getOwner() == Owner.BACKGROUND);
             sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
+            multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
             onEnabledChanged();
 
@@ -147,6 +151,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         model.setKnownProperty(FieldModel.PROP_WIDEMARGINS, new Value(isWideMargins.isSelected()));
         model.setKnownProperty(FieldModel.PROP_AUTOTAB, new Value(autoTab.isSelected()));
         model.setKnownProperty(FieldModel.PROP_AUTOSELECT, new Value(autoSelect.isSelected()));
+        model.setKnownProperty(FieldModel.PROP_MULTIPLELINES, new Value(multipleLines.isSelected()));
     }
 
     private void onEnabledChanged() {
@@ -155,6 +160,17 @@ public class FieldPropertyEditor extends HyperCardDialog {
             isLockText.setEnabled(false);
         } else {
             isLockText.setEnabled(true);
+        }
+    }
+
+    private void onAutoSelectChanged() {
+        if (autoSelect.isSelected()) {
+            isWrapText.setSelected(true);
+            isWrapText.setEnabled(false);
+            multipleLines.setEnabled(true);
+        } else {
+            isWrapText.setEnabled(true);
+            multipleLines.setEnabled(false);
         }
     }
 
@@ -262,9 +278,11 @@ public class FieldPropertyEditor extends HyperCardDialog {
         panel4.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Look and Feel"));
         isWrapText = new JCheckBox();
         isWrapText.setText("Don't Wrap");
+        isWrapText.setToolTipText("Do not wrap long lines; scroll horizontally instead.");
         panel4.add(isWrapText, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isLockText = new JCheckBox();
         isLockText.setText("Lock Text");
+        isLockText.setToolTipText("Make the text of this field uneditable to the user.");
         panel4.add(isLockText, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         style = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
@@ -275,25 +293,36 @@ public class FieldPropertyEditor extends HyperCardDialog {
         panel4.add(label7, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isVisible = new JCheckBox();
         isVisible.setText("Visible");
+        isVisible.setToolTipText("Hide or show this field on the card.");
         panel4.add(isVisible, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         showLines = new JCheckBox();
         showLines.setText("Show Lines");
+        showLines.setToolTipText("Draw dottled rule underneath lines of text.");
         panel4.add(showLines, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         sharedText = new JCheckBox();
         sharedText.setText("Shared Text");
+        sharedText.setToolTipText("Share the text of this field across all cards in this background. (Applies only to background fields.)");
         panel4.add(sharedText, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         enabled = new JCheckBox();
         enabled.setText("Enabled");
+        enabled.setToolTipText("Enable or disable (grey-out) this field.");
         panel4.add(enabled, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         isWideMargins = new JCheckBox();
         isWideMargins.setText("Wide Margins");
+        isWideMargins.setToolTipText("Inset the text 15px from the edges of the field.");
         panel4.add(isWideMargins, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         autoTab = new JCheckBox();
         autoTab.setText("Auto Tab");
+        autoTab.setToolTipText("Transfer focus to the next part when the tab key is pressed.");
         panel4.add(autoTab, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         autoSelect = new JCheckBox();
         autoSelect.setText("Auto Select");
-        panel4.add(autoSelect, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        autoSelect.setToolTipText("Automatically select the entire line of text that was clicked; makes this a \"list field.\"");
+        panel4.add(autoSelect, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        multipleLines = new JCheckBox();
+        multipleLines.setText("Multiple Lines");
+        multipleLines.setToolTipText("Applies only to \"Auto Select\"; allows multiple lines to be selected together.");
+        panel4.add(multipleLines, new GridConstraints(5, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         editScriptButton = new JButton();
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

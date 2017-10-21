@@ -50,6 +50,18 @@ public class FieldUtilities {
         }
     }
 
+    public static Range getLinesRange(String text, int... lines) {
+        if (lines == null || lines.length == 0) {
+            return new Range();
+        }
+
+        Arrays.sort(lines);
+        int startLine = lines[0];
+        int endLine = lines[lines.length - 1];
+
+        return new Range(getLineRange(text, startLine).start, getLineRange(text, endLine).end);
+    }
+
     /**
      * Given a line number (counting from 1), returns a character range that identifies the first character position
      * and the last.
@@ -86,7 +98,7 @@ public class FieldUtilities {
      * text, returns the number of lines in the field.
      */
     public static int getLineOfChar(int charIndex, String text) {
-        return text.substring(0, charIndex + 1).split("\\n").length;
+        return text.substring(0, Math.min(text.length(), charIndex + 1)).split("\\n").length;
     }
 
 }

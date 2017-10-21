@@ -26,6 +26,7 @@ public interface AddressableSelection {
     /**
      * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
      * text is selected but the caret is moved to the given position.
+     *
      * @param start The selection start, inclusive, counting from 0.
      * @param end The selection end, exclusive, counting from 0.
      */
