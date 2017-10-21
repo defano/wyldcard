@@ -9,7 +9,7 @@ import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
-import com.defano.hypercard.parts.field.FieldDocumentObserver;
+import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.Value;
@@ -33,7 +33,7 @@ import java.util.Set;
  * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldDocumentObserver {
+public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
 
     public final static int WIDE_MARGIN_PX = 15;
     public final static int NARROW_MARGIN_PX = 0;
@@ -200,7 +200,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void caretUpdate(CaretEvent e) {
         // Update selectedText
-        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, new Value(textPane.getSelectedText()), true);
+        FieldModel fieldModel = (FieldModel) toolEditablePart.getPartModel();
+        if (fieldModel.isAutoSelection()) {
+            fieldModel.updateSelectionContext(getSelectedTextRange(), fieldModel);
+        } else {
+            fieldModel.updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel);
+        }
 
         // Update global font style selection
         Range selection = getSelectedTextRange();
@@ -224,6 +229,13 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.autoSelectLines(selectedLines);
     }
 
+    @Override
+    public void onSelectionChange(Range selection) {
+        textPane.requestFocus();
+        textPane.setSelectionStart(selection.start);
+        textPane.setSelectionEnd(selection.end);
+    }
+
     private void displayStyledDocument(StyledDocument doc) {
         if (textPane.getStyledDocument() != doc) {
             textPane.setStyledDocument(doc);
@@ -232,7 +244,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     }
 
     private Range getSelectedTextRange() {
-        return new Range(textPane.getCaret().getDot(), textPane.getCaret().getMark());
+        return Range.ofMarkAndDot(textPane.getCaret().getDot(), textPane.getCaret().getMark());
     }
 
     private void setActiveTextAlign(Value v) {
@@ -349,7 +361,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         public void mousePressed(MouseEvent e) {
             if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue()) {
                 FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-                model.autoSelectLine(textPane.getClickedLine(e.getPoint()));
+                model.autoSelectLine(textPane.getClickedLine(e));
             }
         }
     }

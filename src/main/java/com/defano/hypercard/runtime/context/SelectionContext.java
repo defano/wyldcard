@@ -1,10 +1,7 @@
 package com.defano.hypercard.runtime.context;
 
-import com.defano.hypercard.parts.field.FieldModel;
-import com.defano.hypercard.parts.field.ManagedSelection;
+import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.msgbox.MsgBoxModel;
-import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
@@ -48,13 +45,11 @@ public class SelectionContext {
         return ExecutionContext.getContext().getCurrentCard().findPart(theSelectionPart);
     }
 
-    public ManagedSelection getManagedSelection() throws HtSemanticException {
+    public AddressableSelection getManagedSelection() throws HtSemanticException {
         PartModel partModel = getSelectedPart();
 
-        if (partModel instanceof FieldModel) {
-            return  (ManagedSelection) ExecutionContext.getContext().getCurrentCard().getPart(partModel);
-        } else if (partModel instanceof MsgBoxModel) {
-            return WindowManager.getMessageWindow();
+        if (partModel instanceof AddressableSelection) {
+            return (AddressableSelection) partModel;
         } else {
             throw new IllegalStateException("Bug! Unexpected part holding selection: " + partModel);
         }

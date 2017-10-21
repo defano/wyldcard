@@ -1,16 +1,14 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.field.ManagedSelection;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.msgbox.MsgBoxModel;
+import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.SquigglePainter;
 import com.defano.hypercard.window.HyperCardFrame;
-import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartMessageSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtSyntaxException;
@@ -28,7 +26,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class MessageWindow extends HyperCardFrame implements ManagedSelection, PropertyChangeObserver {
+public class MessageWindow extends HyperCardFrame implements PropertyChangeObserver {
 
     private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
 
@@ -78,22 +76,12 @@ public class MessageWindow extends HyperCardFrame implements ManagedSelection, P
         });
 
         // Update selection
-        messageBox.addCaretListener(e -> MessageWindow.this.updateSelectionContext());
+        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel()));
 
         SwingUtilities.invokeLater(() -> {
             partModel = new MsgBoxModel();
             partModel.addPropertyChangedObserver(MessageWindow.this);
         });
-    }
-
-    @Override
-    public String getHyperTalkAddress() {
-        return "the message";
-    }
-
-    @Override
-    public PartSpecifier getPartSpecifier() {
-        return new PartMessageSpecifier();
     }
 
     private void checkSyntax() {

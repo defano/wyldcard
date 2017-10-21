@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.containers;
 
-import com.defano.hypercard.parts.field.ManagedSelection;
+import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -32,7 +32,7 @@ public class SelectionContainer extends Container {
 
         Value oldSelection = SelectionContext.getInstance().getSelection();
         Range range = SelectionContext.getInstance().getSelectionRange();
-        ManagedSelection field = SelectionContext.getInstance().getManagedSelection();
+        AddressableSelection field = SelectionContext.getInstance().getManagedSelection();
         PartModel partModel = SelectionContext.getInstance().getSelectedPart();
 
         // Create the new selectedText

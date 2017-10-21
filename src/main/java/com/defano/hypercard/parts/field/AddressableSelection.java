@@ -1,23 +1,13 @@
 package com.defano.hypercard.parts.field;
 
-import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-
-public interface ManagedSelection {
-
-    /**
-     * Gets the JTextComponent containing the selectable text.
-     * @return The component containing the selectable text.
-     */
-    JTextComponent getTextComponent();
+public interface AddressableSelection {
 
     /**
      * Gets a HyperTalk expression that refers to this component, like 'card field id 1' or 'the message box'.
@@ -31,7 +21,7 @@ public interface ManagedSelection {
      */
     PartSpecifier getPartSpecifier();
 
-    PartModel getPartModel();
+    SelectableTextModel getSelectableTextModel();
 
     /**
      * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
@@ -44,9 +34,7 @@ public interface ManagedSelection {
             throw new IllegalArgumentException("Selection start cannot be after selection end.");
         }
 
-        getTextComponent().requestFocus();
-        getTextComponent().setSelectionStart(start);
-        getTextComponent().setSelectionEnd(end);
+        getSelectableTextModel().setSelection(new Range(start, end));
     }
 
     /**
@@ -56,8 +44,8 @@ public interface ManagedSelection {
      * @return An expression representing the current line selection
      */
     default Value getSelectedLineExpression() {
-        int lineStart = getLineAtCharPosition(getTextComponent().getSelectionStart());
-        int lineEnd = getLineAtCharPosition(getTextComponent().getSelectionEnd() - 1);
+        int lineStart = getLineAtCharPosition(getSelectableTextModel().getSelection().start);
+        int lineEnd = getLineAtCharPosition(getSelectableTextModel().getSelection().end - 1);
 
         // No selection; selected line is empty
         if (getSelectedText().stringValue().length() == 0) {
@@ -78,8 +66,8 @@ public interface ManagedSelection {
      * @return An expression representing the current field selection.
      */
     default Value getSelectedFieldExpression() {
-        int selectionStart = getTextComponent().getSelectionStart();
-        int selectionEnd = getTextComponent().getSelectionEnd();
+        int selectionStart = getSelectableTextModel().getSelection().start;
+        int selectionEnd = getSelectableTextModel().getSelection().end;
 
         // No selection; selected field is empty
         if (selectionStart == selectionEnd) {
@@ -96,8 +84,8 @@ public interface ManagedSelection {
      * @return An expression representing the current chunk selection.
      */
     default Value getSelectedChunkExpression() {
-        int selectionStart = getTextComponent().getSelectionStart();
-        int selectionEnd = getTextComponent().getSelectionEnd();
+        int selectionStart = getSelectableTextModel().getSelection().start;
+        int selectionEnd = getSelectableTextModel().getSelection().end;
 
         // No selection; selected chunk is empty
         if (selectionStart == selectionEnd) {
@@ -116,19 +104,12 @@ public interface ManagedSelection {
     }
 
     /**
-     * Gets the range of characters selected on this component.
-     * @return The selection range.
-     */
-    default Range getSelectedRange() {
-        return new Range(getTextComponent().getSelectionStart(), getTextComponent().getSelectionEnd());
-    }
-
-    /**
      * Gets the text of the current selection or 'empty' if no selection exists.
      * @return The currently selected text.
      */
     default Value getSelectedText() {
-        return getTextComponent().getSelectedText() == null ? new Value() : new Value(getTextComponent().getSelectedText());
+        Range selection = getSelectableTextModel().getSelection();
+        return new Value(getSelectableText().substring(selection.start, selection.end));
     }
 
     /**
@@ -136,12 +117,7 @@ public interface ManagedSelection {
      * @return The entire text of this component.
      */
     default String getSelectableText() {
-        Document doc = getTextComponent().getDocument();
-        try {
-            return doc.getText(0, doc.getLength());
-        } catch (BadLocationException e) {
-            return "";
-        }
+        return getSelectableTextModel().getText();
     }
 
     /**
@@ -165,16 +141,18 @@ public interface ManagedSelection {
     /**
      * Updates the HyperCard properties and selection context with the active selection.
      */
-    default void updateSelectionContext() {
-        getPartModel().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
-        getPartModel().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
-        getPartModel().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
+    default void updateSelectionContext(Range selection, PropertiesModel model) {
+        getSelectableTextModel().onViewDidUpdateSelection(selection);
+
+        model.defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
+        model.defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
+        model.defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
 
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(), true);
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
 
-        SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectedRange());
+        SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectableTextModel().getSelection());
     }
 }
