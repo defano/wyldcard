@@ -978,7 +978,7 @@ Command	         | Description
 
 ## Functions
 
-[Built-In](#built-in functions) | [User Defined](#user-defined-functions)
+[Built-In](#built-in-functions) | [User Defined](#user-defined-functions)
 
 A _function_ directs HyperTalk to perform a task that produces some value. Therefore, functions can appear as a term in an expression. For example, `3 / the average of "1, 2, 3"` is a legal expression.
 
