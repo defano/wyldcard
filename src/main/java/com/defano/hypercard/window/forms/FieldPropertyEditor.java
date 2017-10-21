@@ -1,6 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
@@ -18,6 +19,8 @@ import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @SuppressWarnings("unchecked")
 public class FieldPropertyEditor extends HyperCardDialog {
@@ -65,8 +68,6 @@ public class FieldPropertyEditor extends HyperCardDialog {
             updateProperties();
             dispose();
         });
-
-        textStyleButton.addActionListener(e -> ((CardLayerPartModel) model).setTextStyle(TextStyleSpecifier.fromFont(JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont().toFont()))));
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (FieldStyle thisStyle : FieldStyle.values()) {
@@ -128,7 +129,13 @@ public class FieldPropertyEditor extends HyperCardDialog {
             sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
             multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
+            textStyleButton.addActionListener(e -> {
+                Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont().toFont());
+                ((FieldModel) part).setTextStyleProperties(TextStyleSpecifier.fromFont(selection));
+            });
+
             onEnabledChanged();
+            onAutoSelectChanged();
 
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + model);
@@ -327,7 +334,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         editScriptButton.setText("Edit Script...");
         fieldEditor.add(editScriptButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textStyleButton = new JButton();
-        textStyleButton.setEnabled(false);
+        textStyleButton.setEnabled(true);
         textStyleButton.setText("Text Style...");
         fieldEditor.add(textStyleButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();

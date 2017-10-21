@@ -286,6 +286,17 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     }
 
     /**
+     * Sets the text attributes of all text in this field to the given specification, replacing any existing style.
+     * @param tss The text style specification.
+     */
+    public void setTextStyleProperties(TextStyleSpecifier tss) {
+        int length = getText().length();
+        StyledDocument doc = getStyledDocument();
+        doc.setCharacterAttributes(0, length, tss.toAttributeSet(), true);
+        fireDocumentChangeObserver(doc);
+    }
+
+    /**
      * Sets the font family of the indicated range of characters in this field; has no effect if the font family
      * is not available on this system.
      *
