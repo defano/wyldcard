@@ -2,24 +2,30 @@ package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.parts.field.AutoSelectionHighlighterPainter;
+import com.defano.hypercard.parts.util.FieldUtilities;
+import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.View;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An extension to {@link JTextPane} that adds the ability to disable auto-wrapping of text, to draw dotted lines
- * underneath each line of text, and to position the cursor beyond the bounds of the field contents.
+ * underneath each line of text, to position the cursor beyond the bounds of the field contents, and to support
+ * "auto-selection" features.
  */
 public class HyperCardTextPane extends JTextPane {
 
     private boolean wrapText = true;
     private boolean showLines = false;
+    private final Set<Integer> autoSelection = new HashSet<>();
+    private final Highlighter listHighlighter = new DefaultHighlighter();
 
     HyperCardTextPane(StyledDocument doc) {
         super(doc);
@@ -28,10 +34,12 @@ public class HyperCardTextPane extends JTextPane {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && isEditable() && isEnabled()) {
-                    expandContentsToClickLoc(e.getPoint());
+                    expandContentsToClickLoc(e);
                 }
             }
         });
+
+        super.setHighlighter(listHighlighter);
     }
 
     /**
@@ -47,6 +55,47 @@ public class HyperCardTextPane extends JTextPane {
         } else {
             return parent == null || (ui.getPreferredSize(this).width <= parent.getSize().width);
         }
+    }
+
+    @Override
+    public String getText() {
+        try {
+            return getStyledDocument().getText(0, getStyledDocument().getLength());
+        } catch (BadLocationException e) {
+            return "";
+        }
+    }
+
+    @Override
+    public String getSelectedText() {
+        if (isAutoSelection()) {
+            return getText().substring(getAutoSelectionRange().start, getAutoSelectionRange().end);
+        } else {
+            return super.getSelectedText();
+        }
+    }
+
+    @Override
+    public int getSelectionStart() {
+        if (isAutoSelection()) {
+            return getAutoSelectionRange().start;
+        } else {
+            return super.getSelectionStart();
+        }
+    }
+
+    @Override
+    public int getSelectionEnd() {
+        if (isAutoSelection()) {
+            return getAutoSelectionRange().end;
+        } else {
+            return super.getSelectionEnd();
+        }
+    }
+
+    private Range getAutoSelectionRange() {
+        int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
+        return FieldUtilities.getLinesRange(this, lines);
     }
 
     public boolean isWrapText() {
@@ -80,8 +129,10 @@ public class HyperCardTextPane extends JTextPane {
         if (showLines) {
             float lastLineHeight = 0;
             int dottedLineY = getInsets().top;
+
             int minX = getInsets().left;
-            int maxX = getWidth() - getInsets().right;
+            int maxX = getBounds().width - getInsets().right;
+            int maxY = getBounds().height - getInsets().bottom;
 
             int lineCount = getWrappedLineCount();
 
@@ -92,13 +143,17 @@ public class HyperCardTextPane extends JTextPane {
             for (int line = 0; line < lineCount; line++) {
                 lastLineHeight = getLineHeight(line);
                 dottedLineY += lastLineHeight;
-                g.drawLine(minX, dottedLineY, maxX, dottedLineY);
-            }
 
+                if (dottedLineY < maxY) {
+                    g.drawLine(minX, dottedLineY, maxX, dottedLineY);
+                }
+            }
+            
             // Interpolate dotted lines under unused lines
-            while (dottedLineY < getHeight()) {
-                dottedLineY += lastLineHeight;
+            dottedLineY += lastLineHeight;
+            while (dottedLineY < maxY) {
                 g.drawLine(minX, dottedLineY, maxX, dottedLineY);
+                dottedLineY += lastLineHeight;
             }
         }
     }
@@ -155,21 +210,23 @@ public class HyperCardTextPane extends JTextPane {
      * This lets a user click within an empty field and move the cursor to an arbitrary line, even the contents of
      * the field don't reach the line they clicked.
      *
-     * @param clickLoc The location of the mouse click.
+     * @param evt The location of the mouse click.
      */
-    private void expandContentsToClickLoc(Point clickLoc) {
-        int clickLine = getClickedLine(clickLoc);
+    private void expandContentsToClickLoc(MouseEvent evt) {
+        if (isEditable()) {
+            int clickLine = getClickedLine(evt);
 
-        // Did we click beyond the length of the field contents
-        if (getWrappedLineCount() < clickLine) {
-            int needsLines = clickLine - getWrappedLineCount();
+            // Did we click beyond the length of the field contents
+            if (getWrappedLineCount() < clickLine) {
+                int needsLines = clickLine - getWrappedLineCount();
 
-            // Expand field contents to reach click line
-            for (int index = 0; index < needsLines; index++) {
-                try {
-                    getStyledDocument().insertString(getStyledDocument().getLength(), "\n", getCharacterAttributes());
-                } catch (BadLocationException e) {
-                    throw new IllegalStateException("Bug! Shouldn't be possible.", e);
+                // Expand field contents to reach click line
+                for (int index = 0; index < needsLines; index++) {
+                    try {
+                        getStyledDocument().insertString(getStyledDocument().getLength(), "\n", getCharacterAttributes());
+                    } catch (BadLocationException e) {
+                        throw new IllegalStateException("Bug! Shouldn't be possible.", e);
+                    }
                 }
             }
         }
@@ -178,12 +235,19 @@ public class HyperCardTextPane extends JTextPane {
     /**
      * Determines the line number (counting from 1) where the given point is located.
      *
-     * @param clickLoc A point within the bounds of this component
+     * @param evt A point within the bounds of this component
      * @return The line number where the give point is located
      */
-    private int getClickedLine(Point clickLoc) {
-        float cumulativeLineHeight = 0;
+    public int getClickedLine(MouseEvent evt) {
+
+        float cumulativeLineHeight = getInsets().top;
         float thisLineHeight = 0;
+        Point clickLoc = SwingUtilities.convertPoint(evt.getComponent(), evt.getPoint(), this);
+
+        // Special case; user clicked inside of top inset margin
+        if (clickLoc.y < getInsets().top) {
+            return 1;
+        }
 
         for (int line = 0; ; line++) {
             thisLineHeight = getLineHeight(line) == 0 ? thisLineHeight : getLineHeight(line);
@@ -196,4 +260,43 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    public void autoSelectLines(Set<Integer> selectedLines) {
+        if (selectedLines != null) {
+            this.autoSelection.clear();
+            this.autoSelection.addAll(selectedLines);
+
+            removeAutoSelections();
+
+            for (int thisLine : selectedLines) {
+                autoSelectLine(thisLine);
+            }
+        }
+    }
+
+    private void autoSelectLine(int selectedLine) {
+        Range clickRange = FieldUtilities.getLineRange(this, selectedLine);
+        if (!clickRange.isEmpty()) {
+            autoSelect(FieldUtilities.getLineRange(this, selectedLine));
+        }
+    }
+
+    private void autoSelect(Range range) {
+        try {
+            setSelectionStart(range.start);
+            setSelectionEnd(range.end);
+            listHighlighter.addHighlight(range.start, range.end, new AutoSelectionHighlighterPainter());
+        } catch (BadLocationException ble) {
+            // Nothing to select
+        }
+    }
+
+    private void removeAutoSelections() {
+        setSelectionStart(0);
+        setSelectionEnd(0);
+        listHighlighter.removeAllHighlights();
+    }
+
+    private boolean isAutoSelection() {
+        return autoSelection.size() > 0;
+    }
 }

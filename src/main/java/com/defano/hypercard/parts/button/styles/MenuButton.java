@@ -6,6 +6,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -54,7 +55,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
     }
 
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case PartModel.PROP_CONTENTS:
                 putValueInMenu(newValue);

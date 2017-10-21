@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.FontContext;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;
@@ -26,10 +27,7 @@ import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
 import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -43,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements ManagedSelection, CardLayerPart, PropertyChangeObserver, DeferredKeyEventComponent {
+public class FieldPart extends StyleableField implements CardLayerPart, PropertyChangeObserver, DeferredKeyEventComponent {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -52,7 +50,6 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
     private FieldModel partModel;
     private final WeakReference<CardPart> parent;
     private AtomicBoolean redispatchInProgress = new AtomicBoolean(false);
-    private SelectionUpdater selectionUpdater = new SelectionUpdater();
 
     private FieldPart(FieldStyle style, CardPart parent, Owner owner) {
         super(style);
@@ -126,15 +123,12 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
 
         partModel.removePropertyChangedObserver(this);
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
-        getTextComponent().removeCaretListener(selectionUpdater);
     }
 
     /** {@inheritDoc} */
     @Override
     public void partOpened() {
         super.partOpened();
-
-        getTextComponent().addCaretListener(selectionUpdater);
         partModel.addPropertyChangedObserver(this);
     }
 
@@ -262,7 +256,7 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
                 setStyle(FieldStyle.fromName(newValue.stringValue()));
@@ -333,30 +327,7 @@ public class FieldPart extends StyleableField implements ManagedSelection, CardL
      * {@inheritDoc}
      */
     @Override
-    public JTextComponent getTextComponent() {
-        return super.getTextPane();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getHyperTalkAddress() {
-        return getCardLayer().friendlyName.toLowerCase() + " field id " + getPartModel().getId();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public PartSpecifier getPartSpecifier() {
         return new PartIdSpecifier(getCardLayer().asOwner(), PartType.FIELD, getId());
-    }
-
-    private class SelectionUpdater implements CaretListener {
-        @Override
-        public void caretUpdate(CaretEvent e) {
-            FieldPart.this.updateSelectionContext();
-        }
     }
 }

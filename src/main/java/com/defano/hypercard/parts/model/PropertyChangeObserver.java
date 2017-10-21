@@ -17,5 +17,5 @@ public interface PropertyChangeObserver {
      * @param oldValue The attribute's previous value
      * @param newValue The attribute's new value
      */
-    void onPropertyChanged(String property, Value oldValue, Value newValue);
+    void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue);
 }

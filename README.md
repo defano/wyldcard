@@ -605,14 +605,16 @@ Style                                            | Name          | Notes
 
 A field has these unique properties:
 
-Property     | Description
--------------|----------------------
-`autoTab`    | When true, typing tab in the field causes focus to move to the next focusable UI component; when false, typing tab inserts a tab character into the field contents.
-`lockText`   | Returns or sets whether the text contained by the field can be edited by the user.
-`showLines`  | Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
-`dontWrap`   | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
-`sharedText` | When `true`, each card in the background shares the same text in the field. When `false`, each card in the background can place a unique value into the field. Has no effect on card fields.
-`wideMargins`| Returns or sets whether the field is drawn with a wider, 15-pixel margin between its text and border.
+Property        | Description
+----------------|----------------------
+`autoSelect`    | When true, the field behaves as a list; clicking a line in the field automatically hilites (selects) the entire line of text.
+`autoTab`       | When true, typing tab in the field causes focus to move to the next focusable UI component; when false, typing tab inserts a tab character into the field contents.
+`lockText`      | Returns or sets whether the text contained by the field can be edited by the user.
+`showLines`     | Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
+`dontWrap`      | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
+`multipleLines` | Determines if multiple lines of text can be selected in auto-select mode. That is, whether the _list field_ allows multiple selections or not. Has no effect when the `autoSelect` property is `false`.
+`sharedText`    | When `true`, each card in the background shares the same text in the field. When `false`, each card in the background can place a unique value into the field. Has no effect on card fields.
+`wideMargins`   | Returns or sets whether the field is drawn with a wider, 15-pixel margin between its text and border.
 
 #### Text properties
 
@@ -723,7 +725,7 @@ Global Property | Description
 `multiple`      | A boolean value indicating whether shapes are being drawn multiple (equivalent to "Draw Multiple" in the "Options" menu).
 `pattern`       | Gets or sets the number of selected paint pattern. Patterns are numbered 0 to 39. Setting to a value outside this range has no effect.
 `polySides`     | An integer represeting the number of sides drawn using the polygon tool.
-`scriptTextFont'| The name of the font family used in the script editor; default is `Monaco`.
+`scriptTextFont`| The name of the font family used in the script editor; default is `Monaco`.
 `scriptTextSize`| The size, in points, of the text of the script editor; default is `12`.
 `systemVersion` | The read-only version number of the Java Virtual Machine executing HyperTalk Java, for example, `1.8.0_131`.
 `textFont`      | The currently active font family, as indicated by the selection in the "Font" menu.

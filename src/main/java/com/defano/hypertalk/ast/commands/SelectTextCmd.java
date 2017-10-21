@@ -4,12 +4,9 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.button.styles.MenuButton;
-import com.defano.hypercard.parts.field.FieldModel;
-import com.defano.hypercard.parts.field.ManagedSelection;
+import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.msgbox.MsgBoxModel;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.ChunkType;
 import com.defano.hypertalk.ast.common.PartType;
@@ -56,15 +53,12 @@ public class SelectTextCmd extends Command {
 
     private void selectManagedText(PartSpecifier specifier) throws HtException {
         PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
-        ManagedSelection field;
 
-        if (partModel instanceof FieldModel) {
-            field = (ManagedSelection) HyperCard.getInstance().getDisplayedCard().getPart(partModel);
-        } else if (partModel instanceof MsgBoxModel) {
-            field = WindowManager.getMessageWindow();
-        } else {
+        if (! (partModel instanceof AddressableSelection)) {
             throw new IllegalStateException("Bug! Don't know how to select text in part: " + partModel);
         }
+
+        AddressableSelection field = (AddressableSelection) partModel;
 
         Range range = chunk == null ?
                 new Range(0, field.getSelectableText().length()) :            // Entire contents

@@ -1,6 +1,8 @@
 package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.awt.KeyListenable;
+import com.defano.hypercard.awt.MouseListenable;
+import com.defano.hypercard.awt.MouseMotionListenable;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
@@ -8,8 +10,9 @@ import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
-import com.defano.hypercard.parts.field.FieldDocumentObserver;
+import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.utils.Range;
@@ -23,14 +26,16 @@ import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
 /**
  * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldDocumentObserver {
+public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
 
     public final static int WIDE_MARGIN_PX = 15;
     public final static int NARROW_MARGIN_PX = 0;
@@ -41,6 +46,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final FontStyleObserver fontStyleObserver = new FontStyleObserver();
     private final FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
     private final AutoTabKeyObserver autoTabKeyObserver = new AutoTabKeyObserver();
+    private final AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
 
     private final ToolEditablePart toolEditablePart;
 
@@ -50,6 +56,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         // Create the editor component
         textPane = new HyperCardTextPane(new DefaultStyledDocument());
         textPane.setEditorKit(new RTFEditorKit());
+        textPane.setTransferHandler(null);      // Disallow drag-and-drop; causes issues with auto-select
+
         this.setViewportView(textPane);
     }
 
@@ -90,7 +98,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      * {@inheritDoc}
      */
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_DONTWRAP:
                 textPane.setWrapText(!newValue.booleanValue());
@@ -140,6 +148,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void partOpened() {
+        FieldModel model = (FieldModel) toolEditablePart.getPartModel();
 
         // Get notified when field tool is selected
         ToolsContext.getInstance().getToolModeProvider().addObserver(toolModeObserver);
@@ -156,10 +165,15 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.addMouseListener(toolEditablePart);
         textPane.addCaretListener(this);
         textPane.addKeyListener(autoTabKeyObserver);
+        textPane.addMouseListener(autoSelectObserver);
+        textPane.addMouseMotionListener(autoSelectObserver);
 
-        // Finally, update view with model data
-        displayStyledDocument(((FieldModel) toolEditablePart.getPartModel()).getStyledDocument());
+        // Update view with model data
+        displayStyledDocument(model.getStyledDocument());
         toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
+
+        // And auto-select any
+        SwingUtilities.invokeLater(() -> textPane.autoSelectLines(model.getAutoSelectedLines()));
     }
 
     /**
@@ -173,6 +187,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.removeMouseListener(toolEditablePart);
         textPane.removeCaretListener(this);
         textPane.addKeyListener(autoTabKeyObserver);
+        textPane.removeMouseListener(autoSelectObserver);
 
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(null);
@@ -190,7 +205,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void caretUpdate(CaretEvent e) {
         // Update selectedText
-        toolEditablePart.getPartModel().defineProperty(FieldModel.PROP_SELECTEDTEXT, new Value(textPane.getSelectedText()), true);
+        FieldModel fieldModel = (FieldModel) toolEditablePart.getPartModel();
+        if (fieldModel.isAutoSelection()) {
+            fieldModel.updateSelectionContext(getSelectedTextRange(), fieldModel);
+        } else {
+            fieldModel.updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel);
+        }
 
         // Update global font style selection
         Range selection = getSelectedTextRange();
@@ -209,15 +229,33 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         displayStyledDocument(document);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onAutoSelectedLinesChanged(Set<Integer> selectedLines) {
+        textPane.autoSelectLines(selectedLines);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onSelectionChange(Range selection) {
+        textPane.requestFocus();
+        textPane.setSelectionStart(selection.start);
+        textPane.setSelectionEnd(selection.end);
+    }
+
     private void displayStyledDocument(StyledDocument doc) {
         if (textPane.getStyledDocument() != doc) {
             textPane.setStyledDocument(doc);
-            doc.addDocumentListener(this);
+            doc.addDocumentListener(AbstractTextField.this);
         }
     }
 
     private Range getSelectedTextRange() {
-        return new Range(textPane.getCaret().getDot(), textPane.getCaret().getMark());
+        return Range.ofMarkAndDot(textPane.getCaret().getDot(), textPane.getCaret().getMark());
     }
 
     private void setActiveTextAlign(Value v) {
@@ -262,7 +300,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             textPane.setMargin(new Insets(NARROW_MARGIN_PX, NARROW_MARGIN_PX, NARROW_MARGIN_PX, NARROW_MARGIN_PX));
         }
 
-        textPane.invalidate(); textPane.repaint();
+        textPane.invalidate();
+        textPane.repaint();
     }
 
     private void updateModel() {
@@ -319,12 +358,32 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_TAB &&
-                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOTAB).booleanValue())
-            {
+                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOTAB).booleanValue()) {
                 e.consume();
                 KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
             }
         }
+    }
 
+    private class AutoSelectObserver implements MouseListenable, MouseMotionListenable {
+
+        /** {@inheritDoc} */
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue()) {
+                FieldModel model = (FieldModel) toolEditablePart.getPartModel();
+                model.autoSelectLine(textPane.getClickedLine(e), false);
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue() &&
+                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_MULTIPLELINES).booleanValue())
+            {
+                FieldModel model = (FieldModel) toolEditablePart.getPartModel();
+                model.autoSelectLine(textPane.getClickedLine(e), true);
+            }
+        }
     }
 }

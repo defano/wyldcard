@@ -7,6 +7,7 @@ import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.button.SharedHilight;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.fonts.FontUtils;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -33,7 +34,7 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonCo
     }
 
     @Override
-    public void onPropertyChanged(String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
