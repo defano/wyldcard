@@ -1,6 +1,6 @@
 # HyperTalk Java
 
-[Features](#features) | [Getting Started](#features) | [HyperTalk Language Reference](#the-hypertalk-language)
+[Features](#features) | [Getting Started](#getting-started) | [HyperTalk Language Reference](#the-hypertalk-language)
 
 An effort to recreate Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
