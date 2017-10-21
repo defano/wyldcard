@@ -74,7 +74,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 # The HyperTalk Language
 
-[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts-and-properties) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
+[Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
 HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_) that contains a script providing a _handler_ for the given message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts or to themselves, too.
 
@@ -255,6 +255,8 @@ end subtract
 
 ## Expressions
 
+[Operators](#operators) | [Factors](#factors) | [Literals](#constants-and-literals)
+
 An _expression_ is anything in HyperTalk that represents or produces a _value_. Constants (like `3.14`, `quote` or `"Hello world!"`), containers and variables (`myVar`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `fibonacci(empty, 0, 1, 200)`) are all expressions.
 
 A powerful aspect of HyperTalk's expression language is its ability to refer to a _chunk_ of an expression. A script can get or set any range of words, characters, lines, or (comma-delimited) items in a value by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), or by ordinal (`the third line of`).
@@ -380,6 +382,8 @@ Constant     | Value
 
 ## Containers
 
+[Variables](#variable-containers) | [Parts](#part-containers) | [Menus](#menu-containers) | [Message](#the-message) | [It](#the-it-container) | [Selection](#the-selection-container)
+
 A _container_ is anything in HyperCard that you can `put` a value into: Parts, variables, properties, menus, the message box, and the selection are each containers.
 
 #### Variable containers
@@ -453,7 +457,7 @@ Item 2
 Other...
 ```
 
-#### The message box
+#### The message
 
 The _message box_ is a HyperCard window containing a single-line editable text field (you can show or hide this window from the "Go" menu). Text entered into the message is evaluated as a HyperTalk statement when you press enter. The contents of this field can by read or written as a container and is addressable as `[the] message`, `[the] message box` or `[the] message window`.
 
@@ -490,7 +494,9 @@ if the selection is a number then multiply the selection by 10
 put "[redacted]" into the selection
 ```
 
-## Parts and Properties
+## Parts
+
+[Part IDs](#part-ids) | [Part Numbers](#part-numbers) | [Part Names](#part-names)
 
 A _part_ is a scriptable user interface element.
 
@@ -500,11 +506,9 @@ Every part maintains a set of _properties_ that describe its look-and-feel (like
 
 Note that HyperTalk Java treats properties as "first class" containers than can be accessed in whole or by chunk using the `get`, `set` or `put` commands (this was not quite true in HyperCard).
 
-### Referring to Parts
-
 Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.
 
-#### Part IDs
+### Part IDs
 
 Each part in the stack is assigned a unique ID which never changes and will never be reused (even if the part is deleted). A part can be referred to in script by its ID. For example:
 
@@ -513,7 +517,7 @@ hide card button id 0
 put "I like IDs" into background field id 22
 ```
 
-#### Part Numbers
+### Part Numbers
 
 Each part is assigned a number that represents it's logical order within the context of its owner.
 
@@ -528,7 +532,7 @@ add 20 to the height of card button 1.
 set the name of background part 9 to "Number 9"   -- might be a card or a field
 ```
 
-#### Part names
+### Part Names
 
 Every part has a name which can be edited by the user or changed via script. Parts do not need to have unique names, but be aware that when referring to a part by name, the part with the lowest number will be assumed if there are multiple parts with the requested name.
 
@@ -537,7 +541,20 @@ get the height of background button "My Neat Button"
 put "2 * 2 = 4" after card field "Math"
 ```
 
-### Properties common to all buttons and fields
+## Properties
+
+[Buttons](#buttons) | [Fields](#fields) | [Menus](#menus) | [HyperCard](#hypercard-properties)
+
+A property is a HyperTalk-addressable attribute that determines how a part looks, feels, and reacts to user interaction. Properties in HyperTalk Java are "first-class" containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
+
+For example,
+
+```
+set the lockText of field "Not Editable" to true
+add 10 to the left of the message box
+set the itemDelimiter to "|"
+repeat while the mouseLoc is within the rect of me
+```
 
 All buttons and fields have these properties:
 
@@ -736,6 +753,8 @@ As noted in the table above, some of these properties are reset to their default
 
 ## Sorting
 
+[Cards](#sorting-cards) | [Containers](#sorting-the-contents-of-a-container)
+
 HyperTalk provides a powerful and flexible construct for sorting cards in a stack, or the items or lines in a container.
 
 ### Sorting cards
@@ -790,6 +809,8 @@ sort the lines of card field "Names" by the middle word of each  -- or by middle
 ```
 
 ## Audio Visual Effects
+
+[Visual Effects](#visual-effects) | [Sound Effects](#sound-effects) | [Music](#music)
 
 HyperTalk Java supports a nearly identical set of visual and sound effects as HyperCard.
 
@@ -856,7 +877,7 @@ go next with visual barn door open slowly
 go to card 3 with visual effect iris open to black very fast
 ```
 
-### Sound Effects and Music
+### Sound Effects
 
 HyperTalk Java has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes with the `play` command. Touch-Tone phone sounds can be produced with the `dial` command, and the system alert sound can be emitted with `beep`.
 
@@ -867,6 +888,8 @@ play flute
 dial "1-800-588-2300"
 beep
 ```
+
+### Music
 
 To produce music, use the syntax `play <sound> [tempo <speed>] <musical-expression>` where:
 
@@ -954,6 +977,8 @@ Command	         | Description
 `write`          | Writes text into a file that was previously opened with `open file`. Several forms, including `write <data> to file <filename>` (writes the expression `<data>` to the file, *overwriting the contents of the file*), `write <data> to file <filename> at end` (appends data to the end of the given file; `at end` can also be specified as `at eof`), `write <data> to file <filename> at <position>` (writes data to the file starting at the given `<position>`). Note that data is not actually written to disk until the file is closed or HyperTalk Java is quit.  
 
 ## Functions
+
+[Built-In](#built-in functions) | [User Defined](#user-defined-functions)
 
 A _function_ directs HyperTalk to perform a task that produces some value. Therefore, functions can appear as a term in an expression. For example, `3 / the average of "1, 2, 3"` is a legal expression.
 
@@ -1071,6 +1096,8 @@ end fibonacci
 ```
 
 ## Flow control
+
+[Branching](#conditional-branching) | [Looping](#loop-constructs)
 
 HyperTalk supports simple conditional branching (if-then-else; no concept of switch/case), plus a very flexible syntax for looping.
 
