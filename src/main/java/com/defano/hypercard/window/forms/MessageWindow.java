@@ -77,7 +77,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         });
 
         // Update selection
-        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel()));
+        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel(), true));
 
         SwingUtilities.invokeLater(() -> {
             partModel = new MsgBoxModel();

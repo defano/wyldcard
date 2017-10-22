@@ -22,7 +22,9 @@ public interface SelectableTextModel {
     void setSelection(Range selection);
 
     /**
-     * Gets the current text selection; returns a zero-length range if no text is currently selected.
+     * Gets the current text selection; returns a zero-length range if no text is currently selected. Certain selections
+     * apply only to the part (like auto-selections), in which case they do not count as "HyperCard's" selection.
+     *
      * @return The current text selection.
      */
     Range getSelection();

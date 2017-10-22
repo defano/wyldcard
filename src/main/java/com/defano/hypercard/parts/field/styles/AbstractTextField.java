@@ -207,9 +207,9 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         // Update selectedText
         FieldModel fieldModel = (FieldModel) toolEditablePart.getPartModel();
         if (fieldModel.isAutoSelection()) {
-            fieldModel.updateSelectionContext(getSelectedTextRange(), fieldModel);
+            fieldModel.updateSelectionContext(getSelectedTextRange(), fieldModel, false);
         } else {
-            fieldModel.updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel);
+            fieldModel.updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel, true);
         }
 
         // Update global font style selection

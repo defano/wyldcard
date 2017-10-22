@@ -26,6 +26,7 @@ public class HyperCardTextPane extends JTextPane {
     private boolean showLines = false;
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter listHighlighter = new DefaultHighlighter();
+    private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
 
     HyperCardTextPane(StyledDocument doc) {
         super(doc);
@@ -282,17 +283,13 @@ public class HyperCardTextPane extends JTextPane {
 
     private void autoSelect(Range range) {
         try {
-            setSelectionStart(range.start);
-            setSelectionEnd(range.end);
-            listHighlighter.addHighlight(range.start, range.end, new AutoSelectionHighlighterPainter());
+            listHighlighter.addHighlight(range.start, range.end, hilitePainter);
         } catch (BadLocationException ble) {
             // Nothing to select
         }
     }
 
     private void removeAutoSelections() {
-        setSelectionStart(0);
-        setSelectionEnd(0);
         listHighlighter.removeAllHighlights();
     }
 

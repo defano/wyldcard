@@ -67,7 +67,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     private byte[] sharedRtf;
     private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
-    private final Set<Integer> autoSelection = new HashSet<>();
+    private final Set<Integer> sharedAutoSelection = new HashSet<>();
+    private final Set<Integer> unsharedAutoSelection = new HashSet<>();
 
     private transient int currentCardId = 0;
     private transient FieldModelObserver observer;
@@ -416,19 +417,27 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param lineNumber The line number to auto-select
      */
     public void autoSelectLine(int lineNumber, boolean appendSelection) {
-        if (lineNumber <= new Value(getText()).getLines().size()) {
+        if (lineNumber >= 1 && lineNumber <= new Value(getText()).getLines().size()) {
 
             if (!appendSelection) {
-                autoSelection.clear();
+                getAutoSelectedLines().clear();
             }
 
-            autoSelection.add(lineNumber);
+            getAutoSelectedLines().add(lineNumber);
 
-            fireAutoSelectChangeObserver(autoSelection);
+            fireAutoSelectChangeObserver(getAutoSelectedLines());
         }
     }
 
-    public void autoSelectLines(int startLine, int endLine) {
+    /**
+     * Auto-selects the given range of lines.
+     *
+     * @param startLine The first line in the auto-selection, counting from 1, inclusive.
+     * @param endLine The last line in the auto-selection, counting from 1, inclusive.
+     */
+    private void autoSelectLines(int startLine, int endLine) {
+        Set<Integer> autoSelection = getAutoSelectedLines();
+
         autoSelection.clear();
         for (int line = startLine; line <= endLine; line++) {
             autoSelection.add(line);
@@ -445,7 +454,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     public Set<Integer> getAutoSelectedLines() {
         if (isAutoSelection()) {
-            return autoSelection;
+            return useSharedText() ? sharedAutoSelection : unsharedAutoSelection;
         } else {
             return new HashSet<>();
         }
@@ -459,7 +468,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     private Range getAutoSelectionRange() {
         if (isAutoSelection()) {
-            int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
+            int[] lines = getAutoSelectedLines().stream().mapToInt(Number::intValue).toArray();
             return FieldUtilities.getLinesRange(getText(), lines);
         } else {
             return new Range();
@@ -471,7 +480,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return True if auto-selection is enabled; false otherwise
      */
     public boolean isAutoSelection() {
-        return getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue() && autoSelection.size() > 0;
+        return getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue();
     }
 
     /**

@@ -1,6 +1,6 @@
 # HyperTalk Java
 
-[Features](#features) | [Getting Started](#getting-started) | [HyperTalk Language Reference](#the-hypertalk-language)
+[Features](#features) | [Getting Started](#getting-started) | [Building](doc/BUILDING.md) | [HyperTalk Language Reference](#the-hypertalk-language)
 
 An effort to recreate Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
@@ -16,7 +16,7 @@ Apple called it "programming for the rest of us." Steve Wozniak called it ["the 
 
 ## Features
 
-HyperTalk Java attempts to maintain high-fidelity to Apple's original software; by and large, it's an attempt to clone the original rather than to modernize it.  
+HyperTalk Java attempts to maintain high-fidelity to Apple's original software rather than to modernize it.  
 
 #### Organize information
 
@@ -44,15 +44,13 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software; 
 * Synthesize sounds into a sequence of musical notes supporting pitch, octave, accidental, duration and tempo.
 * Animate cards and parts by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
-### Notable absences
+### What's missing?
 
-This is neither a HyperCard replacement nor an open-sourced release of Apple's software. HyperTalk Java is still missing a few features present in HyperCard:
-
-* Can't open or import old HyperCard stacks. Maybe in the future...
-* No multi-window stack support (`open stack ... in new window`), or scriptable palettes.
+* Can't open or import old HyperCard stacks.
+* No multi-window or palette support (`open stack ... in new window`).
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No support for external commands or functions (XCMDs/XFCNs); no `find` command.
-* No ability to reference parts not on the active card (`show button "Nope!" of card 7`).
+* No ability to reference objects that are not on the active card (`show button "Nope!" of card 7`).
 
 ## Getting started
 

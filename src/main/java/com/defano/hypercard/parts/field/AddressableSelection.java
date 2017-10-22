@@ -21,6 +21,10 @@ public interface AddressableSelection {
      */
     PartSpecifier getPartSpecifier();
 
+    /**
+     * Gets the model associated with the selectable text element.
+     * @return The selectable text model.
+     */
     SelectableTextModel getSelectableTextModel();
 
     /**
@@ -141,19 +145,27 @@ public interface AddressableSelection {
 
     /**
      * Updates the HyperCard properties and selection context with the active selection.
+     *
+     * @param selection         The range of characters in the current selection; a zero-length range indicates no selection.
+     * @param model             The model of the component that owns the selection.
+     * @param isSystemSelection True if this selection qualifies as the global, "system" selection. That is, when
+     *                          true, this selection is addressable as 'the selection'; when false, the selection
+     *                          is only addressable as a property of this part, i.e., 'the selectedText of field x'
      */
-    default void updateSelectionContext(Range selection, PropertiesModel model) {
+    default void updateSelectionContext(Range selection, PropertiesModel model, boolean isSystemSelection) {
         getSelectableTextModel().onViewDidUpdateSelection(selection);
 
         model.defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
         model.defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
         model.defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
 
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(), true);
-        HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
+        if (isSystemSelection) {
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
 
-        SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectableTextModel().getSelection());
+            SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectableTextModel().getSelection());
+        }
     }
 }
