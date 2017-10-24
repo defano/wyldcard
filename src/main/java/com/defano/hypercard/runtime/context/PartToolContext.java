@@ -1,11 +1,11 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.model.Provider;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.field.FieldPart;
@@ -19,14 +19,18 @@ public class PartToolContext {
     private final static PartToolContext instance = new PartToolContext();
 
     private final Provider<ToolEditablePart> selectedPart = new Provider<>(null);
-    private final TextStyleObserver textStyleObserver = new TextStyleObserver();
+    private final TextFontObserver fontObserver = new TextFontObserver();
+    private final TextStyleObserver styleObserver = new TextStyleObserver();
+    private final TextSizeObserver sizeObserver = new TextSizeObserver();
 
     private PartToolContext() {
         // Deselect all parts when user changes tool mode
         ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> deselectAllParts());
 
         // Change part font when user chooses a font/style from the menubar
-        FontContext.getInstance().getHilitedTextStyleProvider().addObserver(textStyleObserver);
+        FontContext.getInstance().getSelectedFontFamilyProvider().addObserver(fontObserver);
+        FontContext.getInstance().getSelectedFontSizeProvider().addObserver(sizeObserver);
+        FontContext.getInstance().getSelectedFontStyleProvider().addObserver(styleObserver);
     }
 
     public static PartToolContext getInstance() {
@@ -73,13 +77,6 @@ public class PartToolContext {
         }
     }
 
-    public void setSelectedPartTextStyle(TextStyleSpecifier tss) {
-        ToolEditablePart selectedPart = this.selectedPart.get();
-        if (selectedPart != null) {
-            ((CardLayerPartModel)selectedPart.getPart().getPartModel()).setTextStyle(tss);
-        }
-    }
-
     public Provider<ToolEditablePart> getSelectedPartProvider() {
         return selectedPart;
     }
@@ -87,8 +84,31 @@ public class PartToolContext {
     private class TextStyleObserver implements Observer {
         @Override
         public void update(Observable o, Object arg) {
-            setSelectedPartTextStyle(FontContext.getInstance().getHilitedTextStyleProvider().get());
-
+            ToolEditablePart selectedPart = PartToolContext.this.selectedPart.get();
+            if (selectedPart != null) {
+                selectedPart.getPartModel().setKnownProperty(CardLayerPartModel.PROP_TEXTSTYLE, new Value(arg));
+            }
         }
     }
+
+    private class TextSizeObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            ToolEditablePart selectedPart = PartToolContext.this.selectedPart.get();
+            if (selectedPart != null) {
+                selectedPart.getPartModel().setKnownProperty(CardLayerPartModel.PROP_TEXTSIZE, new Value(arg));
+            }
+        }
+    }
+
+    private class TextFontObserver implements Observer {
+        @Override
+        public void update(Observable o, Object arg) {
+            ToolEditablePart selectedPart = PartToolContext.this.selectedPart.get();
+            if (selectedPart != null) {
+                selectedPart.getPartModel().setKnownProperty(CardLayerPartModel.PROP_TEXTFONT, new Value(arg));
+            }
+        }
+    }
+
 }

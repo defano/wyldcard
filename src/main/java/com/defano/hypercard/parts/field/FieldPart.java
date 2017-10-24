@@ -22,8 +22,6 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;
@@ -68,6 +66,9 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
 
         // Place the field in the center of the card
         newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        newField.partModel.setKnownProperty(FieldModel.PROP_TEXTFONT, FontContext.getInstance().getSelectedFontFamilyProvider().get());
+        newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSIZE, FontContext.getInstance().getSelectedFontSizeProvider().get());
+        newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getSelectedFontStyleProvider().get());
 
         // When a new field is created, make the field tool active and select the newly created part
         ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
@@ -303,7 +304,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
         int id = parent.get().getStackModel().getNextFieldId();
 
         partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
-        partModel.setTextStyle(FontContext.getInstance().getHilitedTextStyleProvider().get());
         partModel.addPropertyChangedObserver(this);
     }
 
@@ -321,13 +321,5 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     @Override
     public void dispatchEvent(AWTEvent event) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> getTextPane().dispatchEvent(event));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public PartSpecifier getPartSpecifier() {
-        return new PartIdSpecifier(getCardLayer().asOwner(), PartType.FIELD, getId());
     }
 }

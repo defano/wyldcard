@@ -1,7 +1,6 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
@@ -19,8 +18,6 @@ import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @SuppressWarnings("unchecked")
 public class FieldPropertyEditor extends HyperCardDialog {
@@ -131,7 +128,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
 
             textStyleButton.addActionListener(e -> {
                 Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont().toFont());
-                ((FieldModel) part).setTextStyleProperties(TextStyleSpecifier.fromFont(selection));
+                if (selection != null) {
+                    ((FieldModel) part).setFont(TextStyleSpecifier.fromFont(selection));
+                }
             });
 
             onEnabledChanged();

@@ -40,7 +40,7 @@ public abstract class CardLayerPartModel extends PartModel {
         return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(PROP_TEXTFONT), getKnownProperty(PROP_TEXTSTYLE), getKnownProperty(PROP_TEXTSIZE));
     }
 
-    public void setTextStyle(TextStyleSpecifier style) {
+    public void setFont(TextStyleSpecifier style) {
         if (style != null) {
             if (style.getFontSize() > 0) {
                 setKnownProperty(PROP_TEXTSIZE, new Value(style.getFontSize()));
@@ -53,5 +53,4 @@ public abstract class CardLayerPartModel extends PartModel {
             setKnownProperty(PROP_TEXTSTYLE, style.getHyperTalkStyle());
         }
     }
-
 }
