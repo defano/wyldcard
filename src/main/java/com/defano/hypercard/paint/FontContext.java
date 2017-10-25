@@ -75,14 +75,8 @@ public class FontContext {
         }
     }
 
-    /**
-     * Convenience method to set the hilited font context given an AWT font object.
-     * @param font The hilited font.
-     */
-    public void setHilitedFont(Font font) {
-        if (font != null) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromFont(font);
-
+    public void setFocusedTextStyle(TextStyleSpecifier tss) {
+        if (tss != null) {
             focusedFontFamilyProvider.set(Sets.newHashSet(new Value(tss.getFontFamily())));
             focusedFontSizeProvider.set(Sets.newHashSet(new Value(tss.getFontSize())));
             focusedFontStyleProvider.set(tss.getHyperTalkStyle());

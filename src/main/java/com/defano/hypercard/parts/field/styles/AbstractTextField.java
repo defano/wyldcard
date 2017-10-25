@@ -217,7 +217,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         // Update font style selection in menus
         if (textPane.getText().length() > 0 && textPane.isEditable()) {
-            updateHilitedFontSelection();
+            updateFocusedFontSelection();
         }
     }
 
@@ -235,7 +235,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void onAutoSelectedLinesChanged(Set<Integer> selectedLines) {
         textPane.autoSelectLines(selectedLines);
-        updateHilitedFontSelection();
+        updateFocusedFontSelection();
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.requestFocus();
         textPane.setSelectionStart(selection.start);
         textPane.setSelectionEnd(selection.end);
-        updateHilitedFontSelection();
+        updateFocusedFontSelection();
     }
 
     private void displayStyledDocument(StyledDocument doc) {
@@ -283,7 +283,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
-        updateHilitedFontSelection();
+        updateFocusedFontSelection();
     }
 
     private void setTextFontSize(Value fontSize) {
@@ -297,7 +297,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
-        updateHilitedFontSelection();
+        updateFocusedFontSelection();
     }
 
     private void setTextFontStyle(Value fontStyle) {
@@ -311,7 +311,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
-        updateHilitedFontSelection();
+        updateFocusedFontSelection();
     }
 
     protected void setWideMargins(boolean isWideMargins) {
@@ -330,7 +330,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         model.setStyledDocument(textPane.getStyledDocument());
     }
 
-    private void updateHilitedFontSelection() {
+    private void updateFocusedFontSelection() {
         Range selection = getSelectedTextRange();
 
         Value styles = new Value("plain");

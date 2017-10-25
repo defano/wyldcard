@@ -150,9 +150,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return A StyledDocument representation of the contents of this field.
      */
     public StyledDocument getStyledDocument() {
+        StyledDocument doc = new DefaultStyledDocument();
+
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(getRtf());
-            StyledDocument doc = new DefaultStyledDocument();
 
             new RTFEditorKit().read(bais, doc, 0);
             bais.close();
@@ -163,8 +164,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             return doc;
 
         } catch (Exception e) {
-            return new DefaultStyledDocument();
+            doc = new DefaultStyledDocument();
         }
+
+        return doc;
     }
 
     /**
@@ -295,6 +298,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void setTextStyle(TextStyleSpecifier tss) {
         StyledDocument doc = getStyledDocument();
         doc.setCharacterAttributes(0, doc.getLength() + 1, tss.toAttributeSet(), true);
+
+        setStyledDocument(doc);
         fireDocumentChangeObserver(doc);
     }
 
@@ -313,9 +318,20 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param fontFamily    The new font family to apply.
      */
     public void setTextFontFamily(int startPosition, int length, Value fontFamily) {
-        TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
         StyledDocument doc = getStyledDocument();
-        doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+
+        // Special case; zero-length document does not persist prev style, replace with focused style
+        if (doc.getLength() == 0) {
+            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            tss.setFontFamily(fontFamily.stringValue());
+            doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
+        }
+
+        // Apply font family to document
+        else {
+            TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
+            doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+        }
 
         setStyledDocument(doc);
         fireDocumentChangeObserver(doc);
@@ -329,10 +345,20 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param fontSize      The new font size to apply.
      */
     public void setTextFontSize(int startPosition, int length, Value fontSize) {
-        TextStyleSpecifier tss = TextStyleSpecifier.fromFontSize(fontSize.integerValue());
-        System.err.println("FONT SIZE: " + tss.toAttributeSet());
         StyledDocument doc = getStyledDocument();
-        doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+
+        // Special case; zero-length document does not persist prev style, replace with focused style
+        if (doc.getLength() == 0) {
+            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            tss.setFontSize(fontSize.integerValue());
+            doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
+        }
+
+        // Apply font size to document
+        else {
+            TextStyleSpecifier tss = TextStyleSpecifier.fromFontSize(fontSize.integerValue());
+            doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+        }
 
         setStyledDocument(doc);
         fireDocumentChangeObserver(doc);
@@ -348,10 +374,21 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     public void setTextFontStyle(int startPosition, int length, Value fontStyle) {
         StyledDocument doc = getStyledDocument();
-        for (int index = startPosition; index <= startPosition + length; index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(index).getAttributes());
+
+        // Special case; zero-length document does not persist prev style, replace with focused style
+        if (doc.getLength() == 0) {
+            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
             tss.setFontStyle(fontStyle);
-            doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
+        }
+
+        // Apply style changes to each character
+        else {
+            for (int index = startPosition; index <= startPosition + length; index++) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(index).getAttributes());
+                tss.setFontStyle(fontStyle);
+                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            }
         }
 
         setStyledDocument(doc);
