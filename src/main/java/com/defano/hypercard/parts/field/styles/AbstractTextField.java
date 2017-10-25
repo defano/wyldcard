@@ -27,9 +27,7 @@ import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
@@ -174,7 +172,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         // Initialize font to system font selection if document is empty
         if (textPane.getText().length() == 0) {
-            textPane.setCharacterAttributes(FontContext.getInstance().getHilitedTextStyleProvider().get().toAttributeSet(), true);
+            textPane.setCharacterAttributes(FontContext.getInstance().getFocusedTextStyle().toAttributeSet(), true);
         }
 
         // And auto-select any
@@ -219,12 +217,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         // Update font style selection in menus
         if (textPane.getText().length() > 0 && textPane.isEditable()) {
-            Range selection = getSelectedTextRange();
-            AttributeSet caretAttributes = selection.isEmpty() ?
-                    textPane.getCharacterAttributes() :
-                    textPane.getStyledDocument().getCharacterElement(selection.start + ((selection.end - selection.start) / 2)).getAttributes();
-
-            FontContext.getInstance().setHilitedTextStyle(TextStyleSpecifier.fromAttributeSet(caretAttributes));
+            updateHilitedFontSelection();
         }
     }
 
@@ -242,6 +235,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void onAutoSelectedLinesChanged(Set<Integer> selectedLines) {
         textPane.autoSelectLines(selectedLines);
+        updateHilitedFontSelection();
     }
 
     /**
@@ -252,6 +246,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.requestFocus();
         textPane.setSelectionStart(selection.start);
         textPane.setSelectionEnd(selection.end);
+        updateHilitedFontSelection();
     }
 
     private void displayStyledDocument(StyledDocument doc) {
@@ -288,6 +283,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
+        updateHilitedFontSelection();
     }
 
     private void setTextFontSize(Value fontSize) {
@@ -301,6 +297,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
+        updateHilitedFontSelection();
     }
 
     private void setTextFontStyle(Value fontStyle) {
@@ -314,6 +311,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         }
 
         updateModel();
+        updateHilitedFontSelection();
     }
 
     protected void setWideMargins(boolean isWideMargins) {
@@ -330,6 +328,34 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private void updateModel() {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
         model.setStyledDocument(textPane.getStyledDocument());
+    }
+
+    private void updateHilitedFontSelection() {
+        Range selection = getSelectedTextRange();
+
+        Value styles = new Value("plain");
+        Set<Value> families = new HashSet<>();
+        Set<Value> sizes = new HashSet<>();
+
+        if (selection.isEmpty()) {
+            AttributeSet attributes = textPane.getCharacterAttributes();
+            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
+            styles = tss.getHyperTalkStyle();
+            families.add(new Value(tss.getFontFamily()));
+            sizes.add(new Value(tss.getFontSize()));
+        } else {
+            for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
+                AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
+                styles = tss.appendStyle(styles);
+                families.add(new Value(tss.getFontFamily()));
+                sizes.add(new Value(tss.getFontSize()));
+            }
+        }
+
+        FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
+        FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
+        FontContext.getInstance().getFocusedFontStyleProvider().set(styles);
     }
 
     private class FontStyleObserver implements Observer {
@@ -406,6 +432,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             }
         }
 
+        /** {@inheritDoc} */
         @Override
         public void mouseDragged(MouseEvent e) {
             if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue() &&

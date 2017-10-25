@@ -127,9 +127,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
             multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
             textStyleButton.addActionListener(e -> {
-                Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont().toFont());
+                Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
                 if (selection != null) {
-                    ((FieldModel) part).setFont(TextStyleSpecifier.fromFont(selection));
+                    ((FieldModel) part).setTextStyle(TextStyleSpecifier.fromFont(selection));
                 }
             });
 

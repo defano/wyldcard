@@ -75,9 +75,9 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         });
 
         textStyle.addActionListener(e -> {
-            Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getFont().toFont());
+            Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
             if (selection != null) {
-                ((FieldModel) model).setFont(TextStyleSpecifier.fromFont(selection));
+                ((FieldModel) model).setTextStyle(TextStyleSpecifier.fromFont(selection));
             }
         });
 

@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
 import com.defano.hypercard.parts.util.FieldUtilities;
@@ -117,14 +118,14 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
 
-        defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(getTextFontFamily(0, getText().length())));
-        defineComputedSetterProperty(PROP_TEXTFONT, (model, propertyName, value) -> setTextFontFamily(0, getText().length(), value));
+        defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(getTextFontFamily(0, getText().length() + 1)));
+        defineComputedSetterProperty(PROP_TEXTFONT, (model, propertyName, value) -> setTextFontFamily(0, getText().length() + 1, value));
 
-        defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(getTextFontSize(0, getText().length())));
-        defineComputedSetterProperty(PROP_TEXTSIZE, (model, propertyName, value) -> setTextFontSize(0, getText().length(), value));
+        defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(getTextFontSize(0, getText().length() + 1)));
+        defineComputedSetterProperty(PROP_TEXTSIZE, (model, propertyName, value) -> setTextFontSize(0, getText().length() + 1, value));
 
-        defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length())));
-        defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length(), value));
+        defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length() + 1)));
+        defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
     }
@@ -230,7 +231,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         int changePosition = 0;
         StyledDocument document = getStyledDocument();
-        AttributeSet style = document.getCharacterElement(0).getAttributes();
+
+        AttributeSet style = document.getLength() == 0 ?
+                FontContext.getInstance().getFocusedTextStyle().toAttributeSet() :
+                document.getCharacterElement(0).getAttributes();
 
         try {
             for (DiffMatchPatch.Diff thisDiff : getTextDifferences(existingText, newText)) {
@@ -253,7 +257,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             throw new RuntimeException("An error occurred updating field text.", e);
         }
 
-        setStyledDocument(document);        // Save our changes
+        setStyledDocument(document);              // Save our changes
         fireDocumentChangeObserver(document);     // ... and let the view know know about 'em
     }
 
@@ -286,15 +290,18 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         this.currentCardId = cardId;
     }
 
-    /**
-     * Sets the text attributes of all text in this field to the given specification, replacing any existing style.
-     * @param tss The text style specification.
-     */
-    public void setTextStyleProperties(TextStyleSpecifier tss) {
-        int length = getText().length();
+    /** {@inheritDoc} */
+    @Override
+    public void setTextStyle(TextStyleSpecifier tss) {
         StyledDocument doc = getStyledDocument();
-        doc.setCharacterAttributes(0, length, tss.toAttributeSet(), true);
+        doc.setCharacterAttributes(0, doc.getLength() + 1, tss.toAttributeSet(), true);
         fireDocumentChangeObserver(doc);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public TextStyleSpecifier getTextStyle() {
+        return TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(0).getAttributes());
     }
 
     /**
@@ -309,6 +316,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
         StyledDocument doc = getStyledDocument();
         doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+
+        setStyledDocument(doc);
         fireDocumentChangeObserver(doc);
     }
 
@@ -321,8 +330,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     public void setTextFontSize(int startPosition, int length, Value fontSize) {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontSize(fontSize.integerValue());
+        System.err.println("FONT SIZE: " + tss.toAttributeSet());
         StyledDocument doc = getStyledDocument();
         doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
+
+        setStyledDocument(doc);
         fireDocumentChangeObserver(doc);
     }
 
@@ -341,6 +353,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             tss.setFontStyle(fontStyle);
             doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
         }
+
+        setStyledDocument(doc);
         fireDocumentChangeObserver(doc);
     }
 
@@ -424,7 +438,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             }
 
             getAutoSelectedLines().add(lineNumber);
-
             fireAutoSelectChangeObserver(getAutoSelectedLines());
         }
     }

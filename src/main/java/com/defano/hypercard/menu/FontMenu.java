@@ -1,6 +1,7 @@
 package com.defano.hypercard.menu;
 
 import com.defano.hypercard.paint.FontContext;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.jmonet.model.ImmutableProvider;
 
 import java.awt.*;
@@ -16,7 +17,7 @@ public class FontMenu extends HyperCardMenu {
             MenuItemBuilder.ofCheckType()
                     .named(thisFamily)
                     .withAction(e -> FontContext.getInstance().setSelectedFontFamily(thisFamily))
-                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getHilitedTextStyleProvider(), f -> thisFamily.equalsIgnoreCase(f.getFontFamily())))
+                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontFamilyProvider(), f -> f.contains(new Value(thisFamily))))
                     .fontFamily(thisFamily)
                     .build(this);
         }

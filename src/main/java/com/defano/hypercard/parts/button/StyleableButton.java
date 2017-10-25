@@ -53,7 +53,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            FontContext.getInstance().setHilitedTextStyle((((CardLayerPartModel) getPartModel()).getFont()));
+            FontContext.getInstance().setHilitedFont((((CardLayerPartModel) getPartModel()).getTextStyle().toFont()));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }

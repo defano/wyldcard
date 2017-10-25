@@ -36,11 +36,11 @@ public abstract class CardLayerPartModel extends PartModel {
 
     }
 
-    public TextStyleSpecifier getFont() {
+    public TextStyleSpecifier getTextStyle() {
         return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(PROP_TEXTFONT), getKnownProperty(PROP_TEXTSTYLE), getKnownProperty(PROP_TEXTSIZE));
     }
 
-    public void setFont(TextStyleSpecifier style) {
+    public void setTextStyle(TextStyleSpecifier style) {
         if (style != null) {
             if (style.getFontSize() > 0) {
                 setKnownProperty(PROP_TEXTSIZE, new Value(style.getFontSize()));
