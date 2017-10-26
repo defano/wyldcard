@@ -65,6 +65,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_AUTOTAB = "autotab";
     public static final String PROP_AUTOSELECT = "autoselect";
     public static final String PROP_MULTIPLELINES = "multiplelines";
+    public static final String PROP_SCROLLING = "scrolling";
 
     private byte[] sharedRtf;
     private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
@@ -103,6 +104,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         partModel.defineProperty(PROP_AUTOTAB, new Value(false), false);
         partModel.defineProperty(PROP_AUTOSELECT, new Value(false), false);
         partModel.defineProperty(PROP_MULTIPLELINES, new Value(false), false);
+        partModel.defineProperty(PROP_SCROLLING, new Value(true), false);
 
         partModel.initialize();
 

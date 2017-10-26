@@ -1,6 +1,7 @@
 package com.defano.hypercard.paint;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.fonts.FontFactory;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.defano.hypertalk.ast.common.ExpressionList;
 import com.defano.hypertalk.ast.common.SystemMessage;
@@ -287,7 +288,7 @@ public class ToolsContext {
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
-                .withFontProvider(FontContext.getInstance().getSelectedFontProvider())
+                .withFontProvider(FontContext.getInstance().getPaintFontProvider())
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getInstance().getDisplayedCard().getCanvas())
                 .build();

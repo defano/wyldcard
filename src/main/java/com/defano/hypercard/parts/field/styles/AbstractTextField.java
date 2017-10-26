@@ -121,6 +121,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             case FieldModel.PROP_WIDEMARGINS:
                 setWideMargins(newValue.booleanValue());
                 break;
+
+            case FieldModel.PROP_SCROLLING:
+                textPane.setScrollable(newValue.booleanValue());
+                break;
         }
     }
 

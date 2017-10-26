@@ -83,6 +83,14 @@ public class TextStyleSpecifier {
     }
 
     public Font toFont() {
+        return FontFactory.byNameStyleSize(fontFamily, getAwtFontStyle(), fontSize);
+    }
+
+    public static int convertHyperTalkStyleToAwt(Value style) {
+        return TextStyleSpecifier.fromFontStyle(style).getAwtFontStyle();
+    }
+
+    public int getAwtFontStyle() {
         int fontStyle = Font.PLAIN;
 
         if (isBold) {
@@ -93,7 +101,7 @@ public class TextStyleSpecifier {
             fontStyle |= Font.ITALIC;
         }
 
-        return FontFactory.byNameStyleSize(fontFamily, fontStyle, fontSize);
+        return fontStyle;
     }
 
     public Value getHyperTalkStyle() {
