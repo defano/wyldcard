@@ -25,6 +25,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
@@ -45,6 +47,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
     private final AutoTabKeyObserver autoTabKeyObserver = new AutoTabKeyObserver();
     private final AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
+    private final ScrollObserver scrollObserver = new ScrollObserver();
 
     private final ToolEditablePart toolEditablePart;
 
@@ -125,6 +128,10 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             case FieldModel.PROP_SCROLLING:
                 textPane.setScrollable(newValue.booleanValue());
                 break;
+
+            case FieldModel.PROP_SCROLL:
+                setScroll(newValue.integerValue());
+                break;
         }
     }
 
@@ -143,6 +150,24 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     public void setEditable(boolean editable) {
         super.setEnabled(editable);
         textPane.setEditable(editable);
+    }
+
+    /**
+     * Sets the scrolled amount of this field to the given value. This value represents the number of pixels that have
+     * scrolled above the top of the text field.
+     *
+     * @param scroll The amount to scroll.
+     */
+    public void setScroll(int scroll) {
+        getVerticalScrollBar().setValue(scroll);
+    }
+
+    /**
+     * Gets the scrolled amount of this pixel.
+     * @return The number of pixels that have scrolled above the top of this field
+     */
+    public int getScroll() {
+        return getVerticalScrollBar().getValue();
     }
 
     /**
@@ -170,6 +195,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.addMouseListener(autoSelectObserver);
         textPane.addMouseMotionListener(autoSelectObserver);
 
+        getVerticalScrollBar().addAdjustmentListener(scrollObserver);
+
         // Update view with model data
         displayStyledDocument(model.getStyledDocument());
         toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
@@ -195,6 +222,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.removeCaretListener(this);
         textPane.addKeyListener(autoTabKeyObserver);
         textPane.removeMouseListener(autoSelectObserver);
+
+        getVerticalScrollBar().removeAdjustmentListener(scrollObserver);
 
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(null);
@@ -255,12 +284,16 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
     private void displayStyledDocument(StyledDocument doc) {
         if (textPane.getStyledDocument() != doc) {
+            int oldCaretPosition = textPane.getCaretPosition();
+
             // Remove old listener
             textPane.getStyledDocument().removeDocumentListener(AbstractTextField.this);
 
             // Replace doc and listener
             textPane.setStyledDocument(doc);
             doc.addDocumentListener(AbstractTextField.this);
+
+            textPane.setCaretPosition(oldCaretPosition);
         }
     }
 
@@ -445,6 +478,14 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
                 FieldModel model = (FieldModel) toolEditablePart.getPartModel();
                 model.autoSelectLine(textPane.getClickedLine(e), true);
             }
+        }
+    }
+
+    private class ScrollObserver implements AdjustmentListener {
+        /** {@inheritDoc} */
+        @Override
+        public void adjustmentValueChanged(AdjustmentEvent e) {
+            toolEditablePart.getPartModel().setKnownProperty(FieldModel.PROP_SCROLL, new Value(e.getValue()), true);
         }
     }
 }

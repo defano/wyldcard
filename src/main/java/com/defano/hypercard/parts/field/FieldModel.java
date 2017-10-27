@@ -3,7 +3,10 @@ package com.defano.hypercard.parts.field;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.parts.model.ComputedGetter;
+import com.defano.hypercard.parts.model.ComputedSetter;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -12,6 +15,7 @@ import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
@@ -66,6 +70,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_AUTOSELECT = "autoselect";
     public static final String PROP_MULTIPLELINES = "multiplelines";
     public static final String PROP_SCROLLING = "scrolling";
+    public static final String PROP_SCROLL = "scroll";
 
     private byte[] sharedRtf;
     private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
@@ -105,6 +110,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         partModel.defineProperty(PROP_AUTOSELECT, new Value(false), false);
         partModel.defineProperty(PROP_MULTIPLELINES, new Value(false), false);
         partModel.defineProperty(PROP_SCROLLING, new Value(true), false);
+        partModel.defineProperty(PROP_SCROLL, new Value(0), false);
 
         partModel.initialize();
 
