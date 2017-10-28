@@ -108,7 +108,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         long buttonNumber = HyperCard.getInstance().getDisplayedCard().getButtonNumber((ButtonModel) part);
         long buttonCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
         long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
-        String layer = part.getOwner().friendlyName;
+        String layer = part.getOwner().hyperTalkName;
 
         buttonLabel.setText(layer + " Button:");
         buttonLabelValue.setText(buttonNumber + " of " + buttonCount);

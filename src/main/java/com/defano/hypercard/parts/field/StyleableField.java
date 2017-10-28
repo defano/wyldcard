@@ -63,7 +63,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
     public void setStyle(FieldStyle style) {
         Component oldComponent = getFieldComponent();
         fieldComponent = getComponentForStyle(style);
-        replaceSwingComponent(oldComponent, (JComponent) fieldComponent);
+        replaceViewComponent(oldComponent, (JComponent) fieldComponent);
     }
 
     @Override

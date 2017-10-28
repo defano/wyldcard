@@ -141,8 +141,8 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
-    public void replaceSwingComponent(Component oldButtonComponent, Component newButtonComponent) {
-        parent.get().replaceSwingComponent(this, oldButtonComponent, newButtonComponent);
+    public void replaceViewComponent(Component oldButtonComponent, Component newButtonComponent) {
+        parent.get().replaceViewComponent(this, oldButtonComponent, newButtonComponent);
     }
 
     @Override

@@ -98,7 +98,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
             long fieldNumber = HyperCard.getInstance().getDisplayedCard().getFieldNumber((FieldModel) part);
             long fieldCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
             long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
-            String layer = part.getOwner().friendlyName;
+            String layer = part.getOwner().hyperTalkName;
 
             fieldLabel.setText(layer + " Field:");
             fieldLabelValue.setText(fieldNumber + " of " + fieldCount);

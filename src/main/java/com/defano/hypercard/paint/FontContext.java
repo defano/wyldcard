@@ -217,7 +217,7 @@ public class FontContext {
      * Gets a HyperTalk representation of the currently focused font style selection; a comma-separated list of
      * styles, for example 'bold, italic' or 'plain'.
      *
-     * @return
+     * @return A HyperTalk representation of the focused font style
      */
     private Value getFocusedHyperTalkFontStyle() {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value("plain"));

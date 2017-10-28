@@ -141,8 +141,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
 
     /** {@inheritDoc} */
     @Override
-    public void replaceSwingComponent(Component oldComponent, Component newComponent) {
-        parent.get().replaceSwingComponent(this, oldComponent, newComponent);
+    public void replaceViewComponent(Component oldComponent, Component newComponent) {
+        parent.get().replaceViewComponent(this, oldComponent, newComponent);
     }
 
     /** {@inheritDoc} */

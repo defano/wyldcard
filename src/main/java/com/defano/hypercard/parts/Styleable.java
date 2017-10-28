@@ -20,7 +20,7 @@ public interface Styleable<Style,StyledComponent> {
      * @param oldComponent The former component associated with this part
      * @param newComponent The new component
      */
-    void replaceSwingComponent(Component oldComponent, Component newComponent);
+    void replaceViewComponent(Component oldComponent, Component newComponent);
 
     /**
      * Specifies the style of this part.

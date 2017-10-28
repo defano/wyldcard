@@ -583,7 +583,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     @Override
     public String getHyperTalkAddress() {
-        return getOwner().friendlyName.toLowerCase() + " field id " + getId();
+        return getOwner().hyperTalkName.toLowerCase() + " field id " + getId();
     }
 
     /**

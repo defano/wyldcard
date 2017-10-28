@@ -136,7 +136,7 @@ public interface PartContainer {
         }
 
         if (index < 0 || index >= foundParts.size()) {
-            throw new PartException("No " + ps.getHyperTalkIdentifier() + " exists on this " + ps.layer.friendlyName.toLowerCase() + ".");
+            throw new PartException("No " + ps.getHyperTalkIdentifier() + " exists on this " + ps.layer.hyperTalkName.toLowerCase() + ".");
         } else {
             return foundParts.get(index);
         }

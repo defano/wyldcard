@@ -11,17 +11,17 @@ public enum ChunkType
     LINERANGE("lines"),
     ITEMRANGE("items");
 
-    private final String friendlyName;
+    private final String hyperTalkName;
 
-    ChunkType(String friendlyName) {
-        this.friendlyName = friendlyName;
+    ChunkType(String hyperTalkName) {
+        this.hyperTalkName = hyperTalkName;
     }
 
     public boolean isRange() {
         return this == CHARRANGE || this == WORDRANGE || this == LINERANGE || this == ITEMRANGE;
     }
 
-    public String friendlyName() {
-        return friendlyName;
+    public String hyperTalkName() {
+        return hyperTalkName;
     }
 }

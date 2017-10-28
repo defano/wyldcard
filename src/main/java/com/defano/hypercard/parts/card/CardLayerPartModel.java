@@ -9,6 +9,9 @@ import com.defano.hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A model of properties common to parts that live on a layer of the card (i.e., buttons and fields).
+ */
 public abstract class CardLayerPartModel extends PartModel {
 
     public static final String PROP_ZORDER = "zorder";
