@@ -205,12 +205,10 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         }
 
         // Single click to select part
-        else {
-            if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
-                PartToolContext.getInstance().setSelectedPart(this);
-            } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {
-                PartToolContext.getInstance().setSelectedPart(this);
-            }
+        else if ((ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) ||
+                (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent))
+        {
+            PartToolContext.getInstance().setSelectedPart(this);
         }
     }
 

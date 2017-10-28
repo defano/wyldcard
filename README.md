@@ -630,7 +630,7 @@ Property        | Description
 `showLines`     | Returns or sets whether dotted baselines are drawn underneath the text (imitates ruled notebook paper)
 `dontWrap`      | Returns or sets whether text automatically breaks (wraps) at the visible edge of the field. When false, the field will scroll horizontally until a `return` character is reached.
 `multipleLines` | Determines if multiple lines of text can be selected in auto-select mode. That is, whether the _list field_ allows multiple selections or not. Has no effect when the `autoSelect` property is `false`.
-`scroll`        | The number of pixels that have scrolled from the top of the field; `0` indicates that the first line of text appears at the top of visible text. Has no effect if the field is not scrolling.
+`scroll`        | The number of pixels that have scrolled from the top of the field; `0` indicates that the first line of text is visible at the top field. Has no effect if the field is not scrolling.
 `scrolling`     | Enables or disables vertical scrolling in this field. This property does not exist in Apple's HyperCard.
 `sharedText`    | When `true`, each card in the background shares the same text in the field. When `false`, each card in the background can place a unique value into the field. Has no effect on card fields.
 `wideMargins`   | Returns or sets whether the field is drawn with a wider, 15-pixel margin between its text and border.

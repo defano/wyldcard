@@ -21,49 +21,49 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Plain")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("plain")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("plain"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedPlainProvider())
                 .fontStyle(Font.PLAIN)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Bold")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("bold")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("bold"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedBoldProvider())
                 .fontStyle(Font.BOLD)
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Italic")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("italic")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("italic"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedItalicProvider())
                 .fontStyle(Font.ITALIC)
                 .build(this);
         
         MenuItemBuilder.ofCheckType()
                 .named("Underline")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("underline")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("underline"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedUnderlineProvider())
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Strikethrough")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("strikethrough")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("strikethrough"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedStrikethroughProvider())
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Superscript")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("superscript")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("superscript"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedSuperscriptProvider())
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Subscript")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("subscript")))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontStyleProvider(), e -> e.contains(new Value("subscript"))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedSubscriptProvider())
                 .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
                 .build(this);
 

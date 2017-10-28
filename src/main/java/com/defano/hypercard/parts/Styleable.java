@@ -6,7 +6,7 @@ import java.awt.*;
  * Represents a part that can be styled (that is, the underlying Swing component can be swapped out at runtime).
  *
  * @param <Style> The style associated with the part.
- * @param <StyledComponent> The(Swing) component associated with the part.
+ * @param <StyledComponent> The (Swing) component associated with the part.
  */
 public interface Styleable<Style,StyledComponent> {
 

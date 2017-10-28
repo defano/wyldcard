@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An extension to {@link JTextPane} that adds a variety of HyperCard-specific features to standard text panes,
+ * An extension to {@link JTextPane} that adds a variety of HyperCard-specific features to a standard text pane,
  * including:
  *
- * - Ability to enable or disable vertical scrolling within a JScrollPane
- * - Ability to disable wrapping text across lines,
+ * - Ability to enable or disable vertical scrolling (within a JScrollPane),
+ * - Ability to disable auto-wrapping text across lines,
  * - Draw dotted lines underneath each line of text,
  * - Ability to position the cursor beyond the bounds of the field contents
  * - Support for per-line "auto-selection" features.

@@ -3,10 +3,7 @@ package com.defano.hypercard.parts.field;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
-import com.defano.hypercard.parts.model.ComputedGetter;
-import com.defano.hypercard.parts.model.ComputedSetter;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
-import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -15,7 +12,6 @@ import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
@@ -635,7 +631,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
         if (observer != null) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onAutoSelectedLinesChanged(selectedLines));
+            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onAutoSelectionChanged(selectedLines));
         }
     }
 

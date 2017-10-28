@@ -19,12 +19,12 @@ public interface FieldModelObserver {
     void onStyledDocumentChanged(StyledDocument document);
 
     /**
-     * Fired to indicate that the set of auto-selected lines (that is, those highlighted in a "list field" have
+     * Fired to indicate that the set of auto-selected lines (that is, those highlighted in a "list field") have
      * changed.
      *
      * @param selectedLines The set of list-highlighted lines.
      */
-    void onAutoSelectedLinesChanged(Set<Integer> selectedLines);
+    void onAutoSelectionChanged(Set<Integer> selectedLines);
 
     /**
      * Fired to indicate the normal (cursor-highlighted) selection of the field has changed.

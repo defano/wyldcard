@@ -32,7 +32,7 @@ import java.awt.event.MouseEvent;
 import java.util.*;
 
 /**
- * An abstract HyperCard text field; that is, one without a specific style bound to it. Encapsulates the stylable,
+ * An abstract HyperCard text field. That is, a field without a specific style bound to it. Encapsulates the styleable,
  * editable text component and the scrollable surface in which it is embedded.
  */
 public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
@@ -153,24 +153,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     }
 
     /**
-     * Sets the scrolled amount of this field to the given value. This value represents the number of pixels that have
-     * scrolled above the top of the text field.
-     *
-     * @param scroll The amount to scroll.
-     */
-    public void setScroll(int scroll) {
-        getVerticalScrollBar().setValue(scroll);
-    }
-
-    /**
-     * Gets the scrolled amount of this pixel.
-     * @return The number of pixels that have scrolled above the top of this field
-     */
-    public int getScroll() {
-        return getVerticalScrollBar().getValue();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -266,7 +248,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      * {@inheritDoc}
      */
     @Override
-    public void onAutoSelectedLinesChanged(Set<Integer> selectedLines) {
+    public void onAutoSelectionChanged(Set<Integer> selectedLines) {
         textPane.autoSelectLines(selectedLines);
         updateFocusedFontSelection();
     }
@@ -281,6 +263,25 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.setSelectionEnd(selection.end);
         updateFocusedFontSelection();
     }
+
+    /**
+     * Sets the scrolled amount of this field to the given value. This value represents the number of pixels that have
+     * scrolled above the top of the text field.
+     *
+     * @param scroll The amount to scroll.
+     */
+    public void setScroll(int scroll) {
+        getVerticalScrollBar().setValue(scroll);
+    }
+
+    /**
+     * Gets the scrolled amount of this pixel.
+     * @return The number of pixels that have scrolled above the top of this field
+     */
+    public int getScroll() {
+        return getVerticalScrollBar().getValue();
+    }
+
 
     private void displayStyledDocument(StyledDocument doc) {
         if (textPane.getStyledDocument() != doc) {
@@ -370,21 +371,25 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private void updateFocusedFontSelection() {
         Range selection = getSelectedTextRange();
 
-        Value styles = new Value("plain");
+        Set<Value> styles = new HashSet<>();
         Set<Value> families = new HashSet<>();
         Set<Value> sizes = new HashSet<>();
 
+        // No selection; aggregate and report styles of entire field
         if (selection.isEmpty()) {
             AttributeSet attributes = textPane.getCharacterAttributes();
             TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
-            styles = tss.getHyperTalkStyle();
+            styles.add(tss.getHyperTalkStyle());
             families.add(new Value(tss.getFontFamily()));
             sizes.add(new Value(tss.getFontSize()));
-        } else {
+        }
+
+        // Selection exists; aggregate and report styles only of selected text
+        else {
             for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
                 AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
-                styles = tss.appendStyle(styles);
+                styles.add(tss.getHyperTalkStyle());
                 families.add(new Value(tss.getFontFamily()));
                 sizes.add(new Value(tss.getFontSize()));
             }
@@ -392,7 +397,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
 
         FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
         FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
-        FontContext.getInstance().getFocusedFontStyleProvider().set(styles);
+        FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
     }
 
     private class FontStyleObserver implements Observer {

@@ -255,8 +255,56 @@ public class TextStyleSpecifier {
         this.fontSize = fontSize;
     }
 
+    public boolean isBold() {
+        return isBold;
+    }
+
+    public boolean isItalic() {
+        return isItalic;
+    }
+
+    public boolean isUnderline() {
+        return isUnderline;
+    }
+
+    public boolean isStrikeThrough() {
+        return isStrikeThrough;
+    }
+
+    public boolean isSuperscript() {
+        return isSuperscript;
+    }
+
+    public boolean isSubscript() {
+        return isSubscript;
+    }
+
     public boolean isPlain() {
         return !isBold && !isItalic && !isUnderline && !isStrikeThrough && !isSuperscript && !isSubscript;
+    }
+
+    public void setBold(boolean bold) {
+        isBold = bold;
+    }
+
+    public void setItalic(boolean italic) {
+        isItalic = italic;
+    }
+
+    public void setUnderline(boolean underline) {
+        isUnderline = underline;
+    }
+
+    public void setStrikeThrough(boolean strikeThrough) {
+        isStrikeThrough = strikeThrough;
+    }
+
+    public void setSuperscript(boolean superscript) {
+        isSuperscript = superscript;
+    }
+
+    public void setSubscript(boolean subscript) {
+        isSubscript = subscript;
     }
 
     @Override
