@@ -16,14 +16,21 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * An extension to {@link JTextPane} that adds the ability to disable auto-wrapping of text, to draw dotted lines
- * underneath each line of text, to position the cursor beyond the bounds of the field contents, and to support
- * "auto-selection" features.
+ * An extension to {@link JTextPane} that adds a variety of HyperCard-specific features to a standard text pane,
+ * including:
+ *
+ * - Ability to enable or disable vertical scrolling (within a JScrollPane),
+ * - Ability to disable auto-wrapping text across lines,
+ * - Draw dotted lines underneath each line of text,
+ * - Ability to position the cursor beyond the bounds of the field contents
+ * - Support for per-line "auto-selection" features.
  */
 public class HyperCardTextPane extends JTextPane {
 
     private boolean wrapText = true;
+    private boolean scrollable = true;
     private boolean showLines = false;
+
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter listHighlighter = new DefaultHighlighter();
     private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
@@ -58,6 +65,17 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return !scrollable || super.getScrollableTracksViewportHeight();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getText() {
         try {
@@ -67,6 +85,9 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getSelectedText() {
         if (isAutoSelection()) {
@@ -76,6 +97,9 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getSelectionStart() {
         if (isAutoSelection()) {
@@ -85,6 +109,9 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getSelectionEnd() {
         if (isAutoSelection()) {
@@ -97,6 +124,18 @@ public class HyperCardTextPane extends JTextPane {
     private Range getAutoSelectionRange() {
         int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
         return FieldUtilities.getLinesRange(this, lines);
+    }
+
+    public boolean isScrollable() {
+        return scrollable;
+    }
+
+    public void setScrollable(boolean scrollable) {
+        this.scrollable = scrollable;
+
+        // Cause the field to re-wrap the text inside of it
+        this.setSize(this.getWidth() - 1, this.getHeight());
+        this.setSize(this.getWidth() + 1, this.getHeight());
     }
 
     public boolean isWrapText() {

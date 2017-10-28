@@ -287,7 +287,7 @@ public class ToolsContext {
                 .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintProvider(linePaintProvider)
                 .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
-                .withFontProvider(FontContext.getInstance().getSelectedFontProvider())
+                .withFontProvider(FontContext.getInstance().getPaintFontProvider())
                 .withShapeSidesProvider(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getInstance().getDisplayedCard().getCanvas())
                 .build();

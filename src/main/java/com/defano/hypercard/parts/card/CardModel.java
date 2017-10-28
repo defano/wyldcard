@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 /**
  * A data model representing a card in a stack. See {@link CardPart} for the associated
- * view object.
+ * controller object.
  */
 public class CardModel extends PartModel {
 

@@ -53,7 +53,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            FontContext.getInstance().setHilitedTextStyle((((CardLayerPartModel) getPartModel()).getFont()));
+            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle()));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }
@@ -65,7 +65,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     public void setStyle(ButtonStyle style) {
         Component oldComponent = getButtonComponent();
         buttonComponent = getComponentForStyle(style);
-        replaceSwingComponent(oldComponent, (JComponent) buttonComponent);
+        replaceViewComponent(oldComponent, (JComponent) buttonComponent);
 
         getPartModel().addPropertyChangedObserver(buttonComponent);
         partOpened();

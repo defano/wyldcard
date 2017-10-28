@@ -2,6 +2,10 @@ package com.defano.hypercard.parts.model;
 
 import com.defano.hypertalk.ast.common.Value;
 
+/**
+ * Logically links two logical (boolean-valued) properties together. That is, when one property changes state, the other
+ * property should also change. This is useful for managing mutually exclusive properties in a model.
+ */
 public class LogicalLinkObserver implements PropertyChangeObserver {
 
     private final String whenProperty;

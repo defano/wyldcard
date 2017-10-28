@@ -106,7 +106,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
             return "line " +
                     (getSelectedIndex() + 1) +
                     " of " +
-                    toolEditablePart.getCardLayer().friendlyName.toLowerCase() +
+                    toolEditablePart.getCardLayer().hyperTalkName.toLowerCase() +
                     " button id " +
                     toolEditablePart.getId();
         }

@@ -1,9 +1,11 @@
 package com.defano.hypercard.parts.field;
 
+import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.OpaqueField;
 import com.defano.hypercard.parts.field.styles.RectangleField;
 import com.defano.hypercard.parts.field.styles.ShadowField;
@@ -47,6 +49,9 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
         if (isSelectedForEditing()) {
             MarchingAnts.getInstance().addObserver(this);
+
+            // TODO: Focus style only reflects first char; should reflect entire field
+            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle()));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }
@@ -58,7 +63,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
     public void setStyle(FieldStyle style) {
         Component oldComponent = getFieldComponent();
         fieldComponent = getComponentForStyle(style);
-        replaceSwingComponent(oldComponent, (JComponent) fieldComponent);
+        replaceViewComponent(oldComponent, (JComponent) fieldComponent);
     }
 
     @Override

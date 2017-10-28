@@ -63,7 +63,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
      *
-     * @param cardIndex The location in the stack whose card should be returned.
+     * @param cardIndex The location in the stack where the card should be created.
      * @param stack The stack data model containing the card to return
      * @return The CardPart.
      * @throws HtException Thrown if an error occurs creating the card.
@@ -73,7 +73,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Instantiates a CardPart given a CardModel and StackModel.
+     * Instantiates a CardPart given a {@link CardModel} and {@link StackModel}.
      *
      * @param model The model of the card to instantiate.
      * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
@@ -280,7 +280,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
 
         setPartsOnLayerVisible(Owner.CARD, visible);
 
-        // Notify the window manager than background editing changed
+        // Notify the window manager that background editing mode changed
         WindowManager.getStackWindow().invalidateWindowTitle();
     }
 
@@ -353,7 +353,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * @param oldButtonComponent The old Swing component associated with this part.
      * @param newButtonComponent The new Swing component to be used.
      */
-    public void replaceSwingComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
+    public void replaceViewComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
         CardLayer partLayer = getCardLayer(oldButtonComponent);
         removeSwingComponent(oldButtonComponent);
         addSwingComponent(newButtonComponent, forPart.getRect(), partLayer);

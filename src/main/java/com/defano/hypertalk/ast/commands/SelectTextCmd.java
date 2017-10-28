@@ -81,7 +81,7 @@ public class SelectTextCmd extends Command {
 
     private void selectMenuButtonItem(PartSpecifier specifier) throws HtException {
         if (chunk.type != ChunkType.LINE) {
-            throw new HtSemanticException("Cannot select " + chunk.type.friendlyName() + " of this button.");
+            throw new HtSemanticException("Cannot select " + chunk.type.hyperTalkName() + " of this button.");
         }
 
         PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);

@@ -9,6 +9,9 @@ import com.defano.hypertalk.ast.common.Value;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * A model of properties common to parts that live on a layer of the card (i.e., buttons and fields).
+ */
 public abstract class CardLayerPartModel extends PartModel {
 
     public static final String PROP_ZORDER = "zorder";
@@ -36,7 +39,7 @@ public abstract class CardLayerPartModel extends PartModel {
 
     }
 
-    public TextStyleSpecifier getFont() {
+    public TextStyleSpecifier getTextStyle() {
         return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(PROP_TEXTFONT), getKnownProperty(PROP_TEXTSTYLE), getKnownProperty(PROP_TEXTSIZE));
     }
 
@@ -53,5 +56,4 @@ public abstract class CardLayerPartModel extends PartModel {
             setKnownProperty(PROP_TEXTSTYLE, style.getHyperTalkStyle());
         }
     }
-
 }

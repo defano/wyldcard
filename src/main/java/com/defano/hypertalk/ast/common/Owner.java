@@ -6,9 +6,9 @@ public enum Owner {
     STACK("Stack"),
     HYPERCARD("HyperCard");
 
-    public final String friendlyName;
+    public final String hyperTalkName;
 
-    Owner(String friendlyName) {
-        this.friendlyName = friendlyName;
+    Owner(String hyperTalkName) {
+        this.hyperTalkName = hyperTalkName;
     }
 }

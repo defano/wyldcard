@@ -7,6 +7,10 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
+/**
+ * A utility for representing text style and converting it between various forms of that representation like
+ * {@link Font}, {@link AttributeSet} and {@link Value}.
+ */
 public class TextStyleSpecifier {
 
     private AttributeSet attributes;
@@ -23,9 +27,9 @@ public class TextStyleSpecifier {
     private TextStyleSpecifier() {
     }
 
-    public static TextStyleSpecifier fromHyperTalkFontStyle(Value fontStyle) {
+    public static TextStyleSpecifier fromFontStyle(Value hyperTalkStyle) {
         TextStyleSpecifier tss = new TextStyleSpecifier();
-        tss.setFontStyle(fontStyle);
+        tss.setFontStyle(hyperTalkStyle);
         return tss;
     }
 
@@ -79,8 +83,14 @@ public class TextStyleSpecifier {
     }
 
     public Font toFont() {
+        return FontFactory.byNameStyleSize(fontFamily, getAwtFontStyle(), fontSize);
+    }
 
+    public static int convertHyperTalkStyleToAwt(Value style) {
+        return TextStyleSpecifier.fromFontStyle(style).getAwtFontStyle();
+    }
 
+    public int getAwtFontStyle() {
         int fontStyle = Font.PLAIN;
 
         if (isBold) {
@@ -91,7 +101,7 @@ public class TextStyleSpecifier {
             fontStyle |= Font.ITALIC;
         }
 
-        return FontFactory.byNameStyleSize(fontFamily, fontStyle, fontSize);
+        return fontStyle;
     }
 
     public Value getHyperTalkStyle() {
@@ -119,7 +129,7 @@ public class TextStyleSpecifier {
             return new Value("plain");
         } else {
             id.delete(0, 1);
-            return new Value(id.toString());
+            return new Value(id.toString().trim());
         }
     }
 
@@ -215,6 +225,18 @@ public class TextStyleSpecifier {
         }
     }
 
+    public Value appendStyle(Value style) {
+        String v = style.stringValue().toLowerCase();
+        isBold = v.contains("bold") || isBold;
+        isItalic = v.contains("italic") || isItalic;
+        isUnderline = v.contains("underline") || isUnderline;
+        isSubscript = v.contains("subscript") || isSubscript;
+        isSuperscript = v.contains("superscript") || isSuperscript;
+        isStrikeThrough = v.contains("strikethrough") || isStrikeThrough;
+
+        return getHyperTalkStyle();
+    }
+
     public void setFontStyle(Value value) {
         String v = value.stringValue().toLowerCase();
         isBold = v.contains("bold");
@@ -231,10 +253,6 @@ public class TextStyleSpecifier {
 
     public void setFontSize(int fontSize) {
         this.fontSize = fontSize;
-    }
-
-    public boolean isPlain() {
-        return !isBold() && !isItalic() && !isUnderline() && !isStrikeThrough() && !isSuperscript() && !isSubscript();
     }
 
     public boolean isBold() {
@@ -259,6 +277,63 @@ public class TextStyleSpecifier {
 
     public boolean isSubscript() {
         return isSubscript;
+    }
+
+    public boolean isPlain() {
+        return !isBold && !isItalic && !isUnderline && !isStrikeThrough && !isSuperscript && !isSubscript;
+    }
+
+    public void setBold(boolean bold) {
+        isBold = bold;
+    }
+
+    public void setItalic(boolean italic) {
+        isItalic = italic;
+    }
+
+    public void setUnderline(boolean underline) {
+        isUnderline = underline;
+    }
+
+    public void setStrikeThrough(boolean strikeThrough) {
+        isStrikeThrough = strikeThrough;
+    }
+
+    public void setSuperscript(boolean superscript) {
+        isSuperscript = superscript;
+    }
+
+    public void setSubscript(boolean subscript) {
+        isSubscript = subscript;
+    }
+
+    @Override
+    public String toString() {
+        return "TextStyleSpecifier{" +
+                "attributes=" + attributes +
+                ", fontFamily='" + fontFamily + '\'' +
+                ", fontSize=" + fontSize +
+                ", isBold=" + isBold +
+                ", isItalic=" + isItalic +
+                ", isUnderline=" + isUnderline +
+                ", isStrikeThrough=" + isStrikeThrough +
+                ", isSuperscript=" + isSuperscript +
+                ", isSubscript=" + isSubscript +
+                '}';
+    }
+
+    @Override
+    public int hashCode() {
+        int result = attributes != null ? attributes.hashCode() : 0;
+        result = 31 * result + (fontFamily != null ? fontFamily.hashCode() : 0);
+        result = 31 * result + fontSize;
+        result = 31 * result + (isBold ? 1 : 0);
+        result = 31 * result + (isItalic ? 1 : 0);
+        result = 31 * result + (isUnderline ? 1 : 0);
+        result = 31 * result + (isStrikeThrough ? 1 : 0);
+        result = 31 * result + (isSuperscript ? 1 : 0);
+        result = 31 * result + (isSubscript ? 1 : 0);
+        return result;
     }
 
     @Override

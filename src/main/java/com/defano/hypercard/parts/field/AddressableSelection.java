@@ -150,7 +150,7 @@ public interface AddressableSelection {
      * @param model             The model of the component that owns the selection.
      * @param isSystemSelection True if this selection qualifies as the global, "system" selection. That is, when
      *                          true, this selection is addressable as 'the selection'; when false, the selection
-     *                          is only addressable as a property of this part, i.e., 'the selectedText of field x'
+     *                          is only addressable as a property of this part, i.e., 'the selectedText of field x'.
      */
     default void updateSelectionContext(Range selection, PropertiesModel model, boolean isSystemSelection) {
         getSelectableTextModel().onViewDidUpdateSelection(selection);

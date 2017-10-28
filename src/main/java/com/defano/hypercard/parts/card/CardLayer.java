@@ -6,17 +6,17 @@ import com.defano.hypertalk.ast.common.Owner;
  * An enumeration of layers in the card view stack.
  */
 public enum CardLayer {
-    BACKGROUND_GRAPHICS(1, "Background"),
-    BACKGROUND_PARTS(2, "Background"),
-    CARD_GRAPHICS(3, "Card"),
-    CARD_PARTS(4, "Card");
+    BACKGROUND_GRAPHICS(1, "background"),
+    BACKGROUND_PARTS(2, "background"),
+    CARD_GRAPHICS(3, "card"),
+    CARD_PARTS(4, "card");
 
     public final int paneLayer;
-    public final String friendlyName;
+    public final String hyperTalkName;
 
-    CardLayer(int paneLayer, String friendlyName) {
+    CardLayer(int paneLayer, String hyperTalkName) {
         this.paneLayer = paneLayer;
-        this.friendlyName = friendlyName;
+        this.hyperTalkName = hyperTalkName;
     }
 
     public Owner asOwner() {
