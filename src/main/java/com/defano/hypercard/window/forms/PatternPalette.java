@@ -14,8 +14,8 @@ import java.util.Observer;
 
 public class PatternPalette extends HyperCardDialog implements Observer {
 
-    private final int PATTERN_WIDTH = 30;
-    private final int PATTERN_HEIGHT = 20;
+    private final static int PATTERN_WIDTH = 30;
+    private final static int PATTERN_HEIGHT = 20;
 
     private int selectedPattern;
     private JPanel palettePanel;

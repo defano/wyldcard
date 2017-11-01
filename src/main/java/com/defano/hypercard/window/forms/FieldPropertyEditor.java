@@ -154,7 +154,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
         model.setKnownProperty(FieldModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
         model.setKnownProperty(FieldModel.PROP_DONTWRAP, new Value(isWrapText.isSelected()));
         model.setKnownProperty(FieldModel.PROP_SHOWLINES, new Value(showLines.isSelected()));
-        model.setKnownProperty(FieldModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
+        model.setKnownProperty(FieldModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
         model.setKnownProperty(FieldModel.PROP_SHAREDTEXT, new Value(sharedText.isSelected()));
         model.setKnownProperty(FieldModel.PROP_ENABLED, new Value(enabled.isSelected()));
         model.setKnownProperty(FieldModel.PROP_WIDEMARGINS, new Value(isWideMargins.isSelected()));

@@ -118,6 +118,7 @@ public class RepeatStatement extends Statement {
         }
     }
 
+    @SuppressWarnings("InfiniteLoopStatement")
     private void executeRepeatForever() throws HtException, Breakpoint {
         while (true) {
             iterate();

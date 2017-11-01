@@ -142,7 +142,10 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
     @Override
     public void replaceViewComponent(Component oldButtonComponent, Component newButtonComponent) {
-        parent.get().replaceViewComponent(this, oldButtonComponent, newButtonComponent);
+        CardPart cardPart = parent.get();
+        if (cardPart != null) {
+            cardPart.replaceViewComponent(this, oldButtonComponent, newButtonComponent);
+        }
     }
 
     @Override
@@ -234,7 +237,10 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.get().getStackModel().getNextButtonId();
-        partModel = ButtonModel.newButtonModel(id, geometry, owner);
+        CardPart cardPart = parent.get();
+        if (cardPart != null) {
+            int id = cardPart.getStackModel().getNextButtonId();
+            partModel = ButtonModel.newButtonModel(id, geometry, owner);
+        }
     }
 }

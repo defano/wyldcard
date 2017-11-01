@@ -142,7 +142,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     /** {@inheritDoc} */
     @Override
     public void replaceViewComponent(Component oldComponent, Component newComponent) {
-        parent.get().replaceViewComponent(this, oldComponent, newComponent);
+        CardPart part = parent.get();
+        if (part != null) {
+            part.replaceViewComponent(this, oldComponent, newComponent);
+        }
     }
 
     /** {@inheritDoc} */
@@ -301,10 +304,13 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     }
 
     private void initProperties(Rectangle geometry) {
-        int id = parent.get().getStackModel().getNextFieldId();
+        CardPart cardPart = parent.get();
 
-        partModel = FieldModel.newFieldModel(id, geometry, owner, parent.get().getId());
-        partModel.addPropertyChangedObserver(this);
+        if (cardPart != null) {
+            int id = cardPart.getStackModel().getNextFieldId();
+            partModel = FieldModel.newFieldModel(id, geometry, owner, cardPart.getId());
+            partModel.addPropertyChangedObserver(this);
+        }
     }
 
     /**

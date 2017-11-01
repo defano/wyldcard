@@ -66,14 +66,12 @@ public class ButtonPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
-        iconButton.addActionListener(e -> {
-            WindowBuilder.make(new IconPicker())
-                    .withTitle("Icon")
-                    .resizeable(false)
-                    .withModel(model)
-                    .asModal()
-                    .build();
-        });
+        iconButton.addActionListener(e -> WindowBuilder.make(new IconPicker())
+                .withTitle("Icon")
+                .resizeable(false)
+                .withModel(model)
+                .asModal()
+                .build());
 
         textStyle.addActionListener(e -> {
             Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
@@ -139,8 +137,8 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
         model.setKnownProperty(ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
         model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
-        model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(style.getSelectedItem().toString()));
-        model.setKnownProperty(ButtonModel.PROP_FAMILY, new Value(family.getSelectedItem().toString()));
+        model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
+        model.setKnownProperty(ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
         model.setKnownProperty(ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
     }
 

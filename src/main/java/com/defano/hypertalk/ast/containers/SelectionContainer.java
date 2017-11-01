@@ -47,9 +47,7 @@ public class SelectionContainer extends Container {
 
         // Select the new range of text in the destination
         int newSelectionLength = newSelection.toString().length();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            field.setSelection(range.start, range.start + newSelectionLength);
-        });
+        ThreadUtils.invokeAndWaitAsNeeded(() -> field.setSelection(range.start, range.start + newSelectionLength));
     }
 
 }

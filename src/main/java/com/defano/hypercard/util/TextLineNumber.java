@@ -289,10 +289,7 @@ public class TextLineNumber extends JPanel
         int caretPosition = component.getCaretPosition();
         Element root = component.getDocument().getDefaultRootElement();
 
-        if (root.getElementIndex( rowStartOffset ) == root.getElementIndex(caretPosition))
-            return true;
-        else
-            return false;
+        return root.getElementIndex(rowStartOffset) == root.getElementIndex(caretPosition);
     }
 
     /*

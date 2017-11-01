@@ -24,13 +24,13 @@ public class FontUtils {
     public static int getAlignmentForValue(Value v) {
         switch (v.stringValue().trim().toLowerCase()) {
             case "left":
-                return SwingUtilities.LEFT;
+                return SwingConstants.LEFT;
             case "right":
-                return SwingUtilities.RIGHT;
+                return SwingConstants.RIGHT;
 
             default:
             case "center":
-                return SwingUtilities.CENTER;
+                return SwingConstants.CENTER;
         }
     }
 

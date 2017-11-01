@@ -286,14 +286,13 @@ public class Value implements StyledComparable<Value> {
             startVal = c.start.evaluate();
         if (c.end != null)
             endVal = c.end.evaluate();
-                        
-        if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
+
+        if (startVal == null || !startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
         if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
 
-        if (startVal != null)
-            startIdx = startVal.integerValue();
+        startIdx = startVal.integerValue();
         if (endVal != null)
             endIdx = endVal.integerValue();
 
@@ -327,13 +326,12 @@ public class Value implements StyledComparable<Value> {
         if (c.end != null)
             endVal = c.end.evaluate();
         
-        if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
+        if (startVal == null || !startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
         if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
-        
-        if (startVal != null)
-            startIdx = startVal.integerValue();
+
+        startIdx = startVal.integerValue();
         if (endVal != null)
             endIdx = endVal.integerValue();
 
