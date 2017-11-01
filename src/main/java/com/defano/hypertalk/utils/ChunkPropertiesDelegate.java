@@ -4,6 +4,7 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.CompositeChunk;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -24,7 +25,9 @@ public class ChunkPropertiesDelegate {
         }
 
         FieldModel fieldModel = (FieldModel) partModel;
-        Range range = RangeUtils.getRange(partModel.getValue().stringValue(), chunk);
+        Range range = (chunk instanceof CompositeChunk) ?
+                RangeUtils.getRange(partModel.getValue().stringValue(), (CompositeChunk) chunk) :
+                RangeUtils.getRange(partModel.getValue().stringValue(), chunk);
 
         switch (property.toLowerCase()) {
             case PROP_TEXTSIZE:
@@ -47,7 +50,9 @@ public class ChunkPropertiesDelegate {
         }
 
         FieldModel fieldModel = (FieldModel) partModel;
-        Range range = RangeUtils.getRange(partModel.getValue().stringValue(), chunk);
+        Range range = (chunk instanceof CompositeChunk) ?
+                RangeUtils.getRange(partModel.getValue().stringValue(), (CompositeChunk) chunk) :
+                RangeUtils.getRange(partModel.getValue().stringValue(), chunk);
 
         switch (property.toLowerCase()) {
             case PROP_TEXTSIZE:

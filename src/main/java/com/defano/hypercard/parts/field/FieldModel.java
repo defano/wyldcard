@@ -388,7 +388,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Apply style changes to each character
         else {
-            for (int index = startPosition; index <= startPosition + length; index++) {
+            for (int index = startPosition; index < startPosition + length; index++) {
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(index).getAttributes());
                 tss.setFontStyle(fontStyle);
                 doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);

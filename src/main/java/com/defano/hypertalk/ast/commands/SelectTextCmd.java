@@ -7,11 +7,8 @@ import com.defano.hypercard.parts.button.styles.MenuButton;
 import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.ChunkType;
-import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -61,8 +58,10 @@ public class SelectTextCmd extends Command {
         AddressableSelection field = (AddressableSelection) partModel;
 
         Range range = chunk == null ?
-                new Range(0, field.getSelectableText().length()) :            // Entire contents
-                RangeUtils.getRange(field.getSelectableText(), chunk);        // Chunk of contents
+                new Range(0, field.getSelectableText().length()) :                              // Entire contents
+                (chunk instanceof CompositeChunk) ?
+                        RangeUtils.getRange(field.getSelectableText(), (CompositeChunk)chunk) : // Chunk of a chunk of contents
+                        RangeUtils.getRange(field.getSelectableText(), chunk);                  // Chunk of contents
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             switch (preposition) {
