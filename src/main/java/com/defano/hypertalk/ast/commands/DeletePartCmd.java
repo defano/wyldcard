@@ -1,9 +1,13 @@
 package com.defano.hypertalk.ast.commands;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -21,8 +25,17 @@ public class DeletePartCmd extends Command {
     @Override
     public void onExecute() throws HtException {
         try {
-            PartModel p = ExecutionContext.getContext().getCurrentCard().findPart(part.evaluateAsSpecifier());
-            ExecutionContext.getContext().getCurrentCard().removePart(p);
+            PartSpecifier ps = part.evaluateAsSpecifier();
+            PartModel p = ExecutionContext.getContext().getPart(ps);
+
+            CardPart owner;
+            if (ps instanceof RemotePartSpecifier) {
+                owner = HyperCard.getInstance().getStack().findRemotePartOwner((RemotePartSpecifier) ps);
+            } else {
+                owner = ExecutionContext.getContext().getCurrentCard();
+            }
+
+            owner.removePart(p);
         } catch (PartException e) {
             throw new HtSemanticException("No such " + part.toString() + " to delete", e);
         }

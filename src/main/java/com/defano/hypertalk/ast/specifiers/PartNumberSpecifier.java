@@ -3,6 +3,9 @@ package com.defano.hypertalk.ast.specifiers;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
+/**
+ * Specifies a button, field, card or background part by cardinal number. For example, 'card 14' or 'button 2'
+ */
 public class PartNumberSpecifier implements PartSpecifier {
 
     private final PartType type;

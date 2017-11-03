@@ -27,20 +27,23 @@ public interface StackPartContainer extends PartContainer {
         if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
         } else if (ps instanceof RemotePartSpecifier) {
-            return findPartByLocation((RemotePartSpecifier) ps);
+            return findRemotePart((RemotePartSpecifier) ps);
         } else {
             return PartContainer.super.findPart(ps);
         }
     }
 
-    default PartModel findPartByLocation(RemotePartSpecifier ps) throws PartException {
+    default CardPart findRemotePartOwner(RemotePartSpecifier ps) throws PartException {
         try {
-            CardModel cardModel = (CardModel) findPart(ps.getLocation().evaluateAsSpecifier());
-            CardPart cardPart = CardPart.skeletonFromModel(cardModel, getStackModel());
-            return cardPart.findPart(ps.getRemotePartSpecifier());
+            CardModel cardModel = (CardModel) findPart(ps.getRemoteCardPartExp().evaluateAsSpecifier());
+            return CardPart.skeletonFromModel(cardModel, getStackModel());
         } catch (HtException e) {
-            throw new PartException("Cannot find that card.");
+            throw new PartException("Can't find that card.");
         }
+    }
+
+    default PartModel findRemotePart(RemotePartSpecifier ps) throws PartException {
+        return findRemotePartOwner(ps).findPart(ps.getRemotePartSpecifier());
     }
 
     /**

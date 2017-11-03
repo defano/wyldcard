@@ -522,14 +522,19 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private void removeField(FieldModel fieldModel) {
         FieldPart field = fields.getPartForModel(fieldModel);
-        fields.removePart(field);
-        removeSwingComponent(field.getComponent());
-        field.partClosed();
 
-        if (field.getCardLayer() == CardLayer.CARD_PARTS) {
+        if (field != null) {
+            fields.removePart(field);
+            removeSwingComponent(field.getComponent());
+            field.partClosed();
+        }
+
+        if (fieldModel.getLayer() == CardLayer.CARD_PARTS) {
             cardModel.removePartModel(fieldModel);
-        } else if (field.getCardLayer() == CardLayer.BACKGROUND_PARTS) {
+        } else if (fieldModel.getLayer() == CardLayer.BACKGROUND_PARTS) {
             getCardBackground().removePartModel(fieldModel);
+        } else {
+            throw new IllegalStateException("Bug! Invalid field layer.");
         }
     }
 
@@ -556,16 +561,20 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private void removeButton(ButtonModel buttonModel) {
         ButtonPart button = buttons.getPartForModel(buttonModel);
-        buttons.removePart(button);
-        removeSwingComponent(button.getComponent());
-        button.partClosed();
 
-        if (button.getCardLayer() == CardLayer.CARD_PARTS) {
-            cardModel.removePartModel(buttonModel);
-        } else if (button.getCardLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().removePartModel(buttonModel);
+        if (button != null) {
+            buttons.removePart(button);
+            removeSwingComponent(button.getComponent());
+            button.partClosed();
         }
 
+        if (buttonModel.getLayer() == CardLayer.CARD_PARTS) {
+            cardModel.removePartModel(buttonModel);
+        } else if (buttonModel.getLayer() == CardLayer.BACKGROUND_PARTS) {
+            getCardBackground().removePartModel(buttonModel);
+        } else {
+            throw new IllegalStateException("Bug! Invalid button layer.");
+        }
     }
 
     /**

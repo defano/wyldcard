@@ -5,6 +5,7 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.PartType;
@@ -32,7 +33,7 @@ public class SelectPartCmd extends Command {
             throw new HtSemanticException("Expected a button or field here.");
         }
 
-        PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
+        PartModel partModel = ExecutionContext.getContext().getPart(specifier);
         CardLayerPart part = HyperCard.getInstance().getDisplayedCard().getPart(partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {

@@ -6,6 +6,7 @@ import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.button.styles.MenuButton;
 import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
@@ -49,7 +50,7 @@ public class SelectTextCmd extends Command {
     }
 
     private void selectManagedText(PartSpecifier specifier) throws HtException {
-        PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
+        PartModel partModel = ExecutionContext.getContext().getPart(specifier);
 
         if (! (partModel instanceof AddressableSelection)) {
             throw new IllegalStateException("Bug! Don't know how to select text in part: " + partModel);
@@ -83,7 +84,7 @@ public class SelectTextCmd extends Command {
             throw new HtSemanticException("Cannot select " + chunk.type.hyperTalkName() + " of this button.");
         }
 
-        PartModel partModel = HyperCard.getInstance().getDisplayedCard().findPart(specifier);
+        PartModel partModel = ExecutionContext.getContext().getPart(specifier);
         ButtonPart part = (ButtonPart) HyperCard.getInstance().getDisplayedCard().getPart(partModel);
 
         ButtonComponent component = (ButtonComponent) part.getButtonComponent();

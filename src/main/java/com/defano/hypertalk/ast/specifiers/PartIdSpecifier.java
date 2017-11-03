@@ -3,7 +3,9 @@ package com.defano.hypertalk.ast.specifiers;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
-
+/**
+ * Specifies a button, field, card or background by its ID. For example, 'card id 13' or 'bg field id 11'
+ */
 public class PartIdSpecifier implements PartSpecifier {
 
     private final Owner layer;

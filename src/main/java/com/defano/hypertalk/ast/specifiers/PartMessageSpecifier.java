@@ -3,6 +3,9 @@ package com.defano.hypertalk.ast.specifiers;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
+/**
+ * Specifies the one-and-only message box (aka message, aka message window).
+ */
 public class PartMessageSpecifier implements PartSpecifier {
 
     @Override

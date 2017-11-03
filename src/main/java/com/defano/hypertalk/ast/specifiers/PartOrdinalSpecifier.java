@@ -4,6 +4,10 @@ import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
+/**
+ * Specifies a button, field, card or background part by ordinal number. For example, 'the second card' or 'the fifth
+ * card field'
+ */
 public class PartOrdinalSpecifier implements PartSpecifier {
 
     private final PartType type;

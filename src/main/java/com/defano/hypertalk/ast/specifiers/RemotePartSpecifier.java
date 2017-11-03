@@ -4,18 +4,21 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.expressions.PartExp;
 
+/**
+ * Specifies a button or field part that is not on the current card. For example, 'button 3 of card 19'
+ */
 public class RemotePartSpecifier implements PartSpecifier {
 
-    private final PartSpecifier partSpecifier;
-    private final PartExp ofPartExp;
+    private final PartSpecifier partSpecifier;      // The button or field
+    private final PartExp ofCardPartExp;            // The card the button or field can be found on
 
-    public RemotePartSpecifier(PartSpecifier partSpecifier, PartExp ofPartExp) {
+    public RemotePartSpecifier(PartSpecifier partSpecifier, PartExp ofCardPartExp) {
         this.partSpecifier = partSpecifier;
-        this.ofPartExp = ofPartExp;
+        this.ofCardPartExp = ofCardPartExp;
     }
 
-    public PartExp getLocation() {
-        return ofPartExp;
+    public PartExp getRemoteCardPartExp() {
+        return ofCardPartExp;
     }
 
     public PartSpecifier getRemotePartSpecifier() {

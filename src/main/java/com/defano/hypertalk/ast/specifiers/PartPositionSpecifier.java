@@ -4,6 +4,10 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
 
+/**
+ * Specifies a card or background in positional relationship to the current card (next, previous or this). For example,
+ * 'the next card' or 'prev background'
+ */
 public class PartPositionSpecifier implements PartSpecifier {
 
     private final Position position;

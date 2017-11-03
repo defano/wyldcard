@@ -3,7 +3,11 @@ package com.defano.hypertalk.ast.specifiers;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
-
+/**
+ * Specifies a button, field, card or background by name. For example, 'card "Nifty Card"' or 'card button 'Press me!"'
+ * Note that names are not unique; multiple parts can have the same name. HyperCard assumes the user is referring to
+ * the part with the lowest number when ambiguously referring to parts by name.
+ */
 public class PartNameSpecifier implements PartSpecifier {
 
     private final Owner layer;
