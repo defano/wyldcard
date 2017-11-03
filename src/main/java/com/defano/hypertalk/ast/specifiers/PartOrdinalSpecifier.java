@@ -6,9 +6,9 @@ import com.defano.hypertalk.ast.common.PartType;
 
 public class PartOrdinalSpecifier implements PartSpecifier {
 
-    public final PartType type;
-    public final Owner layer;
-    public final Ordinal ordinal;
+    private final PartType type;
+    private final Owner layer;
+    private final Ordinal ordinal;
 
     public PartOrdinalSpecifier(Owner layer, PartType type, Ordinal ordinal) {
         this.type = type;
@@ -17,17 +17,17 @@ public class PartOrdinalSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Object value() {
+    public Object getValue() {
         return ordinal;
     }
 
     @Override
-    public Owner owner() {
+    public Owner getOwner() {
         return layer;
     }
 
     @Override
-    public PartType type() {
+    public PartType getType() {
         return type;
     }
 
@@ -36,9 +36,9 @@ public class PartOrdinalSpecifier implements PartSpecifier {
         if (layer == null) {
             return ordinal.stringValue().toLowerCase() + " " + type.toString().toLowerCase();
         } else if (type == null) {
-            return ordinal.stringValue().toLowerCase() + " " + owner().name().toLowerCase() + " part";
+            return ordinal.stringValue().toLowerCase() + " " + getOwner().name().toLowerCase() + " part";
         } else {
-            return ordinal.stringValue().toLowerCase() + " " + owner().name().toLowerCase() + " " + type.toString().toLowerCase();
+            return ordinal.stringValue().toLowerCase() + " " + getOwner().name().toLowerCase() + " " + type.toString().toLowerCase();
         }
     }
 }

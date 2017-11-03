@@ -39,9 +39,9 @@ public class SelectTextCmd extends Command {
     public void onExecute() throws HtException {
         PartSpecifier specifier = this.partExp.evaluateAsSpecifier();
 
-        if (specifier.type() != null && specifier.type() == PartType.BUTTON) {
+        if (specifier.getType() != null && specifier.getType() == PartType.BUTTON) {
             selectMenuButtonItem(specifier);
-        } else if (specifier.type() == null || (specifier.type() != PartType.FIELD && specifier.type() != PartType.MESSAGE_BOX)) {
+        } else if (specifier.getType() == null || (specifier.getType() != PartType.FIELD && specifier.getType() != PartType.MESSAGE_BOX)) {
             throw new HtSemanticException("Expected a field here.");
         } else {
             selectManagedText(specifier);

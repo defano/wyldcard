@@ -6,9 +6,9 @@ import com.defano.hypertalk.ast.common.Position;
 
 public class PartPositionSpecifier implements PartSpecifier {
 
-    public final Position position;
-    public final Owner layer;
-    public final PartType type;
+    private final Position position;
+    private final Owner layer;
+    private final PartType type;
 
     public PartPositionSpecifier(Owner layer, PartType type, Position position) {
         this.position = position;
@@ -17,17 +17,17 @@ public class PartPositionSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Object value() {
+    public Object getValue() {
         return position;
     }
 
     @Override
-    public Owner owner() {
+    public Owner getOwner() {
         return layer;
     }
 
     @Override
-    public PartType type() {
+    public PartType getType() {
         return type;
     }
 
@@ -36,9 +36,9 @@ public class PartPositionSpecifier implements PartSpecifier {
         if (layer == null) {
             return position.name().toLowerCase() + " " + type.toString().toLowerCase();
         } else if (type == null) {
-            return position.name().toLowerCase() + " " + owner().name() + " part";
+            return position.name().toLowerCase() + " " + getOwner().name() + " part";
         } else {
-            return position.name().toLowerCase() + " " + owner().name() + " " + type.toString().toLowerCase();
+            return position.name().toLowerCase() + " " + getOwner().name() + " " + type.toString().toLowerCase();
         }
     }
 }

@@ -28,7 +28,7 @@ public class SelectPartCmd extends Command {
     public void onExecute() throws HtException {
         PartSpecifier specifier = this.part.evaluateAsSpecifier();
 
-        if (specifier.type() == null || (specifier.type() != PartType.FIELD && specifier.type() != PartType.BUTTON)) {
+        if (specifier.getType() == null || (specifier.getType() != PartType.FIELD && specifier.getType() != PartType.BUTTON)) {
             throw new HtSemanticException("Expected a button or field here.");
         }
 
@@ -36,7 +36,7 @@ public class SelectPartCmd extends Command {
         CardLayerPart part = HyperCard.getInstance().getDisplayedCard().getPart(partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            ToolsContext.getInstance().forceToolSelection(specifier.type().getEditTool(), false);
+            ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);
         });
     }

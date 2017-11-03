@@ -1,8 +1,8 @@
 package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.PartContainer;
 import com.defano.hypercard.parts.PartException;
+import com.defano.hypercard.parts.StackPartContainer;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
@@ -33,7 +33,7 @@ import java.util.List;
  * This view is "virtual" because a stack has no view aside from the card that is currently displayed in it. Thus, this
  * class has no associated Swing component and cannot be added to a view hierarchy.
  */
-public class StackPart implements PropertyChangeObserver, PartContainer {
+public class StackPart implements PropertyChangeObserver, StackPartContainer {
 
     public final static String FILE_EXTENSION = ".stack";
 

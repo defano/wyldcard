@@ -1,14 +1,16 @@
-package com.defano.hypercard.parts.card;
+package com.defano.hypercard.parts;
 
-import com.defano.hypercard.parts.PartContainer;
 import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.util.ZOrderComparator;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**

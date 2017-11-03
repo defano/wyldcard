@@ -6,9 +6,9 @@ import com.defano.hypertalk.ast.common.PartType;
 
 public class PartNameSpecifier implements PartSpecifier {
 
-    public final Owner layer;
-    public final PartType type;
-    public final String name;
+    private final Owner layer;
+    private final PartType type;
+    private final String name;
 
     public PartNameSpecifier (Owner layer, PartType type, String name) {
         this.layer = layer;
@@ -17,22 +17,22 @@ public class PartNameSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Owner owner() {
+    public Owner getOwner() {
         return layer;
     }
 
     @Override
-    public PartType type() {
+    public PartType getType() {
         return type;
     }
 
     @Override
-    public String value() {
+    public String getValue() {
         return name;
     }
 
     @Override
     public String getHyperTalkIdentifier() {
-        return owner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + name;
+        return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + name;
     }
 }

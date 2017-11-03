@@ -32,7 +32,7 @@ public class SetPropertyCmd extends Command {
         if (this.part == null) {
             ExecutionContext.getContext().getGlobalProperties().setProperty(property, value);
         } else {
-            PartModel model = ExecutionContext.getContext().getCurrentCard().findPart(part.evaluateAsSpecifier());
+            PartModel model = ExecutionContext.getContext().getPart(part.evaluateAsSpecifier());
 
             if (model.hasProperty(property)) {
                 model.setKnownProperty(property, value);
