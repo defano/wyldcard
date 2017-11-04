@@ -120,7 +120,7 @@ public class SortCardsCmd extends Command {
         PartSpecifier specifier = background.evaluateAsSpecifier();
 
         // Shouldn't be possible, but...
-        if (specifier.type() != PartType.BACKGROUND) {
+        if (specifier.getType() != PartType.BACKGROUND) {
             throw new HtSemanticException("Expression does not refer to a background.");
         }
 

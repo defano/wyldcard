@@ -24,7 +24,7 @@ public class SelectionContext {
 
     public void setTheSelection(PartSpecifier selectionPart, Range selectionRange) {
         // Do not allow a message selection from replacing a field selection
-        if (!hasFieldSelection() || !(selectionPart != null && selectionPart.type() == PartType.MESSAGE_BOX)) {
+        if (!hasFieldSelection() || !(selectionPart != null && selectionPart.getType() == PartType.MESSAGE_BOX)) {
             this.theSelectionPart = selectionPart;
             this.theSelectionRange = selectionRange;
         }
@@ -61,7 +61,7 @@ public class SelectionContext {
 
     private boolean hasFieldSelection() {
         return theSelectionPart != null &&
-                theSelectionPart.type() == PartType.FIELD &&
+                theSelectionPart.getType() == PartType.FIELD &&
                 theSelectionRange != null &&
                 !theSelectionRange.isEmpty();
     }

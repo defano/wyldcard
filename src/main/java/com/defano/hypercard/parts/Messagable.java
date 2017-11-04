@@ -88,7 +88,7 @@ public interface Messagable {
                     onCompletion.onMessagePassed(command, true, null);
                 } else {
                     // Get next recipient in message passing order; null if no other parts receive message
-                    Messagable nextRecipient = getNextMessageRecipient(getMe().type());
+                    Messagable nextRecipient = getNextMessageRecipient(getMe().getType());
                     if (nextRecipient == null) {
                         onCompletion.onMessagePassed(command, false, null);
                     } else {
@@ -146,7 +146,7 @@ public interface Messagable {
 
         while (function == null) {
             // Get next part is message passing hierarchy
-            target = getNextMessageRecipient(target.getMe().type());
+            target = getNextMessageRecipient(target.getMe().getType());
 
             // No more scripts to search; error!
             if (target == null) {
@@ -179,14 +179,14 @@ public interface Messagable {
                 return null;
             case FIELD:
             case BUTTON:
-                if (getMe().owner() == Owner.BACKGROUND) {
+                if (getMe().getOwner() == Owner.BACKGROUND) {
                     return ExecutionContext.getContext().getCurrentCard().getCardBackground();
                 } else {
                     return ExecutionContext.getContext().getCurrentCard().getCardModel();
                 }
         }
 
-        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe().owner());
+        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe().getOwner());
     }
 
 }

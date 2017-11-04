@@ -50,7 +50,6 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software r
 * No multi-window or palette support (`open stack ... in new window`).
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No support for external commands or functions (XCMDs/XFCNs); no `find` command.
-* No ability to reference objects that are not on the active card (`show button "Nope!" of card 7`).
 
 ## Getting started
 
@@ -506,7 +505,7 @@ Every part maintains a set of _properties_ that describe its look-and-feel (like
 
 Note that HyperTalk Java treats properties as "first class" containers than can be accessed in whole or by chunk using the `get`, `set` or `put` commands (this was not quite true in HyperCard).
 
-Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.
+Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. (Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.) You can refer to buttons and fields on other cards in the stack, too (for example, `card button "Push Me" of card 3`).
 
 ### Part IDs
 
@@ -514,7 +513,7 @@ Each part in the stack is assigned a unique ID which never changes and will neve
 
 ```
 hide card button id 0
-put "I like IDs" into background field id 22
+put "I like IDs" into background field id 22 of card 3
 ```
 
 ### Part Numbers
@@ -538,7 +537,7 @@ Every part has a name which can be edited by the user or changed via script. Par
 
 ```
 get the height of background button "My Neat Button"
-put "2 * 2 = 4" after card field "Math"
+put "2 * 2 = 4" after card field "Math" of the first card
 ```
 
 ## Properties

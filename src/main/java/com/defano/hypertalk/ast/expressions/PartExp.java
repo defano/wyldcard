@@ -10,5 +10,5 @@ public abstract class PartExp extends Expression {
         super(context);
     }
 
-    public abstract PartSpecifier evaluateAsSpecifier () throws HtException;
+    public abstract PartSpecifier evaluateAsSpecifier() throws HtException;
 }

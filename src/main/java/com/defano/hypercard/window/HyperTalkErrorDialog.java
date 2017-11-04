@@ -76,7 +76,7 @@ public class HyperTalkErrorDialog {
         return breadcrumb != null &&
                 breadcrumb.getPart() != null &&
                 breadcrumb.getToken() != null &&
-                breadcrumb.getPart().type() != null &&
-                breadcrumb.getPart().type() != PartType.MESSAGE_BOX;
+                breadcrumb.getPart().getType() != null &&
+                breadcrumb.getPart().getType() != PartType.MESSAGE_BOX;
     }
 }

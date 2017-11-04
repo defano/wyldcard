@@ -429,6 +429,7 @@ buttonPart          : ('background' | 'bkgnd' | 'bg')? 'button' factor          
                     | ('card' | 'cd')? 'button' factor                                                                  # cardButtonPart
                     | ordinal ('card' | 'cd')? 'button'                                                                 # cardButtonOrdinalPart
                     | ('card' | 'cd')? 'button' 'id' factor                                                             # cardButtonIdPart
+                    | buttonPart 'of' cardPart                                                                          # buttonOfCardPart
                     ;
 
 fieldPart           : ('background' | 'bkgnd' | 'bg')? 'field' factor                                                   # bkgndFieldPart
@@ -437,6 +438,7 @@ fieldPart           : ('background' | 'bkgnd' | 'bg')? 'field' factor           
                     | ('card' | 'cd')? 'field' factor                                                                   # cardFieldPart
                     | ordinal ('card' | 'cd')? 'field'                                                                  # cardFieldOrdinalPart
                     | ('card' | 'cd')? 'field' 'id' factor                                                              # cardFieldIdPart
+                    | fieldPart 'of' cardPart                                                                           # fieldOfCardPart
                     ;
 
 cardPart            : 'this' ('card' | 'cd')                                                                            # thisCardPart

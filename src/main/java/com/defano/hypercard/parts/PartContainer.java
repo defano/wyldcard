@@ -1,15 +1,9 @@
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Ordinal;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Position;
 import com.defano.hypertalk.ast.specifiers.*;
-import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +35,6 @@ public interface PartContainer {
             return findPartByNumber((PartNumberSpecifier) ps);
         } else if (ps instanceof PartOrdinalSpecifier) {
             return findPartByOrdinal((PartOrdinalSpecifier) ps);
-        } else if (ps instanceof PartPositionSpecifier) {
-            return findPartByPosition((PartPositionSpecifier) ps);
         } else if (ps instanceof PartMessageSpecifier) {
             return WindowManager.getMessageWindow().getPartModel();
         }
@@ -59,9 +51,9 @@ public interface PartContainer {
      */
     default PartModel findPartById(PartIdSpecifier ps) throws PartException {
         Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
-                .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
-                .filter(p -> p.getId() == ps.id)
+                .filter(p -> ps.getType() == null || p.getType() == ps.getType())
+                .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
+                .filter(p -> p.getId() == ps.getValue())
                 .findFirst();
 
         if (foundPart.isPresent()) {
@@ -80,9 +72,9 @@ public interface PartContainer {
      */
     default PartModel findPartByName(PartNameSpecifier ps) throws PartException {
         Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
-                .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
-                .filter(p -> p.getName().equalsIgnoreCase(ps.value()))
+                .filter(p -> ps.getType() == null || p.getType() == ps.getType())
+                .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
+                .filter(p -> p.getName().equalsIgnoreCase(ps.getValue()))
                 .findFirst();
 
         if (foundPart.isPresent()) {
@@ -101,11 +93,11 @@ public interface PartContainer {
      */
     default PartModel findPartByNumber(PartNumberSpecifier ps) throws PartException {
         List<PartModel> foundParts = getPartsInDisplayOrder().stream()
-                .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
+                .filter(p -> ps.getType() == null || p.getType() == ps.getType())
+                .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
                 .collect(Collectors.toList());
 
-        int partIndex = ps.number - 1;
+        int partIndex = (int) ps.getValue() - 1;
 
         if (partIndex >= foundParts.size() || partIndex < 0) {
             throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
@@ -123,108 +115,23 @@ public interface PartContainer {
      */
     default PartModel findPartByOrdinal(PartOrdinalSpecifier ps) throws PartException {
         List<PartModel> foundParts = getPartsInDisplayOrder().stream()
-                .filter(p -> ps.type() == null || p.getType() == ps.type())
-                .filter(p -> ps.owner() == null || p.getOwner() == ps.owner())
+                .filter(p -> ps.getType() == null || p.getType() == ps.getType())
+                .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
                 .collect(Collectors.toList());
 
-        int index = ps.ordinal.intValue() - 1;
+        int index = ((Ordinal) ps.getValue()).intValue() - 1;
 
-        if (ps.ordinal == Ordinal.LAST) {
+        if (ps.getValue() == Ordinal.LAST) {
             index = foundParts.size() - 1;
-        } else if (ps.ordinal == Ordinal.MIDDLE) {
+        } else if (ps.getValue() == Ordinal.MIDDLE) {
             index = foundParts.size() / 2;
         }
 
         if (index < 0 || index >= foundParts.size()) {
-            throw new PartException("No " + ps.getHyperTalkIdentifier() + " exists on this " + ps.layer.hyperTalkName.toLowerCase() + ".");
+            throw new PartException("No " + ps.getHyperTalkIdentifier() + " exists on this " + ps.getOwner().hyperTalkName.toLowerCase() + ".");
         } else {
             return foundParts.get(index);
         }
     }
 
-    /**
-     * Finds a card or background based on its relative position to the current card or background.
-     *
-     * @param ps The specification of the card or background to find
-     * @return The model of the requested part.
-     * @throws PartException Thrown if the requested part cannot be found.
-     */
-    default PartModel findPartByPosition(PartPositionSpecifier ps) throws PartException {
-        if (ps.type() != PartType.BACKGROUND && ps.type() != PartType.CARD) {
-            throw new PartException("Cannot find " + ps.type().toString().toLowerCase() + " by position.");
-        }
-
-        int thisCard = ExecutionContext.getContext().getCurrentCard().getCardIndexInStack();
-
-        try {
-            if (ps.type() == PartType.CARD) {
-                switch ((Position) ps.value()) {
-                    case NEXT:
-                        return HyperCard.getInstance().getStack().getStackModel().getCardModel(thisCard + 1);
-                    case PREV:
-                        return HyperCard.getInstance().getStack().getStackModel().getCardModel(thisCard - 1);
-                    case THIS:
-                        return HyperCard.getInstance().getStack().getStackModel().getCardModel(thisCard);
-                }
-            }
-
-            if (ps.type() == PartType.BACKGROUND) {
-                switch ((Position) ps.value()) {
-                    case NEXT:
-                        return HyperCard.getInstance().getStack().getStackModel().getBackground(findNextBackground().getBackgroundId());
-                    case PREV:
-                        return HyperCard.getInstance().getStack().getStackModel().getBackground(findPrevBackground().getBackgroundId());
-                    case THIS:
-                        return ExecutionContext.getContext().getCurrentCard().getCardBackground();
-                }
-            }
-
-        } catch (Throwable t) {
-            throw new PartException("No such card or background.");
-        }
-
-        throw new PartException("Bug! Unhandled search term");
-    }
-
-    /**
-     * Finds the first previous card containing a different background then the current card.
-     * @return The first previous card with a different background than the current card.
-     * @throws PartException Thrown if no such card can be found.
-     */
-    default CardModel findPrevBackground() throws PartException {
-        int thisCard = ExecutionContext.getContext().getCurrentCard().getCardIndexInStack();
-        List<CardModel> prevCards = Lists.reverse(HyperCard.getInstance().getStack().getStackModel().getCardModels().subList(0, thisCard + 1));
-
-        return findNextBackground(prevCards);
-    }
-
-    /**
-     * Finds the next card containing a different background then the current card.
-     * @return The next card with a different background than the current card.
-     * @throws PartException Thrown if no such card can be found.
-     */
-    default CardModel findNextBackground() throws PartException {
-        int thisCard = ExecutionContext.getContext().getCurrentCard().getCardIndexInStack();
-        int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().get();
-        List<CardModel> nextCards = HyperCard.getInstance().getStack().getStackModel().getCardModels().subList(thisCard, cardCount);
-
-        return findNextBackground(nextCards);
-    }
-
-    /**
-     * Finds the next card in a list of card models containing a different background than the first card in this list.
-     * @param cardList The list of card models to traverse.
-     * @return The first card with a different background than the first card.
-     * @throws PartException Thrown if no such card can be found.
-     */
-    default CardModel findNextBackground(List<CardModel> cardList) throws PartException {
-        int thisBackground = cardList.get(0).getBackgroundId();
-
-        Optional<CardModel> nextBkgnd = cardList.stream().filter(cardModel -> cardModel.getBackgroundId() != thisBackground).findFirst();
-        if (nextBkgnd.isPresent()) {
-            return nextBkgnd.get();
-        }
-
-        throw new PartException("No such card.");
-    }
 }

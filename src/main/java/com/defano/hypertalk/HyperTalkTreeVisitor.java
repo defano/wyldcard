@@ -1410,6 +1410,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitButtonOfCardPart(HyperTalkParser.ButtonOfCardPartContext ctx) {
+        return new RemotePartExp(ctx, (PartExp) visit(ctx.buttonPart()), (PartExp) visit(ctx.cardPart()));
+    }
+
+    @Override
     public Object visitBkgndButtonOrdinalPart(HyperTalkParser.BkgndButtonOrdinalPartContext ctx) {
         return new PartNumberExp(ctx, Owner.BACKGROUND, PartType.BUTTON, (Ordinal) visit(ctx.ordinal()));
     }
@@ -1422,6 +1427,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCardFieldPart(HyperTalkParser.CardFieldPartContext ctx) {
         return new PartNameExp(ctx, Owner.CARD, PartType.FIELD, (Expression)visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitFieldOfCardPart(HyperTalkParser.FieldOfCardPartContext ctx) {
+        return new RemotePartExp(ctx, (PartExp) visit(ctx.fieldPart()), (PartExp) visit(ctx.cardPart()));
     }
 
     @Override

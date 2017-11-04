@@ -3,11 +3,14 @@ package com.defano.hypertalk.ast.specifiers;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 
+/**
+ * Specifies a button, field, card or background part by cardinal number. For example, 'card 14' or 'button 2'
+ */
 public class PartNumberSpecifier implements PartSpecifier {
 
-    public final PartType type;
-    public final Owner layer;
-    public final int number;
+    private final PartType type;
+    private final Owner layer;
+    private final int number;
 
     public PartNumberSpecifier(Owner layer, PartType type, int number) {
         this.layer = layer;
@@ -16,17 +19,17 @@ public class PartNumberSpecifier implements PartSpecifier {
     }
 
     @Override
-    public Object value() {
+    public Object getValue() {
         return number;
     }
 
     @Override
-    public Owner owner() {
+    public Owner getOwner() {
         return layer;
     }
 
     @Override
-    public PartType type() {
+    public PartType getType() {
         return type;
     }
 
@@ -35,9 +38,9 @@ public class PartNumberSpecifier implements PartSpecifier {
         if (layer == null) {
             return type.toString().toLowerCase() + " " + number;
         } else if (type == null) {
-            return owner().name().toLowerCase() + " part " + number;
+            return getOwner().name().toLowerCase() + " part " + number;
         } else {
-            return owner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + number;
+            return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + number;
         }
     }
 }
