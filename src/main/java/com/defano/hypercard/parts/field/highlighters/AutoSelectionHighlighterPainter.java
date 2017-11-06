@@ -1,8 +1,12 @@
-package com.defano.hypercard.parts.field;
+package com.defano.hypercard.parts.field.highlighters;
 
 import javax.swing.text.*;
 import java.awt.*;
 
+/**
+ * Highlight painter that fills the selection for the entire width of the field, irrespective of what subset of text
+ * is actually highlighted. Used for "Auto Selection" fields in which only an entire row of text can be selected.
+ */
 public class AutoSelectionHighlighterPainter extends DefaultHighlighter.DefaultHighlightPainter {
 
     /**

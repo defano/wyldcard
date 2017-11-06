@@ -2,7 +2,7 @@ package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
-import com.defano.hypercard.parts.field.AutoSelectionHighlighterPainter;
+import com.defano.hypercard.parts.field.highlighters.AutoSelectionHighlighterPainter;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypertalk.utils.Range;
 
