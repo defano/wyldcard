@@ -43,4 +43,24 @@ public class PartNumberSpecifier implements PartSpecifier {
             return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + number;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartNumberSpecifier that = (PartNumberSpecifier) o;
+
+        if (number != that.number) return false;
+        if (type != that.type) return false;
+        return layer == that.layer;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (layer != null ? layer.hashCode() : 0);
+        result = 31 * result + number;
+        return result;
+    }
 }
