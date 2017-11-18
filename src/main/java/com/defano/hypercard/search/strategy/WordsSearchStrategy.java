@@ -7,7 +7,7 @@ import com.defano.hypertalk.utils.Range;
  * Search strategy that attempts to find the first case-insensitive occurrence of a search term that begins a word in
  * the text. For example, searching for "on" would match "ontology" but not "radon".
  */
-public class DefaultSearchStrategy implements SearchStrategy {
+public class WordsSearchStrategy implements SearchStrategy {
 
     /** {@inheritDoc} */
     @Override

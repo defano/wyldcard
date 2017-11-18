@@ -16,7 +16,7 @@ public class CharsSearchStrategy implements SearchStrategy {
         if (start < 0) {
             return null;
         } else {
-            return new Range(start, start + term.length());
+            return new Range(searchFrom + start, searchFrom + start + term.length());
         }
     }
 }

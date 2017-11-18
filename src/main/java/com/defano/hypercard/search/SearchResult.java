@@ -41,7 +41,7 @@ public class SearchResult {
     }
 
     public String getFoundChunk() {
-        return "char " + range.start + " to " + range.end + " of " + getFoundField();
+        return "char " + (range.start + 1) + " to " + range.end + " of " + getFoundField();
     }
 
     @Override
