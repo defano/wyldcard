@@ -1,8 +1,7 @@
 package com.defano.hypercard.parts.field;
 
+import com.defano.hypercard.parts.field.styles.HyperCardTextPane;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-
-import javax.swing.*;
 
 public interface FieldComponent extends PropertyChangeObserver {
 
@@ -12,7 +11,7 @@ public interface FieldComponent extends PropertyChangeObserver {
      *
      * @return The JTextPane
      */
-    JTextPane getTextPane();
+    HyperCardTextPane getTextPane();
 
     /**
      * Sets whether the text in this component should be user editable.

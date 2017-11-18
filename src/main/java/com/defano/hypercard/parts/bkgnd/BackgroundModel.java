@@ -62,6 +62,10 @@ public class BackgroundModel extends PartModel {
         return models;
     }
 
+    public Collection<FieldModel> getFieldModels() {
+        return fieldModels;
+    }
+
     public void addFieldModel(FieldModel model) {
         this.fieldModels.add(model);
     }

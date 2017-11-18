@@ -3,6 +3,7 @@ package com.defano.hypercard.parts.field.styles;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.field.highlighters.AutoSelectionHighlighterPainter;
+import com.defano.hypercard.parts.field.highlighters.FoundSelectionHighlightPainter;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypertalk.utils.Range;
 
@@ -32,8 +33,9 @@ public class HyperCardTextPane extends JTextPane {
     private boolean showLines = false;
 
     private final Set<Integer> autoSelection = new HashSet<>();
-    private final Highlighter listHighlighter = new DefaultHighlighter();
+    private final Highlighter highlighter = new DefaultHighlighter();
     private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
+    private final FoundSelectionHighlightPainter foundPainter = new FoundSelectionHighlightPainter();
 
     HyperCardTextPane(StyledDocument doc) {
         super(doc);
@@ -47,7 +49,7 @@ public class HyperCardTextPane extends JTextPane {
             }
         });
 
-        super.setHighlighter(listHighlighter);
+        super.setHighlighter(highlighter);
     }
 
     /**
@@ -121,6 +123,25 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    public void clearSearchHilights() {
+        for (Highlighter.Highlight thisHighlight : highlighter.getHighlights()) {
+            if (thisHighlight.getPainter() instanceof FoundSelectionHighlightPainter) {
+                highlighter.removeHighlight(thisHighlight);
+            }
+        }
+
+        // Removing highlights sometimes leaves graphic turds; fix that
+        repaint();
+    }
+
+    public void applySearchHilight(Range range) {
+        try {
+            highlighter.addHighlight(range.start, range.end, foundPainter);
+        } catch (BadLocationException e) {
+            throw new IllegalStateException("Bug! Invalid search result.");
+        }
+    }
+
     private Range getAutoSelectionRange() {
         int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
         return FieldUtilities.getLinesRange(this, lines);
@@ -158,6 +179,8 @@ public class HyperCardTextPane extends JTextPane {
         this.showLines = showLines;
         this.repaint();
     }
+
+
 
     /**
      * {@inheritDoc}
@@ -322,14 +345,14 @@ public class HyperCardTextPane extends JTextPane {
 
     private void autoSelect(Range range) {
         try {
-            listHighlighter.addHighlight(range.start, range.end, hilitePainter);
+            highlighter.addHighlight(range.start, range.end, hilitePainter);
         } catch (BadLocationException ble) {
             // Nothing to select
         }
     }
 
     private void removeAutoSelections() {
-        listHighlighter.removeAllHighlights();
+        highlighter.removeAllHighlights();
     }
 
     private boolean isAutoSelection() {

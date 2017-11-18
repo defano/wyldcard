@@ -139,7 +139,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      * {@inheritDoc}
      */
     @Override
-    public JTextPane getTextPane() {
+    public HyperCardTextPane getTextPane() {
         return textPane;
     }
 

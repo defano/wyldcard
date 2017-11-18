@@ -62,7 +62,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Find...")
-                .disabled()
+                .withAction(e -> WindowManager.getMessageWindow().doFind())
                 .withShortcut('F')
                 .build(this);
 

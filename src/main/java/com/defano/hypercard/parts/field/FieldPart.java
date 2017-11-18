@@ -23,6 +23,7 @@ import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart, PropertyChangeObserver, DeferredKeyEventComponent {
+public class FieldPart extends StyleableField implements CardLayerPart, Searchable, PropertyChangeObserver, DeferredKeyEventComponent {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -115,6 +116,23 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
                 .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
                 .resizeable(false)
                 .build();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void clearSearchHilights() {
+        getHyperCardTextPane().clearSearchHilights();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void applySearchHilight(Range range) {
+        getHyperCardTextPane().applySearchHilight(range);
+    }
+
+    @Override
+    public String getText() {
+        return ((FieldModel) getPartModel()).getText();
     }
 
     /** {@inheritDoc} */
@@ -240,7 +258,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
 
-        if (getTextPane().hasFocus() && !redispatchInProgress.get()) {
+        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get()) {
             getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ExpressionList(null, String.valueOf(e.getKeyChar())), e, this);
         }
     }
@@ -250,7 +268,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (getTextPane().hasFocus() && !redispatchInProgress.get()) {
+        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get()) {
             BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
             if (bsm != null) {
                 getPartModel().receiveAndDeferKeyEvent(bsm.message.messageName, bsm.boundArguments, e, this);
@@ -291,11 +309,11 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
 
     private void setClickText(MouseEvent evt) {
         try {
-            int clickIndex = getTextPane().viewToModel(evt.getPoint());
-            int startWordIndex = Utilities.getWordStart(getTextPane(), clickIndex);
-            int endWordIndex = Utilities.getWordEnd(getTextPane(), clickIndex);
+            int clickIndex = getHyperCardTextPane().viewToModel(evt.getPoint());
+            int startWordIndex = Utilities.getWordStart(getHyperCardTextPane(), clickIndex);
+            int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
 
-            String clickText = getTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
+            String clickText = getHyperCardTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
             ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
 
         } catch (BadLocationException e) {
@@ -326,6 +344,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, Property
      */
     @Override
     public void dispatchEvent(AWTEvent event) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> getTextPane().dispatchEvent(event));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> getHyperCardTextPane().dispatchEvent(event));
     }
 }

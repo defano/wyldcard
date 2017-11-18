@@ -75,6 +75,7 @@ commandStmnt        : answerCmd                                                 
                     | writeCmd                                                                                          # writeCmdStmt
                     | convertCmd                                                                                        # convertCmdStmt
                     | selectCmd                                                                                         # selectCmdStmt
+                    | findCmd                                                                                           # findCmdStmt
                     | 'hide' part                                                                                       # hideCmdStmnt
                     | 'show' part                                                                                       # showCmdStmnt
                     | 'add' expression 'to' container                                                                   # addCmdStmnt
@@ -116,6 +117,19 @@ commandStmnt        : answerCmd                                                 
                     | 'push' destination                                                                                # pushDestCmdStmt
                     | ID                                                                                                # noArgMsgCmdStmt
                     | ID expressionList                                                                                 # argMsgCmdStmt
+                    ;
+
+findCmd             : searchable 'international'? factor                                                                # findAnywhere
+                    | searchable 'international'? factor 'in' fieldPart                                                 # findField
+                    | searchable 'international'? factor 'of' 'marked' 'cards'                                          # findMarkedCards
+                    | searchable 'international'? factor 'in' fieldPart 'of' 'marked' 'cards'                           # findFieldMarkedCards
+                    ;
+
+searchable          : 'find word'                                                                                       # searchableWord
+                    | 'find' 'chars'                                                                                    # searchableChars
+                    | 'find' 'whole'                                                                                    # searchableWhole
+                    | 'find' 'string'                                                                                   # searchableString
+                    | 'find'                                                                                            # searchableSubstring
                     ;
 
 selectCmd           : 'select' part                                                                                     # selectPartCmd

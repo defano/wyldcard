@@ -10,7 +10,7 @@ import java.awt.*;
 public class FoundSelectionHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
 
     public FoundSelectionHighlightPainter() {
-        super(Color.BLACK);
+        super(Color.RED);
     }
 
 
@@ -69,6 +69,7 @@ public class FoundSelectionHighlightPainter extends DefaultHighlighter.DefaultHi
             // if the model-to-view projection is of zero width (6340106).
             r.width = Math.max(r.width, 1);
 
+            ((Graphics2D)g).setStroke(new BasicStroke(2));
             g.drawRect(r.x, r.y, r.width, r.height);
         }
 

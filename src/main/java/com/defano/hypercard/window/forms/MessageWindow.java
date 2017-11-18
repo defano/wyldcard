@@ -149,6 +149,15 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         return getTextComponent().getText();
     }
 
+    /**
+     * Show the message window, populate the field with a find command, and position the caret inside the query string.
+     */
+    public void doFind() {
+        setVisible(true);
+        setMsgBoxText("find \"\"");
+        getTextComponent().setCaretPosition(6);
+    }
+
     private void evaluateMessageBox() {
         Interpreter.getMessageExecutor().execute(() -> {
             try {
