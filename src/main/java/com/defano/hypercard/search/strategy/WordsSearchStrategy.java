@@ -1,6 +1,5 @@
 package com.defano.hypercard.search.strategy;
 
-import com.defano.hypercard.search.SearchStrategy;
 import com.defano.hypertalk.utils.Range;
 
 /**

@@ -9,11 +9,11 @@ import com.defano.hypertalk.utils.Range;
 
 public class SearchResult {
 
-    public final String searchedText;
-    public final int cardIndex;
-    public final Range range;
-    public final int fieldId;
-    public final Owner fieldLayer;
+    private final String searchedText;
+    private final int cardIndex;
+    private final Range range;
+    private final int fieldId;
+    private final Owner fieldLayer;
 
     public SearchResult(String searchedText, Range range, Owner fieldLayer, int fieldId, int cardIndex) {
         this.searchedText = searchedText;
@@ -42,6 +42,14 @@ public class SearchResult {
 
     public String getFoundChunk() {
         return "char " + (range.start + 1) + " to " + range.end + " of " + getFoundField();
+    }
+
+    public int getCardIndex() {
+        return cardIndex;
+    }
+
+    public Range getRange() {
+        return range;
     }
 
     @Override

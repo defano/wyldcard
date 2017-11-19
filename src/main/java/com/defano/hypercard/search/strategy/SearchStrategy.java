@@ -1,4 +1,4 @@
-package com.defano.hypercard.search;
+package com.defano.hypercard.search.strategy;
 
 import com.defano.hypertalk.utils.Range;
 

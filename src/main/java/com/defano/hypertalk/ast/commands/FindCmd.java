@@ -33,11 +33,11 @@ public class FindCmd extends Command {
 
     @Override
     protected void onExecute() throws HtException, Breakpoint {
-        PartSpecifier fieldSpecifer = field == null ? null : field.evaluateAsSpecifier();
+        PartSpecifier fieldSpecifier = field == null ? null : field.evaluateAsSpecifier();
 
-        SearchQuery query = fieldSpecifer == null ?
+        SearchQuery query = fieldSpecifier == null ?
                 new SearchQuery(searchType, term.evaluate().stringValue(), onlyMarkedCards) :
-                new SearchQuery(searchType, term.evaluate().stringValue(), fieldSpecifer);
+                new SearchQuery(searchType, term.evaluate().stringValue(), fieldSpecifier);
 
         SearchContext.getInstance().find(query);
     }

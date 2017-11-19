@@ -172,15 +172,15 @@ public class SearchContext {
         }
 
         // Search result is on a different card; go there
-        else if (result.cardIndex != ExecutionContext.getContext().getCurrentCard().getCardIndexInStack()) {
-            ExecutionContext.getContext().getCurrentStack().goCard(result.cardIndex, null, true);
+        else if (result.getCardIndex() != ExecutionContext.getContext().getCurrentCard().getCardIndexInStack()) {
+            ExecutionContext.getContext().getCurrentStack().goCard(result.getCardIndex(), null, true);
         }
 
         // Box the found text
         try {
             FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().findPart(result.getLocalPartSpecifier());
             FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
-            foundField.applySearchHilight(result.range);
+            foundField.applySearchHilight(result.getRange());
         } catch (Exception e) {
             throw new IllegalStateException("Bug! Search result refers to a bogus part.", e);
         }
