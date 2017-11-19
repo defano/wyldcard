@@ -1043,6 +1043,10 @@ Function        | Description
 `exp`           | Returns the value of _e_ raised to the power of the given argument.
 `exp1`          | Returns the value of _1-e_ raised to the number of the given argument.
 `exp2`          | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.
+`foundChunk`    | Returns a HyperTalk chunk identifying the currently highlighted search result text (the result of executing the `find` command). For example, `chars 13 to 17 of background field id 8`.
+`foundField`    | Returns a HyperTalk expression representing the field containing the highlighted search result text. For example, `background field id 8`.
+`foundLine`     | Returns a HyperTalk line chunk expression representing the line and field containing the highlighted search result. For example, `line 4 of background field id 8`.
+`foundText`     | Returns the highlighted search result, that is, the text string that is presently box-highlighted on the card.  
 `length`        | Returns the number of characters in the value of the given expression. Example: `the length of "Hello World!"` yields `12`.
 `ln`            | Returns the natural logarithm of the given argument.
 `ln1`           | Returns the natural logarithm of the given argument plus one.
