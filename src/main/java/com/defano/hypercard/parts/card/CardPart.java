@@ -8,6 +8,7 @@ import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.search.SearchContext;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.PartsTable;
@@ -685,6 +686,9 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         if (e.getClickCount() == 2) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
+
+        // Search results are reset/cleared whenever the card is clicked
+        SearchContext.getInstance().reset();
     }
 
     @Override

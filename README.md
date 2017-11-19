@@ -752,9 +752,9 @@ Global Property | Description
 
 As noted in the table above, some of these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
 
-## Sorting
+## Searching & Sorting
 
-[Cards](#sorting-cards) | [Containers](#sorting-the-contents-of-a-container)
+[Cards](#sorting-cards) | [Containers](#sorting-the-contents-of-a-container) | [Searching](#searching)
 
 HyperTalk provides a powerful and flexible construct for sorting cards in a stack, or the items or lines in a container.
 
@@ -807,6 +807,34 @@ sort the lines of menu "Edit"                                    -- alphabetize 
 sort the items of myListVar descending numeric
 sort the lines of card field "Names" by the last word of each    -- sort names by last name
 sort the lines of card field "Names" by the middle word of each  -- or by middle name
+```
+
+### Searching
+
+Use the `find` command to find text anywhere in the stack or anywhere within a specified field. HyperCard supported a variety of search strategies, but HyperTalk Java implements a reduced set. All searches are case insensitive.
+
+The syntax for searching is `find [<searchable>] [international] <factor> [in <field>] [of marked cards]` where:
+
+* `<searchable>` is one of `word`, `chars`, `whole`, `string`. When no `searchable` value is specified, the behavior associated with `chars` is assumed. See the table below for a detailed description of each
+* `international` had special meaning in HyperCard (matching diphthongs and diacriticals); it has no meaning in HyperTalk Java but is allowable in the syntax
+* `<factor>` is a single-term expression representing the text to find
+* `<field>` optionally specifies that the search should only take place within the single, specified field
+* `of marked cards` indicates that only marked cards should be searched. Has no effect if only a single field is being searched
+
+Strategy    | Description
+------------|-------------------------------------
+`word`      | Finds entire words that begin with the given search term. For example, `find word "fi"` in `Find me fast!` matches `Find` but `find word "nd"` in the same text matches nothing.
+`whole`     | Same behavior as `word`
+`chars`     | Finds the given search term appearing anywhere in searchable text.
+`whole`     | Same behavior as `chars`
+`string`    | Same behavior as `chars`
+
+Consider these examples,
+
+```
+find "Hyper"                             -- Searches the entire stack for occurrences of 'hyper'
+find "Hyper" of marked cards             -- Searches only marked cards
+find "Hyper" in background field "Card"  -- Searches only this one field
 ```
 
 ## Audio Visual Effects
@@ -952,6 +980,7 @@ Command	         | Description
 `drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
 `enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
 `exit`           | Interrupts the flow of execution. Use `exit to HyperCard` to immediately exit all pending script handlers; `exit <message>` to break out of a handler or function (for example, `exit mouseUp`); `exit repeat` to prematurely end execution of a loop. Note that the `exit` message is not sent to the card and cannot be trapped in script.
+`find`           | Finds text in the stack or in a given field. Several forms of the command, see the "Searching & Sorting" section. For example, `find chars "blah" of marked cards`.
 `get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)

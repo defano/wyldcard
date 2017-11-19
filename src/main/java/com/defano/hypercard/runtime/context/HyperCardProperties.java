@@ -44,6 +44,10 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_SCRIPTTEXTFONT = "scripttextfont";
     public final static String PROP_SCRIPTTEXTSIZE = "scripttextsize";
     public final static String PROP_SYSTEMVERSION = "systemversion";
+    public final static String PROP_FOUNDCHUNK = "foundchunk";
+    public final static String PROP_FOUNDFIELD = "foundfield";
+    public final static String PROP_FOUNDLINE = "foundline";
+    public final static String PROP_FOUNDTEXT = "foundtext";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -70,6 +74,10 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_SOUND, new Value("done"), true);
         defineProperty(PROP_SCRIPTTEXTFONT, new Value("Monaco"), false);
         defineProperty(PROP_SCRIPTTEXTSIZE, new Value(12), false);
+        defineProperty(PROP_FOUNDCHUNK, new Value(), true);
+        defineProperty(PROP_FOUNDFIELD, new Value(), true);
+        defineProperty(PROP_FOUNDLINE, new Value(), true);
+        defineProperty(PROP_FOUNDTEXT, new Value(), true);
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (model, propertyName) -> new Value(System.getProperty("java.version")));
 

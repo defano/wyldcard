@@ -45,4 +45,24 @@ public class PartPositionSpecifier implements PartSpecifier {
             return position.name().toLowerCase() + " " + getOwner().name() + " " + type.toString().toLowerCase();
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartPositionSpecifier that = (PartPositionSpecifier) o;
+
+        if (position != that.position) return false;
+        if (layer != that.layer) return false;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = position != null ? position.hashCode() : 0;
+        result = 31 * result + (layer != null ? layer.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
+    }
 }

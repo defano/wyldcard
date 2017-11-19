@@ -4,6 +4,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
@@ -258,6 +259,10 @@ public class ExecutionContext {
         } else {
             return currentCard;
         }
+    }
+
+    public StackPart getCurrentStack() {
+        return HyperCard.getInstance().getStack();
     }
 
     /**

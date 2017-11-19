@@ -27,4 +27,10 @@ public class PartMessageSpecifier implements PartSpecifier {
     public String getHyperTalkIdentifier() {
         return "the message";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o != null && getClass() == o.getClass();
+    }
+    
 }

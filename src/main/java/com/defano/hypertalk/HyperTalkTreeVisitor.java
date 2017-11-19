@@ -171,6 +171,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitFindCmdStmt(HyperTalkParser.FindCmdStmtContext ctx) {
+        return visit(ctx.findCmd());
+    }
+
+    @Override
     public Object visitDualFormatConvertible(HyperTalkParser.DualFormatConvertibleContext ctx) {
         return new Convertible((ConvertibleDateFormat) visit(ctx.conversionFormat(0)), (ConvertibleDateFormat) visit(ctx.conversionFormat(1)));
     }
@@ -905,6 +910,51 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitArgMsgCmdStmt(HyperTalkParser.ArgMsgCmdStmtContext ctx) {
         return new MessageCmd(ctx, (String) visit(ctx.ID()), (ExpressionList) visit(ctx.expressionList()));
+    }
+
+    @Override
+    public Object visitFindAnywhere(HyperTalkParser.FindAnywhereContext ctx) {
+        return new FindCmd(ctx, (SearchType) visit(ctx.searchable()), (Expression) visit(ctx.factor()), false);
+    }
+
+    @Override
+    public Object visitFindField(HyperTalkParser.FindFieldContext ctx) {
+        return new FindCmd(ctx, (SearchType) visit(ctx.searchable()), (Expression) visit(ctx.factor()), (PartExp) visit(ctx.fieldPart()), false);
+    }
+
+    @Override
+    public Object visitFindMarkedCards(HyperTalkParser.FindMarkedCardsContext ctx) {
+        return new FindCmd(ctx, (SearchType) visit(ctx.searchable()), (Expression) visit(ctx.factor()), true);
+    }
+
+    @Override
+    public Object visitFindFieldMarkedCards(HyperTalkParser.FindFieldMarkedCardsContext ctx) {
+        return new FindCmd(ctx, (SearchType) visit(ctx.searchable()), (Expression) visit(ctx.factor()), (PartExp) visit(ctx.fieldPart()), true);
+    }
+
+    @Override
+    public Object visitSearchableWord(HyperTalkParser.SearchableWordContext ctx) {
+        return SearchType.WORDS;
+    }
+
+    @Override
+    public Object visitSearchableChars(HyperTalkParser.SearchableCharsContext ctx) {
+        return SearchType.CHARS;
+    }
+
+    @Override
+    public Object visitSearchableWhole(HyperTalkParser.SearchableWholeContext ctx) {
+        return SearchType.WHOLE;
+    }
+
+    @Override
+    public Object visitSearchableString(HyperTalkParser.SearchableStringContext ctx) {
+        return SearchType.STRING;
+    }
+
+    @Override
+    public Object visitSearchableSubstring(HyperTalkParser.SearchableSubstringContext ctx) {
+        return SearchType.SUBSTRING;
     }
 
     @Override

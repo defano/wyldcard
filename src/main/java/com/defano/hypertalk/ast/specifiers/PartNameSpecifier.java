@@ -39,4 +39,24 @@ public class PartNameSpecifier implements PartSpecifier {
     public String getHyperTalkIdentifier() {
         return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartNameSpecifier that = (PartNameSpecifier) o;
+
+        if (layer != that.layer) return false;
+        if (type != that.type) return false;
+        return name != null ? name.equals(that.name) : that.name == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = layer != null ? layer.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }

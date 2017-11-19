@@ -45,4 +45,24 @@ public class PartOrdinalSpecifier implements PartSpecifier {
             return ordinal.stringValue().toLowerCase() + " " + getOwner().name().toLowerCase() + " " + type.toString().toLowerCase();
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartOrdinalSpecifier that = (PartOrdinalSpecifier) o;
+
+        if (type != that.type) return false;
+        if (layer != that.layer) return false;
+        return ordinal == that.ordinal;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type != null ? type.hashCode() : 0;
+        result = 31 * result + (layer != null ? layer.hashCode() : 0);
+        result = 31 * result + (ordinal != null ? ordinal.hashCode() : 0);
+        return result;
+    }
 }

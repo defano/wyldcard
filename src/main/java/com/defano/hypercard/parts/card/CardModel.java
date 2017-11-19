@@ -83,6 +83,10 @@ public class CardModel extends PartModel {
         return Stream.concat(fields.stream(), buttons.stream()).collect(Collectors.toList());
     }
 
+    public Collection<FieldModel> getFieldModels() {
+        return fields;
+    }
+
     /**
      * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
      * @param partModel The part to remove from this card.
@@ -152,5 +156,9 @@ public class CardModel extends PartModel {
     @Override
     public String getValueProperty() {
         return PROP_CONTENTS;
+    }
+
+    public boolean isMarked() {
+        return getKnownProperty(PROP_MARKED).booleanValue();
     }
 }

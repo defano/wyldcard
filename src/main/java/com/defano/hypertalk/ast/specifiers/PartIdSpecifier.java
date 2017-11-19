@@ -41,4 +41,24 @@ public class PartIdSpecifier implements PartSpecifier {
             return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " id " + id;
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PartIdSpecifier that = (PartIdSpecifier) o;
+
+        if (id != that.id) return false;
+        if (layer != that.layer) return false;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = layer != null ? layer.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + id;
+        return result;
+    }
 }

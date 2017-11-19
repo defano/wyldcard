@@ -23,6 +23,10 @@ public class PartNumberExp extends PartExp {
         this(context, owner, type, null, ordinal);
     }
 
+    public PartNumberExp(ParserRuleContext context, Owner owner, PartType type, Expression expression) {
+        this(context, owner, type, expression, null);
+    }
+
     public PartNumberExp(ParserRuleContext context, Owner owner, Expression expression) {
         this(context, owner, PartType.CARD, expression, null);
     }
