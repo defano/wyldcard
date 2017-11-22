@@ -25,10 +25,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.*;
 
 /**
@@ -48,8 +45,13 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final AutoTabKeyObserver autoTabKeyObserver = new AutoTabKeyObserver();
     private final AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
     private final ScrollObserver scrollObserver = new ScrollObserver();
+    private final FocusObserver focusObserver = new FocusObserver();
 
     private final ToolEditablePart toolEditablePart;
+
+    // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
+    // menu remains useful for text property changes
+    private boolean didLoseFocusToMenu = false;
 
     public AbstractTextField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
@@ -93,6 +95,12 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     public void paint(Graphics g) {
         super.paint(g);
         toolEditablePart.drawSelectionRectangle(g);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasFocus() {
+        return didLoseFocusToMenu || (textPane != null && textPane.hasFocus());
     }
 
     /**
@@ -176,6 +184,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.addKeyListener(autoTabKeyObserver);
         textPane.addMouseListener(autoSelectObserver);
         textPane.addMouseMotionListener(autoSelectObserver);
+        textPane.addFocusListener(focusObserver);
 
         getVerticalScrollBar().addAdjustmentListener(scrollObserver);
 
@@ -204,6 +213,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.removeCaretListener(this);
         textPane.addKeyListener(autoTabKeyObserver);
         textPane.removeMouseListener(autoSelectObserver);
+        textPane.removeFocusListener(focusObserver);
 
         getVerticalScrollBar().removeAdjustmentListener(scrollObserver);
 
@@ -314,10 +324,20 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         Range selection = getSelectedTextRange();
         StyledDocument doc = textPane.getStyledDocument();
 
-        for (int index = selection.start; index < selection.start + selection.length(); index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+        // Apply change to field
+        if (selection.length() == 0) {
+            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
             tss.setFontFamily(fontFamily.stringValue());
-            doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
+        }
+
+        // Apply change to highlighted text
+        else {
+            for (int index = selection.start; index < selection.start + selection.length(); index++) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+                tss.setFontFamily(fontFamily.stringValue());
+                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            }
         }
 
         updateModel();
@@ -328,10 +348,20 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         Range selection = getSelectedTextRange();
         StyledDocument doc = textPane.getStyledDocument();
 
-        for (int index = selection.start; index < selection.start + selection.length(); index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+        // Apply change to field
+        if (selection.length() == 0) {
+            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
             tss.setFontSize(fontSize.integerValue());
-            doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
+        }
+
+        // Apply change to highlighted text
+        else {
+            for (int index = selection.start; index < selection.start + selection.length(); index++) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+                tss.setFontSize(fontSize.integerValue());
+                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            }
         }
 
         updateModel();
@@ -342,10 +372,20 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         Range selection = getSelectedTextRange();
         StyledDocument doc = textPane.getStyledDocument();
 
-        for (int index = selection.start; index < selection.start + selection.length(); index++) {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+        // Apply change to field
+        if (selection.length() == 0) {
+            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
             tss.setFontStyle(fontStyle);
-            doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            textPane.setCharacterAttributes(tss.toAttributeSet(), true);
+        }
+
+        // Apply change to highlighted text
+        else {
+            for (int index = selection.start; index < selection.start + selection.length(); index++) {
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
+                tss.setFontStyle(fontStyle);
+                doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
+            }
         }
 
         updateModel();
@@ -406,7 +446,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
-            if (textPane.hasSelection()) {
+            if (hasFocus()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle((Value) arg));
             }
         }
@@ -418,7 +458,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
-            if (textPane.hasSelection()) {
+            if (hasFocus()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize((Value) arg));
             }
         }
@@ -430,7 +470,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
-            if (textPane.hasSelection()) {
+            if (hasFocus()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily((Value) arg));
             }
         }
@@ -493,4 +533,19 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             toolEditablePart.getPartModel().setKnownProperty(FieldModel.PROP_SCROLL, new Value(e.getValue()), true);
         }
     }
+
+    private class FocusObserver implements FocusListener {
+        /** {@inheritDoc} */
+        @Override
+        public void focusGained(FocusEvent e) {
+            didLoseFocusToMenu = false;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void focusLost(FocusEvent e) {
+            didLoseFocusToMenu = e.getOppositeComponent() instanceof JRootPane;
+        }
+    }
+
 }
