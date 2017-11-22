@@ -49,7 +49,7 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software r
 * Can't open or import old HyperCard stacks.
 * No multi-window or palette support (`open stack ... in new window`).
 * No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No support for external commands or functions (XCMDs/XFCNs); no `find` command.
+* No support for external commands or functions (XCMDs/XFCNs).
 
 ## Getting started
 
@@ -713,7 +713,7 @@ Menu Property   | Description
 
 #### Special considerations
 
-Menus in HyperTalk Java differ from Apple's HyperCard if a few nuanced ways:
+Menus in HyperTalk Java differ from Apple's HyperCard in a few nuanced ways:
 
 * In Apple's HyperCard, if you created a menu item with the same name as a HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in HyperTalk Java.
 * HyperTalk Java cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (thus, the stack cannot take action when the user selects an item from them).

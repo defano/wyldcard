@@ -142,6 +142,14 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    /**
+     * Determines if this field has an active selection.
+     * @return True if the field has a selection, false otherwise
+     */
+    public boolean hasSelection() {
+        return getSelectionStart() != getSelectionEnd();
+    }
+
     private Range getAutoSelectionRange() {
         int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
         return FieldUtilities.getLinesRange(this, lines);

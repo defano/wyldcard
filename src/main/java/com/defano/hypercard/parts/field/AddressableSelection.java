@@ -114,7 +114,15 @@ public interface AddressableSelection {
      */
     default Value getSelectedText() {
         Range selection = getSelectableTextModel().getSelection();
-        return new Value(getSelectableText().substring(selection.start, selection.end));
+        String selectedText = getSelectableText();
+
+        if (selection.length() == 0) {
+            return new Value();
+        }
+
+        return new Value(getSelectableText().substring(
+                selection.start < 0 ? 0 : selection.start,
+                selection.end >= selectedText.length() ? selectedText.length() : selection.end));
     }
 
     /**

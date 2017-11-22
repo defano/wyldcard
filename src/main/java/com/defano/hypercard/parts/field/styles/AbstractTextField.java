@@ -406,7 +406,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
-            if (textPane.hasFocus()) {
+            if (textPane.hasSelection()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle((Value) arg));
             }
         }
@@ -418,7 +418,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
-            if (textPane.hasFocus()) {
+            if (textPane.hasSelection()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize((Value) arg));
             }
         }
@@ -430,7 +430,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
-            if (textPane.hasFocus()) {
+            if (textPane.hasSelection()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily((Value) arg));
             }
         }
