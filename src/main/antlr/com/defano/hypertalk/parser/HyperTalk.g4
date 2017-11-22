@@ -21,7 +21,7 @@ blockName           : ID
                     | 'answer' | 'ask' | 'put' | 'get' | 'set' | 'send' | 'wait' | 'sort' | 'go' | 'enable' | 'disable'
                     | 'read' | 'write' | 'hide' | 'show' | 'add' | 'subtract' | 'multiply' | 'divide' | 'choose'
                     | 'click' | 'drag' | 'type' | 'lock' | 'unlock' | 'pass' | 'domenu' | 'visual' | 'reset' | 'create'
-                    | 'delete' | 'play' | 'dial' | 'beep' | 'open' | 'close' | 'select'
+                    | 'delete' | 'play' | 'dial' | 'beep' | 'open' | 'close' | 'select' | 'find'
                     ;
 
 function            : 'function' ID parameterList NEWLINE statementList 'end' ID                                        # populatedFunction
@@ -446,12 +446,12 @@ buttonPart          : ('background' | 'bkgnd' | 'bg')? 'button' factor          
                     | buttonPart 'of' cardPart                                                                          # buttonOfCardPart
                     ;
 
-fieldPart           : ('background' | 'bkgnd' | 'bg')? 'field' factor                                                   # bkgndFieldPart
-                    | ordinal ('background' | 'bkgnd' | 'bg')? 'field'                                                  # bkgndFieldOrdinalPart
-                    | ('background' | 'bkgnd' | 'bg')? 'field' 'id' factor                                              # bkgndFieldIdPart
-                    | ('card' | 'cd')? 'field' factor                                                                   # cardFieldPart
-                    | ordinal ('card' | 'cd')? 'field'                                                                  # cardFieldOrdinalPart
-                    | ('card' | 'cd')? 'field' 'id' factor                                                              # cardFieldIdPart
+fieldPart           : ('background' | 'bkgnd' | 'bg')? ('field' | 'fld') factor                                         # bkgndFieldPart
+                    | ordinal ('background' | 'bkgnd' | 'bg')? ('field' | 'fld')                                        # bkgndFieldOrdinalPart
+                    | ('background' | 'bkgnd' | 'bg')? ('field' | 'fld') 'id' factor                                    # bkgndFieldIdPart
+                    | ('card' | 'cd')? ('field' | 'fld') factor                                                         # cardFieldPart
+                    | ordinal ('card' | 'cd')? ('field' | 'fld')                                                        # cardFieldOrdinalPart
+                    | ('card' | 'cd')? ('field' | 'fld') 'id' factor                                                    # cardFieldIdPart
                     | fieldPart 'of' cardPart                                                                           # fieldOfCardPart
                     ;
 
@@ -514,7 +514,7 @@ constant            : 'empty'                                                   
                     | 'linefeed'                                                                                        # lineFeedExp
                     | 'comma'                                                                                           # commaExp
                     | 'colon'                                                                                           # colonExp
-                    | ('one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten')          # cardninalExp
+                    | ('zero' | 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten') # cardninalExp
                     ;
 
 factor              : literal                                                                                           # literalFactor
@@ -590,8 +590,8 @@ noArgFunc           : 'mouse'                                                   
                     | 'number of' ('background' | 'bkgnd' | 'bg') 'parts'                                               # numberOfBkgndParts
                     | 'number of' ('card' | 'cd')? 'buttons'                                                            # numberOfCardButtons
                     | 'number of' ('background' | 'bkgnd' | 'bg') 'buttons'                                             # numberOfBkgndButtons
-                    | 'number of' ('card' | 'cd') 'fields'                                                              # numberOfCardFields
-                    | 'number of' ('background' | 'bkgnd' | 'bg')? 'fields'                                             # numberOfBkgndFields
+                    | 'number of' ('card' | 'cd') ('fields' | 'flds')                                                   # numberOfCardFields
+                    | 'number of' ('background' | 'bkgnd' | 'bg')? ('fields' | 'flds')                                  # numberOfBkgndFields
                     | 'number of' 'menus'                                                                               # numberOfMenusFunc
                     | 'number of' 'cards'                                                                               # numberOfCardsFunc
                     | 'number of' 'marked' 'cards'                                                                      # numberOfMarkedCards

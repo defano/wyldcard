@@ -18,6 +18,7 @@ public class LiteralExp extends Expression {
 
     public static LiteralExp ofCardinal(ParserRuleContext context, String cardinal) {
         switch (cardinal.toLowerCase()) {
+            case "zero": return new LiteralExp(context, 0);
             case "one": return new LiteralExp(context, 1);
             case "two": return new LiteralExp(context, 2);
             case "three": return new LiteralExp(context, 3);
