@@ -59,7 +59,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         // Create the editor component
         textPane = new HyperCardTextPane(new DefaultStyledDocument());
         textPane.setEditorKit(new RTFEditorKit());
-        textPane.setTransferHandler(null);      // Disallow drag-and-drop; causes issues with auto-select
 
         this.setViewportView(textPane);
     }
@@ -482,6 +481,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
          */
         @Override
         public void update(Observable o, Object arg) {
+            textPane.setFocusable(ToolMode.BROWSE == arg);
+
             setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
             setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
             setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());

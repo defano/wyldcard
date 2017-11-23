@@ -132,6 +132,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
+        addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));
     }
 
     /**
@@ -228,7 +229,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param newText The text with which to replace the field's existing contents.
      */
     private void replaceText(String newText) {
-
         String existingText = getText();
 
         // Don't waste our own time

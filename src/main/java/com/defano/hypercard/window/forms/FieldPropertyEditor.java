@@ -175,12 +175,15 @@ public class FieldPropertyEditor extends HyperCardDialog {
 
     private void onAutoSelectChanged() {
         if (autoSelect.isSelected()) {
+            isLockText.setSelected(true);
+            isLockText.setEnabled(false);
             isWrapText.setSelected(true);
             isWrapText.setEnabled(false);
             multipleLines.setEnabled(true);
         } else {
             isWrapText.setEnabled(true);
             multipleLines.setEnabled(false);
+            isLockText.setEnabled(true);
         }
     }
 
