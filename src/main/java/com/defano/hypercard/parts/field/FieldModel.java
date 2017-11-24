@@ -7,6 +7,7 @@ import com.defano.hypercard.parts.model.LogicalLinkObserver;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
@@ -76,6 +77,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private transient int currentCardId = 0;
     private transient FieldModelObserver observer;
     private transient Range selection;
+    private transient StyledDocument cachedDocument;
+    private transient Throttle rtfGenerationThrottle;
 
     public FieldModel(Owner owner) {
         super(PartType.FIELD, owner);
@@ -119,6 +122,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void initialize() {
         super.initialize();
 
+        rtfGenerationThrottle = new Throttle(500);
+
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
 
@@ -155,6 +160,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return A StyledDocument representation of the contents of this field.
      */
     public StyledDocument getStyledDocument() {
+        if (cachedDocument != null) {
+            return cachedDocument;
+        }
+
         StyledDocument doc = new DefaultStyledDocument();
 
         try {
@@ -172,6 +181,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             doc = new DefaultStyledDocument();
         }
 
+        this.cachedDocument = doc;
         return doc;
     }
 
@@ -182,13 +192,17 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param doc The styled document data to persist into the model.
      */
     public void setStyledDocument(StyledDocument doc) {
-        byte[] rtf = convertDocumentToRtf(doc);
+        this.cachedDocument = doc;
 
-        if (useSharedText()) {
-            this.sharedRtf = rtf;
-        } else {
-            unsharedRtf.put(currentCardId, rtf);
-        }
+        rtfGenerationThrottle.submit(() -> {
+            byte[] rtf = convertDocumentToRtf(doc);
+
+            if (useSharedText()) {
+                FieldModel.this.sharedRtf = rtf;
+            } else {
+                unsharedRtf.put(currentCardId, rtf);
+            }
+        });
     }
 
     /**

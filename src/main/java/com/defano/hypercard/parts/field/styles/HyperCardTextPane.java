@@ -80,11 +80,8 @@ public class HyperCardTextPane extends JTextPane {
      */
     @Override
     public String getText() {
-        try {
-            return getStyledDocument().getText(0, getStyledDocument().getLength());
-        } catch (BadLocationException e) {
-            return "";
-        }
+        String text = super.getText();
+        return text == null ? "" : text;
     }
 
     /**
@@ -201,7 +198,7 @@ public class HyperCardTextPane extends JTextPane {
             ((Graphics2D) g).setStroke(dottedLine);
 
             // Draw dotted line under all lines with text
-            for (int line = 0; line < lineCount; line++) {
+            for (int line = 0; line < lineCount && dottedLineY < maxY; line++) {
                 lastLineHeight = getLineHeight(line);
                 dottedLineY += lastLineHeight;
 
