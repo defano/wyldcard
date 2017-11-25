@@ -1,5 +1,6 @@
 package com.defano.hypercard.util;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -22,15 +23,14 @@ public class Throttle {
     }
 
     /**
-     * Submit a job (i.e., {@link Runnable}) to be throttled.
+     * Submit a job (i.e., {@link Runnable}) to be throttled and executed (in the future) on the UI thread.
      *
      * If there are previous jobs pending execution, they are canceled and this job is scheduled for execution after
      * the throttle period has expired.
      *
      * @param runnable The job to submit for throttling.
      */
-    public void submit(Runnable runnable) {
-
+    public void submitOnUiThread(Runnable runnable) {
         // Cancel pending jobs
         for (Future pendingUpdate : pendingUpdates) {
             pendingUpdate.cancel(false);
@@ -38,7 +38,7 @@ public class Throttle {
         pendingUpdates.clear();
 
         // Schedule job
-        pendingUpdates.add(executor.schedule(runnable, periodMs, TimeUnit.MILLISECONDS));
+        pendingUpdates.add(executor.schedule(() -> SwingUtilities.invokeLater(runnable), periodMs, TimeUnit.MILLISECONDS));
     }
 
 }

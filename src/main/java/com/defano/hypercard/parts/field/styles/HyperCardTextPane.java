@@ -35,7 +35,8 @@ public class HyperCardTextPane extends JTextPane {
     private boolean showLines = false;
 
     private HashMap <Integer, Integer> baselinesCache;
-    private int startLine, endLine;
+    private int startLine, endLine, viewPortBottom;
+    private Throttle lineCalculationThrottle = new Throttle(50);
 
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter highlighter = new DefaultHighlighter();
@@ -191,20 +192,24 @@ public class HyperCardTextPane extends JTextPane {
     public void invalidateViewport(JViewport viewport) {
         if (viewport != null) {
 
+            lineCalculationThrottle.submitOnUiThread(() -> {
+                Point startPoint = viewport.getViewPosition();
+                Dimension size = viewport.getExtentSize();
+                Point endPoint = new Point(startPoint.x + size.width, startPoint.y + size.height);
 
+                try {
+                    startLine = FieldUtilities.getWrappedLineOfChar(HyperCardTextPane.this, viewToModel(startPoint));
+                    endLine = FieldUtilities.getWrappedLineOfChar(HyperCardTextPane.this, viewToModel(endPoint));
+                    viewPortBottom = startPoint.y + size.height;
 
-            Point startPoint = viewport.getViewPosition();
-            Dimension size = viewport.getExtentSize();
-            Point endPoint = new Point(startPoint.x + size.width, startPoint.y + size.height);
+                    invalidateLineHeights();
 
-            try {
-                startLine = FieldUtilities.getWrappedLineOfChar(this, viewToModel(startPoint));
-                endLine = FieldUtilities.getWrappedLineOfChar(this, viewToModel(endPoint));
+                    viewport.repaint();
 
-                invalidateLineHeights();
-            } catch (Exception ignored) {
-
-            }
+                } catch (Exception ignored) {
+                    ignored.printStackTrace();
+                }
+            });
         }
     }
 
@@ -220,7 +225,6 @@ public class HyperCardTextPane extends JTextPane {
         super.paintComponent(g);
 
         if (showLines) {
-
             HashMap<Integer, Integer> baselines = this.baselinesCache;
 
             // Calculate line heights
@@ -230,7 +234,6 @@ public class HyperCardTextPane extends JTextPane {
 
             int minX = getInsets().left;
             int maxX = getBounds().width - getInsets().right;
-            int maxY = getBounds().height - getInsets().bottom;
             int lastBaseline = 0;
 
             Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
@@ -248,7 +251,7 @@ public class HyperCardTextPane extends JTextPane {
             // If text does not fill entire field, interpolate lines in unused space
             float interpolatedHeight = (int) getLineHeight(baselinesCache.size() - 1);
             int thisBaseline = lastBaseline + (int)interpolatedHeight;
-            while (thisBaseline <= maxY && interpolatedHeight > 0) {
+            while (thisBaseline <= viewPortBottom && interpolatedHeight > 0) {
                 g.drawLine(minX, thisBaseline, maxX, thisBaseline);
                 thisBaseline += interpolatedHeight;
             }
