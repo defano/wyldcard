@@ -14,28 +14,22 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
-import java.util.concurrent.*;
 
 /**
  * An abstract HyperCard text field. That is, a field without a specific style bound to it. Encapsulates the styleable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
+public abstract class HyperCardTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
 
     public final static int WIDE_MARGIN_PX = 15;
     public final static int NARROW_MARGIN_PX = 1;
@@ -49,7 +43,6 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final AutoSelectObserver autoSelectObserver = new AutoSelectObserver();
     private final ScrollObserver scrollObserver = new ScrollObserver();
     private final FocusObserver focusObserver = new FocusObserver();
-    private final Throttle modelUpdateThrottle = new Throttle(250);
 
     private final ToolEditablePart toolEditablePart;
 
@@ -57,7 +50,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     // menu remains useful for text property changes
     private boolean didLoseFocusToMenu = false;
 
-    public AbstractTextField(ToolEditablePart toolEditablePart) {
+    public HyperCardTextField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
         // Create the editor component
@@ -65,6 +58,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.setEditorKit(new RTFEditorKit());
 
         this.setViewportView(textPane);
+
+        getViewport().addChangeListener(e -> {
+            textPane.invalidateViewport(getViewport());
+        });
+
     }
 
     /**
@@ -73,6 +71,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void insertUpdate(DocumentEvent e) {
         enqueueModelUpdateRequest();
+        textPane.invalidateViewport(getViewport());
     }
 
     /**
@@ -81,6 +80,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void removeUpdate(DocumentEvent e) {
         enqueueModelUpdateRequest();
+        textPane.invalidateViewport(getViewport());
     }
 
     /**
@@ -89,6 +89,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     @Override
     public void changedUpdate(DocumentEvent e) {
         enqueueModelUpdateRequest();
+        textPane.invalidateViewport(getViewport());
     }
 
     /**
@@ -301,11 +302,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             int oldCaretPosition = textPane.getCaretPosition();
 
             // Remove old listener
-            textPane.getStyledDocument().removeDocumentListener(AbstractTextField.this);
+            textPane.getStyledDocument().removeDocumentListener(HyperCardTextField.this);
 
             // Replace doc and listener
             textPane.setStyledDocument(doc);
-            doc.addDocumentListener(AbstractTextField.this);
+            doc.addDocumentListener(HyperCardTextField.this);
 
             textPane.setCaretPosition(oldCaretPosition);
         }
@@ -407,10 +408,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     }
 
     private void enqueueModelUpdateRequest() {
-        modelUpdateThrottle.submit(() -> {
-            FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-            model.setStyledDocument(textPane.getStyledDocument());
-        });
+        FieldModel model = (FieldModel) toolEditablePart.getPartModel();
+        model.setStyledDocument(textPane.getStyledDocument());
     }
 
     private void updateFocusedFontSelection() {

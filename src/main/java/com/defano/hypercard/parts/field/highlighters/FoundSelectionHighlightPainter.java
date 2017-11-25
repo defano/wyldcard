@@ -13,7 +13,6 @@ public class FoundSelectionHighlightPainter extends DefaultHighlighter.DefaultHi
         super(Color.RED);
     }
 
-
     /**
      * Paints a portion of a highlight.
      *

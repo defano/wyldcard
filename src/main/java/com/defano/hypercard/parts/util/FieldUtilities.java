@@ -2,9 +2,7 @@ package com.defano.hypercard.parts.util;
 
 import com.defano.hypertalk.utils.Range;
 
-import javax.swing.text.Element;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.Utilities;
+import javax.swing.text.*;
 import java.util.Arrays;
 
 public class FieldUtilities {
@@ -14,7 +12,7 @@ public class FieldUtilities {
      * of the first line, and the ending position of the last line.
      *
      * @param component The text component whose contents should be ranged
-     * @param lines One or more lines to range.
+     * @param lines     One or more lines to range.
      * @return The range of characters, or an empty range in the lines is null/empty.
      */
     public static Range getLinesRange(JTextComponent component, int... lines) {
@@ -34,7 +32,7 @@ public class FieldUtilities {
      * and the last.
      *
      * @param component The text component whose contents should be ranged
-     * @param line The line number to range, counting from 1
+     * @param line      The line number to range, counting from 1
      * @return A range identifying the starting and ending character position of the line.
      */
     public static Range getLineRange(JTextComponent component, int line) {
@@ -101,4 +99,34 @@ public class FieldUtilities {
         return text.substring(0, Math.min(text.length(), charIndex + 1)).split("\\n").length;
     }
 
+    public static int getWrappedLineOfChar(JTextComponent comp, int charIdx) {
+        int charCount = 0;
+        int lineCount = 0;
+
+        View document = comp.getUI().getRootView(comp).getView(0);
+
+        if (document != null) {
+
+            // Walk each paragraph in document
+            for (int paragraphIdx = 0; paragraphIdx < document.getViewCount(); paragraphIdx++) {
+                View paragraph = document.getView(paragraphIdx);
+
+                // Walk each line in paragraph
+                for (int lineIdx = 0; lineIdx < paragraph.getViewCount(); lineIdx++) {
+                    View line = paragraph.getView(lineIdx);
+
+                    // Walk each char in the line
+                    charCount += line.getEndOffset() - line.getStartOffset();
+
+                    if (charCount >= charIdx) {
+                        return lineCount;
+                    }
+
+                    lineCount++;
+                }
+            }
+        }
+
+        return 0;
+    }
 }

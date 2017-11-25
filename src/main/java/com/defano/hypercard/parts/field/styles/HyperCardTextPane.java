@@ -5,14 +5,16 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.field.highlighters.AutoSelectionHighlighterPainter;
 import com.defano.hypercard.parts.field.highlighters.FoundSelectionHighlightPainter;
 import com.defano.hypercard.parts.util.FieldUtilities;
+import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.utils.Range;
 
+import javax.rmi.CORBA.Util;
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +33,9 @@ public class HyperCardTextPane extends JTextPane {
     private boolean wrapText = true;
     private boolean scrollable = true;
     private boolean showLines = false;
+
+    private HashMap <Integer, Integer> baselinesCache;
+    private int startLine, endLine;
 
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter highlighter = new DefaultHighlighter();
@@ -57,13 +62,15 @@ public class HyperCardTextPane extends JTextPane {
      */
     @Override
     public boolean getScrollableTracksViewportWidth() {
-        Component parent = getParent();
-        ComponentUI ui = getUI();
+        return wrapText;
+    }
 
+    @Override
+    public Dimension getPreferredSize() {
         if (wrapText) {
-            return super.getScrollableTracksViewportWidth();
+            return super.getPreferredSize();
         } else {
-            return parent == null || (ui.getPreferredSize(this).width <= parent.getSize().width);
+            return new Dimension(getDocumentWidth(), super.getPreferredSize().height);
         }
     }
 
@@ -80,8 +87,11 @@ public class HyperCardTextPane extends JTextPane {
      */
     @Override
     public String getText() {
-        String text = super.getText();
-        return text == null ? "" : text;
+        try {
+            return getStyledDocument().getText(0, getStyledDocument().getLength());
+        } catch (BadLocationException e) {
+            return "";
+        }
     }
 
     /**
@@ -150,10 +160,7 @@ public class HyperCardTextPane extends JTextPane {
 
     public void setScrollable(boolean scrollable) {
         this.scrollable = scrollable;
-
-        // Cause the field to re-wrap the text inside of it
-        this.setSize(this.getWidth() - 1, this.getHeight());
-        this.setSize(this.getWidth() + 1, this.getHeight());
+        rewrapText();
     }
 
     public boolean isWrapText() {
@@ -162,7 +169,10 @@ public class HyperCardTextPane extends JTextPane {
 
     public void setWrapText(boolean wrapText) {
         this.wrapText = wrapText;
+        rewrapText();
+    }
 
+    private void rewrapText() {
         // Cause the field to re-wrap the text inside of it
         this.setSize(this.getWidth() - 1, this.getHeight());
         this.setSize(this.getWidth() + 1, this.getHeight());
@@ -174,7 +184,32 @@ public class HyperCardTextPane extends JTextPane {
 
     public void setShowLines(boolean showLines) {
         this.showLines = showLines;
+        this.baselinesCache = null;
         this.repaint();
+    }
+
+    public void invalidateViewport(JViewport viewport) {
+        if (viewport != null) {
+
+
+
+            Point startPoint = viewport.getViewPosition();
+            Dimension size = viewport.getExtentSize();
+            Point endPoint = new Point(startPoint.x + size.width, startPoint.y + size.height);
+
+            try {
+                startLine = FieldUtilities.getWrappedLineOfChar(this, viewToModel(startPoint));
+                endLine = FieldUtilities.getWrappedLineOfChar(this, viewToModel(endPoint));
+
+                invalidateLineHeights();
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    public void invalidateLineHeights() {
+        this.baselinesCache = null;
     }
 
     /**
@@ -185,34 +220,74 @@ public class HyperCardTextPane extends JTextPane {
         super.paintComponent(g);
 
         if (showLines) {
-            float lastLineHeight = 0;
-            int dottedLineY = getInsets().top;
+
+            HashMap<Integer, Integer> baselines = this.baselinesCache;
+
+            // Calculate line heights
+            if (baselines == null) {
+                baselines = buildLineCache();
+            }
 
             int minX = getInsets().left;
             int maxX = getBounds().width - getInsets().right;
             int maxY = getBounds().height - getInsets().bottom;
-
-            int lineCount = getWrappedLineCount();
+            int lastBaseline = 0;
 
             Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
             ((Graphics2D) g).setStroke(dottedLine);
 
-            // Draw dotted line under all lines with text
-            for (int line = 0; line < lineCount && dottedLineY < maxY; line++) {
-                lastLineHeight = getLineHeight(line);
-                dottedLineY += lastLineHeight;
-
-                if (dottedLineY < maxY) {
-                    g.drawLine(minX, dottedLineY, maxX, dottedLineY);
+            // Draw lines under visible text
+            for (int line = startLine; line <= endLine; line++) {
+                Integer baselineY = baselines.get(line);
+                if (baselineY != null && baselineY > 0) {
+                    lastBaseline = baselines.get(line);
+                    g.drawLine(minX, lastBaseline, maxX, lastBaseline);
                 }
             }
-            
-            // Interpolate dotted lines under unused lines
-            dottedLineY += lastLineHeight;
-            while (dottedLineY < maxY) {
-                g.drawLine(minX, dottedLineY, maxX, dottedLineY);
-                dottedLineY += lastLineHeight;
+
+            // If text does not fill entire field, interpolate lines in unused space
+            float interpolatedHeight = (int) getLineHeight(baselinesCache.size() - 1);
+            int thisBaseline = lastBaseline + (int)interpolatedHeight;
+            while (thisBaseline <= maxY && interpolatedHeight > 0) {
+                g.drawLine(minX, thisBaseline, maxX, thisBaseline);
+                thisBaseline += interpolatedHeight;
             }
+        }
+    }
+
+    private HashMap<Integer, Integer> buildLineCache() {
+        this.baselinesCache = new HashMap<>();
+        float lastLineHeight = 0;
+        int dottedLineY = getInsets().top;
+
+        // Draw dotted line under all lines with text
+        for (int line = 0; line < getWrappedLineCount(); line++) {
+            float thisLineHeight = getLineHeight(line);
+            if (thisLineHeight == 0) {
+                break;
+            }
+
+            lastLineHeight = thisLineHeight;
+            dottedLineY += lastLineHeight;
+
+            baselinesCache.put(line, dottedLineY);
+        }
+
+        return baselinesCache;
+    }
+
+    /**
+     * Gets the natural width of this document, in pixels. That is, the number of horizontal pixels required to display
+     * the document without wrapping or truncating the text.
+     *
+     * @return The natural width of the document.
+     */
+    private int getDocumentWidth() {
+        try {
+            View document = getUI().getRootView(this).getView(0);
+            return (int) document.getPreferredSpan(View.X_AXIS);
+        } catch (Exception e) {
+            return this.getWidth();
         }
     }
 
