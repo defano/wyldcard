@@ -4,15 +4,14 @@ import com.google.gson.*;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.imageio.ImageIO;
+import javax.swing.text.StyledDocument;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Base64;
 
 /**
  * A utility for serializing/de-serializing HyperTalk Java objects.
@@ -23,6 +22,7 @@ public class Serializer {
             .registerTypeAdapterFactory(new PostConstructAdapterFactory())
             .registerTypeAdapter(Value.class, new ValueSerializer())
             .registerTypeAdapter(byte[].class, new ImageSerializer())
+            .registerTypeAdapter(StyledDocument.class, new com.defano.hypercard.runtime.serializer.DocumentSerializer())
             .enableComplexMapKeySerialization()
             .setPrettyPrinting()
             .create();
@@ -118,35 +118,6 @@ public class Serializer {
             } catch (IOException e) {
                 throw new RuntimeException("An error occurred reading the image. This stack may be corrupted.", e);
             }
-        }
-    }
-
-    /**
-     * Used to serialize/deserialize a Value object as a primitive. Replaces JSON like "visible":{"value":"true"} with
-     * "visible":true.
-     */
-    private static class ValueSerializer implements JsonSerializer<Value>, JsonDeserializer<Value> {
-        @Override
-        public Value deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return new Value(json.getAsString());
-        }
-
-        @Override
-        public JsonElement serialize(Value src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(src.stringValue());
-        }
-    }
-
-    /**
-     * Used to serialize/deserialize an array of bytes into a Base64-encoded string.
-     */
-    private static class ImageSerializer implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
-        public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return Base64.getDecoder().decode(json.getAsString());
-        }
-
-        public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
-            return new JsonPrimitive(Base64.getEncoder().encodeToString(src));
         }
     }
 

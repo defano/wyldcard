@@ -3,7 +3,7 @@ package com.defano.hypercard.parts.field.styles;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.border.DropShadowBorder;
 
-public class ShadowField extends AbstractTextField {
+public class ShadowField extends HyperCardTextField {
 
     private final static int OUTLINE_STROKE = 1;
     private final static int SHADOW_STROKE = 2;

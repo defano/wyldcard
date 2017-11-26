@@ -3,6 +3,7 @@ package com.defano.hypercard.parts.field;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.parts.field.styles.HyperCardTextField;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
@@ -17,11 +18,7 @@ import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.annotation.PostConstruct;
 import javax.swing.text.*;
-import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -36,8 +33,8 @@ import java.util.*;
  * <p>
  * Second: Fields placed in the background layer can either share their contents across all cards in the background
  * or, each card may have its own text (while still sharing other properties like size, location and showLines). This
- * necessitates the {@link #sharedRtf} and {@link #unsharedRtf} properties. Foreground-layer fields always use the
- * {@link #sharedRtf} value.
+ * necessitates the {@link #sharedText} and {@link #unsharedText} properties. Foreground-layer fields always use the
+ * {@link #sharedText} value.
  * <p>
  * Third: TextAlign is a separate, managed property of the field and not of the document model because Java's
  * RTFEditorKit doesn't support saving text alignment. Ugh! That's okay though, because HyperCard supports only a
@@ -45,7 +42,7 @@ import java.util.*;
  * {@link com.defano.hypercard.parts.model.PropertiesModel}.
  * <p>
  * Fourth: Changes to the field's DOM can originate from the UI (i.e., a user typing into the field) or from HyperTalk.
- * Because changes can originate in the view ({@link com.defano.hypercard.parts.field.styles.AbstractTextField}, this
+ * Because changes can originate in the view ({@link HyperCardTextField}, this
  * requires a bidirectional observation binding: the model must observe the view for changes, and the view must observe
  * the model for changes..
  * <p>
@@ -68,8 +65,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static final String PROP_SCROLLING = "scrolling";
     public static final String PROP_SCROLL = "scroll";
 
-    private byte[] sharedRtf;
-    private final Map<Integer, byte[]> unsharedRtf = new HashMap<>();
+    private StyledDocument sharedText = new DefaultStyledDocument();
+    private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
     private final Set<Integer> unsharedAutoSelection = new HashSet<>();
 
@@ -137,7 +134,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     /**
      * Sets the observer of scripted changes to the field's document model. Only a single observer is supported (and
-     * should always be the field view object, {@link com.defano.hypercard.parts.field.styles.AbstractTextField}.
+     * should always be the field view object, {@link HyperCardTextField}.
      *
      * In most every other case, a special observer interface is not required because observable attributes are modeled
      * by {@link com.defano.hypercard.parts.model.PropertiesModel}. Unfortunately, this technique requires properties
@@ -155,24 +152,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @return A StyledDocument representation of the contents of this field.
      */
     public StyledDocument getStyledDocument() {
-        StyledDocument doc = new DefaultStyledDocument();
-
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(getRtf());
-
-            new RTFEditorKit().read(bais, doc, 0);
-            bais.close();
-
-            // RTFEditorKit appears to (erroneously) append a newline when we deserialize; get rid of that.
-            doc.remove(doc.getLength() - 1, 1);
-
-            return doc;
-
-        } catch (Exception e) {
-            doc = new DefaultStyledDocument();
+        if (useSharedText()) {
+            return sharedText == null ? new DefaultStyledDocument() : sharedText;
+        } else {
+            return unsharedText.getOrDefault(currentCardId, new DefaultStyledDocument());
         }
-
-        return doc;
     }
 
     /**
@@ -182,12 +166,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param doc The styled document data to persist into the model.
      */
     public void setStyledDocument(StyledDocument doc) {
-        byte[] rtf = convertDocumentToRtf(doc);
-
         if (useSharedText()) {
-            this.sharedRtf = rtf;
+            FieldModel.this.sharedText = doc;
         } else {
-            unsharedRtf.put(currentCardId, rtf);
+            unsharedText.put(currentCardId, doc);
         }
     }
 
@@ -600,33 +582,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public FieldModel getSelectableTextModel() {
         return this;
-    }
-
-    private byte[] convertDocumentToRtf(StyledDocument doc) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            new RTFEditorKit().write(baos, doc, 0, doc.getLength());
-            baos.close();
-
-            return baos.toByteArray();
-
-        } catch (IOException | BadLocationException e) {
-            throw new RuntimeException("An error occurred while saving field contents.", e);
-        }
-    }
-
-    /**
-     * Gets the RTF data persisted in this model. Retrieves either the shared document data, or the unshared data
-     * depending on whether the field is in the background and has the sharedText property.
-     *
-     * @return The RTF data persisted into the model, or an empty document if nothing has been persisted.
-     */
-    private byte[] getRtf() {
-        if (useSharedText()) {
-            return sharedRtf;
-        } else {
-            return unsharedRtf.getOrDefault(currentCardId, new byte[0]);
-        }
     }
 
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {

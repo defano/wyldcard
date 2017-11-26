@@ -4,7 +4,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 
 import javax.swing.*;
 
-public class OpaqueField extends AbstractTextField {
+public class OpaqueField extends HyperCardTextField {
 
     public OpaqueField(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
