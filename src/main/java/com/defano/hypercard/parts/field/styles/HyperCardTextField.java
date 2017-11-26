@@ -14,6 +14,7 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.utils.Range;
 
@@ -45,6 +46,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private final FocusObserver focusObserver = new FocusObserver();
 
     private final ToolEditablePart toolEditablePart;
+    private final Throttle fontSelectionThrottle = new Throttle(500);
 
     // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
     // menu remains useful for text property changes
@@ -412,36 +414,44 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         model.setStyledDocument(textPane.getStyledDocument());
     }
 
+    /**
+     * Update the menu bar font style selection (Font and Style menus) with the font, size and style of the active
+     * text selection.
+     */
     private void updateFocusedFontSelection() {
-        Range selection = getSelectedTextRange();
 
-        Set<Value> styles = new HashSet<>();
-        Set<Value> families = new HashSet<>();
-        Set<Value> sizes = new HashSet<>();
+        // Style calculation can be costly for large selections; throttle repeated requests in the background
+        fontSelectionThrottle.submit(() -> {
+            Range selection = getSelectedTextRange();
 
-        // No selection; aggregate and report styles of entire field
-        if (selection.isEmpty()) {
-            AttributeSet attributes = textPane.getCharacterAttributes();
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
-            styles.add(tss.getHyperTalkStyle());
-            families.add(new Value(tss.getFontFamily()));
-            sizes.add(new Value(tss.getFontSize()));
-        }
+            Set<Value> styles = new HashSet<>();
+            Set<Value> families = new HashSet<>();
+            Set<Value> sizes = new HashSet<>();
 
-        // Selection exists; aggregate and report styles only of selected text
-        else {
-            for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
-                AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
+            // No selection; aggregate and report styles of entire field
+            if (selection.isEmpty()) {
+                AttributeSet attributes = textPane.getCharacterAttributes();
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
                 styles.add(tss.getHyperTalkStyle());
                 families.add(new Value(tss.getFontFamily()));
                 sizes.add(new Value(tss.getFontSize()));
             }
-        }
 
-        FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
-        FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
-        FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
+            // Selection exists; aggregate and report styles only of selected text
+            else {
+                for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
+                    AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
+                    TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
+                    styles.add(tss.getHyperTalkStyle());
+                    families.add(new Value(tss.getFontFamily()));
+                    sizes.add(new Value(tss.getFontSize()));
+                }
+            }
+
+            FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
+            FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
+            FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
+        });
     }
 
     private class FontStyleObserver implements Observer {

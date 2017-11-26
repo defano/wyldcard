@@ -31,6 +31,10 @@ public class Throttle {
      * @param runnable The job to submit for throttling.
      */
     public void submitOnUiThread(Runnable runnable) {
+        submit(() -> SwingUtilities.invokeLater(runnable));
+    }
+
+    public void submit(Runnable runnable) {
         // Cancel pending jobs
         for (Future pendingUpdate : pendingUpdates) {
             pendingUpdate.cancel(false);
@@ -38,7 +42,7 @@ public class Throttle {
         pendingUpdates.clear();
 
         // Schedule job
-        pendingUpdates.add(executor.schedule(() -> SwingUtilities.invokeLater(runnable), periodMs, TimeUnit.MILLISECONDS));
+        pendingUpdates.add(executor.schedule(runnable, periodMs, TimeUnit.MILLISECONDS));
     }
 
 }
