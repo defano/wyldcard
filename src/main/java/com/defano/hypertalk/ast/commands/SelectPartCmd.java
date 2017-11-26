@@ -8,6 +8,7 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.expressions.PartExp;
@@ -37,6 +38,8 @@ public class SelectPartCmd extends Command {
         CardLayerPart part = HyperCard.getInstance().getDisplayedCard().getPart(partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            WindowManager.getStackWindow().requestFocus();
+
             ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);
         });
