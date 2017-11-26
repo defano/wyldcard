@@ -66,21 +66,24 @@ public class HyperCardTextPane extends JTextPane {
         return wrapText;
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        if (wrapText) {
-            return super.getPreferredSize();
-        } else {
-            return new Dimension(getDocumentWidth(), super.getPreferredSize().height);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean getScrollableTracksViewportHeight() {
         return !scrollable || super.getScrollableTracksViewportHeight();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        if (wrapText) {
+            return super.getPreferredSize();
+        } else {
+            return new Dimension(Math.max(getDocumentWidth(), getParent().getBounds().width), super.getPreferredSize().height);
+        }
     }
 
     /**
