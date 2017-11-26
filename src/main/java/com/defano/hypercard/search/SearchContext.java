@@ -180,7 +180,9 @@ public class SearchContext {
         try {
             FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().findPart(result.getLocalPartSpecifier());
             FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
+
             foundField.applySearchHilight(result.getRange());
+            foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
         } catch (Exception e) {
             throw new IllegalStateException("Bug! Search result refers to a bogus part.", e);
         }
