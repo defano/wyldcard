@@ -7,7 +7,7 @@ import com.defano.hypercard.parts.ToolEditablePart;
 import javax.swing.*;
 import java.awt.*;
 
-public class TransparentField extends AbstractTextField {
+public class TransparentField extends HyperCardTextField {
 
     private final static Color TRANSPARENT = new Color(0, 0, 0, 0);
 

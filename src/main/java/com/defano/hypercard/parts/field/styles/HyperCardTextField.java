@@ -14,14 +14,12 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
@@ -32,7 +30,7 @@ import java.util.*;
  * An abstract HyperCard text field. That is, a field without a specific style bound to it. Encapsulates the styleable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class AbstractTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
+public abstract class HyperCardTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
 
     public final static int WIDE_MARGIN_PX = 15;
     public final static int NARROW_MARGIN_PX = 1;
@@ -48,12 +46,13 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
     private final FocusObserver focusObserver = new FocusObserver();
 
     private final ToolEditablePart toolEditablePart;
+    private final Throttle fontSelectionThrottle = new Throttle(500);
 
     // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
     // menu remains useful for text property changes
     private boolean didLoseFocusToMenu = false;
 
-    public AbstractTextField(ToolEditablePart toolEditablePart) {
+    public HyperCardTextField(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
         // Create the editor component
@@ -61,6 +60,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.setEditorKit(new RTFEditorKit());
 
         this.setViewportView(textPane);
+
+        getViewport().addChangeListener(e -> {
+            textPane.invalidateViewport(getViewport());
+        });
+
     }
 
     /**
@@ -68,7 +72,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void insertUpdate(DocumentEvent e) {
-        updateModel();
+        enqueueModelUpdateRequest();
+        textPane.invalidateViewport(getViewport());
     }
 
     /**
@@ -76,7 +81,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void removeUpdate(DocumentEvent e) {
-        updateModel();
+        enqueueModelUpdateRequest();
+        textPane.invalidateViewport(getViewport());
     }
 
     /**
@@ -84,7 +90,8 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void changedUpdate(DocumentEvent e) {
-        updateModel();
+        enqueueModelUpdateRequest();
+        textPane.invalidateViewport(getViewport());
     }
 
     /**
@@ -205,7 +212,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
      */
     @Override
     public void partClosed() {
-        updateModel();
+        enqueueModelUpdateRequest();
         textPane.getStyledDocument().removeDocumentListener(this);
 
         textPane.removeMouseListener(toolEditablePart);
@@ -297,11 +304,11 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             int oldCaretPosition = textPane.getCaretPosition();
 
             // Remove old listener
-            textPane.getStyledDocument().removeDocumentListener(AbstractTextField.this);
+            textPane.getStyledDocument().removeDocumentListener(HyperCardTextField.this);
 
             // Replace doc and listener
             textPane.setStyledDocument(doc);
-            doc.addDocumentListener(AbstractTextField.this);
+            doc.addDocumentListener(HyperCardTextField.this);
 
             textPane.setCaretPosition(oldCaretPosition);
         }
@@ -316,7 +323,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         StyleConstants.setAlignment(alignment, FontUtils.getAlignmentStyleForValue(v));
         textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
 
-        updateModel();
+        enqueueModelUpdateRequest();
     }
 
     private void setTextFontFamily(Value fontFamily) {
@@ -339,7 +346,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             }
         }
 
-        updateModel();
+        enqueueModelUpdateRequest();
         updateFocusedFontSelection();
     }
 
@@ -363,7 +370,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             }
         }
 
-        updateModel();
+        enqueueModelUpdateRequest();
         updateFocusedFontSelection();
     }
 
@@ -387,7 +394,7 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
             }
         }
 
-        updateModel();
+        enqueueModelUpdateRequest();
         updateFocusedFontSelection();
     }
 
@@ -402,41 +409,49 @@ public abstract class AbstractTextField extends JScrollPane implements FieldComp
         textPane.repaint();
     }
 
-    private void updateModel() {
+    private void enqueueModelUpdateRequest() {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
         model.setStyledDocument(textPane.getStyledDocument());
     }
 
+    /**
+     * Update the menu bar font style selection (Font and Style menus) with the font, size and style of the active
+     * text selection.
+     */
     private void updateFocusedFontSelection() {
-        Range selection = getSelectedTextRange();
 
-        Set<Value> styles = new HashSet<>();
-        Set<Value> families = new HashSet<>();
-        Set<Value> sizes = new HashSet<>();
+        // Style calculation can be costly for large selections; throttle repeated requests in the background
+        fontSelectionThrottle.submit(() -> {
+            Range selection = getSelectedTextRange();
 
-        // No selection; aggregate and report styles of entire field
-        if (selection.isEmpty()) {
-            AttributeSet attributes = textPane.getCharacterAttributes();
-            TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
-            styles.add(tss.getHyperTalkStyle());
-            families.add(new Value(tss.getFontFamily()));
-            sizes.add(new Value(tss.getFontSize()));
-        }
+            Set<Value> styles = new HashSet<>();
+            Set<Value> families = new HashSet<>();
+            Set<Value> sizes = new HashSet<>();
 
-        // Selection exists; aggregate and report styles only of selected text
-        else {
-            for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
-                AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
+            // No selection; aggregate and report styles of entire field
+            if (selection.isEmpty()) {
+                AttributeSet attributes = textPane.getCharacterAttributes();
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
                 styles.add(tss.getHyperTalkStyle());
                 families.add(new Value(tss.getFontFamily()));
                 sizes.add(new Value(tss.getFontSize()));
             }
-        }
 
-        FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
-        FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
-        FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
+            // Selection exists; aggregate and report styles only of selected text
+            else {
+                for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
+                    AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
+                    TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
+                    styles.add(tss.getHyperTalkStyle());
+                    families.add(new Value(tss.getFontFamily()));
+                    sizes.add(new Value(tss.getFontSize()));
+                }
+            }
+
+            FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
+            FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
+            FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
+        });
     }
 
     private class FontStyleObserver implements Observer {

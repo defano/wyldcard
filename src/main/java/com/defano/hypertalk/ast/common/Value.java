@@ -27,7 +27,7 @@ public class Value implements StyledComparable<Value> {
     // Cache for known value types (all are effectively final)
     private Long longValue;
     private Double floatValue;
-    private final Boolean booleanValue;
+    private Boolean booleanValue;
 
     public static Value ofLines(List<Value> lines) {
         StringBuilder builder = new StringBuilder();
@@ -75,14 +75,17 @@ public class Value implements StyledComparable<Value> {
 
     public Value (long v) {
         this(String.valueOf(v));
+        longValue = v;
     }
     
     public Value (double f) {
         this(String.valueOf(f));
+        floatValue = f;
     }
     
     public Value (boolean v) {
         this(String.valueOf(v));
+        booleanValue = v;
     }
 
     public Value (int x, int y) {
@@ -106,34 +109,14 @@ public class Value implements StyledComparable<Value> {
             floatValue = 0.0;
             booleanValue = null;
         }
-
-        else {
-            try {
-                longValue = Long.parseLong(value.trim());
-            } catch (NumberFormatException e) {
-                longValue = null;
-            }
-
-            try {
-                floatValue = Double.parseDouble(value.trim());
-            } catch (NumberFormatException e) {
-                floatValue = null;
-            }
-
-            if (value.trim().equalsIgnoreCase("true") || value.trim().equalsIgnoreCase("false")) {
-                booleanValue = Boolean.parseBoolean(value);
-            } else {
-                booleanValue = null;
-            }
-        }
     }
     
     public boolean isInteger () {
-        return longValue != null;
+        return longValue != null || parseLong() != null;
     }
 
     public boolean isFloat () {
-        return floatValue != null;
+        return floatValue != null || parseFloat() != null;
     }    
     
     public boolean isNatural () {
@@ -141,11 +124,43 @@ public class Value implements StyledComparable<Value> {
     }    
 
     public boolean isBoolean () {
-        return booleanValue != null;
+        return booleanValue != null || parseBoolean() != null;
     }    
     
     public boolean isNumber () {
         return isFloat();
+    }
+
+    private Long parseLong() {
+        try {
+            longValue = Long.parseLong(value.trim());
+        } catch (NumberFormatException e) {
+            longValue = null;
+        }
+
+        return longValue;
+    }
+
+    private Double parseFloat() {
+        try {
+            floatValue = Double.parseDouble(value.trim());
+        } catch (NumberFormatException e) {
+            floatValue = null;
+        }
+
+        return floatValue;
+    }
+
+    private Boolean parseBoolean() {
+        if (value.trim().equalsIgnoreCase("true")) {
+            booleanValue = true;
+        } else if (value.trim().equalsIgnoreCase("false")) {
+            booleanValue = false;
+        } else {
+            booleanValue = null;
+        }
+
+        return booleanValue;
     }
 
     public boolean isPoint () {
@@ -171,7 +186,7 @@ public class Value implements StyledComparable<Value> {
     }    
 
     public int integerValue() {
-        if (longValue != null) {
+        if (longValue != null || parseLong() != null) {
             return longValue.intValue();
         } else {
             return 0;
@@ -179,21 +194,21 @@ public class Value implements StyledComparable<Value> {
     }
 
     public long longValue() {
-        if (longValue != null)
+        if (longValue != null || parseLong() != null)
             return longValue;
         else
             return 0;
     }
         
     public double doubleValue() {
-        if (floatValue != null)
+        if (floatValue != null || parseFloat() != null)
             return floatValue;
         else
             return 0.0f;
     }
         
     public boolean booleanValue () {
-        if (booleanValue != null)
+        if (booleanValue != null || parseBoolean() != null)
             return booleanValue;
         else
             return false;
