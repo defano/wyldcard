@@ -36,6 +36,11 @@ public class PartMover {
 
             if (partInst != null && withinInst != null) {
 
+                // Don't move if owning window does not have focus
+                if (!SwingUtilities.getWindowAncestor(withinInst).equals(FocusManager.getCurrentManager().getFocusedWindow())) {
+                    return;
+                }
+
                 Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
                 SwingUtilities.convertPointFromScreen(mouseLoc, withinInst);
 

@@ -38,6 +38,12 @@ public class PartResizer {
             Component withinInst = within.get();
 
             if (partInst != null && withinInst != null) {
+
+                // Don't resize if owning window does not have focus
+                if (!SwingUtilities.getWindowAncestor(withinInst).equals(FocusManager.getCurrentManager().getFocusedWindow())) {
+                    return;
+                }
+
                 Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
                 SwingUtilities.convertPointFromScreen(mouseLoc, withinInst);
                 Point partLoc = originalBounds.getLocation();
