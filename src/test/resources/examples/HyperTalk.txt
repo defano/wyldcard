@@ -1,0 +1,447 @@
+
+--
+-- Script to remove all alternative labels from the grammar definition
+--
+on mouseUp
+	put the ticks into startTime
+	repeat with n = 1 to the number of lines in cd fld 1
+		if line n of cd fld 1 contains "#" then
+			put offset("#", line n of cd fld 1) into firstChar
+			put the number of chars in line n of cd fld 1 into lastChar
+			delete chars firstChar to lastChar of line n of cd fld 1
+		end if
+	end repeat
+
+	-- How long did it take?
+	put the ticks - startTime into duration
+	put "Completed in " & duration / 60.0 & " seconds"
+end mouseUp
+
+--
+-- Flow Control
+--
+
+on testConditionalBranching
+    if x < y then put x
+
+    if x < y then
+        put x
+    end if
+
+    if x > y then put x else put y
+
+    if x < y then
+        put x
+    else put y
+
+    if x < y then
+        put x
+    else
+        put y
+    end if
+
+    if x > y then put x
+    else put y
+
+    if x > y then
+        put x
+        put y
+    else if x > z then put z
+
+    if x > y then put y
+    else if x > z then put z
+    else if x > a then put a
+
+    if x > y then
+        put x
+        put y
+    else if x > z then put x
+    else if x > a then
+        put x
+        put a
+    end if
+end testConditionalBranching
+
+on testLoops
+    repeat forever
+        put x
+    end repeat
+
+    repeat for x
+        put y
+    end repeat
+
+    repeat with n = 1 to 10
+        put n
+    end repeat
+
+    repeat with n = 10 down to 1
+        put n
+    end repeat
+end testLoops
+
+--
+-- Commands
+--
+
+on testCommands
+    answer x
+    answer x with a
+    answer x with a and b
+    answer x with a and b and c
+
+    ask a
+    ask a with b
+
+    beep
+    beep 10 + 3
+
+    choose browse tool
+    choose button tool
+    choose field tool
+    choose oval tool
+    choose brush tool
+    choose pencil tool
+    choose bucket tool
+    choose poly tool
+    choose polygon tool
+    choose rect tool
+    choose rectangle tool
+    choose curve tool
+    choose reg poly tool
+    choose regular poly tool
+    choose regular polygon tool
+    choose eraser tool
+    choose round rect tool
+    choose round rectangle tool
+    choose select tool
+    choose lasso tool
+    choose spray tool
+    choose spray can tool
+    choose line tool
+    choose text tool
+    choose (word 1 of card field 2) tool
+    choose tool 1
+    choose tool (word 1 of card field 2)
+
+    click at 10,10
+    click at "10, 10"
+    click at the mouseLoc
+    click at 10,10 with commandKey, optionKey, shiftKey
+
+    convert cd fld 1 to seconds
+    convert cd fld 1 to dateitems
+    convert cd fld 1 to long date
+    convert cd fld 1 to english date
+    convert cd fld 1 to date
+    convert cd fld 1 to short date
+    convert cd fld 1 to abbrev date
+    convert cd fld 1 to abbreviated date
+    convert cd fld 1 to time
+    convert cd fld 1 to short time
+    convert cd fld 1 to abbrev time
+    convert cd fld 1 to abbreviated time
+    convert cd fld 1 to english time
+    convert cd fld 1 to long time
+    convert cd fld 1 from seconds to long date
+    convert cd fld 1 from seconds to long time and long date
+    convert 100 from seconds to date
+
+    create menu "My Great Menu"
+    create menu item 1 of fld id 13
+
+    delete menu "My Great Menu"
+    delete menuitem 1 from menu "My Great Menu"
+    delete the first menuitem from menu "My Great Menu"
+    delete the last menuitem from menu "My Great Menu"
+    delete menuitem "My Item" from menu "My Great Menu"
+    delete card field 1
+    delete bg btn id 13
+    delete the first cd btn
+    delete item 1 of the message box
+    delete chars 13 to 27 of the middle line of card field x
+
+    dial the last line of x
+    dial "588-2300"
+
+    disable card button "x"
+    disable the first menuitem of the last menu
+    disable menu "Edit"
+
+    divide x by 3
+    divide word 17 of x by the message window
+
+    domenu "New Button"
+    domenu ("New" && "Field")
+
+    drag from x to y
+    drag from 10,10 to "100,100"
+    drag from the mouseLoc to 10,10 with shiftKey, optionKey
+
+    enable fld "My Field"
+    enable menuitem "Undo" of menu "Edit"
+    enable menu "File"
+    enable the last menu
+
+    exit testCommands
+    exit repeat
+    exit to hypercard
+
+    find x
+    find x in card field 1
+    find x of marked cards
+    find x in card field 1 of marked cards
+
+    find word "word" in card field 1
+    find chars "chars" of marked cards
+    find whole "whole" in bg fld id 3 of marked cards
+    find string "string"
+
+    get 2 + 2 / 3
+    get char 3 of the middle word of item 11 of line 17 of theText
+
+    go to card 1
+    go to the last card
+    go to the middle card
+    go to the first card
+    go to the next card
+    go to prev card
+    go to the previous card
+    go bg 1
+    go to the next background
+    go to the middle bg
+    go back
+    go next card
+    go card 13
+    go next card with visual effect dissolve very slowly to black
+
+    hide field "bananas"
+    hide the third cd btn
+
+    lock screen
+
+    visual effect barn door open
+    visual effect barn door close
+    visual effect checkerboard
+    visual effect iris open
+    visual effect iris close
+    visual effect plain
+    visual effect scroll down
+    visual effect scroll up
+    visual effect scroll left
+    visual effect scroll right
+    visual effect shrink to top
+    visual effect shrink to bottom
+    visual effect shrink to center
+    visual effect stretch from top
+    visual effect stretch from bottom
+    visual effect stretch from center
+    visual effect venetian blinds
+    visual effect wipe up
+    visual effect wipe down
+    visual effect wipe left
+    visual effect wipe right
+    visual effect zoom in
+    visual effect zoom out
+
+    visual dissolve to black
+    visual dissolve to white
+    visual dissolve to gray
+    visual dissolve to grey
+    visual dissolve to card
+    visual dissolve to inverse
+
+    visual effect iris open fast
+    visual effect iris open very fast
+    visual effect iris open slow
+    visual effect iris open slowly
+    visual effect iris open very slowly
+    visual effect iris open very slow
+
+end testCommands
+
+--
+-- Constants
+--
+on constantsTest
+    zero + one + two + three + four + five + six + seven + eight + nine + ten
+
+end constantsTest
+
+--
+-- Chunks
+--
+on chunkTest
+
+    -- Prepositional chunks
+    put x into y
+    put x after y
+    put x before y
+
+    -- Singular chunks
+    the first char of x
+    the first character of x
+    char 1 of x
+    the last char of x
+    the middle character of x
+
+    the second word of x
+    word 2 of x
+    the last word of x
+    the middle word of x
+
+    the third item of x
+    item 3 of x
+    the last item of x
+    the middle item of x
+
+    the fourth line of x
+    line 3 of x
+    the last line of x
+    the middle line of x
+
+    -- Ranged chunks
+    char 1 to 2 of x
+    chars 1 to 2 of x
+    word 1 to 2 of x
+    words 1 to 2 of x
+    item 1 to 2 of x
+    items 1 to 2 of x
+    line 1 to 2 of x
+    lines 1 to 2 of x
+
+    -- Expression chunks
+    word 2 + 3 of x
+
+
+    -- Compound chunks
+    the first char of the second word of the third line of x
+    chars 1 to 2 of words 3 to 4 of items 5 to 6 of line 7 to 8 of x
+    put char 1 of word 2 of line 3 of x before char 4 of word 5 of item 6 of line 7 of y
+
+
+end chunkTest
+
+-- Handlers
+
+on mouseUp
+end mouseUp
+
+--
+-- Command keywords in the language should be usable as block names, let's verify.
+--
+
+on answer
+end answer
+
+on ask
+end ask
+
+on put
+end put
+
+on get
+end get
+
+on set
+end set
+
+on send
+end send
+
+on wait
+end wait
+
+on sort
+end sort
+
+on go
+end go
+
+on enable
+end enable
+
+on disable
+end disable
+
+on read
+end read
+
+on write
+end write
+
+on hide
+end hide
+
+on show
+end show
+
+on add
+end add
+
+on subtract
+end subtract
+
+on multiply
+end multiply
+
+on divide
+end divide
+
+on choose
+end choose
+
+on click
+end click
+
+on drag
+end drag
+
+on type
+end type
+
+on lock
+end lock
+
+on unlock
+end unlock
+
+on pass
+end pass
+
+on domenu
+end domenu
+
+on visual
+end visual
+
+on reset
+end reset
+
+on create
+end create
+
+on delete
+end delete
+
+on play
+end play
+
+on dial
+end dial
+
+on beep
+end beep
+
+on open
+end open
+
+on close
+end close
+
+on select
+end select
+
+on find
+end find
+

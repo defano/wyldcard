@@ -50,6 +50,8 @@ dependencies {
 	compile 'com.l2fprod.common:l2fprod-common-fontchooser:6.9.1'
 
 	testCompile 'junit:junit:4.12'
+	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'
+
 }
 
 generateGrammarSource {
