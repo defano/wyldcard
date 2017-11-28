@@ -62,7 +62,7 @@ public class Interpreter {
      * @param scriptText The script to compile.
      * @param observer A non-null callback to fire when compilation is complete.
      */
-    public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
+    public static void compileInBackground(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
 
         // Preempt any previously enqueued compile jobs
         backgroundCompileExecutor.getQueue().clear();
@@ -72,7 +72,7 @@ public class Interpreter {
             Script compiledScript = null;
 
             try {
-                compiledScript = compile(scriptText);
+                compiledScript = compile(compilationUnit, scriptText);
             } catch (HtException e) {
                 generatedError = e;
             }
@@ -88,7 +88,7 @@ public class Interpreter {
      * @return The compiled Script object
      * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
      */
-    public static Script compile(String scriptText) throws HtException {
+    public static Script compile(CompilationUnit compilationUnit, String scriptText) throws HtException {
         HyperTalkErrorListener errors = new HyperTalkErrorListener();
 
         HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
@@ -98,7 +98,7 @@ public class Interpreter {
         parser.addErrorListener(errors);
 
         try {
-            ParseTree tree = parser.script();
+            ParseTree tree = compilationUnit.getParseTree(parser);
 
             if (!errors.errors.isEmpty()) {
                 throw errors.errors.get(0);
@@ -119,7 +119,7 @@ public class Interpreter {
      */
     public static Value evaluate(String expression) {
         try {
-            Statement statement = compile(expression).getStatements().list.get(0);
+            Statement statement = compile(CompilationUnit.SCRIPTLET, expression).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
@@ -150,7 +150,7 @@ public class Interpreter {
     @SuppressWarnings("unchecked")
     public static <T> T dereference(Value value, Class<T> klass) {
         try {
-            Statement statement = Interpreter.compile(value.stringValue()).getStatements().list.get(0);
+            Statement statement = Interpreter.compile(CompilationUnit.SCRIPTLET, value.stringValue()).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -179,7 +179,7 @@ public class Interpreter {
      * @throws HtException Thrown if the statement cannot be compiled (due to a syntax/semantic error).
      */
     public static boolean isExpressionStatement(String statement) throws HtException {
-        return compile(statement).getStatements().list.get(0) instanceof ExpressionStatement;
+        return compile(CompilationUnit.SCRIPTLET, statement).getStatements().list.get(0) instanceof ExpressionStatement;
     }
 
     /**
@@ -233,7 +233,7 @@ public class Interpreter {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static Future<String> executeString(PartSpecifier me, String statementList) throws HtException  {
-        return executeNamedBlock(me, getAnonymousBlock(compile(statementList).getStatements()), new ExpressionList());
+        return executeNamedBlock(me, getAnonymousBlock(compile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ExpressionList());
     }
 
     /**

@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.Messagable;
 import com.defano.hypercard.parts.card.CardLayer;
+import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -148,7 +149,7 @@ public class PartModel extends PropertiesModel implements Messagable {
         defineComputedSetterProperty(PROP_SCRIPT, (model, propertyName, value) -> {
             model.setKnownProperty(PROP_SCRIPTTEXT, value);
             try {
-                script = Interpreter.compile(value.stringValue());
+                script = Interpreter.compile(CompilationUnit.SCRIPT, value.stringValue());
             } catch (HtException e) {
                 script = new Script();
             }
@@ -176,7 +177,7 @@ public class PartModel extends PropertiesModel implements Messagable {
     public Script getScript() {
         if (script == null) {
             try {
-                script = Interpreter.compile(getKnownProperty(PROP_SCRIPTTEXT).stringValue());
+                script = Interpreter.compile(CompilationUnit.SCRIPT, getKnownProperty(PROP_SCRIPTTEXT).stringValue());
             } catch (HtException e) {
                 e.printStackTrace();
             }

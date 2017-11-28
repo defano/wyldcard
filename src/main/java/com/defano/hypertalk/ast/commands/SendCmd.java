@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.commands;
 
+import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Script;
@@ -36,7 +37,7 @@ public class SendCmd extends Command {
 
     private MessageCmd interpretMessage(String message) {
         try {
-            Script compiled = Interpreter.compile(message);
+            Script compiled = Interpreter.compile(CompilationUnit.SCRIPTLET, message);
             return (MessageCmd) compiled.getStatements().list.get(0);
         } catch (Exception e) {
             return null;

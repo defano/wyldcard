@@ -37,7 +37,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitHandlerScript(HyperTalkParser.HandlerScriptContext ctx) {
-        return new Script((NamedBlock) visit(ctx.handler()), ctx.handler().getStart().getLine(), ctx.handler().getStop().getLine());
+        Script script = (Script) visit(ctx.script());
+        script.defineHandler((NamedBlock) visit(ctx.handler()), ctx.handler().getStart().getLine(), ctx.handler().getStop().getLine());
+        return script;
+    }
+
+    @Override
+    public Object visitFunctionScript(HyperTalkParser.FunctionScriptContext ctx) {
+        Script script = (Script) visit(ctx.script());
+        script.defineUserFunction((UserFunction) visit(ctx.function()), ctx.function().getStart().getLine(), ctx.function().getStop().getLine());
+        return script;
+    }
+
+    @Override
+    public Object visitNewlineScript(HyperTalkParser.NewlineScriptContext ctx) {
+        return visit(ctx.script());
     }
 
     @Override
@@ -506,69 +520,54 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitStatementScript(HyperTalkParser.StatementScriptContext ctx) {
-        Script script = new Script();
-        Statement statement = (Statement) visit(ctx.nonEmptyStmnt());
-        script.defineStatementList(new StatementList(statement));
-        return script;
-    }
-
-    @Override
-    public Object visitScriptFunctionScript(HyperTalkParser.ScriptFunctionScriptContext ctx) {
-        Script script = (Script) visit(ctx.script());
-        script.defineUserFunction((UserFunction) visit(ctx.function()), ctx.function().getStart().getLine(), ctx.function().getStop().getLine());
-        return script;
-    }
-
-    @Override
-    public Object visitFunctionScript(HyperTalkParser.FunctionScriptContext ctx) {
-        Script script = new Script();
-        script.defineUserFunction((UserFunction) visit(ctx.function()), ctx.function().getStart().getLine(), ctx.function().getStop().getLine());
-        return script;
-    }
-
-    @Override
-    public Object visitScriptHandlerScript(HyperTalkParser.ScriptHandlerScriptContext ctx) {
-        Script script = (Script) visit(ctx.script());
-        script.defineHandler((NamedBlock) visit(ctx.handler()), ctx.handler().getStart().getLine(), ctx.handler().getStop().getLine());
-        return script;
-    }
-
-    @Override
     public Object visitCommentScript(HyperTalkParser.CommentScriptContext ctx) {
+        return visit(ctx.script());
+    }
+
+    @Override
+    public Object visitEmptyScript(HyperTalkParser.EmptyScriptContext ctx) {
         return new Script();
     }
 
     @Override
-    public Object visitStatementListScript(HyperTalkParser.StatementListScriptContext ctx) {
-        Script script = new Script();
-        script.defineStatementList((StatementList) visit(ctx.statementList()));
-        return script;
+    public Object visitStatementScriptlet(HyperTalkParser.StatementScriptletContext ctx) {
+        Script script = (Script) visit(ctx.scriptlet());
+        return script.insertStatement((Statement) visit(ctx.nonEmptyStmnt()));
     }
 
     @Override
-    public Object visitWhitespaceScript(HyperTalkParser.WhitespaceScriptContext ctx) {
+    public Object visitWhitespaceScriptlet(HyperTalkParser.WhitespaceScriptletContext ctx) {
+        return visit(ctx.scriptlet());
+    }
+
+    @Override
+    public Object visitCommentScriptlet(HyperTalkParser.CommentScriptletContext ctx) {
+        return visit(ctx.scriptlet());
+    }
+
+    @Override
+    public Object visitEmptyScriptlet(HyperTalkParser.EmptyScriptletContext ctx) {
         return new Script();
     }
 
     @Override
     public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.blockName(0)), (String) visit(ctx.blockName(1)), (StatementList) visit(ctx.statementList()));
+        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.blockName(0)), (String) visit(ctx.blockName(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
-    }
-
-    @Override
-    public Object visitBlockName(HyperTalkParser.BlockNameContext ctx) {
-        return super.visitBlockName(ctx);
+        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
     }
 
     @Override
     public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
         return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+    }
+
+    @Override
+    public Object visitHandlerName(HyperTalkParser.HandlerNameContext ctx) {
+        return super.visitHandlerName(ctx);
     }
 
     @Override
@@ -648,11 +647,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitNonEmptyDoStmnt(HyperTalkParser.NonEmptyDoStmntContext ctx) {
-        return visit(ctx.doStmnt());
-    }
-
-    @Override
     public Object visitNonEmptyReturnStmnt(HyperTalkParser.NonEmptyReturnStmntContext ctx) {
         return visit(ctx.returnStmnt());
     }
@@ -670,11 +664,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitEprReturnStmnt(HyperTalkParser.EprReturnStmntContext ctx) {
         return new ReturnStatement(ctx, (Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitDoStmnt(HyperTalkParser.DoStmntContext ctx) {
-        return new DoCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -710,6 +699,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDivideCmdStmnt(HyperTalkParser.DivideCmdStmntContext ctx) {
         return new DivideCmd(ctx, (Expression) visit(ctx.expression()), (Container) visit(ctx.container()));
+    }
+
+    @Override
+    public Object visitDoCmdStmt(HyperTalkParser.DoCmdStmtContext ctx) {
+        return new DoCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -804,7 +798,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitExitCmdStmt(HyperTalkParser.ExitCmdStmtContext ctx) {
-        return new ExitStatement(ctx, (String) visit(ctx.blockName()));
+        return new ExitStatement(ctx, (String) visit(ctx.handlerName()));
     }
 
     @Override
@@ -994,7 +988,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPassCmdStmt(HyperTalkParser.PassCmdStmtContext ctx) {
-        return new PassCmd(ctx, (String) visit(ctx.blockName()));
+        return new PassCmd(ctx, (String) visit(ctx.handlerName()));
     }
 
     @Override
@@ -1447,6 +1441,56 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPartRef(HyperTalkParser.PartRefContext ctx) {
         return new PartReferenceExp(ctx, ctx.ID().getText());
+    }
+
+    @Override
+    public Object visitMessagePart(HyperTalkParser.MessagePartContext ctx) {
+        return super.visitMessagePart(ctx);
+    }
+
+    @Override
+    public Object visitCard(HyperTalkParser.CardContext ctx) {
+        return super.visitCard(ctx);
+    }
+
+    @Override
+    public Object visitBackground(HyperTalkParser.BackgroundContext ctx) {
+        return super.visitBackground(ctx);
+    }
+
+    @Override
+    public Object visitButton(HyperTalkParser.ButtonContext ctx) {
+        return super.visitButton(ctx);
+    }
+
+    @Override
+    public Object visitField(HyperTalkParser.FieldContext ctx) {
+        return super.visitField(ctx);
+    }
+
+    @Override
+    public Object visitCharacter(HyperTalkParser.CharacterContext ctx) {
+        return super.visitCharacter(ctx);
+    }
+
+    @Override
+    public Object visitWord(HyperTalkParser.WordContext ctx) {
+        return super.visitWord(ctx);
+    }
+
+    @Override
+    public Object visitLine(HyperTalkParser.LineContext ctx) {
+        return super.visitLine(ctx);
+    }
+
+    @Override
+    public Object visitItem(HyperTalkParser.ItemContext ctx) {
+        return super.visitItem(ctx);
+    }
+
+    @Override
+    public Object visitOf(HyperTalkParser.OfContext ctx) {
+        return super.visitOf(ctx);
     }
 
     @Override

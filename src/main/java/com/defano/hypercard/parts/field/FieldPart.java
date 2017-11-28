@@ -3,6 +3,7 @@ package com.defano.hypercard.parts.field;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;
@@ -285,7 +286,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
                 break;
             case FieldModel.PROP_SCRIPT:
                 try {
-                    Interpreter.compile(newValue.stringValue());
+                    Interpreter.compile(CompilationUnit.SCRIPT, newValue.stringValue());
                 } catch (HtException e) {
                     HyperCard.getInstance().showErrorDialog(e);
                 }

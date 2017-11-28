@@ -8,6 +8,7 @@
 
 package com.defano.hypertalk;
 
+import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.exception.HtException;
 import org.apache.commons.io.IOUtils;
@@ -23,7 +24,7 @@ public class TestGrammar {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/HyperTalk.txt");
         String testScript = IOUtils.toString(in);
 
-        Interpreter.compile(testScript);
+        Interpreter.compile(CompilationUnit.SCRIPT, testScript);
     }
 
 }

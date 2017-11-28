@@ -1,6 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.fonts.FontFactory;
+import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypercard.util.HandlerComboBox;
 import com.defano.hypercard.util.TextLineNumber;
@@ -85,7 +86,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     private void checkSyntax() {
-        Interpreter.compileInBackground(scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
+        Interpreter.compileInBackground(CompilationUnit.SCRIPT, scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
             if (compiledScript != null) {
                 ScriptEditor.this.compiledScript = compiledScript;
             }
