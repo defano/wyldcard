@@ -456,6 +456,7 @@ propertyName
     : 'marked'          // Requires special rule because 'marked' is also a lexed token
     | 'id'
     | 'rect' | 'rectangle'
+    | 'bottom' | 'left' | 'right' | 'top' | 'center' | 'scroll'
     | ID
     ;
 
@@ -742,11 +743,11 @@ LITERAL
     | NUMBER_LITERAL
     ;
 
-INTEGER_LITERAL
+fragment INTEGER_LITERAL
     : DIGIT+
     ;
 
-NUMBER_LITERAL
+fragment NUMBER_LITERAL
     : INTEGER_LITERAL
     | '-' INTEGER_LITERAL
     | '.' INTEGER_LITERAL
@@ -757,7 +758,7 @@ NUMBER_LITERAL
     | '-' INTEGER_LITERAL '.' INTEGER_LITERAL
     ;
 
-STRING_LITERAL
+fragment STRING_LITERAL
     : '"' ~('"' | '\r' | '\n' )* '"'
     ;
 
@@ -769,11 +770,11 @@ FOUR_ITEM_LIST
     : (LITERAL ',' LITERAL ',' LITERAL ',' LITERAL)
     ;
 
-ALPHA
+fragment ALPHA
     : ('a' .. 'z' | 'A' .. 'Z')+
     ;
 
-DIGIT
+fragment DIGIT
     : ('0' .. '9')+
     ;
 

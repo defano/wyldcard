@@ -220,6 +220,104 @@ on testCommands
 
     lock screen
 
+    multiply x by y
+    multiply the first char of the last word of cd fld 1 by 22
+
+    next repeat
+
+    open file "file"
+    open file f
+
+    pass testCommands
+
+    play "b a g a b b b"
+    play the first word of the name of button id 2
+    play "c d e" tempo 200
+    play flute x
+    play harpsichord y
+    play boing tempo x y
+
+    pop card
+    push card
+    push next background
+    push card 13
+
+    put "hello world"
+    put x into y
+    put y before z
+    put z after a
+
+    read from file x for y
+    read from file x at y for z
+    read from file x until "found me!"
+
+    reset the menubar
+    reset paint
+
+    select the first card button
+    select field "my field"
+    select empty
+    select text of bg fld 1
+    select before text of background field "f"
+    select after text of background fld x
+    select the first char of the middle word of the fifth line of field 1
+    select before the middle word of the middle line of field f
+    select after item ten of bkgnd fld 11
+
+    set the bottom of me to x
+    set the bottomRight of me to x
+    set the contents of me to x
+    set the enabled of me to true
+    set the height of me to 100
+    set the left of me to x
+    set the location of me to 10,10
+    set the name of me to "name"
+    set the rectangle of me to 10,10,100,100
+    set the right of me to z
+    set the script of me to "answer hello"
+    set the style of me to default
+    set the style of me to classic
+    set the style of me to shadow
+    set the style of me to oval
+    set the style of me to rectangular
+    set the style of me to transparent
+    set the style of me to opaque
+    set the style of me to checkbox
+    set the style of me to radio
+    set the style of me to menu
+    set the textalign of me to left
+    set the textalign of me to right
+    set the textalign of me to center
+    set the textfont of me to arial
+    set the textsize of me to 24
+    set the textstyle of me to plain
+    set the textstyle of me to bold
+    set the textstyle of me to italic
+    set the top of me to y
+    set the topLeft of me to 110,220
+    set the visible of me to true
+    set the width of me to the height of me
+    set the autohilite of me to true
+    set the hilite of me to false
+    set the iconalign of me to top
+    set the iconalign of me to left
+    set the iconalign of me to right
+    set the iconalign of me to bottom
+    set the showname of me to false
+    set the autoselect of me to true
+    set the autotab of me to x
+    set the locktext of me to the visible of x
+    set the showlines of me to true
+    set the dontwrap of me to the showlines of me
+    set the multiplelines of me to x
+    set the scroll of me to 100
+    set the scrolling of me to false
+    set the sharedtext of me to true
+    set the widemargins of me to true
+    set the textfont of the last word of cd fld 1 to courier
+    set the textsize of lines 1 to 3 of bg field 2 to 48
+    set the textstyle of the middle character of me to bold
+
     visual effect barn door open
     visual effect barn door close
     visual effect checkerboard
