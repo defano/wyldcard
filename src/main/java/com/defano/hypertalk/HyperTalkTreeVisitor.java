@@ -571,25 +571,15 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEmptyArgList(HyperTalkParser.EmptyArgListContext ctx) {
-        return new ExpressionList();
-    }
-
-    @Override
     public Object visitSingleExpArgList(HyperTalkParser.SingleExpArgListContext ctx) {
-        return new ExpressionList((Expression) visit(ctx.expression()));
+        return new ExpressionList((Expression) visit(ctx.factor()));
     }
 
     @Override
     public Object visitMultiExpArgList(HyperTalkParser.MultiExpArgListContext ctx) {
         ExpressionList argumentList = (ExpressionList) visit(ctx.expressionList());
-        argumentList.addArgument((Expression) visit(ctx.expression()));
+        argumentList.addArgument((Expression) visit(ctx.factor()));
         return argumentList;
-    }
-
-    @Override
-    public Object visitEmptyParamList(HyperTalkParser.EmptyParamListContext ctx) {
-        return new ParameterList();
     }
 
     @Override
@@ -605,13 +595,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitSingleStmntList(HyperTalkParser.SingleStmntListContext ctx) {
-        return new StatementList((Statement) visit(ctx.nonEmptyStmnt()));
+    public Object visitEmptyStmntList(HyperTalkParser.EmptyStmntListContext ctx) {
+        return new StatementList(ctx);
     }
 
     @Override
-    public Object visitNewlineStmntList(HyperTalkParser.NewlineStmntListContext ctx) {
-        return new StatementList();
+    public Object visitSingleStmntList(HyperTalkParser.SingleStmntListContext ctx) {
+        return new StatementList(ctx, (Statement) visit(ctx.nonEmptyStmnt()));
     }
 
     @Override
@@ -758,7 +748,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPlayCmdStmt(HyperTalkParser.PlayCmdStmtContext ctx) {
-        return new PlayCmd(ctx, (Expression) visit(ctx.expression()), (MusicSpecifier) visit(ctx.music()));
+        return new PlayCmd(ctx, (MusicSpecifier) visit(ctx.music()));
     }
 
     @Override
@@ -877,6 +867,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMusicInstrumentNotes(HyperTalkParser.MusicInstrumentNotesContext ctx) {
+        return MusicSpecifier.forNotes((Expression) visit(ctx.factor()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitMusicInstrumentNotesTempo(HyperTalkParser.MusicInstrumentNotesTempoContext ctx) {
+        return MusicSpecifier.forNotesAndTempo((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.expression()), (Expression) visit(ctx.factor(1)));
+    }
+
+    @Override
+    public Object visitMusicInstrumentTempo(HyperTalkParser.MusicInstrumentTempoContext ctx) {
+        return MusicSpecifier.forTempo((Expression) visit(ctx.factor()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitSelectPartCmd(HyperTalkParser.SelectPartCmdContext ctx) {
         return new SelectPartCmd(ctx, (PartExp) visit(ctx.part()));
     }
@@ -952,23 +957,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitMusicNotes(HyperTalkParser.MusicNotesContext ctx) {
-        return MusicSpecifier.forNotes((Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitMusicNotesTempo(HyperTalkParser.MusicNotesTempoContext ctx) {
-        return MusicSpecifier.forNotesAndTempo((Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
-    }
-
-    @Override
-    public Object visitMusicTempo(HyperTalkParser.MusicTempoContext ctx) {
-        return MusicSpecifier.forTempo((Expression) visit(ctx.factor()));
-    }
-
-    @Override
-    public Object visitMusicDefault(HyperTalkParser.MusicDefaultContext ctx) {
-        return MusicSpecifier.forDefault();
+    public Object visitMusicInstrument(HyperTalkParser.MusicInstrumentContext ctx) {
+        return MusicSpecifier.forDefault((Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -1057,47 +1047,27 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitIfThenSingleLine(HyperTalkParser.IfThenSingleLineContext ctx) {
-        return new IfStatement(ctx, (Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.singleThen()));
+    public Object visitIfStatement(HyperTalkParser.IfStatementContext ctx) {
+        return new IfStatement(ctx, (Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.thenStatement()));
     }
 
     @Override
-    public Object visitIfThenMultiline(HyperTalkParser.IfThenMultilineContext ctx) {
-        return new IfStatement(ctx, (Expression) visit(ctx.expression()), (ThenElseBlock) visit(ctx.multiThen()));
+    public Object visitThenSingleStmnt(HyperTalkParser.ThenSingleStmntContext ctx) {
+        return new ThenElseBlock((Statement) visit(ctx.nonEmptyStmnt()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
     }
 
     @Override
-    public Object visitSingleThenElse(HyperTalkParser.SingleThenElseContext ctx) {
-        return new ThenElseBlock(new StatementList((Statement) visit(ctx.nonEmptyStmnt())), (StatementList) visit(ctx.elseBlock()));
+    public Object visitThenStmntList(HyperTalkParser.ThenStmntListContext ctx) {
+        return new ThenElseBlock((Statement) visit(ctx.statementList()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
     }
 
     @Override
-    public Object visitSingleThenNoElse(HyperTalkParser.SingleThenNoElseContext ctx) {
-        return new ThenElseBlock(new StatementList((Statement) visit(ctx.nonEmptyStmnt())), new StatementList());
+    public Object visitElseSingleStmt(HyperTalkParser.ElseSingleStmtContext ctx) {
+        return visit(ctx.nonEmptyStmnt());
     }
 
     @Override
-    public Object visitEmptyElse(HyperTalkParser.EmptyElseContext ctx) {
-        return new ThenElseBlock((StatementList) visit(ctx.statementList()), new StatementList());
-    }
-
-    @Override
-    public Object visitEmptyThenEmptyElse(HyperTalkParser.EmptyThenEmptyElseContext ctx) {
-        return new ThenElseBlock(new StatementList(), new StatementList());
-    }
-
-    @Override
-    public Object visitThenElse(HyperTalkParser.ThenElseContext ctx) {
-        return new ThenElseBlock((StatementList) visit(ctx.statementList()), (StatementList) visit(ctx.elseBlock()));
-    }
-
-    @Override
-    public Object visitElseStmntBlock(HyperTalkParser.ElseStmntBlockContext ctx) {
-        return new StatementList((Statement) visit(ctx.nonEmptyStmnt()));
-    }
-
-    @Override
-    public Object visitElseStmntListBlock(HyperTalkParser.ElseStmntListBlockContext ctx) {
+    public Object visitElseStmntList(HyperTalkParser.ElseStmntListContext ctx) {
         return visit(ctx.statementList());
     }
 
@@ -1108,7 +1078,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitRepeatEmpty(HyperTalkParser.RepeatEmptyContext ctx) {
-        return new RepeatStatement(ctx, (RepeatSpecifier) visit(ctx.repeatRange()), new StatementList());
+        return new RepeatStatement(ctx, (RepeatSpecifier) visit(ctx.repeatRange()), new StatementList(ctx));
     }
 
     @Override

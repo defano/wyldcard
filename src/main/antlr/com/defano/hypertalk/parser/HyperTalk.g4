@@ -63,22 +63,20 @@ handlerName
     ;
 
 expressionList
-    : expression                                                                                                        # singleExpArgList
-    | expressionList ',' expression                                                                                     # multiExpArgList
-    |                                                                                                                   # emptyArgList
+    : factor                                                                                                            # singleExpArgList
+    | expressionList ',' factor                                                                                         # multiExpArgList
     ;
 
 parameterList
     : ID                                                                                                                # singleParamList
     | parameterList ',' ID                                                                                              # multiParamList
-    |                                                                                                                   # emptyParamList
     ;
 
 statementList
-    : statementList nonEmptyStmnt NEWLINE                                                                               # multiStmntList
-    | nonEmptyStmnt NEWLINE                                                                                             # singleStmntList
+    : statementList nonEmptyStmnt                                                                                       # multiStmntList
+    | nonEmptyStmnt                                                                                                     # singleStmntList
     | statementList NEWLINE                                                                                             # stmntListNewlineStmntList
-    |                                                                                                                   # newlineStmntList
+    |                                                                                                                   # emptyStmntList
     ;
 
 nonEmptyStmnt
@@ -149,7 +147,7 @@ commandStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
     | 'open' 'file' expression                                                                                          # openFileCmdStmt
     | 'pass' handlerName                                                                                                # passCmdStmt
-    | 'play' expression music                                                                                           # playCmdStmt
+    | 'play' music                                                                                                      # playCmdStmt
     | 'pop' card                                                                                                        # popCardCmdStmt
     | 'push' card                                                                                                       # pushCardCmdStmt
     | 'push' destination                                                                                                # pushDestCmdStmt
@@ -207,10 +205,10 @@ find
     ;
 
 music
-    : expression                                                                                                        # musicNotes
-    | 'tempo' factor expression                                                                                         # musicNotesTempo
-    | 'tempo' factor                                                                                                    # musicTempo
-    |                                                                                                                   # musicDefault
+    : factor expression                                                                                                 # musicInstrumentNotes
+    | factor 'tempo' factor expression                                                                                  # musicInstrumentNotesTempo
+    | factor 'tempo' expression                                                                                         # musicInstrumentTempo
+    | factor                                                                                                            # musicInstrument
     ;
 
 toolExpression
@@ -336,24 +334,17 @@ destinationType
     ;
 
 ifStatement
-    : 'if' expression NEWLINE? singleThen NEWLINE?                                                                      # ifThenSingleLine
-    | 'if' expression NEWLINE? multiThen NEWLINE?                                                                       # ifThenMultiline
+    : 'if' expression thenStatement
     ;
 
-singleThen
-    : 'then' nonEmptyStmnt elseBlock                                                                                    # singleThenElse
-    | 'then' nonEmptyStmnt                                                                                              # singleThenNoElse
+thenStatement
+    : 'then' nonEmptyStmnt NEWLINE? elseStatement?                                                                      # thenSingleStmnt
+    | 'then' NEWLINE statementList NEWLINE (elseStatement | 'end' 'if')                                                 # thenStmntList
     ;
 
-multiThen
-    : 'then' NEWLINE statementList 'end' 'if'                                                                           # emptyElse
-    | 'then' 'end' 'if'                                                                                                 # emptyThenEmptyElse
-    | 'then' statementList elseBlock                                                                                    # thenElse
-    ;
-
-elseBlock
-    : 'else' nonEmptyStmnt                                                                                              # elseStmntBlock
-    | 'else' NEWLINE statementList 'end' 'if'                                                                           # elseStmntListBlock
+elseStatement
+    : 'else' nonEmptyStmnt (NEWLINE 'end' 'if')?                                                                        # elseSingleStmt
+    | 'else' NEWLINE statementList NEWLINE 'end' 'if'                                                                   # elseStmntList
     ;
 
 repeatStatement
@@ -717,6 +708,7 @@ zeroArgFunc
 
 literal
     : knownType
+    | constant
     | LITERAL
     | TWO_ITEM_LIST
     | FOUR_ITEM_LIST

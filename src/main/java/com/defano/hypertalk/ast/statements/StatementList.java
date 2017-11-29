@@ -2,19 +2,22 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
-public class StatementList {
+public class StatementList extends Statement {
 
-    public final Vector<Statement> list;
+    public final ArrayList<Statement> list;
 
-    public StatementList () {
-        list = new Vector<>();
+    public StatementList (ParserRuleContext context) {
+        super(context);
+        list = new ArrayList<>();
     }
     
-    public StatementList (Statement s) {
-        list = new Vector<>();
+    public StatementList (ParserRuleContext context, Statement s) {
+        super(context);
+        list = new ArrayList<>();
         append(s);
     }
 
@@ -23,7 +26,7 @@ public class StatementList {
         return this;
     }
 
-    public void execute() throws HtException, Breakpoint {
+    public void onExecute() throws HtException, Breakpoint {
         for (Statement s : list) {
             s.execute();
         }

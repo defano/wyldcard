@@ -13,9 +13,9 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.Vector;
 
 public class ExecutionContext {
 
@@ -54,7 +54,7 @@ public class ExecutionContext {
      */
     public void pushContext () {
         getStack().push(getFrame());
-        setFrame(new StackFrame(new SymbolTable(), new Vector<>(), new Value()));
+        setFrame(new StackFrame(new SymbolTable(), new ArrayList<>(), new Value()));
     }
 
     /**

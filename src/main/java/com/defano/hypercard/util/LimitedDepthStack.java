@@ -1,10 +1,10 @@
 package com.defano.hypercard.util;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class LimitedDepthStack<T> {
 
-    private final Vector<T> contents = new Vector<>();
+    private final ArrayList<T> contents = new ArrayList<>();
     private final int maxDepth;
 
     public LimitedDepthStack(int maxDepth) {

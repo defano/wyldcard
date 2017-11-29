@@ -41,10 +41,10 @@ public class Script {
 
     public Script insertStatement(Statement statement) {
         if (this.statements == null) {
-            this.statements = new StatementList();
+            this.statements = new StatementList(null);
         }
 
-        this.statements.list.insertElementAt(statement, 0);
+        this.statements.list.add(0, statement);
         return this;
     }
 

@@ -1,18 +1,18 @@
 package com.defano.hypertalk.ast.common;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class ParameterList {
 
     public final List<String> list;
     
     public ParameterList () {
-        list = new Vector<>();
+        list = new ArrayList<>();
     }
     
     public ParameterList(String p) {
-        list = new Vector<>();
+        list = new ArrayList<>();
         list.add(p);
     }
     
