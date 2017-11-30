@@ -23,6 +23,33 @@ public enum ConvertibleDateFormat {
         this.dateFormat = format;
     }
 
+    public static ConvertibleDateFormat ofDateLength(DateLength length) {
+        switch (length) {
+            case LONG:
+                return LONG_DATE;
+            case DEFAULT:
+            case SHORT:
+                return SHORT_DATE;
+            case ABBREVIATED:
+                return ABBREV_DATE;
+
+            default: throw new IllegalArgumentException("Bug! Invalid date length.");
+        }
+    }
+
+    public static ConvertibleDateFormat ofTimeLength(DateLength length) {
+        switch (length) {
+            case LONG:
+                return LONG_TIME;
+            case DEFAULT:
+            case SHORT:
+            case ABBREVIATED:
+                return SHORT_TIME;
+
+            default: throw new IllegalArgumentException("Bug! Invalid time length.");
+        }
+    }
+
     private static class SecondsDateFormat extends DateFormat {
 
         @Override

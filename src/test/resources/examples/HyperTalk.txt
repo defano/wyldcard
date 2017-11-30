@@ -28,11 +28,17 @@ on testConditionalBranching
         put x
     end if
 
+    if x < y then
+        put x
+        put y
+    end if
+
     if x > y then put x else put y
 
     if x < y then
         put x
-    else put y
+        put y
+    else put z
 
     if x < y then
         put x
@@ -60,6 +66,7 @@ on testConditionalBranching
         put x
         put a
     end if
+
 end testConditionalBranching
 
 on testLoops
@@ -81,17 +88,163 @@ on testLoops
 end testLoops
 
 --
+-- Functions
+--
+on parseNoArgFunctions
+
+    the mouse
+    the mouseloc
+    the result
+    the commandkey
+    the cmdkey
+    the shiftkey
+    the optionkey
+    the ticks
+    the seconds
+    the time
+    the long time
+    the english time
+
+    the date
+    the long date
+    the short date
+    the english date
+    the abbreviated date
+    the abbrev date
+
+    the time
+    the long time
+    the short time
+    the english time
+    the abbreviated time
+    the abbrev time
+
+    the tool
+    the number of parts
+    the number of card parts
+    the number of background parts
+    the number of card buttons
+    the number of background buttons
+    the number of card field
+    the number of fields
+    the number of bg fields
+    the number of menus
+    the number of cards
+    the number of marked cards
+    the number of backgrounds
+    the number of background in this stack
+
+    the menus
+    the diskspace
+    the params
+    the paramcount
+
+end parseNoArgFunctions
+
+on parseSingleArgFunctions
+
+    the average of x
+    average(x)
+
+    the min of x
+    min(x)
+
+    the max of x
+    max(x)
+
+    the sum of x
+    sum(x)
+
+    the number of characters of x
+    the number of words of x
+    the number of items of x
+    the number of lines of x
+    the number of menuitems of x
+    the number of cards of x
+
+    the random of x
+    random(x)
+
+    the sqrt of x
+    sqrt(x)
+
+    the trunc of x
+    trunc(x)
+
+    the sin of x
+    sin(x)
+
+    the cos of x
+    cos(x)
+
+    the tan of x
+    tan(x)
+
+    the atan of x
+    atan(x)
+
+    the exp of x
+    exp(x)
+
+    the exp1 of x
+    exp1(x)
+
+    the exp2 of x
+    exp2(x)
+
+    the ln of x
+    ln(x)
+
+    the ln1 of x
+    ln1(x)
+
+    the log2 of x
+    log2(x)
+
+    the abs of x
+    abs(x)
+
+    the chartonum of x
+    chartonum(x)
+
+    the numtochar of x
+    numtochar(x)
+
+    the value of x
+    value(x)
+
+    the length of x
+    length(x)
+
+    the diskspace of x
+    diskspace(x)
+
+    the param of x
+    param(x)
+
+end parseSingleArgFunctions
+
+on parseMultiArgFunctions
+
+    annuity(x, y)
+    compound(x, y)
+    offset(x, y)
+
+end parseMultiArgFunctions
+
+--
 -- Commands
 --
 
 on testCommands
     answer x
     answer x with a
-    answer x with a and b
-    answer x with a and b and c
+    answer x with a or b
+    answer x with a or b or c
 
     ask a
     ask a with b
+    ask "How long?" with the number of characters in "hello"
 
     beep
     beep 10 + 3
@@ -128,6 +281,8 @@ on testCommands
     click at "10, 10"
     click at the mouseLoc
     click at 10,10 with commandKey, optionKey, shiftKey
+
+    close file theFile
 
     convert cd fld 1 to seconds
     convert cd fld 1 to dateitems
@@ -318,6 +473,34 @@ on testCommands
     set the textsize of lines 1 to 3 of bg field 2 to 48
     set the textstyle of the middle character of me to bold
 
+    sort the items of x
+    sort lines of the middle card field
+    sort the items of x by the last word of each
+    sort the lines of x by the random of 10
+    sort items of x descending
+    sort items of x ascending text
+    sort items of x descending numeric by chars 2 to 4 of each
+    sort items of x descending international
+    sort items of x ascending datetime
+    sort stack descending by the first word of the first card field
+    sort this stack by the first word of the first card field
+    sort the cards by the random of 100
+    sort the cards of this stack ascending numeric by x
+    sort the marked cards of this stack descending international by x
+    sort the first bg by x
+    sort background "sorted" ascending text by the last line of card field 1
+    sort the cards of the last background by x
+    sort the marked cards of bkgnd id 3 by y
+
+    subtract the random of 200 from x
+
+    type the first line of card field 1
+    type "z" with commandkey
+    type "z" with cmdkey
+
+    unlock screen
+    unlock screen with visual effect iris open very fast to black
+
     visual effect barn door open
     visual effect barn door close
     visual effect checkerboard
@@ -341,30 +524,116 @@ on testCommands
     visual effect wipe right
     visual effect zoom in
     visual effect zoom out
-
     visual dissolve to black
     visual dissolve to white
     visual dissolve to gray
     visual dissolve to grey
     visual dissolve to card
     visual dissolve to inverse
-
     visual effect iris open fast
     visual effect iris open very fast
     visual effect iris open slow
     visual effect iris open slowly
     visual effect iris open very slowly
     visual effect iris open very slow
+    visual effect dissolve very slowly to white
+
+    wait for 10 ticks
+    wait 3 seconds
+    wait until the last word of the message window contains "done!"
+    wait while the mouse is down
+
+    write the last line of the first card field to file "lines.txt"
+    write "Thanks for playing" to file x at eof
+    write "Thanks for playing" to file x at end
+    write 2 + 3 to file x at -7
 
 end testCommands
+
+on parseOperators
+
+    not x
+    not false
+    -x
+    x ^ y
+    x mod y
+    x div y
+    x / y
+    x * y
+    x + y
+    x - y
+    x && y
+    x & y
+    x >= y
+    x <= y
+    x ≥ y
+    x ≤ y
+    x > y
+    x < y
+    x contains y
+    x is in y
+    9.99 is a number
+    9 is an integer
+    10,10 is a point
+    10,10,20,20 is a rect
+    10,10,20,20 is a rectangle
+    "1/1/2012" is a date
+    true is a logical
+    false is a boolean
+    true is a bool
+    x is not a number
+    100,100 is not in 10,10,20,20
+    x = y
+    x is not y
+    x is y
+    x is not within y
+    x and y
+    x or y
+
+end parseOperators
+
+on lexing
+
+    -- String Literals
+    unquotedLiteral
+    "quotedLiteral"
+
+    -- Number Literals
+    0
+    -0
+    .25
+    -.25
+    1.25
+    -1.25
+
+    -- Point & Rect Literals
+    10,10
+    0,0,100,100
+
+    -- Line wrapping
+    answer "How are you?" |
+        with "Choice 1"   |
+        or "Choice 2"
+
+    ask "Yes?" ¬
+        with "No"
+
+end lexing
 
 --
 -- Constants
 --
-on constantsTest
+on parseConstantsLiteralsSynonyms
     zero + one + two + three + four + five + six + seven + eight + nine + ten
 
-end constantsTest
+    if x is empty then answer "empty"
+    the random of pi
+    put quote & space & "name" & space & quote & return into x
+    write tab & formfeed & linefeed to file x
+    word 1 of x contains comma
+    put "http" && colon & colon into scheme
+
+end parseConstantsLiteralsSynonyms
 
 --
 -- Chunks
@@ -411,7 +680,6 @@ on chunkTest
     -- Expression chunks
     word 2 + 3 of x
 
-
     -- Compound chunks
     the first char of the second word of the third line of x
     chars 1 to 2 of words 3 to 4 of items 5 to 6 of line 7 to 8 of x
@@ -420,10 +688,22 @@ on chunkTest
 
 end chunkTest
 
--- Handlers
+-- Handlers & Functions
 
-on mouseUp
-end mouseUp
+on noArgHandler
+end noArgHandler
+
+on paramHandler p
+end paramHandler
+
+on paramsHandler p1, p2, p3
+end paramsHandler
+
+function f
+end f
+
+function f p1, p2, p3
+end f
 
 --
 -- Command keywords in the language should be usable as block names, let's verify.
@@ -542,4 +822,3 @@ end select
 
 on find
 end find
-

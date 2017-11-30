@@ -36,15 +36,13 @@ public class FunctionExecutionTask implements Callable<Value> {
         ExecutionContext.getContext().setParams(evaluatedArguments);
         ExecutionContext.getContext().setMessage(function.name);
 
-        if (function.parameters.list.size() != evaluatedArguments.size()) {
-            throw new HtSemanticException("Function '" + function.name + "' expects " + function.parameters.list.size() + " arguments, but got " + evaluatedArguments.size() + ".");
-        }
-
         try {
             // Bind argument values to parameter variables in this context
             for (int index = 0; index < function.parameters.list.size(); index++) {
+
+                // Missing arguments are populated with empty
                 String theParam = function.parameters.list.get(index);
-                Value theArg = evaluatedArguments.get(index);
+                Value theArg = evaluatedArguments.size() > index ? evaluatedArguments.get(index) : new Value();
 
                 ExecutionContext.getContext().setVariable(theParam, theArg);
             }

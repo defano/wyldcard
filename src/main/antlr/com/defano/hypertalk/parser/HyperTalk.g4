@@ -24,8 +24,8 @@
 
 grammar HyperTalk;
 
-// Accepts only well-formed HyperTalk scripts consisting handlers, functions, whitespace and comments representing
-// scipts assignable to parts (like buttons and fields). Disallows statements or expressions not inside a handler or
+// Accepts only well-formed HyperTalk scripts consisting of handlers, functions, whitespace and comments representing
+// scipts assignable to parts (like buttons and fields). Disallows statements or expressions not inside of a handler or
 // function block.
 script
     : handler script                                                                                                    # handlerScript
@@ -50,12 +50,13 @@ handler
     ;
 
 function
-    : 'function' ID parameterList NEWLINE statementList 'end' ID                                                        # populatedFunction
+    : 'function' ID NEWLINE statementList 'end' ID                                                                      # populatedFunction
+    | 'function' ID parameterList NEWLINE statementList 'end' ID                                                        # populatedArgFunction
     ;
 
+// Handlers cannot usually have the name of a keyword, but command names are an exception
 handlerName
     : ID
-    // Need a special rules here to handle command names because they're also keywords (tokens)
     | 'answer' | 'ask' | 'put' | 'get' | 'set' | 'send' | 'wait' | 'sort' | 'go' | 'enable' | 'disable'
     | 'read' | 'write' | 'hide' | 'show' | 'add' | 'subtract' | 'multiply' | 'divide' | 'choose'
     | 'click' | 'drag' | 'type' | 'lock' | 'unlock' | 'pass' | 'domenu' | 'visual' | 'reset' | 'create'
@@ -88,16 +89,39 @@ nonEmptyStmnt
     | commandStmnt                                                                                                      # nonEmptyCommandStmnt
     ;
 
+globalStmnt
+    : 'global' ID
+    ;
+
 returnStmnt
     : 'return' expression                                                                                               # eprReturnStmnt
     | 'return'                                                                                                          # voidReturnStmnt
     ;
 
+ifStatement
+    : 'if' expression thenStatement
+    ;
+
+thenStatement
+    : 'then' nonEmptyStmnt NEWLINE? elseStatement?                                                                      # thenSingleStmnt
+    | 'then' NEWLINE statementList NEWLINE (elseStatement | 'end' 'if')                                                 # thenStmntList
+    ;
+
+elseStatement
+    : 'else' nonEmptyStmnt (NEWLINE 'end' 'if')?                                                                        # elseSingleStmt
+    | 'else' NEWLINE statementList NEWLINE 'end' 'if'                                                                   # elseStmntList
+    ;
+
+repeatStatement
+    : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
+    | 'repeat' repeatRange NEWLINE 'end' 'repeat'                                                                       # repeatEmpty
+    ;
+
 commandStmnt
     : 'add' expression 'to' container                                                                                   # addCmdStmnt
-    | 'answer' expression 'with' expression 'or' expression 'or' expression                                             # answerThreeButtonCmd
-    | 'answer' expression 'with' expression 'or' expression                                                             # answerTwoButtonCmd
-    | 'answer' expression 'with' expression                                                                             # answerOneButtonCmd
+    | 'answer' expression 'with' factor 'or' factor 'or' factor                                                         # answerThreeButtonCmd
+    | 'answer' expression 'with' factor 'or' factor                                                                     # answerTwoButtonCmd
+    | 'answer' expression 'with' factor                                                                                 # answerOneButtonCmd
     | 'answer' expression                                                                                               # answerDefaultCmd
     | 'ask' expression 'with' expression                                                                                # askExpWithCmd
     | 'ask' expression                                                                                                  # askExpCmd
@@ -186,9 +210,9 @@ commandStmnt
     | 'unlock' 'screen' 'with' 'visual' visualEffect                                                                    # unlockScreenVisualCmdStmt
     | 'visual' visualEffect                                                                                             # visualEffectCmdStmt
     | 'wait' factor timeUnit                                                                                            # waitCountCmd
-    | 'wait for' factor timeUnit                                                                                        # waitForCountCmd
-    | 'wait until' expression                                                                                           # waitUntilCmd
-    | 'wait while' expression                                                                                           # waitWhileCmd
+    | 'wait' 'for' factor timeUnit                                                                                      # waitForCountCmd
+    | 'wait' 'until' expression                                                                                         # waitUntilCmd
+    | 'wait' 'while' expression                                                                                         # waitWhileCmd
     | 'write' expression 'to' 'file' factor                                                                             # writeFileCmd
     | 'write' expression 'to' 'file' factor 'at' ('eof' | 'end')                                                        # writeEndFileCmd
     | 'write' expression 'to' 'file' factor 'at' factor                                                                 # writeAtFileCmd
@@ -197,7 +221,7 @@ commandStmnt
     ;
 
 find
-    : 'find word' 'international'?                                                                                      # searchableWord
+    : 'find' 'word' 'international'?                                                                                    # searchableWord
     | 'find' 'chars' 'international'?                                                                                   # searchableChars
     | 'find' 'whole' 'international'?                                                                                   # searchableWhole
     | 'find' 'string' 'international'?                                                                                  # searchableString
@@ -231,11 +255,15 @@ convertible
 conversionFormat
     : 'seconds'                                                                                                         # secondsConvFormat
     | 'dateitems'                                                                                                       # dateItemsConvFormat
-    | ('long date' | 'english date')                                                                                    # longDateConvFormat
-    | ('date' | 'short date')                                                                                           # shortDateConvFormat
-    | ('abbrev date' | 'abbreviated date')                                                                              # abbrevDateConvFormat
-    | ('time' | 'short time' | 'abbrev time' | 'abbreviated time')                                                      # shortTimeConvFormat
-    | ('english time' | 'long time')                                                                                    # longTimeConvFormat
+    | timeDateFormat 'date'                                                                                             # dateConvFormat
+    | timeDateFormat 'time'                                                                                             # timeConvFormat
+    ;
+
+timeDateFormat
+    : ('english' | 'long')                                                                                              # longTimeFormat
+    | ('abbreviated' | 'abbrev')                                                                                        # abbreviatedTimeFormat
+    | 'short'                                                                                                           # shortTimeFormat
+    |                                                                                                                   # defaultTimeFormat
     ;
 
 sortDirection
@@ -333,31 +361,12 @@ destinationType
     | background                                                                                                        # bkgndDestinationType
     ;
 
-ifStatement
-    : 'if' expression thenStatement
-    ;
-
-thenStatement
-    : 'then' nonEmptyStmnt NEWLINE? elseStatement?                                                                      # thenSingleStmnt
-    | 'then' NEWLINE statementList NEWLINE (elseStatement | 'end' 'if')                                                 # thenStmntList
-    ;
-
-elseStatement
-    : 'else' nonEmptyStmnt (NEWLINE 'end' 'if')?                                                                        # elseSingleStmt
-    | 'else' NEWLINE statementList NEWLINE 'end' 'if'                                                                   # elseStmntList
-    ;
-
-repeatStatement
-    : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
-    | 'repeat' repeatRange NEWLINE 'end' 'repeat'                                                                       # repeatEmpty
-    ;
-
 repeatRange
     : 'forever'                                                                                                         # infiniteLoop
-    |                                                                                                                   # infiniteLoop
     | duration                                                                                                          # durationLoop
     | count                                                                                                             # countLoop
     | 'with' ID '=' range                                                                                               # withLoop
+    |                                                                                                                   # infiniteLoop
     ;
 
 duration
@@ -375,10 +384,6 @@ count
 range
     : expression 'down' 'to' expression                                                                                 # rangeDownTo
     | expression 'to' expression                                                                                        # rangeUpTo
-    ;
-
-globalStmnt
-    : 'global' ID
     ;
 
 preposition
@@ -444,7 +449,7 @@ propertySpec
     ;
 
 propertyName
-    : 'marked'          // Requires special rule because 'marked' is also a lexed token
+    : 'marked'          // These require special rules because they're also keywords in the language
     | 'id'
     | 'rect' | 'rectangle'
     | 'bottom' | 'left' | 'right' | 'top' | 'center' | 'scroll'
@@ -461,6 +466,42 @@ part
     | 'me'                                                                                                              # mePart
     | messagePart                                                                                                       # msgPart
     | ID                                                                                                                # partRef
+    ;
+
+buttonPart
+    : background? button factor                                                                                         # bkgndButtonPart
+    | ordinal background? button                                                                                        # bkgndButtonOrdinalPart
+    | background? button 'id' factor                                                                                    # bkgndButtonIdPart
+    | card? button factor                                                                                               # cardButtonPart
+    | ordinal card? button                                                                                              # cardButtonOrdinalPart
+    | card? button 'id' factor                                                                                          # cardButtonIdPart
+    | buttonPart of cardPart                                                                                            # buttonOfCardPart
+    ;
+
+fieldPart
+    : background? field factor                                                                                          # bkgndFieldPart
+    | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
+    | background? field 'id' factor                                                                                     # bkgndFieldIdPart
+    | card? field factor                                                                                                # cardFieldPart
+    | ordinal card? field                                                                                               # cardFieldOrdinalPart
+    | card? field 'id' factor                                                                                           # cardFieldIdPart
+    | fieldPart of cardPart                                                                                             # fieldOfCardPart
+    ;
+
+cardPart
+    : 'this' card                                                                                                       # thisCardPart
+    | position card                                                                                                     # positionCardPart
+    | ordinal card                                                                                                      # ordinalCardPart
+    | card factor                                                                                                       # expressionCardPart
+    | card 'id' factor                                                                                                  # cardIdPart
+    ;
+
+bkgndPart
+    : background factor                                                                                                 # expressionBkgndPart
+    | background 'id' factor                                                                                            # bkgndIdPart
+    | ordinal background                                                                                                # ordinalBkgndPart
+    | position background                                                                                               # positionBkgndPart
+    | 'this' background                                                                                                 # thisBkgndPart
     ;
 
 messagePart
@@ -527,65 +568,28 @@ of
     | 'from'
     ;
 
-buttonPart
-    : background? button factor                                                                                         # bkgndButtonPart
-    | ordinal background? button                                                                                        # bkgndButtonOrdinalPart
-    | background? button 'id' factor                                                                                    # bkgndButtonIdPart
-    | card? button factor                                                                                               # cardButtonPart
-    | ordinal card? button                                                                                              # cardButtonOrdinalPart
-    | card? button 'id' factor                                                                                          # cardButtonIdPart
-    | buttonPart of cardPart                                                                                            # buttonOfCardPart
-    ;
-
-fieldPart
-    : background? field factor                                                                                          # bkgndFieldPart
-    | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
-    | background? field 'id' factor                                                                                     # bkgndFieldIdPart
-    | card? field factor                                                                                                # cardFieldPart
-    | ordinal card? field                                                                                               # cardFieldOrdinalPart
-    | card? field 'id' factor                                                                                           # cardFieldIdPart
-    | fieldPart of cardPart                                                                                             # fieldOfCardPart
-    ;
-
-cardPart
-    : 'this' card                                                                                                       # thisCardPart
-    | position card                                                                                                     # positionCardPart
-    | ordinal card                                                                                                      # ordinalCardPart
-    | card factor                                                                                                       # expressionCardPart
-    | card 'id' factor                                                                                                  # cardIdPart
-    ;
-
-bkgndPart
-    : background factor                                                                                                 # expressionBkgndPart
-    | background 'id' factor                                                                                            # bkgndIdPart
-    | ordinal background                                                                                                # ordinalBkgndPart
-    | position background                                                                                               # positionBkgndPart
-    | 'this' background                                                                                                 # thisBkgndPart
-    ;
-
 ordinal
     : 'the'? ordinalValue                                                                                               # theOrdinalVal
     ;
 
 ordinalValue
-    : 'first'                                                                                                           # firstOrd
-    | 'second'                                                                                                          # secondOrd
-    | 'third'                                                                                                           # thirdOrd
-    | 'fourth'                                                                                                          # fourthOrd
-    | 'fifth'                                                                                                           # fifthOrd
-    | 'sixth'                                                                                                           # sixthOrd
-    | 'seventh'                                                                                                         # seventhOrd
-    | 'eigth'                                                                                                           # eigthOrd
-    | 'ninth'                                                                                                           # ninthOrd
-    | 'tenth'                                                                                                           # tenthOrd
-    | ('mid' | 'middle')                                                                                                # midOrd
-    | 'last'                                                                                                            # lastOrd
+    : 'first'
+    | 'second'
+    | 'third'
+    | 'fourth'
+    | 'fifth'
+    | 'sixth'
+    | 'seventh'
+    | 'eigth'
+    | 'ninth'
+    | 'tenth'
+    | ('mid' | 'middle')
+    | 'last'
     ;
 
 expression
     : constant                                                                                                          # constantExp
-    | builtInFunc                                                                                                       # builtinFuncExp
-    | ID '(' expressionList ')'                                                                                         # functionExp
+    | functionCall                                                                                                      # functionExp
     | factor                                                                                                            # factorExp
     | chunk expression                                                                                                  # chunkExp
     | 'not' expression                                                                                                  # notExp
@@ -601,21 +605,6 @@ expression
     | expression 'or' expression                                                                                        # orExp
     ;
 
-constant
-    : 'empty'                                                                                                           # emptyExp
-    | 'pi'                                                                                                              # piExp
-    | 'quote'                                                                                                           # quoteExp
-    | 'return'                                                                                                          # returnExp
-    | 'space'                                                                                                           # spaceExp
-    | 'tab'                                                                                                             # tabExp
-    | 'formfeed'                                                                                                        # formFeedExp
-    | 'linefeed'                                                                                                        # lineFeedExp
-    | 'comma'                                                                                                           # commaExp
-    | 'colon'                                                                                                           # colonExp
-    | ('zero' | 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten')                 # cardninalExp
-    | ('commandkey' | 'cmdkey' | 'optionkey' | 'shiftkey')                                                              # modifierKeyExp
-    ;
-
 factor
     : literal                                                                                                           # literalFactor
     | ID                                                                                                                # idFactor
@@ -628,6 +617,12 @@ factor
     | chunk factor                                                                                                      # chunkFactorChunk
     ;
 
+functionCall
+    : builtInFunc                                                                                                       # builtInFuncCall
+    | ID '(' expressionList ')'                                                                                         # userArgFuncCall
+    | ID '(' ')'                                                                                                        # userNoArgFuncCall
+    ;
+
 builtInFunc
     : 'the'? singleArgFunc of factor                                                                                    # builtinFuncOneArgs
     | singleArgFunc '(' factor ')'                                                                                      # builtinFuncOneArgs
@@ -635,11 +630,32 @@ builtInFunc
     | multiArgFunc '(' expressionList ')'                                                                               # builtinFuncArgList
     ;
 
-multiArgFunc
-    : singleArgFunc                                                                                                     # oneArgArgFunc
-    | 'annuity'                                                                                                         # annuityArgFunc
-    | 'compound'                                                                                                        # compoundArgFunc
-    | 'offset'                                                                                                          # offsetArgFunc
+zeroArgFunc
+    : 'mouse'                                                                                                           # mouseFunc
+    | 'mouseloc'                                                                                                        # mouseLocFunc
+    | 'result'                                                                                                          # resultFunc
+    | ('commandkey' | 'cmdkey')                                                                                         # commandKeyFunc
+    | 'shiftkey'                                                                                                        # shiftKeyFunc
+    | 'optionkey'                                                                                                       # optionKeyFunc
+    | 'ticks'                                                                                                           # ticksFunc
+    | 'seconds'                                                                                                         # secondsFunc
+    | timeDateFormat 'time'                                                                                             # timeFunc
+    | timeDateFormat 'date'                                                                                             # dateFunc
+    | 'tool'                                                                                                            # toolFunc
+    | 'number' 'of' card? 'parts'                                                                                       # numberOfCardParts
+    | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndParts
+    | 'number' 'of' card? button                                                                                        # numberOfCardButtons
+    | 'number' 'of' background button                                                                                   # numberOfBkgndButtons
+    | 'number' 'of' card field                                                                                          # numberOfCardFields
+    | 'number' 'of' background? field                                                                                   # numberOfBkgndFields
+    | 'number' 'of' 'menus'                                                                                             # numberOfMenusFunc
+    | 'number' 'of' card                                                                                                # numberOfCardsFunc
+    | 'number' 'of' 'marked' card                                                                                       # numberOfMarkedCards
+    | 'number' 'of' background ('in' 'this' 'stack')?                                                                   # numberOfBackgrounds
+    | 'menus'                                                                                                           # menusFunc
+    | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
+    | 'params'                                                                                                          # paramsFunc
+    | 'paramcount'                                                                                                      # paramCountFunc
     ;
 
 singleArgFunc
@@ -647,12 +663,12 @@ singleArgFunc
     | 'min'                                                                                                             # minFunc
     | 'max'                                                                                                             # maxFunc
     | 'sum'                                                                                                             # sumFunc
-    | 'number of' character                                                                                             # numberOfCharsFunc
-    | 'number of' word                                                                                                  # numberOfWordsFunc
-    | 'number of' item                                                                                                  # numberOfItemsFunc
-    | 'number of' line                                                                                                  # numberOfLinesFunc
-    | 'number of' 'menuitems'                                                                                           # numberOfMenuItemsFunc
-    | 'number of' card                                                                                                  # numberOfBkgndCardsFunc
+    | 'number' 'of' character                                                                                           # numberOfCharsFunc
+    | 'number' 'of' word                                                                                                # numberOfWordsFunc
+    | 'number' 'of' item                                                                                                # numberOfItemsFunc
+    | 'number' 'of' line                                                                                                # numberOfLinesFunc
+    | 'number' 'of' 'menuitems'                                                                                         # numberOfMenuItemsFunc
+    | 'number' 'of' card                                                                                                # numberOfBkgndCardsFunc
     | 'random'                                                                                                          # randomFunc
     | 'sqrt'                                                                                                            # sqrtFunc
     | 'trunc'                                                                                                           # truncFunc
@@ -675,44 +691,39 @@ singleArgFunc
     | 'param'                                                                                                           # paramFunc
     ;
 
-zeroArgFunc
-    : 'mouse'                                                                                                           # mouseFunc
-    | 'mouseloc'                                                                                                        # mouseLocFunc
-    | 'result'                                                                                                          # resultFunc
-    | ('commandkey' | 'cmdkey')                                                                                         # commandKeyFunc
-    | 'shiftkey'                                                                                                        # shiftKeyFunc
-    | 'optionkey'                                                                                                       # optionKeyFunc
-    | 'ticks'                                                                                                           # ticksFunc
-    | 'seconds'                                                                                                         # secondsFunc
-    | ('english date' | 'long date')                                                                                    # longDateFormatFunc
-    | ('date' | 'short date')                                                                                           # shortDateFormatFunc
-    | ('abbrev date' | 'abbreviated date')                                                                              # abbrevDateFormatFunc
-    | ('english time' | 'long time')                                                                                    # longTimeFormatFunc
-    | ('time' | 'short time' | 'abbrev time' | 'abbreviated time')                                                      # abbrevTimeFormatFunc
-    | 'tool'                                                                                                            # toolFunc
-    | 'number of' card? 'parts'                                                                                         # numberOfCardParts
-    | 'number of' background 'parts'                                                                                    # numberOfBkgndParts
-    | 'number of' card? button                                                                                          # numberOfCardButtons
-    | 'number of' background button                                                                                     # numberOfBkgndButtons
-    | 'number of' card field                                                                                            # numberOfCardFields
-    | 'number of' background? field                                                                                     # numberOfBkgndFields
-    | 'number of' 'menus'                                                                                               # numberOfMenusFunc
-    | 'number of' card                                                                                                  # numberOfCardsFunc
-    | 'number of' 'marked' card                                                                                         # numberOfMarkedCards
-    | 'number of' background ('in' 'this' 'stack')?                                                                     # numberOfBackgrounds
-    | 'menus'                                                                                                           # menusFunc
-    | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
-    | 'params'                                                                                                          # paramsFunc
-    | 'paramcount'                                                                                                      # paramCountFunc
+multiArgFunc
+    : singleArgFunc                                                                                                     # oneArgArgFunc
+    | 'annuity'                                                                                                         # annuityArgFunc
+    | 'compound'                                                                                                        # compoundArgFunc
+    | 'offset'                                                                                                          # offsetArgFunc
     ;
+
 
 literal
     : knownType
     | constant
+    | 'up' | 'down'
+    | ('commandkey' | 'cmdkey' | 'optionkey' | 'shiftkey')
     | LITERAL
     | TWO_ITEM_LIST
     | FOUR_ITEM_LIST
     ;
+
+
+constant
+    : 'empty'                                                                                                           # emptyExp
+    | 'pi'                                                                                                              # piExp
+    | 'quote'                                                                                                           # quoteExp
+    | 'return'                                                                                                          # returnExp
+    | 'space'                                                                                                           # spaceExp
+    | 'tab'                                                                                                             # tabExp
+    | 'formfeed'                                                                                                        # formFeedExp
+    | 'linefeed'                                                                                                        # lineFeedExp
+    | 'comma'                                                                                                           # commaExp
+    | 'colon'                                                                                                           # colonExp
+    | ('zero' | 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten')                 # cardninalExp
+    ;
+
 
 knownType
     : 'number'
@@ -728,6 +739,10 @@ knownType
 
 ID
     : (ALPHA (ALPHA | DIGIT)*)
+    ;
+
+BREAK
+    : ('|' | '¬') NEWLINE -> skip
     ;
 
 LITERAL
@@ -751,7 +766,7 @@ fragment NUMBER_LITERAL
     ;
 
 fragment STRING_LITERAL
-    : '"' ~('"' | '\r' | '\n' )* '"'
+    : '"' ~('"' | '\r' | '\n')* '"'
     ;
 
 TWO_ITEM_LIST
@@ -772,10 +787,6 @@ fragment DIGIT
 
 COMMENT
     : '--' ~('\r' | '\n' | '|')* -> skip
-    ;
-
-BREAK
-    : ('|' | '¬') NEWLINE -> skip
     ;
 
 NEWLINE
