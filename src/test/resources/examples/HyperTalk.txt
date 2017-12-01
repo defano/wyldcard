@@ -70,6 +70,10 @@ on testConditionalBranching
 end testConditionalBranching
 
 on testLoops
+    repeat
+        put w
+    end repeat
+
     repeat forever
         put x
     end repeat
@@ -78,11 +82,11 @@ on testLoops
         put y
     end repeat
 
-    repeat with n = 1 to 10
+    repeat with n = x to the number of words in y
         put n
     end repeat
 
-    repeat with n = 10 down to 1
+    repeat with n = the number of chars in "blah" down to 1
         put n
     end repeat
 end testLoops
@@ -244,7 +248,7 @@ on testCommands
 
     ask a
     ask a with b
-    ask "How long?" with the number of characters in "hello"
+    ask "How long?" with the number of characters in "Not long"
 
     beep
     beep 10 + 3
@@ -279,8 +283,8 @@ on testCommands
 
     click at 10,10
     click at "10, 10"
-    click at the mouseLoc
-    click at 10,10 with commandKey, optionKey, shiftKey
+    click at the mouseloc
+    click at 10,10 with commandkey, optionkey, shiftkey
 
     close file theFile
 
@@ -331,7 +335,7 @@ on testCommands
 
     drag from x to y
     drag from 10,10 to "100,100"
-    drag from the mouseLoc to 10,10 with shiftKey, optionKey
+    drag from the mouseloc to 10,10 with shiftkey, optionkey
 
     enable fld "My Field"
     enable menuitem "Undo" of menu "Edit"
@@ -346,11 +350,12 @@ on testCommands
     find x in card field 1
     find x of marked cards
     find x in card field 1 of marked cards
-
     find word "word" in card field 1
     find chars "chars" of marked cards
     find whole "whole" in bg fld id 3 of marked cards
     find string "string"
+    find international "bonjour"
+    find string international "bonjour" in field id 14 of marked cards
 
     get 2 + 2 / 3
     get char 3 of the middle word of item 11 of line 17 of theText
@@ -507,6 +512,10 @@ on testCommands
     visual effect iris open
     visual effect iris close
     visual effect plain
+    visual effect push up
+    visual effect push down
+    visual effect push left
+    visual effect push right
     visual effect scroll down
     visual effect scroll up
     visual effect scroll left
@@ -524,6 +533,8 @@ on testCommands
     visual effect wipe right
     visual effect zoom in
     visual effect zoom out
+    visual effect zoom open
+    visual effect zoom close
     visual dissolve to black
     visual dissolve to white
     visual dissolve to gray
@@ -582,6 +593,12 @@ on parseOperators
     false is a boolean
     true is a bool
     x is not a number
+    x is not an integer
+    x is not a rect
+    x is not a rectangle
+    x is not a logical
+    x is not a boolean
+    x is not a bool
     100,100 is not in 10,10,20,20
     x = y
     x is not y
@@ -605,6 +622,8 @@ on lexing
     -.25
     1.25
     -1.25
+    2.
+    -2.
 
     -- Point & Rect Literals
     10,10
@@ -624,7 +643,7 @@ end lexing
 -- Constants
 --
 on parseConstantsLiteralsSynonyms
-    zero + one + two + three + four + five + six + seven + eight + nine + ten
+    put zero + one + two + three + four + five + six + seven + eight + nine + ten into theSum
 
     if x is empty then answer "empty"
     the random of pi
@@ -633,6 +652,19 @@ on parseConstantsLiteralsSynonyms
     word 1 of x contains comma
     put "http" && colon & colon into scheme
 
+    the first word of x
+    the second char in x
+    the third item from x
+    the fourth line of x
+    the fifth word in x
+    the sixth char from x
+    the seventh item of x
+    the eighth line in x
+    the ninth word from x
+    the tenth char of x
+    the mid item in x
+    the middle line from x
+    the last word of x
 end parseConstantsLiteralsSynonyms
 
 --
@@ -685,10 +717,18 @@ on chunkTest
     chars 1 to 2 of words 3 to 4 of items 5 to 6 of line 7 to 8 of x
     put char 1 of word 2 of line 3 of x before char 4 of word 5 of item 6 of line 7 of y
 
-
 end chunkTest
 
 -- Handlers & Functions
+
+on messages
+    f()
+    f(x,y,z)
+
+    doSomething
+    doSomething cool
+    doSomething cool, andFun
+end messages
 
 on noArgHandler
 end noArgHandler

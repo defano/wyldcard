@@ -325,6 +325,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPushUpEffect(HyperTalkParser.PushUpEffectContext ctx) {
+        return SegueName.SCROLL_UP;
+    }
+
+    @Override
+    public Object visitPushDownEffect(HyperTalkParser.PushDownEffectContext ctx) {
+        return SegueName.SCROLL_DOWN;
+    }
+
+    @Override
+    public Object visitPushLeftEffect(HyperTalkParser.PushLeftEffectContext ctx) {
+        return SegueName.SCROLL_LEFT;
+    }
+
+    @Override
+    public Object visitPushRightEffect(HyperTalkParser.PushRightEffectContext ctx) {
+        return SegueName.SCROLL_RIGHT;
+    }
+
+    @Override
     public Object visitScrollDownEffect(HyperTalkParser.ScrollDownEffectContext ctx) {
         return SegueName.SCROLL_DOWN;
     }
@@ -387,6 +407,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitZoomOutEffect(HyperTalkParser.ZoomOutEffectContext ctx) {
         return SegueName.ZOOM_OUT;
+    }
+
+    @Override
+    public Object visitZoomOpenEffect(HyperTalkParser.ZoomOpenEffectContext ctx) {
+        return SegueName.ZOOM_OUT;
+    }
+
+    @Override
+    public Object visitZoomCloseEffect(HyperTalkParser.ZoomCloseEffectContext ctx) {
+        return SegueName.ZOOM_IN;
     }
 
     @Override
@@ -486,12 +516,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertyDest(HyperTalkParser.PropertyDestContext ctx) {
-        return new PropertyContainer((PropertySpecifier) visit(ctx.propertySpec()));
+        return new PropertyContainer((PropertySpecifier) visit(ctx.partProperty()));
     }
 
     @Override
     public Object visitChunkPropertyDest(HyperTalkParser.ChunkPropertyDestContext ctx) {
-        return new PropertyContainer((PropertySpecifier) visit(ctx.propertySpec()), (Chunk)visit(ctx.chunk()));
+        return new PropertyContainer((PropertySpecifier) visit(ctx.partProperty()), (Chunk)visit(ctx.chunk()));
     }
 
     @Override
@@ -502,11 +532,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
         return new MenuContainer((MenuItemSpecifier) visit(ctx.menuItem()));
-    }
-
-    @Override
-    public Object visitCommentScript(HyperTalkParser.CommentScriptContext ctx) {
-        return visit(ctx.script());
     }
 
     @Override
@@ -522,11 +547,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitWhitespaceScriptlet(HyperTalkParser.WhitespaceScriptletContext ctx) {
-        return visit(ctx.scriptlet());
-    }
-
-    @Override
-    public Object visitCommentScriptlet(HyperTalkParser.CommentScriptletContext ctx) {
         return visit(ctx.scriptlet());
     }
 
@@ -653,7 +673,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSetCmdStmnt(HyperTalkParser.SetCmdStmntContext ctx) {
-        return new SetCmd(ctx, (PropertySpecifier) visit(ctx.propertySpec()), (Expression) visit(ctx.propertyValue()));
+        return new SetCmd(ctx, (PropertySpecifier) visit(ctx.property()), (Expression) visit(ctx.propertyValue()));
     }
 
     @Override
@@ -738,7 +758,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPlayCmdStmt(HyperTalkParser.PlayCmdStmtContext ctx) {
-        return new PlayCmd(ctx, (MusicSpecifier) visit(ctx.music()));
+        return new PlayCmd(ctx, (MusicSpecifier) visit(ctx.musicExpression()));
     }
 
     @Override
@@ -1204,13 +1224,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
-        return new MsgBoxContainer();
-    }
-
-    @Override
-    public Object visitChunkMessageDest(HyperTalkParser.ChunkMessageDestContext ctx) {
-        return new MsgBoxContainer((Chunk) visit(ctx.chunk()));
+    public Object visitMessage(HyperTalkParser.MessageContext ctx) {
+        return super.visitMessage(ctx);
     }
 
     @Override
@@ -1226,11 +1241,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitChunkDest(HyperTalkParser.ChunkDestContext ctx) {
         return new MsgBoxContainer((Chunk) visit(ctx.chunk()));
-    }
-
-    @Override
-    public Object visitDefaultDest(HyperTalkParser.DefaultDestContext ctx) {
-        return new MsgBoxContainer();
     }
 
     @Override
@@ -1286,6 +1296,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPropertyName(HyperTalkParser.PropertyNameContext ctx) {
         return ctx.getText();
+    }
+
+    @Override
+    public Object visitCommandName(HyperTalkParser.CommandNameContext ctx) {
+        return super.visitCommandName(ctx);
     }
 
     @Override
@@ -1401,11 +1416,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPartRef(HyperTalkParser.PartRefContext ctx) {
         return new PartReferenceExp(ctx, ctx.ID().getText());
-    }
-
-    @Override
-    public Object visitMessagePart(HyperTalkParser.MessagePartContext ctx) {
-        return super.visitMessagePart(ctx);
     }
 
     @Override
@@ -1724,8 +1734,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitIdOfPartFactor(HyperTalkParser.IdOfPartFactorContext ctx) {
-        return new PropertyExp(ctx, (PropertySpecifier) visit(ctx.propertySpec()));
+    public Object visitProperty(HyperTalkParser.PropertyContext ctx) {
+        return super.visitProperty(ctx);
+    }
+
+    @Override
+    public Object visitPartPropertyFactor(HyperTalkParser.PartPropertyFactorContext ctx) {
+        return new PropertyExp(ctx, (PropertySpecifier) visit(ctx.partProperty()));
     }
 
     @Override
@@ -1799,6 +1814,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCardinalValue(HyperTalkParser.CardinalValueContext ctx) {
+        return super.visitCardinalValue(ctx);
+    }
+
+    @Override
     public Object visitCardninalExp(HyperTalkParser.CardninalExpContext ctx) {
         return LiteralExp.ofCardinal(ctx, ctx.getText());
     }
@@ -1836,6 +1856,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitOrdinalValue(HyperTalkParser.OrdinalValueContext ctx) {
         return super.visitOrdinalValue(ctx);
+    }
+
+    @Override
+    public Object visitMouseState(HyperTalkParser.MouseStateContext ctx) {
+        return super.visitMouseState(ctx);
+    }
+
+    @Override
+    public Object visitModifierKey(HyperTalkParser.ModifierKeyContext ctx) {
+        return super.visitModifierKey(ctx);
+    }
+
+    @Override
+    public Object visitKnownType(HyperTalkParser.KnownTypeContext ctx) {
+        return super.visitKnownType(ctx);
     }
 
     @Override

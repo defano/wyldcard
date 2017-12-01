@@ -13,7 +13,7 @@ public class ToolFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
-        return new Value(ToolsContext.getInstance().getSelectedTool().name().toLowerCase());
+    public Value onEvaluate() {
+        return new Value(ToolsContext.getInstance().getSelectedTool().name().toLowerCase() + " tool");
     }
 }

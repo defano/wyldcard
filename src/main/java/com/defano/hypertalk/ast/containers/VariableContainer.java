@@ -37,17 +37,7 @@ public class VariableContainer extends Container {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-
-        Value mutable = ExecutionContext.getContext().getVariable(symbol);
-
-        // Operating on a chunk of the existing value
-        if (chunk != null)
-            mutable = Value.setChunk(mutable, preposition, chunk, value);
-        else
-            mutable = Value.setValue(mutable, preposition, value);
-
-        ExecutionContext.getContext().setVariable(symbol, mutable);
-        ExecutionContext.getContext().setIt(mutable);
+        ExecutionContext.getContext().setVariable(symbol, preposition, chunk, value);
     }
 
 }

@@ -4,13 +4,14 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PropertySpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 import com.defano.hypertalk.utils.ChunkPropertiesDelegate;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PropertyExp extends Expression {
 
-    public final PropertySpecifier propertySpecifier;
+    private final PropertySpecifier propertySpecifier;
 
     public PropertyExp(ParserRuleContext context, PropertySpecifier propertySpecifier) {
         super(context);
@@ -21,7 +22,12 @@ public class PropertyExp extends Expression {
 
         // Getting a HyperCard property
         if (propertySpecifier.isGlobalPropertySpecifier()) {
-            return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
+            try {
+                return ExecutionContext.getContext().getGlobalProperties().getProperty(propertySpecifier.property);
+            } catch (NoSuchPropertyException e) {
+                // Context sensitive: Unknown HC property references are assumed to be local variable references
+                return ExecutionContext.getContext().getVariable(propertySpecifier.property);
+            }
         }
 
         // Getting a menu property

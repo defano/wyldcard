@@ -24,7 +24,11 @@ public class TestGrammar {
         InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/HyperTalk.txt");
         String testScript = IOUtils.toString(in);
 
+        long start = System.currentTimeMillis();
         Interpreter.compile(CompilationUnit.SCRIPT, testScript);
+        long end = System.currentTimeMillis();
+
+        System.out.println("Compiled test script in " + (end - start) + "ms.");
     }
 
 }

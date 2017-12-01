@@ -140,6 +140,19 @@ public class ExecutionContext {
             getFrame().symbols.put(symbol, v);
     }
 
+    public void setVariable(String symbol, Preposition preposition, Chunk chunk, Value value) throws HtException {
+        Value mutable = getVariable(symbol);
+
+        // Operating on a chunk of the existing value
+        if (chunk != null)
+            mutable = Value.setChunk(mutable, preposition, chunk, value);
+        else
+            mutable = Value.setValue(mutable, preposition, value);
+
+        ExecutionContext.getContext().setVariable(symbol, mutable);
+        ExecutionContext.getContext().setIt(mutable);
+    }
+
     /**
      * Gets the value assigned to a symbol (variable). If the variable is an in-scope global, returns the globally
      * assigned value; if the variable is an in-scope local variable, returns its value. If the variable does not

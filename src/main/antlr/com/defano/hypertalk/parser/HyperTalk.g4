@@ -24,23 +24,21 @@
 
 grammar HyperTalk;
 
-// Accepts only well-formed HyperTalk scripts consisting of handlers, functions, whitespace and comments representing
-// scipts assignable to parts (like buttons and fields). Disallows statements or expressions not inside of a handler or
-// function block.
+// Start symbol accepting only well-formed HyperTalk scripts that consist of handlers, functions, whitespace and
+// comments (representing scipts that are assignable to parts like buttons and fields). Disallows statements or
+// expressions that are not inside of a handler or function block.
 script
     : handler script                                                                                                    # handlerScript
     | function script                                                                                                   # functionScript
     | NEWLINE script                                                                                                    # newlineScript
-    | COMMENT script                                                                                                    # commentScript
     | EOF                                                                                                               # emptyScript
     ;
 
-// Accepts any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when evaluating the
-// message box or via the 'do' command / 'value of' function.
+// Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
+// evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
 scriptlet
     : nonEmptyStmnt scriptlet                                                                                           # statementScriptlet
     | NEWLINE scriptlet                                                                                                 # whitespaceScriptlet
-    | COMMENT scriptlet                                                                                                 # commentScriptlet
     | EOF                                                                                                               # emptyScriptlet
     ;
 
@@ -54,13 +52,9 @@ function
     | 'function' ID parameterList NEWLINE statementList 'end' ID                                                        # populatedArgFunction
     ;
 
-// Handlers cannot usually have the name of a keyword, but command names are an exception
 handlerName
     : ID
-    | 'answer' | 'ask' | 'put' | 'get' | 'set' | 'send' | 'wait' | 'sort' | 'go' | 'enable' | 'disable'
-    | 'read' | 'write' | 'hide' | 'show' | 'add' | 'subtract' | 'multiply' | 'divide' | 'choose'
-    | 'click' | 'drag' | 'type' | 'lock' | 'unlock' | 'pass' | 'domenu' | 'visual' | 'reset' | 'create'
-    | 'delete' | 'play' | 'dial' | 'beep' | 'open' | 'close' | 'select' | 'find'
+    | commandName   // Handlers can take the name of a command keyword (other keywords are disallowed)
     ;
 
 expressionList
@@ -127,7 +121,7 @@ commandStmnt
     | 'ask' expression                                                                                                  # askExpCmd
     | 'beep'                                                                                                            # beepCmdStmt
     | 'beep' expression                                                                                                 # beepMultipleStmt
-    | 'choose' toolExpression 'tool'                                                                                    # chooseToolCmdStmt
+    | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmdStmt
     | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmdStmt
     | 'click' 'at' expression                                                                                           # clickCmdStmt
     | 'click' 'at' expression 'with' expressionList                                                                     # clickWithKeyCmdStmt
@@ -171,7 +165,7 @@ commandStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
     | 'open' 'file' expression                                                                                          # openFileCmdStmt
     | 'pass' handlerName                                                                                                # passCmdStmt
-    | 'play' music                                                                                                      # playCmdStmt
+    | 'play' musicExpression                                                                                            # playCmdStmt
     | 'pop' card                                                                                                        # popCardCmdStmt
     | 'push' card                                                                                                       # pushCardCmdStmt
     | 'push' destination                                                                                                # pushDestCmdStmt
@@ -191,7 +185,7 @@ commandStmnt
     | 'select' chunk part                                                                                               # selectChunkCmd
     | 'select' 'before' chunk part                                                                                      # selectBeforeChunkCmd
     | 'select' 'after' chunk part                                                                                       # selectAfterChunkCmd
-    | 'set' propertySpec 'to' propertyValue                                                                             # setCmdStmnt
+    | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' expression 'to' part                                                                                       # sendCmdStmnt
     | 'show' part                                                                                                       # showCmdStmnt
     | 'sort' sortChunkType container sortDirection sortStyle                                                            # sortDirectionCmd
@@ -220,15 +214,7 @@ commandStmnt
     | ID expressionList                                                                                                 # argMsgCmdStmt
     ;
 
-find
-    : 'find' 'word' 'international'?                                                                                    # searchableWord
-    | 'find' 'chars' 'international'?                                                                                   # searchableChars
-    | 'find' 'whole' 'international'?                                                                                   # searchableWhole
-    | 'find' 'string' 'international'?                                                                                  # searchableString
-    | 'find' 'international'?                                                                                           # searchableSubstring
-    ;
-
-music
+musicExpression
     : factor expression                                                                                                 # musicInstrumentNotes
     | factor 'tempo' factor expression                                                                                  # musicInstrumentNotesTempo
     | factor 'tempo' expression                                                                                         # musicInstrumentTempo
@@ -293,62 +279,6 @@ visualEffect
     | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
     ;
 
-speed
-    : 'fast'                                                                                                            # fastSpeed
-    | ('slow' | 'slowly')                                                                                               # slowSpeed
-    | 'very' 'fast'                                                                                                     # veryFastSpeed
-    | 'very' ('slow' | 'slowly')                                                                                        # verySlowSpeed
-    ;
-
-image
-    : 'black'                                                                                                           # blackImage
-    | 'card'                                                                                                            # cardImage
-    | ('gray' | 'grey')                                                                                                 # grayImage
-    | 'inverse'                                                                                                         # inverseImage
-    | 'white'                                                                                                           # whiteImage
-    ;
-
-effect
-    : 'dissolve'                                                                                                        # dissolveEffect
-    | 'barn' 'door' 'open'                                                                                              # barnDoorOpenEffect
-    | 'barn' 'door' 'close'                                                                                             # barnDoorCloseEffect
-    | 'checkerboard'                                                                                                    # checkerboardEffect
-    | 'iris' 'open'                                                                                                     # irisOpenEffect
-    | 'iris' 'close'                                                                                                    # irisCloseEffect
-    | 'plain'                                                                                                           # plainEffect
-    | 'scroll' 'down'                                                                                                   # scrollDownEffect
-    | 'scroll' 'up'                                                                                                     # scrollUpEffect
-    | 'scroll' 'left'                                                                                                   # scrollLeftEffect
-    | 'scroll' 'right'                                                                                                  # scrollRightEffect
-    | 'shrink' 'to' 'top'                                                                                               # shrinkToTopEffect
-    | 'shrink' 'to' 'center'                                                                                            # shrinkToCenterEffect
-    | 'shrink' 'to' 'bottom'                                                                                            # shrinkToBottomEffect
-    | 'stretch' 'from' 'top'                                                                                            # stretchFromTopEffect
-    | 'stretch' 'from' 'center'                                                                                         # stretchFromCenterEffect
-    | 'stretch' 'from' 'bottom'                                                                                         # stretchFromBottomEffect
-    | 'venetian' 'blinds'                                                                                               # venitianBlindsEffect
-    | 'wipe' 'up'                                                                                                       # wipeUpEffect
-    | 'wipe' 'down'                                                                                                     # wipeDownEffect
-    | 'wipe' 'left'                                                                                                     # wipeLeftEffect
-    | 'wipe' 'right'                                                                                                    # wipeRightEffect
-    | 'zoom' 'in'                                                                                                       # zoomInEffect
-    | 'zoom' 'out'                                                                                                      # zoomOutEffect
-    ;
-
-timeUnit
-    : 'ticks'                                                                                                           # ticksTimeUnit
-    | 'tick'                                                                                                            # tickTimeUnit
-    | 'seconds'                                                                                                         # secondsTimeUnit
-    | 'sec'                                                                                                             # secTimeUnit
-    | 'second'                                                                                                          # secondTimeUnit
-    ;
-
-position
-    : 'the'? 'next'                                                                                                     # nextPosition
-    | 'the'? ('prev' | 'previous')                                                                                      # prevPosition
-    | 'this'                                                                                                            # thisPosition
-    ;
-
 destination
     : destinationType expression                                                                                        # cardNumber
     | ordinal destinationType                                                                                           # cardOrdinal
@@ -362,10 +292,10 @@ destinationType
     ;
 
 repeatRange
-    : 'forever'                                                                                                         # infiniteLoop
-    | duration                                                                                                          # durationLoop
+    : duration                                                                                                          # durationLoop
     | count                                                                                                             # countLoop
     | 'with' ID '=' range                                                                                               # withLoop
+    | 'forever'                                                                                                         # infiniteLoop
     |                                                                                                                   # infiniteLoop
     ;
 
@@ -386,12 +316,6 @@ range
     | expression 'to' expression                                                                                        # rangeUpTo
     ;
 
-preposition
-    : 'before'                                                                                                          # beforePreposition
-    | 'after'                                                                                                           # afterPreposition
-    | 'into'                                                                                                            # intoPreposition
-    ;
-
 chunk
     : chunk chunk                                                                                                       # compositeChunk
     | ordinal character of                                                                                              # ordinalCharChunk
@@ -410,19 +334,16 @@ chunk
 
 container
     : ID                                                                                                                # variableDest
-    | messagePart                                                                                                       # messageDest
-    | chunk messagePart                                                                                                 # chunkMessageDest
-    | 'the' 'selection'                                                                                                 # selectionDest
-    | chunk 'the' 'selection'                                                                                           # chunkSelectionDest
     | chunk ID                                                                                                          # chunkVariableDest
+    | 'the'? 'selection'                                                                                                # selectionDest
+    | chunk 'the'? 'selection'                                                                                          # chunkSelectionDest
     | part                                                                                                              # partDest
     | chunk part                                                                                                        # chunkPartDest
     | chunk                                                                                                             # chunkDest
-    | propertySpec                                                                                                      # propertyDest
-    | chunk propertySpec                                                                                                # chunkPropertyDest
+    | partProperty                                                                                                      # propertyDest
+    | chunk partProperty                                                                                                # chunkPropertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
-    |                                                                                                                   # defaultDest
     ;
 
 menu
@@ -435,25 +356,19 @@ menuItem
     | ordinal 'menuitem' of menu                                                                                        # ordinalMenuItem
     ;
 
-propertyValue
-    : 'plain'                                                                                                           # propertyValueLiteral
-    | 'menu'                                                                                                            # propertyValueLiteral
-    | expression                                                                                                        # propertyValueExp
+property
+    : globalProperty
+    | partProperty
     ;
 
-propertySpec
+globalProperty
     : 'the'? propertyName                                                                                               # propertySpecGlobal
-    | 'the'? propertyName of part                                                                                       # propertySpecPart
+    ;
+
+partProperty
+    : 'the'? propertyName of part                                                                                       # propertySpecPart
     | 'the'? propertyName of chunk part                                                                                 # propertySpecChunkPart
     | 'the'? propertyName of menuItem                                                                                   # propertySpecMenuItem
-    ;
-
-propertyName
-    : 'marked'          // These require special rules because they're also keywords in the language
-    | 'id'
-    | 'rect' | 'rectangle'
-    | 'bottom' | 'left' | 'right' | 'top' | 'center' | 'scroll'
-    | ID
     ;
 
 part
@@ -464,7 +379,7 @@ part
     | card 'part' factor                                                                                                # cardPartNumberPart
     | background 'part' factor                                                                                          # bkgndPartNumberPart
     | 'me'                                                                                                              # mePart
-    | messagePart                                                                                                       # msgPart
+    | message                                                                                                           # msgPart
     | ID                                                                                                                # partRef
     ;
 
@@ -504,87 +419,8 @@ bkgndPart
     | 'this' background                                                                                                 # thisBkgndPart
     ;
 
-messagePart
-    : 'the'? 'message'
-    | 'the'? 'message' 'box'
-    | 'the'? 'message' 'window'
-    ;
-
-card
-    : 'card'
-    | 'cards'
-    | 'cd'
-    | 'cds'
-    ;
-
-background
-    : 'background'
-    | 'backgrounds'
-    | 'bkgnd'
-    | 'bkgnds'
-    | 'bg'
-    | 'bgs'
-    ;
-
-button
-    : 'button'
-    | 'buttons'
-    | 'btn'
-    | 'btns'
-    ;
-
-field
-    : 'field'
-    | 'fields'
-    | 'fld'
-    | 'flds'
-    ;
-
-character
-    : 'character'
-    | 'characters'
-    | 'char'
-    | 'chars'
-    ;
-
-word
-    : 'word'
-    | 'words'
-    ;
-
-line
-    : 'line'
-    | 'lines'
-    ;
-
-item
-    : 'item'
-    | 'items'
-    ;
-
-of
-    : 'of'
-    | 'in'
-    | 'from'
-    ;
-
 ordinal
     : 'the'? ordinalValue                                                                                               # theOrdinalVal
-    ;
-
-ordinalValue
-    : 'first'
-    | 'second'
-    | 'third'
-    | 'fourth'
-    | 'fifth'
-    | 'sixth'
-    | 'seventh'
-    | 'eigth'
-    | 'ninth'
-    | 'tenth'
-    | ('mid' | 'middle')
-    | 'last'
     ;
 
 expression
@@ -611,7 +447,7 @@ factor
     | part                                                                                                              # partFactor
     | 'the'? 'selection'                                                                                                # selectionFactor
     | '(' expression ')'                                                                                                # expressionFactor
-    | propertySpec                                                                                                      # idOfPartFactor
+    | partProperty                                                                                                      # partPropertyFactor
     | menu                                                                                                              # menuFactor
     | menuItem                                                                                                          # menuItemFactor
     | chunk factor                                                                                                      # chunkFactorChunk
@@ -698,20 +534,25 @@ multiArgFunc
     | 'offset'                                                                                                          # offsetArgFunc
     ;
 
-
 literal
-    : knownType
-    | constant
-    | 'up' | 'down'
-    | ('commandkey' | 'cmdkey' | 'optionkey' | 'shiftkey')
+    : constant
+    | modifierKey
+    | mouseState
+    | knownType
     | LITERAL
     | TWO_ITEM_LIST
     | FOUR_ITEM_LIST
     ;
 
+preposition
+    : 'before'                                                                                                          # beforePreposition
+    | 'after'                                                                                                           # afterPreposition
+    | 'into'                                                                                                            # intoPreposition
+    ;
 
 constant
-    : 'empty'                                                                                                           # emptyExp
+    : cardinalValue                                                                                                     # cardninalExp
+    | 'empty'                                                                                                           # emptyExp
     | 'pi'                                                                                                              # piExp
     | 'quote'                                                                                                           # quoteExp
     | 'return'                                                                                                          # returnExp
@@ -721,9 +562,48 @@ constant
     | 'linefeed'                                                                                                        # lineFeedExp
     | 'comma'                                                                                                           # commaExp
     | 'colon'                                                                                                           # colonExp
-    | ('zero' | 'one' | 'two' | 'three' | 'four' | 'five' | 'six' | 'seven' | 'eight' | 'nine' | 'ten')                 # cardninalExp
     ;
 
+cardinalValue
+    : 'zero'
+    | 'one'
+    | 'two'
+    | 'three'
+    | 'four'
+    | 'five'
+    | 'six'
+    | 'seven'
+    | 'eight'
+    | 'nine'
+    | 'ten'
+    ;
+
+ordinalValue
+    : 'first'
+    | 'second'
+    | 'third'
+    | 'fourth'
+    | 'fifth'
+    | 'sixth'
+    | 'seventh'
+    | 'eighth'
+    | 'ninth'
+    | 'tenth'
+    | ('mid' | 'middle')
+    | 'last'
+    ;
+
+mouseState
+    : 'up'
+    | 'down'
+    ;
+
+modifierKey
+    : 'commandkey'
+    | 'cmdkey'
+    | 'optionkey'
+    | 'shiftkey'
+    ;
 
 knownType
     : 'number'
@@ -735,6 +615,210 @@ knownType
     | 'logical'
     | 'boolean'
     | 'bool'
+    ;
+
+find
+    : 'find' 'word' 'international'?                                                                                    # searchableWord
+    | 'find' 'chars' 'international'?                                                                                   # searchableChars
+    | 'find' 'whole' 'international'?                                                                                   # searchableWhole
+    | 'find' 'string' 'international'?                                                                                  # searchableString
+    | 'find' 'international'?                                                                                           # searchableSubstring
+    ;
+
+// Not all properties need to be enumerated here, only those sharing a name with another keyword. This is a context-
+// sensitive feature of HyperTalk.
+propertyName
+    : 'marked'
+    | 'id'
+    | 'rect'
+    | 'rectangle'
+    | 'bottom'
+    | 'left'
+    | 'right'
+    | 'top'
+    | 'center'
+    | 'scroll'
+    | ID
+    ;
+
+// Not all values need to be enumerated here, only known values sharing a name with another keyword. This is a context-
+// sensitive feature of HyperTalk.
+propertyValue
+    : 'plain'                                                                                                           # propertyValueLiteral
+    | 'menu'                                                                                                            # propertyValueLiteral
+    | 'bottom'                                                                                                          # propertyValueLiteral
+    | 'left'                                                                                                            # propertyValueLiteral
+    | 'right'                                                                                                           # propertyValueLiteral
+    | 'top'                                                                                                             # propertyValueLiteral
+    | 'center'                                                                                                          # propertyValueLiteral
+    | expression                                                                                                        # propertyValueExp
+    ;
+
+commandName
+    : 'answer'
+    | 'ask'
+    | 'put'
+    | 'get'
+    | 'set'
+    | 'send'
+    | 'wait'
+    | 'sort'
+    | 'go'
+    | 'enable'
+    | 'disable'
+    | 'read'
+    | 'write'
+    | 'hide'
+    | 'show'
+    | 'add'
+    | 'subtract'
+    | 'multiply'
+    | 'divide'
+    | 'choose'
+    | 'click'
+    | 'drag'
+    | 'type'
+    | 'lock'
+    | 'unlock'
+    | 'pass'
+    | 'domenu'
+    | 'visual'
+    | 'reset'
+    | 'create'
+    | 'delete'
+    | 'play'
+    | 'dial'
+    | 'beep'
+    | 'open'
+    | 'close'
+    | 'select'
+    | 'find'
+    ;
+
+speed
+    : 'fast'                                                                                                            # fastSpeed
+    | ('slow' | 'slowly')                                                                                               # slowSpeed
+    | 'very' 'fast'                                                                                                     # veryFastSpeed
+    | 'very' ('slow' | 'slowly')                                                                                        # verySlowSpeed
+    ;
+
+image
+    : 'black'                                                                                                           # blackImage
+    | 'card'                                                                                                            # cardImage
+    | ('gray' | 'grey')                                                                                                 # grayImage
+    | 'inverse'                                                                                                         # inverseImage
+    | 'white'                                                                                                           # whiteImage
+    ;
+
+effect
+    : 'dissolve'                                                                                                        # dissolveEffect
+    | 'barn' 'door' 'open'                                                                                              # barnDoorOpenEffect
+    | 'barn' 'door' 'close'                                                                                             # barnDoorCloseEffect
+    | 'checkerboard'                                                                                                    # checkerboardEffect
+    | 'iris' 'open'                                                                                                     # irisOpenEffect
+    | 'iris' 'close'                                                                                                    # irisCloseEffect
+    | 'plain'                                                                                                           # plainEffect
+    | 'push' 'up'                                                                                                       # pushUpEffect
+    | 'push' 'down'                                                                                                     # pushDownEffect
+    | 'push' 'left'                                                                                                     # pushLeftEffect
+    | 'push' 'right'                                                                                                    # pushRightEffect
+    | 'scroll' 'down'                                                                                                   # scrollDownEffect
+    | 'scroll' 'up'                                                                                                     # scrollUpEffect
+    | 'scroll' 'left'                                                                                                   # scrollLeftEffect
+    | 'scroll' 'right'                                                                                                  # scrollRightEffect
+    | 'shrink' 'to' 'top'                                                                                               # shrinkToTopEffect
+    | 'shrink' 'to' 'center'                                                                                            # shrinkToCenterEffect
+    | 'shrink' 'to' 'bottom'                                                                                            # shrinkToBottomEffect
+    | 'stretch' 'from' 'top'                                                                                            # stretchFromTopEffect
+    | 'stretch' 'from' 'center'                                                                                         # stretchFromCenterEffect
+    | 'stretch' 'from' 'bottom'                                                                                         # stretchFromBottomEffect
+    | 'venetian' 'blinds'                                                                                               # venitianBlindsEffect
+    | 'wipe' 'up'                                                                                                       # wipeUpEffect
+    | 'wipe' 'down'                                                                                                     # wipeDownEffect
+    | 'wipe' 'left'                                                                                                     # wipeLeftEffect
+    | 'wipe' 'right'                                                                                                    # wipeRightEffect
+    | 'zoom' 'in'                                                                                                       # zoomInEffect
+    | 'zoom' 'out'                                                                                                      # zoomOutEffect
+    | 'zoom' 'open'                                                                                                     # zoomOpenEffect
+    | 'zoom' 'close'                                                                                                    # zoomCloseEffect
+    ;
+
+timeUnit
+    : 'ticks'                                                                                                           # ticksTimeUnit
+    | 'tick'                                                                                                            # tickTimeUnit
+    | 'seconds'                                                                                                         # secondsTimeUnit
+    | 'sec'                                                                                                             # secTimeUnit
+    | 'second'                                                                                                          # secondTimeUnit
+    ;
+
+position
+    : 'the'? 'next'                                                                                                     # nextPosition
+    | 'the'? ('prev' | 'previous')                                                                                      # prevPosition
+    | 'this'                                                                                                            # thisPosition
+    ;
+
+message
+    : 'the'? 'message'
+    | 'the'? 'message' 'box'
+    | 'the'? 'message' 'window'
+    ;
+
+card
+    : 'card'
+    | 'cards'
+    | 'cd'
+    | 'cds'
+    ;
+
+background
+    : 'background'
+    | 'backgrounds'
+    | 'bkgnd'
+    | 'bkgnds'
+    | 'bg'
+    | 'bgs'
+    ;
+
+button
+    : 'button'
+    | 'buttons'
+    | 'btn'
+    | 'btns'
+    ;
+
+field
+    : 'field'
+    | 'fields'
+    | 'fld'
+    | 'flds'
+    ;
+
+character
+    : 'character'
+    | 'characters'
+    | 'char'
+    | 'chars'
+    ;
+
+word
+    : 'word'
+    | 'words'
+    ;
+
+line
+    : 'line'
+    | 'lines'
+    ;
+
+item
+    : 'item'
+    | 'items'
+    ;
+
+of
+    : 'of'
+    | 'in'
+    | 'from'
     ;
 
 ID
@@ -786,7 +870,7 @@ fragment DIGIT
     ;
 
 COMMENT
-    : '--' ~('\r' | '\n' | '|')* -> skip
+    : ('--' ~('\r' | '\n' | '|')*) NEWLINE -> skip
     ;
 
 NEWLINE

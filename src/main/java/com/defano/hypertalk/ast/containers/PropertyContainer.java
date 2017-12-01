@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.specifiers.PropertySpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.utils.ChunkPropertiesDelegate;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 
@@ -53,7 +54,12 @@ public class PropertyContainer extends Container {
         } else if (propertySpec.isMenuItemPropertySpecifier()) {
             throw new HtSemanticException("Cannot put a value into this kind of property.");
         } else {
-            ExecutionContext.getContext().setProperty(propertySpec.property, getPartSpecifier(), preposition, chunk, value);
+            try {
+                ExecutionContext.getContext().setProperty(propertySpec.property, getPartSpecifier(), preposition, chunk, value);
+            } catch (NoSuchPropertyException e) {
+                // Context sensitive: Unknown HC property references are assumed to be local variable references
+                ExecutionContext.getContext().setVariable(propertySpec.property, preposition, chunk, value);
+            }
         }
     }
 
