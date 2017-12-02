@@ -17,6 +17,8 @@ import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import javax.swing.plaf.nimbus.State;
+
 /**
  * Converts an Antlr parse tree into a HyperTalk abstract syntax tree using Antlr's visitor pattern. The HyperTalk
  * grammar is defined in HyperTalk.g4.
@@ -563,24 +565,48 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (StatementList) visit(ctx.statementList()));
+    public Object visitNoArgHandler(HyperTalkParser.NoArgHandlerContext ctx) {
+        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), statements);
     }
 
     @Override
-    public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
-        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+    public Object visitArgHandler(HyperTalkParser.ArgHandlerContext ctx) {
+        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), statements);
     }
 
     @Override
-    public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
-        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new ParameterList(), (StatementList) visit(ctx.statementList()));
+    public Object visitNoArgFunction(HyperTalkParser.NoArgFunctionContext ctx) {
+        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new ParameterList(), statements);
     }
 
     @Override
-    public Object visitPopulatedArgFunction(HyperTalkParser.PopulatedArgFunctionContext ctx) {
-        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+    public Object visitArgFunction(HyperTalkParser.ArgFunctionContext ctx) {
+        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), statements);
     }
+
+    //    @Override
+//    public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
+//        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (StatementList) visit(ctx.statementList()));
+//    }
+//
+//    @Override
+//    public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
+//        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+//    }
+//
+//    @Override
+//    public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
+//        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new ParameterList(), (StatementList) visit(ctx.statementList()));
+//    }
+//
+//    @Override
+//    public Object visitPopulatedArgFunction(HyperTalkParser.PopulatedArgFunctionContext ctx) {
+//        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
+//    }
 
     @Override
     public Object visitHandlerName(HyperTalkParser.HandlerNameContext ctx) {
@@ -612,11 +638,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEmptyStmntList(HyperTalkParser.EmptyStmntListContext ctx) {
-        return new StatementList(ctx);
-    }
-
-    @Override
     public Object visitSingleStmntList(HyperTalkParser.SingleStmntListContext ctx) {
         return new StatementList(ctx, (Statement) visit(ctx.nonEmptyStmnt()));
     }
@@ -626,11 +647,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         StatementList statementList = (StatementList) visit(ctx.statementList());
         statementList.append((Statement) visit(ctx.nonEmptyStmnt()));
         return statementList;
-    }
-
-    @Override
-    public Object visitStmntListNewlineStmntList(HyperTalkParser.StmntListNewlineStmntListContext ctx) {
-        return visit(ctx.statementList());
     }
 
     @Override
@@ -1145,7 +1161,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGlobalStmnt(HyperTalkParser.GlobalStmntContext ctx) {
-        return new GlobalStatement(ctx, (String) visit(ctx.ID()));
+        return new GlobalStatement(ctx, (ParameterList) visit(ctx.parameterList()));
     }
 
     @Override

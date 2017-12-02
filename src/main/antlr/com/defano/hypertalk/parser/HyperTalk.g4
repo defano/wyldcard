@@ -43,13 +43,13 @@ scriptlet
     ;
 
 handler
-    : 'on' handlerName NEWLINE statementList 'end' handlerName                                                          # populatedHandler
-    | 'on' handlerName parameterList NEWLINE statementList 'end' handlerName                                            # populatedArgHandler
+    : 'on' handlerName NEWLINE statementList? 'end' handlerName                                                         # noArgHandler
+    | 'on' handlerName parameterList NEWLINE statementList? 'end' handlerName                                           # argHandler
     ;
 
 function
-    : 'function' ID NEWLINE statementList 'end' ID                                                                      # populatedFunction
-    | 'function' ID parameterList NEWLINE statementList 'end' ID                                                        # populatedArgFunction
+    : 'function' ID NEWLINE statementList? 'end' ID                                                                     # noArgFunction
+    | 'function' ID parameterList NEWLINE statementList? 'end' ID                                                       # argFunction
     ;
 
 handlerName
@@ -68,23 +68,21 @@ parameterList
     ;
 
 statementList
-    : statementList nonEmptyStmnt                                                                                       # multiStmntList
-    | nonEmptyStmnt                                                                                                     # singleStmntList
-    | statementList NEWLINE                                                                                             # stmntListNewlineStmntList
-    |                                                                                                                   # emptyStmntList
+    : nonEmptyStmnt NEWLINE+ statementList                                                                              # multiStmntList
+    | nonEmptyStmnt NEWLINE+                                                                                            # singleStmntList
     ;
 
 nonEmptyStmnt
-    : ifStatement                                                                                                       # nonEmptyIfStmnt
+    : commandStmnt                                                                                                      # nonEmptyCommandStmnt
+    | expression                                                                                                        # nonEmptyExpStmnt
+    | ifStatement                                                                                                       # nonEmptyIfStmnt
     | repeatStatement                                                                                                   # nonEmptyRepeatStmnt
     | globalStmnt                                                                                                       # nonEmptyGlobalStmnt
     | returnStmnt                                                                                                       # nonEmptyReturnStmnt
-    | commandStmnt                                                                                                      # nonEmptyCommandStmnt
-    | expression                                                                                                        # nonEmptyExpStmnt
     ;
 
 globalStmnt
-    : 'global' ID
+    : 'global' parameterList
     ;
 
 returnStmnt
@@ -98,12 +96,12 @@ ifStatement
 
 thenStatement
     : 'then' nonEmptyStmnt NEWLINE? elseStatement?                                                                      # thenSingleStmnt
-    | 'then' NEWLINE statementList NEWLINE (elseStatement | 'end' 'if')                                                 # thenStmntList
+    | 'then' NEWLINE statementList (elseStatement | 'end' 'if')                                                         # thenStmntList
     ;
 
 elseStatement
     : 'else' nonEmptyStmnt (NEWLINE 'end' 'if')?                                                                        # elseSingleStmt
-    | 'else' NEWLINE statementList NEWLINE 'end' 'if'                                                                   # elseStmntList
+    | 'else' NEWLINE statementList 'end' 'if'                                                                           # elseStmntList
     ;
 
 repeatStatement
