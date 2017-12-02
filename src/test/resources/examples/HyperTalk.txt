@@ -359,6 +359,8 @@ on testCommands
 
     get 2 + 2 / 3
     get char 3 of the middle word of item 11 of line 17 of theText
+    get the number of bg button x
+    get the number of the last card in this background
 
     go to card 1
     go to the last card
@@ -373,6 +375,8 @@ on testCommands
     go back
     go next card
     go card 13
+    go the first card of the last background
+    go card 14 of bkgnd 15
     go next card with visual effect dissolve very slowly to black
 
     hide field "bananas"

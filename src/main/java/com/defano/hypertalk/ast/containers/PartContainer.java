@@ -11,30 +11,19 @@ import com.defano.hypertalk.ast.common.Chunk;
 public class PartContainer extends Container {
 
     private final PartExp part;
-    private final Chunk chunk;
 
     public PartContainer(PartExp part) {
         this.part = part;
-        this.chunk = null;
-    }
-
-    public PartContainer(PartExp part, Chunk chunk) {
-        this.part = part;
-        this.chunk = chunk;
     }
 
     public PartExp part() {
         return part;
     }
 
-    public Chunk chunk() {
-        return chunk;
-    }
-
     @Override
     public Value getValue() throws HtException {
         Value value = ExecutionContext.getContext().getPart(part.evaluateAsSpecifier()).getValue();
-        return chunkOf(value, this.chunk());
+        return chunkOf(value, getChunk());
     }
 
     @Override
@@ -42,8 +31,8 @@ public class PartContainer extends Container {
         Value destValue = ExecutionContext.getContext().getPart(part.evaluateAsSpecifier()).getValue();
 
         // Operating on a chunk of the existing value
-        if (chunk != null)
-            destValue = Value.setChunk(destValue, preposition, chunk, value);
+        if (getChunk() != null)
+            destValue = Value.setChunk(destValue, preposition, getChunk(), value);
         else
             destValue = Value.setValue(destValue, preposition, value);
 

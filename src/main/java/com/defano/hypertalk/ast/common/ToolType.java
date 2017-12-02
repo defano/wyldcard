@@ -15,17 +15,17 @@ public enum ToolType {
     BRUSH(7, "brush"),
     PENCIL(6, "pencil"),
     BUCKET(13, "bucket"),
-    POLYGON(18, "poly", "polygon"),
+    POLYGON(18, "polygon", "poly"),
     BUTTON(2, "button"),
-    RECTANGLE(11, "rect", "rectangle"),
+    RECTANGLE(11, "rectangle", "rect"),
     CURVE(15, "curve"),
-    SHAPE(17, "reg poly", "regular poly", "reg polygon", "regular polygon"),
+    SHAPE(17,  "regular polygon", "reg poly", "regular poly", "reg polygon"),
     ERASER(8, "eraser"),
-    ROUNDRECT(12, "round rect", "round rectangle"),
+    ROUNDRECT(12, "round rectangle", "round rect"),
     FIELD(3, "field"),
     SELECT(4, "select"),
     LASSO(5, "lasso"),
-    SPRAY(10, "spray", "spray can"),
+    SPRAY(10, "spray can", "spray", "spray can"),
     LINE(9, "line"),
     TEXT(16, "text"),
     SLANT,
@@ -53,6 +53,7 @@ public enum ToolType {
         switch (mode) {
             case BROWSE: return BROWSE;
             case FIELD: return FIELD;
+            case BUTTON: return BUTTON;
             case PAINT: return fromPaintTool(paintTool);
         }
 

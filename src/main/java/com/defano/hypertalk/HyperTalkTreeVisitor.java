@@ -520,11 +520,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitChunkPropertyDest(HyperTalkParser.ChunkPropertyDestContext ctx) {
-        return new PropertyContainer((PropertySpecifier) visit(ctx.partProperty()), (Chunk)visit(ctx.chunk()));
-    }
-
-    @Override
     public Object visitMenuDest(HyperTalkParser.MenuDestContext ctx) {
         return new MenuContainer((MenuSpecifier) visit(ctx.menu()));
     }
@@ -532,6 +527,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
         return new MenuContainer((MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
+        return new MsgBoxContainer();
+    }
+
+    @Override
+    public Object visitChunkContainerDest(HyperTalkParser.ChunkContainerDestContext ctx) {
+        Container container = (Container) visit(ctx.container());
+        container.setChunk((Chunk) visit(ctx.chunk()));
+        return container;
     }
 
     @Override
@@ -1209,18 +1216,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitChunkVariableDest(HyperTalkParser.ChunkVariableDestContext ctx) {
-        return new VariableContainer((String) visit(ctx.ID()), (Chunk) visit(ctx.chunk()));
-    }
-
-    @Override
     public Object visitPartDest(HyperTalkParser.PartDestContext ctx) {
         return new PartContainer((PartExp) visit(ctx.part()));
-    }
-
-    @Override
-    public Object visitChunkPartDest(HyperTalkParser.ChunkPartDestContext ctx) {
-        return new PartContainer((PartExp) visit(ctx.part()), (Chunk) visit(ctx.chunk()));
     }
 
     @Override
@@ -1229,18 +1226,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCards(HyperTalkParser.CardsContext ctx) {
+        return super.visitCards(ctx);
+    }
+
+    @Override
     public Object visitSelectionDest(HyperTalkParser.SelectionDestContext ctx) {
         return new SelectionContainer();
-    }
-
-    @Override
-    public Object visitChunkSelectionDest(HyperTalkParser.ChunkSelectionDestContext ctx) {
-        return new SelectionContainer((Chunk) visit(ctx.chunk()));
-    }
-
-    @Override
-    public Object visitChunkDest(HyperTalkParser.ChunkDestContext ctx) {
-        return new MsgBoxContainer((Chunk) visit(ctx.chunk()));
     }
 
     @Override
@@ -1476,6 +1468,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPositionCardPart(HyperTalkParser.PositionCardPartContext ctx) {
         return new PartPositionExp(ctx, PartType.CARD, (Position) visit(ctx.position()));
+    }
+
+    @Override
+    public Object visitCardOfBkgndPart(HyperTalkParser.CardOfBkgndPartContext ctx) {
+        return new RemotePartExp(ctx, (PartExp) visit(ctx.cardPart()), (PartExp) visit(ctx.bkgndPart()));
     }
 
     @Override
@@ -1890,7 +1887,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_LINES: return new NumberOfFunc(ctx, Countable.LINE, (Expression) visit(ctx.factor()));
             case NUMBER_WORDS: return new NumberOfFunc(ctx, Countable.WORD, (Expression) visit(ctx.factor()));
             case NUMBER_MENUITEMS: return new NumberOfFunc(ctx, Countable.MENU_ITEMS, (Expression) visit(ctx.factor()));
-            case NUMBER_BKGND_CARDS: return new NumberOfFunc(ctx, Countable.BKGND_CARDS, (Expression) visit(ctx.factor()));
+            case NUMBER_BKGND_CARDS: return new NumberOfFunc(ctx, Countable.CARDS_IN_BKGND, (Expression) visit(ctx.factor()));
             case RANDOM: return new RandomFunc(ctx, (Expression) visit(ctx.factor()));
             case SQRT:
             case TRUNC:

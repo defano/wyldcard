@@ -13,24 +13,10 @@ import javax.swing.*;
 
 public class MsgBoxContainer extends Container {
 
-    public final Chunk chunk;
-
-    public MsgBoxContainer() {
-        this.chunk = null;
-    }
-
-    public MsgBoxContainer(Chunk chunk) {
-        this.chunk = chunk;
-    }
-
-    public Chunk chunk() {
-        return chunk;
-    }
-
     @Override
     public Value getValue() throws HtException {
         Value value = new Value(WindowManager.getMessageWindow().getMsgBoxText());
-        return chunkOf(value, this.chunk());
+        return chunkOf(value, getChunk());
     }
 
     @Override
@@ -38,8 +24,8 @@ public class MsgBoxContainer extends Container {
         Value destValue = new Value(WindowManager.getMessageWindow().getMsgBoxText());
 
         // Operating on a chunk of the existing value
-        if (chunk != null)
-            destValue = Value.setChunk(destValue, preposition, chunk, value);
+        if (getChunk() != null)
+            destValue = Value.setChunk(destValue, preposition, getChunk(), value);
         else
             destValue = Value.setValue(destValue, preposition, value);
 

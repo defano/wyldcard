@@ -9,35 +9,20 @@ import com.defano.hypertalk.ast.common.Chunk;
 public class VariableContainer extends Container {
 
     private final String symbol;
-    private final Chunk chunk;
 
     public VariableContainer(String symbol) {
         this.symbol = symbol;
-        this.chunk = null;
-    }
-
-    public VariableContainer(String symbol, Chunk chunk) {
-        this.symbol = symbol;
-        this.chunk = chunk;
-    }
-
-    public String symbol() {
-        return symbol;
-    }
-
-    public Chunk chunk() {
-        return chunk;
     }
 
     @Override
     public Value getValue() throws HtException {
         Value value = ExecutionContext.getContext().getVariable(symbol);
-        return chunkOf(value, this.chunk());
+        return chunkOf(value, getChunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        ExecutionContext.getContext().setVariable(symbol, preposition, chunk, value);
+        ExecutionContext.getContext().setVariable(symbol, preposition, getChunk(), value);
     }
 
 }

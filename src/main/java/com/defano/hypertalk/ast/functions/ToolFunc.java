@@ -14,6 +14,6 @@ public class ToolFunc extends Expression {
 
     @Override
     public Value onEvaluate() {
-        return new Value(ToolsContext.getInstance().getSelectedTool().name().toLowerCase() + " tool");
+        return new Value(ToolsContext.getInstance().getSelectedTool().getPrimaryToolName().toLowerCase() + " tool");
     }
 }

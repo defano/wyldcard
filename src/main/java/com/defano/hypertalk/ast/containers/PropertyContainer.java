@@ -15,20 +15,9 @@ import com.defano.hypertalk.utils.MenuPropertiesDelegate;
 public class PropertyContainer extends Container {
 
     public final PropertySpecifier propertySpec;
-    public final Chunk chunk;
 
     public PropertyContainer(PropertySpecifier propertySpec) {
         this.propertySpec = propertySpec;
-        this.chunk = null;
-    }
-
-    public PropertyContainer(PropertySpecifier propertySpec, Chunk chunk) {
-        this.propertySpec = propertySpec;
-        this.chunk = chunk;
-    }
-
-    public Chunk chunk() {
-        return chunk;
     }
 
     @Override
@@ -43,7 +32,7 @@ public class PropertyContainer extends Container {
             propertyValue = ExecutionContext.getContext().getPart(getPartSpecifier()).getProperty(getPropertyName());
         }
 
-        return chunkOf(propertyValue, this.chunk());
+        return chunkOf(propertyValue, getChunk());
     }
 
     @Override
@@ -55,10 +44,10 @@ public class PropertyContainer extends Container {
             throw new HtSemanticException("Cannot put a value into this kind of property.");
         } else {
             try {
-                ExecutionContext.getContext().setProperty(propertySpec.property, getPartSpecifier(), preposition, chunk, value);
+                ExecutionContext.getContext().setProperty(propertySpec.property, getPartSpecifier(), preposition, getChunk(), value);
             } catch (NoSuchPropertyException e) {
                 // Context sensitive: Unknown HC property references are assumed to be local variable references
-                ExecutionContext.getContext().setVariable(propertySpec.property, preposition, chunk, value);
+                ExecutionContext.getContext().setVariable(propertySpec.property, preposition, getChunk(), value);
             }
         }
     }

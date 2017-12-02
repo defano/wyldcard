@@ -12,19 +12,9 @@ import com.defano.hypertalk.utils.Range;
 
 public class SelectionContainer extends Container {
 
-    private final Chunk chunk;
-
-    public SelectionContainer(Chunk chunk) {
-        this.chunk = chunk;
-    }
-
-    public SelectionContainer() {
-        this.chunk = null;
-    }
-
     @Override
     public Value getValue() throws HtException {
-        return chunkOf(SelectionContext.getInstance().getSelection(), chunk);
+        return chunkOf(SelectionContext.getInstance().getSelection(), getChunk());
     }
 
     @Override
@@ -37,8 +27,8 @@ public class SelectionContainer extends Container {
 
         // Create the new selectedText
         Value newSelection;
-        if (chunk != null)
-            newSelection = Value.setChunk(oldSelection, preposition, chunk, value);
+        if (getChunk() != null)
+            newSelection = Value.setChunk(oldSelection, preposition, getChunk(), value);
         else
             newSelection = Value.setValue(oldSelection, preposition, value);
 

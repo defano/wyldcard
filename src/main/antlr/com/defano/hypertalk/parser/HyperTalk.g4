@@ -152,8 +152,8 @@ commandStmnt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
     | find factor                                                                                                       # findAnywhere
     | find factor of fieldPart                                                                                          # findField
-    | find factor of 'marked' 'cards'                                                                                   # findMarkedCards
-    | find factor of fieldPart of 'marked' 'cards'                                                                      # findFieldMarkedCards
+    | find factor of 'marked' cards                                                                                     # findMarkedCards
+    | find factor of fieldPart of 'marked' cards                                                                        # findFieldMarkedCards
     | 'get' expression                                                                                                  # getCmdStmnt
     | 'go' 'to'? destination 'with' 'visual' visualEffect                                                               # goVisualEffectCmdStmnd
     | 'go' 'to'? destination                                                                                            # goCmdStmnt
@@ -192,11 +192,11 @@ commandStmnt
     | 'sort' sortChunkType container sortDirection sortStyle 'by' expression                                            # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
     | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
-    | 'sort' 'the'? 'cards' (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                # sortStackCmd
-    | 'sort' 'the'? 'marked' 'cards' (of 'this' 'stack')? sortDirection sortStyle 'by' expression                       # sortMarkedCardsCmd
+    | 'sort' 'the'? cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                  # sortStackCmd
+    | 'sort' 'the'? 'marked' cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                         # sortMarkedCardsCmd
     | 'sort' bkgndPart sortDirection sortStyle 'by' expression                                                          # sortBkgndCardsCmd
-    | 'sort' 'the'? 'cards' of bkgndPart sortDirection sortStyle 'by' expression                                        # sortBkgndCardsCmd
-    | 'sort' 'the'? 'marked' 'cards' of bkgndPart sortDirection sortStyle 'by' expression                               # sortMarkedBkgndCardsCmd
+    | 'sort' 'the'? cards of bkgndPart sortDirection sortStyle 'by' expression                                          # sortBkgndCardsCmd
+    | 'sort' 'the'? 'marked' cards of bkgndPart sortDirection sortStyle 'by' expression                                 # sortMarkedBkgndCardsCmd
     | 'subtract' expression 'from' container                                                                            # subtractCmdStmnt
     | 'type' expression                                                                                                 # typeCmdStmt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
@@ -334,16 +334,13 @@ chunk
 
 container
     : ID                                                                                                                # variableDest
-    | chunk ID                                                                                                          # chunkVariableDest
     | 'the'? 'selection'                                                                                                # selectionDest
-    | chunk 'the'? 'selection'                                                                                          # chunkSelectionDest
     | part                                                                                                              # partDest
-    | chunk part                                                                                                        # chunkPartDest
-    | chunk                                                                                                             # chunkDest
     | partProperty                                                                                                      # propertyDest
-    | chunk partProperty                                                                                                # chunkPropertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
+    | message                                                                                                           # messageDest
+    | chunk container                                                                                                   # chunkContainerDest
     ;
 
 menu
@@ -409,6 +406,7 @@ cardPart
     | ordinal card                                                                                                      # ordinalCardPart
     | card factor                                                                                                       # expressionCardPart
     | card 'id' factor                                                                                                  # cardIdPart
+    | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
     ;
 
 bkgndPart
@@ -417,10 +415,6 @@ bkgndPart
     | ordinal background                                                                                                # ordinalBkgndPart
     | position background                                                                                               # positionBkgndPart
     | 'this' background                                                                                                 # thisBkgndPart
-    ;
-
-ordinal
-    : 'the'? ordinalValue                                                                                               # theOrdinalVal
     ;
 
 expression
@@ -485,9 +479,9 @@ zeroArgFunc
     | 'number' 'of' card field                                                                                          # numberOfCardFields
     | 'number' 'of' background? field                                                                                   # numberOfBkgndFields
     | 'number' 'of' 'menus'                                                                                             # numberOfMenusFunc
-    | 'number' 'of' card                                                                                                # numberOfCardsFunc
-    | 'number' 'of' 'marked' card                                                                                       # numberOfMarkedCards
-    | 'number' 'of' background ('in' 'this' 'stack')?                                                                   # numberOfBackgrounds
+    | 'number' 'of' cards (of 'this' 'stack')?                                                                          # numberOfCardsFunc
+    | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCards
+    | 'number' 'of' background (of 'this' 'stack')?                                                                     # numberOfBackgrounds
     | 'menus'                                                                                                           # menusFunc
     | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
     | 'params'                                                                                                          # paramsFunc
@@ -504,7 +498,7 @@ singleArgFunc
     | 'number' 'of' item                                                                                                # numberOfItemsFunc
     | 'number' 'of' line                                                                                                # numberOfLinesFunc
     | 'number' 'of' 'menuitems'                                                                                         # numberOfMenuItemsFunc
-    | 'number' 'of' card                                                                                                # numberOfBkgndCardsFunc
+    | 'number' 'of' cards                                                                                               # numberOfBkgndCardsFunc
     | 'random'                                                                                                          # randomFunc
     | 'sqrt'                                                                                                            # sqrtFunc
     | 'trunc'                                                                                                           # truncFunc
@@ -578,6 +572,10 @@ cardinalValue
     | 'ten'
     ;
 
+ordinal
+    : 'the'? ordinalValue                                                                                               # theOrdinalVal
+    ;
+
 ordinalValue
     : 'first'
     | 'second'
@@ -629,6 +627,7 @@ find
 // sensitive feature of HyperTalk.
 propertyName
     : 'marked'
+    | 'number'
     | 'id'
     | 'rect'
     | 'rectangle'
@@ -763,11 +762,14 @@ message
     | 'the'? 'message' 'window'
     ;
 
+cards
+    : 'cards'
+    | 'cds'
+    ;
+
 card
     : 'card'
-    | 'cards'
     | 'cd'
-    | 'cds'
     ;
 
 background

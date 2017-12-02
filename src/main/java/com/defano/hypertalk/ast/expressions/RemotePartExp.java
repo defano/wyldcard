@@ -8,6 +8,10 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+/**
+ * An expression referring to a button or field not on the presently active card. For example, 'the first card
+ * button of the next card).
+ */
 public class RemotePartExp extends PartExp {
 
     private final PartExp partExp;

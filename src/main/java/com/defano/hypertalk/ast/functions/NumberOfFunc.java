@@ -61,7 +61,7 @@ public class NumberOfFunc extends Expression {
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getMarkedCards().size());
             case BKGNDS:
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getBackgroundCount());
-            case BKGND_CARDS:
+            case CARDS_IN_BKGND:
                 BackgroundModel model = (BackgroundModel) HyperCard.getInstance().getStack().findPart(((PartExp) expression).evaluateAsSpecifier());
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(model.getId()).size());
             default:
