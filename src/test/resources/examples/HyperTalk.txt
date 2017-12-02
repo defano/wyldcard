@@ -50,7 +50,7 @@ on testConditionalBranching
     else put y
 
     if x > y then
-        put x
+        put x   -- a comment in here
         put y
     else if x > z then put z
 
@@ -317,7 +317,7 @@ on testCommands
     delete card field 1
     delete bg btn id 13
     delete the first cd btn
-    delete item 1 of the message box
+    delete item 1 of the msg box
     delete chars 13 to 27 of the middle line of card field x
 
     dial the last line of x

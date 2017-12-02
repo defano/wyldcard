@@ -37,8 +37,8 @@ script
 // Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
 // evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
 scriptlet
-    : nonEmptyStmnt scriptlet                                                                                           # statementScriptlet
-    | NEWLINE scriptlet                                                                                                 # whitespaceScriptlet
+    : statement? NEWLINE+ scriptlet EOF                                                                                 # statementScriptlet
+    | statement                                                                                                         # singleStatementScriptlet
     | EOF                                                                                                               # emptyScriptlet
     ;
 
@@ -57,9 +57,9 @@ handlerName
     | commandName   // Handlers can take the name of a command keyword (other keywords are disallowed)
     ;
 
-expressionList
+argumentList
     : factor                                                                                                            # singleExpArgList
-    | expressionList ',' factor                                                                                         # multiExpArgList
+    | argumentList ',' factor                                                                                           # multiExpArgList
     ;
 
 parameterList
@@ -68,13 +68,14 @@ parameterList
     ;
 
 statementList
-    : nonEmptyStmnt NEWLINE+ statementList                                                                              # multiStmntList
-    | nonEmptyStmnt NEWLINE+                                                                                            # singleStmntList
+    : statement? NEWLINE+ statementList                                                                                 # multiStmntList
+    | statement NEWLINE+                                                                                                # singleStmntList
     ;
 
-nonEmptyStmnt
+statement
     : commandStmnt                                                                                                      # nonEmptyCommandStmnt
     | expression                                                                                                        # nonEmptyExpStmnt
+    | messageStatement                                                                                                  # nonEmptyMsgStmnt
     | ifStatement                                                                                                       # nonEmptyIfStmnt
     | repeatStatement                                                                                                   # nonEmptyRepeatStmnt
     | globalStmnt                                                                                                       # nonEmptyGlobalStmnt
@@ -95,18 +96,24 @@ ifStatement
     ;
 
 thenStatement
-    : 'then' nonEmptyStmnt NEWLINE? elseStatement?                                                                      # thenSingleStmnt
+    : 'then' statement                                                                                                  # thenSingleLineStmnt
+    | 'then' statement NEWLINE? elseStatement?                                                                          # thenSingleStmnt
     | 'then' NEWLINE statementList (elseStatement | 'end' 'if')                                                         # thenStmntList
     ;
 
 elseStatement
-    : 'else' nonEmptyStmnt (NEWLINE 'end' 'if')?                                                                        # elseSingleStmt
+    : 'else' statement (NEWLINE 'end' 'if')?                                                                            # elseSingleStmt
     | 'else' NEWLINE statementList 'end' 'if'                                                                           # elseStmntList
     ;
 
 repeatStatement
     : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
     | 'repeat' repeatRange NEWLINE 'end' 'repeat'                                                                       # repeatEmpty
+    ;
+
+messageStatement
+    : ID                                                                                                                # noArgMsgCmdStmt
+    | ID argumentList                                                                                                   # argMsgCmdStmt
     ;
 
 commandStmnt
@@ -122,7 +129,7 @@ commandStmnt
     | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmdStmt
     | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmdStmt
     | 'click' 'at' expression                                                                                           # clickCmdStmt
-    | 'click' 'at' expression 'with' expressionList                                                                     # clickWithKeyCmdStmt
+    | 'click' 'at' expression 'with' argumentList                                                                       # clickWithKeyCmdStmt
     | 'close' 'file' expression                                                                                         # closeFileCmdStmt
     | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
@@ -141,7 +148,7 @@ commandStmnt
     | 'do' expression                                                                                                   # doCmdStmt
     | 'domenu' factor                                                                                                   # doMenuCmdStmt
     | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
-    | 'drag' 'from' expression 'to' expression 'with' expressionList                                                    # dragWithKeyCmdStmt
+    | 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
     | 'enable' part                                                                                                     # enablePartCmd
     | 'enable' menuItem                                                                                                 # enableMenuItemCmd
     | 'enable' menu                                                                                                     # enableMenuCmd
@@ -208,8 +215,6 @@ commandStmnt
     | 'write' expression 'to' 'file' factor                                                                             # writeFileCmd
     | 'write' expression 'to' 'file' factor 'at' ('eof' | 'end')                                                        # writeEndFileCmd
     | 'write' expression 'to' 'file' factor 'at' factor                                                                 # writeAtFileCmd
-    | ID                                                                                                                # noArgMsgCmdStmt
-    | ID expressionList                                                                                                 # argMsgCmdStmt
     ;
 
 musicExpression
@@ -416,10 +421,7 @@ bkgndPart
     ;
 
 expression
-    : constant                                                                                                          # constantExp
-    | functionCall                                                                                                      # functionExp
-    | factor                                                                                                            # factorExp
-    | chunk expression                                                                                                  # chunkExp
+    : factor                                                                                                            # factorExp
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
     | expression '^' expression                                                                                         # caratExp
@@ -436,6 +438,7 @@ expression
 factor
     : literal                                                                                                           # literalFactor
     | ID                                                                                                                # idFactor
+    | functionCall                                                                                                      # functionExp
     | part                                                                                                              # partFactor
     | 'the'? 'selection'                                                                                                # selectionFactor
     | '(' expression ')'                                                                                                # expressionFactor
@@ -447,15 +450,14 @@ factor
 
 functionCall
     : builtInFunc                                                                                                       # builtInFuncCall
-    | ID '(' expressionList ')'                                                                                         # userArgFuncCall
-    | ID '(' ')'                                                                                                        # userNoArgFuncCall
+    | ID '(' argumentList? ')'                                                                                          # userArgFuncCall
     ;
 
 builtInFunc
     : 'the'? singleArgFunc of factor                                                                                    # builtinFuncOneArgs
     | singleArgFunc '(' factor ')'                                                                                      # builtinFuncOneArgs
     | 'the' zeroArgFunc                                                                                                 # builtinFuncNoArg
-    | multiArgFunc '(' expressionList ')'                                                                               # builtinFuncArgList
+    | multiArgFunc '(' argumentList ')'                                                                                 # builtinFuncArgList
     ;
 
 zeroArgFunc
@@ -621,8 +623,7 @@ find
     | 'find' 'international'?                                                                                           # searchableSubstring
     ;
 
-// Not all properties need to be enumerated here, only those sharing a name with another keyword. This is a context-
-// sensitive feature of HyperTalk.
+// Not all properties need to be enumerated here, only those sharing a name with another keyword.
 propertyName
     : 'marked'
     | 'number'
@@ -638,8 +639,7 @@ propertyName
     | ID
     ;
 
-// Not all values need to be enumerated here, only known values sharing a name with another keyword. This is a context-
-// sensitive feature of HyperTalk.
+// Not all property values need to be enumerated here, only known values sharing a name with another keyword.
 propertyValue
     : 'plain'                                                                                                           # propertyValueLiteral
     | 'menu'                                                                                                            # propertyValueLiteral
@@ -755,9 +755,9 @@ position
     ;
 
 message
-    : 'the'? 'message'
-    | 'the'? 'message' 'box'
-    | 'the'? 'message' 'window'
+    : 'the'? ('message' | 'msg')
+    | 'the'? ('message' | 'msg') 'box'
+    | 'the'? ('message' | 'msg') 'window'
     ;
 
 cards
@@ -870,7 +870,7 @@ fragment DIGIT
     ;
 
 COMMENT
-    : ('--' ~('\r' | '\n' | '|')*) NEWLINE -> skip
+    : ('--' ~('\r' | '\n' | '|')*) -> skip
     ;
 
 NEWLINE

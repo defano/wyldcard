@@ -22,7 +22,7 @@ public class StatementList extends Statement {
     }
 
     public StatementList append (Statement s) {
-        list.add(s);
+        list.add(0, s);
         return this;
     }
 

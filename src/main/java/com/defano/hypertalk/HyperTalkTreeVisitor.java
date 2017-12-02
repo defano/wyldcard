@@ -17,8 +17,6 @@ import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import javax.swing.plaf.nimbus.State;
-
 /**
  * Converts an Antlr parse tree into a HyperTalk abstract syntax tree using Antlr's visitor pattern. The HyperTalk
  * grammar is defined in HyperTalk.g4.
@@ -551,12 +549,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitStatementScriptlet(HyperTalkParser.StatementScriptletContext ctx) {
         Script script = (Script) visit(ctx.scriptlet());
-        return script.insertStatement((Statement) visit(ctx.nonEmptyStmnt()));
+        return script.insertStatement((Statement) visit(ctx.statement()));
     }
 
     @Override
-    public Object visitWhitespaceScriptlet(HyperTalkParser.WhitespaceScriptletContext ctx) {
-        return visit(ctx.scriptlet());
+    public Object visitSingleStatementScriptlet(HyperTalkParser.SingleStatementScriptletContext ctx) {
+        Script script = new Script();
+        return script.insertStatement((Statement) visit(ctx.statement()));
     }
 
     @Override
@@ -588,26 +587,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), statements);
     }
 
-    //    @Override
-//    public Object visitPopulatedHandler(HyperTalkParser.PopulatedHandlerContext ctx) {
-//        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (StatementList) visit(ctx.statementList()));
-//    }
-//
-//    @Override
-//    public Object visitPopulatedArgHandler(HyperTalkParser.PopulatedArgHandlerContext ctx) {
-//        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
-//    }
-//
-//    @Override
-//    public Object visitPopulatedFunction(HyperTalkParser.PopulatedFunctionContext ctx) {
-//        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new ParameterList(), (StatementList) visit(ctx.statementList()));
-//    }
-//
-//    @Override
-//    public Object visitPopulatedArgFunction(HyperTalkParser.PopulatedArgFunctionContext ctx) {
-//        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), (StatementList) visit(ctx.statementList()));
-//    }
-
     @Override
     public Object visitHandlerName(HyperTalkParser.HandlerNameContext ctx) {
         return super.visitHandlerName(ctx);
@@ -620,7 +599,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMultiExpArgList(HyperTalkParser.MultiExpArgListContext ctx) {
-        ExpressionList argumentList = (ExpressionList) visit(ctx.expressionList());
+        ExpressionList argumentList = (ExpressionList) visit(ctx.argumentList());
         argumentList.addArgument((Expression) visit(ctx.factor()));
         return argumentList;
     }
@@ -639,13 +618,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSingleStmntList(HyperTalkParser.SingleStmntListContext ctx) {
-        return new StatementList(ctx, (Statement) visit(ctx.nonEmptyStmnt()));
+        return new StatementList(ctx, (Statement) visit(ctx.statement()));
     }
 
     @Override
     public Object visitMultiStmntList(HyperTalkParser.MultiStmntListContext ctx) {
         StatementList statementList = (StatementList) visit(ctx.statementList());
-        statementList.append((Statement) visit(ctx.nonEmptyStmnt()));
+        statementList.append((Statement) visit(ctx.statement()));
         return statementList;
     }
 
@@ -677,6 +656,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNonEmptyExpStmnt(HyperTalkParser.NonEmptyExpStmntContext ctx) {
         return new ExpressionStatement(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitNonEmptyMsgStmnt(HyperTalkParser.NonEmptyMsgStmntContext ctx) {
+        return super.visitNonEmptyMsgStmnt(ctx);
     }
 
     @Override
@@ -746,7 +730,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitClickWithKeyCmdStmt(HyperTalkParser.ClickWithKeyCmdStmtContext ctx) {
-        return new ClickCmd(ctx, (Expression) visit(ctx.expression()), (ExpressionList) visit(ctx.expressionList()));
+        return new ClickCmd(ctx, (Expression) visit(ctx.expression()), (ExpressionList) visit(ctx.argumentList()));
     }
 
     @Override
@@ -756,7 +740,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDragWithKeyCmdStmt(HyperTalkParser.DragWithKeyCmdStmtContext ctx) {
-        return new DragCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (ExpressionList) visit(ctx.expressionList()));
+        return new DragCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (ExpressionList) visit(ctx.argumentList()));
     }
 
     @Override
@@ -851,7 +835,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitArgMsgCmdStmt(HyperTalkParser.ArgMsgCmdStmtContext ctx) {
-        return new MessageCmd(ctx, (String) visit(ctx.ID()), (ExpressionList) visit(ctx.expressionList()));
+        return new MessageCmd(ctx, (String) visit(ctx.ID()), (ExpressionList) visit(ctx.argumentList()));
     }
 
     @Override
@@ -1085,8 +1069,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitThenSingleLineStmnt(HyperTalkParser.ThenSingleLineStmntContext ctx) {
+        return new ThenElseBlock((Statement) visit(ctx.statement()), null);
+    }
+
+    @Override
     public Object visitThenSingleStmnt(HyperTalkParser.ThenSingleStmntContext ctx) {
-        return new ThenElseBlock((Statement) visit(ctx.nonEmptyStmnt()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
+        return new ThenElseBlock((Statement) visit(ctx.statement()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
     }
 
     @Override
@@ -1096,7 +1085,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitElseSingleStmt(HyperTalkParser.ElseSingleStmtContext ctx) {
-        return visit(ctx.nonEmptyStmnt());
+        return visit(ctx.statement());
     }
 
     @Override
@@ -1596,11 +1585,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
     }
 
-    @Override
-    public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
-        return new ChunkExp(ctx, (Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
-    }
-
+//    @Override
+//    public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
+//        return new ChunkExp(ctx, (Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
+//    }
+//
     @Override
     public Object visitOrExp(HyperTalkParser.OrExpContext ctx) {
         return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.OR, (Expression) visit(ctx.expression(1)));
@@ -1641,10 +1630,10 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         return new UnaryOperatorExp(ctx, UnaryOperator.NEGATE, (Expression) visit(ctx.expression()));
     }
 
-    @Override
-    public Object visitConstantExp(HyperTalkParser.ConstantExpContext ctx) {
-        return visit(ctx.constant());
-    }
+//    @Override
+//    public Object visitConstantExp(HyperTalkParser.ConstantExpContext ctx) {
+//        return visit(ctx.constant());
+//    }
 
     @Override
     public Object visitNotExp(HyperTalkParser.NotExpContext ctx) {
@@ -1658,12 +1647,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitUserArgFuncCall(HyperTalkParser.UserArgFuncCallContext ctx) {
-        return new UserFunctionExp(ctx, (String) visit(ctx.ID()), (ExpressionList) visit(ctx.expressionList()));
-    }
-
-    @Override
-    public Object visitUserNoArgFuncCall(HyperTalkParser.UserNoArgFuncCallContext ctx) {
-        return new UserFunctionExp(ctx, (String) visit(ctx.ID()), new ExpressionList());
+        ExpressionList args = ctx.argumentList() == null ? new ExpressionList(ctx) : (ExpressionList) visit(ctx.argumentList());
+        return new UserFunctionExp(ctx, (String) visit(ctx.ID()), args);
     }
 
     @Override
@@ -1970,14 +1955,14 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitBuiltinFuncArgList(HyperTalkParser.BuiltinFuncArgListContext ctx) {
         switch ((BuiltInFunction) visit(ctx.multiArgFunc())) {
-            case MIN: return new MinFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case MAX: return new MaxFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case SUM: return new SumFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case AVERAGE: return new AverageFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case RANDOM: return new RandomFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case ANNUITY: return new AnnuityFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case COMPOUND: return new CompoundFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
-            case OFFSET: return new OffsetFunc(ctx, (ExpressionList) visit(ctx.expressionList()));
+            case MIN: return new MinFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case MAX: return new MaxFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case SUM: return new SumFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case AVERAGE: return new AverageFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case RANDOM: return new RandomFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case ANNUITY: return new AnnuityFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case COMPOUND: return new CompoundFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
+            case OFFSET: return new OffsetFunc(ctx, (ExpressionList) visit(ctx.argumentList()));
             default: throw new RuntimeException("Bug! Unimplemented arg-list function: " + ctx.multiArgFunc().getText());
         }
     }
