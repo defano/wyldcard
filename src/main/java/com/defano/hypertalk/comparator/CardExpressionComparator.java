@@ -38,21 +38,20 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     @Override
     public int compare(CardModel o1, CardModel o2) {
         try {
-            PartSpecifier oldMe = ExecutionContext.getContext().hasMe() ? ExecutionContext.getContext().getMe() : null;
-
             // Evaluate expression in the context of card o1
             ExecutionContext.getContext().setCurrentCard(acquire(o1));
-            ExecutionContext.getContext().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId()));
+            ExecutionContext.getContext().pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId()));
             Value o1Value = expression.evaluate();
+            ExecutionContext.getContext().popMe();
 
             // Evaluate expression in the context of card o2
             ExecutionContext.getContext().setCurrentCard(acquire(o2));
-            ExecutionContext.getContext().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId()));
+            ExecutionContext.getContext().pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId()));
             Value o2Value = expression.evaluate();
+            ExecutionContext.getContext().popMe();
 
             // Stop overriding card context in this thread
             ExecutionContext.getContext().setCurrentCard(null);
-            ExecutionContext.getContext().setMe(oldMe);
 
             if (direction == SortDirection.ASCENDING) {
                 return o1Value.compareTo(o2Value, sortStyle);

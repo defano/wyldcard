@@ -35,7 +35,7 @@ public class HandlerExecutionTask implements Callable<String> {
         List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();
 
         ExecutionContext.getContext().pushContext();
-        ExecutionContext.getContext().setMe(me);
+        ExecutionContext.getContext().pushMe(me);
         ExecutionContext.getContext().setParams(evaluatedArguments);
         ExecutionContext.getContext().setMessage(handler.name);
 
@@ -60,7 +60,9 @@ public class HandlerExecutionTask implements Callable<String> {
         }
 
         String passedMessage = ExecutionContext.getContext().getPassedMessage();
+
         ExecutionContext.getContext().popContext();
+        ExecutionContext.getContext().popMe();
 
         return passedMessage;
     }

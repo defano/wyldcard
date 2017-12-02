@@ -79,8 +79,8 @@ nonEmptyStmnt
     | repeatStatement                                                                                                   # nonEmptyRepeatStmnt
     | globalStmnt                                                                                                       # nonEmptyGlobalStmnt
     | returnStmnt                                                                                                       # nonEmptyReturnStmnt
-    | expression                                                                                                        # nonEmptyExpStmnt
     | commandStmnt                                                                                                      # nonEmptyCommandStmnt
+    | expression                                                                                                        # nonEmptyExpStmnt
     ;
 
 globalStmnt

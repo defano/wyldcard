@@ -25,7 +25,7 @@ public class SendCmd extends Command {
     }
 
     public void onExecute() throws HtException {
-        ExecutionContext.getContext().setMe(part.evaluateAsSpecifier());
+        ExecutionContext.getContext().pushMe(part.evaluateAsSpecifier());
 
         MessageCmd messageCmd = interpretMessage(message.evaluate().stringValue());
         if (messageCmd == null) {
@@ -33,6 +33,8 @@ public class SendCmd extends Command {
         } else {
             messageCmd.onExecute();
         }
+
+        ExecutionContext.getContext().popMe();
     }
 
     private MessageCmd interpretMessage(String message) {

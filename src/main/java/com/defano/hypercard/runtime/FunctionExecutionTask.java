@@ -32,7 +32,7 @@ public class FunctionExecutionTask implements Callable<Value> {
         List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();
 
         ExecutionContext.getContext().pushContext();
-        ExecutionContext.getContext().setMe(me);
+        ExecutionContext.getContext().pushMe(me);
         ExecutionContext.getContext().setParams(evaluatedArguments);
         ExecutionContext.getContext().setMessage(function.name);
 
@@ -58,8 +58,10 @@ public class FunctionExecutionTask implements Callable<Value> {
         }
 
         Value returnValue = ExecutionContext.getContext().getReturnValue();
+
         ExecutionContext.getContext().popContext();
-        
+        ExecutionContext.getContext().popMe();
+
         return returnValue;
     }
 }

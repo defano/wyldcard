@@ -31,7 +31,7 @@ public class ExecutionContext {
      */
     private final ThreadLocal<Stack<StackFrame>> stack = new ThreadLocal<>();
     private final ThreadLocal<StackFrame> frame = new ThreadLocal<>();
-    private final ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
+    private final ThreadLocal<Stack<PartSpecifier>> me = new ThreadLocal<>();
     private final ThreadLocal<Value> result = new ThreadLocal<>();
     private final ThreadLocal<CardPart> card = new ThreadLocal<>();
 
@@ -342,8 +342,12 @@ public class ExecutionContext {
      *
      * @param me The part referred to as 'me'
      */
-    public void setMe (PartSpecifier me) {
-        this.me.set(me);
+    public void pushMe(PartSpecifier me) {
+        getMeStack().push(me);
+    }
+
+    public PartSpecifier popMe() {
+        return getMeStack().pop();
     }
 
     /**
@@ -353,11 +357,11 @@ public class ExecutionContext {
      * @throws HtSemanticException Thrown if no part is bound to 'me' in this context
      */
     public PartSpecifier getMe () throws HtSemanticException {
-        if (me.get() == null) {
+        if (getMeStack().size() == 0) {
             throw new HtSemanticException("Can't refer to 'me' in this context.");
         }
 
-        return this.me.get();
+        return getMeStack().peek();
     }
 
     /**
@@ -401,6 +405,14 @@ public class ExecutionContext {
         } else {
             throw new PartException("No such part.");
         }
+    }
+
+    private Stack<PartSpecifier> getMeStack() {
+        if (this.me.get() == null) {
+            this.me.set(new Stack<>());
+        }
+
+        return this.me.get();
     }
 
     private Stack<StackFrame> getStack() {
