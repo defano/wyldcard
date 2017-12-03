@@ -340,7 +340,7 @@ container
     : ID                                                                                                                # variableDest
     | 'the'? 'selection'                                                                                                # selectionDest
     | part                                                                                                              # partDest
-    | partProperty                                                                                                      # propertyDest
+    | property                                                                                                          # propertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
     | message                                                                                                           # messageDest
@@ -426,12 +426,33 @@ expression
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
     | expression '^' expression                                                                                         # caratExp
-    | expression op=('mod'|'div'|'/'|'*') expression                                                                    # multiplicationExp
-    | expression op=('+'|'-') expression                                                                                # additionExp
+    | expression op=('mod'
+            | 'div'
+            | '/'
+            | '*') expression                                                                                           # multiplicationExp
+    | expression op=('+'
+            | '-') expression                                                                                           # additionExp
     | expression op=('&&'|'&') expression                                                                               # concatExp
-    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is a'|'is an'|'is not a'|'is not an') expression     # equalityExp
-    | expression op=('='|'is not'|'is'|'<>'|'≠'|'is not in') expression                                                 # comparisonExp
-    | expression op=('is within' | 'is not within') expression                                                          # withinExp
+    | expression op=('>='
+            | '<='
+            | '≤'
+            | '≥'
+            | '<'
+            | '>'
+            | 'contains'
+            | 'is in'
+            | 'is not in'
+            | 'is a'
+            | 'is an'
+            | 'is not a'
+            | 'is not an'
+            | 'is within'
+            | 'is not within') expression                                                                               # equalityExp
+    | expression op=('='
+            | 'is not'
+            | 'is'
+            | '<>'
+            | '≠') expression                                                                                           # comparisonExp
     | expression 'and' expression                                                                                       # andExp
     | expression 'or' expression                                                                                        # orExp
     ;
@@ -443,7 +464,7 @@ factor
     | part                                                                                                              # partFactor
     | 'the'? 'selection'                                                                                                # selectionFactor
     | '(' expression ')'                                                                                                # expressionFactor
-    | partProperty                                                                                                      # partPropertyFactor
+    | property                                                                                                          # partPropertyFactor
     | menu                                                                                                              # menuFactor
     | menuItem                                                                                                          # menuItemFactor
     | chunk factor                                                                                                      # chunkFactorChunk
@@ -487,6 +508,22 @@ zeroArgFunc
     | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
     | 'params'                                                                                                          # paramsFunc
     | 'paramcount'                                                                                                      # paramCountFunc
+    | 'sound'                                                                                                           # propDelegatedFunc
+    | 'selectedtext'                                                                                                    # propDelegatedFunc
+    | 'selectedchunk'                                                                                                   # propDelegatedFunc
+    | 'selectedfield'                                                                                                   # propDelegatedFunc
+    | 'selectedline'                                                                                                    # propDelegatedFunc
+    | 'clicktext'                                                                                                       # propDelegatedFunc
+    | 'mouseh'                                                                                                          # propDelegatedFunc
+    | 'mousev'                                                                                                          # propDelegatedFunc
+    | 'screenrect'                                                                                                      # propDelegatedFunc
+    | 'clickloc'                                                                                                        # propDelegatedFunc
+    | 'clickh'                                                                                                          # propDelegatedFunc
+    | 'clickv'                                                                                                          # propDelegatedFunc
+    | 'foundchunk'                                                                                                      # propDelegatedFunc
+    | 'foundfield'                                                                                                      # propDelegatedFunc
+    | 'foundline'                                                                                                       # propDelegatedFunc
+    | 'foundtext'                                                                                                       # propDelegatedFunc
     ;
 
 singleArgFunc
@@ -590,6 +627,7 @@ ordinalValue
     | 'tenth'
     | ('mid' | 'middle')
     | 'last'
+    | 'any'
     ;
 
 mouseState

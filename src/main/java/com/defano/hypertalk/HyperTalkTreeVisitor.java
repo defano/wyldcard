@@ -516,7 +516,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertyDest(HyperTalkParser.PropertyDestContext ctx) {
-        return new PropertyContainer((PropertySpecifier) visit(ctx.partProperty()));
+        return new PropertyContainer((PropertySpecifier) visit(ctx.property()));
     }
 
     @Override
@@ -1586,16 +1586,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitWithinExp(HyperTalkParser.WithinExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
-    }
-
-//    @Override
-//    public Object visitChunkExp(HyperTalkParser.ChunkExpContext ctx) {
-//        return new ChunkExp(ctx, (Chunk) visit(ctx.chunk()), (Expression) visit(ctx.expression()));
-//    }
-//
-    @Override
     public Object visitOrExp(HyperTalkParser.OrExpContext ctx) {
         return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.OR, (Expression) visit(ctx.expression(1)));
     }
@@ -1738,7 +1728,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPartPropertyFactor(HyperTalkParser.PartPropertyFactorContext ctx) {
-        return new PropertyExp(ctx, (PropertySpecifier) visit(ctx.partProperty()));
+        return new PropertyExp(ctx, (PropertySpecifier) visit(ctx.property()));
     }
 
     @Override
@@ -1947,6 +1937,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case DISK_SPACE: return new DiskSpaceFunc(ctx);
             case PARAM_COUNT: return new ParamCountFunc(ctx);
             case PARAMS: return new ParamsFunc(ctx);
+            case PROPERTY_DELEGATED: return new PropertyDelegatedFunc(ctx, ctx.zeroArgFunc().getText());
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -2057,6 +2048,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitParamCountFunc(HyperTalkParser.ParamCountFuncContext ctx) {
         return BuiltInFunction.PARAM_COUNT;
+    }
+
+    @Override
+    public Object visitPropDelegatedFunc(HyperTalkParser.PropDelegatedFuncContext ctx) {
+        return BuiltInFunction.PROPERTY_DELEGATED;
     }
 
     @Override

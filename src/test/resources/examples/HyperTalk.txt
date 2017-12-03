@@ -76,6 +76,13 @@ end testConditionalBranching
 on testLoops
 
     repeat for x
+    end repeat
+
+    repeat for x
+        -- comment
+    end repeat
+
+    repeat for x
 
     end repeat
 
@@ -99,6 +106,16 @@ on testLoops
         put n
     end repeat
 end testLoops
+
+--
+-- Properties
+--
+
+on parseProperties
+    the itemdelimiter
+    put "," into the itemdelimiter
+
+end parseProperties
 
 --
 -- Functions
@@ -409,6 +426,7 @@ on testCommands
     play flute x
     play harpsichord y
     play boing tempo x y
+    wait until the sound is done
 
     pop card
     push card
@@ -696,21 +714,25 @@ on chunkTest
     char 1 of x
     the last char of x
     the middle character of x
+    any character of x
 
     the second word of x
     word 2 of x
     the last word of x
     the middle word of x
+    any word of x
 
     the third item of x
     item 3 of x
     the last item of x
     the middle item of x
+    any item of x
 
     the fourth line of x
     line 3 of x
     the last line of x
     the middle line of x
+    any line of x
 
     -- Ranged chunks
     char 1 to 2 of x
