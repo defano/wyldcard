@@ -567,13 +567,13 @@ multiArgFunc
     ;
 
 literal
-    : constant
-    | modifierKey
-    | mouseState
-    | knownType
-    | LITERAL
-    | TWO_ITEM_LIST
-    | FOUR_ITEM_LIST
+    : constant                                                                                                          # constantExp
+    | modifierKey                                                                                                       # literalExp
+    | mouseState                                                                                                        # literalExp
+    | knownType                                                                                                         # literalExp
+    | LITERAL                                                                                                           # literalExp
+    | TWO_ITEM_LIST                                                                                                     # literalExp
+    | FOUR_ITEM_LIST                                                                                                    # literalExp
     ;
 
 preposition

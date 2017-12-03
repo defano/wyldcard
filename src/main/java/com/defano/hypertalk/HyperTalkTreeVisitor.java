@@ -1753,52 +1753,52 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitEmptyExp(HyperTalkParser.EmptyExpContext ctx) {
-        return new LiteralExp(ctx, "");
+        return new Value("");
     }
 
     @Override
     public Object visitPiExp(HyperTalkParser.PiExpContext ctx) {
-        return new LiteralExp(ctx, "3.14159265358979323846");
+        return new Value("3.14159265358979323846");
     }
 
     @Override
     public Object visitQuoteExp(HyperTalkParser.QuoteExpContext ctx) {
-        return new LiteralExp(ctx, "\"");
+        return new Value("\"");
     }
 
     @Override
     public Object visitReturnExp(HyperTalkParser.ReturnExpContext ctx) {
-        return new LiteralExp(ctx, "\n");
+        return new Value("\n");
     }
 
     @Override
     public Object visitSpaceExp(HyperTalkParser.SpaceExpContext ctx) {
-        return new LiteralExp(ctx, " ");
+        return new Value(" ");
     }
 
     @Override
     public Object visitTabExp(HyperTalkParser.TabExpContext ctx) {
-        return new LiteralExp(ctx, "\t");
+        return new Value("\t");
     }
 
     @Override
     public Object visitFormFeedExp(HyperTalkParser.FormFeedExpContext ctx) {
-        return new LiteralExp(ctx, "\f");
+        return new Value("\f");
     }
 
     @Override
     public Object visitLineFeedExp(HyperTalkParser.LineFeedExpContext ctx) {
-        return new LiteralExp(ctx, "\n");
+        return new Value("\n");
     }
 
     @Override
     public Object visitCommaExp(HyperTalkParser.CommaExpContext ctx) {
-        return new LiteralExp(ctx, ",");
+        return new Value(",");
     }
 
     @Override
     public Object visitColonExp(HyperTalkParser.ColonExpContext ctx) {
-        return new LiteralExp(ctx, ":");
+        return new Value(":");
     }
 
     @Override
@@ -2024,7 +2024,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitLiteral(HyperTalkParser.LiteralContext ctx) {
+    public Object visitConstantExp(HyperTalkParser.ConstantExpContext ctx) {
+        return super.visitConstantExp(ctx);
+    }
+
+    @Override
+    public Object visitLiteralExp(HyperTalkParser.LiteralExpContext ctx) {
         String literal = ctx.getText();
 
         // Drop quotes from quoted string literal when converting a value
