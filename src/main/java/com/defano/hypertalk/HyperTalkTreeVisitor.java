@@ -594,13 +594,13 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSingleExpArgList(HyperTalkParser.SingleExpArgListContext ctx) {
-        return new ExpressionList((Expression) visit(ctx.factor()));
+        return new ExpressionList((Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitMultiExpArgList(HyperTalkParser.MultiExpArgListContext ctx) {
         ExpressionList argumentList = (ExpressionList) visit(ctx.argumentList());
-        argumentList.addArgument((Expression) visit(ctx.factor()));
+        argumentList.addArgument((Expression) visit(ctx.expression()));
         return argumentList;
     }
 
@@ -631,6 +631,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNonEmptyCommandStmnt(HyperTalkParser.NonEmptyCommandStmntContext ctx) {
         return visit(ctx.commandStmnt());
+    }
+
+    @Override
+    public Object visitNonEmptyFuncStmnt(HyperTalkParser.NonEmptyFuncStmntContext ctx) {
+        return new ExpressionStatement(ctx, (Expression) visit(ctx.functionCall()));
     }
 
     @Override
@@ -1629,11 +1634,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     public Object visitNegateExp(HyperTalkParser.NegateExpContext ctx) {
         return new UnaryOperatorExp(ctx, UnaryOperator.NEGATE, (Expression) visit(ctx.expression()));
     }
-
-//    @Override
-//    public Object visitConstantExp(HyperTalkParser.ConstantExpContext ctx) {
-//        return visit(ctx.constant());
-//    }
 
     @Override
     public Object visitNotExp(HyperTalkParser.NotExpContext ctx) {

@@ -58,8 +58,8 @@ handlerName
     ;
 
 argumentList
-    : factor                                                                                                            # singleExpArgList
-    | argumentList ',' factor                                                                                           # multiExpArgList
+    : expression                                                                                                        # singleExpArgList
+    | argumentList ',' expression                                                                                       # multiExpArgList
     ;
 
 parameterList
@@ -74,8 +74,9 @@ statementList
 
 statement
     : commandStmnt                                                                                                      # nonEmptyCommandStmnt
-    | expression                                                                                                        # nonEmptyExpStmnt
+    | functionCall                                                                                                      # nonEmptyFuncStmnt
     | messageStatement                                                                                                  # nonEmptyMsgStmnt
+    | expression                                                                                                        # nonEmptyExpStmnt
     | ifStatement                                                                                                       # nonEmptyIfStmnt
     | repeatStatement                                                                                                   # nonEmptyRepeatStmnt
     | globalStmnt                                                                                                       # nonEmptyGlobalStmnt
