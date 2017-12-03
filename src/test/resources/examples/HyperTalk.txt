@@ -765,6 +765,14 @@ on messages
     doSomething cool, andFun
 end messages
 
+on emptyHandler
+
+end emptyHandler
+
+on commentHandler
+    -- comment
+end commentHandler
+
 on noArgHandler
 end noArgHandler
 

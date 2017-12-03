@@ -43,13 +43,13 @@ scriptlet
     ;
 
 handler
-    : 'on' handlerName NEWLINE statementList? 'end' handlerName                                                         # noArgHandler
-    | 'on' handlerName parameterList NEWLINE statementList? 'end' handlerName                                           # argHandler
+    : 'on' handlerName NEWLINE+ statementList? 'end' handlerName                                                         # noArgHandler
+    | 'on' handlerName parameterList NEWLINE+ statementList? 'end' handlerName                                           # argHandler
     ;
 
 function
-    : 'function' ID NEWLINE statementList? 'end' ID                                                                     # noArgFunction
-    | 'function' ID parameterList NEWLINE statementList? 'end' ID                                                       # argFunction
+    : 'function' ID NEWLINE+ statementList? 'end' ID                                                                     # noArgFunction
+    | 'function' ID parameterList NEWLINE+ statementList? 'end' ID                                                       # argFunction
     ;
 
 handlerName
