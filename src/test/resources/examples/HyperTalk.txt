@@ -24,6 +24,10 @@ end mouseUp
 on testConditionalBranching
     if x < y then put x
 
+    if x then
+
+    end if
+
     if x < y then
         put x
     end if
@@ -70,6 +74,11 @@ on testConditionalBranching
 end testConditionalBranching
 
 on testLoops
+
+    repeat for x
+
+    end repeat
+
     repeat
         put w
     end repeat

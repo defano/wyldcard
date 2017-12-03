@@ -98,7 +98,7 @@ ifStatement
 thenStatement
     : 'then' statement                                                                                                  # thenSingleLineStmnt
     | 'then' statement NEWLINE? elseStatement?                                                                          # thenSingleStmnt
-    | 'then' NEWLINE statementList (elseStatement | 'end' 'if')                                                         # thenStmntList
+    | 'then' NEWLINE statementList? (elseStatement | 'end' 'if')                                                         # thenStmntList
     ;
 
 elseStatement
@@ -108,7 +108,7 @@ elseStatement
 
 repeatStatement
     : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
-    | 'repeat' repeatRange NEWLINE 'end' 'repeat'                                                                       # repeatEmpty
+    | 'repeat' repeatRange NEWLINE+ 'end' 'repeat'                                                                       # repeatEmpty
     ;
 
 messageStatement
