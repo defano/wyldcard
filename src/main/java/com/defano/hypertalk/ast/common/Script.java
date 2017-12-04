@@ -44,7 +44,7 @@ public class Script {
             this.statements = new StatementList(null);
         }
 
-        this.statements.list.add(0, statement);
+        this.statements.list.add(statement);
         return this;
     }
 

@@ -22,8 +22,27 @@ end mouseUp
 --
 
 on testConditionalBranching
+
+    if x
+    then doSomethingCool
+
+    if x
+    then
+    end if
+
+    if x then
+        -- comment body
+    end if
+
+    if x then
+        -- comment body
+    else
+        -- comment body
+    end if
+
     if x < y then put x
 
+    -- empty body
     if x then
 
     end if

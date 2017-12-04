@@ -37,19 +37,21 @@ script
 // Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
 // evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
 scriptlet
-    : statement? NEWLINE+ scriptlet EOF                                                                                 # statementScriptlet
-    | statement                                                                                                         # singleStatementScriptlet
+    : statement                                                                                                         # singleStatementScriptlet
+    | scriptlet NEWLINE statement NEWLINE?                                                                              # statementScriptlet
+    | NEWLINE scriptlet EOF                                                                                             # whitespaceScriptlet
+    | scriptlet NEWLINE                                                                                                 # whitespaceScriptlet
     | EOF                                                                                                               # emptyScriptlet
     ;
 
 handler
-    : 'on' handlerName NEWLINE+ statementList? 'end' handlerName                                                         # noArgHandler
-    | 'on' handlerName parameterList NEWLINE+ statementList? 'end' handlerName                                           # argHandler
+    : 'on' handlerName NEWLINE+ statementList? 'end' handlerName                                                        # noArgHandler
+    | 'on' handlerName parameterList NEWLINE+ statementList? 'end' handlerName                                          # argHandler
     ;
 
 function
-    : 'function' ID NEWLINE+ statementList? 'end' ID                                                                     # noArgFunction
-    | 'function' ID parameterList NEWLINE+ statementList? 'end' ID                                                       # argFunction
+    : 'function' ID NEWLINE+ statementList? 'end' ID                                                                    # noArgFunction
+    | 'function' ID parameterList NEWLINE+ statementList? 'end' ID                                                      # argFunction
     ;
 
 handlerName
@@ -97,19 +99,19 @@ ifStatement
     ;
 
 thenStatement
-    : 'then' statement                                                                                                  # thenSingleLineStmnt
-    | 'then' statement NEWLINE? elseStatement?                                                                          # thenSingleStmnt
-    | 'then' NEWLINE statementList? (elseStatement | 'end' 'if')                                                         # thenStmntList
+    : NEWLINE? 'then' statement                                                                                         # thenSingleLineStmnt
+    | NEWLINE? 'then' statement NEWLINE? elseStatement?                                                                 # thenSingleStmnt
+    | NEWLINE? 'then' NEWLINE+ statementList? (elseStatement | 'end' 'if')                                              # thenStmntList
     ;
 
 elseStatement
-    : 'else' statement (NEWLINE 'end' 'if')?                                                                            # elseSingleStmt
-    | 'else' NEWLINE statementList 'end' 'if'                                                                           # elseStmntList
+    : 'else' statement (NEWLINE+ 'end' 'if')?                                                                           # elseSingleStmt
+    | 'else' NEWLINE+ statementList? 'end' 'if'                                                                         # elseStmntList
     ;
 
 repeatStatement
     : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
-    | 'repeat' repeatRange NEWLINE+ 'end' 'repeat'                                                                       # repeatEmpty
+    | 'repeat' repeatRange NEWLINE+ 'end' 'repeat'                                                                      # repeatEmpty
     ;
 
 messageStatement
@@ -136,7 +138,7 @@ commandStmnt
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
-    | 'create' 'menu' factor                                                                                            # createMenuCmdStmt
+    | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
     | 'delete' menu                                                                                                     # deleteMenuCmdStmt
     | 'delete' menuItem                                                                                                 # deleteMenuItemCmdStmt
     | 'delete' part                                                                                                     # deleteCmdStmt
@@ -147,7 +149,7 @@ commandStmnt
     | 'disable' menu                                                                                                    # disableMenuCmd
     | 'divide' container 'by' expression                                                                                # divideCmdStmnt
     | 'do' expression                                                                                                   # doCmdStmt
-    | 'domenu' factor                                                                                                   # doMenuCmdStmt
+    | 'domenu' expression                                                                                               # doMenuCmdStmt
     | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
     | 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
     | 'enable' part                                                                                                     # enablePartCmd
@@ -177,10 +179,10 @@ commandStmnt
     | 'push' destination                                                                                                # pushDestCmdStmt
     | 'put' expression                                                                                                  # putIntoCmd
     | 'put' expression preposition container                                                                            # putPrepositionCmd
-    | 'read' 'from' 'file' factor                                                                                       # readFileCmd
-    | 'read' 'from' 'file' factor 'for' factor                                                                          # readFileForCmd
-    | 'read' 'from' 'file' factor 'at' factor 'for' factor                                                              # readFileAtCmd
-    | 'read' 'from' 'file' factor 'until' factor                                                                        # readFileUntil
+    | 'read' 'from' 'file' expression                                                                                   # readFileCmd
+    | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
+    | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
+    | 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
     | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
     | 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
     | 'select' part                                                                                                     # selectPartCmd
@@ -213,16 +215,16 @@ commandStmnt
     | 'wait' 'for' factor timeUnit                                                                                      # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
     | 'wait' 'while' expression                                                                                         # waitWhileCmd
-    | 'write' expression 'to' 'file' factor                                                                             # writeFileCmd
-    | 'write' expression 'to' 'file' factor 'at' ('eof' | 'end')                                                        # writeEndFileCmd
-    | 'write' expression 'to' 'file' factor 'at' factor                                                                 # writeAtFileCmd
+    | 'write' expression 'to' 'file' expression                                                                         # writeFileCmd
+    | 'write' expression 'to' 'file' expression 'at' ('eof' | 'end')                                                    # writeEndFileCmd
+    | 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd
     ;
 
 musicExpression
-    : factor expression                                                                                                 # musicInstrumentNotes
-    | factor 'tempo' factor expression                                                                                  # musicInstrumentNotesTempo
-    | factor 'tempo' expression                                                                                         # musicInstrumentTempo
-    | factor                                                                                                            # musicInstrument
+    : expression expression                                                                                             # musicInstrumentNotes
+    | expression 'tempo' expression expression                                                                          # musicInstrumentNotesTempo
+    | expression 'tempo' expression                                                                                     # musicInstrumentTempo
+    | expression                                                                                                        # musicInstrument
     ;
 
 toolExpression
@@ -873,22 +875,18 @@ LITERAL
     | NUMBER_LITERAL
     ;
 
-fragment INTEGER_LITERAL
+INTEGER_LITERAL
     : DIGIT+
     ;
 
-fragment NUMBER_LITERAL
+NUMBER_LITERAL
     : INTEGER_LITERAL
-    | '-' INTEGER_LITERAL
     | '.' INTEGER_LITERAL
-    | '-' '.' INTEGER_LITERAL
     | INTEGER_LITERAL '.'
-    | '-' INTEGER_LITERAL '.'
     | INTEGER_LITERAL '.' INTEGER_LITERAL
-    | '-' INTEGER_LITERAL '.' INTEGER_LITERAL
     ;
 
-fragment STRING_LITERAL
+STRING_LITERAL
     : '"' ~('"' | '\r' | '\n')* '"'
     ;
 
@@ -900,11 +898,11 @@ FOUR_ITEM_LIST
     : (LITERAL ',' LITERAL ',' LITERAL ',' LITERAL)
     ;
 
-fragment ALPHA
+ALPHA
     : ('a' .. 'z' | 'A' .. 'Z')+
     ;
 
-fragment DIGIT
+DIGIT
     : ('0' .. '9')+
     ;
 

@@ -21,7 +21,7 @@ public class TestGrammar {
 
     @Test
     public void testGrammar() throws IOException, HtException {
-        InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/HyperTalk.txt");
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/Script.txt");
         String testScript = IOUtils.toString(in);
 
         long start = System.currentTimeMillis();

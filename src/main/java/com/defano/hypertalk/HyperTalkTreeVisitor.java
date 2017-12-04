@@ -547,6 +547,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWhitespaceScriptlet(HyperTalkParser.WhitespaceScriptletContext ctx) {
+        return visit(ctx.scriptlet());
+    }
+
+    @Override
     public Object visitStatementScriptlet(HyperTalkParser.StatementScriptletContext ctx) {
         Script script = (Script) visit(ctx.scriptlet());
         return script.insertStatement((Statement) visit(ctx.statement()));
@@ -890,17 +895,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMusicInstrumentNotes(HyperTalkParser.MusicInstrumentNotesContext ctx) {
-        return MusicSpecifier.forNotes((Expression) visit(ctx.factor()), (Expression) visit(ctx.expression()));
+        return MusicSpecifier.forNotes((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMusicInstrumentNotesTempo(HyperTalkParser.MusicInstrumentNotesTempoContext ctx) {
-        return MusicSpecifier.forNotesAndTempo((Expression) visit(ctx.factor(0)), (Expression) visit(ctx.expression()), (Expression) visit(ctx.factor(1)));
+        return MusicSpecifier.forNotesAndTempo((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(2)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMusicInstrumentTempo(HyperTalkParser.MusicInstrumentTempoContext ctx) {
-        return MusicSpecifier.forTempo((Expression) visit(ctx.factor()), (Expression) visit(ctx.expression()));
+        return MusicSpecifier.forTempo((Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
@@ -945,42 +950,42 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitWriteFileCmd(HyperTalkParser.WriteFileCmdContext ctx) {
-        return WriteCmd.writeFile(ctx, (Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
+        return WriteCmd.writeFile(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitWriteEndFileCmd(HyperTalkParser.WriteEndFileCmdContext ctx) {
-        return WriteCmd.appendFile(ctx, (Expression) visit(ctx.expression()), (Expression) visit(ctx.factor()));
+        return WriteCmd.appendFile(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitWriteAtFileCmd(HyperTalkParser.WriteAtFileCmdContext ctx) {
-        return WriteCmd.writeFileAt(ctx, (Expression) visit(ctx.expression()), (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
+        return WriteCmd.writeFileAt(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)));
     }
 
     @Override
     public Object visitReadFileCmd(HyperTalkParser.ReadFileCmdContext ctx) {
-        return ReadCmd.ofFile(ctx, (Expression) visit(ctx.factor()));
+        return ReadCmd.ofFile(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitReadFileForCmd(HyperTalkParser.ReadFileForCmdContext ctx) {
-        return ReadCmd.ofFileFor(ctx, (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
+        return ReadCmd.ofFileFor(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitReadFileAtCmd(HyperTalkParser.ReadFileAtCmdContext ctx) {
-        return ReadCmd.ofFileAt(ctx, (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)), (Expression) visit(ctx.factor(2)));
+        return ReadCmd.ofFileAt(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)));
     }
 
     @Override
     public Object visitReadFileUntil(HyperTalkParser.ReadFileUntilContext ctx) {
-        return ReadCmd.ofFileUntil(ctx, (Expression) visit(ctx.factor(0)), (Expression) visit(ctx.factor(1)));
+        return ReadCmd.ofFileUntil(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
     public Object visitMusicInstrument(HyperTalkParser.MusicInstrumentContext ctx) {
-        return MusicSpecifier.forDefault((Expression) visit(ctx.factor()));
+        return MusicSpecifier.forDefault((Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -1005,7 +1010,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDoMenuCmdStmt(HyperTalkParser.DoMenuCmdStmtContext ctx) {
-        return new DoMenuCmd(ctx, (Expression) visit(ctx.factor()));
+        return new DoMenuCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -1025,7 +1030,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCreateMenuCmdStmt(HyperTalkParser.CreateMenuCmdStmtContext ctx) {
-        return new CreateMenuCmd(ctx, (Expression) visit(ctx.factor()));
+        return new CreateMenuCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
