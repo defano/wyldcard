@@ -30,6 +30,11 @@ on testConditionalBranching
     then
     end if
 
+    if x
+    then
+    else
+    end if
+
     if x then
         -- comment body
     end if
@@ -133,6 +138,9 @@ end testLoops
 on parseProperties
     the itemdelimiter
     put "," into the itemdelimiter
+    set the itemdelimiter to "|"
+
+
 
 end parseProperties
 
@@ -187,6 +195,22 @@ on parseNoArgFunctions
     the diskspace
     the params
     the paramcount
+
+    the sound
+    the selectedtext
+    the selectedchunk
+    the selectedline
+    the clicktext
+    the mouseh
+    the mousev
+    the screenrect
+    the clickloc
+    the clickh
+    the clickv
+    the foundchunk
+    the foundfield
+    the foundline
+    the foundtext
 
 end parseNoArgFunctions
 
@@ -371,6 +395,7 @@ on testCommands
     disable card button "x"
     disable the first menuitem of the last menu
     disable menu "Edit"
+    disable (card field x)
 
     divide x by 3
     divide word 17 of x by the message window
@@ -674,6 +699,8 @@ on lexing
     -1.25
     2.
     -2.
+    3-2
+    -2-4
 
     -- Point & Rect Literals
     10,10
@@ -777,11 +804,12 @@ end chunkTest
 
 on messages
     f()
+    f(x)
     f(x,y,z)
 
-    doSomething
+    doSomething     -- with a comment
     doSomething cool
-    doSomething cool, andFun
+    doSomething cool, andFun   -- an another comment
 end messages
 
 on emptyHandler

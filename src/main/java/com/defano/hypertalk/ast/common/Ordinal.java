@@ -11,7 +11,9 @@ public enum Ordinal {
     EIGHTH(8, "eighth"),
     NINTH(9, "ninth"),
     TENTH(10, "tenth"),
-    
+
+    ANY(Integer.MAX_VALUE - 3, "any"),
+
     // MAX_VALUE - 2 is required to support "after the last char of..."
     LAST(Integer.MAX_VALUE - 2, "last"),
     

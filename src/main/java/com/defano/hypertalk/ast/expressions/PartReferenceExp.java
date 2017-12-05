@@ -10,11 +10,11 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartReferenceExp extends PartExp {
 
-    private final String symbol;
+    private final Expression partExpression;
 
-    public PartReferenceExp (ParserRuleContext context, String symbol) {
+    public PartReferenceExp (ParserRuleContext context, Expression partExpression) {
         super(context);
-        this.symbol = symbol;
+        this.partExpression = partExpression;
     }
 
     @Override
@@ -27,12 +27,12 @@ public class PartReferenceExp extends PartExp {
         return dereference().evaluate();
     }
 
-    private PartExp dereference() throws HtSemanticException {
-        Value value = ExecutionContext.getContext().getVariable(symbol);
-        Expression expression = Interpreter.dereference(value, PartExp.class);
+    private PartExp dereference() throws HtException {
+        Value evaluated = partExpression.evaluate();
+        Expression expression = Interpreter.dereference(evaluated, PartExp.class);
 
         if (expression == null) {
-            throw new HtSemanticException("Expected a part, but got " + value);
+            throw new HtSemanticException("Expected a part, but got " + evaluated);
         }
 
         return (PartExp) expression;

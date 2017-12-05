@@ -15,6 +15,7 @@ import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
@@ -66,7 +67,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitWaitCountCmd(HyperTalkParser.WaitCountCmdContext ctx) {
-        return new WaitCmd(ctx, (Expression) visit(ctx.factor()), (TimeUnit) visit(ctx.timeUnit()));
+        return new WaitCmd(ctx, (Expression) visit(ctx.expression()), (TimeUnit) visit(ctx.timeUnit()));
     }
 
     @Override
@@ -629,7 +630,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMultiStmntList(HyperTalkParser.MultiStmntListContext ctx) {
         StatementList statementList = (StatementList) visit(ctx.statementList());
-        statementList.append((Statement) visit(ctx.statement()));
+
+        if (ctx.statement() != null) {
+            statementList.append((Statement) visit(ctx.statement()));
+        }
+
         return statementList;
     }
 
@@ -850,22 +855,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFindAnywhere(HyperTalkParser.FindAnywhereContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.factor()), false);
+        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), false);
     }
 
     @Override
     public Object visitFindField(HyperTalkParser.FindFieldContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.factor()), (PartExp) visit(ctx.fieldPart()), false);
+        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), (PartExp) visit(ctx.fieldPart()), false);
     }
 
     @Override
     public Object visitFindMarkedCards(HyperTalkParser.FindMarkedCardsContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.factor()), true);
+        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), true);
     }
 
     @Override
     public Object visitFindFieldMarkedCards(HyperTalkParser.FindFieldMarkedCardsContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.factor()), (PartExp) visit(ctx.fieldPart()), true);
+        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), (PartExp) visit(ctx.fieldPart()), true);
     }
 
     @Override
@@ -1090,7 +1095,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitThenStmntList(HyperTalkParser.ThenStmntListContext ctx) {
-        return new ThenElseBlock((Statement) visit(ctx.statementList()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
+        return new ThenElseBlock(ctx.statementList() == null ? new StatementList(ctx) : (Statement) visit(ctx.statementList()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
     }
 
     @Override
@@ -1100,7 +1105,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitElseStmntList(HyperTalkParser.ElseStmntListContext ctx) {
-        return visit(ctx.statementList());
+        return ctx.statementList() == null ? new StatementList(ctx) : visit(ctx.statementList());
     }
 
     @Override
@@ -1421,8 +1426,18 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitPartRef(HyperTalkParser.PartRefContext ctx) {
-        return new PartReferenceExp(ctx, ctx.ID().getText());
+    public Object visitReferencePart(HyperTalkParser.ReferencePartContext ctx) {
+        return super.visitReferencePart(ctx);
+    }
+
+    @Override
+    public Object visitExpressionPartRef(HyperTalkParser.ExpressionPartRefContext ctx) {
+        return new PartReferenceExp(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitVariablePartRef(HyperTalkParser.VariablePartRefContext ctx) {
+        return new PartReferenceExp(ctx, new VariableExp(ctx, ctx.ID().getText()));
     }
 
     @Override
@@ -1707,6 +1722,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNegativeLiteralFactor(HyperTalkParser.NegativeLiteralFactorContext ctx) {
+        return new LiteralExp(ctx, new Value("-" + visit(ctx.literal())));
+    }
+
+    @Override
     public Object visitIdFactor(HyperTalkParser.IdFactorContext ctx) {
         return new VariableExp(ctx, (String) visit(ctx.ID()));
     }
@@ -1823,7 +1843,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitWaitForCountCmd(HyperTalkParser.WaitForCountCmdContext ctx) {
-        return new WaitCmd(ctx, (Expression) visit(ctx.factor()), (TimeUnit) visit(ctx.timeUnit()));
+        return new WaitCmd(ctx, (Expression) visit(ctx.expression()), (TimeUnit) visit(ctx.timeUnit()));
     }
 
     @Override
@@ -1873,18 +1893,20 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitBuiltinFuncOneArgs(HyperTalkParser.BuiltinFuncOneArgsContext ctx) {
+        ParseTree expTree = ctx.factor() != null ? ctx.factor() : ctx.expression();
+
         switch ((BuiltInFunction) visit(ctx.singleArgFunc())) {
-            case MIN: return new MinFunc(ctx, (Expression) visit(ctx.factor()));
-            case MAX: return new MaxFunc(ctx, (Expression) visit(ctx.factor()));
-            case SUM: return new SumFunc(ctx, (Expression) visit(ctx.factor()));
-            case AVERAGE: return new AverageFunc(ctx, (Expression) visit(ctx.factor()));
-            case NUMBER_CHARS: return new NumberOfFunc(ctx, Countable.CHAR, (Expression) visit(ctx.factor()));
-            case NUMBER_ITEMS: return new NumberOfFunc(ctx, Countable.ITEM, (Expression) visit(ctx.factor()));
-            case NUMBER_LINES: return new NumberOfFunc(ctx, Countable.LINE, (Expression) visit(ctx.factor()));
-            case NUMBER_WORDS: return new NumberOfFunc(ctx, Countable.WORD, (Expression) visit(ctx.factor()));
-            case NUMBER_MENUITEMS: return new NumberOfFunc(ctx, Countable.MENU_ITEMS, (Expression) visit(ctx.factor()));
-            case NUMBER_BKGND_CARDS: return new NumberOfFunc(ctx, Countable.CARDS_IN_BKGND, (Expression) visit(ctx.factor()));
-            case RANDOM: return new RandomFunc(ctx, (Expression) visit(ctx.factor()));
+            case MIN: return new MinFunc(ctx, (Expression) visit(expTree));
+            case MAX: return new MaxFunc(ctx, (Expression) visit(expTree));
+            case SUM: return new SumFunc(ctx, (Expression) visit(expTree));
+            case AVERAGE: return new AverageFunc(ctx, (Expression) visit(expTree));
+            case NUMBER_CHARS: return new NumberOfFunc(ctx, Countable.CHAR, (Expression) visit(expTree));
+            case NUMBER_ITEMS: return new NumberOfFunc(ctx, Countable.ITEM, (Expression) visit(expTree));
+            case NUMBER_LINES: return new NumberOfFunc(ctx, Countable.LINE, (Expression) visit(expTree));
+            case NUMBER_WORDS: return new NumberOfFunc(ctx, Countable.WORD, (Expression) visit(expTree));
+            case NUMBER_MENUITEMS: return new NumberOfFunc(ctx, Countable.MENU_ITEMS, (Expression) visit(expTree));
+            case NUMBER_BKGND_CARDS: return new NumberOfFunc(ctx, Countable.CARDS_IN_BKGND, (Expression) visit(expTree));
+            case RANDOM: return new RandomFunc(ctx, (Expression) visit(expTree));
             case SQRT:
             case TRUNC:
             case SIN:
@@ -1899,12 +1921,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case LOG2:
             case ABS:
             case NUM_TO_CHAR:
-                return new MathFunc(ctx, (BuiltInFunction) visit(ctx.singleArgFunc()), (Expression) visit(ctx.factor()));
-            case CHAR_TO_NUM: return new CharToNumFunc(ctx, (Expression) visit(ctx.factor()));
-            case VALUE: return new ValueFunc(ctx, (Expression) visit(ctx.factor()));
-            case LENGTH: return new NumberOfFunc(ctx, Countable.CHAR, (Expression) visit(ctx.factor()));
-            case DISK_SPACE: return new DiskSpaceFunc(ctx, (Expression) visit(ctx.factor()));
-            case PARAM: return new ParamFunc(ctx, (Expression) visit(ctx.factor()));
+                return new MathFunc(ctx, (BuiltInFunction) visit(ctx.singleArgFunc()), (Expression) visit(expTree));
+            case CHAR_TO_NUM: return new CharToNumFunc(ctx, (Expression) visit(expTree));
+            case VALUE: return new ValueFunc(ctx, (Expression) visit(expTree));
+            case LENGTH: return new NumberOfFunc(ctx, Countable.CHAR, (Expression) visit(expTree));
+            case DISK_SPACE: return new DiskSpaceFunc(ctx, (Expression) visit(expTree));
+            case PARAM: return new ParamFunc(ctx, (Expression) visit(expTree));
 
             default: throw new RuntimeException("Bug! Unimplemented one-arg function: " + ctx.singleArgFunc().getText());
         }

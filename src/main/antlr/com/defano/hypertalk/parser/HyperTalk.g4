@@ -25,7 +25,7 @@
 grammar HyperTalk;
 
 // Start symbol accepting only well-formed HyperTalk scripts that consist of handlers, functions, whitespace and
-// comments (representing scipts that are assignable to parts like buttons and fields). Disallows statements or
+// comments (representing scipts that are assignable to objects like buttons, fields and cards). Disallows statements or
 // expressions that are not inside of a handler or function block.
 script
     : handler script                                                                                                    # handlerScript
@@ -158,10 +158,10 @@ commandStmnt
     | 'exit' handlerName                                                                                                # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
-    | find factor                                                                                                       # findAnywhere
-    | find factor of fieldPart                                                                                          # findField
-    | find factor of 'marked' cards                                                                                     # findMarkedCards
-    | find factor of fieldPart of 'marked' cards                                                                        # findFieldMarkedCards
+    | find expression                                                                                                   # findAnywhere
+    | find expression of fieldPart                                                                                      # findField
+    | find expression of 'marked' cards                                                                                 # findMarkedCards
+    | find expression of fieldPart of 'marked' cards                                                                    # findFieldMarkedCards
     | 'get' expression                                                                                                  # getCmdStmnt
     | 'go' 'to'? destination 'with' 'visual' visualEffect                                                               # goVisualEffectCmdStmnd
     | 'go' 'to'? destination                                                                                            # goCmdStmnt
@@ -211,8 +211,8 @@ commandStmnt
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
     | 'unlock' 'screen' 'with' 'visual' visualEffect                                                                    # unlockScreenVisualCmdStmt
     | 'visual' visualEffect                                                                                             # visualEffectCmdStmt
-    | 'wait' factor timeUnit                                                                                            # waitCountCmd
-    | 'wait' 'for' factor timeUnit                                                                                      # waitForCountCmd
+    | 'wait' expression timeUnit                                                                                        # waitCountCmd
+    | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
     | 'wait' 'while' expression                                                                                         # waitWhileCmd
     | 'write' expression 'to' 'file' expression                                                                         # writeFileCmd
@@ -383,7 +383,12 @@ part
     | background 'part' factor                                                                                          # bkgndPartNumberPart
     | 'me'                                                                                                              # mePart
     | message                                                                                                           # msgPart
-    | ID                                                                                                                # partRef
+    | partReference                                                                                                     # referencePart
+    ;
+
+partReference
+    : '(' expression ')'                                                                                                # expressionPartRef
+    | ID                                                                                                                # variablePartRef
     ;
 
 buttonPart
@@ -428,44 +433,23 @@ expression
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
     | expression '^' expression                                                                                         # caratExp
-    | expression op=('mod'
-            | 'div'
-            | '/'
-            | '*') expression                                                                                           # multiplicationExp
-    | expression op=('+'
-            | '-') expression                                                                                           # additionExp
-    | expression op=('&&'|'&') expression                                                                               # concatExp
-    | expression op=('>='
-            | '<='
-            | '≤'
-            | '≥'
-            | '<'
-            | '>'
-            | 'contains'
-            | 'is in'
-            | 'is not in'
-            | 'is a'
-            | 'is an'
-            | 'is not a'
-            | 'is not an'
-            | 'is within'
-            | 'is not within') expression                                                                               # equalityExp
-    | expression op=('='
-            | 'is not'
-            | 'is'
-            | '<>'
-            | '≠') expression                                                                                           # comparisonExp
+    | expression op=('mod'| 'div'| '/'| '*') expression                                                                 # multiplicationExp
+    | expression op=('+'| '-') expression                                                                               # additionExp
+    | expression op=('&&'| '&') expression                                                                              # concatExp
+    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is not in'|'is a'|'is an'|'is not a'|'is not an'|'is within'|'is not within') expression # equalityExp
+    | expression op=('='|'is not'|'is'|'<>'|'≠') expression                                                             # comparisonExp
     | expression 'and' expression                                                                                       # andExp
     | expression 'or' expression                                                                                        # orExp
     ;
 
 factor
     : literal                                                                                                           # literalFactor
+    | '-' literal                                                                                                       # negativeLiteralFactor
     | ID                                                                                                                # idFactor
     | functionCall                                                                                                      # functionExp
-    | part                                                                                                              # partFactor
     | 'the'? 'selection'                                                                                                # selectionFactor
     | '(' expression ')'                                                                                                # expressionFactor
+    | part                                                                                                              # partFactor
     | property                                                                                                          # partPropertyFactor
     | menu                                                                                                              # menuFactor
     | menuItem                                                                                                          # menuItemFactor
@@ -478,9 +462,9 @@ functionCall
     ;
 
 builtInFunc
-    : 'the'? singleArgFunc of factor                                                                                    # builtinFuncOneArgs
-    | singleArgFunc '(' factor ')'                                                                                      # builtinFuncOneArgs
-    | 'the' zeroArgFunc                                                                                                 # builtinFuncNoArg
+    : 'the' zeroArgFunc                                                                                                 # builtinFuncNoArg
+    | 'the'? singleArgFunc of factor                                                                                    # builtinFuncOneArgs
+    | singleArgFunc '(' expression ')'                                                                                  # builtinFuncOneArgs
     | multiArgFunc '(' argumentList ')'                                                                                 # builtinFuncArgList
     ;
 
