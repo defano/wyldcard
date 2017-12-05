@@ -8,7 +8,6 @@ import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.utils.Range;
 
-import javax.rmi.CORBA.Util;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;

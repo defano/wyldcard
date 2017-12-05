@@ -1,7 +1,6 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;

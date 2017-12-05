@@ -452,7 +452,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
-        return new GoCmd(ctx, (DestinationExp) visit(ctx.destination()));
+        return new GoCmd(ctx, (PartExp) visit(ctx.expression()));
     }
 
     @Override
@@ -467,7 +467,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd(ctx, (DestinationExp) visit(ctx.destination()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
+        return new GoCmd(ctx, (PartExp) visit(ctx.expression()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
     }
 
     @Override
@@ -483,36 +483,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitThisPosition(HyperTalkParser.ThisPositionContext ctx) {
         return Position.THIS;
-    }
-
-    @Override
-    public Object visitCardNumber(HyperTalkParser.CardNumberContext ctx) {
-        return new DestinationNumberExp(ctx, (Expression) visit(ctx.expression()), (DestinationType) visit(ctx.destinationType()));
-    }
-
-    @Override
-    public Object visitCardOrdinal(HyperTalkParser.CardOrdinalContext ctx) {
-        return new DestinationOrdinalExp(ctx, (Ordinal) visit(ctx.ordinal()), (DestinationType) visit(ctx.destinationType()));
-    }
-
-    @Override
-    public Object visitCardPosition(HyperTalkParser.CardPositionContext ctx) {
-        return new DestinationPositionExp(ctx, (Position) visit(ctx.position()), (DestinationType) visit(ctx.destinationType()));
-    }
-
-    @Override
-    public Object visitDestinationRef(HyperTalkParser.DestinationRefContext ctx) {
-        return new DestinationReferenceExp(ctx, (Expression) visit(ctx.factor()));
-    }
-
-    @Override
-    public Object visitCardDestinationType(HyperTalkParser.CardDestinationTypeContext ctx) {
-        return DestinationType.CARD;
-    }
-
-    @Override
-    public Object visitBkgndDestinationType(HyperTalkParser.BkgndDestinationTypeContext ctx) {
-        return DestinationType.BACKGROUND;
     }
 
     @Override
@@ -840,7 +810,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPushDestCmdStmt(HyperTalkParser.PushDestCmdStmtContext ctx) {
-        return new PushCardCmd(ctx, (DestinationExp) visit(ctx.destination()));
+        return new PushCardCmd(ctx, (PartExp) visit(ctx.expression()));
     }
 
     @Override

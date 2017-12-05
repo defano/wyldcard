@@ -163,8 +163,8 @@ commandStmnt
     | find expression of 'marked' cards                                                                                 # findMarkedCards
     | find expression of fieldPart of 'marked' cards                                                                    # findFieldMarkedCards
     | 'get' expression                                                                                                  # getCmdStmnt
-    | 'go' 'to'? destination 'with' 'visual' visualEffect                                                               # goVisualEffectCmdStmnd
-    | 'go' 'to'? destination                                                                                            # goCmdStmnt
+    | 'go' 'to'? expression 'with' 'visual' visualEffect                                                                # goVisualEffectCmdStmnd
+    | 'go' 'to'? expression                                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'go' 'back' 'with' 'visual' visualEffect                                                                          # goBackVisualEffectCmdStmt
     | 'hide' part                                                                                                       # hideCmdStmnt
@@ -176,7 +176,7 @@ commandStmnt
     | 'play' musicExpression                                                                                            # playCmdStmt
     | 'pop' card                                                                                                        # popCardCmdStmt
     | 'push' card                                                                                                       # pushCardCmdStmt
-    | 'push' destination                                                                                                # pushDestCmdStmt
+    | 'push' expression                                                                                                 # pushDestCmdStmt
     | 'put' expression                                                                                                  # putIntoCmd
     | 'put' expression preposition container                                                                            # putPrepositionCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
@@ -283,18 +283,6 @@ visualEffect
     | 'effect'? effect 'to' image                                                                                       # effectTo
     | 'effect'? effect speed                                                                                            # effectSpeed
     | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
-    ;
-
-destination
-    : destinationType expression                                                                                        # cardNumber
-    | ordinal destinationType                                                                                           # cardOrdinal
-    | position destinationType                                                                                          # cardPosition
-    | factor                                                                                                            # destinationRef
-    ;
-
-destinationType
-    : card                                                                                                              # cardDestinationType
-    | background                                                                                                        # bkgndDestinationType
     ;
 
 repeatRange

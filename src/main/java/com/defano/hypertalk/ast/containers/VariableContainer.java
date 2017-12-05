@@ -4,7 +4,6 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.common.Chunk;
 
 public class VariableContainer extends Container {
 

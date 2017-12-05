@@ -5,7 +5,6 @@ import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.common.Chunk;
 
 
 public class PartContainer extends Container {

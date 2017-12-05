@@ -6,7 +6,6 @@ import com.defano.hypercard.window.forms.MessageWindow;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.PartType;
 
 import javax.swing.*;

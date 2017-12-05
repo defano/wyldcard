@@ -4,7 +4,6 @@ import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
