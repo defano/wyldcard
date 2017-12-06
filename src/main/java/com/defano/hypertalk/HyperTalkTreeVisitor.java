@@ -518,6 +518,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitLiteralMenuExpression(HyperTalkParser.LiteralMenuExpressionContext ctx) {
+        return new MenuExp(ctx, (MenuSpecifier) visit(ctx.menu()));
+    }
+
+    @Override
+    public Object visitReferenceMenuExpression(HyperTalkParser.ReferenceMenuExpressionContext ctx) {
+        return new MenuExp(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitEmptyScript(HyperTalkParser.EmptyScriptContext ctx) {
         return new Script();
     }
@@ -763,6 +773,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDialCmdStmt(HyperTalkParser.DialCmdStmtContext ctx) {
         return new DialCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitDisableExpression(HyperTalkParser.DisableExpressionContext ctx) {
+        if (ctx.menu() != null) {
+            return new DisableCmd(ctx, new MenuExp(ctx, (MenuSpecifier) visit(ctx.menu())));
+        } else if (ctx.menuItem() != null) {
+            return new DisableCmd(ctx, new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem())));
+        } else {
+            return new DisableCmd(ctx, (Expression) visit(ctx.partExpression()));
+        }
     }
 
     @Override
@@ -1040,20 +1061,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         return new EnableMenuCmd(ctx, (MenuSpecifier) visit(ctx.menu()), true);
     }
 
-    @Override
-    public Object visitDisablePartCmd(HyperTalkParser.DisablePartCmdContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), CardLayerPartModel.PROP_ENABLED, new Value(false));
-    }
 
-    @Override
-    public Object visitDisableMenuItemCmd(HyperTalkParser.DisableMenuItemCmdContext ctx) {
-        return new EnableMenuItemCmd(ctx, (MenuItemSpecifier) visit(ctx.menuItem()), false);
-    }
 
-    @Override
-    public Object visitDisableMenuCmd(HyperTalkParser.DisableMenuCmdContext ctx) {
-        return new EnableMenuCmd(ctx, (MenuSpecifier) visit(ctx.menu()), false);
-    }
+//    @Override
+//    public Object visitDisablePartCmd(HyperTalkParser.DisablePartCmdContext ctx) {
+//        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), CardLayerPartModel.PROP_ENABLED, new Value(false));
+//    }
+//
+//    @Override
+//    public Object visitDisableMenuItemCmd(HyperTalkParser.DisableMenuItemCmdContext ctx) {
+//        return new EnableMenuItemCmd(ctx, (MenuItemSpecifier) visit(ctx.menuItem()), false);
+//    }
+//
+//    @Override
+//    public Object visitDisableMenuCmd(HyperTalkParser.DisableMenuCmdContext ctx) {
+//        return new EnableMenuCmd(ctx, (MenuSpecifier) visit(ctx.menu()), false);
+//    }
 
     @Override
     public Object visitIfStatement(HyperTalkParser.IfStatementContext ctx) {
@@ -1735,7 +1758,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMenuItemFactor(HyperTalkParser.MenuItemFactorContext ctx) {
-        return new MenuExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
+        return new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitLiteralMenuItemExpression(HyperTalkParser.LiteralMenuItemExpressionContext ctx) {
+        return new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitReferenceMenuItemExpression(HyperTalkParser.ReferenceMenuItemExpressionContext ctx) {
+        return new MenuItemExp(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override

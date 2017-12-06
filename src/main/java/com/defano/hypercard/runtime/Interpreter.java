@@ -182,9 +182,14 @@ public class Interpreter {
         return null;
     }
 
-    public static <T> T evaluate(CompilationUnit compilationUnit, Value value, Class<T> klass) {
+    public static <T> T evaluate(CompilationUnit compilationUnit, Expression expression, Class<T> klass) throws HtException {
+
+        if (expression.getClass().isAssignableFrom(klass)) {
+            return (T) expression;
+        }
+
         try {
-            Object ast = Interpreter.compile(compilationUnit, value.stringValue());
+            Object ast = Interpreter.compile(compilationUnit, expression.evaluate().stringValue());
             if (ast.getClass().isAssignableFrom(klass)) {
                 return (T) ast;
             } else {

@@ -144,9 +144,11 @@ commandStmnt
     | 'delete' chunk container                                                                                          # deleteChunkCmdStmt
     | 'delete' partExpression                                                                                           # deleteCmdStmt
     | 'dial' expression                                                                                                 # dialCmdStmt
-    | 'disable' menuItem                                                                                                # disableMenuItemCmd
-    | 'disable' menu                                                                                                    # disableMenuCmd
-    | 'disable' partExpression                                                                                          # disablePartCmd
+    | 'disable' menuExpression       # disableExpression
+    | 'disable' menuItemExpression   # disableExpression
+    | 'disable' partExpression                                                                                              # disableExpression
+//    | 'disable' menuExpression                                                                                          # disableExpression
+//    | 'disable' partExpression                                                                                          # disableExpression
     | 'divide' container 'by' expression                                                                                # divideCmdStmnt
     | 'do' expression                                                                                                   # doCmdStmt
     | 'domenu' expression                                                                                               # doMenuCmdStmt
@@ -311,9 +313,19 @@ container
     | chunk container                                                                                                   # chunkContainerDest
     ;
 
+menuExpression
+    : menu                                                                                                              # literalMenuExpression
+    | expression                                                                                                        # referenceMenuExpression
+    ;
+
 menu
     : 'menu' factor                                                                                                     # expressionMenu
     | ordinal 'menu'                                                                                                    # ordinalMenu
+    ;
+
+menuItemExpression
+    : menuItem                                                                                                          # literalMenuItemExpression
+    | expression                                                                                                        # referenceMenuItemExpression
     ;
 
 menuItem

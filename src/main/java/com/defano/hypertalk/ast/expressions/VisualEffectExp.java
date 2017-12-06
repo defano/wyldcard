@@ -35,7 +35,7 @@ public class VisualEffectExp extends Expression {
         if (specifier != null) {
             return specifier;
         } else {
-            VisualEffectExp exp = Interpreter.evaluate(CompilationUnit.EFFECT_EXPRESSION, expression.evaluate(), VisualEffectExp.class);
+            VisualEffectExp exp = Interpreter.evaluate(CompilationUnit.EFFECT_EXPRESSION, expression, VisualEffectExp.class);
             return exp == null ? null : exp.evaluateAsVisualEffect();
         }
     }
