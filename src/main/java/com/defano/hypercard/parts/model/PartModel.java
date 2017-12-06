@@ -149,7 +149,7 @@ public class PartModel extends PropertiesModel implements Messagable {
         defineComputedSetterProperty(PROP_SCRIPT, (model, propertyName, value) -> {
             model.setKnownProperty(PROP_SCRIPTTEXT, value);
             try {
-                script = Interpreter.compile(CompilationUnit.SCRIPT, value.stringValue());
+                script = Interpreter.compileScript(value.stringValue());
             } catch (HtException e) {
                 script = new Script();
             }
@@ -177,7 +177,7 @@ public class PartModel extends PropertiesModel implements Messagable {
     public Script getScript() {
         if (script == null) {
             try {
-                script = Interpreter.compile(CompilationUnit.SCRIPT, getKnownProperty(PROP_SCRIPTTEXT).stringValue());
+                script = Interpreter.compileScript(getKnownProperty(PROP_SCRIPTTEXT).stringValue());
             } catch (HtException e) {
                 e.printStackTrace();
             }

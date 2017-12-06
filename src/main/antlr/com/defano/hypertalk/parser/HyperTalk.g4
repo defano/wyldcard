@@ -141,20 +141,20 @@ commandStmnt
     | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
     | 'delete' menu                                                                                                     # deleteMenuCmdStmt
     | 'delete' menuItem                                                                                                 # deleteMenuItemCmdStmt
-    | 'delete' part                                                                                                     # deleteCmdStmt
-    | 'delete' container                                                                                                # deleteChunkCmdStmt
+    | 'delete' chunk container                                                                                          # deleteChunkCmdStmt
+    | 'delete' partExpression                                                                                           # deleteCmdStmt
     | 'dial' expression                                                                                                 # dialCmdStmt
-    | 'disable' part                                                                                                    # disablePartCmd
     | 'disable' menuItem                                                                                                # disableMenuItemCmd
     | 'disable' menu                                                                                                    # disableMenuCmd
+    | 'disable' partExpression                                                                                          # disablePartCmd
     | 'divide' container 'by' expression                                                                                # divideCmdStmnt
     | 'do' expression                                                                                                   # doCmdStmt
     | 'domenu' expression                                                                                               # doMenuCmdStmt
     | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
     | 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
-    | 'enable' part                                                                                                     # enablePartCmd
     | 'enable' menuItem                                                                                                 # enableMenuItemCmd
     | 'enable' menu                                                                                                     # enableMenuCmd
+    | 'enable' partExpression                                                                                           # enablePartCmd
     | 'exit' handlerName                                                                                                # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
@@ -163,11 +163,11 @@ commandStmnt
     | find expression of 'marked' cards                                                                                 # findMarkedCards
     | find expression of fieldPart of 'marked' cards                                                                    # findFieldMarkedCards
     | 'get' expression                                                                                                  # getCmdStmnt
-    | 'go' 'to'? expression 'with' 'visual' visualEffect                                                                # goVisualEffectCmdStmnd
+    | 'go' 'to'? expression 'with' 'visual' effectExpression                                                                # goVisualEffectCmdStmnd
     | 'go' 'to'? expression                                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
-    | 'go' 'back' 'with' 'visual' visualEffect                                                                          # goBackVisualEffectCmdStmt
-    | 'hide' part                                                                                                       # hideCmdStmnt
+    | 'go' 'back' 'with' 'visual' effectExpression                                                                          # goBackVisualEffectCmdStmt
+    | 'hide' partExpression                                                                                             # hideCmdStmnt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'multiply' container 'by' expression                                                                              # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
@@ -185,17 +185,17 @@ commandStmnt
     | 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
     | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
     | 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
-    | 'select' part                                                                                                     # selectPartCmd
     | 'select' 'empty'                                                                                                  # selectEmptyCmd
-    | 'select' 'text' of part                                                                                           # selectTextCmd
-    | 'select' 'before' 'text' of part                                                                                  # selectBeforeCmd
-    | 'select' 'after' 'text' of part                                                                                   # selectAfterCmd
-    | 'select' chunk part                                                                                               # selectChunkCmd
-    | 'select' 'before' chunk part                                                                                      # selectBeforeChunkCmd
-    | 'select' 'after' chunk part                                                                                       # selectAfterChunkCmd
+    | 'select' 'text' of partExpression                                                                                 # selectTextCmd
+    | 'select' 'before' 'text' of partExpression                                                                        # selectBeforeCmd
+    | 'select' 'after' 'text' of partExpression                                                                         # selectAfterCmd
+    | 'select' chunk partExpression                                                                                     # selectChunkCmd
+    | 'select' 'before' chunk partExpression                                                                            # selectBeforeChunkCmd
+    | 'select' 'after' chunk partExpression                                                                             # selectAfterChunkCmd
+    | 'select' partExpression                                                                                           # selectPartCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
-    | 'send' expression 'to' part                                                                                       # sendCmdStmnt
-    | 'show' part                                                                                                       # showCmdStmnt
+    | 'send' expression 'to' partExpression                                                                             # sendCmdStmnt
+    | 'show' partExpression                                                                                             # showCmdStmnt
     | 'sort' sortChunkType container sortDirection sortStyle                                                            # sortDirectionCmd
     | 'sort' sortChunkType container sortDirection sortStyle 'by' expression                                            # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
@@ -209,8 +209,8 @@ commandStmnt
     | 'type' expression                                                                                                 # typeCmdStmt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
-    | 'unlock' 'screen' 'with' 'visual' visualEffect                                                                    # unlockScreenVisualCmdStmt
-    | 'visual' visualEffect                                                                                             # visualEffectCmdStmt
+    | 'unlock' 'screen' 'with' 'visual' effectExpression                                                                    # unlockScreenVisualCmdStmt
+    | 'visual' effectExpression                                                                                             # visualEffectCmdStmt
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -218,25 +218,6 @@ commandStmnt
     | 'write' expression 'to' 'file' expression                                                                         # writeFileCmd
     | 'write' expression 'to' 'file' expression 'at' ('eof' | 'end')                                                    # writeEndFileCmd
     | 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd
-    ;
-
-musicExpression
-    : expression expression                                                                                             # musicInstrumentNotes
-    | expression 'tempo' expression expression                                                                          # musicInstrumentNotesTempo
-    | expression 'tempo' expression                                                                                     # musicInstrumentTempo
-    | expression                                                                                                        # musicInstrument
-    ;
-
-toolExpression
-    : 'text'                                                                                                            # keywordToolExpr
-    | 'select'                                                                                                          # keywordToolExpr
-    | 'field'                                                                                                           # keywordToolExpr
-    | 'button'                                                                                                          # keywordToolExpr
-    | 'line'                                                                                                            # keywordToolExpr
-    | ('reg' | 'regular')? ('poly' | 'polygon')                                                                         # keywordToolExpr
-    | 'round'? ('rect' | 'rectangle')                                                                                   # keywordToolExpr
-    | 'spray' 'can'?                                                                                                    # keywordToolExpr
-    | expression                                                                                                        # toolExpr
     ;
 
 convertible
@@ -276,13 +257,6 @@ sortStyle
     | 'international'                                                                                                   # sortStyleInternational
     | 'datetime'                                                                                                        # sortStyleDateTime
     |                                                                                                                   # sortStyleDefault
-    ;
-
-visualEffect
-    : 'effect'? effect                                                                                                  # effectDefault
-    | 'effect'? effect 'to' image                                                                                       # effectTo
-    | 'effect'? effect speed                                                                                            # effectSpeed
-    | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
     ;
 
 repeatRange
@@ -329,11 +303,11 @@ chunk
 container
     : ID                                                                                                                # variableDest
     | 'the'? 'selection'                                                                                                # selectionDest
-    | part                                                                                                              # partDest
     | property                                                                                                          # propertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
     | message                                                                                                           # messageDest
+    | partExpression                                                                                                    # partDest
     | chunk container                                                                                                   # chunkContainerDest
     ;
 
@@ -357,8 +331,8 @@ globalProperty
     ;
 
 partProperty
-    : 'the'? propertyName of part                                                                                       # propertySpecPart
-    | 'the'? propertyName of chunk part                                                                                 # propertySpecChunkPart
+    : 'the'? propertyName of partExpression                                                                             # propertySpecPart
+    | 'the'? propertyName of chunk partExpression                                                                       # propertySpecChunkPart
     | 'the'? propertyName of menuItem                                                                                   # propertySpecMenuItem
     ;
 
@@ -371,12 +345,6 @@ part
     | background 'part' factor                                                                                          # bkgndPartNumberPart
     | 'me'                                                                                                              # mePart
     | message                                                                                                           # msgPart
-    | partReference                                                                                                     # referencePart
-    ;
-
-partReference
-    : '(' expression ')'                                                                                                # expressionPartRef
-    | ID                                                                                                                # variablePartRef
     ;
 
 buttonPart
@@ -442,6 +410,38 @@ factor
     | menu                                                                                                              # menuFactor
     | menuItem                                                                                                          # menuItemFactor
     | chunk factor                                                                                                      # chunkFactorChunk
+    ;
+
+partExpression
+    : part                                                                                                              # literalPartExpression
+    | expression                                                                                                        # referencePartExpression
+    ;
+
+musicExpression
+    : expression expression                                                                                             # musicInstrumentNotes
+    | expression 'tempo' expression expression                                                                          # musicInstrumentNotesTempo
+    | expression 'tempo' expression                                                                                     # musicInstrumentTempo
+    | expression                                                                                                        # musicInstrument
+    ;
+
+toolExpression
+    : 'text'                                                                                                            # keywordToolExpr
+    | 'select'                                                                                                          # keywordToolExpr
+    | 'field'                                                                                                           # keywordToolExpr
+    | 'button'                                                                                                          # keywordToolExpr
+    | 'line'                                                                                                            # keywordToolExpr
+    | ('reg' | 'regular')? ('poly' | 'polygon')                                                                         # keywordToolExpr
+    | 'round'? ('rect' | 'rectangle')                                                                                   # keywordToolExpr
+    | 'spray' 'can'?                                                                                                    # keywordToolExpr
+    | expression                                                                                                        # toolExpr
+    ;
+
+effectExpression
+    : 'effect'? effect                                                                                                  # effectDefault
+    | 'effect'? effect 'to' image                                                                                       # effectTo
+    | 'effect'? effect speed                                                                                            # effectSpeed
+    | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
+    | expression                                                                                                        # effectReference
     ;
 
 functionCall
