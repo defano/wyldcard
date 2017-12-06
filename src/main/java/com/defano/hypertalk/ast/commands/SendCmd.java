@@ -39,7 +39,7 @@ public class SendCmd extends Command {
 
     private MessageCmd interpretMessage(String message) {
         try {
-            Script compiled = Interpreter.compile(CompilationUnit.SCRIPTLET, message);
+            Script compiled = Interpreter.compileScriptlet(message);
             return (MessageCmd) compiled.getStatements().list.get(0);
         } catch (Exception e) {
             return null;

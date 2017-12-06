@@ -286,7 +286,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
                 break;
             case FieldModel.PROP_SCRIPT:
                 try {
-                    Interpreter.compile(CompilationUnit.SCRIPT, newValue.stringValue());
+                    Interpreter.compileScript(newValue.stringValue());
                 } catch (HtException e) {
                     HyperCard.getInstance().showErrorDialog(e);
                 }

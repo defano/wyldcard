@@ -69,7 +69,7 @@ public class Interpreter {
 
         backgroundCompileExecutor.submit(() -> {
             HtException generatedError = null;
-            Script compiledScript = null;
+            Object compiledScript = null;
 
             try {
                 compiledScript = compile(compilationUnit, scriptText);
@@ -81,16 +81,8 @@ public class Interpreter {
         });
     }
 
-    /**
-     * Compiles the given script on the current thread.
-     *
-     * @param scriptText The script text to compile
-     * @return The compiled Script object
-     * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
-     */
-    public static Script compile(CompilationUnit compilationUnit, String scriptText) throws HtException {
+    public static Object compile(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
         HyperTalkErrorListener errors = new HyperTalkErrorListener();
-
         HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         HyperTalkParser parser = new HyperTalkParser(tokens);
@@ -98,16 +90,35 @@ public class Interpreter {
         parser.addErrorListener(errors);
 
         try {
+            long start = System.currentTimeMillis();
             ParseTree tree = compilationUnit.getParseTree(parser);
+            long end = System.currentTimeMillis();
+
+            System.err.println("Compiled " + scriptText.length() + " chars in " + (end - start) + "ms.");
 
             if (!errors.errors.isEmpty()) {
                 throw errors.errors.get(0);
             }
 
-            return (Script) new HyperTalkTreeVisitor().visit(tree);
+            return new HyperTalkTreeVisitor().visit(tree);
         } catch (RecognitionException e) {
             throw new HtSyntaxException(e);
         }
+    }
+
+    public static Script compileScriptlet(String scriptText) throws HtException {
+        return (Script) compile(CompilationUnit.SCRIPTLET, scriptText);
+    }
+
+    /**
+     * Compiles the given script on the current thread.
+     *
+     * @param scriptText The script text to compile
+     * @return The compiled Script object
+     * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
+     */
+    public static Script compileScript(String scriptText) throws HtException {
+        return (Script) compile(CompilationUnit.SCRIPT, scriptText);
     }
 
     /**
@@ -119,7 +130,7 @@ public class Interpreter {
      */
     public static Value evaluate(String expression) {
         try {
-            Statement statement = compile(CompilationUnit.SCRIPTLET, expression).getStatements().list.get(0);
+            Statement statement = compileScriptlet(expression).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
@@ -133,7 +144,7 @@ public class Interpreter {
 
     /**
      * Attempts to evaluate the given value as an AST node identified by klass. That is, the given value is compiled
-     * as a HyperTalk script and the first and only statement in the script is coerced to the requested type. Returns
+     * as a HyperTalk scriptlet and the first statement in the script is coerced to the requested type. Returns
      * null if the value is not a valid HyperTalk script or contains a script fragment that cannot be coerced to
      * the requested type.
      *
@@ -141,16 +152,16 @@ public class Interpreter {
      * PartIdExp will be returned referring to the requested part.
      *
      * @param value The value to dereference; may be any non-null value, but only Values containing valid HyperTalk
-     *              can be dereferenced.
+     *              can be de-referenced.
      * @param klass The Class to coerce/dereference the value into (may return a subtype of this class).
      * @param <T> The type of the requested class.
      * @return Null if dereference fails for any reason, otherwise an instance of the requested class representing
      * the dereferenced value.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T dereference(Value value, Class<T> klass) {
+    public static <T> T evaluate(Value value, Class<T> klass) {
         try {
-            Statement statement = Interpreter.compile(CompilationUnit.SCRIPTLET, value.stringValue()).getStatements().list.get(0);
+            Statement statement = Interpreter.compileScriptlet(value.stringValue()).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -171,6 +182,19 @@ public class Interpreter {
         return null;
     }
 
+    public static <T> T evaluate(CompilationUnit compilationUnit, Value value, Class<T> klass) {
+        try {
+            Object ast = Interpreter.compile(compilationUnit, value.stringValue());
+            if (ast.getClass().isAssignableFrom(klass)) {
+                return (T) ast;
+            } else {
+                return null;
+            }
+        } catch (HtSyntaxException e) {
+            return null;
+        }
+    }
+
     /**
      * Determines if the given Script text represents a valid HyperTalk expression on the current thread.
      *
@@ -179,7 +203,7 @@ public class Interpreter {
      * @throws HtException Thrown if the statement cannot be compiled (due to a syntax/semantic error).
      */
     public static boolean isExpressionStatement(String statement) throws HtException {
-        return compile(CompilationUnit.SCRIPTLET, statement).getStatements().list.get(0) instanceof ExpressionStatement;
+        return compileScriptlet(statement).getStatements().list.get(0) instanceof ExpressionStatement;
     }
 
     /**
@@ -233,7 +257,7 @@ public class Interpreter {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static Future<String> executeString(PartSpecifier me, String statementList) throws HtException  {
-        return executeNamedBlock(me, getAnonymousBlock(compile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ExpressionList());
+        return executeNamedBlock(me, getAnonymousBlock(compileScriptlet(statementList).getStatements()), new ExpressionList());
     }
 
     /**

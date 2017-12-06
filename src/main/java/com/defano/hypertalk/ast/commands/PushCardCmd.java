@@ -6,6 +6,7 @@ import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -14,13 +15,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PushCardCmd extends Command {
 
-    private final PartExp destinationExp;
+    private final Expression destinationExp;
 
     public PushCardCmd(ParserRuleContext context) {
         this(context, null);
     }
 
-    public PushCardCmd(ParserRuleContext context, PartExp destinationExp) {
+    public PushCardCmd(ParserRuleContext context, Expression destinationExp) {
         super(context, "push");
         this.destinationExp = destinationExp;
     }
@@ -31,22 +32,25 @@ public class PushCardCmd extends Command {
             push(HyperCard.getInstance().getDisplayedCard().getId());
         } else {
 
-            Integer pushCardId = evaluateAsCardId(destinationExp);
+            Integer pushCardId = null;
+            PartModel destinationModel = destinationExp.evaluateAsPartModel(CardModel.class);
+            if (destinationModel == null) {
+                destinationExp.evaluateAsPartModel(BackgroundModel.class);
+            }
 
-            if (pushCardId == null) {
-                PartExp partRef = Interpreter.dereference(destinationExp.evaluate(), PartExp.class);
-                pushCardId = evaluateAsCardId(partRef);
+            if (destinationModel != null) {
+                pushCardId = evaluateAsCardId(destinationModel);
+            }
 
-                if (pushCardId == null) {
-                    throw new HtSemanticException("Can't push that.");
-                }
+            if (pushCardId != null) {
+                push(pushCardId);
+            } else {
+                throw new HtSemanticException("Can't push that.");
             }
         }
     }
 
-    private Integer evaluateAsCardId(PartExp card) throws HtException {
-        PartModel model = ExecutionContext.getContext().getPart(card.evaluateAsSpecifier());
-
+    private Integer evaluateAsCardId(PartModel model) throws HtException {
         if (model instanceof CardModel) {
             return model.getId();
         } else if (model instanceof BackgroundModel) {

@@ -89,7 +89,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     private void checkSyntax() {
         try {
             messageBox.getHighlighter().removeAllHighlights();
-            Interpreter.compile(CompilationUnit.SCRIPTLET, messageBox.getText());
+            Interpreter.compileScriptlet(messageBox.getText());
         } catch (HtException e) {
             squiggleHighlight(e);
         }

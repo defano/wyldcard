@@ -28,10 +28,10 @@ public class PartReferenceExp extends PartExp {
 
     private PartExp dereference() throws HtException {
         Value evaluated = partExpression.evaluate();
-        Expression expression = Interpreter.dereference(evaluated, PartExp.class);
+        Expression expression = Interpreter.evaluate(evaluated, PartExp.class);
 
         if (expression == null) {
-            throw new HtSemanticException("Expected a part, but got " + evaluated);
+            throw new HtSemanticException("Expected a part, but got " + evaluated.stringValue());
         }
 
         return (PartExp) expression;

@@ -8,7 +8,6 @@
 
 package com.defano.hypertalk;
 
-import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.exception.HtException;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +24,7 @@ public class TestGrammar {
         String testScript = IOUtils.toString(in);
 
         long start = System.currentTimeMillis();
-        Interpreter.compile(CompilationUnit.SCRIPT, testScript);
+        Interpreter.compileScript(testScript);
         long end = System.currentTimeMillis();
 
         System.out.println("Compiled test script in " + (end - start) + "ms.");

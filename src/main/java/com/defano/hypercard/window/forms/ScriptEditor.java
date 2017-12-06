@@ -88,7 +88,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private void checkSyntax() {
         Interpreter.compileInBackground(CompilationUnit.SCRIPT, scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
             if (compiledScript != null) {
-                ScriptEditor.this.compiledScript = compiledScript;
+                ScriptEditor.this.compiledScript = (Script) compiledScript;
             }
             scriptField.getHighlighter().removeAllHighlights();
             handlersMenu.invalidateDataset();

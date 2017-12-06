@@ -57,12 +57,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitHideCmdStmnt(HyperTalkParser.HideCmdStmntContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(false));
+        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), PartModel.PROP_VISIBLE, new Value(false));
     }
 
     @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.part()), PartModel.PROP_VISIBLE, new Value(true));
+        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), PartModel.PROP_VISIBLE, new Value(true));
     }
 
     @Override
@@ -227,22 +227,27 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitEffectDefault(HyperTalkParser.EffectDefaultContext ctx) {
-        return new VisualEffectSpecifier((SegueName) visit(ctx.effect()));
+        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect())));
     }
 
     @Override
     public Object visitEffectTo(HyperTalkParser.EffectToContext ctx) {
-        return new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectImage) visit(ctx.image()));
+        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectImage) visit(ctx.image())));
     }
 
     @Override
     public Object visitEffectSpeed(HyperTalkParser.EffectSpeedContext ctx) {
-        return new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()));
+        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed())));
     }
 
     @Override
     public Object visitEffectSpeedTo(HyperTalkParser.EffectSpeedToContext ctx) {
-        return new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()), (VisualEffectImage) visit(ctx.image()));
+        return new VisualEffectExp(ctx, new VisualEffectSpecifier((SegueName) visit(ctx.effect()), (VisualEffectSpeed) visit(ctx.speed()), (VisualEffectImage) visit(ctx.image())));
+    }
+
+    @Override
+    public Object visitEffectReference(HyperTalkParser.EffectReferenceContext ctx) {
+        return new VisualEffectExp(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -452,7 +457,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
-        return new GoCmd(ctx, (PartExp) visit(ctx.expression()));
+        return new GoCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -462,12 +467,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoBackVisualEffectCmdStmt(HyperTalkParser.GoBackVisualEffectCmdStmtContext ctx) {
-        return new GoCmd(ctx, null, (VisualEffectSpecifier) visit(ctx.visualEffect()));
+        return new GoCmd(ctx, null, (VisualEffectExp) visit(ctx.effectExpression()));
     }
 
     @Override
     public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd(ctx, (PartExp) visit(ctx.expression()), (VisualEffectSpecifier) visit(ctx.visualEffect()));
+        return new GoCmd(ctx, (Expression) visit(ctx.expression()), (VisualEffectExp) visit(ctx.effectExpression()));
     }
 
     @Override
@@ -670,7 +675,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSendCmdStmnt(HyperTalkParser.SendCmdStmntContext ctx) {
-        return new SendCmd(ctx, (PartExp) visit(ctx.part()), (Expression) visit(ctx.expression()));
+        return new SendCmd(ctx, (PartExp) visit(ctx.partExpression()), (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -740,12 +745,14 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDeleteCmdStmt(HyperTalkParser.DeleteCmdStmtContext ctx) {
-        return new DeletePartCmd(ctx, (PartExp) visit(ctx.part()));
+        return new DeletePartCmd(ctx, (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitDeleteChunkCmdStmt(HyperTalkParser.DeleteChunkCmdStmtContext ctx) {
-        return new DeleteChunkCmd(ctx, (Container) visit(ctx.container()));
+        Container container = (Container) visit(ctx.container());
+        container.setChunk((Chunk) visit(ctx.chunk()));
+        return new DeleteChunkCmd(ctx, container);
     }
 
     @Override
@@ -810,7 +817,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPushDestCmdStmt(HyperTalkParser.PushDestCmdStmtContext ctx) {
-        return new PushCardCmd(ctx, (PartExp) visit(ctx.expression()));
+        return new PushCardCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -885,7 +892,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSelectPartCmd(HyperTalkParser.SelectPartCmdContext ctx) {
-        return new SelectPartCmd(ctx, (PartExp) visit(ctx.part()));
+        return new SelectPartCmd(ctx, (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
@@ -895,32 +902,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSelectTextCmd(HyperTalkParser.SelectTextCmdContext ctx) {
-        return new SelectTextCmd(ctx, Preposition.INTO, (PartExp) visit(ctx.part()));
+        return new SelectTextCmd(ctx, Preposition.INTO, (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitSelectAfterChunkCmd(HyperTalkParser.SelectAfterChunkCmdContext ctx) {
-        return new SelectTextCmd(ctx, Preposition.AFTER, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+        return new SelectTextCmd(ctx, Preposition.AFTER, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitSelectBeforeChunkCmd(HyperTalkParser.SelectBeforeChunkCmdContext ctx) {
-        return new SelectTextCmd(ctx, Preposition.BEFORE, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+        return new SelectTextCmd(ctx, Preposition.BEFORE, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitSelectAfterCmd(HyperTalkParser.SelectAfterCmdContext ctx) {
-        return new SelectTextCmd(ctx, Preposition.AFTER, (PartExp) visit(ctx.part()));
+        return new SelectTextCmd(ctx, Preposition.AFTER, (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitSelectBeforeCmd(HyperTalkParser.SelectBeforeCmdContext ctx) {
-        return new SelectTextCmd(ctx, Preposition.BEFORE, (PartExp) visit(ctx.part()));
+        return new SelectTextCmd(ctx, Preposition.BEFORE, (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitSelectChunkCmd(HyperTalkParser.SelectChunkCmdContext ctx) {
-        return new SelectTextCmd(ctx, Preposition.INTO, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+        return new SelectTextCmd(ctx, Preposition.INTO, (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
@@ -975,7 +982,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitUnlockScreenVisualCmdStmt(HyperTalkParser.UnlockScreenVisualCmdStmtContext ctx) {
-        return new UnlockScreenCmd(ctx, (VisualEffectSpecifier) visit(ctx.visualEffect()));
+        return new UnlockScreenCmd(ctx, (VisualEffectExp) visit(ctx.effectExpression()));
     }
 
     @Override
@@ -990,7 +997,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitVisualEffectCmdStmt(HyperTalkParser.VisualEffectCmdStmtContext ctx) {
-        return new VisualEffectCmd(ctx, (VisualEffectSpecifier) visit(ctx.visualEffect()));
+        return new VisualEffectCmd(ctx, (VisualEffectExp) visit(ctx.effectExpression()));
     }
 
     @Override
@@ -1020,7 +1027,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitEnablePartCmd(HyperTalkParser.EnablePartCmdContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(true));
+        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), CardLayerPartModel.PROP_ENABLED, new Value(true));
     }
 
     @Override
@@ -1035,7 +1042,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDisablePartCmd(HyperTalkParser.DisablePartCmdContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.part()), CardLayerPartModel.PROP_ENABLED, new Value(false));
+        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), CardLayerPartModel.PROP_ENABLED, new Value(false));
     }
 
     @Override
@@ -1207,7 +1214,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPartDest(HyperTalkParser.PartDestContext ctx) {
-        return new PartContainer((PartExp) visit(ctx.part()));
+        return new PartContainer((PartExp) visit(ctx.partExpression()));
     }
 
     @Override
@@ -1262,17 +1269,27 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.propertyName()), (PartExp) visit(ctx.part()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitPropertySpecChunkPart(HyperTalkParser.PropertySpecChunkPartContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.propertyName()), (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.part()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (Chunk) visit(ctx.chunk()), (PartExp) visit(ctx.partExpression()));
     }
 
     @Override
     public Object visitPropertySpecMenuItem(HyperTalkParser.PropertySpecMenuItemContext ctx) {
         return new PropertySpecifier((String) visit(ctx.propertyName()), (MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitLiteralPartExpression(HyperTalkParser.LiteralPartExpressionContext ctx) {
+        return visit(ctx.part());
+    }
+
+    @Override
+    public Object visitReferencePartExpression(HyperTalkParser.ReferencePartExpressionContext ctx) {
+        return new PartReferenceExp(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -1393,21 +1410,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMsgPart(HyperTalkParser.MsgPartContext ctx) {
         return new PartMessageExp(ctx);
-    }
-
-    @Override
-    public Object visitReferencePart(HyperTalkParser.ReferencePartContext ctx) {
-        return super.visitReferencePart(ctx);
-    }
-
-    @Override
-    public Object visitExpressionPartRef(HyperTalkParser.ExpressionPartRefContext ctx) {
-        return new PartReferenceExp(ctx, (Expression) visit(ctx.expression()));
-    }
-
-    @Override
-    public Object visitVariablePartRef(HyperTalkParser.VariablePartRefContext ctx) {
-        return new PartReferenceExp(ctx, new VariableExp(ctx, ctx.ID().getText()));
     }
 
     @Override

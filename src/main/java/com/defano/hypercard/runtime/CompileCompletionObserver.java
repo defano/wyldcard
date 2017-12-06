@@ -1,6 +1,5 @@
 package com.defano.hypercard.runtime;
 
-import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.exception.HtException;
 
 public interface CompileCompletionObserver {
@@ -12,5 +11,5 @@ public interface CompileCompletionObserver {
      * @param compiledScript The compiled Script object.
      * @param generatedError Any exception generated during the compile process, or null, if the compile succeeded.
      */
-    void onCompileCompleted(String scriptText, Script compiledScript, HtException generatedError);
+    void onCompileCompleted(String scriptText, Object compiledScript, HtException generatedError);
 }

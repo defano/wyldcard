@@ -37,7 +37,22 @@ public class PartNameSpecifier implements PartSpecifier {
 
     @Override
     public String getHyperTalkIdentifier() {
-        return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " " + name;
+        StringBuilder builder = new StringBuilder();
+        if (getOwner() != null) {
+            builder.append(getOwner().name().toLowerCase());
+            builder.append(" ");
+        }
+
+        if (type != null) {
+            builder.append(type.toString().toLowerCase());
+            builder.append(" ");
+        }
+
+        if (name != null) {
+            builder.append(name);
+        }
+
+        return builder.toString();
     }
 
     @Override

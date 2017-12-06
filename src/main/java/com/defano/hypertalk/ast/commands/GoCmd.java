@@ -1,15 +1,13 @@
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -17,24 +15,28 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class GoCmd extends Command {
 
-    private final PartExp destinationExp;
-    private VisualEffectSpecifier visualEffect;
+    private final Expression destinationExp;
+    private VisualEffectExp visualEffectExp;
 
-    public GoCmd(ParserRuleContext context, PartExp destinationExp) {
+    public GoCmd(ParserRuleContext context, Expression destinationExp) {
         this(context, destinationExp, null);
     }
 
-    public GoCmd(ParserRuleContext context, PartExp destinationExp, VisualEffectSpecifier visualEffect) {
+    public GoCmd(ParserRuleContext context, Expression destinationExp, VisualEffectExp visualEffectExp) {
         super(context, "go");
 
         this.destinationExp = destinationExp;
-        this.visualEffect = visualEffect;
+        this.visualEffectExp = visualEffectExp;
     }
 
     public void onExecute() throws HtException {
 
-        if (visualEffect == null) {
+        VisualEffectSpecifier visualEffect;
+
+        if (visualEffectExp == null) {
             visualEffect = ExecutionContext.getContext().getVisualEffect();
+        } else {
+            visualEffect = visualEffectExp.evaluateAsVisualEffect();
         }
 
         // Special case: No destination means 'Go back'
@@ -43,27 +45,24 @@ public class GoCmd extends Command {
         }
 
         else {
-            try {
-                Integer destinationIndex = evaluateAsCardIndex(destinationExp);
-                if (destinationIndex == null) {
-                    PartExp refPart = Interpreter.dereference(destinationExp.evaluate(), PartExp.class);
-                    destinationIndex = evaluateAsCardIndex(refPart);
+            Integer cardIndex = evaluateAsCardIndex(destinationExp.evaluateAsPartModel(CardModel.class));
+            if (cardIndex == null) {
+                cardIndex = evaluateAsCardIndex(destinationExp.evaluateAsPartModel(BackgroundModel.class));
+            }
 
-                    if (destinationIndex == null) {
-                        throw new HtSemanticException("Cannot go there.");
-                    }
-                }
-
-                HyperCard.getInstance().getStack().goCard(destinationIndex, visualEffect, true);
-            } catch (PartException e) {
-                // Nothing to do; going to a non-existent card or bkgnd has no effect
+            if (cardIndex == null) {
+                throw new HtSemanticException("That doesn't refer to a card.");
+            } else {
+                HyperCard.getInstance().getStack().goCard(cardIndex, visualEffect, true);
             }
         }
     }
 
-    private Integer evaluateAsCardIndex(PartExp destination) throws HtException {
-        PartSpecifier cardPart = destination.evaluateAsSpecifier();
-        PartModel model = ExecutionContext.getContext().getPart(cardPart);
+    private Integer evaluateAsCardIndex(PartModel model) {
+
+        if (model == null) {
+            return null;
+        }
 
         int destinationIndex;
         if (model instanceof CardModel) {
