@@ -34,7 +34,7 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software r
 #### Script your own software
 
 * Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and can be trapped to override system behavior.
-* Supports much of the HyperTalk 2.x language (most of the built-in commands and functions have been implemented).
+* Supports much of the HyperTalk 2.x language (most of the built-in commands and functions have been implemented), including context-sensitive evaluation of _factors_.
 * Customize the application menu bar and author scripts that determine its behavior.
 * Powerful expression language sports compound mutable chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 
@@ -340,22 +340,16 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is a single evaluated term appearing in an expression. HyperTalk is somewhat unusual in its use of _context sensitive_ evaluation of terms.
+A _factor_ is an expression that HyperCard tries to interpret in whatever way is most meaningful to the context of it's usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making the HyperTalk language feel more like English than a programming language. "Do what I mean, not what I say."
 
-When referring to parts and destinations, if a symbol bound to a variable exists in the context of its usage then the value of that variable will be evaluated as if it were HyperTalk.
+For example, the `go` command expects to "go" to a card or to a background. If you say `go to cd fld 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression then HyperCard will produce an error.
 
-In the following usage, HyperTalk assumes `someCard` to be an unquoted literal and looks for a card named `someCard`:
+#### How factors work in HyperTalk Java
 
-```
-go to card someCard  -- Looks for first card named 'someCard'
-```
+When a command evaluates an expression, the command expects that the argument evaluates to (refers to) some specific kind of object. In the example above, the `go` command expects that its argument refers to a card or background. If the argument is a literal expression of the expected type (i.e., `go to card field 1` or `go to the last card of the next background`) then HyperCard interprets the expression as is. But, if the expression is not a literal of the expected type then HyperTalk evaluates the expression as text and re-interprets it. The "text" evaluation of an expression is the value that would be displayed if you were to `put` or `answer` the expression (that is, the value put into a variable, the text of a field, the contents of a button, etc.). This text value is then treated as if it were a fragment of HyperTalk entered as part of the script. For example, if a variable `x` contains the value `next card`, then saying `go x` has the same result as if you'd written `go next card`.
 
-But in this example, HyperTalk evaluates the contents of `someCard` and discovers that it contains a valid HyperTalk expression referring to a card in the stack:
+#### Types of factors
 
-```
-put "the last card" into someCard
-go someCard          -- Same behavior as 'go the last card'!
-```
 
 ### Constants and literals
 
@@ -374,7 +368,7 @@ Constant     | Value
 `space`      | A single space, equivalent to `" "`
 `tab`        | A tab character
 `formFeed`   | The form feed character (ASCII 0x0c, `\f` in Java)
-`lineFeed`   | The line feed character (ASCII 0x0a, `\n` in Java)
+`lineFeed`   | The line feed character (ASCII 0x0a, `\r` in Java)
 `comma`      | The comma character, `,`
 `colon`      | The colon character, `:`
 `zero`..`ten`| The integers `0` to `10`

@@ -144,17 +144,13 @@ commandStmnt
     | 'delete' chunk container                                                                                          # deleteChunkCmdStmt
     | 'delete' partExpression                                                                                           # deleteCmdStmt
     | 'dial' expression                                                                                                 # dialCmdStmt
-    | 'disable' menuItem                                                                                                # disableMenuItemCmd
-    | 'disable' menu                                                                                                    # disableMenuCmd
-    | 'disable' partExpression                                                                                          # disablePartCmd
+    | 'disable' expression                                                                                              # disableExprStmt
     | 'divide' container 'by' expression                                                                                # divideCmdStmnt
     | 'do' expression                                                                                                   # doCmdStmt
     | 'domenu' expression                                                                                               # doMenuCmdStmt
     | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
     | 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
-    | 'enable' menuItem                                                                                                 # enableMenuItemCmd
-    | 'enable' menu                                                                                                     # enableMenuCmd
-    | 'enable' partExpression                                                                                           # enablePartCmd
+    | 'enable' expression                                                                                               # enableExpStmnt
     | 'exit' handlerName                                                                                                # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
@@ -163,10 +159,10 @@ commandStmnt
     | find expression of 'marked' cards                                                                                 # findMarkedCards
     | find expression of fieldPart of 'marked' cards                                                                    # findFieldMarkedCards
     | 'get' expression                                                                                                  # getCmdStmnt
-    | 'go' 'to'? expression 'with' 'visual' effectExpression                                                                # goVisualEffectCmdStmnd
+    | 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
     | 'go' 'to'? expression                                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
-    | 'go' 'back' 'with' 'visual' effectExpression                                                                          # goBackVisualEffectCmdStmt
+    | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
     | 'hide' partExpression                                                                                             # hideCmdStmnt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'multiply' container 'by' expression                                                                              # multiplyCmdStmnt
@@ -209,8 +205,8 @@ commandStmnt
     | 'type' expression                                                                                                 # typeCmdStmt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
-    | 'unlock' 'screen' 'with' 'visual' effectExpression                                                                    # unlockScreenVisualCmdStmt
-    | 'visual' effectExpression                                                                                             # visualEffectCmdStmt
+    | 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmdStmt
+    | 'visual' expression                                                                                               # visualEffectCmdStmt
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
     | 'wait' 'until' expression                                                                                         # waitUntilCmd
@@ -409,6 +405,7 @@ factor
     | property                                                                                                          # partPropertyFactor
     | menu                                                                                                              # menuFactor
     | menuItem                                                                                                          # menuItemFactor
+    | effectExpression                                                                                                  # visualEffectFactor
     | chunk factor                                                                                                      # chunkFactorChunk
     ;
 
@@ -441,7 +438,6 @@ effectExpression
     | 'effect'? effect 'to' image                                                                                       # effectTo
     | 'effect'? effect speed                                                                                            # effectSpeed
     | 'effect'? effect speed 'to' image                                                                                 # effectSpeedTo
-    | expression                                                                                                        # effectReference
     ;
 
 functionCall

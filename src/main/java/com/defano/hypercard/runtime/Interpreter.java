@@ -3,6 +3,7 @@ package com.defano.hypercard.runtime;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtSemanticException;

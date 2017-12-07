@@ -246,11 +246,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEffectReference(HyperTalkParser.EffectReferenceContext ctx) {
-        return new VisualEffectExp(ctx, (Expression) visit(ctx.expression()));
-    }
-
-    @Override
     public Object visitFastSpeed(HyperTalkParser.FastSpeedContext ctx) {
         return VisualEffectSpeed.FAST;
     }
@@ -467,12 +462,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoBackVisualEffectCmdStmt(HyperTalkParser.GoBackVisualEffectCmdStmtContext ctx) {
-        return new GoCmd(ctx, null, (VisualEffectExp) visit(ctx.effectExpression()));
+        return new GoCmd(ctx, null, (Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd(ctx, (Expression) visit(ctx.expression()), (VisualEffectExp) visit(ctx.effectExpression()));
+        return new GoCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
@@ -766,6 +761,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitDisableExprStmt(HyperTalkParser.DisableExprStmtContext ctx) {
+        return new EnableDisableCmd(ctx, (Expression) visit(ctx.expression()), false);
+    }
+
+    @Override
     public Object visitBeepCmdStmt(HyperTalkParser.BeepCmdStmtContext ctx) {
         return new BeepCmd(ctx);
     }
@@ -982,7 +982,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitUnlockScreenVisualCmdStmt(HyperTalkParser.UnlockScreenVisualCmdStmtContext ctx) {
-        return new UnlockScreenCmd(ctx, (VisualEffectExp) visit(ctx.effectExpression()));
+        return new UnlockScreenCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -997,7 +997,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitVisualEffectCmdStmt(HyperTalkParser.VisualEffectCmdStmtContext ctx) {
-        return new VisualEffectCmd(ctx, (VisualEffectExp) visit(ctx.effectExpression()));
+        return new VisualEffectCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -1026,33 +1026,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitEnablePartCmd(HyperTalkParser.EnablePartCmdContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), CardLayerPartModel.PROP_ENABLED, new Value(true));
-    }
-
-    @Override
-    public Object visitEnableMenuItemCmd(HyperTalkParser.EnableMenuItemCmdContext ctx) {
-        return new EnableMenuItemCmd(ctx, (MenuItemSpecifier) visit(ctx.menuItem()), true);
-    }
-
-    @Override
-    public Object visitEnableMenuCmd(HyperTalkParser.EnableMenuCmdContext ctx) {
-        return new EnableMenuCmd(ctx, (MenuSpecifier) visit(ctx.menu()), true);
-    }
-
-    @Override
-    public Object visitDisablePartCmd(HyperTalkParser.DisablePartCmdContext ctx) {
-        return new SetPropertyCmd(ctx, (PartExp) visit(ctx.partExpression()), CardLayerPartModel.PROP_ENABLED, new Value(false));
-    }
-
-    @Override
-    public Object visitDisableMenuItemCmd(HyperTalkParser.DisableMenuItemCmdContext ctx) {
-        return new EnableMenuItemCmd(ctx, (MenuItemSpecifier) visit(ctx.menuItem()), false);
-    }
-
-    @Override
-    public Object visitDisableMenuCmd(HyperTalkParser.DisableMenuCmdContext ctx) {
-        return new EnableMenuCmd(ctx, (MenuSpecifier) visit(ctx.menu()), false);
+    public Object visitEnableExpStmnt(HyperTalkParser.EnableExpStmntContext ctx) {
+        return new EnableDisableCmd(ctx, (Expression) visit(ctx.expression()), true);
     }
 
     @Override
@@ -1715,7 +1690,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitExpressionFactor(HyperTalkParser.ExpressionFactorContext ctx) {
-        return visit(ctx.expression());
+        return new GroupExp(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -1735,7 +1710,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitMenuItemFactor(HyperTalkParser.MenuItemFactorContext ctx) {
-        return new MenuExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
+        return new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
+    }
+
+    @Override
+    public Object visitVisualEffectFactor(HyperTalkParser.VisualEffectFactorContext ctx) {
+        return visit(ctx.effectExpression());
     }
 
     @Override
