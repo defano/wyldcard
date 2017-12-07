@@ -16,13 +16,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class GoCmd extends Command {
 
     private final Expression destinationExp;
-    private VisualEffectExp visualEffectExp;
+    private Expression visualEffectExp;
 
     public GoCmd(ParserRuleContext context, Expression destinationExp) {
         this(context, destinationExp, null);
     }
 
-    public GoCmd(ParserRuleContext context, Expression destinationExp, VisualEffectExp visualEffectExp) {
+    public GoCmd(ParserRuleContext context, Expression destinationExp, Expression visualEffectExp) {
         super(context, "go");
 
         this.destinationExp = destinationExp;
@@ -36,7 +36,7 @@ public class GoCmd extends Command {
         if (visualEffectExp == null) {
             visualEffect = ExecutionContext.getContext().getVisualEffect();
         } else {
-            visualEffect = visualEffectExp.evaluateAsVisualEffect();
+            visualEffect = visualEffectExp.factor(VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
         }
 
         // Special case: No destination means 'Go back'
@@ -51,7 +51,7 @@ public class GoCmd extends Command {
             }
 
             if (cardIndex == null) {
-                throw new HtSemanticException("That doesn't refer to a card.");
+                throw new HtSemanticException("No such card.");
             } else {
                 HyperCard.getInstance().getStack().goCard(cardIndex, visualEffect, true);
             }

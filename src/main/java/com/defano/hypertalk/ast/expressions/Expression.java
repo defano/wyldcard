@@ -45,7 +45,7 @@ public abstract class Expression extends ASTNode {
      * type.
      */
     public <T extends PartModel> T evaluateAsPartModel(Class<T> clazz) {
-        PartExp partExp = evaluateAsPart();
+        PartExp partExp = evaluateAsPartExp();
 
         if (partExp == null) {
             return null;
@@ -80,9 +80,9 @@ public abstract class Expression extends ASTNode {
      * @return A {@link PartExp} representation of this expression or null
      * @throws HtException
      */
-    public PartExp evaluateAsPart() {
-        if (this instanceof PartExp) {
-            return (PartExp) this;
+    private PartExp evaluateAsPartExp() {
+        if (this.ungrouped() instanceof PartExp) {
+            return (PartExp) this.ungrouped();
         }
 
         try {
@@ -92,5 +92,114 @@ public abstract class Expression extends ASTNode {
         }
     }
 
+    private MenuItemExp evaluateAsMenuItemExp() {
+        if (this.ungrouped() instanceof MenuItemExp) {
+            return (MenuItemExp) this.ungrouped();
+        }
+
+        try {
+            return Interpreter.evaluate(this.evaluate(), MenuItemExp.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private MenuExp evaluateAsMenuExp() {
+        if (this.ungrouped() instanceof MenuExp) {
+            return (MenuExp) this.ungrouped();
+        }
+
+        try {
+            return Interpreter.evaluate(this.evaluate(), MenuExp.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private VisualEffectExp evaluateAsVisualEffect() {
+        if (this.ungrouped() instanceof VisualEffectExp) {
+            return (VisualEffectExp) this.ungrouped();
+        }
+
+        try {
+            return Interpreter.evaluate(this.evaluate(), VisualEffectExp.class);
+        } catch (HtException e) {
+            return null;
+        }
+    }
+
+    private <T extends Expression> T evaluateAs(Class<T> klazz) {
+        if (klazz.equals(PartExp.class)) {
+            return (T) evaluateAsPartExp();
+        } else if (klazz.equals(MenuExp.class)) {
+            return (T) evaluateAsMenuExp();
+        } else if (klazz.equals(MenuItemExp.class)) {
+            return (T) evaluateAsMenuItemExp();
+        } else if (klazz.equals(VisualEffectExp.class)) {
+            return (T) evaluateAsVisualEffect();
+        }
+
+        return null;
+    }
+
+    private Expression ungrouped() {
+        if (this instanceof GroupExp) {
+            return ((GroupExp) this).expression.ungrouped();
+        } else {
+            return this;
+        }
+    }
+
+    /**
+     * Attempts to evaluate this expression as a factor conforming to one of a prioritized list of acceptable types.
+     * When the factor can be evaluated as an acceptable type, the associated {@link FactorAction} is invoked. No more
+     * than one {@link FactorAction} will be invoked (but no actions will be invoked if this expression cannot be
+     * interpreted as an acceptable type).
+     *
+     * This method enables a recursive, context-sensitive evaluation of terms.
+     *
+     * @param evaluations A prioritized order list of acceptable
+     * @return True if this expression can be interpreted as an acceptable type (indicates that a {@link FactorAction}
+     * was invoked); false otherwise.
+     * @throws HtException Thrown if an invoked {@link FactorAction} produces an exception. Will not be thrown as part
+     * of the process of evaluating the expression.
+     */
+    public boolean factor(FactorAssociation... evaluations) throws HtException {
+
+        // If this expression directly matches the requested type, then take action
+        for (FactorAssociation thisEvaluation : evaluations) {
+            if(thisEvaluation.expressionType.isAssignableFrom(this.getClass())) {
+                thisEvaluation.action.accept(this);
+                return true;
+            }
+        }
+
+        // If not, try to interpret this expression as each of the allowable types
+        for (FactorAssociation thisEvaluation : evaluations) {
+            Object coerced = this.evaluateAs(thisEvaluation.expressionType);
+            if (coerced != null) {
+                thisEvaluation.action.accept(coerced);
+                return true;
+            }
+        }
+
+        // Loser, loser, chicken boozer. Can't interpret this factor as a requested type.
+        return false;
+    }
+
+    public <T extends Expression> T factor(Class<T> clazz) throws HtException {
+        final Object[] expr = new Object[1];
+        factor(new FactorAssociation(clazz, object -> expr[0] = object));
+        return (T) expr[0];
+    }
+
+    public <T extends Expression> T factor(Class<T> clazz, HtException orError) throws HtException {
+        T result = factor(clazz);
+        if (result == null) {
+            throw orError;
+        } else {
+            return result;
+        }
+    }
 
 }

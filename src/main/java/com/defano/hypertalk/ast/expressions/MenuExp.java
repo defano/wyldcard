@@ -11,38 +11,15 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class MenuExp extends Expression {
 
-    private final MenuSpecifier menuSpecifier;
-    private final Expression expression;
+    public final MenuSpecifier menuSpecifier;
 
     public MenuExp(ParserRuleContext context, MenuSpecifier menuContainer) {
         super(context);
         this.menuSpecifier = menuContainer;
-        this.expression = null;
-    }
-
-    public MenuExp(ParserRuleContext context, Expression expression) {
-        super(context);
-        this.menuSpecifier = null;
-        this.expression = expression;
     }
 
     @Override
     public Value onEvaluate() throws HtException {
-        MenuSpecifier specifier = evaluateAsMenuSpecifier();
-        if (specifier != null) {
-            return new MenuContainer(specifier).getValue();
-        } else {
-            throw new HtSemanticException("Not a menu item.");
-        }
+        return new MenuContainer(menuSpecifier).getValue();
     }
-
-    public MenuSpecifier evaluateAsMenuSpecifier() throws HtException {
-        if (menuSpecifier != null) {
-            return menuSpecifier;
-        } else {
-            MenuExp exp = Interpreter.evaluate(CompilationUnit.MENU_EXPRESSION, expression, MenuExp.class);
-            return exp == null ? null : exp.menuSpecifier;
-        }
-    }
-
 }

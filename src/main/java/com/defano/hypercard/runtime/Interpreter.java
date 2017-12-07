@@ -3,6 +3,7 @@ package com.defano.hypercard.runtime;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -180,24 +181,6 @@ public class Interpreter {
         }
 
         return null;
-    }
-
-    public static <T> T evaluate(CompilationUnit compilationUnit, Expression expression, Class<T> klass) throws HtException {
-
-        if (expression.getClass().isAssignableFrom(klass)) {
-            return (T) expression;
-        }
-
-        try {
-            Object ast = Interpreter.compile(compilationUnit, expression.evaluate().stringValue());
-            if (ast.getClass().isAssignableFrom(klass)) {
-                return (T) ast;
-            } else {
-                return null;
-            }
-        } catch (HtSyntaxException e) {
-            return null;
-        }
     }
 
     /**
