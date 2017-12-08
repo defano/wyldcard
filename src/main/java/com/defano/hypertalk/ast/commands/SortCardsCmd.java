@@ -5,9 +5,9 @@ import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.SortDirection;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.comparator.CardExpressionComparator;
 import com.defano.hypertalk.comparator.SortStyle;
@@ -26,13 +26,13 @@ public class SortCardsCmd extends Command {
     private final SortDirection direction;
     private final SortStyle style;
     private final Expression expression;
-    private final PartExp background;
+    private final PartContainerExp background;
 
     public SortCardsCmd(ParserRuleContext context, boolean markedCards, SortDirection direction, SortStyle style, Expression expression) {
         this(context, markedCards, null, direction, style, expression);
     }
 
-    public SortCardsCmd(ParserRuleContext context, boolean markedCards, PartExp background, SortDirection direction, SortStyle style, Expression expression) {
+    public SortCardsCmd(ParserRuleContext context, boolean markedCards, PartContainerExp background, SortDirection direction, SortStyle style, Expression expression) {
         super(context, "sort");
 
         this.markedCards = markedCards;

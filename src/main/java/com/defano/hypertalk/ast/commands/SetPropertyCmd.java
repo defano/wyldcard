@@ -3,7 +3,8 @@ package com.defano.hypertalk.ast.commands;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -11,7 +12,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SetPropertyCmd extends Command {
 
-    public final PartExp part;
+    public final Expression part;
     public final String property;
     public final Value value;
 
@@ -19,7 +20,7 @@ public class SetPropertyCmd extends Command {
         this(context, null, property, value);
     }
 
-    public SetPropertyCmd(ParserRuleContext context, PartExp part, String property, Value value) {
+    public SetPropertyCmd(ParserRuleContext context, Expression part, String property, Value value) {
         super(context, "set");
 
         this.part = part;
@@ -32,7 +33,7 @@ public class SetPropertyCmd extends Command {
         if (this.part == null) {
             ExecutionContext.getContext().getGlobalProperties().setProperty(property, value);
         } else {
-            PartModel model = ExecutionContext.getContext().getPart(part.evaluateAsSpecifier());
+            PartModel model = ExecutionContext.getContext().getPart(part.factor(PartContainerExp.class, new HtSemanticException("Expected to find a part here.")).evaluateAsSpecifier());
 
             if (model.hasProperty(property)) {
                 model.setKnownProperty(property, value);

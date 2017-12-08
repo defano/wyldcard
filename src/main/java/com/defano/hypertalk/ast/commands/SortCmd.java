@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.commands;
 import com.defano.hypertalk.ast.common.SortDirection;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.Preposition;
+import com.defano.hypertalk.ast.containers.ContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.comparator.ExpressionValueComparator;
@@ -10,7 +11,6 @@ import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.comparator.ValueComparator;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.ChunkType;
-import com.defano.hypertalk.ast.containers.Container;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -20,11 +20,11 @@ public class SortCmd extends Command {
 
     public final SortDirection direction;
     public final ChunkType chunkType;
-    public final Container container;
+    public final ContainerExp container;
     public final Expression expression;
     public final SortStyle sortStyle;
 
-    public SortCmd(ParserRuleContext context, Container container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
+    public SortCmd(ParserRuleContext context, ContainerExp container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
         super(context, "sort");
 
         this.container = container;
@@ -34,7 +34,7 @@ public class SortCmd extends Command {
         this.sortStyle = sortStyle;
     }
 
-    public SortCmd(ParserRuleContext context, Container container, ChunkType chunkType, SortDirection direction, SortStyle sortStyle) {
+    public SortCmd(ParserRuleContext context, ContainerExp container, ChunkType chunkType, SortDirection direction, SortStyle sortStyle) {
         super(context, "sort");
 
         this.container = container;
@@ -74,9 +74,9 @@ public class SortCmd extends Command {
         }
 
         if (chunkType == ChunkType.LINE) {
-            return container.getValue().getLines();
+            return container.evaluate().getLines();
         } else {
-            return container.getValue().getItems();
+            return container.evaluate().getItems();
         }
     }
 

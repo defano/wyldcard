@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartOrdinalSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
@@ -12,7 +13,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class PartNumberExp extends PartExp {
+public class PartNumberExp extends PartContainerExp {
 
     public final Owner layer;
     public final PartType type;

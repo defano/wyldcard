@@ -9,8 +9,8 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -22,9 +22,9 @@ public class SelectTextCmd extends Command {
 
     private final Preposition preposition;
     private final Chunk chunk;
-    private final PartExp partExp;
+    private final PartContainerExp partExp;
 
-    public SelectTextCmd(ParserRuleContext context, Preposition preposition, Chunk chunkExp, PartExp partExp) {
+    public SelectTextCmd(ParserRuleContext context, Preposition preposition, Chunk chunkExp, PartContainerExp partExp) {
         super(context, "select");
 
         this.preposition = preposition;
@@ -32,7 +32,7 @@ public class SelectTextCmd extends Command {
         this.partExp = partExp;
     }
 
-    public SelectTextCmd(ParserRuleContext context, Preposition preposition, PartExp partExp) {
+    public SelectTextCmd(ParserRuleContext context, Preposition preposition, PartContainerExp partExp) {
         this(context, preposition, null, partExp);
     }
 

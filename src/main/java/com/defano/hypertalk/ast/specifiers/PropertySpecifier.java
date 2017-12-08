@@ -1,24 +1,24 @@
 package com.defano.hypertalk.ast.specifiers;
 
 import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 
 public class PropertySpecifier {
 
     public final String property;
     public final Chunk chunk;
-    public final PartExp partExp;
+    public final PartContainerExp partExp;
     public final MenuItemSpecifier menuItem;
 
     public PropertySpecifier (String globalProperty) {
         this(globalProperty, null, null, null);
     }
 
-    public PropertySpecifier (String property, Chunk chunk, PartExp partSpecifier) {
+    public PropertySpecifier (String property, Chunk chunk, PartContainerExp partSpecifier) {
         this(property, chunk, partSpecifier, null);
     }
 
-    public PropertySpecifier (String property, PartExp partSpecifier) {
+    public PropertySpecifier (String property, PartContainerExp partSpecifier) {
         this(property, null, partSpecifier, null);
     }
 
@@ -26,7 +26,7 @@ public class PropertySpecifier {
         this(property, null, null, menuItem);
     }
 
-    private PropertySpecifier (String property, Chunk chunk, PartExp part, MenuItemSpecifier menuItem) {
+    private PropertySpecifier (String property, Chunk chunk, PartContainerExp part, MenuItemSpecifier menuItem) {
         this.property = property;
         this.chunk = chunk;
         this.partExp = part;

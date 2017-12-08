@@ -6,12 +6,13 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartPositionSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class PartPositionExp extends PartExp {
+public class PartPositionExp extends PartContainerExp {
 
     private final PartType type;
     private final Position position;

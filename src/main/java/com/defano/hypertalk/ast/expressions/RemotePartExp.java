@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -12,12 +13,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
  * An expression referring to a button or field not on the presently active card. For example, 'the first card
  * button of the next card).
  */
-public class RemotePartExp extends PartExp {
+public class RemotePartExp extends PartContainerExp {
 
-    private final PartExp partExp;
-    private final PartExp ofPartExp;
+    private final PartContainerExp partExp;
+    private final PartContainerExp ofPartExp;
 
-    public RemotePartExp(ParserRuleContext context, PartExp partExp, PartExp ofPartExp) {
+    public RemotePartExp(ParserRuleContext context, PartContainerExp partExp, PartContainerExp ofPartExp) {
         super(context);
 
         this.partExp = partExp;
@@ -30,7 +31,7 @@ public class RemotePartExp extends PartExp {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
+    public Value onEvaluate() throws HtException {
         try {
             return ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
         } catch (Exception e) {

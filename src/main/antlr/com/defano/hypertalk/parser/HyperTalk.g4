@@ -120,7 +120,7 @@ messageStatement
     ;
 
 commandStmnt
-    : 'add' expression 'to' container                                                                                   # addCmdStmnt
+    : 'add' expression 'to' expression                                                                                  # addCmdStmnt
     | 'answer' expression 'with' factor 'or' factor 'or' factor                                                         # answerThreeButtonCmd
     | 'answer' expression 'with' factor 'or' factor                                                                     # answerTwoButtonCmd
     | 'answer' expression 'with' factor                                                                                 # answerOneButtonCmd
@@ -139,13 +139,10 @@ commandStmnt
     | 'convert' expression 'to' convertible                                                                             # convertToCmd
     | 'convert' expression 'from' convertible 'to' convertible                                                          # convertFromToCmd
     | 'create' 'menu' expression                                                                                        # createMenuCmdStmt
-    | 'delete' menu                                                                                                     # deleteMenuCmdStmt
-    | 'delete' menuItem                                                                                                 # deleteMenuItemCmdStmt
-    | 'delete' chunk container                                                                                          # deleteChunkCmdStmt
-    | 'delete' partExpression                                                                                           # deleteCmdStmt
+    | 'delete' expression                                                                                               # deleteCmdStmt
     | 'dial' expression                                                                                                 # dialCmdStmt
     | 'disable' expression                                                                                              # disableExprStmt
-    | 'divide' container 'by' expression                                                                                # divideCmdStmnt
+    | 'divide' expression 'by' expression                                                                               # divideCmdStmnt
     | 'do' expression                                                                                                   # doCmdStmt
     | 'domenu' expression                                                                                               # doMenuCmdStmt
     | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
@@ -163,7 +160,7 @@ commandStmnt
     | 'go' 'to'? expression                                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
-    | 'hide' partExpression                                                                                             # hideCmdStmnt
+    | 'hide' expression                                                                                                 # hideCmdStmnt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'multiply' container 'by' expression                                                                              # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
@@ -174,7 +171,7 @@ commandStmnt
     | 'push' card                                                                                                       # pushCardCmdStmt
     | 'push' expression                                                                                                 # pushDestCmdStmt
     | 'put' expression                                                                                                  # putIntoCmd
-    | 'put' expression preposition container                                                                            # putPrepositionCmd
+    | 'put' expression preposition expression                                                                           # putPrepositionCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
     | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
     | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
@@ -191,7 +188,7 @@ commandStmnt
     | 'select' partExpression                                                                                           # selectPartCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' expression 'to' partExpression                                                                             # sendCmdStmnt
-    | 'show' partExpression                                                                                             # showCmdStmnt
+    | 'show' expression                                                                                                 # showCmdStmnt
     | 'sort' sortChunkType container sortDirection sortStyle                                                            # sortDirectionCmd
     | 'sort' sortChunkType container sortDirection sortStyle 'by' expression                                            # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
@@ -296,17 +293,6 @@ chunk
     | line expression of                                                                                                # lineLineChunk
     ;
 
-container
-    : ID                                                                                                                # variableDest
-    | 'the'? 'selection'                                                                                                # selectionDest
-    | property                                                                                                          # propertyDest
-    | menu                                                                                                              # menuDest
-    | menuItem                                                                                                          # menuItemDest
-    | message                                                                                                           # messageDest
-    | partExpression                                                                                                    # partDest
-    | chunk container                                                                                                   # chunkContainerDest
-    ;
-
 menu
     : 'menu' factor                                                                                                     # expressionMenu
     | ordinal 'menu'                                                                                                    # ordinalMenu
@@ -397,16 +383,22 @@ expression
 factor
     : literal                                                                                                           # literalFactor
     | '-' literal                                                                                                       # negativeLiteralFactor
-    | ID                                                                                                                # idFactor
     | functionCall                                                                                                      # functionExp
-    | 'the'? 'selection'                                                                                                # selectionFactor
     | '(' expression ')'                                                                                                # expressionFactor
-    | part                                                                                                              # partFactor
-    | property                                                                                                          # partPropertyFactor
-    | menu                                                                                                              # menuFactor
-    | menuItem                                                                                                          # menuItemFactor
     | effectExpression                                                                                                  # visualEffectFactor
+    | container                                                                                                         # containerFactor
     | chunk factor                                                                                                      # chunkFactorChunk
+    ;
+
+container
+    : ID                                                                                                                # variableDest
+    | 'the'? 'selection'                                                                                                # selectionDest
+    | property                                                                                                          # propertyDest
+    | menu                                                                                                              # menuDest
+    | menuItem                                                                                                          # menuItemDest
+    | message                                                                                                           # messageDest
+    | part                                                                                                              # partDest
+    | chunk container                                                                                                   # chunkContainerDest
     ;
 
 partExpression

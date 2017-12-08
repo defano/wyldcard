@@ -8,11 +8,16 @@ import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-public class SelectionContainer extends Container {
+public class SelectionContainerExp extends ContainerExp {
+
+    public SelectionContainerExp(ParserRuleContext context) {
+        super(context);
+    }
 
     @Override
-    public Value getValue() throws HtException {
+    public Value onEvaluate() throws HtException {
         return chunkOf(SelectionContext.getInstance().getSelection(), getChunk());
     }
 

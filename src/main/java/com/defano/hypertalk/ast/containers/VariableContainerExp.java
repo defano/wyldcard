@@ -4,17 +4,19 @@ import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-public class VariableContainer extends Container {
+public class VariableContainerExp extends ContainerExp {
 
     private final String symbol;
 
-    public VariableContainer(String symbol) {
+    public VariableContainerExp(ParserRuleContext context, String symbol) {
+        super(context);
         this.symbol = symbol;
     }
 
     @Override
-    public Value getValue() throws HtException {
+    public Value onEvaluate() throws HtException {
         Value value = ExecutionContext.getContext().getVariable(symbol);
         return chunkOf(value, getChunk());
     }

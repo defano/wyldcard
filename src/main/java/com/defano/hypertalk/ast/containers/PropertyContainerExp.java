@@ -10,17 +10,19 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.utils.ChunkPropertiesDelegate;
 import com.defano.hypertalk.utils.MenuPropertiesDelegate;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-public class PropertyContainer extends Container {
+public class PropertyContainerExp extends ContainerExp {
 
     public final PropertySpecifier propertySpec;
 
-    public PropertyContainer(PropertySpecifier propertySpec) {
+    public PropertyContainerExp(ParserRuleContext context, PropertySpecifier propertySpec) {
+        super(context);
         this.propertySpec = propertySpec;
     }
 
     @Override
-    public Value getValue() throws HtException {
+    public Value onEvaluate() throws HtException {
         Value propertyValue;
 
         if (propertySpec.isChunkPropertySpecifier()) {

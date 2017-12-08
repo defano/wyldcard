@@ -5,6 +5,7 @@ import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -45,7 +46,7 @@ public abstract class Expression extends ASTNode {
      * type.
      */
     public <T extends PartModel> T evaluateAsPartModel(Class<T> clazz) {
-        PartExp partExp = evaluateAsPartExp();
+        PartContainerExp partExp = factor(PartContainerExp.class);
 
         if (partExp == null) {
             return null;
@@ -62,7 +63,7 @@ public abstract class Expression extends ASTNode {
             if (clazz.isAssignableFrom(model.getClass())) {
                 return (T) model;
             } else {
-                PartExp refExp = Interpreter.evaluate(partExp.evaluate(), PartExp.class);
+                PartContainerExp refExp = Interpreter.evaluate(partExp.evaluate(), PartContainerExp.class);
                 return refExp == null ? null : refExp.evaluateAsPartModel(clazz);
             }
         } catch (HtException e) {
@@ -70,76 +71,16 @@ public abstract class Expression extends ASTNode {
         }
     }
 
-    /**
-     * Returns the part expression evaluation of this expression, or null, if this expression cannot be represented
-     * as a part expression.
-     *
-     * If this expression is already a {@link PartExp}, then this is returned. If this is not a {@link PartExp}, then
-     * the value of the expression is evaluated and returned.
-     *
-     * @return A {@link PartExp} representation of this expression or null
-     * @throws HtException
-     */
-    private PartExp evaluateAsPartExp() {
-        if (this.ungrouped() instanceof PartExp) {
-            return (PartExp) this.ungrouped();
-        }
-
-        try {
-            return Interpreter.evaluate(this.evaluate(), PartExp.class);
-        } catch (HtException e) {
-            return null;
-        }
-    }
-
-    private MenuItemExp evaluateAsMenuItemExp() {
-        if (this.ungrouped() instanceof MenuItemExp) {
-            return (MenuItemExp) this.ungrouped();
-        }
-
-        try {
-            return Interpreter.evaluate(this.evaluate(), MenuItemExp.class);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private MenuExp evaluateAsMenuExp() {
-        if (this.ungrouped() instanceof MenuExp) {
-            return (MenuExp) this.ungrouped();
-        }
-
-        try {
-            return Interpreter.evaluate(this.evaluate(), MenuExp.class);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private VisualEffectExp evaluateAsVisualEffect() {
-        if (this.ungrouped() instanceof VisualEffectExp) {
-            return (VisualEffectExp) this.ungrouped();
-        }
-
-        try {
-            return Interpreter.evaluate(this.evaluate(), VisualEffectExp.class);
-        } catch (HtException e) {
-            return null;
-        }
-    }
-
     private <T extends Expression> T evaluateAs(Class<T> klazz) {
-        if (klazz.equals(PartExp.class)) {
-            return (T) evaluateAsPartExp();
-        } else if (klazz.equals(MenuExp.class)) {
-            return (T) evaluateAsMenuExp();
-        } else if (klazz.equals(MenuItemExp.class)) {
-            return (T) evaluateAsMenuItemExp();
-        } else if (klazz.equals(VisualEffectExp.class)) {
-            return (T) evaluateAsVisualEffect();
+        if (this.ungrouped().getClass().isAssignableFrom(klazz)) {
+            return (T) this.ungrouped();
         }
 
-        return null;
+        try {
+            return Interpreter.evaluate(this.evaluate(), klazz);
+        } catch (HtException e) {
+            return null;
+        }
     }
 
     private Expression ungrouped() {
@@ -166,9 +107,22 @@ public abstract class Expression extends ASTNode {
      */
     public boolean factor(FactorAssociation... evaluations) throws HtException {
 
+        // Special case: Expression is a group (has parens around it), try to factor the evaluated result first. If not,
+        // continue attempting to factor as if the expression was not grouped.
+        if (this instanceof GroupExp) {
+            try {
+                LiteralExp exp = new LiteralExp(null, this.ungrouped().evaluate());
+                if (exp.factor(evaluations)) {
+                    return true;
+                }
+            } catch (HtException e) {
+                // Nothing to do
+            }
+        }
+
         // If this expression directly matches the requested type, then take action
         for (FactorAssociation thisEvaluation : evaluations) {
-            if(thisEvaluation.expressionType.isAssignableFrom(this.getClass())) {
+            if (thisEvaluation.expressionType.isAssignableFrom(this.getClass())) {
                 thisEvaluation.action.accept(this);
                 return true;
             }
@@ -187,10 +141,15 @@ public abstract class Expression extends ASTNode {
         return false;
     }
 
-    public <T extends Expression> T factor(Class<T> clazz) throws HtException {
-        final Object[] expr = new Object[1];
-        factor(new FactorAssociation(clazz, object -> expr[0] = object));
-        return (T) expr[0];
+    public <T extends Expression> T factor(Class<T> clazz) {
+        try {
+            final Object[] expr = new Object[1];
+            factor(new FactorAssociation(clazz, object -> expr[0] = object));
+            return (T) expr[0];
+        } catch (HtException e) {
+            // Thrown only if a factor action throws it; our action never throws it
+            throw new IllegalStateException("Bug! This exception should not be possible.");
+        }
     }
 
     public <T extends Expression> T factor(Class<T> clazz, HtException orError) throws HtException {

@@ -5,16 +5,13 @@ import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.CompilationUnit;
-import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.expressions.ChunkExp;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -22,9 +19,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SelectPartCmd extends Command {
 
-    private final PartExp part;
+    private final PartContainerExp part;
 
-    public SelectPartCmd(ParserRuleContext context, PartExp part) {
+    public SelectPartCmd(ParserRuleContext context, PartContainerExp part) {
         super(context, "select");
         this.part = part;
     }
