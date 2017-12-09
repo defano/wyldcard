@@ -26,13 +26,13 @@ public class SortCardsCmd extends Command {
     private final SortDirection direction;
     private final SortStyle style;
     private final Expression expression;
-    private final PartContainerExp background;
+    private final Expression background;
 
     public SortCardsCmd(ParserRuleContext context, boolean markedCards, SortDirection direction, SortStyle style, Expression expression) {
         this(context, markedCards, null, direction, style, expression);
     }
 
-    public SortCardsCmd(ParserRuleContext context, boolean markedCards, PartContainerExp background, SortDirection direction, SortStyle style, Expression expression) {
+    public SortCardsCmd(ParserRuleContext context, boolean markedCards, Expression background, SortDirection direction, SortStyle style, Expression expression) {
         super(context, "sort");
 
         this.markedCards = markedCards;
@@ -117,9 +117,7 @@ public class SortCardsCmd extends Command {
             return true;
         }
 
-        PartSpecifier specifier = background.evaluateAsSpecifier();
-
-        // Shouldn't be possible, but...
+        PartSpecifier specifier = background.factor(PartContainerExp.class, new HtSemanticException("Can't sort that.")).evaluateAsSpecifier();
         if (specifier.getType() != PartType.BACKGROUND) {
             throw new HtSemanticException("Expression does not refer to a background.");
         }

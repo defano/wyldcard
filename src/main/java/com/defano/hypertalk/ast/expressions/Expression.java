@@ -120,10 +120,10 @@ public abstract class Expression extends ASTNode {
             }
         }
 
-        // If this expression directly matches the requested type, then take action
+        // If this expression (not including parens) directly matches the requested type, then take action
         for (FactorAssociation thisEvaluation : evaluations) {
-            if (thisEvaluation.expressionType.isAssignableFrom(this.getClass())) {
-                thisEvaluation.action.accept(this);
+            if (thisEvaluation.expressionType.isAssignableFrom(this.ungrouped().getClass())) {
+                thisEvaluation.action.accept(this.ungrouped());
                 return true;
             }
         }

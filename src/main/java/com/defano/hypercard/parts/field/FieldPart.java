@@ -3,7 +3,6 @@ package com.defano.hypercard.parts.field;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.model.PropertiesModel;
-import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;

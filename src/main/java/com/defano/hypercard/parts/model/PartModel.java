@@ -2,7 +2,6 @@ package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.Messagable;
 import com.defano.hypercard.parts.card.CardLayer;
-import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;

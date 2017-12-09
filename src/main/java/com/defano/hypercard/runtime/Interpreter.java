@@ -3,7 +3,6 @@ package com.defano.hypercard.runtime;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -82,7 +81,7 @@ public class Interpreter {
         });
     }
 
-    public static Object compile(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
+    private static Object compile(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
         HyperTalkErrorListener errors = new HyperTalkErrorListener();
         HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -91,11 +90,7 @@ public class Interpreter {
         parser.addErrorListener(errors);
 
         try {
-            long start = System.currentTimeMillis();
             ParseTree tree = compilationUnit.getParseTree(parser);
-            long end = System.currentTimeMillis();
-
-            System.err.println("Compiled " + scriptText.length() + " chars in " + (end - start) + "ms.");
 
             if (!errors.errors.isEmpty()) {
                 throw errors.errors.get(0);

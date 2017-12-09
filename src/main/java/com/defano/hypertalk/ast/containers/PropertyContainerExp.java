@@ -1,6 +1,7 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
@@ -26,9 +27,11 @@ public class PropertyContainerExp extends ContainerExp {
         Value propertyValue;
 
         if (propertySpec.isChunkPropertySpecifier()) {
-            propertyValue = ChunkPropertiesDelegate.getProperty(propertySpec.property, propertySpec.chunk, getPartSpecifier());
+            propertyValue = ChunkPropertiesDelegate.getProperty(propertySpec.getProperty(), propertySpec.getChunk(), getPartSpecifier());
         } else if (propertySpec.isMenuItemPropertySpecifier()) {
-            propertyValue = MenuPropertiesDelegate.getProperty(propertySpec.property, propertySpec.menuItem);
+            propertyValue = MenuPropertiesDelegate.getProperty(propertySpec.getProperty(), propertySpec.getMenuItem());
+        } else if (propertySpec.isGlobalPropertySpecifier()) {
+            propertyValue = HyperCardProperties.getInstance().getProperty(propertySpec.getProperty());
         } else {
             propertyValue = ExecutionContext.getContext().getPart(getPartSpecifier()).getProperty(getPropertyName());
         }
@@ -40,24 +43,24 @@ public class PropertyContainerExp extends ContainerExp {
     public void putValue(Value value, Preposition preposition) throws HtException {
 
         if (propertySpec.isChunkPropertySpecifier()) {
-            ChunkPropertiesDelegate.setProperty(propertySpec.property, value, propertySpec.chunk, getPartSpecifier());
+            ChunkPropertiesDelegate.setProperty(propertySpec.getProperty(), value, propertySpec.getChunk(), getPartSpecifier());
         } else if (propertySpec.isMenuItemPropertySpecifier()) {
             throw new HtSemanticException("Cannot put a value into this kind of property.");
         } else {
             try {
-                ExecutionContext.getContext().setProperty(propertySpec.property, getPartSpecifier(), preposition, getChunk(), value);
+                ExecutionContext.getContext().setProperty(propertySpec.getProperty(), getPartSpecifier(), preposition, getChunk(), value);
             } catch (NoSuchPropertyException e) {
                 // Context sensitive: Unknown HC property references are assumed to be local variable references
-                ExecutionContext.getContext().setVariable(propertySpec.property, preposition, getChunk(), value);
+                ExecutionContext.getContext().setVariable(propertySpec.getProperty(), preposition, getChunk(), value);
             }
         }
     }
 
     private PartSpecifier getPartSpecifier() throws HtException {
-        return propertySpec.partExp == null ? null : propertySpec.partExp.evaluateAsSpecifier();
+        return propertySpec.getPartExp() == null ? null : propertySpec.getPartExp().evaluateAsSpecifier();
     }
 
     public String getPropertyName() {
-        return propertySpec.property;
+        return propertySpec.getProperty();
     }
 }

@@ -4,7 +4,6 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.msgbox.MsgBoxModel;
-import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.SquigglePainter;

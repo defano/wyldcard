@@ -340,16 +340,19 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is an expression that HyperCard tries to interpret in whatever way is most meaningful to the context of it's usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making the HyperTalk language feel more like English than a programming language. "Do what I mean, not what I say."
+A _factor_ is an expression referring to an object that HyperCard tries to interpret in whatever way is most meaningful to the context of it's usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
-For example, the `go` command expects to "go" to a card or to a background. If you say `go to cd fld 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression then HyperCard will produce an error.
+For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression (such as, `next card`) then HyperCard will produce an error.
 
 #### How factors work in HyperTalk Java
 
-When a command evaluates an expression, the command expects that the argument evaluates to (refers to) some specific kind of object. In the example above, the `go` command expects that its argument refers to a card or background. If the argument is a literal expression of the expected type (i.e., `go to card field 1` or `go to the last card of the next background`) then HyperCard interprets the expression as is. But, if the expression is not a literal of the expected type then HyperTalk evaluates the expression as text and re-interprets it. The "text" evaluation of an expression is the value that would be displayed if you were to `put` or `answer` the expression (that is, the value put into a variable, the text of a field, the contents of a button, etc.). This text value is then treated as if it were a fragment of HyperTalk entered as part of the script. For example, if a variable `x` contains the value `next card`, then saying `go x` has the same result as if you'd written `go next card`.
+When a HyperTalk Java command expects an expression conforming to a specific type, it uses this algorithm to resolve the factor:
 
-#### Types of factors
+1. If the expression is a _grouped expression_ (that is, it has parentheses around it) then the group is evaluated and the resulting value is re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object becomes the argument to the command. For example, if `card field 1` contains the text `card button 1`, then the command `hide (card field 1)` has the effect of hiding card button 1.
 
+2. If the expression is an _object literal_ referring to the expected object type, then the literal value is used as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself—and not the button—to be hidden (because `card field 1` is an object literal in `hide card field 1`).
+
+3. Finally, if none of the previous attempts produce a usable argument, then, following the same process described in the first step, the expression is evaluated, and the resulting value is then re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object is assumed to be the argument to the command.
 
 ### Constants and literals
 

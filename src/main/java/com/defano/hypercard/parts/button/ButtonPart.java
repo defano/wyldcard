@@ -2,7 +2,6 @@ package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.model.PropertiesModel;
-import com.defano.hypercard.runtime.CompilationUnit;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.window.forms.ButtonPropertyEditor;

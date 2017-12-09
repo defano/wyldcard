@@ -7,16 +7,17 @@ import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 
 public class SendCmd extends Command {
 
-    public final PartContainerExp part;
+    public final Expression part;
     public final Expression message;
 
-    public SendCmd(ParserRuleContext context, PartContainerExp part, Expression message) {
+    public SendCmd(ParserRuleContext context, Expression part, Expression message) {
         super(context, "send");
 
         this.part = part;
@@ -24,11 +25,12 @@ public class SendCmd extends Command {
     }
 
     public void onExecute() throws HtException {
-        ExecutionContext.getContext().pushMe(part.evaluateAsSpecifier());
+        PartContainerExp factor = part.factor(PartContainerExp.class, new HtSemanticException("Cannot send a message to that."));
+        ExecutionContext.getContext().pushMe(factor.evaluateAsSpecifier());
 
         MessageCmd messageCmd = interpretMessage(message.evaluate().stringValue());
         if (messageCmd == null) {
-            ExecutionContext.getContext().sendMessage(part.evaluateAsSpecifier(), message.evaluate().stringValue(), new ArrayList<>());
+            ExecutionContext.getContext().sendMessage(factor.evaluateAsSpecifier(), message.evaluate().stringValue(), new ArrayList<>());
         } else {
             messageCmd.onExecute();
         }

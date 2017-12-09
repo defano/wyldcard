@@ -11,6 +11,7 @@ import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.containers.PartContainerExp;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -19,16 +20,16 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SelectPartCmd extends Command {
 
-    private final PartContainerExp part;
+    private final Expression part;
 
-    public SelectPartCmd(ParserRuleContext context, PartContainerExp part) {
+    public SelectPartCmd(ParserRuleContext context, Expression part) {
         super(context, "select");
         this.part = part;
     }
 
     @Override
     public void onExecute() throws HtException {
-        PartSpecifier specifier = this.part.evaluateAsSpecifier();
+        PartSpecifier specifier = this.part.factor(PartContainerExp.class, new HtSemanticException("Cannot select that.")).evaluateAsSpecifier();
 
         if (specifier.getType() == null || (specifier.getType() != PartType.FIELD && specifier.getType() != PartType.BUTTON)) {
             throw new HtSemanticException("Expected a button or field here.");

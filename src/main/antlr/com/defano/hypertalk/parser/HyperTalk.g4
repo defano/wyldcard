@@ -70,8 +70,8 @@ parameterList
     ;
 
 statementList
-    : statement? NEWLINE+ statementList                                                                                 # multiStmntList
-    | statement NEWLINE+                                                                                                # singleStmntList
+    : statement? NEWLINE statementList                                                                                  # multiStmntList
+    | statement NEWLINE                                                                                                 # singleStmntList
     ;
 
 statement
@@ -152,9 +152,9 @@ commandStmnt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
     | find expression                                                                                                   # findAnywhere
-    | find expression of fieldPart                                                                                      # findField
+    | find expression of expression                                                                                     # findField
     | find expression of 'marked' cards                                                                                 # findMarkedCards
-    | find expression of fieldPart of 'marked' cards                                                                    # findFieldMarkedCards
+    | find expression of expression of 'marked' cards                                                                   # findFieldMarkedCards
     | 'get' expression                                                                                                  # getCmdStmnt
     | 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
     | 'go' 'to'? expression                                                                                             # goCmdStmnt
@@ -162,7 +162,7 @@ commandStmnt
     | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
     | 'hide' expression                                                                                                 # hideCmdStmnt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
-    | 'multiply' container 'by' expression                                                                              # multiplyCmdStmnt
+    | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
     | 'open' 'file' expression                                                                                          # openFileCmdStmt
     | 'pass' handlerName                                                                                                # passCmdStmt
@@ -179,26 +179,25 @@ commandStmnt
     | 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
     | 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
     | 'select' 'empty'                                                                                                  # selectEmptyCmd
-    | 'select' 'text' of partExpression                                                                                 # selectTextCmd
-    | 'select' 'before' 'text' of partExpression                                                                        # selectBeforeCmd
-    | 'select' 'after' 'text' of partExpression                                                                         # selectAfterCmd
-    | 'select' chunk partExpression                                                                                     # selectChunkCmd
-    | 'select' 'before' chunk partExpression                                                                            # selectBeforeChunkCmd
-    | 'select' 'after' chunk partExpression                                                                             # selectAfterChunkCmd
-    | 'select' partExpression                                                                                           # selectPartCmd
+    | 'select' 'text' of expression                                                                                     # selectTextCmd
+    | 'select' 'before' 'text' of expression                                                                            # selectBeforeCmd
+    | 'select' 'after' 'text' of expression                                                                             # selectAfterCmd
+    | 'select' expression                                                                                               # selectChunkCmd
+    | 'select' 'before' expression                                                                                      # selectBeforeChunkCmd
+    | 'select' 'after' expression                                                                                       # selectAfterChunkCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
-    | 'send' expression 'to' partExpression                                                                             # sendCmdStmnt
+    | 'send' expression 'to' expression                                                                                 # sendCmdStmnt
     | 'show' expression                                                                                                 # showCmdStmnt
-    | 'sort' sortChunkType container sortDirection sortStyle                                                            # sortDirectionCmd
-    | 'sort' sortChunkType container sortDirection sortStyle 'by' expression                                            # sortExpressionCmd
+    | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
+    | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
     | 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
     | 'sort' 'the'? cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                  # sortStackCmd
     | 'sort' 'the'? 'marked' cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                         # sortMarkedCardsCmd
-    | 'sort' bkgndPart sortDirection sortStyle 'by' expression                                                          # sortBkgndCardsCmd
-    | 'sort' 'the'? cards of bkgndPart sortDirection sortStyle 'by' expression                                          # sortBkgndCardsCmd
-    | 'sort' 'the'? 'marked' cards of bkgndPart sortDirection sortStyle 'by' expression                                 # sortMarkedBkgndCardsCmd
-    | 'subtract' expression 'from' container                                                                            # subtractCmdStmnt
+    | 'sort' expression sortDirection sortStyle 'by' expression                                                         # sortBkgndCardsCmd
+    | 'sort' 'the'? cards of expression sortDirection sortStyle 'by' expression                                         # sortBkgndCardsCmd
+    | 'sort' 'the'? 'marked' cards of expression sortDirection sortStyle 'by' expression                                # sortMarkedBkgndCardsCmd
+    | 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
     | 'type' expression                                                                                                 # typeCmdStmt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
@@ -313,9 +312,7 @@ globalProperty
     ;
 
 partProperty
-    : 'the'? propertyName of partExpression                                                                             # propertySpecPart
-    | 'the'? propertyName of chunk partExpression                                                                       # propertySpecChunkPart
-    | 'the'? propertyName of menuItem                                                                                   # propertySpecMenuItem
+    : 'the'? propertyName of expression                                                                                 # propertySpecPart
     ;
 
 part
@@ -383,9 +380,9 @@ expression
 factor
     : literal                                                                                                           # literalFactor
     | '-' literal                                                                                                       # negativeLiteralFactor
-    | functionCall                                                                                                      # functionExp
     | '(' expression ')'                                                                                                # expressionFactor
     | effectExpression                                                                                                  # visualEffectFactor
+    | functionCall                                                                                                      # functionExp
     | container                                                                                                         # containerFactor
     | chunk factor                                                                                                      # chunkFactorChunk
     ;
@@ -399,11 +396,6 @@ container
     | message                                                                                                           # messageDest
     | part                                                                                                              # partDest
     | chunk container                                                                                                   # chunkContainerDest
-    ;
-
-partExpression
-    : part                                                                                                              # literalPartExpression
-    | expression                                                                                                        # referencePartExpression
     ;
 
 musicExpression
