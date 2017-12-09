@@ -1,6 +1,7 @@
 package com.defano.hypertalk.ast.common;
 
 import com.defano.hypertalk.ast.functions.UserFunction;
+import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 
 import java.util.*;
@@ -37,9 +38,13 @@ public class Script {
         handlerEndingLine.put(name, endingLine);
         return this;
     }
-    
-    public Script defineStatementList (StatementList statements) {
-        this.statements = statements;
+
+    public Script insertStatement(Statement statement) {
+        if (this.statements == null) {
+            this.statements = new StatementList(null);
+        }
+
+        this.statements.list.add(statement);
         return this;
     }
 

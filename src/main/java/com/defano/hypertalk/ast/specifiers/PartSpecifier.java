@@ -30,7 +30,7 @@ public interface PartSpecifier {
     PartType getType();
 
     default boolean isCardElementSpecifier() {
-        return getType() == PartType.BUTTON || getType() == PartType.FIELD;
+        return getType() == PartType.BUTTON || getType() == PartType.FIELD || getType() == null;
     }
 
     default boolean isStackElementSpecifier() {

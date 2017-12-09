@@ -34,7 +34,7 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software r
 #### Script your own software
 
 * Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and can be trapped to override system behavior.
-* Supports much of the HyperTalk 2.x language (most of the built-in commands and functions have been implemented).
+* Supports much of the HyperTalk 2.x language (most of the built-in commands and functions have been implemented), including context-sensitive evaluation of _factors_.
 * Customize the application menu bar and author scripts that determine its behavior.
 * Powerful expression language sports compound mutable chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
 
@@ -340,22 +340,19 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is a single evaluated term appearing in an expression. HyperTalk is somewhat unusual in its use of _context sensitive_ evaluation of terms.
+A _factor_ is an expression referring to an object that HyperCard tries to interpret in whatever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
-When referring to parts and destinations, if a symbol bound to a variable exists in the context of its usage then the value of that variable will be evaluated as if it were HyperTalk.
+For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression (such as, `next card`) then HyperCard will produce an error.
 
-In the following usage, HyperTalk assumes `someCard` to be an unquoted literal and looks for a card named `someCard`:
+#### How factors work in HyperTalk Java
 
-```
-go to card someCard  -- Looks for first card named 'someCard'
-```
+When a HyperTalk Java command expects an expression conforming to a specific type, it uses this algorithm to resolve the factor:
 
-But in this example, HyperTalk evaluates the contents of `someCard` and discovers that it contains a valid HyperTalk expression referring to a card in the stack:
+1. If the expression is a _grouped expression_ (that is, it has parentheses around it) then the group is evaluated and the resulting value is re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object becomes the argument to the command. For example, if `card field 1` contains the text `card button 1`, then the command `hide (card field 1)` has the effect of hiding card button 1.
 
-```
-put "the last card" into someCard
-go someCard          -- Same behavior as 'go the last card'!
-```
+2. If the expression is an _object literal_ referring to the expected object type, then the literal value is used as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself—and not the button—to be hidden (because `card field 1` is an object literal in `hide card field 1`).
+
+3. Finally, if none of the previous attempts produce a usable argument, then, following the same process described in the first step, the expression is evaluated, and the resulting value is then re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object is assumed to be the argument to the command.
 
 ### Constants and literals
 
@@ -374,7 +371,7 @@ Constant     | Value
 `space`      | A single space, equivalent to `" "`
 `tab`        | A tab character
 `formFeed`   | The form feed character (ASCII 0x0c, `\f` in Java)
-`lineFeed`   | The line feed character (ASCII 0x0a, `\n` in Java)
+`lineFeed`   | The line feed character (ASCII 0x0a, `\r` in Java)
 `comma`      | The comma character, `,`
 `colon`      | The colon character, `:`
 `zero`..`ten`| The integers `0` to `10`
@@ -518,7 +515,7 @@ put "I like IDs" into background field id 22 of card 3
 
 ### Part Numbers
 
-Each part is assigned a number that represents it's logical order within the context of its owner.
+Each part is assigned a number that represents its logical order within the context of its owner.
 
 For buttons and fields, this represents the drawing order of the part (_z-order_); Higher numbered parts are drawn before lowered numbered parts and thereby appear behind them. You cannot directly set a button or field's number, but the "Bring Closer" or "Send Further" commands in the "Objects" menu will affect the number assigned to it.
 

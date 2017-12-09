@@ -1,18 +1,19 @@
 package com.defano.hypertalk.ast.commands;
 
+import com.defano.hypertalk.ast.containers.ContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.containers.Container;
 import com.defano.hypertalk.ast.common.Preposition;
+import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SubtractCmd extends Command {
 
     private final Expression expression;
-    private final Container container;
+    private final Expression container;
 
-    public SubtractCmd(ParserRuleContext context, Expression source, Container container) {
+    public SubtractCmd(ParserRuleContext context, Expression source, Expression container) {
         super(context, "subtract");
 
         this.expression = source;
@@ -20,6 +21,7 @@ public class SubtractCmd extends Command {
     }
 
     public void onExecute() throws HtException {
-        container.putValue(container.getValue().subtract(expression.evaluate()), Preposition.INTO);
+        ContainerExp factor = container.factor(ContainerExp.class, new HtSemanticException("Can't subtract from that."));
+        factor.putValue(factor.evaluate().subtract(expression.evaluate()), Preposition.INTO);
     }
 }

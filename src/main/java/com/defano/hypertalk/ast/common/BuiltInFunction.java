@@ -61,5 +61,6 @@ public enum BuiltInFunction {
     PARAMS,
     PARAM_COUNT,
     PARAM,
-    OFFSET
+    OFFSET,
+    PROPERTY_DELEGATED
 }

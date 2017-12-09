@@ -18,9 +18,10 @@ public class IfStatement extends Statement {
     }
     
     public void onExecute() throws HtException, Breakpoint {
-        if (condition.evaluate().booleanValue())
+        if (condition.evaluate().booleanValue()) {
             then.thenBranch.execute();
-        else
+        } else if (then.elseBranch != null) {
             then.elseBranch.execute();
+        }
     }
 }

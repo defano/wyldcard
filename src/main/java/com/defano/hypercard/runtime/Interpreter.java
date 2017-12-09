@@ -62,23 +62,48 @@ public class Interpreter {
      * @param scriptText The script to compile.
      * @param observer A non-null callback to fire when compilation is complete.
      */
-    public static void compileInBackground(String scriptText, CompileCompletionObserver observer) {
+    public static void compileInBackground(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
 
         // Preempt any previously enqueued compile jobs
         backgroundCompileExecutor.getQueue().clear();
 
         backgroundCompileExecutor.submit(() -> {
             HtException generatedError = null;
-            Script compiledScript = null;
+            Object compiledScript = null;
 
             try {
-                compiledScript = compile(scriptText);
+                compiledScript = compile(compilationUnit, scriptText);
             } catch (HtException e) {
                 generatedError = e;
             }
 
             observer.onCompileCompleted(scriptText, compiledScript, generatedError);
         });
+    }
+
+    private static Object compile(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
+        HyperTalkErrorListener errors = new HyperTalkErrorListener();
+        HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        HyperTalkParser parser = new HyperTalkParser(tokens);
+        parser.removeErrorListeners();        // don't log to console
+        parser.addErrorListener(errors);
+
+        try {
+            ParseTree tree = compilationUnit.getParseTree(parser);
+
+            if (!errors.errors.isEmpty()) {
+                throw errors.errors.get(0);
+            }
+
+            return new HyperTalkTreeVisitor().visit(tree);
+        } catch (RecognitionException e) {
+            throw new HtSyntaxException(e);
+        }
+    }
+
+    public static Script compileScriptlet(String scriptText) throws HtException {
+        return (Script) compile(CompilationUnit.SCRIPTLET, scriptText);
     }
 
     /**
@@ -88,26 +113,8 @@ public class Interpreter {
      * @return The compiled Script object
      * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
      */
-    public static Script compile(String scriptText) throws HtException {
-        HyperTalkErrorListener errors = new HyperTalkErrorListener();
-
-        HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        HyperTalkParser parser = new HyperTalkParser(tokens);
-        parser.removeErrorListeners();        // don't log to console
-        parser.addErrorListener(errors);
-
-        try {
-            ParseTree tree = parser.script();
-
-            if (!errors.errors.isEmpty()) {
-                throw errors.errors.get(0);
-            }
-
-            return (Script) new HyperTalkTreeVisitor().visit(tree);
-        } catch (RecognitionException e) {
-            throw new HtSyntaxException(e);
-        }
+    public static Script compileScript(String scriptText) throws HtException {
+        return (Script) compile(CompilationUnit.SCRIPT, scriptText);
     }
 
     /**
@@ -119,7 +126,7 @@ public class Interpreter {
      */
     public static Value evaluate(String expression) {
         try {
-            Statement statement = compile(expression).getStatements().list.get(0);
+            Statement statement = compileScriptlet(expression).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate();
             }
@@ -133,7 +140,7 @@ public class Interpreter {
 
     /**
      * Attempts to evaluate the given value as an AST node identified by klass. That is, the given value is compiled
-     * as a HyperTalk script and the first and only statement in the script is coerced to the requested type. Returns
+     * as a HyperTalk scriptlet and the first statement in the script is coerced to the requested type. Returns
      * null if the value is not a valid HyperTalk script or contains a script fragment that cannot be coerced to
      * the requested type.
      *
@@ -141,16 +148,16 @@ public class Interpreter {
      * PartIdExp will be returned referring to the requested part.
      *
      * @param value The value to dereference; may be any non-null value, but only Values containing valid HyperTalk
-     *              can be dereferenced.
+     *              can be de-referenced.
      * @param klass The Class to coerce/dereference the value into (may return a subtype of this class).
      * @param <T> The type of the requested class.
      * @return Null if dereference fails for any reason, otherwise an instance of the requested class representing
      * the dereferenced value.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T dereference(Value value, Class<T> klass) {
+    public static <T> T evaluate(Value value, Class<T> klass) {
         try {
-            Statement statement = Interpreter.compile(value.stringValue()).getStatements().list.get(0);
+            Statement statement = Interpreter.compileScriptlet(value.stringValue()).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -171,6 +178,19 @@ public class Interpreter {
         return null;
     }
 
+    public static <T> T evaluate(CompilationUnit compilationUnit, Value value, Class<T> klass) {
+        try {
+            Object ast = Interpreter.compile(compilationUnit, value.stringValue());
+            if (ast.getClass().isAssignableFrom(klass)) {
+                return (T) ast;
+            } else {
+                return null;
+            }
+        } catch (HtSyntaxException e) {
+            return null;
+        }
+    }
+
     /**
      * Determines if the given Script text represents a valid HyperTalk expression on the current thread.
      *
@@ -179,7 +199,7 @@ public class Interpreter {
      * @throws HtException Thrown if the statement cannot be compiled (due to a syntax/semantic error).
      */
     public static boolean isExpressionStatement(String statement) throws HtException {
-        return compile(statement).getStatements().list.get(0) instanceof ExpressionStatement;
+        return compileScriptlet(statement).getStatements().list.get(0) instanceof ExpressionStatement;
     }
 
     /**
@@ -233,7 +253,7 @@ public class Interpreter {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static Future<String> executeString(PartSpecifier me, String statementList) throws HtException  {
-        return executeNamedBlock(me, getAnonymousBlock(compile(statementList).getStatements()), new ExpressionList());
+        return executeNamedBlock(me, getAnonymousBlock(compileScriptlet(statementList).getStatements()), new ExpressionList());
     }
 
     /**

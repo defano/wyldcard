@@ -4,27 +4,21 @@ import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
+import org.antlr.v4.runtime.ParserRuleContext;
 
-public class SelectionContainer extends Container {
+public class SelectionContainerExp extends ContainerExp {
 
-    private final Chunk chunk;
-
-    public SelectionContainer(Chunk chunk) {
-        this.chunk = chunk;
-    }
-
-    public SelectionContainer() {
-        this.chunk = null;
+    public SelectionContainerExp(ParserRuleContext context) {
+        super(context);
     }
 
     @Override
-    public Value getValue() throws HtException {
-        return chunkOf(SelectionContext.getInstance().getSelection(), chunk);
+    public Value onEvaluate() throws HtException {
+        return chunkOf(SelectionContext.getInstance().getSelection(), getChunk());
     }
 
     @Override
@@ -37,8 +31,8 @@ public class SelectionContainer extends Container {
 
         // Create the new selectedText
         Value newSelection;
-        if (chunk != null)
-            newSelection = Value.setChunk(oldSelection, preposition, chunk, value);
+        if (getChunk() != null)
+            newSelection = Value.setChunk(oldSelection, preposition, getChunk(), value);
         else
             newSelection = Value.setValue(oldSelection, preposition, value);
 

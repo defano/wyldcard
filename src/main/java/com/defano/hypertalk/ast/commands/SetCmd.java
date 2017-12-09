@@ -28,29 +28,29 @@ public class SetCmd extends Command {
             
             // Setting the property of HyperCard
             if (propertySpec.isGlobalPropertySpecifier()) {
-                ExecutionContext.getContext().getGlobalProperties().setProperty(propertySpec.property, expression.evaluate());
+                ExecutionContext.getContext().getGlobalProperties().setProperty(propertySpec.getProperty(), expression.evaluate());
             }
 
             // Setting the property of menu / menu item
             else if (propertySpec.isMenuItemPropertySpecifier()) {
-                MenuPropertiesDelegate.setProperty(propertySpec.property, expression.evaluate(), propertySpec.menuItem);
+                MenuPropertiesDelegate.setProperty(propertySpec.getProperty(), expression.evaluate(), propertySpec.getMenuItem());
             }
 
             else if (propertySpec.isChunkPropertySpecifier()) {
-                ChunkPropertiesDelegate.setProperty(propertySpec.property, expression.evaluate(), propertySpec.chunk, propertySpec.partExp.evaluateAsSpecifier());
+                ChunkPropertiesDelegate.setProperty(propertySpec.getProperty(), expression.evaluate(), propertySpec.getChunk(), propertySpec.getPartExp().evaluateAsSpecifier());
             }
 
             // Setting the property of a part
             else {
-                ExecutionContext.getContext().setProperty(propertySpec.property, propertySpec.partExp.evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
+                ExecutionContext.getContext().setProperty(propertySpec.getProperty(), propertySpec.getPartExp().evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
             }
 
         } catch (HtSemanticException e) {
-            if (propertySpec.partExp != null) {
+            if (propertySpec.getPartExp() != null) {
                 throw (e);
             } else {
                 // When all else fails, set the value of a variable container
-                ExecutionContext.getContext().setVariable(propertySpec.property, expression.evaluate());
+                ExecutionContext.getContext().setVariable(propertySpec.getProperty(), expression.evaluate());
             }
         }
     }

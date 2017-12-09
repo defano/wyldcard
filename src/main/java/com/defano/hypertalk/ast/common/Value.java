@@ -4,7 +4,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 
 import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.comparator.StyledComparable;
@@ -239,7 +238,7 @@ public class Value implements StyledComparable<Value> {
     }
 
     public List<Value> getItems() {
-        List<Value> list = new Vector<>();
+        List<Value> list = new ArrayList<>();
         
         for (String item : value.split(","))
             list.add(new Value(item));

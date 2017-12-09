@@ -9,8 +9,9 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.expressions.PartExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -21,35 +22,31 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class SelectTextCmd extends Command {
 
     private final Preposition preposition;
-    private final Chunk chunk;
-    private final PartExp partExp;
+    private final Expression partExp;
 
-    public SelectTextCmd(ParserRuleContext context, Preposition preposition, Chunk chunkExp, PartExp partExp) {
+    public SelectTextCmd(ParserRuleContext context, Preposition preposition, Expression partExp) {
         super(context, "select");
 
         this.preposition = preposition;
-        this.chunk = chunkExp;
         this.partExp = partExp;
-    }
-
-    public SelectTextCmd(ParserRuleContext context, Preposition preposition, PartExp partExp) {
-        this(context, preposition, null, partExp);
     }
 
     @Override
     public void onExecute() throws HtException {
-        PartSpecifier specifier = this.partExp.evaluateAsSpecifier();
+        PartContainerExp containerExp = this.partExp.factor(PartContainerExp.class, new HtSemanticException("Cannot select text from that."));
+        PartSpecifier specifier = containerExp.evaluateAsSpecifier();
+        Chunk chunk = containerExp.getChunk();
 
         if (specifier.getType() != null && specifier.getType() == PartType.BUTTON) {
-            selectMenuButtonItem(specifier);
+            selectMenuButtonItem(specifier, chunk);
         } else if (specifier.getType() == null || (specifier.getType() != PartType.FIELD && specifier.getType() != PartType.MESSAGE_BOX)) {
             throw new HtSemanticException("Expected a field here.");
         } else {
-            selectManagedText(specifier);
+            selectManagedText(specifier, chunk);
         }
     }
 
-    private void selectManagedText(PartSpecifier specifier) throws HtException {
+    private void selectManagedText(PartSpecifier specifier, Chunk chunk) throws HtException {
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);
 
         if (! (partModel instanceof AddressableSelection)) {
@@ -79,9 +76,9 @@ public class SelectTextCmd extends Command {
         });
     }
 
-    private void selectMenuButtonItem(PartSpecifier specifier) throws HtException {
+    private void selectMenuButtonItem(PartSpecifier specifier, Chunk chunk) throws HtException {
         if (chunk.type != ChunkType.LINE) {
-            throw new HtSemanticException("Cannot select " + chunk.type.hyperTalkName() + " of this button.");
+            throw new HtSemanticException("Can't select the text of a button.");
         }
 
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);

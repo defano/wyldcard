@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.commands;
 import com.defano.hypertalk.ast.common.SortDirection;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.common.Preposition;
+import com.defano.hypertalk.ast.containers.ContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.comparator.ExpressionValueComparator;
@@ -10,7 +11,6 @@ import com.defano.hypertalk.comparator.SortStyle;
 import com.defano.hypertalk.comparator.ValueComparator;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.common.ChunkType;
-import com.defano.hypertalk.ast.containers.Container;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -20,11 +20,11 @@ public class SortCmd extends Command {
 
     public final SortDirection direction;
     public final ChunkType chunkType;
-    public final Container container;
+    public final Expression container;
     public final Expression expression;
     public final SortStyle sortStyle;
 
-    public SortCmd(ParserRuleContext context, Container container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
+    public SortCmd(ParserRuleContext context, Expression container, ChunkType chunkType, Expression expression, SortDirection direction, SortStyle sortStyle) {
         super(context, "sort");
 
         this.container = container;
@@ -34,18 +34,13 @@ public class SortCmd extends Command {
         this.sortStyle = sortStyle;
     }
 
-    public SortCmd(ParserRuleContext context, Container container, ChunkType chunkType, SortDirection direction, SortStyle sortStyle) {
-        super(context, "sort");
-
-        this.container = container;
-        this.chunkType = chunkType;
-        this.direction = direction;
-        this.expression = null;
-        this.sortStyle = sortStyle;
+    public SortCmd(ParserRuleContext context, Expression container, ChunkType chunkType, SortDirection direction, SortStyle sortStyle) {
+        this(context, container, chunkType, null, direction, sortStyle);
     }
 
     public void onExecute() throws HtException {
-        List<Value> items = getItemsToSort();
+        ContainerExp factor = container.factor(ContainerExp.class, new HtSemanticException("Can't sort that."));
+        List<Value> items = getItemsToSort(factor);
 
         // Sort by direction
         if (expression == null) {
@@ -57,10 +52,10 @@ public class SortCmd extends Command {
             items.sort(new ExpressionValueComparator(expression, direction, sortStyle));
         }
 
-        putSortedItems(items);
+        putSortedItems(factor, items);
     }
 
-    private void putSortedItems(List<Value> sortedItems) throws HtException {
+    private void putSortedItems(ContainerExp container, List<Value> sortedItems) throws HtException {
         if (chunkType == ChunkType.LINE) {
             container.putValue(Value.ofLines(sortedItems), Preposition.INTO);
         } else {
@@ -68,15 +63,15 @@ public class SortCmd extends Command {
         }
     }
 
-    private List<Value> getItemsToSort() throws HtException {
+    private List<Value> getItemsToSort(ContainerExp container) throws HtException {
         if (chunkType != ChunkType.LINE && chunkType != ChunkType.ITEM) {
-            throw new HtSemanticException("Cannot sort by '" + chunkType + "'. Only 'lines' or 'items' are supported.");
+            throw new HtSemanticException("Can only sort by lines or items.");
         }
 
         if (chunkType == ChunkType.LINE) {
-            return container.getValue().getLines();
+            return container.evaluate().getLines();
         } else {
-            return container.getValue().getItems();
+            return container.evaluate().getItems();
         }
     }
 

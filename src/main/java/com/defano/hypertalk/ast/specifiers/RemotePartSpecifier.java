@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.specifiers;
 
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.expressions.PartExp;
+import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.exception.HtException;
 
 /**
@@ -11,14 +11,14 @@ import com.defano.hypertalk.exception.HtException;
 public class RemotePartSpecifier implements PartSpecifier {
 
     private final PartSpecifier partSpecifier;      // The button or field
-    private final PartExp ofCardPartExp;            // The card the button or field can be found on
+    private final PartContainerExp ofCardPartExp;   // The card the button or field can be found on
 
-    public RemotePartSpecifier(PartSpecifier partSpecifier, PartExp ofCardPartExp) {
+    public RemotePartSpecifier(PartSpecifier partSpecifier, PartContainerExp ofCardPartExp) {
         this.partSpecifier = partSpecifier;
         this.ofCardPartExp = ofCardPartExp;
     }
 
-    public PartExp getRemoteCardPartExp() {
+    public PartContainerExp getRemoteCardPartExp() {
         return ofCardPartExp;
     }
 

@@ -4,12 +4,14 @@ import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 
 import java.awt.*;
@@ -101,7 +103,12 @@ public class SearchContext {
 
         // Indexing a single, user-specified field
         if (query.isSingleFieldSearch()) {
-            FieldModel field = (FieldModel) ExecutionContext.getContext().getPart(query.searchField);
+            PartModel part = ExecutionContext.getContext().getPart(query.searchField);
+            if (!(part instanceof FieldModel)) {
+                throw new HtSemanticException("Can't search that.");
+            }
+
+            FieldModel field = (FieldModel) part;
 
             int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardIndexInStack();
             if (query.searchField instanceof RemotePartSpecifier) {

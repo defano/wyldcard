@@ -1,51 +1,36 @@
 package com.defano.hypertalk.ast.containers;
 
 import com.defano.hypercard.menu.MenuItemBuilder;
-import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
-import com.defano.hypertalk.ast.specifiers.MenuSpecifier;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.specifiers.MenuSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MenuContainer extends Container {
+public class MenuContainerExp extends ContainerExp {
 
-    private final MenuSpecifier menu;
-    private final MenuItemSpecifier item;
+    public final MenuSpecifier menu;
 
-    public MenuContainer(MenuItemSpecifier item) {
-        this.item = item;
-        this.menu = null;
-    }
-
-    public MenuContainer(MenuSpecifier menu) {
+    public MenuContainerExp(ParserRuleContext context, MenuSpecifier menu) {
+        super(context);
         this.menu = menu;
-        this.item = null;
     }
 
     @Override
-    public Value getValue() throws HtException {
-        if (item != null) {
-            return getMenuItemValue(item.getSpecifiedMenu(), item.getSpecifiedItemIndex());
-        } else if (menu != null) {
-            return getMenuValue(menu.getSpecifiedMenu());
-        }
-
-        throw new IllegalStateException("Bug! Invalid container state.");
+    public Value onEvaluate() throws HtException {
+        Value evaluated = getMenuValue(menu.getSpecifiedMenu());
+        return chunkOf(evaluated, getChunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        if (item != null) {
-            putMenuItemValue(value, preposition);
-        } else {
-            putMenuValue(value, preposition);
-        }
+        putMenuValue(value, preposition);
     }
 
     /**
@@ -66,51 +51,6 @@ public class MenuContainer extends Container {
         }
 
         return Value.ofLines(menuItems);
-    }
-
-    /**
-     * Gets the value of a specific menu item.
-     *
-     * @param itemIndex The index of the menu item whose value should be returned.
-     * @param menu The menu whose menu items should be returned.
-     * @return The value of the specified menu item.
-     */
-    public static Value getMenuItemValue(JMenu menu, int itemIndex) throws HtSemanticException {
-        if (itemIndex < 0 || itemIndex >= menu.getItemCount()) {
-            throw new HtSemanticException("No such menu item " + (itemIndex + 1));
-        }
-
-        if (menu.getItem(itemIndex) == null) {
-            return new Value("-");
-        } else {
-            return new Value(menu.getItem(itemIndex).getText());
-        }
-    }
-
-    /**
-     * Puts a Value into a menu relative to a given menu item. See {@link #addValueToMenu(Value, JMenu, int)}
-     *
-     * @param value the value representing new menu items.
-     * @param preposition The preposition representing where items should be added relative to the given menu item.
-     * @throws HtSemanticException Thrown if an error occurs adding items.
-     */
-    private void putMenuItemValue(Value value, Preposition preposition) throws HtException {
-        JMenu menu = item.getSpecifiedMenu();
-        int itemIndex = item.getSpecifiedItemIndex();       // Location of specified item
-
-        if (preposition == Preposition.AFTER) {
-            itemIndex++;
-        }
-
-        if (itemIndex < 0 || itemIndex > menu.getItemCount()) {
-            throw new HtSemanticException("No such menu item.");
-        }
-
-        if (preposition == Preposition.INTO) {
-            menu.remove(itemIndex);
-        }
-
-        addValueToMenu(value, menu, itemIndex);
     }
 
     /**
@@ -145,7 +85,7 @@ public class MenuContainer extends Container {
      * @param menu The menu into which items should be added
      * @param index The index at which the menu items should be added.
      */
-    private void addValueToMenu(Value v, JMenu menu, int index) {
+    public static void addValueToMenu(Value v, JMenu menu, int index) {
         List<Value> menuItems = v.getLines();
 
         // If value contains a single line, then attempt to onEvaluate it as items

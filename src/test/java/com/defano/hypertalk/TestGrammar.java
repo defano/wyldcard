@@ -10,56 +10,31 @@ package com.defano.hypertalk;
 
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypertalk.exception.HtException;
-
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import static junit.framework.Assert.fail;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TestGrammar {
 
-    private final String[] validStatements = new String[]{
-            "",
-            "3",
-            "3.0",
-            "3.",
-            ".3",
-            "hello",
-            "answer \"hello\" with \"choice 1\"",
-            "answer \"hello\" with \"choice 1\" or \"choice 2\"",
-            "answer \"hello\" with \"choice 1\" or \"choice 2\" or \"choice 2\"",
-            "ask \"hello\"",
-            "ask \"hello\" with \"answer\""
-    };
-
-    private final String[] validScripts = new String[] {
-            "",
-            "-- comment",
-            "\n\n\n",
-            "on mouseUp\nend mouseUp",
-    };
-
-    @SuppressWarnings("deprecation")
     @Test
-    public void testValidStatements () {
-        for (String thisStatement : validStatements) {
-            try {
-                Interpreter.compile(thisStatement);
-            } catch (HtException e) {
-                fail("Compile error in [" + thisStatement + "]: " + e.getMessage());
-            }
-        }
-    }
+    public void testGrammar() throws IOException, HtException {
+        InputStream in = this.getClass().getClassLoader().getResourceAsStream("examples/Script.txt");
+        String testScript = IOUtils.toString(in);
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testValidScripts () {
-        for (String thisScript : validScripts) {
-            try {
-                Interpreter.compile(thisScript);
-            } catch (HtException e) {
-                fail("Compile error in [" + thisScript + "]: " + e.getMessage());
-            }
-        }
+        long start = System.currentTimeMillis();
+        Interpreter.compileScript(testScript);
+        long end = System.currentTimeMillis();
+
+        System.out.println("Cold-compiled test script in " + (end - start) + "ms.");
+
+        start = System.currentTimeMillis();
+        Interpreter.compileScript(testScript);
+        end = System.currentTimeMillis();
+
+        System.out.println("Warm-compiled test script in " + (end - start) + "ms.");
+
     }
 
 }

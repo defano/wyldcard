@@ -13,9 +13,9 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.Vector;
 
 public class ExecutionContext {
 
@@ -31,7 +31,7 @@ public class ExecutionContext {
      */
     private final ThreadLocal<Stack<StackFrame>> stack = new ThreadLocal<>();
     private final ThreadLocal<StackFrame> frame = new ThreadLocal<>();
-    private final ThreadLocal<PartSpecifier> me = new ThreadLocal<>();
+    private final ThreadLocal<Stack<PartSpecifier>> me = new ThreadLocal<>();
     private final ThreadLocal<Value> result = new ThreadLocal<>();
     private final ThreadLocal<CardPart> card = new ThreadLocal<>();
 
@@ -54,7 +54,7 @@ public class ExecutionContext {
      */
     public void pushContext () {
         getStack().push(getFrame());
-        setFrame(new StackFrame(new SymbolTable(), new Vector<>(), new Value()));
+        setFrame(new StackFrame(new SymbolTable(), new ArrayList<>(), new Value()));
     }
 
     /**
@@ -138,6 +138,19 @@ public class ExecutionContext {
             globals.put(symbol, v);
         else
             getFrame().symbols.put(symbol, v);
+    }
+
+    public void setVariable(String symbol, Preposition preposition, Chunk chunk, Value value) throws HtException {
+        Value mutable = getVariable(symbol);
+
+        // Operating on a chunk of the existing value
+        if (chunk != null)
+            mutable = Value.setChunk(mutable, preposition, chunk, value);
+        else
+            mutable = Value.setValue(mutable, preposition, value);
+
+        ExecutionContext.getContext().setVariable(symbol, mutable);
+        ExecutionContext.getContext().setIt(mutable);
     }
 
     /**
@@ -329,8 +342,12 @@ public class ExecutionContext {
      *
      * @param me The part referred to as 'me'
      */
-    public void setMe (PartSpecifier me) {
-        this.me.set(me);
+    public void pushMe(PartSpecifier me) {
+        getMeStack().push(me);
+    }
+
+    public PartSpecifier popMe() {
+        return getMeStack().pop();
     }
 
     /**
@@ -340,11 +357,11 @@ public class ExecutionContext {
      * @throws HtSemanticException Thrown if no part is bound to 'me' in this context
      */
     public PartSpecifier getMe () throws HtSemanticException {
-        if (me.get() == null) {
+        if (getMeStack().size() == 0) {
             throw new HtSemanticException("Can't refer to 'me' in this context.");
         }
 
-        return this.me.get();
+        return getMeStack().peek();
     }
 
     /**
@@ -388,6 +405,14 @@ public class ExecutionContext {
         } else {
             throw new PartException("No such part.");
         }
+    }
+
+    private Stack<PartSpecifier> getMeStack() {
+        if (this.me.get() == null) {
+            this.me.set(new Stack<>());
+        }
+
+        return this.me.get();
     }
 
     private Stack<StackFrame> getStack() {

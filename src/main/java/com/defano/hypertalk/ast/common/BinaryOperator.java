@@ -13,7 +13,7 @@ public enum BinaryOperator {
     PLUS("+"),
     MINUS("-"),
     MULTIPLY("*"),
-    DIVIDE("/"),
+    DIVIDE("/", "div"),
     MOD("mod"),
     EXP("^"),
     AND("and"),

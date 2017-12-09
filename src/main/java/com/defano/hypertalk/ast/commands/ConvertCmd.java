@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Convertible;
-import com.defano.hypertalk.ast.containers.Container;
+import com.defano.hypertalk.ast.containers.ContainerExp;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
@@ -15,16 +15,16 @@ import java.util.Date;
 
 public class ConvertCmd extends Command {
 
-    private final Container container;
+    private final ContainerExp container;
     private final Expression expression;
     private final Convertible from;
     private final Convertible to;
 
-    public ConvertCmd (ParserRuleContext context, Container container, Convertible to) {
+    public ConvertCmd (ParserRuleContext context, ContainerExp container, Convertible to) {
         this(context, container, null, to);
     }
 
-    public ConvertCmd(ParserRuleContext context, Container container, Convertible from, Convertible to) {
+    public ConvertCmd(ParserRuleContext context, ContainerExp container, Convertible from, Convertible to) {
         super(context, "convert");
 
         this.container = container;
@@ -50,7 +50,7 @@ public class ConvertCmd extends Command {
     public void onExecute() throws HtException {
         Date timestamp = container == null ?
                 DateUtils.dateOf(expression.evaluate(), from) :
-                DateUtils.dateOf(container.getValue(), from);
+                DateUtils.dateOf(container.evaluate(), from);
 
         if (timestamp == null) {
             throw new HtSemanticException("Invalid date.");

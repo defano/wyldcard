@@ -6,31 +6,21 @@ import com.defano.hypercard.window.forms.MessageWindow;
 import com.defano.hypertalk.ast.common.Preposition;
 import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.common.Chunk;
 import com.defano.hypertalk.ast.common.PartType;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 
-public class MsgBoxContainer extends Container {
+public class MsgBoxContainerExp extends ContainerExp {
 
-    public final Chunk chunk;
-
-    public MsgBoxContainer() {
-        this.chunk = null;
-    }
-
-    public MsgBoxContainer(Chunk chunk) {
-        this.chunk = chunk;
-    }
-
-    public Chunk chunk() {
-        return chunk;
+    public MsgBoxContainerExp(ParserRuleContext context) {
+        super(context);
     }
 
     @Override
-    public Value getValue() throws HtException {
+    public Value onEvaluate() throws HtException {
         Value value = new Value(WindowManager.getMessageWindow().getMsgBoxText());
-        return chunkOf(value, this.chunk());
+        return chunkOf(value, getChunk());
     }
 
     @Override
@@ -38,8 +28,8 @@ public class MsgBoxContainer extends Container {
         Value destValue = new Value(WindowManager.getMessageWindow().getMsgBoxText());
 
         // Operating on a chunk of the existing value
-        if (chunk != null)
-            destValue = Value.setChunk(destValue, preposition, chunk, value);
+        if (getChunk() != null)
+            destValue = Value.setChunk(destValue, preposition, getChunk(), value);
         else
             destValue = Value.setValue(destValue, preposition, value);
 

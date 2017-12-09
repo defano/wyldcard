@@ -211,7 +211,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
                 break;
             case ButtonModel.PROP_SCRIPT:
                 try {
-                    Interpreter.compile(newValue.stringValue());
+                    Interpreter.compileScript(newValue.stringValue());
                 } catch (HtException e) {
                     HyperCard.getInstance().showErrorDialog(new HtSemanticException("Didn't understand that.", e));
                 }
