@@ -1,15 +1,11 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.parts.PartException;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Position;
-import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartPositionSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartPositionExp extends PartContainerExp {
@@ -29,16 +25,7 @@ public class PartPositionExp extends PartContainerExp {
     }
 
     @Override
-    public PartSpecifier evaluateAsSpecifier() throws HtSemanticException {
+    public PartSpecifier evaluateAsSpecifier() {
         return new PartPositionSpecifier(Owner.STACK, type, position);
-    }
-
-    @Override
-    public Value onEvaluate() throws HtSemanticException {
-        try {
-            return ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
-        } catch (PartException e) {
-            throw new HtSemanticException("Can't get that part.");
-        }
     }
 }
