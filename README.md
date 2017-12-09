@@ -340,7 +340,7 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is an expression referring to an object that HyperCard tries to interpret in whatever way is most meaningful to the context of it's usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
+A _factor_ is an expression referring to an object that HyperCard tries to interpret in whatever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
 For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression (such as, `next card`) then HyperCard will produce an error.
 
@@ -515,7 +515,7 @@ put "I like IDs" into background field id 22 of card 3
 
 ### Part Numbers
 
-Each part is assigned a number that represents it's logical order within the context of its owner.
+Each part is assigned a number that represents its logical order within the context of its owner.
 
 For buttons and fields, this represents the drawing order of the part (_z-order_); Higher numbered parts are drawn before lowered numbered parts and thereby appear behind them. You cannot directly set a button or field's number, but the "Bring Closer" or "Send Further" commands in the "Objects" menu will affect the number assigned to it.
 

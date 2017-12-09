@@ -24,12 +24,15 @@ public class PartNumberExp extends PartContainerExp {
         this(context, owner, type, null, ordinal);
     }
 
-    public PartNumberExp(ParserRuleContext context, Owner owner, PartType type, Expression expression) {
-        this(context, owner, type, expression, null);
-    }
-
+    /**
+     * Create an expression referring to a button or field based on its "part number" on either the card or background
+     * layer.
+     * @param context The parser context
+     * @param owner The owning part layer (card or background)
+     * @param expression An integer expression referring to the part number.
+     */
     public PartNumberExp(ParserRuleContext context, Owner owner, Expression expression) {
-        this(context, owner, PartType.CARD, expression, null);
+        this(context, owner,  null, expression, null);
     }
 
     public PartNumberExp(ParserRuleContext context, PartType type, Ordinal ordinal) {

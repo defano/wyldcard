@@ -70,8 +70,8 @@ parameterList
     ;
 
 statementList
-    : statement? NEWLINE statementList                                                                                  # multiStmntList
-    | statement NEWLINE                                                                                                 # singleStmntList
+    : statement? NEWLINE+ statementList                                                                                  # multiStmntList
+    | statement NEWLINE+                                                                                                 # singleStmntList
     ;
 
 statement
@@ -316,51 +316,51 @@ partProperty
     ;
 
 part
-    : buttonPart                                                                                                        # buttonPartPart
-    | fieldPart                                                                                                         # fieldPartPart
-    | bkgndPart                                                                                                         # bkgndPartPart
-    | cardPart                                                                                                          # cardPartPart
+    : message                                                                                                           # msgPart
     | card 'part' factor                                                                                                # cardPartNumberPart
     | background 'part' factor                                                                                          # bkgndPartNumberPart
     | 'me'                                                                                                              # mePart
-    | message                                                                                                           # msgPart
+    | buttonPart                                                                                                        # buttonPartPart
+    | fieldPart                                                                                                         # fieldPartPart
+    | bkgndPart                                                                                                         # bkgndPartPart
+    | cardPart                                                                                                          # cardPartPart
     ;
 
 buttonPart
-    : background? button factor                                                                                         # bkgndButtonPart
-    | ordinal background? button                                                                                        # bkgndButtonOrdinalPart
+    : card? button 'id' factor                                                                                          # cardButtonIdPart
     | background? button 'id' factor                                                                                    # bkgndButtonIdPart
+    | background? button factor                                                                                         # bkgndButtonPart
+    | ordinal background? button                                                                                        # bkgndButtonOrdinalPart
     | card? button factor                                                                                               # cardButtonPart
     | ordinal card? button                                                                                              # cardButtonOrdinalPart
-    | card? button 'id' factor                                                                                          # cardButtonIdPart
     | buttonPart of cardPart                                                                                            # buttonOfCardPart
     ;
 
 fieldPart
-    : background? field factor                                                                                          # bkgndFieldPart
-    | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
+    : card? field 'id' factor                                                                                           # cardFieldIdPart
     | background? field 'id' factor                                                                                     # bkgndFieldIdPart
+    | background? field factor                                                                                          # bkgndFieldPart
+    | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
     | card? field factor                                                                                                # cardFieldPart
     | ordinal card? field                                                                                               # cardFieldOrdinalPart
-    | card? field 'id' factor                                                                                           # cardFieldIdPart
     | fieldPart of cardPart                                                                                             # fieldOfCardPart
     ;
 
 cardPart
     : 'this' card                                                                                                       # thisCardPart
+    | card 'id' factor                                                                                                  # cardIdPart
     | position card                                                                                                     # positionCardPart
     | ordinal card                                                                                                      # ordinalCardPart
     | card factor                                                                                                       # expressionCardPart
-    | card 'id' factor                                                                                                  # cardIdPart
     | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
     ;
 
 bkgndPart
-    : background factor                                                                                                 # expressionBkgndPart
+    : 'this' background                                                                                                 # thisBkgndPart
     | background 'id' factor                                                                                            # bkgndIdPart
+    | background factor                                                                                                 # expressionBkgndPart
     | ordinal background                                                                                                # ordinalBkgndPart
     | position background                                                                                               # positionBkgndPart
-    | 'this' background                                                                                                 # thisBkgndPart
     ;
 
 expression
