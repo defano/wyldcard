@@ -4,9 +4,11 @@
 --
 on mouseUp
 	put the ticks into startTime
+
+	-- much faster if we copy cd fld 1 into a temporary variable
 	repeat with n = 1 to the number of lines in cd fld 1
-		if line n of cd fld 1 contains "#" then  -- some comment here
-			put offset("#", line n of cd fld 1) into firstChar -- and also here
+		if line n of cd fld 1 contains "#" then  -- ignore lines without alternative labels
+			put offset("#", line n of cd fld 1) into firstChar
 			put the number of chars in line n of cd fld 1 into lastChar
 			delete chars firstChar to lastChar of line n of cd fld 1
 		end if
@@ -135,19 +137,26 @@ end testLoops
 -- Properties
 --
 
-on parseProperties
+on testProperties
+
+    -- HyperCard properties
     the itemdelimiter
     put "," into the itemdelimiter
     set the itemdelimiter to "|"
 
+    -- part properties
+    set the name of me to x
+    get the name of me
+    get the first char of the name of me
+    put "name" into me
+    put "before" before the first word of the name of me   -- not legal in HyperCard, okay here
 
-
-end parseProperties
+end testProperties
 
 --
--- Functions
+-- Built-in function calls
 --
-on parseNoArgFunctions
+on testNoArgFunctions
 
     the mouse
     the mouseloc
@@ -212,9 +221,9 @@ on parseNoArgFunctions
     the foundline
     the foundtext
 
-end parseNoArgFunctions
+end testNoArgFunctions
 
-on parseSingleArgFunctions
+on testSingleArgFunctions
 
     the average of x
     average(x)
@@ -295,21 +304,21 @@ on parseSingleArgFunctions
     the param of x
     param(x)
 
-end parseSingleArgFunctions
+end testSingleArgFunctions
 
-on parseMultiArgFunctions
+on testMultiArgFunctions
 
     annuity(x, y)
     compound(x, y)
     offset(x, y)
 
-end parseMultiArgFunctions
+end testMultiArgFunctions
 
 --
 -- Commands
 --
 
-on testCommands
+on commandsTest
     answer x
     answer x with a
     answer x with a or b
@@ -634,9 +643,9 @@ on testCommands
     write "Thanks for playing" to file x at end
     write 2 + 3 to file x at -7
 
-end testCommands
+end commandsTest
 
-on parseOperators
+on operatorsTest
 
     not x
     not false
@@ -682,9 +691,9 @@ on parseOperators
     x and y
     x or y
 
-end parseOperators
+end operatorsTest
 
-on lexing
+on literalsTest
 
     -- String Literals
     unquotedLiteral
@@ -714,12 +723,16 @@ on lexing
     ask "Yes?" ¬
         with "No"
 
-end lexing
+    -- mouse states
+    the mouse is down
+    the mouse is up
+
+end literalsTest
 
 --
 -- Constants
 --
-on parseConstantsLiteralsSynonyms
+on constantsTest
     put zero + one + two + three + four + five + six + seven + eight + nine + ten into theSum
 
     if x is empty then answer "empty"
@@ -742,10 +755,11 @@ on parseConstantsLiteralsSynonyms
     the mid item in x
     the middle line from x
     the last word of x
-end parseConstantsLiteralsSynonyms
+
+end constantsTest
 
 --
--- Chunks
+-- Chunk expressions
 --
 on chunkTest
 
@@ -800,7 +814,9 @@ on chunkTest
 
 end chunkTest
 
--- Handlers & Functions
+--
+-- Handler and function declarations
+--
 
 on messages
     f()
@@ -812,9 +828,9 @@ on messages
     doSomething cool, andFun   -- an another comment
 end messages
 
-on emptyHandler
+on emptyHandler    -- with a comment
 
-end emptyHandler
+end emptyHandler   -- and another comment
 
 on commentHandler
     -- comment
@@ -836,7 +852,7 @@ function f p1, p2, p3
 end f
 
 --
--- Command keywords in the language should be usable as block names, let's verify.
+-- Command keywords in the language should be usable as block names.
 --
 
 on answer
