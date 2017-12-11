@@ -24,8 +24,8 @@ public abstract class CardLayerPartModel extends PartModel {
     public static final String PROP_TEXTALIGN = "textalign";
     public static final String PROP_ENABLED = "enabled";
 
-    public CardLayerPartModel(PartType type, Owner owner) {
-        super(type, owner);
+    public CardLayerPartModel(PartType type, Owner owner, PartModel parentPartModel) {
+        super(type, owner, parentPartModel);
 
         defineProperty(PROP_ZORDER, new Value(0), false);
         defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
@@ -36,7 +36,6 @@ public abstract class CardLayerPartModel extends PartModel {
         defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
         defineProperty(PROP_TEXTALIGN, new Value("center"), false);
         defineProperty(PROP_ENABLED, new Value(true), false);
-
     }
 
     public TextStyleSpecifier getTextStyle() {

@@ -66,7 +66,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
         // Place the field in the center of the card
-        newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), parent.getPartModel());
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
@@ -321,12 +321,12 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         }
     }
 
-    private void initProperties(Rectangle geometry) {
+    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
             int id = cardPart.getStackModel().getNextFieldId();
-            partModel = FieldModel.newFieldModel(id, geometry, owner, cardPart.getId());
+            partModel = FieldModel.newFieldModel(id, geometry, owner, parentPartModel);
             partModel.addPropertyChangedObserver(this);
         }
     }

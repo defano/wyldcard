@@ -5,6 +5,7 @@ import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.HyperCardTextField;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -74,14 +75,14 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private transient FieldModelObserver observer;
     private transient Range selection;
 
-    public FieldModel(Owner owner) {
-        super(PartType.FIELD, owner);
+    public FieldModel(Owner owner, PartModel parentPartModel) {
+        super(PartType.FIELD, owner, parentPartModel);
     }
 
-    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, int parentCardId) {
-        FieldModel partModel = new FieldModel(owner);
+    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
+        FieldModel partModel = new FieldModel(owner, parentPartModel);
 
-        partModel.currentCardId = parentCardId;
+        partModel.currentCardId = parentPartModel.getId();
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -570,6 +571,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public String getValueProperty() {
         return PROP_TEXT;
+    }
+
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        setParentPartModel(parentPartModel);
     }
 
     /**

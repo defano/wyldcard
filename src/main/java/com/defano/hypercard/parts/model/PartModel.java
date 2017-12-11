@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
  */
-public class PartModel extends PropertiesModel implements Messagable {
+public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public static final String PROP_SCRIPT = "script";
     public static final String PROP_ID = "id";
@@ -41,13 +41,16 @@ public class PartModel extends PropertiesModel implements Messagable {
 
     private final PartType type;
     private Owner owner;
+
+    private transient PartModel parentPartModel;
     private transient Script script = new Script();
 
-    public PartModel(PartType type, Owner owner) {
+    public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
 
         this.type = type;
         this.owner = owner;
+        this.parentPartModel = parentPartModel;
 
         defineProperty(PROP_VISIBLE, new Value(true), false);
         defineProperty(PROP_SCRIPTTEXT, new Value(""), false);
@@ -248,5 +251,25 @@ public class PartModel extends PropertiesModel implements Messagable {
      */
     public PartSpecifier getMe() {
         return new PartIdSpecifier(getOwner(), getType(), getId());
+    }
+
+    public abstract void relinkParentPartModel(PartModel parentPartModel);
+
+    public PartModel getParentPartModel() {
+        return parentPartModel;
+    }
+
+    public void setParentPartModel(PartModel parentPartModel) {
+        this.parentPartModel = parentPartModel;
+        System.err.println(this.toString());
+    }
+
+    @Override
+    public String toString() {
+        return "PartModel{" +
+                owner + " " + type +
+                (hasProperty(PROP_ID) ? " id=" + getKnownProperty(PROP_ID) : "") +
+                ", parent=" + String.valueOf(getParentPartModel()) +
+                '}';
     }
 }

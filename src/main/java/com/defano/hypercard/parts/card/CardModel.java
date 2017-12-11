@@ -36,8 +36,8 @@ public class CardModel extends PartModel implements LayeredPartContainer {
     private final Collection<ButtonModel> buttons = new ArrayList<>();
     private byte[] cardImage;
 
-    private CardModel(int cardId, int backgroundId) {
-        super(PartType.CARD, Owner.STACK);
+    private CardModel(int cardId, int backgroundId, PartModel parentPartModel) {
+        super(PartType.CARD, Owner.STACK, parentPartModel);
 
         this.backgroundId = backgroundId;
 
@@ -77,8 +77,8 @@ public class CardModel extends PartModel implements LayeredPartContainer {
      * @param backgroundId The ID of the background this card should inherit.
      * @return The new CardModel
      */
-    public static CardModel emptyCardModel(int cardId, int backgroundId) {
-        return new CardModel(cardId, backgroundId);
+    public static CardModel emptyCardModel(int cardId, int backgroundId, PartModel parentPartModel) {
+        return new CardModel(cardId, backgroundId, parentPartModel);
     }
 
     public Collection<PartModel> getPartModels() {
@@ -164,6 +164,19 @@ public class CardModel extends PartModel implements LayeredPartContainer {
         return PROP_CONTENTS;
     }
 
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        this.setParentPartModel(parentPartModel);
+
+        for (FieldModel thisField : fields) {
+            thisField.relinkParentPartModel(this);
+        }
+
+        for (ButtonModel thisButton : buttons) {
+            thisButton.relinkParentPartModel(this);
+        }
+    }
+
     public boolean isMarked() {
         return getKnownProperty(PROP_MARKED).booleanValue();
     }
@@ -180,4 +193,5 @@ public class CardModel extends PartModel implements LayeredPartContainer {
 
         return models;
     }
+
 }

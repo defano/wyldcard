@@ -1,7 +1,8 @@
 package com.defano.hypercard.parts.bkgnd;
 
-import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.LayeredPartContainer;
 import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
@@ -17,7 +18,7 @@ import java.util.Collection;
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link CardPart} view object when rendered.
  */
-public class BackgroundModel extends PartModel {
+public class BackgroundModel extends PartModel implements LayeredPartContainer {
 
     public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";
@@ -27,8 +28,8 @@ public class BackgroundModel extends PartModel {
     private final Collection<ButtonModel> buttonModels;
     private final Collection<FieldModel> fieldModels;
 
-    private BackgroundModel(int backgroundId) {
-        super(PartType.BACKGROUND, Owner.STACK);
+    private BackgroundModel(int backgroundId, PartModel parentPartModel) {
+        super(PartType.BACKGROUND, Owner.STACK, parentPartModel);
 
         buttonModels = new ArrayList<>();
         fieldModels = new ArrayList<>();
@@ -50,8 +51,8 @@ public class BackgroundModel extends PartModel {
 
     }
 
-    public static BackgroundModel emptyBackground(int backgroundId) {
-        return new BackgroundModel(backgroundId);
+    public static BackgroundModel emptyBackground(int backgroundId, PartModel parentPartModel) {
+        return new BackgroundModel(backgroundId, parentPartModel);
     }
 
     public Collection<PartModel> getPartModels() {
@@ -94,5 +95,26 @@ public class BackgroundModel extends PartModel {
 
     public BufferedImage getBackgroundImage() {
         return Serializer.deserializeImage(this.backgroundImage);
+    }
+
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        setParentPartModel(parentPartModel);
+
+        for (ButtonModel thisButton : buttonModels) {
+            thisButton.relinkParentPartModel(this);
+        }
+
+        for (FieldModel thisField : fieldModels) {
+            thisField.relinkParentPartModel(this);
+        }
+    }
+
+    @Override
+    public Collection<PartModel> getParts() {
+        ArrayList<PartModel> parts = new ArrayList<>();
+        parts.addAll(buttonModels);
+        parts.addAll(fieldModels);
+        return parts;
     }
 }
