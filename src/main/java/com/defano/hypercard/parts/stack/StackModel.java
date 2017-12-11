@@ -2,6 +2,7 @@ package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.icons.ButtonIcon;
 import com.defano.hypercard.icons.UserIcon;
+import com.defano.hypercard.parts.StackPartContainer;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
@@ -17,7 +18,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StackModel extends PartModel {
+public class StackModel extends PartModel implements StackPartContainer {
 
     private static final int BACKSTACK_DEPTH = 20;
 
@@ -37,7 +38,6 @@ public class StackModel extends PartModel {
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
-        this.backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
@@ -209,6 +209,28 @@ public class StackModel extends PartModel {
         }
 
         return icons;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<PartModel> getPartsInDisplayOrder() {
+        ArrayList<PartModel> parts = new ArrayList<>();
+
+        for (CardModel thisCard : getCardModels()) {
+            parts.add(thisCard);
+
+            BackgroundModel thisBackground = getStackModel().getBackground(thisCard.getBackgroundId());
+            if (!parts.contains(thisBackground)) {
+                parts.add(thisBackground);
+            }
+        }
+
+        return parts;
+    }
+
+    @Override
+    public StackModel getStackModel() {
+        return this;
     }
 }
 

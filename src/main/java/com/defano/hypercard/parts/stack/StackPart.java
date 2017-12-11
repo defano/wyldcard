@@ -1,16 +1,16 @@
 package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.fx.CurtainManager;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.PartException;
-import com.defano.hypercard.parts.StackPartContainer;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.serializer.Serializer;
-import com.defano.hypercard.paint.ToolsContext;
-import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.parts.model.*;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -33,7 +33,7 @@ import java.util.List;
  * This view is "virtual" because a stack has no view aside from the card that is currently displayed in it. Thus, this
  * class has no associated Swing component and cannot be added to a view hierarchy.
  */
-public class StackPart implements PropertyChangeObserver, StackPartContainer {
+public class StackPart implements PropertyChangeObserver {
 
     public final static String FILE_EXTENSION = ".stack";
 
@@ -188,7 +188,7 @@ public class StackPart implements PropertyChangeObserver, StackPartContainer {
     public CardPart popCard(VisualEffectSpecifier visualEffect) {
         if (!stackModel.getBackStack().isEmpty()) {
             try {
-                CardModel model = (CardModel) findPart(new PartIdSpecifier(Owner.STACK, PartType.CARD, stackModel.getBackStack().pop()));
+                CardModel model = (CardModel) getStackModel().findPart(new PartIdSpecifier(Owner.STACK, PartType.CARD, stackModel.getBackStack().pop()));
                 return goCard(getStackModel().getIndexOfCard(model), visualEffect, false);
             } catch (PartException e) {
                 return null;
@@ -359,23 +359,6 @@ public class StackPart implements PropertyChangeObserver, StackPartContainer {
      */
     public void addObserver (StackObserver observer) {
         observers.add(observer);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public List<PartModel> getPartsInDisplayOrder() {
-        ArrayList<PartModel> parts = new ArrayList<>();
-
-        for (CardModel thisCard : stackModel.getCardModels()) {
-            parts.add(thisCard);
-
-            BackgroundModel thisBackground = getStackModel().getBackground(thisCard.getBackgroundId());
-            if (!parts.contains(thisBackground)) {
-                parts.add(thisBackground);
-            }
-        }
-
-        return parts;
     }
 
     /** {@inheritDoc} */

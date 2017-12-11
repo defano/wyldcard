@@ -45,9 +45,9 @@ public class GoCmd extends Command {
         }
 
         else {
-            Integer cardIndex = evaluateAsCardIndex(destinationExp.evaluateAsPartModel(CardModel.class));
+            Integer cardIndex = evaluateAsCardIndex(destinationExp.partFactor(CardModel.class));
             if (cardIndex == null) {
-                cardIndex = evaluateAsCardIndex(destinationExp.evaluateAsPartModel(BackgroundModel.class));
+                cardIndex = evaluateAsCardIndex(destinationExp.partFactor(BackgroundModel.class));
             }
 
             if (cardIndex == null) {

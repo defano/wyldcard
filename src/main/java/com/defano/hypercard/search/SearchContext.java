@@ -1,5 +1,6 @@
 package com.defano.hypercard.search;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.field.FieldModel;
@@ -112,7 +113,7 @@ public class SearchContext {
 
             int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardIndexInStack();
             if (query.searchField instanceof RemotePartSpecifier) {
-                cardIndex = ExecutionContext.getContext().getCurrentStack().findRemotePartOwner((RemotePartSpecifier) query.searchField).getCardIndexInStack();
+                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findRemotePartOwner((RemotePartSpecifier) query.searchField).getCardIndexInStack();
             }
 
             indexField(query, field, cardIndex, results);
@@ -151,7 +152,9 @@ public class SearchContext {
         int searchFrom = 0;
         Range result;
 
-        String fieldText = fieldModel.getText();
+        int cardId = HyperCard.getInstance().getStack().getStackModel().getCardModel(cardIndex).getId();
+        String fieldText = fieldModel.getText(cardId);
+
         do {
             result = SearchFactory.searchBy(query.searchType).search(fieldText, query.searchTerm, searchFrom);
 
@@ -185,9 +188,11 @@ public class SearchContext {
 
         // Box the found text
         try {
-            FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().findPart(result.getLocalPartSpecifier());
+            System.err.println("NOW ON CARD: " + ExecutionContext.getContext().getCurrentCard().getCardIndexInStack());
+            FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(result.getLocalPartSpecifier());
             FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
 
+            System.err.println("TEXT ON FIELD: " + foundField.getText());
             foundField.applySearchHilight(result.getRange());
             foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
         } catch (Exception e) {

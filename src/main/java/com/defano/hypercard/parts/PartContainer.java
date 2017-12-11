@@ -1,8 +1,10 @@
 package com.defano.hypercard.parts;
 
+import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Ordinal;
+import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.specifiers.*;
 
 import java.util.List;
@@ -19,27 +21,57 @@ public interface PartContainer {
      */
     List<PartModel> getPartsInDisplayOrder();
 
+    default PartModel findPart(PartSpecifier ps) throws PartException {
+        return findPart(ps, getPartsInDisplayOrder());
+    }
+
     /**
-     * Returns the part represented by the given part specifier.
+     * Returns the part represented by the given part specifier within the ordered collection of parts.
      *
      * @param ps The part specifier representing the part to fetch
      * @return The specified part
      * @throws PartException Thrown if no such part exists on this card.
      */
-    default PartModel findPart(PartSpecifier ps) throws PartException {
+    default PartModel findPart(PartSpecifier ps, List<PartModel> parts) throws PartException {
         if (ps instanceof PartIdSpecifier) {
-            return findPartById((PartIdSpecifier) ps);
+            return findPartById((PartIdSpecifier) ps, parts);
         } else if (ps instanceof PartNameSpecifier) {
-            return findPartByName((PartNameSpecifier) ps);
+            return findPartByName((PartNameSpecifier) ps, parts);
         } else if (ps instanceof PartNumberSpecifier) {
-            return findPartByNumber((PartNumberSpecifier) ps);
+            return findPartByNumber((PartNumberSpecifier) ps, parts);
         } else if (ps instanceof PartOrdinalSpecifier) {
-            return findPartByOrdinal((PartOrdinalSpecifier) ps);
+            return findPartByOrdinal((PartOrdinalSpecifier) ps, parts);
         } else if (ps instanceof PartMessageSpecifier) {
             return WindowManager.getMessageWindow().getPartModel();
         }
 
         throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
+    }
+
+    default long getPartNumber(PartModel part) {
+        return getPartNumber(part, getPartsInDisplayOrder());
+    }
+
+    /**
+     * Gets the "number" of the specified part on the card relative to all other parts in the same layer.
+     * <p>
+     * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
+     * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
+     *
+     * @param part The part whose number should be returned.
+     * @return The number of this part
+     */
+    default long getPartNumber(PartModel part, List<PartModel> parts) {
+        int number = 0;
+
+        for (PartModel thisPart : parts) {
+            number++;
+            if (thisPart.getId() == part.getId()) {
+                return number;
+            }
+        }
+
+        throw new IllegalArgumentException("No such part on this card.");
     }
 
     /**
@@ -49,8 +81,8 @@ public interface PartContainer {
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default PartModel findPartById(PartIdSpecifier ps) throws PartException {
-        Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
+    default PartModel findPartById(PartIdSpecifier ps, List<PartModel> parts) throws PartException {
+        Optional<PartModel> foundPart = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
                 .filter(p -> p.getId() == ps.getValue())
@@ -70,8 +102,8 @@ public interface PartContainer {
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default PartModel findPartByName(PartNameSpecifier ps) throws PartException {
-        Optional<PartModel> foundPart = getPartsInDisplayOrder().stream()
+    default PartModel findPartByName(PartNameSpecifier ps, List<PartModel> parts) throws PartException {
+        Optional<PartModel> foundPart = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
                 .filter(p -> p.getName().equalsIgnoreCase(ps.getValue()))
@@ -91,8 +123,8 @@ public interface PartContainer {
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default PartModel findPartByNumber(PartNumberSpecifier ps) throws PartException {
-        List<PartModel> foundParts = getPartsInDisplayOrder().stream()
+    default PartModel findPartByNumber(PartNumberSpecifier ps, List<PartModel> parts) throws PartException {
+        List<PartModel> foundParts = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
                 .collect(Collectors.toList());
@@ -113,8 +145,8 @@ public interface PartContainer {
      * @return The specified part
      * @throws PartException Thrown if no part can by found matching the specifier.
      */
-    default PartModel findPartByOrdinal(PartOrdinalSpecifier ps) throws PartException {
-        List<PartModel> foundParts = getPartsInDisplayOrder().stream()
+    default PartModel findPartByOrdinal(PartOrdinalSpecifier ps, List<PartModel> parts) throws PartException {
+        List<PartModel> foundParts = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
                 .collect(Collectors.toList());

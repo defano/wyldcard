@@ -33,8 +33,6 @@ public class FindCmd extends Command {
 
     @Override
     protected void onExecute() throws HtException {
-
-
         PartSpecifier fieldSpecifier = field == null ?
                 null :
                 field.factor(PartContainerExp.class, new HtSemanticException("Can't search that.")).evaluateAsSpecifier();

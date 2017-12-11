@@ -55,7 +55,7 @@ public class DeleteCmd extends Command {
 
                 CardPart owner;
                 if (ps instanceof RemotePartSpecifier) {
-                    owner = HyperCard.getInstance().getStack().findRemotePartOwner((RemotePartSpecifier) ps);
+                    owner = HyperCard.getInstance().getStack().getStackModel().findRemotePartOwner((RemotePartSpecifier) ps);
                 } else {
                     owner = ExecutionContext.getContext().getCurrentCard();
                 }

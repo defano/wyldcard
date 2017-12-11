@@ -101,11 +101,11 @@ public class ButtonPropertyEditor extends HyperCardDialog {
     public void bindModel(Object data) {
         this.model = (PartModel) data;
 
-        PartModel part = HyperCard.getInstance().getDisplayedCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-        long partNumber = HyperCard.getInstance().getDisplayedCard().getPartNumber(part);
-        long buttonNumber = HyperCard.getInstance().getDisplayedCard().getButtonNumber((ButtonModel) part);
-        long buttonCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
-        long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
+        PartModel part = HyperCard.getInstance().getDisplayedCard().getCardModel().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+        long partNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartNumber(part);
+        long buttonNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getButtonNumber((ButtonModel) part);
+        long buttonCount = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartCount(model.getType(), part.getOwner());
+        long partCount = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartCount(null, part.getOwner());
         String layer = part.getOwner().hyperTalkName;
 
         buttonLabel.setText(layer + " Button:");
@@ -301,25 +301,6 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         panel2.add(spacer5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer6 = new Spacer();
         buttonEditor.add(spacer6, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**

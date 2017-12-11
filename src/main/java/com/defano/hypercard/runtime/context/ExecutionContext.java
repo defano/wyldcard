@@ -186,9 +186,9 @@ public class ExecutionContext {
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
         if (ps.isStackElementSpecifier() || ps instanceof RemotePartSpecifier) {
-            return HyperCard.getInstance().getStack().findPart(ps);
+            return HyperCard.getInstance().getStack().getStackModel().findPart(ps);
         } else if (ps.isCardElementSpecifier()) {
-            return getCurrentCard().findPart(ps);
+            return getCurrentCard().getCardModel().findPart(ps);
         } else if (ps.isStackSpecifier()) {
             return HyperCard.getInstance().getStack().getStackModel();
         }

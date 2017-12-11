@@ -45,17 +45,17 @@ public class NumberOfFunc extends Expression {
             case ITEM:
                 return new Value(expression.evaluate().itemCount());
             case CARD_PARTS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(null, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(null, Owner.CARD));
             case BKGND_PARTS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(null, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(null, Owner.BACKGROUND));
             case CARD_BUTTONS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.BUTTON, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.BUTTON, Owner.CARD));
             case BKGND_BUTTONS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
             case CARD_FIELDS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.FIELD, Owner.CARD));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getPartCount(PartType.FIELD, Owner.BACKGROUND));
+                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
                 return new Value(HyperCardMenuBar.instance.getMenuCount());
             case CARDS:
@@ -65,7 +65,7 @@ public class NumberOfFunc extends Expression {
             case BKGNDS:
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
-                BackgroundModel model = (BackgroundModel) HyperCard.getInstance().getStack().findPart(((PartContainerExp) expression).evaluateAsSpecifier());
+                BackgroundModel model = (BackgroundModel) HyperCard.getInstance().getStack().getStackModel().findPart(((PartContainerExp) expression).evaluateAsSpecifier());
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(model.getId()).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);

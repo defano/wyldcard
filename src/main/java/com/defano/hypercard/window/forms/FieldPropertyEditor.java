@@ -93,11 +93,11 @@ public class FieldPropertyEditor extends HyperCardDialog {
         if (data instanceof PartModel) {
             this.model = (PartModel) data;
 
-            PartModel part = HyperCard.getInstance().getDisplayedCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-            long partNumber = HyperCard.getInstance().getDisplayedCard().getPartNumber(part);
-            long fieldNumber = HyperCard.getInstance().getDisplayedCard().getFieldNumber((FieldModel) part);
-            long fieldCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
-            long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
+            PartModel part = HyperCard.getInstance().getDisplayedCard().getCardModel().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
+            long partNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartNumber(part);
+            long fieldNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getFieldNumber((FieldModel) part);
+            long fieldCount = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartCount(model.getType(), part.getOwner());
+            long partCount = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartCount(null, part.getOwner());
             String layer = part.getOwner().hyperTalkName;
 
             fieldLabel.setText(layer + " Field:");
@@ -335,24 +335,5 @@ public class FieldPropertyEditor extends HyperCardDialog {
         panel4.add(fieldLeft, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         final Spacer spacer4 = new Spacer();
         fieldEditor.add(spacer4, new GridConstraints(2, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 }

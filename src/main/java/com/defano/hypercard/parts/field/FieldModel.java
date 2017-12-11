@@ -155,7 +155,15 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         if (useSharedText()) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
-            return unsharedText.getOrDefault(currentCardId, new DefaultStyledDocument());
+            return getStyledDocument(currentCardId);
+        }
+    }
+
+    private StyledDocument getStyledDocument(int forCardId) {
+        if (useSharedText()) {
+            return sharedText == null ? new DefaultStyledDocument() : sharedText;
+        } else {
+            return unsharedText.getOrDefault(forCardId, new DefaultStyledDocument());
         }
     }
 
@@ -189,7 +197,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     @Override
     public String getText() {
-        StyledDocument doc = getStyledDocument();
+        return getText(currentCardId);
+    }
+
+    public String getText(int forCardId) {
+        StyledDocument doc = getStyledDocument(forCardId);
         try {
             return doc.getText(0, doc.getLength());
         } catch (BadLocationException e) {

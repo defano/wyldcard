@@ -82,8 +82,8 @@ public class CardPropertyEditor extends HyperCardDialog {
         cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue());
         cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(CardModel.PROP_ID).stringValue()));
 
-        long fieldCount = card.getPartCount(PartType.FIELD, Owner.CARD);
-        long buttonCount = card.getPartCount(PartType.BUTTON, Owner.CARD);
+        long fieldCount = card.getCardModel().getPartCount(PartType.FIELD, Owner.CARD);
+        long buttonCount = card.getCardModel().getPartCount(PartType.BUTTON, Owner.CARD);
 
         int cardNumber = HyperCard.getInstance().getDisplayedCard().getCardIndexInStack() + 1;
         int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().get();
@@ -171,25 +171,6 @@ public class CardPropertyEditor extends HyperCardDialog {
         propertiesPanel.add(saveButton, new GridConstraints(11, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         propertiesPanel.add(spacer1, new GridConstraints(11, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**

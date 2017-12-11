@@ -80,8 +80,8 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
         }
 
         long cardCount = cardPart.getStackModel().getCardsInBackground(backgroundId).size();
-        long fieldCount = cardPart.getPartCount(PartType.FIELD, Owner.BACKGROUND);
-        long buttonCount = cardPart.getPartCount(PartType.BUTTON, Owner.BACKGROUND);
+        long fieldCount = cardPart.getCardModel().getPartCount(PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = cardPart.getCardModel().getPartCount(PartType.BUTTON, Owner.BACKGROUND);
 
         cardCountLabel.setText(StringUtils.pluralize(cardCount, "Background shared by %d card.", "Background shared by %d cards."));
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d background button.", "Contains %d background buttons."));
@@ -166,24 +166,5 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
         propertiesPanel.add(contentsButton, new GridConstraints(9, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         propertiesPanel.add(spacer2, new GridConstraints(10, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 }

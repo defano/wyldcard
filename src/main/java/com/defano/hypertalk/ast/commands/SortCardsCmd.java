@@ -122,7 +122,7 @@ public class SortCardsCmd extends Command {
             throw new HtSemanticException("Expression does not refer to a background.");
         }
 
-        int backgroundId = HyperCard.getInstance().getStack().findPart(specifier).getId();
+        int backgroundId = HyperCard.getInstance().getStack().getStackModel().findPart(specifier).getId();
 
         for (CardModel thisCard : HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(backgroundId)) {
             if (thisCard.getId() == cardModel.getId()) {

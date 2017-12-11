@@ -43,7 +43,7 @@ public interface StackPartContainer extends PartContainer {
     }
 
     default PartModel findRemotePart(RemotePartSpecifier ps) throws PartException {
-        return findRemotePartOwner(ps).findPart(ps.getRemotePartSpecifier());
+        return findRemotePartOwner(ps).getCardModel().findPart(ps.getRemotePartSpecifier());
     }
 
     /**

@@ -1,28 +1,27 @@
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypercard.parts.LayeredPartContainer;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.ButtonPart;
+import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
-import com.defano.hypercard.search.SearchContext;
-import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.PartsTable;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypercard.search.SearchContext;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
-import com.defano.hypercard.parts.model.*;
-import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
-import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.JMonetCanvas;
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.clipboard.CanvasTransferDelegate;
 import com.defano.jmonet.clipboard.CanvasTransferHandler;
@@ -37,7 +36,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
@@ -50,7 +48,7 @@ import java.util.Observer;
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
  */
-public class CardPart extends CardLayeredPane implements Part, LayeredPartContainer, CanvasCommitObserver, CanvasTransferDelegate, MouseListener, KeyListener {
+public class CardPart extends CardLayeredPane implements Part, CanvasCommitObserver, CanvasTransferDelegate, MouseListener, KeyListener {
 
     private CardModel cardModel;
     private StackModel stackModel;
@@ -295,7 +293,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private void setPartsOnLayerVisible(Owner owningLayer, boolean visible) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (PartModel thisPartModel : getParts()) {
+            for (PartModel thisPartModel : getCardModel().getParts()) {
                 if (thisPartModel.getOwner() == owningLayer) {
                     if (!visible) {
                         getPart(thisPartModel).getComponent().setVisible(false);
@@ -370,7 +368,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     public void onDisplayOrderChanged() {
         SwingUtilities.invokeLater(() -> {
-            for (PartModel thisPart : getPartsInDisplayOrder()) {
+            for (PartModel thisPart : getCardModel().getPartsInDisplayOrder()) {
                 moveToFront(getPart(thisPart).getComponent());
             }
         });
@@ -666,19 +664,6 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         }
 
         throw new IllegalArgumentException("No part on this card matching model: " + partModel);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Collection<PartModel> getParts() {
-        ArrayList<PartModel> partModels = new ArrayList<>();
-        for (ButtonPart thisButton : buttons.getParts()) {
-            partModels.add(thisButton.getPartModel());
-        }
-        for (FieldPart thisField : fields.getParts()) {
-            partModels.add(thisField.getPartModel());
-        }
-        return partModels;
     }
 
     @Override

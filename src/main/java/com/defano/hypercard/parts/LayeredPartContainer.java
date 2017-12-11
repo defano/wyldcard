@@ -32,11 +32,11 @@ public interface LayeredPartContainer extends PartContainer {
      */
     default List<PartModel> getPartsInDisplayOrder() {
         ArrayList<PartModel> bkgndParts = new ArrayList<>();
-        bkgndParts.addAll(getPartsInZOrder(Owner.BACKGROUND));
+        bkgndParts.addAll(getPartsInDisplayOrder(Owner.BACKGROUND));
         bkgndParts.sort(new ZOrderComparator());
 
         ArrayList<PartModel> cardParts = new ArrayList<>();
-        cardParts.addAll(getPartsInZOrder(Owner.CARD));
+        cardParts.addAll(getPartsInDisplayOrder(Owner.CARD));
         cardParts.sort(new ZOrderComparator());
 
         bkgndParts.addAll(cardParts);
@@ -50,7 +50,7 @@ public interface LayeredPartContainer extends PartContainer {
      * @param layer The layer of parts to be returned
      * @return The z-ordered list of parts in the given layer of this card.
      */
-    default List<PartModel> getPartsInZOrder(Owner layer) {
+    default List<PartModel> getPartsInDisplayOrder(Owner layer) {
         ArrayList<PartModel> parts = new ArrayList<>();
 
         parts.addAll(getParts()
@@ -83,32 +83,10 @@ public interface LayeredPartContainer extends PartContainer {
      * @return The number of parts of the given type displayed on this card.
      */
     default long getPartCount(PartType type, Owner layer) {
-        return getPartsInZOrder(layer)
+        return getPartsInDisplayOrder(layer)
                 .stream()
                 .filter(p -> type == null || p.getType() == type)
                 .count();
-    }
-
-    /**
-     * Gets the "number" of the specified part on the card relative to all other parts in the same layer.
-     * <p>
-     * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
-     * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
-     *
-     * @param part The part whose number should be returned.
-     * @return The number of this part
-     */
-    default long getPartNumber(PartModel part) {
-        int number = 0;
-
-        for (PartModel thisPart : getPartsInZOrder(part.getOwner())) {
-            number++;
-            if (thisPart.getId() == part.getId()) {
-                return number;
-            }
-        }
-
-        throw new IllegalArgumentException("No such part on this card.");
     }
 
     /**
@@ -122,7 +100,7 @@ public interface LayeredPartContainer extends PartContainer {
      */
     default long getButtonNumber(ButtonModel part) {
         int number = 0;
-        for (PartModel thisPart : getPartsInZOrder(part.getOwner())) {
+        for (PartModel thisPart : getPartsInDisplayOrder(part.getOwner())) {
             if (thisPart.getType() == PartType.BUTTON) {
                 number++;
             }
@@ -146,7 +124,7 @@ public interface LayeredPartContainer extends PartContainer {
      */
     default long getFieldNumber(FieldModel part) {
         int number = 0;
-        for (PartModel thisPart : getPartsInZOrder(part.getOwner())) {
+        for (PartModel thisPart : getPartsInDisplayOrder(part.getOwner())) {
             if (thisPart.getType() == PartType.FIELD) {
                 number++;
             }
