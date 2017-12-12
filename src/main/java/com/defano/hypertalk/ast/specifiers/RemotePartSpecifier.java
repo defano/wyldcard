@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.specifiers;
 
+import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.containers.PartContainerExp;
@@ -24,6 +25,14 @@ public class RemotePartSpecifier implements PartSpecifier {
 
     public PartSpecifier getRemotePartSpecifier() {
         return partSpecifier;
+    }
+
+    public boolean isRemoteCardSpecifier() {
+        return ofCardPartExp.partFactor(BackgroundModel.class) != null;
+    }
+
+    public boolean isRemotePartSpecifier() {
+        return !isRemoteCardSpecifier();
     }
 
     @Override

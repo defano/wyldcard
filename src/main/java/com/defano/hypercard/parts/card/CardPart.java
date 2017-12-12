@@ -298,7 +298,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     private void setPartsOnLayerVisible(Owner owningLayer, boolean visible) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (PartModel thisPartModel : getCardModel().getParts()) {
+            for (PartModel thisPartModel : getCardModel().getPartModels()) {
                 if (thisPartModel.getOwner() == owningLayer) {
                     if (!visible) {
                         getPart(thisPartModel).getComponent().setVisible(false);
@@ -649,13 +649,19 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return The matching CardLayerPart
      */
     public CardLayerPart getPart(PartModel partModel) {
+        CardLayerPart part = null;
+
         if (partModel instanceof FieldModel) {
-            return fields.getPartForModel(partModel);
+            part = fields.getPartForModel(partModel);
         } else if (partModel instanceof ButtonModel) {
-            return buttons.getPartForModel(partModel);
+            part = buttons.getPartForModel(partModel);
         }
 
-        throw new IllegalArgumentException("No part on this card matching model: " + partModel);
+        if (part == null) {
+            throw new IllegalArgumentException("No part on card " + this.getCardModel() + " for model: " + partModel);
+        } else {
+            return part;
+        }
     }
 
     @Override

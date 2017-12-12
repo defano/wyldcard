@@ -19,7 +19,7 @@ public interface LayeredPartContainer extends PartContainer {
      * Gets a collection of all parts (buttons and fields) held by this container.
      * @return The collection of parts in this container.
      */
-    Collection<PartModel> getParts();
+    Collection<PartModel> getPartModels();
 
     /**
      * Gets a list of parts (buttons and field) that appear on this card, listed in their z-order (that is, the order
@@ -47,7 +47,7 @@ public interface LayeredPartContainer extends PartContainer {
      */
     default List<PartModel> getPartsInDisplayOrder(Owner layer) {
 
-        ArrayList<PartModel> parts = getParts()
+        ArrayList<PartModel> parts = getPartModels()
                 .stream()
                 .filter(p -> p.getOwner() == layer)
                 .sorted(new ZOrderComparator())

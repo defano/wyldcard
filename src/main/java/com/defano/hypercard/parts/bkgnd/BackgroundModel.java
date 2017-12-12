@@ -112,11 +112,4 @@ public class BackgroundModel extends PartModel implements LayeredPartContainer {
         }
     }
 
-    @Override
-    public Collection<PartModel> getParts() {
-        ArrayList<PartModel> parts = new ArrayList<>();
-        parts.addAll(buttonModels);
-        parts.addAll(fieldModels);
-        return parts;
-    }
 }

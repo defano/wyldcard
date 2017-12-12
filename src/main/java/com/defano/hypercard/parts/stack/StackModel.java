@@ -4,6 +4,7 @@ import com.defano.hypercard.icons.ButtonIcon;
 import com.defano.hypercard.icons.UserIcon;
 import com.defano.hypercard.parts.StackPartContainer;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.bkgnd.CardContainer;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
@@ -21,7 +22,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StackModel extends PartModel implements StackPartContainer {
+public class StackModel extends PartModel implements StackPartContainer, CardContainer {
 
     private static final int BACKSTACK_DEPTH = 20;
 
@@ -240,7 +241,7 @@ public class StackModel extends PartModel implements StackPartContainer {
         for (CardModel thisCard : getCardModels()) {
             parts.add(thisCard);
 
-            BackgroundModel thisBackground = getStackModel().getBackground(thisCard.getBackgroundId());
+            BackgroundModel thisBackground = getBackground(thisCard.getBackgroundId());
             if (!parts.contains(thisBackground)) {
                 parts.add(thisBackground);
             }
@@ -249,9 +250,5 @@ public class StackModel extends PartModel implements StackPartContainer {
         return parts;
     }
 
-    @Override
-    public StackModel getStackModel() {
-        return this;
-    }
 }
 

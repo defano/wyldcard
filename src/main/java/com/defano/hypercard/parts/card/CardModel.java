@@ -18,8 +18,6 @@ import javax.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A data model representing a card in a stack. See {@link CardPart} for the associated
@@ -82,10 +80,6 @@ public class CardModel extends PartModel implements LayeredPartContainer {
      */
     public static CardModel emptyCardModel(int cardId, int backgroundId, PartModel parentPartModel) {
         return new CardModel(cardId, backgroundId, parentPartModel);
-    }
-
-    public Collection<PartModel> getPartModels() {
-        return Stream.concat(fields.stream(), buttons.stream()).collect(Collectors.toList());
     }
 
     public Collection<FieldModel> getFieldModels() {
@@ -200,7 +194,7 @@ public class CardModel extends PartModel implements LayeredPartContainer {
     }
 
     @Override
-    public Collection<PartModel> getParts() {
+    public Collection<PartModel> getPartModels() {
         Collection<PartModel> models = new ArrayList<>();
         models.addAll(buttons);
         models.addAll(fields);
