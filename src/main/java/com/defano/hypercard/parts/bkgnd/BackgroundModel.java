@@ -68,10 +68,12 @@ public class BackgroundModel extends PartModel implements LayeredPartContainer {
     }
 
     public void addFieldModel(FieldModel model) {
+        model.setParentPartModel(this);
         this.fieldModels.add(model);
     }
 
     public void addButtonModel(ButtonModel model) {
+        model.setParentPartModel(this);
         this.buttonModels.add(model);
     }
 

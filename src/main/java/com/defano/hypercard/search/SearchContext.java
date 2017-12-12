@@ -188,11 +188,9 @@ public class SearchContext {
 
         // Box the found text
         try {
-            System.err.println("NOW ON CARD: " + ExecutionContext.getContext().getCurrentCard().getCardIndexInStack());
             FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(result.getLocalPartSpecifier());
             FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
 
-            System.err.println("TEXT ON FIELD: " + foundField.getText());
             foundField.applySearchHilight(result.getRange());
             foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
         } catch (Exception e) {

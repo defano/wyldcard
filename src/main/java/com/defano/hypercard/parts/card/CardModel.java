@@ -2,12 +2,13 @@ package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.LayeredPartContainer;
-import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
@@ -35,6 +36,8 @@ public class CardModel extends PartModel implements LayeredPartContainer {
     private final Collection<FieldModel> fields = new ArrayList<>();
     private final Collection<ButtonModel> buttons = new ArrayList<>();
     private byte[] cardImage;
+
+    private transient CardModelObserver observer;
 
     private CardModel(int cardId, int backgroundId, PartModel parentPartModel) {
         super(PartType.CARD, Owner.STACK, parentPartModel);
@@ -96,21 +99,30 @@ public class CardModel extends PartModel implements LayeredPartContainer {
      */
     public void removePartModel(PartModel partModel) {
         if (partModel instanceof FieldModel) {
-            fields.remove(partModel);
+            if (partModel.getOwner() == Owner.BACKGROUND)  {
+                getBackgroundModel().removePartModel(partModel);
+            } else {
+                fields.remove(partModel);
+            }
         } else if (partModel instanceof ButtonModel) {
-            buttons.remove(partModel);
+            if (partModel.getOwner() == Owner.BACKGROUND) {
+                getBackgroundModel().removePartModel(partModel);
+            } else {
+                buttons.remove(partModel);
+            }
         } else {
             throw new IllegalArgumentException("Bug! Can't delete this kind of part from a card: " + partModel.getType());
         }
+
+        firePartRemoved(partModel);
     }
 
     /**
      * Adds a part (button or field) to this card.
      *
      * @param partModel The part to add.
-     * @throws PartException Thrown if part type is unsupported.
      */
-    public void addPartModel(PartModel partModel) throws PartException {
+    public void addPartModel(PartModel partModel) {
         if (partModel instanceof FieldModel) {
             fields.add((FieldModel) partModel);
         } else if (partModel instanceof ButtonModel) {
@@ -118,6 +130,8 @@ public class CardModel extends PartModel implements LayeredPartContainer {
         } else {
             throw new IllegalArgumentException("Bug! Can't add this kind of part to a card: " + partModel.getType());
         }
+
+        partModel.setParentPartModel(this);
     }
 
     /**
@@ -127,6 +141,10 @@ public class CardModel extends PartModel implements LayeredPartContainer {
      */
     public int getBackgroundId() {
         return backgroundId;
+    }
+
+    public BackgroundModel getBackgroundModel() {
+        return ((StackModel) getParentPartModel()).getBackground(getBackgroundId());
     }
 
     /**
@@ -184,14 +202,31 @@ public class CardModel extends PartModel implements LayeredPartContainer {
     @Override
     public Collection<PartModel> getParts() {
         Collection<PartModel> models = new ArrayList<>();
-
-        BackgroundModel bkgnd = HyperCard.getInstance().getStack().getStackModel().getBackground(getBackgroundId());
-
-        models.addAll(bkgnd.getPartModels());
         models.addAll(buttons);
         models.addAll(fields);
-
         return models;
+    }
+
+    /**
+     * Gets the zero-based location of this card in its stack.
+     * @return The location of this card in the stack.
+     */
+    public int getCardIndexInStack() {
+        return ((StackModel) getParentPartModel()).getIndexOfCard(this);
+    }
+
+    public CardModelObserver getObserver() {
+        return observer;
+    }
+
+    public void setObserver(CardModelObserver observer) {
+        this.observer = observer;
+    }
+
+    private void firePartRemoved(PartModel part) {
+        if (observer != null) {
+            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onPartRemoved(part));
+        }
     }
 
 }

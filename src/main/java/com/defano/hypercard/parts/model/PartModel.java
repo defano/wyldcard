@@ -45,6 +45,22 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     private transient PartModel parentPartModel;
     private transient Script script = new Script();
 
+    /**
+     * Recursively re-establish the parent-child part model relationship. Sets the value returned by
+     * {@link #getParentPartModel()} to the given part model and causes this model to invoke this method on all its
+     * children.
+     *
+     * The relationship between a parent and it's child parts are persistent, but the reverse relationship (between
+     * child and parent) is transient. This is a side effect of the serialization engine being unable to deal with
+     * cycles in the model object graph (a child cannot depend on a parent that also depends on it.). Thus, as a
+     * workaround, we programmatically re-establish the child-to-parent relationship after the stack has completed
+     * deserializing from JSON.
+     *
+     * @param parentPartModel The {@link PartModel} of the parent of this part. Null for models that do not have a
+     *                        parent part (i.e., stacks and the message box).
+     */
+    public abstract void relinkParentPartModel(PartModel parentPartModel);
+
     public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
 
@@ -253,15 +269,12 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         return new PartIdSpecifier(getOwner(), getType(), getId());
     }
 
-    public abstract void relinkParentPartModel(PartModel parentPartModel);
-
     public PartModel getParentPartModel() {
         return parentPartModel;
     }
 
     public void setParentPartModel(PartModel parentPartModel) {
         this.parentPartModel = parentPartModel;
-        System.err.println(this.toString());
     }
 
     @Override

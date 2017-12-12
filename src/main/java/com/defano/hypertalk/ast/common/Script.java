@@ -17,6 +17,10 @@ public class Script {
     public Script () {
     }
 
+    public Script(Statement statement) {
+        insertStatement(statement);
+    }
+
     public Script(NamedBlock handler, int startingLine, int endingLine) {
         defineHandler(handler, startingLine, endingLine);
     }
@@ -44,7 +48,7 @@ public class Script {
             this.statements = new StatementList(null);
         }
 
-        this.statements.list.add(statement);
+        this.statements.list.add(0, statement);
         return this;
     }
 

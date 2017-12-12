@@ -48,9 +48,36 @@ public interface PartContainer {
         throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
     }
 
+    /**
+     * Returns the number of this part relative to all other parts held in this container.
+     * @param part
+     * @return
+     */
     default long getPartNumber(PartModel part) {
         return getPartNumber(part, getPartsInDisplayOrder());
     }
+
+    /**
+     * Returns the number of this part relative to all other parts matching the given part type held in this container.
+     * @param part
+     * @param ofType
+     * @return
+     */
+    default long getPartNumber(PartModel part, PartType ofType) {
+        int number = 0;
+        for (PartModel thisPart : getPartsInDisplayOrder()) {
+            if (thisPart.getType() == ofType) {
+                number++;
+            }
+
+            if (thisPart.getId() == part.getId() && thisPart.getType() == ofType) {
+                return number;
+            }
+        }
+
+        throw new IllegalArgumentException("No such part on this card.");
+    }
+
 
     /**
      * Gets the "number" of the specified part on the card relative to all other parts in the same layer.

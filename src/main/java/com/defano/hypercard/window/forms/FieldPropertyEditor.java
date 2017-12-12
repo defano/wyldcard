@@ -23,7 +23,7 @@ import java.awt.*;
 @SuppressWarnings("unchecked")
 public class FieldPropertyEditor extends HyperCardDialog {
 
-    private PartModel model;
+    private FieldModel model;
 
     private JPanel fieldEditor;
     private JTextField fieldName;
@@ -90,22 +90,21 @@ public class FieldPropertyEditor extends HyperCardDialog {
 
     @Override
     public void bindModel(Object data) {
-        if (data instanceof PartModel) {
-            this.model = (PartModel) data;
+        if (data instanceof FieldModel) {
+            this.model = (FieldModel) data;
 
-            PartModel part = HyperCard.getInstance().getDisplayedCard().getCardModel().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-            long partNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartNumber(part);
-            long fieldNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getFieldNumber((FieldModel) part);
-            long fieldCount = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartCount(model.getType(), part.getOwner());
-            long partCount = HyperCard.getInstance().getDisplayedCard().getCardModel().getPartCount(null, part.getOwner());
-            String layer = part.getOwner().hyperTalkName;
+            long partNumber = model.getPartNumber();
+            long fieldNumber = model.getFieldNumber();
+            long fieldCount = model.getFieldCount();
+            long partCount = model.getPartCount();
+            String layer = model.getOwner().hyperTalkName;
 
             fieldLabel.setText(layer + " Field:");
             fieldLabelValue.setText(fieldNumber + " of " + fieldCount);
 
             partLabel.setText(layer + " Part:");
             partLabelValue.setText(partNumber + " of " + partCount);
-            idLabelValue.setText(String.valueOf(part.getId()));
+            idLabelValue.setText(String.valueOf(model.getId()));
 
             fieldName.setText(model.getKnownProperty(FieldModel.PROP_NAME).stringValue());
             idLabelValue.setText(model.getKnownProperty(FieldModel.PROP_ID).stringValue());
@@ -125,14 +124,14 @@ public class FieldPropertyEditor extends HyperCardDialog {
             multipleLines.setSelected(model.getKnownProperty(FieldModel.PROP_MULTIPLELINES).booleanValue());
             scrolling.setSelected(model.getKnownProperty(FieldModel.PROP_SCROLLING).booleanValue());
 
-            sharedText.setEnabled(part.getOwner() == Owner.BACKGROUND);
+            sharedText.setEnabled(model.getOwner() == Owner.BACKGROUND);
             sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
             multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
             textStyleButton.addActionListener(e -> {
                 Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
                 if (selection != null) {
-                    ((FieldModel) part).setTextStyle(TextStyleSpecifier.fromFont(selection));
+                    model.setTextStyle(TextStyleSpecifier.fromFont(selection));
                 }
             });
 

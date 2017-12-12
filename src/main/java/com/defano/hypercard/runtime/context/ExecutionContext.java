@@ -188,7 +188,11 @@ public class ExecutionContext {
         if (ps.isStackElementSpecifier() || ps instanceof RemotePartSpecifier) {
             return HyperCard.getInstance().getStack().getStackModel().findPart(ps);
         } else if (ps.isCardElementSpecifier()) {
-            return getCurrentCard().getCardModel().findPart(ps);
+            if (ps.getOwner() == Owner.BACKGROUND) {
+                return getCurrentCard().getCardBackground().findPart(ps);
+            } else {
+                return getCurrentCard().getCardModel().findPart(ps);
+            }
         } else if (ps.isStackSpecifier()) {
             return HyperCard.getInstance().getStack().getStackModel();
         }
