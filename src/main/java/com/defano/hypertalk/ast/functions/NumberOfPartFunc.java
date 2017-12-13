@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.functions;
 
-import com.defano.hypercard.parts.LayeredPartContainer;
-import com.defano.hypercard.parts.PartContainer;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
+import com.defano.hypercard.parts.finder.PartFinder;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.card.CardModel;
@@ -32,19 +32,19 @@ public class NumberOfPartFunc extends Expression {
         PartModel part = ExecutionContext.getContext().getPart(partFactor.evaluateAsSpecifier());
 
         if (part instanceof ButtonModel) {
-            return new Value(((LayeredPartContainer) part.getParentPartModel()).getPartNumber(part, PartType.BUTTON));
+            return new Value(((LayeredPartFinder) part.getParentPartModel()).getPartNumber(part, PartType.BUTTON));
         }
 
         if (part instanceof FieldModel) {
-            return new Value(((LayeredPartContainer) part.getParentPartModel()).getPartNumber(part, PartType.FIELD));
+            return new Value(((LayeredPartFinder) part.getParentPartModel()).getPartNumber(part, PartType.FIELD));
         }
 
         if (part instanceof CardModel) {
-            return new Value(((PartContainer) part.getParentPartModel()).getPartNumber(part, PartType.CARD));
+            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(part, PartType.CARD));
         }
 
         if (part instanceof BackgroundModel) {
-            return new Value(((PartContainer) part.getParentPartModel()).getPartNumber(part, PartType.BACKGROUND));
+            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(part, PartType.BACKGROUND));
         }
 
         throw new HtSemanticException("Don't know how to get the number of that.");

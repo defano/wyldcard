@@ -5,9 +5,11 @@ import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackPart;
-import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.common.Chunk;
+import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.common.Preposition;
+import com.defano.hypertalk.ast.common.Value;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -185,19 +187,7 @@ public class ExecutionContext {
      * @throws PartException Thrown if no such part exists
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
-        if (ps.isStackElementSpecifier() || ps instanceof RemotePartSpecifier) {
-            return HyperCard.getInstance().getStack().getStackModel().findPart(ps);
-        } else if (ps.isCardElementSpecifier()) {
-            if (ps.getOwner() == Owner.BACKGROUND) {
-                return getCurrentCard().getCardBackground().findPart(ps);
-            } else {
-                return getCurrentCard().getCardModel().findPart(ps);
-            }
-        } else if (ps.isStackSpecifier()) {
-            return HyperCard.getInstance().getStack().getStackModel();
-        }
-
-        throw new IllegalStateException("Bug! Unhandled part type: " + ps);
+        return HyperCard.getInstance().getStack().getStackModel().findPart(ps);
     }
 
     /**

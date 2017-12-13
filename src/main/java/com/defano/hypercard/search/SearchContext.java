@@ -10,7 +10,7 @@ import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
+import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
@@ -111,9 +111,9 @@ public class SearchContext {
 
             FieldModel field = (FieldModel) part;
 
-            int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardIndexInStack();
-            if (query.searchField instanceof RemotePartSpecifier) {
-                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findRemotePartOwner((RemotePartSpecifier) query.searchField).getCardIndexInStack();
+            int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardModel().getCardIndexInStack();
+            if (query.searchField instanceof CompositePartSpecifier) {
+                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findRemotePartOwner((CompositePartSpecifier) query.searchField).getCardIndexInStack();
             }
 
             indexField(query, field, cardIndex, results);
@@ -182,7 +182,7 @@ public class SearchContext {
         }
 
         // Search result is on a different card; go there
-        else if (result.getCardIndex() != ExecutionContext.getContext().getCurrentCard().getCardIndexInStack()) {
+        else if (result.getCardIndex() != ExecutionContext.getContext().getCurrentCard().getCardModel().getCardIndexInStack()) {
             ExecutionContext.getContext().getCurrentStack().goCard(result.getCardIndex(), null, true);
         }
 

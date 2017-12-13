@@ -2,7 +2,7 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
-import com.defano.hypercard.parts.LayeredPartContainer;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.HyperCardTextField;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
@@ -604,11 +604,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     }
 
     public long getFieldNumber() {
-        return ((LayeredPartContainer) getParentPartModel()).getPartNumber(this, PartType.FIELD);
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this, PartType.FIELD);
     }
 
     public long getFieldCount() {
-        return ((LayeredPartContainer) getParentPartModel()).getPartCount(PartType.FIELD, getOwner());
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(PartType.FIELD, getOwner());
     }
 
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {

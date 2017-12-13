@@ -1,5 +1,6 @@
-package com.defano.hypercard.parts;
+package com.defano.hypercard.parts.finder;
 
+import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.window.WindowManager;
@@ -11,24 +12,33 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public interface PartContainer {
+public interface PartFinder {
 
     /**
-     * Gets all parts in this container in the order that they appear or are displayed. For buttons and fields, this
-     * is their z-order; for card or backgrounds, this is their order in the stack.
+     * Gets all parts that should be searched in the order that they appear or are displayed. For buttons and fields,
+     * this is their z-order; for cards or backgrounds this is their order in the stack.
      *
-     * @return The list of parts held by this container in their logical displayed order.
+     * @return The list of parts held by this container in their logical display order.
      */
     List<PartModel> getPartsInDisplayOrder();
 
+    /**
+     * Finds any part returned by {@link #getPartsInDisplayOrder()} by ID, name, number, or ordinal. Can also find the
+     * message box.
+     *
+     * @param ps A part specifier indicating the part to find.
+     * @return The model of the found part.
+     * @throws PartException Thrown if the requested part cannot be located.
+     */
     default PartModel findPart(PartSpecifier ps) throws PartException {
         return findPart(ps, getPartsInDisplayOrder());
     }
 
     /**
-     * Returns the part represented by the given part specifier within the ordered collection of parts.
+     * Finds any part by ID, name, number, or ordinal within an ordered collection of parts.
      *
      * @param ps The part specifier representing the part to fetch
+     * @param parts The list of parts to search
      * @return The specified part
      * @throws PartException Thrown if no such part exists on this card.
      */
@@ -43,25 +53,29 @@ public interface PartContainer {
             return findPartByOrdinal((PartOrdinalSpecifier) ps, parts);
         } else if (ps instanceof PartMessageSpecifier) {
             return WindowManager.getMessageWindow().getPartModel();
+        } else if (ps instanceof CompositePartSpecifier) {
+            throw new PartException("Can't find that.");
         }
 
         throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
     }
 
     /**
-     * Returns the number of this part relative to all other parts held in this container.
-     * @param part
-     * @return
+     * Calculates the number of this part relative to all other parts returned by {@link #getPartsInDisplayOrder()}.
+     * @param part The model of the part whose number should be retrieved.
+     * @return The number of the given part.
      */
     default long getPartNumber(PartModel part) {
         return getPartNumber(part, getPartsInDisplayOrder());
     }
 
     /**
-     * Returns the number of this part relative to all other parts matching the given part type held in this container.
-     * @param part
-     * @param ofType
-     * @return
+     * Calculates the number of this part relative to all other parts returned by {@link #getPartsInDisplayOrder()} and
+     * which match the given part type.
+     *
+     * @param part The model of the part whose number should be retrieved.
+     * @param ofType The type of part being included in the count.
+     * @return The number of the request part and type.
      */
     default long getPartNumber(PartModel part, PartType ofType) {
         int number = 0;
@@ -80,7 +94,8 @@ public interface PartContainer {
 
 
     /**
-     * Gets the "number" of the specified part on the card relative to all other parts in the same layer.
+     * Gets the "number" of the specified part relative to all other parts in the same layer of a given collection of
+     * parts.
      * <p>
      * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
      * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
@@ -102,7 +117,7 @@ public interface PartContainer {
     }
 
     /**
-     * Finds a part based on its ID.
+     * Finds a part based on its ID within a given collection of parts.
      *
      * @param ps The specification of the part to find.
      * @return The specified part.
@@ -123,7 +138,7 @@ public interface PartContainer {
     }
 
     /**
-     * Finds a part based on its name.
+     * Finds a part based on its name within a given collection of parts.
      *
      * @param ps The specification of the part to find.
      * @return The specified part.
@@ -144,7 +159,7 @@ public interface PartContainer {
     }
 
     /**
-     * Finds a part based on its number.
+     * Finds a part based on its number within a given collection of parts.
      *
      * @param ps The specification of the part to find.
      * @return The specified part.
@@ -166,7 +181,7 @@ public interface PartContainer {
     }
 
     /**
-     * Finds a part based on ordinal (first, second... middle, last).
+     * Finds a part based on ordinal (first, second... middle, last) within a given collection of parts.
      *
      * @param ps The specification of the part to find
      * @return The specified part
@@ -187,7 +202,7 @@ public interface PartContainer {
         }
 
         if (index < 0 || index >= foundParts.size()) {
-            throw new PartException("No " + ps.getHyperTalkIdentifier() + " exists on this " + ps.getOwner().hyperTalkName.toLowerCase() + ".");
+            throw new PartException("No such " + ps.getHyperTalkIdentifier() + ".");
         } else {
             return foundParts.get(index);
         }

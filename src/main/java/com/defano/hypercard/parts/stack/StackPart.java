@@ -484,6 +484,6 @@ public class StackPart implements PropertyChangeObserver {
 
         return stackModel.getCardCount() > 1 &&
                 !getDisplayedCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
-                (cardCountInBackground > 1 || !getDisplayedCard().getCardBackground().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+                (cardCountInBackground > 1 || !getDisplayedCard().getCardModel().getBackgroundModel().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 }

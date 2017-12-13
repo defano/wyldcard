@@ -47,6 +47,15 @@ public class PartOrdinalSpecifier implements PartSpecifier {
     }
 
     @Override
+    public String toString() {
+        return "PartOrdinalSpecifier{" +
+                "type=" + type +
+                ", layer=" + layer +
+                ", ordinal=" + ordinal +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

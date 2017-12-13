@@ -1,10 +1,10 @@
 package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.LayeredPartContainer;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
@@ -23,7 +23,7 @@ import java.util.Collection;
  * A data model representing a card in a stack. See {@link CardPart} for the associated
  * controller object.
  */
-public class CardModel extends PartModel implements LayeredPartContainer {
+public class CardModel extends PartModel implements LayeredPartFinder {
 
     public final static String PROP_ID = "id";
     public final static String PROP_MARKED = "marked";
@@ -139,6 +139,10 @@ public class CardModel extends PartModel implements LayeredPartContainer {
 
     public BackgroundModel getBackgroundModel() {
         return ((StackModel) getParentPartModel()).getBackground(getBackgroundId());
+    }
+
+    public StackModel getStackModel() {
+        return getBackgroundModel().getStackModel();
     }
 
     /**

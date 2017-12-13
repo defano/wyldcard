@@ -29,12 +29,12 @@ public interface Part {
     PartModel getPartModel();
 
     /**
-     * Invoked when the part is opened (added) to a card.
+     * Invoked when the part is opened (added) to a card, background or stack.
      */
     void partOpened();
 
     /**
-     * Invoked when the part is closed (removed) from a card.
+     * Invoked when the part is closed (removed) from a card, background or stack.
      */
     void partClosed();
 

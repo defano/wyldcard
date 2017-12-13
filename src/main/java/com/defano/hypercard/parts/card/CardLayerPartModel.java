@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
-import com.defano.hypercard.parts.LayeredPartContainer;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -58,11 +58,11 @@ public abstract class CardLayerPartModel extends PartModel {
     }
 
     public long getPartNumber() {
-        return ((LayeredPartContainer) getParentPartModel()).getPartNumber(this);
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this);
     }
 
     public long getPartCount() {
-        return ((LayeredPartContainer) getParentPartModel()).getPartCount(null, getOwner());
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(null, getOwner());
     }
 
 }

@@ -1,7 +1,6 @@
 package com.defano.hypercard.parts.button;
 
-import com.defano.hypercard.parts.LayeredPartContainer;
-import com.defano.hypercard.parts.PartContainer;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Owner;
@@ -57,11 +56,11 @@ public class ButtonModel extends CardLayerPartModel {
     }
 
     public long getButtonNumber() {
-        return ((LayeredPartContainer) getParentPartModel()).getPartNumber(this, PartType.BUTTON);
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this, PartType.BUTTON);
     }
 
     public long getButtonCount() {
-        return ((LayeredPartContainer) getParentPartModel()).getPartCount(PartType.BUTTON, getOwner());
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(PartType.BUTTON, getOwner());
     }
 
 }

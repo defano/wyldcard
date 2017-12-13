@@ -35,6 +35,10 @@ public class PartPositionSpecifier implements PartSpecifier {
         return type;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
     @Override
     public String getHyperTalkIdentifier() {
         if (layer == null) {
@@ -44,6 +48,15 @@ public class PartPositionSpecifier implements PartSpecifier {
         } else {
             return position.name().toLowerCase() + " " + getOwner().name() + " " + type.toString().toLowerCase();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "PartPositionSpecifier{" +
+                "position=" + position +
+                ", layer=" + layer +
+                ", type=" + type +
+                '}';
     }
 
     @Override

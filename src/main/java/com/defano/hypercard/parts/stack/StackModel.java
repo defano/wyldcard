@@ -2,10 +2,9 @@ package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.icons.ButtonIcon;
 import com.defano.hypercard.icons.UserIcon;
-import com.defano.hypercard.parts.StackPartContainer;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
-import com.defano.hypercard.parts.bkgnd.CardContainer;
 import com.defano.hypercard.parts.card.CardModel;
+import com.defano.hypercard.parts.finder.StackPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.LimitedDepthStack;
@@ -22,7 +21,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StackModel extends PartModel implements StackPartContainer, CardContainer {
+public class StackModel extends PartModel implements StackPartFinder {
 
     private static final int BACKSTACK_DEPTH = 20;
 
@@ -139,6 +138,10 @@ public class StackModel extends PartModel implements StackPartContainer, CardCon
         return currentCardIndex;
     }
 
+    public CardModel getCurrentCard() {
+        return getCardModel(getCurrentCardIndex());
+    }
+
     public void setCurrentCardIndex(int currentCard) {
         this.currentCardIndex = currentCard;
     }
@@ -218,6 +221,11 @@ public class StackModel extends PartModel implements StackPartContainer, CardCon
         return getCardModels().stream()
                 .filter(c -> c.getBackgroundId() == backgroundId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public StackModel getStackModel() {
+        return this;
     }
 
     public void createIcon(String name, BufferedImage image) {

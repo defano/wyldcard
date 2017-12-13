@@ -43,6 +43,15 @@ public class PartIdSpecifier implements PartSpecifier {
     }
 
     @Override
+    public String toString() {
+        return "PartIdSpecifier{" +
+                "layer=" + layer +
+                ", type=" + type +
+                ", id=" + id +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

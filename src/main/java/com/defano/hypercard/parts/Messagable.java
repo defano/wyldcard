@@ -73,7 +73,7 @@ public interface Messagable {
     default void receiveMessage(String command, ExpressionList arguments, MessageCompletionObserver onCompletion) {
 
         // No commands are sent to buttons or fields when not in browse mode
-        if (ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isCardElementSpecifier()) {
+        if (ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isButtonOrFieldSpecifier()) {
             onCompletion.onMessagePassed(command, false, null);
             return;
         }
@@ -174,13 +174,13 @@ public interface Messagable {
             case MESSAGE_BOX:
                 return ExecutionContext.getContext().getCurrentCard().getCardModel();
             case CARD:
-                return ExecutionContext.getContext().getCurrentCard().getCardBackground();
+                return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel();
             case STACK:
                 return null;
             case FIELD:
             case BUTTON:
                 if (getMe().getOwner() == Owner.BACKGROUND) {
-                    return ExecutionContext.getContext().getCurrentCard().getCardBackground();
+                    return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel();
                 } else {
                     return ExecutionContext.getContext().getCurrentCard().getCardModel();
                 }

@@ -1,5 +1,6 @@
 package com.defano.hypercard.parts;
 
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 /**
@@ -8,5 +9,9 @@ import com.defano.hypertalk.exception.HtSemanticException;
 public class PartException extends HtSemanticException {
     public PartException(String message) {
         super(message);
+    }
+
+    public PartException(HtException cause) {
+        super(cause);
     }
 }

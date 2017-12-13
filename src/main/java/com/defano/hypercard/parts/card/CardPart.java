@@ -2,8 +2,6 @@ package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.Part;
-import com.defano.hypercard.parts.PartException;
-import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
@@ -52,9 +50,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     private CardModel cardModel;
 
-    // TODO: Eliminate and delegate to CardModel#getParentPartModel
-    private StackModel stackModel;
-
     private final PartsTable<FieldPart> fields = new PartsTable<>();
     private final PartsTable<ButtonPart> buttons = new PartsTable<>();
 
@@ -72,20 +67,19 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @throws HtException Thrown if an error occurs creating the card.
      */
     public static CardPart fromPositionInStack(int cardIndex, StackModel stack) throws HtException {
-        return fromModel(stack.getCardModel(cardIndex), stack);
+        return fromModel(stack.getCardModel(cardIndex));
     }
 
     /**
      * Instantiates a CardPart given a {@link CardModel} and {@link StackModel}.
      *
      * @param model The model of the card to instantiate.
-     * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
-     *              card's background id).
      * @return The fully instantiated CardPart.
      * @throws HtException Thrown if an error occurs instantiating the card.
      */
-    public static CardPart fromModel(CardModel model, StackModel stack) throws HtException {
-        CardPart card = skeletonFromModel(model, stack);
+    private static CardPart fromModel(CardModel model) throws HtException {
+        CardPart card = skeletonFromModel(model);
+        StackModel stack = model.getStackModel();
 
         // Setup part cut, copy and paste
         card.setTransferHandler(new CardPartTransferHandler(card));
@@ -97,7 +91,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(card.getCardBackground().getBackgroundImage()));
+        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage()));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
@@ -127,24 +121,20 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * part components (button and field views) are not updated to reflect the values in their model.
      *
      * @param model The model of the card to instantiate.
-     * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
-     *              card's background id).
      * @return A partially constructed CardPart useful for programmatic inspection
      * @throws HtException Thrown if an error occurs constructing the CardPart.
      */
-    public static CardPart skeletonFromModel(CardModel model, StackModel stack) throws HtException {
+    public static CardPart skeletonFromModel(CardModel model) throws HtException {
         CardPart card = new CardPart();
-
         card.cardModel = model;
-        card.stackModel = stack;
 
         // Add card parts to this card
-        for (PartModel thisPart : card.cardModel.getPartModels()) {
+        for (PartModel thisPart : model.getPartModels()) {
             card.addPartFromModel(thisPart);
         }
 
         // Add background parts to this card
-        for (PartModel thisPart : card.getCardBackground().getPartModels()) {
+        for (PartModel thisPart : model.getBackgroundModel().getPartModels()) {
             card.addPartFromModel(thisPart);
         }
 
@@ -192,14 +182,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * // TODO: Should probably be moved to CardModel
      */
     public void newButton() {
-        try {
-            CardLayer layer = CardLayerPart.getActivePartLayer();
-            ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
-            addButton(newButton);
-            PartToolContext.getInstance().setSelectedPart(newButton);
-        } catch (PartException ex) {
-            throw new RuntimeException("Bug! An error occurred creating a new button.", ex);
-        }
+        CardLayer layer = CardLayerPart.getActivePartLayer();
+        ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
+        addButton(newButton);
+        PartToolContext.getInstance().setSelectedPart(newButton);
     }
 
     /**
@@ -208,14 +194,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * // TODO: Should probably be moved to CardModel
      */
     public void newField() {
-        try {
-            CardLayer layer = CardLayerPart.getActivePartLayer();
-            FieldPart newField = FieldPart.newField(this, layer.asOwner());
-            addField(newField);
-            PartToolContext.getInstance().setSelectedPart(newField);
-        } catch (PartException ex) {
-            throw new RuntimeException("Bug! An error occurred creating a new field.", ex);
-        }
+        CardLayer layer = CardLayerPart.getActivePartLayer();
+        FieldPart newField = FieldPart.newField(this, layer.asOwner());
+        addField(newField);
+        PartToolContext.getInstance().setSelectedPart(newField);
     }
 
     /**
@@ -251,8 +233,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
                 fields.addPart(field);
                 addSwingComponent(field.getComponent(), field.getRect(), thisPart.getLayer());
                 break;
-            default:
-                throw new IllegalStateException("Bug! Unimplemented part model: " + thisPart);
         }
     }
 
@@ -327,32 +307,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     /**
-     * Gets the zero-based location of this card in its stack.
-     * @return The location of this card in the stack.
-     * // TODO: Remove; delegate calls to model
-     */
-    public int getCardIndexInStack() {
-        return getCardModel().getCardIndexInStack();
-    }
-
-    /**
-     * Gets the data model associated with this card's stack.
-     * @return The stack model for this card.
-     */
-    public StackModel getStackModel() {
-        return stackModel;
-    }
-
-    /**
-     * Returns the data model associated with this card. Note that backgrounds are shared across card; mutating this
-     * object may affect other card in the stack, too.
-     * @return The data model associated with this card's background.
-     */
-    public BackgroundModel getCardBackground() {
-        return stackModel.getBackground(cardModel.getBackgroundId());
-    }
-
-    /**
      * Swap the Swing component associated with a given part (button or field) for a new component. This is useful
      * when changing button or field styles.
      *
@@ -384,7 +338,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
-            getCardBackground().setBackgroundImage(canvasImage);
+            cardModel.getBackgroundModel().setBackgroundImage(canvasImage);
         } else {
             cardModel.setCardImage(canvasImage);
         }
@@ -442,13 +396,13 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public int getHeight() {
-        return stackModel.getHeight();
+        return cardModel.getStackModel().getHeight();
     }
 
     /** {@inheritDoc} */
     @Override
     public int getWidth() {
-        return stackModel.getWidth();
+        return cardModel.getStackModel().getWidth();
     }
 
     /**
@@ -476,7 +430,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     private ButtonPart importButton(ButtonPart part, CardLayer layer) throws HtException {
         ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextButtonId()), true);
+        model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextButtonId()), true);
         model.setOwner(layer.asOwner());
 
         ButtonPart newButton = ButtonPart.fromModel(this, model);
@@ -496,7 +450,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     private FieldPart importField(FieldPart part, CardLayer layer) throws HtException {
         FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextFieldId()), true);
+        model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextFieldId()), true);
         model.setOwner(layer.asOwner());
 
         FieldPart newField = FieldPart.fromModel(this, model);
@@ -507,13 +461,12 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /**
      * Adds a field to this card. Assumes that the field has a unique ID.
      * @param field The field to add to this card.
-     * @throws PartException Thrown if an error occurs adding the field.
      */
-    private void addField(FieldPart field) throws PartException {
+    private void addField(FieldPart field) {
         if (field.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(field.getPartModel());
         } else if (field.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().addFieldModel((FieldModel) field.getPartModel());
+            cardModel.getBackgroundModel().addFieldModel((FieldModel) field.getPartModel());
         }
 
         fields.addPart(field);
@@ -538,13 +491,12 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /**
      * Adds a button to this card. Assumes the button has a unique ID.
      * @param button The button to be added.
-     * @throws PartException Thrown if an error occurs adding this button to the card.
      */
-    private void addButton(ButtonPart button) throws PartException {
+    private void addButton(ButtonPart button) {
         if (button.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(button.getPartModel());
         } else if (button.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().addButtonModel((ButtonModel) button.getPartModel());
+            cardModel.getBackgroundModel().addButtonModel((ButtonModel) button.getPartModel());
         }
 
         buttons.addPart(button);

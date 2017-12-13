@@ -239,7 +239,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
-            int id = cardPart.getStackModel().getNextButtonId();
+            int id = cardPart.getCardModel().getStackModel().getNextButtonId();
             partModel = ButtonModel.newButtonModel(id, geometry, owner, parentPartModel);
         }
     }

@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.SortDirection;
 import com.defano.hypertalk.ast.containers.PartContainerExp;
@@ -55,8 +54,7 @@ public class SortCardsCmd extends Command {
 
         // Sort the indicated cards
         try {
-            StackModel stackModel = HyperCard.getInstance().getStack().getStackModel();
-            sortCards.sort(new CardExpressionComparator(stackModel, expression, style, direction));
+            sortCards.sort(new CardExpressionComparator(expression, style, direction));
 
             // Insert the sorted cards back into the full stack
             List<CardModel> orderedCards = mergeCards(allCards, sortCards);

@@ -325,7 +325,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
-            int id = cardPart.getStackModel().getNextFieldId();
+            int id = cardPart.getCardModel().getStackModel().getNextFieldId();
             partModel = FieldModel.newFieldModel(id, geometry, owner, parentPartModel);
             partModel.addPropertyChangedObserver(this);
         }

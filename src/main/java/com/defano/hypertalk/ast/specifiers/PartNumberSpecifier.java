@@ -45,6 +45,15 @@ public class PartNumberSpecifier implements PartSpecifier {
     }
 
     @Override
+    public String toString() {
+        return "PartNumberSpecifier{" +
+                "type=" + type +
+                ", layer=" + layer +
+                ", number=" + number +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

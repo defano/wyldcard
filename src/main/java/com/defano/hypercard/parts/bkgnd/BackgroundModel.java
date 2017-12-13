@@ -1,10 +1,12 @@
 package com.defano.hypercard.parts.bkgnd;
 
-import com.defano.hypercard.parts.LayeredPartContainer;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -13,12 +15,13 @@ import com.defano.hypertalk.ast.common.Value;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link CardPart} view object when rendered.
  */
-public class BackgroundModel extends PartModel implements LayeredPartContainer {
+public class BackgroundModel extends PartModel implements LayeredPartFinder {
 
     public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";
@@ -57,14 +60,24 @@ public class BackgroundModel extends PartModel implements LayeredPartContainer {
 
     public Collection<PartModel> getPartModels() {
         Collection<PartModel> models = new ArrayList<>();
+
         models.addAll(buttonModels);
         models.addAll(fieldModels);
+        models.addAll(getCardModels());
 
         return models;
     }
 
+    public StackModel getStackModel() {
+        return (StackModel) getParentPartModel();
+    }
+
     public Collection<FieldModel> getFieldModels() {
         return fieldModels;
+    }
+
+    public List<CardModel> getCardModels() {
+        return ((StackModel) getParentPartModel()).getCardsInBackground(getId());
     }
 
     public void addFieldModel(FieldModel model) {

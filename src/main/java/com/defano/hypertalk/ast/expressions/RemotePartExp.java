@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
+import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -24,6 +24,6 @@ public class RemotePartExp extends PartContainerExp {
 
     @Override
     public PartSpecifier evaluateAsSpecifier() throws HtException {
-        return new RemotePartSpecifier(partExp.evaluateAsSpecifier(), ofPartExp);
+        return new CompositePartSpecifier(partExp.evaluateAsSpecifier(), ofPartExp);
     }
 }
