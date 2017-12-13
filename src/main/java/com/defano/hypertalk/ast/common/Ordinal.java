@@ -41,7 +41,7 @@ public enum Ordinal {
     }
 
     public String stringValue() {
-        return name().toLowerCase();
+        return value().toString();
     }
     
     public Value value() {
