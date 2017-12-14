@@ -6,6 +6,7 @@ import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartPositionSpecifier;
@@ -44,40 +45,48 @@ public interface StackPartFinder extends PartFinder {
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
         } else if (ps.isCardPartSpecifier()) {
-            return getStackModel().getCurrentCard().findPart(ps);
+            return ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(ps);
         } else if (ps.isBackgroundPartSpecifier()) {
-            return getStackModel().getCurrentCard().getBackgroundModel().findPart(ps);
+            return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel().findPart(ps);
         } else {
             return PartFinder.super.findPart(ps);
         }
     }
 
+    /**
+     * Finds a part that's part of another part (for example, 'the second card of the first bg', 'card button 3 of card
+     * 4 of background 2').
+     *
+     * @param ps The composite part specifier.
+     * @return The found part.
+     * @throws PartException Thrown if the requested part cannot be found.
+     */
     default PartModel findCompositePart(CompositePartSpecifier ps) throws PartException {
         try {
             PartModel foundPart;
 
             // Recursively find the card or background containing the requested part
-            PartModel remotePart = findPart(ps.getOwningPartExp().evaluateAsSpecifier());
+            PartModel owningPart = findPart(ps.getOwningPartExp().evaluateAsSpecifier());
 
             // Looking for button or field on the remote background
             if (ps.isBackgroundPartSpecifier()) {
-                foundPart = findPart(ps.getPart(), ((CardModel) remotePart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
+                foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
             }
 
             // Looking for button or field on the remote card
             else if (ps.isCardPartSpecifier()) {
-                foundPart = findPart(ps.getPart(), ((CardModel) remotePart).getPartsInDisplayOrder());
+                foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getPartsInDisplayOrder());
             }
 
             // Looking for a card in a remote background
             else {
-                foundPart = findPart(ps.getPart(), ((LayeredPartFinder) remotePart).getPartsInDisplayOrder());
+                foundPart = findPart(ps.getPart(), ((LayeredPartFinder) owningPart).getPartsInDisplayOrder());
             }
 
             // Special case: Field needs to be evaluated in the context of the requested card
             if (foundPart instanceof FieldModel) {
                 // TODO: Broken, requires proxy
-                ((FieldModel) foundPart).setCurrentCardId(remotePart.getId());
+                ((FieldModel) foundPart).setCurrentCardId(owningPart.getId());
             }
 
             return foundPart;

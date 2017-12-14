@@ -1,16 +1,16 @@
 package com.defano.hypertalk.ast.common;
 
+import com.defano.hypertalk.comparator.SortStyle;
+import com.defano.hypertalk.comparator.StyledComparable;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.utils.ChunkUtils;
+import com.defano.hypertalk.utils.DateUtils;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import com.defano.hypertalk.comparator.SortStyle;
-import com.defano.hypertalk.comparator.StyledComparable;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.utils.ChunkUtils;
-import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.utils.DateUtils;
 
 /**
  * Representation of value in HyperTalk; all values are stored internally
@@ -301,9 +301,9 @@ public class Value implements StyledComparable<Value> {
         if (c.end != null)
             endVal = c.end.evaluate();
 
-        if (startVal == null || !startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
+        if (startVal == null || !startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
-        if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
 
         startIdx = startVal.integerValue();
@@ -339,10 +339,10 @@ public class Value implements StyledComparable<Value> {
             startVal = c.start.evaluate();
         if (c.end != null)
             endVal = c.end.evaluate();
-        
-        if (startVal == null || !startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
+
+        if (startVal == null || !startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
-        if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + endVal + "' instead.");
 
         startIdx = startVal.integerValue();

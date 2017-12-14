@@ -68,7 +68,6 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
         replaceViewComponent(oldComponent, (JComponent) buttonComponent);
 
         getPartModel().addPropertyChangedObserver(buttonComponent);
-        partOpened();
     }
 
     @Override

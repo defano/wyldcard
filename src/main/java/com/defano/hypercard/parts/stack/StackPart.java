@@ -48,6 +48,8 @@ public class StackPart implements PropertyChangeObserver {
     public static StackPart fromStackModel(StackModel model) {
         StackPart stackPart = new StackPart();
         stackPart.stackModel = model;
+        stackPart.currentCard = stackPart.buildCardPart(model.getCurrentCardIndex());
+
         return stackPart;
     }
 
@@ -72,7 +74,7 @@ public class StackPart implements PropertyChangeObserver {
      */
     public void open(StackModel model) {
         this.stackModel = model;
-        this.currentCard = getCard(model.getCurrentCardIndex());
+        this.currentCard = buildCardPart(model.getCurrentCardIndex());
         this.cardCountProvider.set(stackModel.getCardCount());
 
         this.stackModel.addPropertyChangedObserver(this);
@@ -154,6 +156,7 @@ public class StackPart implements PropertyChangeObserver {
             CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
         }
 
+        this.currentCard = destination;
         return destination;
     }
 
@@ -327,10 +330,6 @@ public class StackPart implements PropertyChangeObserver {
      * @return The current card
      */
     public CardPart getDisplayedCard() {
-        if (currentCard == null) {
-            currentCard = getCard(getStackModel().getCurrentCardIndex());
-        }
-
         return currentCard;
     }
 
@@ -339,7 +338,7 @@ public class StackPart implements PropertyChangeObserver {
      * result of card sorting or re-ordering).
      */
     public void invalidateCache() {
-        this.currentCard = null;
+        this.currentCard = buildCardPart(getStackModel().getCurrentCardIndex());
         this.cardCountProvider.set(stackModel.getCardCount());
 
         fireOnCardOrderChanged();
@@ -405,24 +404,30 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     private void fireOnCardDimensionChanged(Dimension newDimension) {
-        for (StackObserver observer : observers) {
-            observer.onCardDimensionChanged(newDimension);
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardDimensionChanged(newDimension);
+            }
+        });
     }
 
     private void fireOnStackNameChanged(String newName) {
-        for (StackObserver observer : observers) {
-            observer.onStackNameChanged(newName);
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onStackNameChanged(newName);
+            }
+        });
     }
 
     private void fireOnCardOrderChanged() {
-        for (StackObserver observer : observers) {
-            observer.onCardOrderChanged();
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardOrderChanged();
+            }
+        });
     }
 
-    private CardPart getCard(int index) {
+    private CardPart buildCardPart(int index) {
         try {
             return CardPart.fromPositionInStack(index, stackModel);
         } catch (Exception e) {
@@ -462,7 +467,7 @@ public class StackPart implements PropertyChangeObserver {
 
         try {
             // Change card
-            currentCard = getCard(cardIndex);
+            currentCard = buildCardPart(cardIndex);
             stackModel.setCurrentCardIndex(cardIndex);
 
             // Notify observers of new card

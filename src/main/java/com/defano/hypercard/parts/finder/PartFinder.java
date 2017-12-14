@@ -10,6 +10,7 @@ import com.defano.hypertalk.ast.specifiers.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public interface PartFinder {
@@ -61,7 +62,7 @@ public interface PartFinder {
     }
 
     /**
-     * Calculates the number of this part relative to all other parts returned by {@link #getPartsInDisplayOrder()}.
+     * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder()}.
      * @param part The model of the part whose number should be retrieved.
      * @return The number of the given part.
      */
@@ -70,7 +71,7 @@ public interface PartFinder {
     }
 
     /**
-     * Calculates the number of this part relative to all other parts returned by {@link #getPartsInDisplayOrder()} and
+     * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder()} and
      * which match the given part type.
      *
      * @param part The model of the part whose number should be retrieved.
@@ -199,6 +200,8 @@ public interface PartFinder {
             index = foundParts.size() - 1;
         } else if (ps.getValue() == Ordinal.MIDDLE) {
             index = foundParts.size() / 2;
+        } else if (ps.getValue() == Ordinal.ANY && foundParts.size() > 0) {
+            index = new Random().nextInt(foundParts.size());
         }
 
         if (index < 0 || index >= foundParts.size()) {

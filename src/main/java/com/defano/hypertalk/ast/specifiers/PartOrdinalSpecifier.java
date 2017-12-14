@@ -38,11 +38,11 @@ public class PartOrdinalSpecifier implements PartSpecifier {
     @Override
     public String getHyperTalkIdentifier() {
         if (layer == null) {
-            return ordinal.stringValue().toLowerCase() + " " + type.toString().toLowerCase();
+            return ordinal.name().toLowerCase() + " " + type.toString().toLowerCase();
         } else if (type == null) {
-            return ordinal.stringValue().toLowerCase() + " " + getOwner().name().toLowerCase() + " part";
+            return ordinal.name().toLowerCase() + " " + getOwner().name().toLowerCase() + " part";
         } else {
-            return ordinal.stringValue().toLowerCase() + " " + getOwner().name().toLowerCase() + " " + type.toString().toLowerCase();
+            return ordinal.name().toLowerCase() + " " + getOwner().name().toLowerCase() + " " + type.toString().toLowerCase();
         }
     }
 

@@ -10,8 +10,8 @@ import com.defano.hypertalk.exception.HtException;
  */
 public class CompositePartSpecifier implements PartSpecifier {
 
-    private final PartSpecifier part;      // The button or field
-    private final PartContainerExp owningPart;   // The card the button or field can be found on
+    private final PartSpecifier part;               // The button or field
+    private final PartContainerExp owningPart;      // The card the button or field can be found on
 
     public CompositePartSpecifier(PartSpecifier part, PartContainerExp owningPart) {
         this.part = part;

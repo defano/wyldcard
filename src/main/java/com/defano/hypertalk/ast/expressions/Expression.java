@@ -82,6 +82,15 @@ public abstract class Expression extends ASTNode {
         }
     }
 
+    public <T extends PartModel> T partFactor(Class<T> clazz, HtException orError) throws HtException {
+        T factor = partFactor(clazz);
+        if (factor == null) {
+            throw orError;
+        } else {
+            return factor;
+        }
+    }
+
     /**
      * Attempts to evaluate this expression as a factor conforming to one of a prioritized list of acceptable types.
      *

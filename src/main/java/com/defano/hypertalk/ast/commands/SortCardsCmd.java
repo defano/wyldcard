@@ -1,12 +1,10 @@
 package com.defano.hypertalk.ast.commands;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.SortDirection;
-import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.comparator.CardExpressionComparator;
 import com.defano.hypertalk.comparator.SortStyle;
@@ -115,14 +113,8 @@ public class SortCardsCmd extends Command {
             return true;
         }
 
-        PartSpecifier specifier = background.factor(PartContainerExp.class, new HtSemanticException("Can't sort that.")).evaluateAsSpecifier();
-        if (specifier.getType() != PartType.BACKGROUND) {
-            throw new HtSemanticException("Expression does not refer to a background.");
-        }
-
-        int backgroundId = HyperCard.getInstance().getStack().getStackModel().findPart(specifier).getId();
-
-        for (CardModel thisCard : HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(backgroundId)) {
+        BackgroundModel backgroundModel = background.partFactor(BackgroundModel.class, new HtSemanticException("Can't sort that."));
+        for (CardModel thisCard : backgroundModel.getCardModels()) {
             if (thisCard.getId() == cardModel.getId()) {
                 return true;
             }

@@ -189,6 +189,7 @@ HyperTalk Java automatically sends the following messages to parts as the user i
  `mouseDown`        | Sent when the mouse is pressed over a part
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
+ `mouseStillDown`   | Sent when the mouse is long-pressed (held down) over a part
  `mouseUp`          | Sent when the mouse is pressed and released over a part
  `mouseWithin`      | Send repeatedly to buttons and fields while the mouse is within their bounds
  `newCard`          | Sent to new cards when they are added to the stack.

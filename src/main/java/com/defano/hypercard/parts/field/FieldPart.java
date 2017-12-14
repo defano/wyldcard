@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.awt.MouseStillDown;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
@@ -212,6 +213,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 

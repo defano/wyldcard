@@ -8,9 +8,9 @@ import com.defano.hypertalk.ast.common.Countable;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -65,7 +65,7 @@ public class NumberOfFunc extends Expression {
             case BKGNDS:
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
-                BackgroundModel model = (BackgroundModel) HyperCard.getInstance().getStack().getStackModel().findPart(((PartContainerExp) expression).evaluateAsSpecifier());
+                BackgroundModel model = expression.partFactor(BackgroundModel.class, new HtSemanticException("No such background."));
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(model.getId()).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);

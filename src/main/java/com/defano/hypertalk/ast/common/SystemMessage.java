@@ -9,6 +9,7 @@ import java.util.List;
 public enum SystemMessage {
     MOUSE_UP("mouseUp", "Sent when the user presses and releases the mouse over this part."),
     MOUSE_DOWN("mouseDown", "Sent when the user presses the mouse over this part."),
+    MOUSE_STILL_DOWN("mouseStillDown", "Sent when the user presses and holds the mouse over this part."),
     MOUSE_ENTER("mouseEnter", "Sent when the mouse enters the rectangle of this part."),
     MOUSE_LEAVE("mouseLeave", "Sent when the mouse leaves the rectangle of this part."),
     MOUSE_DOUBLE_CLICK("mouseDoubleClick", "Sent when the user double-clicks this part."),

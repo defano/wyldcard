@@ -1,5 +1,7 @@
 package com.defano.hypercard.parts.card;
 
+import com.defano.hypercard.awt.MouseListenable;
+import com.defano.hypercard.awt.MouseStillDown;
 import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -9,7 +11,6 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
-import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.PartsTable;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.search.SearchContext;
@@ -32,7 +33,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Observable;
@@ -46,17 +46,17 @@ import java.util.Observer;
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
  */
-public class CardPart extends CardLayeredPane implements Part, CanvasCommitObserver, CanvasTransferDelegate, CardModelObserver, MouseListener, KeyListener {
+public class CardPart extends CardLayeredPane implements Part, CanvasCommitObserver, CanvasTransferDelegate, MouseListenable, KeyListener {
 
     private CardModel cardModel;
 
     private final PartsTable<FieldPart> fields = new PartsTable<>();
     private final PartsTable<ButtonPart> buttons = new PartsTable<>();
 
-    private EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver();
-    private ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
-    private BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
-    private CardModelObserver cardModelObserver = new CardPartModelObserver();
+    private final EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver();
+    private final ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
+    private final BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
+    private final CardModelObserver cardModelObserver = new CardPartModelObserver();
 
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
@@ -130,12 +130,12 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         // Add card parts to this card
         for (PartModel thisPart : model.getPartModels()) {
-            card.addPartFromModel(thisPart);
+            card.addViewFromModel(thisPart);
         }
 
         // Add background parts to this card
         for (PartModel thisPart : model.getBackgroundModel().getPartModels()) {
-            card.addPartFromModel(thisPart);
+            card.addViewFromModel(thisPart);
         }
 
         return card;
@@ -163,20 +163,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     /**
-     * Removes a part (button or field) from this card. Has no effect if the part is not on this card.
-     * @param part The part to be removed.
-     */
-    private void removePart(PartModel part) {
-        if (part instanceof ButtonModel) {
-            removeButton((ButtonModel) part);
-        } else if (part instanceof FieldModel) {
-            removeField((FieldModel) part);
-        } else {
-            throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
-        }
-    }
-
-    /**
      * Adds a new button (with default attributes) to this card. Represents the behavior of the user choosing
      * "New Button" from the Objects menu.
      * // TODO: Should probably be moved to CardModel
@@ -185,7 +171,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
         addButton(newButton);
-        PartToolContext.getInstance().setSelectedPart(newButton);
     }
 
     /**
@@ -197,7 +182,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner());
         addField(newField);
-        PartToolContext.getInstance().setSelectedPart(newField);
     }
 
     /**
@@ -214,26 +198,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     public Collection<FieldPart> getFields() {
         return fields.getParts();
-    }
-
-    /**
-     * Adds a part to a specified layer on this card based on its model.
-     * @param thisPart The data model of the part to be added.
-     * @throws HtException Thrown if an error occurs adding the part.
-     */
-    private void addPartFromModel(PartModel thisPart) throws HtException {
-        switch (thisPart.getType()) {
-            case BUTTON:
-                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
-                buttons.addPart(button);
-                addSwingComponent(button.getComponent(), button.getRect(), thisPart.getLayer());
-                break;
-            case FIELD:
-                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
-                fields.addPart(field);
-                addSwingComponent(field.getComponent(), field.getRect(), thisPart.getLayer());
-                break;
-        }
     }
 
     /**
@@ -304,6 +268,52 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         }
 
         setPartsOnLayerVisible(Owner.BACKGROUND, isVisible);
+    }
+
+    /**
+     * Removes a part (button or field) from this card. Has no effect if the part is not on this card.
+     * @param part The part to be removed.
+     */
+    private void removePart(PartModel part) {
+        if (part instanceof ButtonModel) {
+            removeButtonView((ButtonModel) part);
+        } else if (part instanceof FieldModel) {
+            removeFieldView((FieldModel) part);
+        } else {
+            throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
+        }
+    }
+
+    /**
+     * Removes a button from this card view. Does not affect the {@link CardModel}. Has no effect if the button does
+     * not exist on the card.
+     *
+     * @param buttonModel The button to be removed.
+     */
+    private void removeButtonView(ButtonModel buttonModel) {
+        ButtonPart button = buttons.getPart(buttonModel);
+
+        if (button != null) {
+            buttons.removePart(button);
+            removeSwingComponent(button.getComponent());
+            button.partClosed();
+        }
+    }
+
+    /**
+     * Removes a field from this card view. Does not affect the {@link CardModel}. Has no effect if the field does not
+     * exist on the card.
+     *
+     * @param fieldModel The field to be removed.
+     */
+    private void removeFieldView(FieldModel fieldModel) {
+        FieldPart field = fields.getPart(fieldModel);
+
+        if (field != null) {
+            fields.removePart(field);
+            removeSwingComponent(field.getComponent());
+            field.partClosed();
+        }
     }
 
     /**
@@ -459,7 +469,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     /**
-     * Adds a field to this card. Assumes that the field has a unique ID.
+     * Adds a field to this card in the layer indicated by the model. Assumes that the field has a unique ID.
      * @param field The field to add to this card.
      */
     private void addField(FieldPart field) {
@@ -472,20 +482,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         fields.addPart(field);
         addSwingComponent(field.getComponent(), field.getRect(), field.getPartModel().getLayer());
         field.partOpened();
-    }
-
-    /**
-     * Removes a field from this card. Has no effect if the field does not exist on the card.
-     * @param fieldModel The field to be removed.
-     */
-    private void removeField(FieldModel fieldModel) {
-        FieldPart field = fields.getPartForModel(fieldModel);
-
-        if (field != null) {
-            fields.removePart(field);
-            removeSwingComponent(field.getComponent());
-            field.partClosed();
-        }
     }
 
     /**
@@ -505,16 +501,23 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     /**
-     * Removes a button from this card. Has no effect if the button does not exist on the card.
-     * @param buttonModel The button to be removed.
+     * Adds a part view to the layer of this card specified in its model. Does not affect the {@link CardModel}.
+     *
+     * @param thisPart The data model of the part to be added.
+     * @throws HtException Thrown if an error occurs adding the part.
      */
-    private void removeButton(ButtonModel buttonModel) {
-        ButtonPart button = buttons.getPartForModel(buttonModel);
-
-        if (button != null) {
-            buttons.removePart(button);
-            removeSwingComponent(button.getComponent());
-            button.partClosed();
+    private void addViewFromModel(PartModel thisPart) throws HtException {
+        switch (thisPart.getType()) {
+            case BUTTON:
+                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
+                buttons.addPart(button);
+                addSwingComponent(button.getComponent(), button.getRect(), thisPart.getLayer());
+                break;
+            case FIELD:
+                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
+                fields.addPart(field);
+                addSwingComponent(field.getComponent(), field.getRect(), thisPart.getLayer());
+                break;
         }
     }
 
@@ -577,17 +580,17 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         // Remove their Swing components from the card to free memory
         removeAll();
 
-        setTransferHandler(null);
         ToolsContext.getInstance().isEditingBackgroundProvider().deleteObserver(editingBackgroundObserver);
-        getForegroundCanvas().dispose();
-        getBackgroundCanvas().dispose();
-
-        editingBackgroundObserver = null;
-        foregroundScaleObserver = null;
-        backgroundScaleObserver = null;
+        getForegroundCanvas().getScaleProvider().deleteObserver(foregroundScaleObserver);
+        getBackgroundCanvas().getScaleProvider().deleteObserver(backgroundScaleObserver);
 
         getForegroundCanvas().getSurface().removeMouseListener(this);
         getForegroundCanvas().getSurface().removeKeyListener(this);
+
+        getForegroundCanvas().dispose();
+        getBackgroundCanvas().dispose();
+
+        setTransferHandler(null);
         ((CardModel) getPartModel()).setObserver(null);
 
         super.dispose();
@@ -604,9 +607,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayerPart part = null;
 
         if (partModel instanceof FieldModel) {
-            part = fields.getPartForModel(partModel);
+            part = fields.getPart(partModel);
         } else if (partModel instanceof ButtonModel) {
-            part = buttons.getPartForModel(partModel);
+            part = buttons.getPart(partModel);
         }
 
         if (part == null) {
@@ -629,6 +632,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     public void mousePressed(MouseEvent e) {
         getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
+        MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
     }
 
     @Override
@@ -662,11 +666,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     public void keyReleased(KeyEvent e) {
         // Nothing to do
-    }
-
-    @Override
-    public void onPartRemoved(PartModel removedPart) {
-        removePart(removedPart);
     }
 
     private class BackgroundScaleObserver implements Observer {

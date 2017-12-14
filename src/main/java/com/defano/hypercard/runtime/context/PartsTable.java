@@ -18,7 +18,7 @@ public class PartsTable<T extends Part> {
     public void removePart (T p) {
         
         try {
-            Integer partId = p.getProperty(PartModel.PROP_ID).integerValue();
+            int partId = p.getProperty(PartModel.PROP_ID).integerValue();
             idhash.remove(partId);
         } catch (NoSuchPropertyException e) {
             throw new RuntimeException("Bug! All parts must have an id.", e);
@@ -26,9 +26,8 @@ public class PartsTable<T extends Part> {
     }
     
     public void addPart(T p) {
-        
-        try {            
-            Integer partId = p.getProperty(PartModel.PROP_ID).integerValue();
+        try {
+            int partId = p.getProperty(PartModel.PROP_ID).integerValue();
 
             // Check for duplicate id or name
             if (idhash.containsKey(partId)) {
@@ -46,7 +45,7 @@ public class PartsTable<T extends Part> {
         return idhash.values();
     }
 
-    public T getPartForModel(PartModel model) {
+    public T getPart(PartModel model) {
         return idhash.get(model.getId());
     }
 }
