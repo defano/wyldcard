@@ -2,7 +2,9 @@ package com.defano.hypercard.parts.finder;
 
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardLayer;
+import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.Ordinal;
 import com.defano.hypertalk.ast.common.PartType;
@@ -44,21 +46,30 @@ public interface PartFinder {
      * @throws PartException Thrown if no such part exists on this card.
      */
     default PartModel findPart(PartSpecifier ps, List<PartModel> parts) throws PartException {
+        PartModel foundPart;
+
         if (ps instanceof PartIdSpecifier) {
-            return findPartById((PartIdSpecifier) ps, parts);
+            foundPart = findPartById((PartIdSpecifier) ps, parts);
         } else if (ps instanceof PartNameSpecifier) {
-            return findPartByName((PartNameSpecifier) ps, parts);
+            foundPart = findPartByName((PartNameSpecifier) ps, parts);
         } else if (ps instanceof PartNumberSpecifier) {
-            return findPartByNumber((PartNumberSpecifier) ps, parts);
+            foundPart = findPartByNumber((PartNumberSpecifier) ps, parts);
         } else if (ps instanceof PartOrdinalSpecifier) {
-            return findPartByOrdinal((PartOrdinalSpecifier) ps, parts);
+            foundPart = findPartByOrdinal((PartOrdinalSpecifier) ps, parts);
         } else if (ps instanceof PartMessageSpecifier) {
-            return WindowManager.getMessageWindow().getPartModel();
+            foundPart = WindowManager.getMessageWindow().getPartModel();
         } else if (ps instanceof CompositePartSpecifier) {
             throw new PartException("Can't find that.");
+        } else {
+            throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
         }
 
-        throw new IllegalArgumentException("Bug! Unimplemented PartSpecifier: " + ps);
+        // Special case: Field needs to be evaluated in the context of the current card
+        if (foundPart instanceof FieldModel) {
+            ((FieldModel) foundPart).setCurrentCardId(ExecutionContext.getContext().getCurrentCard().getId());
+        }
+
+        return foundPart;
     }
 
     /**

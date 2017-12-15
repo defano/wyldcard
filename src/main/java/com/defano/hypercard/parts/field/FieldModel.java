@@ -70,9 +70,9 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private StyledDocument sharedText = new DefaultStyledDocument();
     private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
-    private final Set<Integer> unsharedAutoSelection = new HashSet<>();
+    private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
 
-    private transient int currentCardId = 0;
+    private transient ThreadLocal<Integer> currentCardId = new ThreadLocal<>();
     private transient FieldModelObserver observer;
     private transient Range selection;
 
@@ -83,7 +83,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
         FieldModel partModel = new FieldModel(owner, parentPartModel);
 
-        partModel.currentCardId = parentPartModel.getId();
+        partModel.setCurrentCardId(parentPartModel.getId());
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -157,7 +157,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         if (useSharedText()) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
-            return getStyledDocument(currentCardId);
+            return getStyledDocument(getCurrentCardId());
         }
     }
 
@@ -179,7 +179,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         if (useSharedText()) {
             FieldModel.this.sharedText = doc;
         } else {
-            unsharedText.put(currentCardId, doc);
+            unsharedText.put(getCurrentCardId(), doc);
         }
     }
 
@@ -199,7 +199,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     @Override
     public String getText() {
-        return getText(currentCardId);
+        return getText(getCurrentCardId());
     }
 
     public String getText(int forCardId) {
@@ -290,7 +290,15 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param cardId The ID of the card on which this field is currently being displayed.
      */
     public void setCurrentCardId(int cardId) {
-        this.currentCardId = cardId;
+        this.currentCardId.set(cardId);
+    }
+
+    public int getCurrentCardId() {
+        if (this.currentCardId.get() == null) {
+            return ExecutionContext.getContext().getCurrentCard().getId();
+        }
+
+        return this.currentCardId.get();
     }
 
     /** {@inheritDoc} */
@@ -504,7 +512,16 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     public Set<Integer> getAutoSelectedLines() {
         if (isAutoSelection()) {
-            return useSharedText() ? sharedAutoSelection : unsharedAutoSelection;
+            if (useSharedText()) {
+                return sharedAutoSelection;
+            } else {
+                Set<Integer> selection = unsharedAutoSelection.get(getCurrentCardId());
+                if (selection == null) {
+                    selection = new HashSet<>();
+                    unsharedAutoSelection.put(getCurrentCardId(), selection);
+                }
+                return selection;
+            }
         } else {
             return new HashSet<>();
         }
@@ -612,19 +629,19 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     }
 
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
-        if (observer != null) {
+        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onAutoSelectionChanged(selectedLines));
         }
     }
 
     private void fireDocumentChangeObserver(StyledDocument document) {
-        if (observer != null) {
+        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onStyledDocumentChanged(document));
         }
     }
 
     private void fireSelectionChange(Range selection) {
-        if (observer != null) {
+        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onSelectionChange(selection));
         }
     }

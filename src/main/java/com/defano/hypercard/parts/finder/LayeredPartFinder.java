@@ -71,12 +71,6 @@ public interface LayeredPartFinder extends PartFinder {
                 .collect(Collectors.toList());
     }
 
-    default List<PartModel> getPartsInLayer(Owner layer, List<PartModel> parts) {
-        return parts.stream()
-                .filter(p -> layer == null || layer == p.getOwner())
-                .collect(Collectors.toList());
-    }
-
     /**
      * Gets the number of parts of the given type that exist on the specified layer.
      *

@@ -85,7 +85,6 @@ public interface StackPartFinder extends PartFinder {
 
             // Special case: Field needs to be evaluated in the context of the requested card
             if (foundPart instanceof FieldModel) {
-                // TODO: Broken, requires proxy
                 ((FieldModel) foundPart).setCurrentCardId(owningPart.getId());
             }
 
