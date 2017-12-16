@@ -113,7 +113,7 @@ public class SearchContext {
 
             int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardModel().getCardIndexInStack();
             if (query.searchField instanceof CompositePartSpecifier) {
-                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findRemotePartOwner((CompositePartSpecifier) query.searchField).getCardIndexInStack();
+                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findOwningCard((CompositePartSpecifier) query.searchField).getCardIndexInStack();
             }
 
             indexField(query, field, cardIndex, results);

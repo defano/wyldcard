@@ -64,8 +64,12 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         this.activeEffect.start();
     }
 
-    public void waitForEffectToFinish() throws InterruptedException {
-        this.latch.await();
+    public void waitForEffectToFinish() {
+        try {
+            this.latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void cancelEffect() {

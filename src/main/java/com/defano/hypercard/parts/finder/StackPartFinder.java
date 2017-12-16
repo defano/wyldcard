@@ -14,7 +14,6 @@ import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.google.common.collect.Lists;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +49,25 @@ public interface StackPartFinder extends PartFinder {
             return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel().findPart(ps);
         } else {
             return PartFinder.super.findPart(ps);
+        }
+    }
+
+    /**
+     * Finds any kind of part contained in this stack within a given list of parts. Note that the list of parts is
+     * ignored when providing a {@link CompositePartSpecifier} or a {@link PartPositionSpecifier}.
+     *
+     * @param ps The part specifier representing the part to fetch
+     * @param parts The list of parts to search
+     * @return The model of the requested part.
+     * @throws PartException Thrown if the part cannot be located.
+     */
+    default PartModel findPart(PartSpecifier ps, List<PartModel> parts) throws PartException {
+        if (ps instanceof CompositePartSpecifier) {
+            return findCompositePart((CompositePartSpecifier) ps);
+        } else if (ps instanceof PartPositionSpecifier) {
+            return findPartByPosition((PartPositionSpecifier) ps);
+        } else {
+            return PartFinder.super.findPart(ps, parts);
         }
     }
 
@@ -187,19 +205,23 @@ public interface StackPartFinder extends PartFinder {
         throw new PartException("No such card.");
     }
 
-    default CardModel findRemotePartOwner(CompositePartSpecifier ps) throws PartException {
-        return findRemoteCollectionOwner(ps).get(0);
-    }
-
-    default List<CardModel> findRemoteCollectionOwner(CompositePartSpecifier ps) throws PartException {
+    /**
+     * Finds the card on which a part identified by a given {@link CompositePartSpecifier} lives. When the "owning part"
+     * is a background (for example, "button 1 of background 3"), then the first card of that background is returned.
+     *
+     * @param ps A composite part specifier, the owning card of which should be returned.
+     * @return The owning card
+     * @throws PartException Thrown if no such part can be found.
+     */
+    default CardModel findOwningCard(CompositePartSpecifier ps) throws PartException {
         BackgroundModel bkgndModel = ps.getOwningPartExp().partFactor(BackgroundModel.class);
         if (bkgndModel != null) {
-            return bkgndModel.getCardModels();
+            return bkgndModel.getCardModels().get(0);
         }
 
         CardModel cardModel = ps.getOwningPartExp().partFactor(CardModel.class);
         if (cardModel != null) {
-            return Collections.singletonList(cardModel);
+            return cardModel;
         }
 
         throw new PartException("Expected a card or background.");

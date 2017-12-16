@@ -177,11 +177,11 @@ public class PropertiesModel {
         }
 
         if (!hasProperty(propertyName)) {
-            throw new NoSuchPropertyException("Can't set property " + propertyName + " because it doesn't exist.");
+            throw new NoSuchPropertyException("No such property " + propertyName + ".");
         }
 
         if (immutableProperties.contains(propertyName)) {
-            throw new PropertyPermissionException("Can't set property " + propertyName + " because it is immutable.");
+            throw new PropertyPermissionException("Can't set " + propertyName + ".");
         }
 
         // If this is an alias; get the "real" name of this property
@@ -269,7 +269,7 @@ public class PropertiesModel {
         }
 
         if (!hasProperty(property)) {
-            throw new NoSuchPropertyException("Can't get property " + property + " because it doesn't exist.");
+            throw new NoSuchPropertyException("No such property " + property + ".");
         }
 
         // If this is an alias; get the "real" name of this property

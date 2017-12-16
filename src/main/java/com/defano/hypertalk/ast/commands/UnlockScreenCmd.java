@@ -20,11 +20,6 @@ public class UnlockScreenCmd extends Command {
     @Override
     public void onExecute() throws HtException {
         CurtainManager.getInstance().unlockScreenWithEffect(effectExp.factor(VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
-
-        try {
-            CurtainManager.getInstance().waitForEffectToFinish();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        CurtainManager.getInstance().waitForEffectToFinish();
     }
 }

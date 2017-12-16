@@ -10,12 +10,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
  * An expression referring to a button or field not on the presently active card. For example, 'the first card
  * button of the next card).
  */
-public class RemotePartExp extends PartContainerExp {
+public class CompositePartExp extends PartContainerExp {
 
     private final PartContainerExp partExp;
     private final PartContainerExp ofPartExp;
 
-    public RemotePartExp(ParserRuleContext context, PartContainerExp partExp, PartContainerExp ofPartExp) {
+    public CompositePartExp(ParserRuleContext context, PartContainerExp partExp, PartContainerExp ofPartExp) {
         super(context);
 
         this.partExp = partExp;

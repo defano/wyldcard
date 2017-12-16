@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 /**
  * A mix-in providing a default implementation of the {@link KeyListener} API for classes that wish to listen
- * to key events but don't need all the callbacks, and cannot extend from {@link java.awt.event.KeyAdapter}.
+ * to key events but don't need all the callbacks and cannot extend from {@link java.awt.event.KeyAdapter}.
  */
 
 public interface KeyListenable extends KeyListener {

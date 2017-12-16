@@ -5,6 +5,10 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ThreadUtils {
 
+    public static void assertDispatchThread() {
+        assert SwingUtilities.isEventDispatchThread();
+    }
+
     public static void invokeAndWaitAsNeeded(Runnable r) {
         if (SwingUtilities.isEventDispatchThread()) {
             r.run();

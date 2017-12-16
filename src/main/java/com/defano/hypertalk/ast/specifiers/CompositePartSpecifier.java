@@ -43,7 +43,11 @@ public class CompositePartSpecifier implements PartSpecifier {
 
     @Override
     public String getHyperTalkIdentifier() {
-        return part.getHyperTalkIdentifier();
+        try {
+            return part.getHyperTalkIdentifier() + " of " + owningPart.evaluateAsSpecifier().getHyperTalkIdentifier();
+        } catch (Exception e) {
+            return part.getHyperTalkIdentifier();
+        }
     }
 
     @Override

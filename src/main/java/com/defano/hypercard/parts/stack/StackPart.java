@@ -379,54 +379,6 @@ public class StackPart implements PropertyChangeObserver {
         }
     }
 
-    private void fireOnStackOpened () {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onStackOpened(StackPart.this);
-            }
-        });
-    }
-
-    private void fireOnCardClosing (CardPart closingCard) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onCardClosed(closingCard);
-            }
-        });
-    }
-
-    private void fireOnCardOpened (CardPart openedCard) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onCardOpened(openedCard);
-            }
-        });
-    }
-
-    private void fireOnCardDimensionChanged(Dimension newDimension) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onCardDimensionChanged(newDimension);
-            }
-        });
-    }
-
-    private void fireOnStackNameChanged(String newName) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onStackNameChanged(newName);
-            }
-        });
-    }
-
-    private void fireOnCardOrderChanged() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onCardOrderChanged();
-            }
-        });
-    }
-
     private CardPart buildCardPart(int index) {
         try {
             return CardPart.fromPositionInStack(index, stackModel);
@@ -490,5 +442,53 @@ public class StackPart implements PropertyChangeObserver {
         return stackModel.getCardCount() > 1 &&
                 !getDisplayedCard().getCardModel().getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue() &&
                 (cardCountInBackground > 1 || !getDisplayedCard().getCardModel().getBackgroundModel().getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
+    }
+
+    private void fireOnStackOpened () {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onStackOpened(StackPart.this);
+            }
+        });
+    }
+
+    private void fireOnCardClosing (CardPart closingCard) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardClosed(closingCard);
+            }
+        });
+    }
+
+    private void fireOnCardOpened (CardPart openedCard) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardOpened(openedCard);
+            }
+        });
+    }
+
+    private void fireOnCardDimensionChanged(Dimension newDimension) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardDimensionChanged(newDimension);
+            }
+        });
+    }
+
+    private void fireOnStackNameChanged(String newName) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onStackNameChanged(newName);
+            }
+        });
+    }
+
+    private void fireOnCardOrderChanged() {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (StackObserver observer : observers) {
+                observer.onCardOrderChanged();
+            }
+        });
     }
 }

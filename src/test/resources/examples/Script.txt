@@ -440,6 +440,9 @@ on commandsTest
     get char 3 of the middle word of item 11 of line 17 of theText
     get the number of bg button x
     get the number of the last card in this background
+    get the selectedchunk of x
+    get the selectedline of y
+    get the selectedtext of z
 
     go to card 1
     go to the last card

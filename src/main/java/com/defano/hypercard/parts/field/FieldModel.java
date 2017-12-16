@@ -2,9 +2,9 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
-import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.HyperCardTextField;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.util.FieldUtilities;
@@ -118,6 +118,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void initialize() {
         super.initialize();
 
+        this.currentCardId = new ThreadLocal<>();
+
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
 
@@ -129,6 +131,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length() + 1)));
         defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
+
+        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (model, propertyName) -> getSelectedText());
+        defineComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (model, propertyName) -> getSelectedChunkExpression());
+        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (model, propertyName) -> getSelectedLineExpression());
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));
@@ -515,12 +521,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             if (useSharedText()) {
                 return sharedAutoSelection;
             } else {
-                Set<Integer> selection = unsharedAutoSelection.get(getCurrentCardId());
-                if (selection == null) {
-                    selection = new HashSet<>();
-                    unsharedAutoSelection.put(getCurrentCardId(), selection);
-                }
-                return selection;
+                return unsharedAutoSelection.computeIfAbsent(getCurrentCardId(), k -> new HashSet<>());
             }
         } else {
             return new HashSet<>();

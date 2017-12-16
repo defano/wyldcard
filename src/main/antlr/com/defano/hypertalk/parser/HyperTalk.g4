@@ -74,8 +74,8 @@ parameterList
     ;
 
 statementList
-    : statement? NEWLINE+ statementList                                                                                  # multiStmntList
-    | statement NEWLINE+                                                                                                 # singleStmntList
+    : statement? NEWLINE statementList                                                                                  # multiStmntList
+    | statement NEWLINE+                                                                                                # singleStmntList
     ;
 
 statement
@@ -307,8 +307,8 @@ menuItem
     ;
 
 property
-    : globalProperty
-    | partProperty
+    : partProperty
+    | globalProperty
     ;
 
 globalProperty
@@ -624,6 +624,10 @@ find
 // Not all properties need to be enumerated here, only those sharing a name with another keyword.
 propertyName
     : 'marked'
+    | 'selectedtext'
+    | 'selectedchunk'
+    | 'selectedfield'
+    | 'selectedline'
     | 'number'
     | 'id'
     | 'rect'

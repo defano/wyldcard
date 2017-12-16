@@ -163,10 +163,6 @@ public interface AddressableSelection {
     default void updateSelectionContext(Range selection, PropertiesModel model, boolean isSystemSelection) {
         getSelectableTextModel().onViewDidUpdateSelection(selection);
 
-        model.defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
-        model.defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);
-        model.defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
-
         if (isSystemSelection) {
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDTEXT, getSelectedText(), true);
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDCHUNK, getSelectedChunkExpression(), true);

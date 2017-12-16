@@ -1284,7 +1284,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitButtonOfCardPart(HyperTalkParser.ButtonOfCardPartContext ctx) {
-        return new RemotePartExp(ctx, (PartContainerExp) visit(ctx.buttonPart()), (PartContainerExp) visit(ctx.cardPart()));
+        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.buttonPart()), (PartContainerExp) visit(ctx.cardPart()));
     }
 
     @Override
@@ -1304,7 +1304,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFieldOfCardPart(HyperTalkParser.FieldOfCardPartContext ctx) {
-        return new RemotePartExp(ctx, (PartContainerExp) visit(ctx.fieldPart()), (PartContainerExp) visit(ctx.cardPart()));
+        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.fieldPart()), (PartContainerExp) visit(ctx.cardPart()));
     }
 
     @Override
@@ -1414,7 +1414,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardOfBkgndPart(HyperTalkParser.CardOfBkgndPartContext ctx) {
-        return new RemotePartExp(ctx, (PartContainerExp) visit(ctx.cardPart()), (PartContainerExp) visit(ctx.bkgndPart()));
+        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.cardPart()), (PartContainerExp) visit(ctx.bkgndPart()));
     }
 
     @Override

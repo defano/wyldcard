@@ -79,19 +79,17 @@ public class SelectCmd extends Command {
                         RangeUtils.getRange(field.getSelectableText(), (CompositeChunk) chunk) : // Chunk of a chunk of contents
                         RangeUtils.getRange(field.getSelectableText(), chunk);                  // Chunk of contents
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            switch (preposition) {
-                case BEFORE:
-                    field.setSelection(range.start, range.start);
-                    break;
-                case AFTER:
-                    field.setSelection(range.end, range.end);
-                    break;
-                default:
-                    field.setSelection(range.start, range.end);
-                    break;
-            }
-        });
+        switch (preposition) {
+            case BEFORE:
+                field.setSelection(range.start, range.start);
+                break;
+            case AFTER:
+                field.setSelection(range.end, range.end);
+                break;
+            default:
+                field.setSelection(range.start, range.end);
+                break;
+        }
     }
 
     private void selectMenuButtonItem(PartSpecifier specifier, Chunk chunk) throws HtException {
@@ -113,7 +111,7 @@ public class SelectCmd extends Command {
     private void selectPart() throws HtException {
         PartSpecifier specifier = this.expression.factor(PartContainerExp.class, new HtSemanticException("Cannot select that.")).evaluateAsSpecifier();
 
-        if (specifier.getType() == null || (specifier.getType() != PartType.FIELD && specifier.getType() != PartType.BUTTON)) {
+        if (specifier.getType() == null || !specifier.isButtonOrFieldSpecifier()) {
             throw new HtSemanticException("Expected a button or field here.");
         }
 

@@ -19,13 +19,6 @@ public class GetCmd extends Command {
         part = null;
     }
     
-    public GetCmd(ParserRuleContext context, PartSpecifier ps) {
-        super(context, "get");
-
-        expression = null;
-        part = ps;
-    }
-    
     public void onExecute () throws HtException {
         if (expression != null) {
             ExecutionContext.getContext().setIt(expression.evaluate());

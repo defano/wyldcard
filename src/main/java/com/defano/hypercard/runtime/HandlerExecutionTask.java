@@ -45,7 +45,6 @@ public class HandlerExecutionTask implements Callable<String> {
 
             // Handlers may be invoked with missing arguments; assume empty for missing args
             Value theArg = index >= evaluatedArguments.size() ? new Value() : evaluatedArguments.get(index);
-
             ExecutionContext.getContext().setVariable(theParam, theArg);
         }
 

@@ -7,6 +7,8 @@ import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Script;
 import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.expressions.LiteralPartExp;
+import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -41,6 +43,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     private final PartType type;
     private Owner owner;
+    private int scriptEditorCaretPosition;
 
     private transient PartModel parentPartModel;
     private transient Script script = new Script();
@@ -262,11 +265,19 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     }
 
     /**
-     * Gets a part specifier that refers to this part in the stack.
+     * Gets a part specifier that refers to this part in the stack. If this part is a button or a field, the part
+     * specifier is a {@link CompositePartSpecifier} referring to the button or field on a specific card or background.
      * @return A part specifier referring to this part.
      */
     public PartSpecifier getMe() {
-        return new PartIdSpecifier(getOwner(), getType(), getId());
+        PartModel parent = getParentPartModel();
+        PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId());
+
+        if (getType() == PartType.BUTTON || getType() == PartType.FIELD) {
+            return new CompositePartSpecifier(localPart, new LiteralPartExp(null, parent.getMe()));
+        } else {
+            return localPart;
+        }
     }
 
     public PartModel getParentPartModel() {
@@ -275,6 +286,14 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public void setParentPartModel(PartModel parentPartModel) {
         this.parentPartModel = parentPartModel;
+    }
+
+    public int getScriptEditorCaretPosition() {
+        return scriptEditorCaretPosition;
+    }
+
+    public void setScriptEditorCaretPosition(int scriptEditorCaretPosition) {
+        this.scriptEditorCaretPosition = scriptEditorCaretPosition;
     }
 
     @Override
