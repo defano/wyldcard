@@ -64,5 +64,4 @@ public abstract class CardLayerPartModel extends PartModel {
     public long getPartCount() {
         return ((LayeredPartFinder) getParentPartModel()).getPartCount(null, getOwner());
     }
-
 }

@@ -35,7 +35,6 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
         this.getEditor().getEditorComponent().addMouseListener(toolEditablePart);
         this.getEditor().getEditorComponent().addKeyListener(toolEditablePart);
 
-
         setRenderer(new MenuButtonCellRenderer());
         setModel(menuItems);
         addActionListener(new MenuButtonItemListener());
@@ -43,7 +42,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
     public void selectItem(int item) {
         int itemIndex = item - 1;
-        if (itemIndex > 0 && itemIndex < getItemCount()) {
+        if (itemIndex >= 0 && itemIndex < getItemCount()) {
             setSelectedIndex(itemIndex);
         }
     }
@@ -58,7 +57,9 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
     public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case PartModel.PROP_CONTENTS:
+                int lastSelection = model.getKnownProperty(ButtonModel.PROP_SELECTEDITEM).integerValue();
                 putValueInMenu(newValue);
+                selectItem(lastSelection);
                 break;
 
             case ButtonModel.PROP_TEXTSIZE:
@@ -71,6 +72,10 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
             case ButtonModel.PROP_TEXTSTYLE:
                 setFont(FontFactory.byNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), getFont().getSize()));
+                break;
+
+            case ButtonModel.PROP_SELECTEDITEM:
+                selectItem(newValue.integerValue());
                 break;
         }
     }
@@ -94,21 +99,11 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if ("-".equals(getSelectedItem())) {
+            if (isDividerElement(getSelectedItem())) {
                 setSelectedIndex(0);
             } else {
-                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDTEXT, new Value(String.valueOf(getSelectedItem())), true);
-                toolEditablePart.getPartModel().defineProperty(ButtonModel.PROP_SELECTEDLINE, new Value(getSelectedLineExpression()), true);
+                toolEditablePart.getPartModel().setKnownProperty(ButtonModel.PROP_SELECTEDITEM, new Value(getSelectedIndex() + 1), true);
             }
-        }
-
-        private String getSelectedLineExpression() {
-            return "line " +
-                    (getSelectedIndex() + 1) +
-                    " of " +
-                    toolEditablePart.getCardLayer().hyperTalkName.toLowerCase() +
-                    " button id " +
-                    toolEditablePart.getId();
         }
     }
 
@@ -118,7 +113,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-            if (String.valueOf(value).equals("-")) {
+            if (isDividerElement(value)) {
                 JSeparator separator = new JSeparator();
                 separator.setEnabled(false);
                 return separator;
@@ -126,6 +121,10 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
             return this;
         }
+    }
+
+    private boolean isDividerElement(Object element) {
+        return String.valueOf(element).trim().startsWith("-");
     }
 
 }
