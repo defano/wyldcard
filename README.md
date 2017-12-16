@@ -134,13 +134,15 @@ A HyperCard stack is an ordered list of _cards_ with only one card visible to th
 
 Each card is comprised of two layers of graphics and user interface elements: a _background layer_ and a foreground layer (also called the _card layer_). Each card has its own unique foreground, but its background can be shared between cards. A background can contain graphics, buttons, text fields and scripts that are common to multiple cards in a stack. A stack can have multiple backgrounds, and cards sharing a given background do not have to be contiguous.
 
+Cards in the stack can be referred to by their name, their position in the stack, or their relative position in their background.
+
 ### Navigating between cards
 
 Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or use the HyperTalk `go` command:
 
 ```
 go to card "MyCard"   -- navigates to first card named "MyCard"
-go to card 13         -- no effect if there are fewer than 13 cards
+go to card 13         
 go next card
 go to the third card
 go to card id 7
@@ -151,6 +153,8 @@ You can also navigate to a card based on its background,
 ```
 go to the next background  -- next card in the stack with a different background than current card
 go to background 3         -- first card with the third unique background in the stack
+go to the middle card of the last bkgnd
+go to card 4 of background 2
 ```
 
 ## Messages and handlers
@@ -189,6 +193,7 @@ HyperTalk Java automatically sends the following messages to parts as the user i
  `mouseDown`        | Sent when the mouse is pressed over a part
  `mouseEnter`       | Sent when the cursor enters the bounds of a part
  `mouseLeave`       | Sent when the cursor leaves the bounds of a part
+ `mouseStillDown`   | Sent when the mouse is long-pressed (held down) over a part
  `mouseUp`          | Sent when the mouse is pressed and released over a part
  `mouseWithin`      | Send repeatedly to buttons and fields while the mouse is within their bounds
  `newCard`          | Sent to new cards when they are added to the stack.
@@ -340,15 +345,15 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is an expression referring to an object that HyperCard tries to interpret in whatever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
+A _factor_ is an expression referring to an object that HyperCard tries to interpret in whichever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
 For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression (such as, `next card`) then HyperCard will produce an error.
 
 #### How factors work in HyperTalk Java
 
-When a HyperTalk Java command expects an expression conforming to a specific type, it uses this algorithm to resolve the factor:
+When a HyperTalk Java command expects an expression conforming to a specific type, it uses this algorithm to interpret the factor:
 
-1. If the expression is a _grouped expression_ (that is, it has parentheses around it) then the group is evaluated and the resulting value is re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object becomes the argument to the command. For example, if `card field 1` contains the text `card button 1`, then the command `hide (card field 1)` has the effect of hiding card button 1.
+1. If the expression is a _grouped expression_ (that is, it has parentheses around it) then the group is evaluated and the resulting value is re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object becomes the argument to the command. For example, if `card field 1` contains the text `card button 1`, then the command `hide (card field 1)` has the effect of hiding `card button 1`, not `card field 1`.
 
 2. If the expression is an _object literal_ referring to the expected object type, then the literal value is used as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself—and not the button—to be hidden (because `card field 1` is an object literal in `hide card field 1`).
 
@@ -356,7 +361,7 @@ When a HyperTalk Java command expects an expression conforming to a specific typ
 
 ### Constants and literals
 
-The table below lists special values that are treated as _constants_ in the language; any _unquoted_ use of these terms evaluates to the specified value.
+The table below lists special values that are treated as _constants_ in the language; any unquoted use of these terms evaluates to the specified value.
 
 Additionally, any single-word unquoted literal that is not a language keyword and not an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat` is equivalent to `put "neat"` (unless a variable named `neat` is in scope, in which case the variable's value will be `put`).
 

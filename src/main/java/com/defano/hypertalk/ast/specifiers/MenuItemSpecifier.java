@@ -7,6 +7,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
+import java.util.Random;
 
 public class MenuItemSpecifier {
 
@@ -64,11 +65,17 @@ public class MenuItemSpecifier {
         }
 
         else if (ordinal != null) {
+            if (menu.getItemCount() == 0) {
+                throw new HtSemanticException("There are no menu items.");
+            }
+
             switch (ordinal) {
                 case LAST:
                     return menu.getItemCount() - 1;
                 case MIDDLE:
                     return menu.getItemCount() / 2;
+                case ANY:
+                    return new Random().nextInt(menu.getItemCount());
                 default:
                     return ordinal.intValue() - 1;
             }

@@ -16,7 +16,7 @@ import javax.swing.text.JTextComponent;
 public class MsgBoxModel extends PartModel implements AddressableSelection, SelectableTextModel {
 
     public MsgBoxModel() {
-        super(PartType.MESSAGE_BOX, Owner.HYPERCARD);
+        super(PartType.MESSAGE_BOX, Owner.HYPERCARD, null);
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_CONTENTS, new Value(), false);
@@ -94,5 +94,10 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
     @Override
     public PartSpecifier getPartSpecifier() {
         return new PartMessageSpecifier();
+    }
+
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        // Nothing to do
     }
 }

@@ -196,7 +196,7 @@ public class ToolsContext {
     }
 
     public ImmutableProvider<Boolean> isEditingBackgroundProvider() {
-        return ImmutableProvider.from(isEditingBackground);
+        return isEditingBackground;
     }
 
     public void toggleIsEditingBackground() {

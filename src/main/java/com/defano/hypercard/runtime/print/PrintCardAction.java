@@ -13,7 +13,7 @@ public class PrintCardAction extends PrintActionDelegate {
         StringBuilder jobNameBuilder = new StringBuilder();
 
         jobNameBuilder.append("Card ");
-        jobNameBuilder.append(HyperCard.getInstance().getDisplayedCard().getCardIndexInStack() + 1);
+        jobNameBuilder.append(HyperCard.getInstance().getDisplayedCard().getCardModel().getCardIndexInStack() + 1);
         jobNameBuilder.append(" in ");
         jobNameBuilder.append(HyperCard.getInstance().getStack().getStackModel().getStackName());
 

@@ -68,8 +68,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
     }
 
     public void invalidateWindowTitle() {
-        String stackName = card.getStackModel().getStackName();
-        int cardNumber = card.getCardIndexInStack() + 1;
+        String stackName = card.getCardModel().getStackModel().getStackName();
+        int cardNumber = card.getCardModel().getCardIndexInStack() + 1;
         int cardCount = stack.getCardCountProvider().get();
         boolean isEditingBackground = card.isForegroundHidden();
 

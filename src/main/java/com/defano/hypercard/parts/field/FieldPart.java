@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.awt.MouseStillDown;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
@@ -66,7 +67,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
         // Place the field in the center of the card
-        newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), parent.getPartModel());
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
@@ -212,6 +213,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 
@@ -321,12 +323,12 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         }
     }
 
-    private void initProperties(Rectangle geometry) {
+    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
-            int id = cardPart.getStackModel().getNextFieldId();
-            partModel = FieldModel.newFieldModel(id, geometry, owner, cardPart.getId());
+            int id = cardPart.getCardModel().getStackModel().getNextFieldId();
+            partModel = FieldModel.newFieldModel(id, geometry, owner, parentPartModel);
             partModel.addPropertyChangedObserver(this);
         }
     }

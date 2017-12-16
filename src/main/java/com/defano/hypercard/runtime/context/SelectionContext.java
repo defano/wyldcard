@@ -42,7 +42,7 @@ public class SelectionContext {
         }
 
         // Find the part holding the selection
-        return ExecutionContext.getContext().getCurrentCard().findPart(theSelectionPart);
+        return ExecutionContext.getContext().getPart(theSelectionPart);
     }
 
     public AddressableSelection getManagedSelection() throws HtSemanticException {

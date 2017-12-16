@@ -30,9 +30,9 @@ public class PushCardCmd extends Command {
         } else {
 
             Integer pushCardId = null;
-            PartModel destinationModel = destinationExp.evaluateAsPartModel(CardModel.class);
+            PartModel destinationModel = destinationExp.partFactor(CardModel.class);
             if (destinationModel == null) {
-                destinationExp.evaluateAsPartModel(BackgroundModel.class);
+                destinationExp.partFactor(BackgroundModel.class);
             }
 
             if (destinationModel != null) {

@@ -1,19 +1,20 @@
 package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.model.PropertiesModel;
-import com.defano.hypercard.runtime.PeriodicMessageManager;
-import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.window.forms.ButtonPropertyEditor;
-import com.defano.hypercard.window.forms.ScriptEditor;
-import com.defano.hypercard.window.WindowBuilder;
+import com.defano.hypercard.awt.MouseStillDown;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.PeriodicMessageManager;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.ButtonPropertyEditor;
+import com.defano.hypercard.window.forms.ScriptEditor;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -71,7 +72,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      */
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
         ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent, owner);
-        button.initProperties(geometry);
+        button.initProperties(geometry, parent.getPartModel());
         return button;
     }
 
@@ -169,6 +170,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 
@@ -236,11 +238,11 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         }
     }
 
-    private void initProperties(Rectangle geometry) {
+    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
-            int id = cardPart.getStackModel().getNextButtonId();
-            partModel = ButtonModel.newButtonModel(id, geometry, owner);
+            int id = cardPart.getCardModel().getStackModel().getNextButtonId();
+            partModel = ButtonModel.newButtonModel(id, geometry, owner, parentPartModel);
         }
     }
 }

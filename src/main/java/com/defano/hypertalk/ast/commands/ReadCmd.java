@@ -49,30 +49,30 @@ public class ReadCmd extends Command {
         try {
             String contents;
             String filename = file.evaluate().stringValue();
-            FileContext.FileHandle handle = FileContext.getInstance().getFileHandle(filename);
+            FileContext.FileHandle file = FileContext.getInstance().getFileHandle(filename);
 
-            if (handle == null) {
+            if (file == null) {
                 throw new HtSemanticException("Cannot read from file " + filename + " because it is not open.");
             }
 
             // 'read file x until y'
             if (until != null) {
-                contents = handle.readUntil(until.evaluate().stringValue(), true);
+                contents = file.readUntil(until.evaluate().stringValue(), true);
             }
 
             // 'read file x at y for z
             else if (at != null && count != null) {
-                contents = handle.readAt(at.evaluate().integerValue(), at.evaluate().integerValue(), true);
+                contents = file.readAt(at.evaluate().integerValue(), at.evaluate().integerValue(), true);
             }
 
             // 'read file x for y
             else if (count != null) {
-                contents = handle.readFor(count.evaluate().integerValue(), true);
+                contents = file.readFor(count.evaluate().integerValue(), true);
             }
 
             // 'read file x'
             else {
-                contents = handle.readAll(true);
+                contents = file.readAll(true);
             }
 
             ExecutionContext.getContext().setResult(new Value());

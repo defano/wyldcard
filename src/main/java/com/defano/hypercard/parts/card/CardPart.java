@@ -1,28 +1,26 @@
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypercard.parts.LayeredPartContainer;
+import com.defano.hypercard.awt.MouseListenable;
+import com.defano.hypercard.awt.MouseStillDown;
+import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.Part;
-import com.defano.hypercard.parts.PartException;
-import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.ButtonPart;
+import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
-import com.defano.hypercard.search.SearchContext;
-import com.defano.hypercard.runtime.serializer.Serializer;
-import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.PartsTable;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypercard.search.SearchContext;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
-import com.defano.hypercard.parts.model.*;
-import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
-import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.JMonetCanvas;
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.clipboard.CanvasTransferDelegate;
 import com.defano.jmonet.clipboard.CanvasTransferHandler;
@@ -35,9 +33,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Observable;
 import java.util.Observer;
@@ -50,17 +46,17 @@ import java.util.Observer;
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
  */
-public class CardPart extends CardLayeredPane implements Part, LayeredPartContainer, CanvasCommitObserver, CanvasTransferDelegate, MouseListener, KeyListener {
+public class CardPart extends CardLayeredPane implements Part, CanvasCommitObserver, CanvasTransferDelegate, MouseListenable, KeyListener {
 
     private CardModel cardModel;
-    private StackModel stackModel;
 
     private final PartsTable<FieldPart> fields = new PartsTable<>();
     private final PartsTable<ButtonPart> buttons = new PartsTable<>();
 
-    private EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver();
-    private ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
-    private BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
+    private final EditingBackgroundObserver editingBackgroundObserver = new EditingBackgroundObserver();
+    private final ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
+    private final BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
+    private final CardModelObserver cardModelObserver = new CardPartModelObserver();
 
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
@@ -71,20 +67,19 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * @throws HtException Thrown if an error occurs creating the card.
      */
     public static CardPart fromPositionInStack(int cardIndex, StackModel stack) throws HtException {
-        return fromModel(stack.getCardModel(cardIndex), stack);
+        return fromModel(stack.getCardModel(cardIndex));
     }
 
     /**
      * Instantiates a CardPart given a {@link CardModel} and {@link StackModel}.
      *
      * @param model The model of the card to instantiate.
-     * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
-     *              card's background id).
      * @return The fully instantiated CardPart.
      * @throws HtException Thrown if an error occurs instantiating the card.
      */
-    public static CardPart fromModel(CardModel model, StackModel stack) throws HtException {
-        CardPart card = skeletonFromModel(model, stack);
+    private static CardPart fromModel(CardModel model) throws HtException {
+        CardPart card = skeletonFromModel(model);
+        StackModel stack = model.getStackModel();
 
         // Setup part cut, copy and paste
         card.setTransferHandler(new CardPartTransferHandler(card));
@@ -96,7 +91,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(card.getCardBackground().getBackgroundImage()));
+        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage()));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
@@ -126,25 +121,21 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * part components (button and field views) are not updated to reflect the values in their model.
      *
      * @param model The model of the card to instantiate.
-     * @param stack The model of the stack in which the card belongs (the stack must have a background matching the
-     *              card's background id).
      * @return A partially constructed CardPart useful for programmatic inspection
      * @throws HtException Thrown if an error occurs constructing the CardPart.
      */
-    public static CardPart skeletonFromModel(CardModel model, StackModel stack) throws HtException {
+    public static CardPart skeletonFromModel(CardModel model) throws HtException {
         CardPart card = new CardPart();
-
         card.cardModel = model;
-        card.stackModel = stack;
 
         // Add card parts to this card
-        for (PartModel thisPart : card.cardModel.getPartModels()) {
-            card.addPartFromModel(thisPart);
+        for (PartModel thisPart : model.getPartModels()) {
+            card.addViewFromModel(thisPart);
         }
 
         // Add background parts to this card
-        for (PartModel thisPart : card.getCardBackground().getPartModels()) {
-            card.addPartFromModel(thisPart);
+        for (PartModel thisPart : model.getBackgroundModel().getPartModels()) {
+            card.addViewFromModel(thisPart);
         }
 
         return card;
@@ -172,47 +163,25 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Removes a part (button or field) from this card. Has no effect if the part is not on this card.
-     * @param part The part to be removed.
-     */
-    public void removePart(PartModel part) {
-        if (part instanceof ButtonModel) {
-            removeButton((ButtonModel) part);
-        } else if (part instanceof FieldModel) {
-            removeField((FieldModel) part);
-        } else {
-            throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
-        }
-    }
-
-    /**
      * Adds a new button (with default attributes) to this card. Represents the behavior of the user choosing
      * "New Button" from the Objects menu.
+     * // TODO: Should probably be moved to CardModel
      */
     public void newButton() {
-        try {
-            CardLayer layer = CardLayerPart.getActivePartLayer();
-            ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
-            addButton(newButton);
-            PartToolContext.getInstance().setSelectedPart(newButton);
-        } catch (PartException ex) {
-            throw new RuntimeException("Bug! An error occurred creating a new button.", ex);
-        }
+        CardLayer layer = CardLayerPart.getActivePartLayer();
+        ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
+        addButton(newButton);
     }
 
     /**
      * Adds a new field (with default attributes) to this card. Represents the behavior of the user choosing
      * "New Field" from the Objects menu.
+     * // TODO: Should probably be moved to CardModel
      */
     public void newField() {
-        try {
-            CardLayer layer = CardLayerPart.getActivePartLayer();
-            FieldPart newField = FieldPart.newField(this, layer.asOwner());
-            addField(newField);
-            PartToolContext.getInstance().setSelectedPart(newField);
-        } catch (PartException ex) {
-            throw new RuntimeException("Bug! An error occurred creating a new field.", ex);
-        }
+        CardLayer layer = CardLayerPart.getActivePartLayer();
+        FieldPart newField = FieldPart.newField(this, layer.asOwner());
+        addField(newField);
     }
 
     /**
@@ -229,28 +198,6 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     public Collection<FieldPart> getFields() {
         return fields.getParts();
-    }
-
-    /**
-     * Adds a part to a specified layer on this card based on its model.
-     * @param thisPart The data model of the part to be added.
-     * @throws HtException Thrown if an error occurs adding the part.
-     */
-    private void addPartFromModel(PartModel thisPart) throws HtException {
-        switch (thisPart.getType()) {
-            case BUTTON:
-                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
-                buttons.addPart(button);
-                addSwingComponent(button.getComponent(), button.getRect(), thisPart.getLayer());
-                break;
-            case FIELD:
-                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
-                fields.addPart(field);
-                addSwingComponent(field.getComponent(), field.getRect(), thisPart.getLayer());
-                break;
-            default:
-                throw new IllegalStateException("Bug! Unimplemented part model: " + thisPart);
-        }
     }
 
     /**
@@ -295,7 +242,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private void setPartsOnLayerVisible(Owner owningLayer, boolean visible) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (PartModel thisPartModel : getParts()) {
+            for (PartModel thisPartModel : getCardModel().getPartModels()) {
                 if (thisPartModel.getOwner() == owningLayer) {
                     if (!visible) {
                         getPart(thisPartModel).getComponent().setVisible(false);
@@ -324,28 +271,49 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Gets the zero-based location of this card in its stack.
-     * @return The location of this card in the stack.
+     * Removes a part (button or field) from this card. Has no effect if the part is not on this card.
+     * @param part The part to be removed.
      */
-    public int getCardIndexInStack() {
-        return getStackModel().getIndexOfCard(this.getCardModel());
+    private void removePart(PartModel part) {
+        if (part instanceof ButtonModel) {
+            removeButtonView((ButtonModel) part);
+        } else if (part instanceof FieldModel) {
+            removeFieldView((FieldModel) part);
+        } else {
+            throw new IllegalArgumentException("Bug! Unimplemented remove of part type: " + part.getClass());
+        }
     }
 
     /**
-     * Gets the data model associated with this card's stack.
-     * @return The stack model for this card.
+     * Removes a button from this card view. Does not affect the {@link CardModel}. Has no effect if the button does
+     * not exist on the card.
+     *
+     * @param buttonModel The button to be removed.
      */
-    public StackModel getStackModel() {
-        return stackModel;
+    private void removeButtonView(ButtonModel buttonModel) {
+        ButtonPart button = buttons.getPart(buttonModel);
+
+        if (button != null) {
+            buttons.removePart(button);
+            removeSwingComponent(button.getComponent());
+            button.partClosed();
+        }
     }
 
     /**
-     * Returns the data model associated with this card. Note that backgrounds are shared across card; mutating this
-     * object may affect other card in the stack, too.
-     * @return The data model associated with this card's background.
+     * Removes a field from this card view. Does not affect the {@link CardModel}. Has no effect if the field does not
+     * exist on the card.
+     *
+     * @param fieldModel The field to be removed.
      */
-    public BackgroundModel getCardBackground() {
-        return stackModel.getBackground(cardModel.getBackgroundId());
+    private void removeFieldView(FieldModel fieldModel) {
+        FieldPart field = fields.getPart(fieldModel);
+
+        if (field != null) {
+            fields.removePart(field);
+            removeSwingComponent(field.getComponent());
+            field.partClosed();
+        }
     }
 
     /**
@@ -370,7 +338,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     public void onDisplayOrderChanged() {
         SwingUtilities.invokeLater(() -> {
-            for (PartModel thisPart : getPartsInDisplayOrder()) {
+            for (PartModel thisPart : getCardModel().getPartsInDisplayOrder()) {
                 moveToFront(getPart(thisPart).getComponent());
             }
         });
@@ -380,7 +348,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
-            getCardBackground().setBackgroundImage(canvasImage);
+            cardModel.getBackgroundModel().setBackgroundImage(canvasImage);
         } else {
             cardModel.setCardImage(canvasImage);
         }
@@ -438,13 +406,13 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     /** {@inheritDoc} */
     @Override
     public int getHeight() {
-        return stackModel.getHeight();
+        return cardModel.getStackModel().getHeight();
     }
 
     /** {@inheritDoc} */
     @Override
     public int getWidth() {
-        return stackModel.getWidth();
+        return cardModel.getStackModel().getWidth();
     }
 
     /**
@@ -472,7 +440,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private ButtonPart importButton(ButtonPart part, CardLayer layer) throws HtException {
         ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextButtonId()), true);
+        model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextButtonId()), true);
         model.setOwner(layer.asOwner());
 
         ButtonPart newButton = ButtonPart.fromModel(this, model);
@@ -492,7 +460,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      */
     private FieldPart importField(FieldPart part, CardLayer layer) throws HtException {
         FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
-        model.defineProperty(PartModel.PROP_ID, new Value(stackModel.getNextFieldId()), true);
+        model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextFieldId()), true);
         model.setOwner(layer.asOwner());
 
         FieldPart newField = FieldPart.fromModel(this, model);
@@ -501,15 +469,14 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Adds a field to this card. Assumes that the field has a unique ID.
+     * Adds a field to this card in the layer indicated by the model. Assumes that the field has a unique ID.
      * @param field The field to add to this card.
-     * @throws PartException Thrown if an error occurs adding the field.
      */
-    private void addField(FieldPart field) throws PartException {
+    private void addField(FieldPart field) {
         if (field.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(field.getPartModel());
         } else if (field.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().addFieldModel((FieldModel) field.getPartModel());
+            cardModel.getBackgroundModel().addFieldModel((FieldModel) field.getPartModel());
         }
 
         fields.addPart(field);
@@ -518,37 +485,14 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Removes a field from this card. Has no effect if the field does not exist on the card.
-     * @param fieldModel The field to be removed.
-     */
-    private void removeField(FieldModel fieldModel) {
-        FieldPart field = fields.getPartForModel(fieldModel);
-
-        if (field != null) {
-            fields.removePart(field);
-            removeSwingComponent(field.getComponent());
-            field.partClosed();
-        }
-
-        if (fieldModel.getLayer() == CardLayer.CARD_PARTS) {
-            cardModel.removePartModel(fieldModel);
-        } else if (fieldModel.getLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().removePartModel(fieldModel);
-        } else {
-            throw new IllegalStateException("Bug! Invalid field layer.");
-        }
-    }
-
-    /**
      * Adds a button to this card. Assumes the button has a unique ID.
      * @param button The button to be added.
-     * @throws PartException Thrown if an error occurs adding this button to the card.
      */
-    private void addButton(ButtonPart button) throws PartException {
+    private void addButton(ButtonPart button) {
         if (button.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(button.getPartModel());
         } else if (button.getPartModel().getLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().addButtonModel((ButtonModel) button.getPartModel());
+            cardModel.getBackgroundModel().addButtonModel((ButtonModel) button.getPartModel());
         }
 
         buttons.addPart(button);
@@ -557,24 +501,23 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     }
 
     /**
-     * Removes a button from this card. Has no effect if the button does not exist on the card.
-     * @param buttonModel The button to be removed.
+     * Adds a part view to the layer of this card specified in its model. Does not affect the {@link CardModel}.
+     *
+     * @param thisPart The data model of the part to be added.
+     * @throws HtException Thrown if an error occurs adding the part.
      */
-    private void removeButton(ButtonModel buttonModel) {
-        ButtonPart button = buttons.getPartForModel(buttonModel);
-
-        if (button != null) {
-            buttons.removePart(button);
-            removeSwingComponent(button.getComponent());
-            button.partClosed();
-        }
-
-        if (buttonModel.getLayer() == CardLayer.CARD_PARTS) {
-            cardModel.removePartModel(buttonModel);
-        } else if (buttonModel.getLayer() == CardLayer.BACKGROUND_PARTS) {
-            getCardBackground().removePartModel(buttonModel);
-        } else {
-            throw new IllegalStateException("Bug! Invalid button layer.");
+    private void addViewFromModel(PartModel thisPart) throws HtException {
+        switch (thisPart.getType()) {
+            case BUTTON:
+                ButtonPart button = ButtonPart.fromModel(this, (ButtonModel) thisPart);
+                buttons.addPart(button);
+                addSwingComponent(button.getComponent(), button.getRect(), thisPart.getLayer());
+                break;
+            case FIELD:
+                FieldPart field = FieldPart.fromModel(this, (FieldModel) thisPart);
+                fields.addPart(field);
+                addSwingComponent(field.getComponent(), field.getRect(), thisPart.getLayer());
+                break;
         }
     }
 
@@ -623,6 +566,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         getForegroundCanvas().getSurface().addKeyListener(this);
 
         getPartModel().receiveMessage(SystemMessage.OPEN_CARD.messageName);
+        ((CardModel) getPartModel()).setObserver(cardModelObserver);
     }
 
     /** {@inheritDoc} */
@@ -636,17 +580,18 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         // Remove their Swing components from the card to free memory
         removeAll();
 
-        setTransferHandler(null);
         ToolsContext.getInstance().isEditingBackgroundProvider().deleteObserver(editingBackgroundObserver);
-        getForegroundCanvas().dispose();
-        getBackgroundCanvas().dispose();
-
-        editingBackgroundObserver = null;
-        foregroundScaleObserver = null;
-        backgroundScaleObserver = null;
+        getForegroundCanvas().getScaleProvider().deleteObserver(foregroundScaleObserver);
+        getBackgroundCanvas().getScaleProvider().deleteObserver(backgroundScaleObserver);
 
         getForegroundCanvas().getSurface().removeMouseListener(this);
         getForegroundCanvas().getSurface().removeKeyListener(this);
+
+        getForegroundCanvas().dispose();
+        getBackgroundCanvas().dispose();
+
+        setTransferHandler(null);
+        ((CardModel) getPartModel()).setObserver(null);
 
         super.dispose();
     }
@@ -659,26 +604,19 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
      * @return The matching CardLayerPart
      */
     public CardLayerPart getPart(PartModel partModel) {
+        CardLayerPart part = null;
+
         if (partModel instanceof FieldModel) {
-            return fields.getPartForModel(partModel);
+            part = fields.getPart(partModel);
         } else if (partModel instanceof ButtonModel) {
-            return buttons.getPartForModel(partModel);
+            part = buttons.getPart(partModel);
         }
 
-        throw new IllegalArgumentException("No part on this card matching model: " + partModel);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Collection<PartModel> getParts() {
-        ArrayList<PartModel> partModels = new ArrayList<>();
-        for (ButtonPart thisButton : buttons.getParts()) {
-            partModels.add(thisButton.getPartModel());
+        if (part == null) {
+            throw new IllegalArgumentException("No part on card " + this.getCardModel() + " for model: " + partModel);
+        } else {
+            return part;
         }
-        for (FieldPart thisField : fields.getParts()) {
-            partModels.add(thisField.getPartModel());
-        }
-        return partModels;
     }
 
     @Override
@@ -694,6 +632,7 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
     @Override
     public void mousePressed(MouseEvent e) {
         getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
+        MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
     }
 
     @Override
@@ -760,4 +699,10 @@ public class CardPart extends CardLayeredPane implements Part, LayeredPartContai
         }
     }
 
+    private class CardPartModelObserver implements CardModelObserver {
+        @Override
+        public void onPartRemoved(PartModel removedPart) {
+            removePart(removedPart);
+        }
+    }
 }

@@ -15,7 +15,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PropertyContainerExp extends ContainerExp {
 
-    public final PropertySpecifier propertySpec;
+    private final PropertySpecifier propertySpec;
 
     public PropertyContainerExp(ParserRuleContext context, PropertySpecifier propertySpec) {
         super(context);

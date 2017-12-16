@@ -1,5 +1,6 @@
 package com.defano.hypercard.search;
 
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.field.FieldModel;
@@ -9,7 +10,7 @@ import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.HyperCardProperties;
 import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
+import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
@@ -110,9 +111,9 @@ public class SearchContext {
 
             FieldModel field = (FieldModel) part;
 
-            int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardIndexInStack();
-            if (query.searchField instanceof RemotePartSpecifier) {
-                cardIndex = ExecutionContext.getContext().getCurrentStack().findRemotePartOwner((RemotePartSpecifier) query.searchField).getCardIndexInStack();
+            int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardModel().getCardIndexInStack();
+            if (query.searchField instanceof CompositePartSpecifier) {
+                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findOwningCard((CompositePartSpecifier) query.searchField).getCardIndexInStack();
             }
 
             indexField(query, field, cardIndex, results);
@@ -151,7 +152,9 @@ public class SearchContext {
         int searchFrom = 0;
         Range result;
 
-        String fieldText = fieldModel.getText();
+        int cardId = HyperCard.getInstance().getStack().getStackModel().getCardModel(cardIndex).getId();
+        String fieldText = fieldModel.getText(cardId);
+
         do {
             result = SearchFactory.searchBy(query.searchType).search(fieldText, query.searchTerm, searchFrom);
 
@@ -179,13 +182,13 @@ public class SearchContext {
         }
 
         // Search result is on a different card; go there
-        else if (result.getCardIndex() != ExecutionContext.getContext().getCurrentCard().getCardIndexInStack()) {
+        else if (result.getCardIndex() != ExecutionContext.getContext().getCurrentCard().getCardModel().getCardIndexInStack()) {
             ExecutionContext.getContext().getCurrentStack().goCard(result.getCardIndex(), null, true);
         }
 
         // Box the found text
         try {
-            FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().findPart(result.getLocalPartSpecifier());
+            FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(result.getLocalPartSpecifier());
             FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
 
             foundField.applySearchHilight(result.getRange());

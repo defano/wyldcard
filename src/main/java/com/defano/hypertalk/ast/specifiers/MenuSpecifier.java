@@ -8,6 +8,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
+import java.util.Random;
 
 public class MenuSpecifier {
 
@@ -47,12 +48,19 @@ public class MenuSpecifier {
             int menuCount = HyperCardMenuBar.instance.getMenuCount();
             JMenu foundMenu;
 
+            if (menuCount == 0) {
+                throw new HtSemanticException("There are no menus.");
+            }
+
             switch (menuOrdinal) {
                 case LAST:
                     foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuCount - 1);
                     break;
                 case MIDDLE:
                     foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuCount / 2);
+                    break;
+                case ANY:
+                    foundMenu = HyperCardMenuBar.instance.findMenuByNumber(new Random().nextInt(menuCount));
                     break;
                 default:
                     foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuOrdinal.intValue() - 1);

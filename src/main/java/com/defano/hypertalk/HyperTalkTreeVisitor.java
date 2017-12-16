@@ -517,24 +517,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSingleScriptlet(HyperTalkParser.SingleScriptletContext ctx) {
+        return new Script((Statement) visit(ctx.statement()));
+    }
+
+    @Override
+    public Object visitMutliScriptlet(HyperTalkParser.MutliScriptletContext ctx) {
+        return visit(ctx.multilineScriptlet());
+    }
+
+    @Override
+    public Object visitStmntMultiScriptlet(HyperTalkParser.StmntMultiScriptletContext ctx) {
+        return ((Script) visit(ctx.multilineScriptlet())).insertStatement((Statement) visit(ctx.statement()));
+    }
+
+    @Override
+    public Object visitStmntScriptlet(HyperTalkParser.StmntScriptletContext ctx) {
+        return new Script((Statement) visit(ctx.statement()));
+    }
+
+    @Override
     public Object visitWhitespaceScriptlet(HyperTalkParser.WhitespaceScriptletContext ctx) {
-        return visit(ctx.scriptlet());
+        return visit(ctx.multilineScriptlet());
     }
 
     @Override
-    public Object visitStatementScriptlet(HyperTalkParser.StatementScriptletContext ctx) {
-        Script script = (Script) visit(ctx.scriptlet());
-        return script.insertStatement((Statement) visit(ctx.statement()));
-    }
-
-    @Override
-    public Object visitSingleStatementScriptlet(HyperTalkParser.SingleStatementScriptletContext ctx) {
-        Script script = new Script();
-        return script.insertStatement((Statement) visit(ctx.statement()));
-    }
-
-    @Override
-    public Object visitEmptyScriptlet(HyperTalkParser.EmptyScriptletContext ctx) {
+    public Object visitEofScriptlet(HyperTalkParser.EofScriptletContext ctx) {
         return new Script();
     }
 
@@ -1276,7 +1284,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitButtonOfCardPart(HyperTalkParser.ButtonOfCardPartContext ctx) {
-        return new RemotePartExp(ctx, (PartContainerExp) visit(ctx.buttonPart()), (PartContainerExp) visit(ctx.cardPart()));
+        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.buttonPart()), (PartContainerExp) visit(ctx.cardPart()));
     }
 
     @Override
@@ -1296,7 +1304,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFieldOfCardPart(HyperTalkParser.FieldOfCardPartContext ctx) {
-        return new RemotePartExp(ctx, (PartContainerExp) visit(ctx.fieldPart()), (PartContainerExp) visit(ctx.cardPart()));
+        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.fieldPart()), (PartContainerExp) visit(ctx.cardPart()));
     }
 
     @Override
@@ -1406,7 +1414,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardOfBkgndPart(HyperTalkParser.CardOfBkgndPartContext ctx) {
-        return new RemotePartExp(ctx, (PartContainerExp) visit(ctx.cardPart()), (PartContainerExp) visit(ctx.bkgndPart()));
+        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.cardPart()), (PartContainerExp) visit(ctx.bkgndPart()));
     }
 
     @Override
@@ -1790,6 +1798,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_WORDS: return new NumberOfFunc(ctx, Countable.WORD, (Expression) visit(expTree));
             case NUMBER_MENUITEMS: return new NumberOfFunc(ctx, Countable.MENU_ITEMS, (Expression) visit(expTree));
             case NUMBER_BKGND_CARDS: return new NumberOfFunc(ctx, Countable.CARDS_IN_BKGND, (Expression) visit(expTree));
+            case NUMBER_OF_PART: return new NumberOfPartFunc(ctx, (Expression) visit(expTree));
             case RANDOM: return new RandomFunc(ctx, (Expression) visit(expTree));
             case SQRT:
             case TRUNC:
@@ -2039,6 +2048,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNumberOfBkgndCardsFunc(HyperTalkParser.NumberOfBkgndCardsFuncContext ctx) {
         return BuiltInFunction.NUMBER_BKGND_CARDS;
+    }
+
+    @Override
+    public Object visitNumberOfPart(HyperTalkParser.NumberOfPartContext ctx) {
+        return BuiltInFunction.NUMBER_OF_PART;
     }
 
     @Override

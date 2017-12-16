@@ -5,6 +5,7 @@ import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.util.NumberUtils;
 import com.defano.hypertalk.ast.common.Value;
 
 import javax.swing.*;
@@ -77,12 +78,19 @@ public class PartMover {
     public void startMoving() {
         CardLayerPart partInst = part.get();
 
+
         if (done && partInst != null) {
+            JComponent partComp = partInst.getComponent();
             done = false;
 
             Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-            SwingUtilities.convertPointFromScreen(mouseLoc, partInst.getComponent());
-            this.mouseLocInPart = new Point(mouseLoc.x, mouseLoc.y);
+            SwingUtilities.convertPointFromScreen(mouseLoc, partComp);
+
+            // Fix for weirdness where convertPointFromScreen produces wildly-bogus result
+            this.mouseLocInPart = new Point(
+                    NumberUtils.range(mouseLoc.x, 0, partComp.getWidth()),
+                    NumberUtils.range(mouseLoc.y, 0, partComp.getHeight())
+            );
 
             MouseManager.notifyOnMouseReleased(() -> done = true);
             executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);

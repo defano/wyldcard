@@ -29,16 +29,16 @@ public interface PartSpecifier {
      */
     PartType getType();
 
-    default boolean isCardElementSpecifier() {
+    default boolean isButtonOrFieldSpecifier() {
         return getType() == PartType.BUTTON || getType() == PartType.FIELD || getType() == null;
     }
 
-    default boolean isStackElementSpecifier() {
-        return getType() == PartType.CARD || getType() == PartType.BACKGROUND || getType() == PartType.MESSAGE_BOX;
+    default boolean isBackgroundPartSpecifier() {
+        return isButtonOrFieldSpecifier() && getOwner() == Owner.BACKGROUND;
     }
 
-    default boolean isStackSpecifier() {
-        return getType() == PartType.STACK;
+    default boolean isCardPartSpecifier() {
+        return isButtonOrFieldSpecifier() && getOwner() == Owner.CARD;
     }
 
     String getHyperTalkIdentifier();

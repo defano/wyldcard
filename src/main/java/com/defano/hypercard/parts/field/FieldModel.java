@@ -4,7 +4,9 @@ import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.HyperCardTextField;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.LogicalLinkObserver;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -68,20 +70,20 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private StyledDocument sharedText = new DefaultStyledDocument();
     private final Map<Integer, StyledDocument> unsharedText = new HashMap<>();
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
-    private final Set<Integer> unsharedAutoSelection = new HashSet<>();
+    private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
 
-    private transient int currentCardId = 0;
+    private transient ThreadLocal<Integer> currentCardId = new ThreadLocal<>();
     private transient FieldModelObserver observer;
     private transient Range selection;
 
-    public FieldModel(Owner owner) {
-        super(PartType.FIELD, owner);
+    public FieldModel(Owner owner, PartModel parentPartModel) {
+        super(PartType.FIELD, owner, parentPartModel);
     }
 
-    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, int parentCardId) {
-        FieldModel partModel = new FieldModel(owner);
+    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
+        FieldModel partModel = new FieldModel(owner, parentPartModel);
 
-        partModel.currentCardId = parentCardId;
+        partModel.setCurrentCardId(parentPartModel.getId());
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -116,6 +118,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void initialize() {
         super.initialize();
 
+        this.currentCardId = new ThreadLocal<>();
+
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
 
@@ -127,6 +131,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length() + 1)));
         defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
+
+        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (model, propertyName) -> getSelectedText());
+        defineComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (model, propertyName) -> getSelectedChunkExpression());
+        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (model, propertyName) -> getSelectedLineExpression());
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));
@@ -155,7 +163,15 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         if (useSharedText()) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
-            return unsharedText.getOrDefault(currentCardId, new DefaultStyledDocument());
+            return getStyledDocument(getCurrentCardId());
+        }
+    }
+
+    private StyledDocument getStyledDocument(int forCardId) {
+        if (useSharedText()) {
+            return sharedText == null ? new DefaultStyledDocument() : sharedText;
+        } else {
+            return unsharedText.getOrDefault(forCardId, new DefaultStyledDocument());
         }
     }
 
@@ -169,7 +185,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         if (useSharedText()) {
             FieldModel.this.sharedText = doc;
         } else {
-            unsharedText.put(currentCardId, doc);
+            unsharedText.put(getCurrentCardId(), doc);
         }
     }
 
@@ -189,7 +205,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     @Override
     public String getText() {
-        StyledDocument doc = getStyledDocument();
+        return getText(getCurrentCardId());
+    }
+
+    public String getText(int forCardId) {
+        StyledDocument doc = getStyledDocument(forCardId);
         try {
             return doc.getText(0, doc.getLength());
         } catch (BadLocationException e) {
@@ -276,7 +296,15 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * @param cardId The ID of the card on which this field is currently being displayed.
      */
     public void setCurrentCardId(int cardId) {
-        this.currentCardId = cardId;
+        this.currentCardId.set(cardId);
+    }
+
+    public int getCurrentCardId() {
+        if (this.currentCardId.get() == null) {
+            return ExecutionContext.getContext().getCurrentCard().getId();
+        }
+
+        return this.currentCardId.get();
     }
 
     /** {@inheritDoc} */
@@ -490,7 +518,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      */
     public Set<Integer> getAutoSelectedLines() {
         if (isAutoSelection()) {
-            return useSharedText() ? sharedAutoSelection : unsharedAutoSelection;
+            if (useSharedText()) {
+                return sharedAutoSelection;
+            } else {
+                return unsharedAutoSelection.computeIfAbsent(getCurrentCardId(), k -> new HashSet<>());
+            }
         } else {
             return new HashSet<>();
         }
@@ -560,6 +592,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         return PROP_TEXT;
     }
 
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        setParentPartModel(parentPartModel);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -584,20 +621,28 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         return this;
     }
 
+    public long getFieldNumber() {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this, PartType.FIELD);
+    }
+
+    public long getFieldCount() {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(PartType.FIELD, getOwner());
+    }
+
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
-        if (observer != null) {
+        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onAutoSelectionChanged(selectedLines));
         }
     }
 
     private void fireDocumentChangeObserver(StyledDocument document) {
-        if (observer != null) {
+        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onStyledDocumentChanged(document));
         }
     }
 
     private void fireSelectionChange(Range selection) {
-        if (observer != null) {
+        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onSelectionChange(selection));
         }
     }

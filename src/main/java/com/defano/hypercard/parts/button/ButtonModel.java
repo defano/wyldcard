@@ -1,6 +1,8 @@
 package com.defano.hypercard.parts.button;
 
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
 import com.defano.hypertalk.ast.common.Value;
@@ -21,13 +23,13 @@ public class ButtonModel extends CardLayerPartModel {
     public static final String PROP_ICON = "icon";
     public static final String PROP_ICONALIGN = "iconalign";
 
-
-    private ButtonModel(Owner owner) {
-        super(PartType.BUTTON, owner);
+    private ButtonModel(Owner owner, PartModel parentPartModel) {
+        super(PartType.BUTTON, owner, parentPartModel);
+        initialize();
     }
 
-    public static ButtonModel newButtonModel(Integer id, Rectangle geometry, Owner owner) {
-        ButtonModel partModel = new ButtonModel(owner);
+    public static ButtonModel newButtonModel(Integer id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
+        ButtonModel partModel = new ButtonModel(owner, parentPartModel);
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -46,6 +48,19 @@ public class ButtonModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_ICONALIGN, new Value("default"), false);
 
         return partModel;
+    }
+
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        setParentPartModel(parentPartModel);
+    }
+
+    public long getButtonNumber() {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this, PartType.BUTTON);
+    }
+
+    public long getButtonCount() {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(PartType.BUTTON, getOwner());
     }
 
 }

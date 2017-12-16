@@ -23,7 +23,7 @@ import java.awt.*;
 @SuppressWarnings("unchecked")
 public class FieldPropertyEditor extends HyperCardDialog {
 
-    private PartModel model;
+    private FieldModel model;
 
     private JPanel fieldEditor;
     private JTextField fieldName;
@@ -90,22 +90,21 @@ public class FieldPropertyEditor extends HyperCardDialog {
 
     @Override
     public void bindModel(Object data) {
-        if (data instanceof PartModel) {
-            this.model = (PartModel) data;
+        if (data instanceof FieldModel) {
+            this.model = (FieldModel) data;
 
-            PartModel part = HyperCard.getInstance().getDisplayedCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-            long partNumber = HyperCard.getInstance().getDisplayedCard().getPartNumber(part);
-            long fieldNumber = HyperCard.getInstance().getDisplayedCard().getFieldNumber((FieldModel) part);
-            long fieldCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
-            long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
-            String layer = part.getOwner().hyperTalkName;
+            long partNumber = model.getPartNumber();
+            long fieldNumber = model.getFieldNumber();
+            long fieldCount = model.getFieldCount();
+            long partCount = model.getPartCount();
+            String layer = model.getOwner().hyperTalkName;
 
             fieldLabel.setText(layer + " Field:");
             fieldLabelValue.setText(fieldNumber + " of " + fieldCount);
 
             partLabel.setText(layer + " Part:");
             partLabelValue.setText(partNumber + " of " + partCount);
-            idLabelValue.setText(String.valueOf(part.getId()));
+            idLabelValue.setText(String.valueOf(model.getId()));
 
             fieldName.setText(model.getKnownProperty(FieldModel.PROP_NAME).stringValue());
             idLabelValue.setText(model.getKnownProperty(FieldModel.PROP_ID).stringValue());
@@ -125,14 +124,14 @@ public class FieldPropertyEditor extends HyperCardDialog {
             multipleLines.setSelected(model.getKnownProperty(FieldModel.PROP_MULTIPLELINES).booleanValue());
             scrolling.setSelected(model.getKnownProperty(FieldModel.PROP_SCROLLING).booleanValue());
 
-            sharedText.setEnabled(part.getOwner() == Owner.BACKGROUND);
+            sharedText.setEnabled(model.getOwner() == Owner.BACKGROUND);
             sharedText.setSelected(model.getKnownProperty(FieldModel.PROP_SHAREDTEXT).booleanValue());
             multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
             textStyleButton.addActionListener(e -> {
                 Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
                 if (selection != null) {
-                    ((FieldModel) part).setTextStyle(TextStyleSpecifier.fromFont(selection));
+                    model.setTextStyle(TextStyleSpecifier.fromFont(selection));
                 }
             });
 
@@ -335,24 +334,5 @@ public class FieldPropertyEditor extends HyperCardDialog {
         panel4.add(fieldLeft, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         final Spacer spacer4 = new Spacer();
         fieldEditor.add(spacer4, new GridConstraints(2, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 }

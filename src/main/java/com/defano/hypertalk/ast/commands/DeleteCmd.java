@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.commands;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.menu.HyperCardMenuBar;
 import com.defano.hypercard.parts.PartException;
-import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.common.Preposition;
@@ -15,7 +15,7 @@ import com.defano.hypertalk.ast.containers.PartContainerExp;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.specifiers.RemotePartSpecifier;
+import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -53,14 +53,14 @@ public class DeleteCmd extends Command {
                 PartSpecifier ps = part.evaluateAsSpecifier();
                 PartModel p = ExecutionContext.getContext().getPart(ps);
 
-                CardPart owner;
-                if (ps instanceof RemotePartSpecifier) {
-                    owner = HyperCard.getInstance().getStack().findRemotePartOwner((RemotePartSpecifier) ps);
+                CardModel owner;
+                if (ps instanceof CompositePartSpecifier) {
+                    owner = HyperCard.getInstance().getStack().getStackModel().findOwningCard((CompositePartSpecifier) ps);
                 } else {
-                    owner = ExecutionContext.getContext().getCurrentCard();
+                    owner = ExecutionContext.getContext().getCurrentCard().getCardModel();
                 }
 
-                owner.removePart(p);
+                owner.removePartModel(p);
             } catch (PartException e) {
                 throw new HtSemanticException("No such " + part.toString() + " to delete", e);
             }

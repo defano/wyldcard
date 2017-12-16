@@ -4,11 +4,15 @@ import com.defano.hypercard.icons.ButtonIcon;
 import com.defano.hypercard.icons.UserIcon;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
+import com.defano.hypercard.parts.finder.StackPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.LimitedDepthStack;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.runtime.serializer.Serializer;
-import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.common.SystemMessage;
+import com.defano.hypertalk.ast.common.Value;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
@@ -17,7 +21,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StackModel extends PartModel {
+public class StackModel extends PartModel implements StackPartFinder {
 
     private static final int BACKSTACK_DEPTH = 20;
 
@@ -32,12 +36,11 @@ public class StackModel extends PartModel {
     private final Map<String, byte[]> userIcons;
 
     private StackModel(String stackName, Dimension dimension) {
-        super(PartType.STACK, Owner.HYPERCARD);
+        super(PartType.STACK, Owner.HYPERCARD, null);
 
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
-        this.backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
@@ -48,6 +51,11 @@ public class StackModel extends PartModel {
     }
 
     @PostConstruct
+    public void postConstruct() {
+        initialize();
+        relinkParentPartModel(null);
+    }
+
     @Override
     public void initialize() {
         super.initialize();
@@ -58,9 +66,22 @@ public class StackModel extends PartModel {
         defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getStackWindow().getWindow().setLocation(WindowManager.getStackWindow().getWindow().getX(), value.integerValue()));
     }
 
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        this.setParentPartModel(parentPartModel);
+
+        for (CardModel thisCard : cardModels) {
+            thisCard.relinkParentPartModel(this);
+        }
+
+        for (BackgroundModel thisBkgnd : backgroundModels.values()) {
+            thisBkgnd.relinkParentPartModel(this);
+        }
+    }
+
     public static StackModel newStackModel(String stackName) {
         StackModel stack = new StackModel(stackName, new Dimension(640, 480));
-        stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel()));
+        stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel(), stack));
         return stack;
     }
 
@@ -71,16 +92,16 @@ public class StackModel extends PartModel {
     }
 
     public void newCard(int backgroundId) {
-        insertCard(CardModel.emptyCardModel(getNextCardId(), backgroundId));
+        insertCard(CardModel.emptyCardModel(getNextCardId(), backgroundId, this));
     }
 
     public void newCardWithNewBackground() {
-        insertCard(CardModel.emptyCardModel(getNextCardId(), newBackgroundModel()));
+        insertCard(CardModel.emptyCardModel(getNextCardId(), newBackgroundModel(), this));
     }
 
     private int newBackgroundModel() {
         int newBackgroundId = getNextBackgroundId();
-        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground(newBackgroundId));
+        backgroundModels.put(newBackgroundId, BackgroundModel.emptyBackground(newBackgroundId, this));
         return newBackgroundId;
     }
 
@@ -115,6 +136,10 @@ public class StackModel extends PartModel {
 
     public int getCurrentCardIndex() {
         return currentCardIndex;
+    }
+
+    public CardModel getCurrentCard() {
+        return getCardModel(getCurrentCardIndex());
     }
 
     public void setCurrentCardIndex(int currentCard) {
@@ -198,6 +223,11 @@ public class StackModel extends PartModel {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public StackModel getStackModel() {
+        return this;
+    }
+
     public void createIcon(String name, BufferedImage image) {
         userIcons.put(name, Serializer.serializeImage(image));
     }
@@ -210,5 +240,23 @@ public class StackModel extends PartModel {
 
         return icons;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<PartModel> getPartsInDisplayOrder() {
+        ArrayList<PartModel> parts = new ArrayList<>();
+
+        for (CardModel thisCard : getCardModels()) {
+            parts.add(thisCard);
+
+            BackgroundModel thisBackground = getBackground(thisCard.getBackgroundId());
+            if (!parts.contains(thisBackground)) {
+                parts.add(thisBackground);
+            }
+        }
+
+        return parts;
+    }
+
 }
 

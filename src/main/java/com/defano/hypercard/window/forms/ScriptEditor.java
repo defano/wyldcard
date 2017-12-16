@@ -138,8 +138,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     public void moveCaretToPosition(int position) {
-        scriptField.setCaretPosition(position);
-        scriptField.requestFocus();
+        try {
+            scriptField.setCaretPosition(position);
+            scriptField.requestFocus();
+        } catch (Exception e) {
+            // Ignore bogus caret positions
+        }
     }
 
     @Override
@@ -158,6 +162,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             this.model = (PartModel) properties;
             String script = this.model.getKnownProperty("script").stringValue();
             scriptField.setText(script.trim());
+            moveCaretToPosition(model.getScriptEditorCaretPosition());
+            scriptField.addCaretListener(e -> saveCaretPosition());
             checkSyntax();
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
@@ -218,6 +224,10 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                 jumpToLine(lineNumber);
             }
         }
+    }
+
+    private void saveCaretPosition() {
+        model.setScriptEditorCaretPosition(scriptField.getCaretPosition());
     }
 
     private void updateCaretPositionLabel() {

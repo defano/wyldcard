@@ -1,9 +1,12 @@
 package com.defano.hypercard.parts.bkgnd;
 
-import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypercard.parts.card.CardModel;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -12,12 +15,13 @@ import com.defano.hypertalk.ast.common.Value;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A data model representing a card background. There is no view associated with this model; rather this data is
  * incorporated into the {@link CardPart} view object when rendered.
  */
-public class BackgroundModel extends PartModel {
+public class BackgroundModel extends PartModel implements LayeredPartFinder {
 
     public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";
@@ -27,8 +31,8 @@ public class BackgroundModel extends PartModel {
     private final Collection<ButtonModel> buttonModels;
     private final Collection<FieldModel> fieldModels;
 
-    private BackgroundModel(int backgroundId) {
-        super(PartType.BACKGROUND, Owner.STACK);
+    private BackgroundModel(int backgroundId, PartModel parentPartModel) {
+        super(PartType.BACKGROUND, Owner.STACK, parentPartModel);
 
         buttonModels = new ArrayList<>();
         fieldModels = new ArrayList<>();
@@ -50,27 +54,39 @@ public class BackgroundModel extends PartModel {
 
     }
 
-    public static BackgroundModel emptyBackground(int backgroundId) {
-        return new BackgroundModel(backgroundId);
+    public static BackgroundModel emptyBackground(int backgroundId, PartModel parentPartModel) {
+        return new BackgroundModel(backgroundId, parentPartModel);
     }
 
     public Collection<PartModel> getPartModels() {
         Collection<PartModel> models = new ArrayList<>();
+
         models.addAll(buttonModels);
         models.addAll(fieldModels);
+        models.addAll(getCardModels());
 
         return models;
+    }
+
+    public StackModel getStackModel() {
+        return (StackModel) getParentPartModel();
     }
 
     public Collection<FieldModel> getFieldModels() {
         return fieldModels;
     }
 
+    public List<CardModel> getCardModels() {
+        return ((StackModel) getParentPartModel()).getCardsInBackground(getId());
+    }
+
     public void addFieldModel(FieldModel model) {
+        model.setParentPartModel(this);
         this.fieldModels.add(model);
     }
 
     public void addButtonModel(ButtonModel model) {
+        model.setParentPartModel(this);
         this.buttonModels.add(model);
     }
 
@@ -95,4 +111,18 @@ public class BackgroundModel extends PartModel {
     public BufferedImage getBackgroundImage() {
         return Serializer.deserializeImage(this.backgroundImage);
     }
+
+    @Override
+    public void relinkParentPartModel(PartModel parentPartModel) {
+        setParentPartModel(parentPartModel);
+
+        for (ButtonModel thisButton : buttonModels) {
+            thisButton.relinkParentPartModel(this);
+        }
+
+        for (FieldModel thisField : fieldModels) {
+            thisField.relinkParentPartModel(this);
+        }
+    }
+
 }

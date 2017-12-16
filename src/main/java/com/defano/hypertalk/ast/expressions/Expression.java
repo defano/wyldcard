@@ -19,6 +19,15 @@ public abstract class Expression extends ASTNode {
 
     protected abstract Value onEvaluate() throws HtException;
 
+    /**
+     * Evaluates this expression, returning a HyperTalk {@link Value} or throwing a "contextualized" exception if an
+     * error occurs during evaluation. A contextualized exception is one containing a
+     * {@link com.defano.hypercard.runtime.Breadcrumb} referring to the script token and script-owning part that
+     * resulted in the exception.
+     *
+     * @return The value that this expression evaluated to.
+     * @throws HtException Thrown to indicate a semantic error was encountered during evaluation.
+     */
     public Value evaluate() throws HtException {
         try {
             return onEvaluate();
@@ -30,8 +39,10 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * Recursively attempts to evaluate the expression as a reference to a part of the given {@link PartModel} class
-     * type. Returns null if the expression cannot be evaluated as a part of this type.
+     * Attempts to evaluate the expression as a reference to a part of the given {@link PartModel} class
+     * type. Returns null if the expression cannot be evaluated as a part of this type (either because this expression
+     * cannot be factored into a valid part expression, or because the resultant part expression does not refer to
+     * an existing part).
      *
      * For example, if the expression "cd fld 1" was evaluated as a CardPart.class, the text of card field 1 would be
      * interpreted as a HyperTalk expression, that, if containing a reference to a card (for example, if the field
@@ -45,7 +56,7 @@ public abstract class Expression extends ASTNode {
      * @return The part model referred to by this expression or null if the expression does not refer to a part of this
      * type.
      */
-    public <T extends PartModel> T evaluateAsPartModel(Class<T> clazz) {
+    public <T extends PartModel> T partFactor(Class<T> clazz) {
         PartContainerExp partExp = factor(PartContainerExp.class);
 
         if (partExp == null) {
@@ -64,42 +75,34 @@ public abstract class Expression extends ASTNode {
                 return (T) model;
             } else {
                 PartContainerExp refExp = Interpreter.evaluate(partExp.evaluate(), PartContainerExp.class);
-                return refExp == null ? null : refExp.evaluateAsPartModel(clazz);
+                return refExp == null ? null : refExp.partFactor(clazz);
             }
         } catch (HtException e) {
             return null;
         }
     }
 
-    private <T extends Expression> T evaluateAs(Class<T> klazz) {
-        if (this.ungrouped().getClass().isAssignableFrom(klazz)) {
-            return (T) this.ungrouped();
-        }
-
-        try {
-            return Interpreter.evaluate(this.evaluate(), klazz);
-        } catch (HtException e) {
-            return null;
-        }
-    }
-
-    private Expression ungrouped() {
-        if (this instanceof GroupExp) {
-            return ((GroupExp) this).expression.ungrouped();
+    public <T extends PartModel> T partFactor(Class<T> clazz, HtException orError) throws HtException {
+        T factor = partFactor(clazz);
+        if (factor == null) {
+            throw orError;
         } else {
-            return this;
+            return factor;
         }
     }
 
     /**
      * Attempts to evaluate this expression as a factor conforming to one of a prioritized list of acceptable types.
+     *
+     * For example, if this expression is 'cd fld 1' but the only acceptable type is
+     *
      * When the factor can be evaluated as an acceptable type, the associated {@link FactorAction} is invoked. No more
      * than one {@link FactorAction} will be invoked (but no actions will be invoked if this expression cannot be
      * interpreted as an acceptable type).
      *
      * This method enables a recursive, context-sensitive evaluation of terms.
      *
-     * @param evaluations A prioritized order list of acceptable
+     * @param evaluations A prioritized order list of acceptable factor types, plus an action associated with each
      * @return True if this expression can be interpreted as an acceptable type (indicates that a {@link FactorAction}
      * was invoked); false otherwise.
      * @throws HtException Thrown if an invoked {@link FactorAction} produces an exception. Will not be thrown as part
@@ -120,7 +123,7 @@ public abstract class Expression extends ASTNode {
             }
         }
 
-        // If this expression (not including parens) directly matches the requested type, then take action
+        // Base case: this expression (not including parens) directly matches the requested type, then take action
         for (FactorAssociation thisEvaluation : evaluations) {
             if (thisEvaluation.expressionType.isAssignableFrom(this.ungrouped().getClass())) {
                 thisEvaluation.action.accept(this.ungrouped());
@@ -141,6 +144,15 @@ public abstract class Expression extends ASTNode {
         return false;
     }
 
+    /**
+     * A convenience form of {@link #factor(FactorAssociation[])} that accepts a single, acceptable expression type
+     * and attempts to interpret this expression as that type. Returns null if this expression cannot be interpreted
+     * in the requested format.
+     *
+     * @param clazz The requested type of expression to factor this expression into.
+     * @param <T> The requested factor subtype of {@link Expression}
+     * @return This expression interpreted as the requested type, or null if unable to interpret as requested.
+     */
     public <T extends Expression> T factor(Class<T> clazz) {
         try {
             final Object[] expr = new Object[1];
@@ -152,12 +164,58 @@ public abstract class Expression extends ASTNode {
         }
     }
 
+    /**
+     * A convenience form of {@link #factor(FactorAssociation[])} that accepts a single, acceptable expression type and
+     * an exception to throw if this expression cannot be interpreted as the requested type.
+     *
+     * @param clazz The requested type of expression to factor this expression into.
+     * @param orError The exception to be throw if this expression cannot be factored.
+     * @param <T> The requested factor subtype of {@link Expression}
+     * @return A factored representation of this expression as T
+     * @throws HtException Thrown if the factorization fails.
+     */
     public <T extends Expression> T factor(Class<T> clazz, HtException orError) throws HtException {
         T result = factor(clazz);
         if (result == null) {
             throw orError;
         } else {
             return result;
+        }
+    }
+
+    /**
+     * Attempts to evaluate this expression as an Expression of the requested subtype.
+     *
+     * Evaluates this expression as a HyperTalk {@link Value}, then invokes the {@link Interpreter} to re-parse the
+     * value. If the re-interpreted value matches the requested type then it is returned. Otherwise, null is returned.
+     *
+     * @param klazz The requested class to evaluate this expression as.
+     * @param <T> The requested Expression subtype.
+     * @return This expression evaluated as the requested type or null.
+     */
+    private <T extends Expression> T evaluateAs(Class<T> klazz) {
+        if (this.ungrouped().getClass().isAssignableFrom(klazz)) {
+            return (T) this.ungrouped();
+        }
+
+        try {
+            return Interpreter.evaluate(this.evaluate(), klazz);
+        } catch (HtException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Recursively un-groups this expression (returns the expression inside of parens); has no effect if this expression
+     * is not grouped. For example, if this expression is "(2 + 3)" or "(((2 + 3)))", this produces "2 + 3".
+     *
+     * @return The un-grouped portion of this expression.
+     */
+    private Expression ungrouped() {
+        if (this instanceof GroupExp) {
+            return ((GroupExp) this).expression.ungrouped();
+        } else {
+            return this;
         }
     }
 

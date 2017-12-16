@@ -5,6 +5,7 @@ import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
@@ -45,15 +46,16 @@ public class GoCmd extends Command {
         }
 
         else {
-            Integer cardIndex = evaluateAsCardIndex(destinationExp.evaluateAsPartModel(CardModel.class));
+            Integer cardIndex = evaluateAsCardIndex(destinationExp.partFactor(CardModel.class));
             if (cardIndex == null) {
-                cardIndex = evaluateAsCardIndex(destinationExp.evaluateAsPartModel(BackgroundModel.class));
+                cardIndex = evaluateAsCardIndex(destinationExp.partFactor(BackgroundModel.class));
             }
 
             if (cardIndex == null) {
                 throw new HtSemanticException("No such card.");
             } else {
-                HyperCard.getInstance().getStack().goCard(cardIndex, visualEffect, true);
+                Integer finalCardIndex = cardIndex;
+                ThreadUtils.invokeAndWaitAsNeeded(() -> HyperCard.getInstance().getStack().goCard(finalCardIndex, visualEffect, true));
             }
         }
     }

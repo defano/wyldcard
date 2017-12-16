@@ -76,7 +76,7 @@ public class PartToolContext {
     public void deleteSelectedPart() {
         ToolEditablePart selectedPart = this.selectedPart.get();
         if (selectedPart != null) {
-            HyperCard.getInstance().getDisplayedCard().removePart(selectedPart.getPartModel());
+            HyperCard.getInstance().getDisplayedCard().getCardModel().removePartModel(selectedPart.getPartModel());
             this.selectedPart.set(null);
         }
     }

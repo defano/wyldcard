@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.common.Owner;
 import com.defano.hypertalk.ast.common.PartType;
@@ -24,8 +25,8 @@ public abstract class CardLayerPartModel extends PartModel {
     public static final String PROP_TEXTALIGN = "textalign";
     public static final String PROP_ENABLED = "enabled";
 
-    public CardLayerPartModel(PartType type, Owner owner) {
-        super(type, owner);
+    public CardLayerPartModel(PartType type, Owner owner, PartModel parentPartModel) {
+        super(type, owner, parentPartModel);
 
         defineProperty(PROP_ZORDER, new Value(0), false);
         defineProperty(PROP_SELECTEDTEXT, new Value(""), true);
@@ -36,7 +37,6 @@ public abstract class CardLayerPartModel extends PartModel {
         defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
         defineProperty(PROP_TEXTALIGN, new Value("center"), false);
         defineProperty(PROP_ENABLED, new Value(true), false);
-
     }
 
     public TextStyleSpecifier getTextStyle() {
@@ -56,4 +56,13 @@ public abstract class CardLayerPartModel extends PartModel {
             setKnownProperty(PROP_TEXTSTYLE, style.getHyperTalkStyle());
         }
     }
+
+    public long getPartNumber() {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this);
+    }
+
+    public long getPartCount() {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(null, getOwner());
+    }
+
 }

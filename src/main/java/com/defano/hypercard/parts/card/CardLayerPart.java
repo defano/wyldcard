@@ -46,7 +46,7 @@ public interface CardLayerPart extends Part {
      */
     default void setDisplayOrder(int newPosition) {
         CardPart card = getCard();
-        ArrayList<PartModel> parts = new ArrayList<>(card.getPartsInDisplayOrder());
+        ArrayList<PartModel> parts = new ArrayList<>(card.getCardModel().getPartsInDisplayOrder());
 
         if (newPosition < 0) {
             newPosition = 0;

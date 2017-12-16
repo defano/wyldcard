@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.common.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,11 +48,14 @@ public class RangeUtils {
     public static Range getRange(String value, ChunkType chunkType, int count) {
         Pattern pattern = ChunkUtils.getRegexForChunkType(chunkType);
         Matcher matcher = pattern.matcher(value);
+        int matchCount = ChunkUtils.getMatchCount(matcher);
 
         if (count == Ordinal.LAST.intValue()) {
-            advanceToMatch(matcher, ChunkUtils.getMatchCount(matcher) - 1);
+            advanceToMatch(matcher, matchCount - 1);
         } else if (count == Ordinal.MIDDLE.intValue()) {
-            advanceToMatch(matcher, ChunkUtils.getMatchCount(matcher) / 2);
+            advanceToMatch(matcher, matchCount / 2);
+        } else if (count == Ordinal.ANY.intValue() && matchCount > 0) {
+            advanceToMatch(matcher, new Random().nextInt(matchCount));
         } else {
             advanceToMatch(matcher, count - 1);
         }
@@ -80,9 +84,9 @@ public class RangeUtils {
         if (c.end != null)
             endVal = c.end.evaluate();
 
-        if (!startVal.isNatural() && !startVal.equals(Ordinal.MIDDLE.value()))
+        if (!startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + startVal + "' instead");
-        if (endVal != null && !endVal.isNatural() && !endVal.equals(Ordinal.MIDDLE.value()))
+        if (endVal != null && !endVal.isNatural() && !Ordinal.reservedValue(endVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, got '" + endVal + "' instead");
 
         if (endVal != null)

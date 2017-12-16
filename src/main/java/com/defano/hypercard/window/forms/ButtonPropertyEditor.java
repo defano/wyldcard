@@ -1,27 +1,24 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
-import com.defano.hypercard.parts.card.CardLayerPartModel;
-import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.button.ButtonModel;
+import com.defano.hypercard.parts.button.ButtonStyle;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.util.StringUtils;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.ast.common.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.defano.hypercard.parts.button.ButtonStyle;
-import com.defano.hypercard.parts.button.ButtonModel;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Value;
 import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class ButtonPropertyEditor extends HyperCardDialog {
-    private PartModel model;
+    private ButtonModel model;
 
     private JButton saveButton;
     private JButton editScriptButton;
@@ -74,9 +71,9 @@ public class ButtonPropertyEditor extends HyperCardDialog {
                 .build());
 
         textStyle.addActionListener(e -> {
-            Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
+            Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getTextStyle().toFont());
             if (selection != null) {
-                ((FieldModel) model).setTextStyle(TextStyleSpecifier.fromFont(selection));
+                model.setTextStyle(TextStyleSpecifier.fromFont(selection));
             }
         });
 
@@ -99,21 +96,20 @@ public class ButtonPropertyEditor extends HyperCardDialog {
 
     @Override
     public void bindModel(Object data) {
-        this.model = (PartModel) data;
+        this.model = (ButtonModel) data;
 
-        PartModel part = HyperCard.getInstance().getDisplayedCard().findPartOnCard(model.getType(), model.getKnownProperty(PartModel.PROP_ID).integerValue());
-        long partNumber = HyperCard.getInstance().getDisplayedCard().getPartNumber(part);
-        long buttonNumber = HyperCard.getInstance().getDisplayedCard().getButtonNumber((ButtonModel) part);
-        long buttonCount = HyperCard.getInstance().getDisplayedCard().getPartCount(model.getType(), part.getOwner());
-        long partCount = HyperCard.getInstance().getDisplayedCard().getPartCount(null, part.getOwner());
-        String layer = part.getOwner().hyperTalkName;
+        long partNumber = model.getPartNumber();
+        long buttonNumber = model.getButtonNumber();
+        long buttonCount = model.getButtonCount();
+        long partCount = model.getPartCount();
+        String layer = model.getOwner().hyperTalkName;
 
         buttonLabel.setText(layer + " Button:");
         buttonLabelValue.setText(buttonNumber + " of " + buttonCount);
 
         partLabel.setText(layer + " Part:");
         partLabelValue.setText(partNumber + " of " + partCount);
-        idLabelValue.setText(String.valueOf(part.getId()));
+        idLabelValue.setText(String.valueOf(model.getId()));
 
         buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
         buttonTop.setText(model.getKnownProperty(ButtonModel.PROP_TOP).stringValue());
@@ -301,25 +297,6 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         panel2.add(spacer5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer6 = new Spacer();
         buttonEditor.add(spacer6, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**

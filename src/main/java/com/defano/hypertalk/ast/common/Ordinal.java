@@ -12,14 +12,15 @@ public enum Ordinal {
     NINTH(9, "ninth"),
     TENTH(10, "tenth"),
 
-    ANY(Integer.MAX_VALUE - 3, "any"),
-
     // MAX_VALUE - 2 is required to support "after the last char of..."
     LAST(Integer.MAX_VALUE - 2, "last"),
     
-    // Any negative value is interpreter to mean middle
-    MIDDLE(-1, "mid", "middle");
-    
+    // -1 interpreted to mean middle
+    MIDDLE(-1, "mid", "middle"),
+
+    // -2 interpreted to mean any
+    ANY(-2, "any");
+
     private final int value;
     private final String[] hyperTalkIdentifiers;
     
@@ -50,5 +51,9 @@ public enum Ordinal {
     
     public int intValue () {
         return value;
+    }
+
+    public static boolean reservedValue(int value) {
+        return value == ANY.intValue() || value == MIDDLE.intValue() || value == LAST.intValue();
     }
 }

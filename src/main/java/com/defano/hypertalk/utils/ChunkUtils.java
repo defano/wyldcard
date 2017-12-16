@@ -62,7 +62,7 @@ public class ChunkUtils {
      */
     public static String putChunk(ChunkType chunkType, Preposition preposition, String mutableString, int chunkNumber, int endChunkNumber, String mutatorString) {
 
-        if (chunkNumber != Ordinal.LAST.intValue() && chunkNumber != Ordinal.MIDDLE.intValue()) {
+        if (!Ordinal.reservedValue(chunkNumber)) {
 
             int chunksInContainer = getCount(chunkType, mutableString);
 

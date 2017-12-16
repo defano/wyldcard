@@ -37,11 +37,15 @@ script
 // Start symbol accepting any sequence of HyperTalk statements, expressions, whitespace and comments. Suitable when
 // evaluating the message box or HyperTalk strings via the 'do' command and 'value of' function.
 scriptlet
-    : statement                                                                                                         # singleStatementScriptlet
-    | scriptlet NEWLINE statement NEWLINE?                                                                              # statementScriptlet
-    | NEWLINE scriptlet EOF                                                                                             # whitespaceScriptlet
-    | scriptlet NEWLINE                                                                                                 # whitespaceScriptlet
-    | EOF                                                                                                               # emptyScriptlet
+    : statement EOF                                                                                                     # singleScriptlet
+    | multilineScriptlet                                                                                                # mutliScriptlet
+    ;
+
+multilineScriptlet
+    : statement NEWLINE multilineScriptlet                                                                              # stmntMultiScriptlet
+    | statement EOF                                                                                                     # stmntScriptlet
+    | NEWLINE multilineScriptlet                                                                                        # whitespaceScriptlet
+    | EOF                                                                                                               # eofScriptlet
     ;
 
 handler
@@ -70,8 +74,8 @@ parameterList
     ;
 
 statementList
-    : statement? NEWLINE+ statementList                                                                                  # multiStmntList
-    | statement NEWLINE+                                                                                                 # singleStmntList
+    : statement? NEWLINE statementList                                                                                  # multiStmntList
+    | statement NEWLINE+                                                                                                # singleStmntList
     ;
 
 statement
@@ -303,8 +307,8 @@ menuItem
     ;
 
 property
-    : globalProperty
-    | partProperty
+    : partProperty
+    | globalProperty
     ;
 
 globalProperty
@@ -491,6 +495,7 @@ singleArgFunc
     | 'number' 'of' line                                                                                                # numberOfLinesFunc
     | 'number' 'of' 'menuitems'                                                                                         # numberOfMenuItemsFunc
     | 'number' 'of' cards                                                                                               # numberOfBkgndCardsFunc
+    | 'number'                                                                                                          # numberOfPart
     | 'random'                                                                                                          # randomFunc
     | 'sqrt'                                                                                                            # sqrtFunc
     | 'trunc'                                                                                                           # truncFunc
@@ -619,6 +624,10 @@ find
 // Not all properties need to be enumerated here, only those sharing a name with another keyword.
 propertyName
     : 'marked'
+    | 'selectedtext'
+    | 'selectedchunk'
+    | 'selectedfield'
+    | 'selectedline'
     | 'number'
     | 'id'
     | 'rect'
