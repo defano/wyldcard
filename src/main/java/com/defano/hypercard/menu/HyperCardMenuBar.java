@@ -1,5 +1,6 @@
 package com.defano.hypercard.menu;
 
+import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -43,9 +44,15 @@ public class HyperCardMenuBar extends JMenuBar {
     public String doMenu(String theMenuItem) throws HtSemanticException {
         JMenuItem foundMenuItem = findMenuItemByName(theMenuItem);
         if (foundMenuItem != null) {
-            for (ActionListener thisAction : foundMenuItem.getActionListeners()) {
-                thisAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doMenu"));
-            }
+
+            ThreadUtils.invokeAndWaitAsNeeded(new Runnable() {
+                @Override
+                public void run() {
+                    for (ActionListener thisAction : foundMenuItem.getActionListeners()) {
+                        thisAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doMenu"));
+                    }
+                }
+            });
 
             return foundMenuItem.getParent().getName();
         }

@@ -171,6 +171,9 @@ public class WindowBuilder<T extends HyperCardWindow> {
             });
         }
 
+        // Bring window to front
+        SwingUtilities.invokeLater(() -> window.getWindow().toFront());
+
         return window;
     }
 
