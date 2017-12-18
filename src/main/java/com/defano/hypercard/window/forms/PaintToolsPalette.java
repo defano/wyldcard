@@ -1,13 +1,13 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.paint.FontContext;
+import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.window.HyperCardDialog;
-import com.defano.hypertalk.ast.common.ToolType;
+import com.defano.hypertalk.ast.model.ToolType;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.DoubleClickListenable;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;

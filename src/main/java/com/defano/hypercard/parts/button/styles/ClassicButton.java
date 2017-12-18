@@ -4,7 +4,7 @@ import com.defano.hypercard.border.RoundRectBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.button.ButtonModel;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import java.awt.*;
 

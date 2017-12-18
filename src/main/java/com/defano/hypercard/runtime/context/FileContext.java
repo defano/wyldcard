@@ -9,6 +9,9 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 
+/**
+ * A singleton representing the state of files opened for reading and writing by script.
+ */
 public class FileContext {
 
     private final static FileContext instance = new FileContext();

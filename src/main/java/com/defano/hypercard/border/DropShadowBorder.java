@@ -3,6 +3,9 @@ package com.defano.hypercard.border;
 import javax.swing.border.Border;
 import java.awt.*;
 
+/**
+ * Draws a single-pixel drop-shadow on the bottom and right edges of a Swing component.
+ */
 public class DropShadowBorder implements Border {
 
     private final int outlineStroke;

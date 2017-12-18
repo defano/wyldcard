@@ -1,13 +1,16 @@
 package com.defano.hypercard.icons;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * A factory for creating {@link ButtonIcon} objects by name or id.
+ */
 public class IconFactory {
 
     public static List<ButtonIcon> getAllIcons() {

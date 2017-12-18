@@ -2,13 +2,13 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackObservable;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.SystemMessage;
+import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.model.SystemMessage;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.Vector;

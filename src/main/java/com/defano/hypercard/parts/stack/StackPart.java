@@ -2,7 +2,7 @@ package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fx.CurtainManager;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
@@ -12,12 +12,12 @@ import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.SystemMessage;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
-import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jmonet.model.Provider;
 

@@ -1,11 +1,14 @@
 package com.defano.hypercard.menu;
 
-import com.defano.hypercard.paint.FontContext;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.model.ImmutableProvider;
 
 import java.awt.*;
 
+/**
+ * The HyperCard Font menu.
+ */
 public class FontMenu extends HyperCardMenu {
 
     public static FontMenu instance = new FontMenu();

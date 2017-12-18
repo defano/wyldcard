@@ -3,6 +3,9 @@ package com.defano.hypercard.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.window.WindowManager;
 
+/**
+ * The HyperCard Go menu.
+ */
 public class GoMenu extends HyperCardMenu {
 
     public static GoMenu instance = new GoMenu();

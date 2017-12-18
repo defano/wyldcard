@@ -4,11 +4,11 @@ import com.defano.hypercard.parts.field.AddressableSelection;
 import com.defano.hypercard.parts.field.SelectableTextModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.PartMessageSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
 import javax.swing.text.JTextComponent;

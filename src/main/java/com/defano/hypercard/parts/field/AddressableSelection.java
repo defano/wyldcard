@@ -1,10 +1,10 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.parts.model.PropertiesModel;
-import com.defano.hypercard.runtime.context.HyperCardProperties;
+import com.defano.hypercard.runtime.HyperCardProperties;
 import com.defano.hypercard.runtime.context.SelectionContext;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
 
 public interface AddressableSelection {
@@ -169,7 +169,7 @@ public interface AddressableSelection {
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(), true);
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(), true);
 
-            SelectionContext.getInstance().setTheSelection(getPartSpecifier(), getSelectableTextModel().getSelection());
+            SelectionContext.getInstance().setSelection(getPartSpecifier(), getSelectableTextModel().getSelection());
         }
     }
 }

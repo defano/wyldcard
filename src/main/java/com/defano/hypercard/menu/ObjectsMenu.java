@@ -10,11 +10,14 @@ import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.HyperCard;
 
 import java.util.Objects;
 
+/**
+ * The HyperCard Objects menu.
+ */
 public class ObjectsMenu extends HyperCardMenu {
 
     public static ObjectsMenu instance = new ObjectsMenu();

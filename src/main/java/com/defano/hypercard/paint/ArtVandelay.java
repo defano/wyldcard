@@ -1,8 +1,9 @@
 package com.defano.hypercard.paint;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.ToolType;
+import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jmonet.tools.SelectionTool;
 
@@ -57,7 +58,7 @@ public class ArtVandelay {
         }
     }
 
-    public static void importPaint(File file) {
+    private static void importPaint(File file) {
 
         try {
             BufferedImage importedImage = ImageIO.read(file);

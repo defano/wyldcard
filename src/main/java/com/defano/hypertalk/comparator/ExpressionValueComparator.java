@@ -1,8 +1,9 @@
 package com.defano.hypertalk.comparator;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.SortDirection;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.SortDirection;
+import com.defano.hypertalk.ast.model.SortStyle;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;

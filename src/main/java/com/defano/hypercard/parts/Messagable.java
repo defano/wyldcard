@@ -2,13 +2,13 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.functions.UserFunction;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.expressions.functions.UserFunction;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.CheckedFuture;

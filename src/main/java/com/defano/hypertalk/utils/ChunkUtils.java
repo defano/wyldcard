@@ -1,13 +1,13 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypercard.runtime.context.HyperCardProperties;
-import com.defano.hypertalk.ast.common.ChunkType;
-import com.defano.hypertalk.ast.common.CompositeChunk;
-import com.defano.hypertalk.ast.common.Ordinal;
+import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.hypertalk.ast.model.ChunkType;
+import com.defano.hypertalk.ast.model.CompositeChunk;
+import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.exception.HtException;
 import com.google.common.collect.Lists;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.Preposition;
+import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.defano.hypercard.menu;
 
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.paint.ArtVandelay;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.HyperCard;
@@ -12,6 +12,9 @@ import com.defano.jmonet.model.ImmutableProvider;
 
 import java.util.Objects;
 
+/**
+ * The HyperCard File menu.
+ */
 public class FileMenu extends HyperCardMenu {
 
     public static FileMenu instance = new FileMenu();

@@ -1,21 +1,21 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.fonts.FontFactory;
+import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.runtime.CompilationUnit;
-import com.defano.hypercard.runtime.context.HyperCardProperties;
+import com.defano.hypercard.runtime.HyperCardProperties;
 import com.defano.hypercard.util.HandlerComboBox;
 import com.defano.hypercard.util.TextLineNumber;
 import com.defano.hypercard.window.HyperCardFrame;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Script;
-import com.defano.hypertalk.ast.common.SystemMessage;
+import com.defano.hypertalk.ast.model.Script;
+import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.utils.Range;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.defano.hypercard.util.SquigglePainter;
 import com.defano.hypercard.runtime.Interpreter;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import org.antlr.v4.runtime.Token;
 
@@ -72,7 +72,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         scriptField.addCaretListener(e -> updateActiveHandler());
         scriptField.addCaretListener(e -> updateCaretPositionLabel());
 
-        scriptField.setFont(FontFactory.byNameStyleSize(
+        scriptField.setFont(FontUtils.getFontByNameStyleSize(
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
                 Font.PLAIN,
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()

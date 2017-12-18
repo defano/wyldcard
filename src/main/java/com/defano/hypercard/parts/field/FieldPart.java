@@ -2,7 +2,7 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.awt.MouseStillDown;
-import com.defano.hypercard.paint.FontContext;
+import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.util.ThreadUtils;
@@ -18,11 +18,11 @@ import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.context.HyperCardProperties;
+import com.defano.hypercard.runtime.HyperCardProperties;
 import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
 

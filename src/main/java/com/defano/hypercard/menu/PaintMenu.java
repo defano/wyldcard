@@ -1,13 +1,16 @@
 package com.defano.hypercard.menu;
 
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import java.util.Objects;
 
+/**
+ * The HyperCard Paint menu.
+ */
 public class PaintMenu extends HyperCardMenu {
 
     public static PaintMenu instance = new PaintMenu();

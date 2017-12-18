@@ -3,6 +3,9 @@ package com.defano.hypercard.border;
 import javax.swing.border.Border;
 import java.awt.*;
 
+/**
+ * Draws a round rectangle border on a Swing component.
+ */
 public class RoundRectBorder implements Border {
 
     private final int outlineStroke;

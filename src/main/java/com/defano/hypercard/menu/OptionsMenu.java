@@ -2,9 +2,9 @@ package com.defano.hypercard.menu;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.ToolType;
+import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 

@@ -5,12 +5,15 @@ import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackPart;
-import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.Preposition;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.hypercard.runtime.StackFrame;
+import com.defano.hypercard.runtime.SymbolTable;
+import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -19,6 +22,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Represents the state of HyperCard during the execution of a HyperTalk script.
+ *
+ * This object maintains the call stack, local and global variables, the part referred to as 'me', any pending visual
+ * effect, and any return value passed out of a function handler.
+ *
+ * A note about threading: When HyperCard sends a message to a part (like 'mouseDown') the handler associated with that
+ * message executes in its own thread. Any messages sent or functions invoked from that system message handler execute
+ * in the same thread. Thus, each system message produces its own thread.
+ */
 public class ExecutionContext {
 
     private static final ExecutionContext instance = new ExecutionContext();

@@ -1,7 +1,7 @@
 package com.defano.hypercard.search;
 
-import com.defano.hypertalk.ast.common.SearchType;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.SearchType;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 
 public class SearchQuery {
     public final SearchType searchType;

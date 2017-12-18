@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * An icon that can be applied to a HyperCard button.
+ */
 public interface ButtonIcon {
 
     int getId();

@@ -1,6 +1,6 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.common.*;
+import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 

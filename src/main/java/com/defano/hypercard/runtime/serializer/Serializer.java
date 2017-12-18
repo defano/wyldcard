@@ -1,7 +1,7 @@
 package com.defano.hypercard.runtime.serializer;
 
 import com.google.gson.*;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.imageio.ImageIO;
 import javax.swing.text.StyledDocument;

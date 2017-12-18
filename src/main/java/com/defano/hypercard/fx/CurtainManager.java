@@ -1,7 +1,7 @@
 package com.defano.hypercard.fx;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueAnimationObserver;
 import com.defano.jsegue.SegueCompletionObserver;
@@ -13,6 +13,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * The "screen curtain" represents a drawable layer that obscures the card with a fixed or animated graphic (for the
+ * purposes of 'lock screen' and visual effects). This singleton provides a facade for managing the screen curtain.
+ */
 public class CurtainManager implements SegueAnimationObserver, SegueCompletionObserver {
 
     private final static CurtainManager instance = new CurtainManager();

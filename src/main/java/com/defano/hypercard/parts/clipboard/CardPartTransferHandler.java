@@ -2,14 +2,14 @@ package com.defano.hypercard.parts.clipboard;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.*;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;

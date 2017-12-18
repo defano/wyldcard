@@ -1,20 +1,18 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.util.StringUtils;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.field.FieldStyle;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
-import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.field.FieldModel;
-import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.model.Owner;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.l2fprod.common.swing.JFontChooser;
 
 import javax.swing.*;

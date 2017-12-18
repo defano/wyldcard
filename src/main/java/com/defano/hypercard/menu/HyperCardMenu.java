@@ -2,6 +2,9 @@ package com.defano.hypercard.menu;
 
 import javax.swing.*;
 
+/**
+ * An extension of {@link JMenu} that prevents menubar flickering when adjusting visibility.
+ */
 public class HyperCardMenu extends JMenu {
 
     public HyperCardMenu(String name) {
@@ -16,7 +19,7 @@ public class HyperCardMenu extends JMenu {
         }
     }
 
-    public void refreshMenuBar() {
+    private void refreshMenuBar() {
         if (getParent() != null) {
             JMenuBar menuBar = (JMenuBar) getParent();
             menuBar.updateUI();

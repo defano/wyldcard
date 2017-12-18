@@ -1,6 +1,6 @@
 package com.defano.hypercard.cursor;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

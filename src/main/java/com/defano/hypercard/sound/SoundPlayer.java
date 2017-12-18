@@ -1,7 +1,7 @@
 package com.defano.hypercard.sound;
 
 import com.defano.hypercard.awt.KeyboardManager;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.sound.sampled.*;

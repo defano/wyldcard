@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.parts.button.styles.RadioButton;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 /**
  * A mixin providing reusable functionality for enabling shared highlight features (i.e., selecting radio buttons by

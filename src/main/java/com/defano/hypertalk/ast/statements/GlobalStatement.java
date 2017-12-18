@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.ParameterList;
+import com.defano.hypertalk.ast.model.ParameterList;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class GlobalStatement extends Statement {

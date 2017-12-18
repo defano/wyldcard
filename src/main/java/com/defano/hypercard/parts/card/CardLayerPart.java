@@ -1,13 +1,16 @@
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.*;
 import java.util.ArrayList;
 
+/**
+ * Represents a part that exists as part of a layer of the card (that is, a button or a field).
+ */
 public interface CardLayerPart extends Part {
 
     /**

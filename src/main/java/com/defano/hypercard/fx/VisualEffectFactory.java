@@ -1,8 +1,8 @@
 package com.defano.hypercard.fx;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypertalk.ast.common.VisualEffectImage;
-import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.model.VisualEffectImage;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueName;
 import com.defano.jsegue.renderers.*;
@@ -10,6 +10,9 @@ import com.defano.jsegue.renderers.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A factory of HyperCard visual effects.
+ */
 public class VisualEffectFactory {
 
     public static AnimatedSegue create(VisualEffectSpecifier effectSpecifier, BufferedImage from, BufferedImage to) {

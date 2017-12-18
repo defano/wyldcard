@@ -4,7 +4,7 @@ import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.awt.KeyboardManager;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.*;
 import java.awt.*;

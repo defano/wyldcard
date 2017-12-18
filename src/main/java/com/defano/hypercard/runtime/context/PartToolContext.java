@@ -1,14 +1,12 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.paint.FontContext;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.FieldPart;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.model.Provider;
 
 import java.util.Observable;
@@ -16,7 +14,7 @@ import java.util.Observer;
 
 /**
  * Management of the selection context/state of the field and button tools. Tracks which part on the displayed card
- * are presently selected, if any.
+ * is presently selected, if any.
  */
 public class PartToolContext {
 

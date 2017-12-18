@@ -3,6 +3,9 @@ package com.defano.hypercard.border;
 import javax.swing.border.Border;
 import java.awt.*;
 
+/**
+ * Draws an oval/circular border on a Swing component.
+ */
 public class OvalBorder implements Border {
 
     private final int outlineStroke;

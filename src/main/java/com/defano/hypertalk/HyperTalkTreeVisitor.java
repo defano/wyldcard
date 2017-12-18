@@ -1,16 +1,18 @@
 package com.defano.hypertalk;
 
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.HyperCardProperties;
-import com.defano.hypertalk.ast.commands.*;
-import com.defano.hypertalk.ast.common.*;
-import com.defano.hypertalk.ast.constructs.*;
-import com.defano.hypertalk.ast.containers.*;
+import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.hypertalk.ast.statements.commands.*;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.statements.conditional.IfStatement;
+import com.defano.hypertalk.ast.statements.conditional.ThenElseBlock;
+import com.defano.hypertalk.ast.statements.loop.*;
+import com.defano.hypertalk.ast.expressions.containers.*;
 import com.defano.hypertalk.ast.expressions.*;
-import com.defano.hypertalk.ast.functions.*;
-import com.defano.hypertalk.ast.specifiers.*;
+import com.defano.hypertalk.ast.expressions.functions.*;
+import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.ast.statements.*;
-import com.defano.hypertalk.comparator.SortStyle;
+import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
@@ -486,22 +488,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertyDest(HyperTalkParser.PropertyDestContext ctx) {
-        return new PropertyContainerExp(ctx, (PropertySpecifier) visit(ctx.property()));
+        return new PropertyExp(ctx, (PropertySpecifier) visit(ctx.property()));
     }
 
     @Override
     public Object visitMenuDest(HyperTalkParser.MenuDestContext ctx) {
-        return new MenuContainerExp(ctx, (MenuSpecifier) visit(ctx.menu()));
+        return new MenuExp(ctx, (MenuSpecifier) visit(ctx.menu()));
     }
 
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
-        return new MenuItemContainerExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
+        return new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
     }
 
     @Override
     public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
-        return new MsgBoxContainerExp(ctx);
+        return new MsgBoxExp(ctx);
     }
 
     @Override
@@ -1137,7 +1139,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPutIntoCmd(HyperTalkParser.PutIntoCmdContext ctx) {
-        return new PutCmd(ctx, (Expression) visit(ctx.expression()), Preposition.INTO, new MsgBoxContainerExp(ctx));
+        return new PutCmd(ctx, (Expression) visit(ctx.expression()), Preposition.INTO, new MsgBoxExp(ctx));
     }
 
     @Override
@@ -1162,7 +1164,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitVariableDest(HyperTalkParser.VariableDestContext ctx) {
-        return new VariableContainerExp(ctx, (String) visit(ctx.ID()));
+        return new VariableExp(ctx, (String) visit(ctx.ID()));
     }
 
     @Override
@@ -1189,7 +1191,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSelectionDest(HyperTalkParser.SelectionDestContext ctx) {
-        return new SelectionContainerExp(ctx);
+        return new SelectionExp(ctx);
     }
 
     @Override
@@ -1284,7 +1286,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitButtonOfCardPart(HyperTalkParser.ButtonOfCardPartContext ctx) {
-        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.buttonPart()), (PartContainerExp) visit(ctx.cardPart()));
+        return new CompositePartExp(ctx, (PartExp) visit(ctx.buttonPart()), (PartExp) visit(ctx.cardPart()));
     }
 
     @Override
@@ -1304,7 +1306,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFieldOfCardPart(HyperTalkParser.FieldOfCardPartContext ctx) {
-        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.fieldPart()), (PartContainerExp) visit(ctx.cardPart()));
+        return new CompositePartExp(ctx, (PartExp) visit(ctx.fieldPart()), (PartExp) visit(ctx.cardPart()));
     }
 
     @Override
@@ -1414,7 +1416,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardOfBkgndPart(HyperTalkParser.CardOfBkgndPartContext ctx) {
-        return new CompositePartExp(ctx, (PartContainerExp) visit(ctx.cardPart()), (PartContainerExp) visit(ctx.bkgndPart()));
+        return new CompositePartExp(ctx, (PartExp) visit(ctx.cardPart()), (PartExp) visit(ctx.bkgndPart()));
     }
 
     @Override

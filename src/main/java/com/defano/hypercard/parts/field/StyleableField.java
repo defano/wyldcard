@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.field;
 
-import com.defano.hypercard.paint.FontContext;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;

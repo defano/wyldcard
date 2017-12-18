@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.card;
 
-import com.defano.hypertalk.ast.common.Owner;
+import com.defano.hypertalk.ast.model.Owner;
 
 /**
  * An enumeration of layers in the card view stack.

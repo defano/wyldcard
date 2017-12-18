@@ -2,8 +2,8 @@ package com.defano.hypercard.menu;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypertalk.ast.common.ExpressionList;
-import com.defano.hypertalk.ast.common.SystemMessage;
+import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.model.SystemMessage;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

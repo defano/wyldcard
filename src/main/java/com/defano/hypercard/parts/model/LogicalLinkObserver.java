@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 /**
  * Logically links two logical (boolean-valued) properties together. That is, when one property changes state, the other

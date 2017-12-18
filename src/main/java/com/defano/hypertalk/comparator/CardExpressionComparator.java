@@ -5,12 +5,9 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.SortDirection;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 

@@ -2,6 +2,9 @@ package com.defano.hypercard.icons;
 
 import javax.swing.*;
 
+/**
+ * A {@link ButtonIcon} backed by a user-generated image.
+ */
 public class UserIcon implements ButtonIcon {
 
     private final String name;

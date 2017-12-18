@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;

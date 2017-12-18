@@ -1,16 +1,16 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.common.Ordinal;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.containers.PartContainerExp;
-import com.defano.hypertalk.ast.specifiers.PartNumberSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartOrdinalSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.Ordinal;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.specifiers.PartNumberSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartOrdinalSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class PartNumberExp extends PartContainerExp {
+public class PartNumberExp extends PartExp {
 
     public final Owner layer;
     public final PartType type;

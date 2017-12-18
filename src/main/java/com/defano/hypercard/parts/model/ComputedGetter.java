@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 /**
  * Represents a readable attribute whose value is computationally derived.

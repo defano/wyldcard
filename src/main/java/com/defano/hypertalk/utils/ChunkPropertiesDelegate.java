@@ -3,10 +3,10 @@ package com.defano.hypertalk.utils;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.Chunk;
-import com.defano.hypertalk.ast.common.CompositeChunk;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.hypertalk.ast.model.CompositeChunk;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 

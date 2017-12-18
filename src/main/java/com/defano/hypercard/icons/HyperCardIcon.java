@@ -3,6 +3,9 @@ package com.defano.hypercard.icons;
 import javax.swing.*;
 import java.util.Arrays;
 
+/**
+ * An enumeration of built-in HyperCard icons.
+ */
 public enum HyperCardIcon implements ButtonIcon {
 
     // Arrows, hands and pointers

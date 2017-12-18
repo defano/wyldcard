@@ -2,7 +2,7 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.KeyListenable;
 import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.parts.button.ButtonComponent;
@@ -11,8 +11,8 @@ import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.common.ToolType;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 
 import java.awt.*;

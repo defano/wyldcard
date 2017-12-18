@@ -6,6 +6,9 @@ import com.defano.jmonet.canvas.JMonetCanvas;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * An extension of JLayeredPane that provides routines for addressing card layers. See {@link CardLayer}.
+ */
 public abstract class CardLayeredPane extends JLayeredPane {
 
     private JMonetCanvas foregroundCanvas;
@@ -75,7 +78,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
         return foregroundCanvas;
     }
 
-    public Component[] getComponentsInCardLayer(CardLayer layer) {
+    private Component[] getComponentsInCardLayer(CardLayer layer) {
         return getComponentsInLayer(layer.paneLayer);
     }
 

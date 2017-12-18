@@ -2,17 +2,20 @@ package com.defano.hypercard.cursor;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackObservable;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
 import com.defano.jmonet.tools.base.PaintTool;
 
 import java.awt.*;
 
+/**
+ * A singleton facade for managing the HyperCard cursor.
+ */
 public class CursorManager {
 
     private final static CursorManager instance = new CursorManager();

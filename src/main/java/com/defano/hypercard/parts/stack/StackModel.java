@@ -9,10 +9,10 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.LimitedDepthStack;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.SystemMessage;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;

@@ -4,9 +4,9 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.containers.PartContainerExp;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -57,7 +57,7 @@ public abstract class Expression extends ASTNode {
      * type.
      */
     public <T extends PartModel> T partFactor(Class<T> clazz) {
-        PartContainerExp partExp = factor(PartContainerExp.class);
+        PartExp partExp = factor(PartExp.class);
 
         if (partExp == null) {
             return null;
@@ -74,7 +74,7 @@ public abstract class Expression extends ASTNode {
             if (clazz.isAssignableFrom(model.getClass())) {
                 return (T) model;
             } else {
-                PartContainerExp refExp = Interpreter.evaluate(partExp.evaluate(), PartContainerExp.class);
+                PartExp refExp = Interpreter.evaluate(partExp.evaluate(), PartExp.class);
                 return refExp == null ? null : refExp.partFactor(clazz);
             }
         } catch (HtException e) {

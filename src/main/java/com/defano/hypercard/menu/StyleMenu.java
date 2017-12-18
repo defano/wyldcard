@@ -1,16 +1,18 @@
 package com.defano.hypercard.menu;
 
-import com.defano.hypercard.paint.FontContext;
+import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.l2fprod.common.swing.JFontChooser;
 
 import java.awt.*;
 
-
+/**
+ * The HyperCard Style menu.
+ */
 public class StyleMenu extends HyperCardMenu {
 
     public static StyleMenu instance = new StyleMenu();

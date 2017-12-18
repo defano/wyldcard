@@ -1,7 +1,7 @@
 package com.defano.hypercard.menu;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.forms.IconCreator;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.clipboard.CardActionListener;
@@ -14,6 +14,9 @@ import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import java.util.Objects;
 
+/**
+ * The HyperCard Edit menu.
+ */
 public class EditMenu extends HyperCardMenu {
 
     public static EditMenu instance = new EditMenu();

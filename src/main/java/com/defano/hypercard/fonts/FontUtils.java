@@ -1,11 +1,14 @@
 package com.defano.hypercard.fonts;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.*;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 
+/**
+ * A utility for resolving fonts from HyperTalk identifiers.
+ */
 public class FontUtils {
 
     public static int getAlignmentStyleForValue(Value v) {
@@ -52,5 +55,13 @@ public class FontUtils {
         }
 
         return style;
+    }
+
+    public static Font getFontByNameStyleSize(String name, int style, int size) {
+        if (LocalFont.isLocalFont(name)) {
+            return LocalFont.forName(name).load(style, size);
+        } else {
+            return new Font(name, style, size);
+        }
     }
 }

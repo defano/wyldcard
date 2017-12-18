@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.common.Value;
-import com.defano.hypertalk.ast.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 

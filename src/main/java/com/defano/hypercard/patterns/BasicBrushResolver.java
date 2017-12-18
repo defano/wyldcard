@@ -1,6 +1,6 @@
 package com.defano.hypercard.patterns;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.jmonet.tools.brushes.BasicBrush;
 

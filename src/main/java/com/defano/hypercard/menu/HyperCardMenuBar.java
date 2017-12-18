@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * An extension of {@link JMenuBar} representing the HyperCard menu bar.
+ */
 public class HyperCardMenuBar extends JMenuBar {
 
     public final static HyperCardMenuBar instance = new HyperCardMenuBar();

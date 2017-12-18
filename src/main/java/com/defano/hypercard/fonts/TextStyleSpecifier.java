@@ -1,6 +1,6 @@
 package com.defano.hypercard.fonts;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
@@ -8,8 +8,8 @@ import javax.swing.text.StyleConstants;
 import java.awt.*;
 
 /**
- * A utility for representing text style and converting it between various forms of that representation like
- * {@link Font}, {@link AttributeSet} and {@link Value}.
+ * A utility for representing text style and converting it between various forms like {@link Font},
+ * {@link AttributeSet} and {@link Value}.
  */
 public class TextStyleSpecifier {
 
@@ -83,7 +83,7 @@ public class TextStyleSpecifier {
     }
 
     public Font toFont() {
-        return FontFactory.byNameStyleSize(fontFamily, getAwtFontStyle(), fontSize);
+        return FontUtils.getFontByNameStyleSize(fontFamily, getAwtFontStyle(), fontSize);
     }
 
     public static int convertHyperTalkStyleToAwt(Value style) {

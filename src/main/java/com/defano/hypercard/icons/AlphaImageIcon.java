@@ -3,13 +3,9 @@
  */
 package com.defano.hypercard.icons;
 
-import java.awt.AlphaComposite;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.image.ImageObserver;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
 /**
  * An Icon  wrapper that paints the contained icon with a specified transparency.
@@ -17,8 +13,8 @@ import javax.swing.*;
  * This class is suitable for wrapping an <CODE>ImageIcon</CODE>
  * that holds an animated image.
  *
- * @version 1.0 08/16/10
- * @author Darryl
+ * Based on a solution found here:
+ * https://tips4java.wordpress.com/2010/08/22/alpha-icons/
  */
 public class AlphaImageIcon extends ImageIcon {
 

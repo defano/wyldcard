@@ -1,14 +1,17 @@
 package com.defano.hypercard.menu;
 
-import com.defano.hypertalk.ast.common.ToolType;
+import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.WindowManager;
 
 import javax.swing.*;
 
+/**
+ * The HyperCard Tools menu.
+ */
 public class ToolsMenu extends HyperCardMenu {
 
     public static ToolsMenu instance = new ToolsMenu();

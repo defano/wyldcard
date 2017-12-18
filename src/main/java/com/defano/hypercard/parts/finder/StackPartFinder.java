@@ -7,10 +7,10 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartPositionSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartPositionSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.google.common.collect.Lists;
 

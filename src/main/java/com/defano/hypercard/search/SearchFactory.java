@@ -3,7 +3,7 @@ package com.defano.hypercard.search;
 import com.defano.hypercard.search.strategy.CharsSearchStrategy;
 import com.defano.hypercard.search.strategy.SearchStrategy;
 import com.defano.hypercard.search.strategy.WordsSearchStrategy;
-import com.defano.hypertalk.ast.common.SearchType;
+import com.defano.hypertalk.ast.model.SearchType;
 
 public class SearchFactory {
 

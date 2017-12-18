@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts;
 
-import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.model.ExpressionList;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.containers.PartContainerExp;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.specifiers.CompositePartSpecifier;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -10,12 +10,12 @@ import org.antlr.v4.runtime.ParserRuleContext;
  * An expression referring to a button or field not on the presently active card. For example, 'the first card
  * button of the next card).
  */
-public class CompositePartExp extends PartContainerExp {
+public class CompositePartExp extends PartExp {
 
-    private final PartContainerExp partExp;
-    private final PartContainerExp ofPartExp;
+    private final PartExp partExp;
+    private final PartExp ofPartExp;
 
-    public CompositePartExp(ParserRuleContext context, PartContainerExp partExp, PartContainerExp ofPartExp) {
+    public CompositePartExp(ParserRuleContext context, PartExp partExp, PartExp ofPartExp) {
         super(context);
 
         this.partExp = partExp;

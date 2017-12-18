@@ -1,6 +1,6 @@
 package com.defano.hypercard.runtime.serializer;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;

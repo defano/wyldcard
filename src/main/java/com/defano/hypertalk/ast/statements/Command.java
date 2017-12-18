@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.statements;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
-import com.defano.hypertalk.ast.common.ExpressionList;
+import com.defano.hypertalk.ast.model.ExpressionList;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;

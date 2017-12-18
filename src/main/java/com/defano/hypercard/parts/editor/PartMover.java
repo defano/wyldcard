@@ -6,7 +6,7 @@ import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.util.NumberUtils;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.*;
 import java.awt.*;

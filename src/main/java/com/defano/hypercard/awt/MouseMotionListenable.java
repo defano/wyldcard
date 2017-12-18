@@ -3,6 +3,9 @@ package com.defano.hypercard.awt;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
+/**
+ * A mix-in providing default (empty) implementations of methods defined in {@link MouseMotionListener}.
+ */
 public interface MouseMotionListenable extends MouseMotionListener {
 
     @Override

@@ -9,6 +9,9 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A builder of HyperCard menu items.
+ */
 public class MenuItemBuilder {
 
     private final JMenuItem item;

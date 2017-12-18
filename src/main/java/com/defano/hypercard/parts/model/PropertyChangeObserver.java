@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.model;
 
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Value;
 
 /**
  * An observer of changes to attributes in a {@link PropertiesModel}.

@@ -6,9 +6,9 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.common.Ordinal;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.specifiers.*;
+import com.defano.hypertalk.ast.model.Ordinal;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.specifiers.*;
 
 import java.util.List;
 import java.util.Optional;

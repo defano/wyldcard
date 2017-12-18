@@ -9,9 +9,9 @@ import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Value;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Value;
 import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;

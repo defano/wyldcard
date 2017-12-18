@@ -3,7 +3,7 @@ package com.defano.hypercard.window.forms;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.hypercard.paint.ToolsContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 
 import javax.swing.*;
 import java.awt.*;

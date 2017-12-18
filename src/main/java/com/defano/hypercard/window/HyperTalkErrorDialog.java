@@ -3,7 +3,7 @@ package com.defano.hypercard.window;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.Breadcrumb;
 import com.defano.hypercard.window.forms.ScriptEditor;
-import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.Token;
 

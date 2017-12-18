@@ -1,14 +1,14 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
-import com.defano.hypertalk.ast.common.Position;
-import com.defano.hypertalk.ast.containers.PartContainerExp;
-import com.defano.hypertalk.ast.specifiers.PartPositionSpecifier;
-import com.defano.hypertalk.ast.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Position;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.specifiers.PartPositionSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class PartPositionExp extends PartContainerExp {
+public class PartPositionExp extends PartExp {
 
     private final PartType type;
     private final Position position;

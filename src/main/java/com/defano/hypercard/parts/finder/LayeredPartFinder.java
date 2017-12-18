@@ -2,8 +2,8 @@ package com.defano.hypercard.parts.finder;
 
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.util.ZOrderComparator;
-import com.defano.hypertalk.ast.common.Owner;
-import com.defano.hypertalk.ast.common.PartType;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
 
 import java.util.ArrayList;
 import java.util.Collection;
