@@ -96,6 +96,9 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
         return new PartMessageSpecifier();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
         // Nothing to do

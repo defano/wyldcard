@@ -85,9 +85,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
      * @param parent The card in which the field should be created.
      * @param model The data model of the field to be created.
      * @return The newly created field.
-     * @throws HtException Thrown if an error occurs instantiating this field on the card.
      */
-    public static FieldPart fromModel(CardPart parent, FieldModel model) throws HtException {
+    public static FieldPart fromModel(CardPart parent, FieldModel model) {
         FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent, model.getOwner());
 
         model.setCurrentCardId(parent.getId());

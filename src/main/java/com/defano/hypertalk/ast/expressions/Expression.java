@@ -17,6 +17,12 @@ public abstract class Expression extends ASTNode {
         super(context);
     }
 
+    /**
+     * Evaluates the expression as a HyperTalk {@link Value}.
+     *
+     * @return The evaluated {@link Value} of this expression.
+     * @throws HtException Thrown if an error occurs evaluating the expression.
+     */
     protected abstract Value onEvaluate() throws HtException;
 
     /**
@@ -82,6 +88,16 @@ public abstract class Expression extends ASTNode {
         }
     }
 
+    /**
+     * A convenience form of {@link #partFactor(Class)} that throws an exception rather than returning null if this
+     * expression cannot be evaluated as a {@link PartModel} of the requested type.
+     * @param clazz The class of part model to coerce this expression to.
+     * @param <T> A subtype of PartModel
+     * @param orError An exception to be thrown if the factor cannot be evaluated as requested.
+     * @return The part model referred to by this expression or null if the expression does not refer to a part of this
+     * type.
+     * @throws HtException Thrown if the factor cannot be evaluated as requested.
+     */
     public <T extends PartModel> T partFactor(Class<T> clazz, HtException orError) throws HtException {
         T factor = partFactor(clazz);
         if (factor == null) {

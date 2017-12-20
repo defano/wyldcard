@@ -24,8 +24,8 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * A data model representing a field part on a card.
- * See {@link FieldPart} for the associated controller object. This model is a mess. Just go with it:
+ * A data model representing a field part on a card. See {@link FieldPart} for the associated controller object.
+ * This model is a mess. Just go with it:
  * <p>
  * First: HyperCard mixes rich text (as edited by the user in the view) with plaintext (as written or read via script).
  * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can
@@ -36,7 +36,7 @@ import java.util.*;
  * Second: Fields placed in the background layer can either share their contents across all cards in the background
  * or, each card may have its own text (while still sharing other properties like size, location and showLines). This
  * necessitates the {@link #sharedText} and {@link #unsharedText} properties. Foreground-layer fields always use the
- * {@link #sharedText} value.
+ * {@link #sharedText} value. This same sharing behavior applies to auto-selection (list fields).
  * <p>
  * Third: TextAlign is a separate, managed property of the field and not of the document model because Java's
  * RTFEditorKit doesn't support saving text alignment. Ugh! That's okay though, because HyperCard supports only a
@@ -46,11 +46,18 @@ import java.util.*;
  * Fourth: Changes to the field's DOM can originate from the UI (i.e., a user typing into the field) or from HyperTalk.
  * Because changes can originate in the view ({@link HyperCardTextField}, this
  * requires a bidirectional observation binding: the model must observe the view for changes, and the view must observe
- * the model for changes..
+ * the model for changes...
  * <p>
  * Four-and-a-half: Not only do the view and the model need to observe one another, but some aspects of the model (like
- * rich-text data and selection ranges) are not readily modeled in the PropertiesModel, so they require thier own
+ * rich-text data and selection ranges) are not readily modeled in the PropertiesModel, so they require their own
  * observation API, {@link FieldModelObserver}.
+ * <p>
+ * Fifth: When dealing with background fields whose text is not shared across all cards, we have to know which card
+ * we're dealing with in order to know which text is in scope for document operations. The model exposes a
+ * thread-local {@link #setCurrentCardId(int)} property that determines which card is "active" for the purposes of
+ * getting or setting text. To support remote field references in script (i.e., 'put "ugh" into bg fld 3 of the last
+ * card'), we can't simply query HyperCard for the displayed card.
+ *
  */
 public class FieldModel extends CardLayerPartModel implements AddressableSelection, SelectableTextModel {
 

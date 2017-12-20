@@ -47,7 +47,6 @@ public class WindowManager {
 
         WindowBuilder.make(shapesPalette)
                 .asPalette()
-                .withTitle("Shapes")
                 .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
@@ -55,7 +54,6 @@ public class WindowManager {
 
         WindowBuilder.make(linesPalette)
                 .asPalette()
-                .withTitle("Lines")
                 .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()

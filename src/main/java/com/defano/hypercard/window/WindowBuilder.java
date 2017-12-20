@@ -4,10 +4,7 @@ import com.defano.hypercard.HyperCard;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public class WindowBuilder<T extends HyperCardWindow> {
 
@@ -151,6 +148,23 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.getWindow().setFocusableWindowState(!isPalette);
 
         if (dock != null) {
+
+            // When dock (main) window is focused, bring palette windows to front
+            dock.getWindow().addWindowFocusListener(new WindowFocusListener() {
+                @Override
+                public void windowGainedFocus(WindowEvent e) {
+                    if (!window.getWindow().isFocusableWindow()) {
+                        window.getWindow().toFront();
+                    }
+                }
+
+                @Override
+                public void windowLostFocus(WindowEvent e) {
+                    // Nothing to do
+                }
+            });
+
+            // When dock window moves, move docked windows too (keep relative window layout)
             dock.getWindow().addComponentListener(new ComponentAdapter() {
                 private Point lastLocation;
 

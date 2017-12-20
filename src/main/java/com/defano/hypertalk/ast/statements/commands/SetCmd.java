@@ -36,6 +36,7 @@ public class SetCmd extends Command {
                 MenuPropertiesDelegate.setProperty(propertySpec.getProperty(), expression.evaluate(), propertySpec.getMenuItem());
             }
 
+            // Setting the property of a chunk of text
             else if (propertySpec.isChunkPropertySpecifier()) {
                 ChunkPropertiesDelegate.setProperty(propertySpec.getProperty(), expression.evaluate(), propertySpec.getChunk(), propertySpec.getPartExp().evaluateAsSpecifier());
             }
