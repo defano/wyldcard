@@ -111,7 +111,7 @@ public class HyperCard {
 
         // Prompt to save if user has unsaved changes
         if (isDirty()) {
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
+            int dialogResult = JOptionPane.showConfirmDialog(stackPart.getDisplayedCard(), "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
                 getStack().save(getSavedStackFileProvider().get());
             }

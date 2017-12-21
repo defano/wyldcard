@@ -12,6 +12,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
     private final T window;
     private Point location = null;
+    private Component relativeLocation = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
     private HyperCardFrame dock;
@@ -84,7 +85,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     public WindowBuilder withLocationCenteredOver(Component component) {
-        this.window.getWindow().setLocationRelativeTo(component);
+        relativeLocation = component;
         return this;
     }
 
@@ -113,10 +114,10 @@ public class WindowBuilder<T extends HyperCardWindow> {
     public T build() {
         this.window.getWindow().pack();
 
-        if (location == null) {
-            this.window.getWindow().setLocationRelativeTo(null);
-        } else {
+        if (location != null) {
             this.window.getWindow().setLocation(location);
+        } else {
+            this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }
 
         this.window.applyMenuBar();

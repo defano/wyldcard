@@ -97,12 +97,7 @@ public class MenuItemBuilder {
     }
 
     public MenuItemBuilder withShortcut (char shortcut) {
-        if (shortcut == '+') {
-            this.item.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        } else {
-            this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        }
-
+        this.item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         this.item.setMnemonic(shortcut);
         return this;
     }

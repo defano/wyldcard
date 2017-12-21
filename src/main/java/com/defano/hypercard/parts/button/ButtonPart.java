@@ -71,7 +71,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @return The new button.
      */
     public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
-        ButtonPart button = new ButtonPart(ButtonStyle.DEFAULT, parent, owner);
+        ButtonPart button = new ButtonPart(ButtonStyle.ROUND_RECT, parent, owner);
         button.initProperties(geometry, parent.getPartModel());
         return button;
     }

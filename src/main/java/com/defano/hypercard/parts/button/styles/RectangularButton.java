@@ -7,12 +7,11 @@ import java.awt.*;
 
 public class RectangularButton extends AbstractLabelButton {
 
-    private final static int OUTLINE_STROKE = 1;        // Width of button outline
     private final static int HILITE_INSET = 1;          // Inset of fill hilite
 
     public RectangularButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
-        setBorder(new RectangleBorder(OUTLINE_STROKE));
+        setBorder(new RectangleBorder());
         setOpaque(true);
         setBackground(Color.WHITE);
     }

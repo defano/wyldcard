@@ -17,8 +17,11 @@ public class OvalBorder implements Border {
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         g.setColor(c.isEnabled() ? Color.BLACK : Color.GRAY);
+
         ((Graphics2D)g).setStroke(new BasicStroke(outlineStroke));
-        g.drawOval(outlineStroke / 2, outlineStroke / 2, width - outlineStroke / 2, height - outlineStroke / 2);
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        g.drawOval(Math.max(outlineStroke / 2, 1), Math.max(outlineStroke / 2, 1), width - Math.max(outlineStroke / 2, 2), height - Math.max(outlineStroke / 2, 2));
     }
 
     @Override

@@ -44,7 +44,7 @@ public class ButtonModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_WIDTH, new Value(geometry.width), false);
         partModel.defineProperty(PROP_HEIGHT, new Value(geometry.height), false);
         partModel.defineProperty(PROP_SHOWNAME, new Value(true), false);
-        partModel.defineProperty(PROP_STYLE, new Value(ButtonStyle.DEFAULT.getName()), false);
+        partModel.defineProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.getName()), false);
         partModel.defineProperty(PROP_FAMILY, new Value(), false);
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
         partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);

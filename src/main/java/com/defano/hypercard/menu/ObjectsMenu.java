@@ -1,17 +1,17 @@
 package com.defano.hypercard.menu;
 
-import com.defano.hypercard.window.WindowBuilder;
-import com.defano.hypercard.window.forms.BackgroundPropertyEditor;
-import com.defano.hypercard.window.forms.CardPropertyEditor;
-import com.defano.hypercard.window.forms.StackPropertyEditor;
+import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.field.FieldPart;
-import com.defano.hypercard.window.WindowManager;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.window.WindowBuilder;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.BackgroundPropertyEditor;
+import com.defano.hypercard.window.forms.CardPropertyEditor;
+import com.defano.hypercard.window.forms.StackPropertyEditor;
+import com.defano.jmonet.model.ImmutableProvider;
 
 import java.util.Objects;
 
@@ -77,7 +77,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .named("Bring Closer")
                 .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
                 .withAction(a -> PartToolContext.getInstance().bringSelectedPartCloser())
-                .withShortcut('+')
+                .withShortcut('=')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

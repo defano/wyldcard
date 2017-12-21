@@ -7,6 +7,7 @@ public enum ButtonStyle {
 
     DEFAULT("Default"),
     CLASSIC("Classic"),
+    ROUND_RECT("Round Rect"),
     CHECKBOX("Checkbox"),
     RADIO("Radio"),
     MENU("Menu"),
@@ -26,6 +27,11 @@ public enum ButtonStyle {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public static ButtonStyle fromName(String name) {
         for (ButtonStyle thisStyle : values()) {
             if (thisStyle.getName().equalsIgnoreCase(name)) {
@@ -33,6 +39,6 @@ public enum ButtonStyle {
             }
         }
 
-        throw new IllegalArgumentException("No such button style: " + name);
+        return DEFAULT;
     }
 }

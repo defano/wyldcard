@@ -29,7 +29,7 @@ public class TransparentButton extends AbstractLabelButton {
         if (enabled) {
             setBorder(BorderFactory.createEmptyBorder());
         } else {
-            setBorder(new RectangleBorder(1));
+            setBorder(new RectangleBorder());
         }
     }
 }

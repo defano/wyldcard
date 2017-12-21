@@ -8,36 +8,31 @@ import java.awt.*;
  */
 public class DropShadowBorder implements Border {
 
-    private final int outlineStroke;
-    private final int shadowStroke;
-    private final int shadowOffset;
-
-    public DropShadowBorder(int outlineStrokeWidth, int shadowStrokeWidth, int shadowOffset) {
-        this.outlineStroke = outlineStrokeWidth;
-        this.shadowStroke = shadowStrokeWidth;
-        this.shadowOffset = shadowOffset;
-    }
+    private final static int OUTLINE_STROKE = 1;
+    private final static int SHADOW_STROKE = 2;
+    private final static int SHADOW_INSET = 5;
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
         Graphics2D g2d = (Graphics2D) g;
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2d.setPaint(c.isEnabled() ? Color.BLACK : Color.GRAY);
-        g2d.setStroke(new BasicStroke(outlineStroke));
-        g.drawRect(outlineStroke / 2, outlineStroke / 2, width - shadowStroke - outlineStroke / 2, height - shadowStroke - outlineStroke / 2);
+        g2d.setStroke(new BasicStroke(OUTLINE_STROKE));
+        g.drawRect(OUTLINE_STROKE / 2, OUTLINE_STROKE / 2, width - SHADOW_STROKE, height - SHADOW_STROKE);
 
-        g2d.setStroke(new BasicStroke(shadowStroke));
+        g2d.setStroke(new BasicStroke(SHADOW_STROKE));
 
         // Draw horizontal shadow line
-        g2d.drawLine(shadowOffset, height - Math.floorDiv(shadowStroke, 2), width, height - Math.floorDiv(shadowStroke, 2));
+        g2d.drawLine(SHADOW_INSET, height - Math.floorDiv(SHADOW_STROKE, 2), width, height - Math.floorDiv(SHADOW_STROKE, 2));
 
         // Draw vertical shadow line
-        g2d.drawLine(width - Math.floorDiv(shadowStroke, 2), height - Math.floorDiv(shadowStroke, 2) - 1, width - Math.floorDiv(shadowStroke, 2), shadowOffset);
+        g2d.drawLine(width - Math.floorDiv(SHADOW_STROKE, 2), height - Math.floorDiv(SHADOW_STROKE, 2) - 1, width - Math.floorDiv(SHADOW_STROKE, 2), SHADOW_INSET);
     }
 
     @Override
     public Insets getBorderInsets(Component c) {
-        return new Insets(outlineStroke, outlineStroke, shadowStroke + outlineStroke, shadowStroke + outlineStroke);
+        return new Insets(OUTLINE_STROKE, OUTLINE_STROKE, SHADOW_STROKE + OUTLINE_STROKE, SHADOW_STROKE + OUTLINE_STROKE);
     }
 
     @Override

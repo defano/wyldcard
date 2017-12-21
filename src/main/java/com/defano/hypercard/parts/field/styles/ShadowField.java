@@ -5,13 +5,9 @@ import com.defano.hypercard.border.DropShadowBorder;
 
 public class ShadowField extends HyperCardTextField {
 
-    private final static int OUTLINE_STROKE = 1;
-    private final static int SHADOW_STROKE = 2;
-    private final static int SHADOW_OFFSET = 5;
-
     public ShadowField(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
-        setBorder(new DropShadowBorder(OUTLINE_STROKE, SHADOW_STROKE, SHADOW_OFFSET));
+        setBorder(new DropShadowBorder());
     }
 
 }

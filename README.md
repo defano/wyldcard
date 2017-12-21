@@ -588,18 +588,19 @@ Property      | Description
 
 Buttons come in a variety of _styles_ which affect their look-and-feel. HyperTalk Java supports the following button styles:
 
-Style                                    | Name          | Notes
------------------------------------------|---------------|----------------------
-![Default](doc/images/default.png)       | `default`     | A push button whose style matches that of the operating system.
-![Default](doc/images/classic.png)       | `classic`     | A push button drawn in the style of Mac OS Classic.
-![Default](doc/images/shadow.png)        | `shadow`      | A push button drawn with a drop-shadow decoration.
-![Default](doc/images/oval.png) | `oval` | A push button drawn with an oval border.
-![Default](doc/images/rectangular.png)   | `rectangular` | A push button drawn with a rectangular border.
-![Default](doc/images/transparent.png)   | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
-![Opaque](doc/images/opaque.png)         | `opaque`      | A rectangular push button drawn without a border.
-![Default](doc/images/checkbox.png)      | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/radio.png)         | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/menu.png)          | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
+Style                                      | Name          | Notes
+-------------------------------------------|---------------|----------------------
+![Round Rect](doc/images/roundrect.png)    | `round rect`  | HyperCard's original push button style; drawn as a round-rectangle with a drop shadow.
+![Default](doc/images/default.png)         | `default`     | A push button whose style matches that of the operating system.
+![Classic](doc/images/classic.png)         | `classic`     | A push button drawn in the style of Mac OS Classic.
+![Shadow](doc/images/shadow.png)           | `shadow`      | A push button drawn with a drop-shadow decoration.
+![Oval](doc/images/oval.png)               | `oval` | A push button drawn with an oval border.
+![Rectangular](doc/images/rectangular.png) | `rectangular` | A push button drawn with a rectangular border.
+![Transparent](doc/images/transparent.png) | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
+![Opaque](doc/images/opaque.png)           | `opaque`      | A rectangular push button drawn without a border.
+![Default](doc/images/checkbox.png)        | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Default](doc/images/radio.png)           | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Default](doc/images/menu.png)            | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
 
 In addition to the properties common to all parts, a button has these additional properties:
 

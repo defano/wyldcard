@@ -8,8 +8,10 @@ import java.awt.*;
  */
 public class RectangleBorder extends LineBorder {
 
-    public RectangleBorder(int outlineStroke) {
-        super(Color.BLACK, outlineStroke);
+    private final static int OUTLINE_STROKE = 1;
+
+    public RectangleBorder() {
+        super(Color.BLACK, OUTLINE_STROKE);
     }
 
 }

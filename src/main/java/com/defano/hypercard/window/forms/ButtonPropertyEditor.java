@@ -4,7 +4,6 @@ import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.ButtonStyle;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.util.StringUtils;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
@@ -79,7 +78,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
 
         DefaultComboBoxModel model = new DefaultComboBoxModel();
         for (ButtonStyle thisStyle : ButtonStyle.values()) {
-            model.addElement(thisStyle.getName());
+            model.addElement(thisStyle);
         }
         style.setModel(model);
     }
@@ -119,7 +118,8 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
         isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue());
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
-        style.setSelectedItem(StringUtils.capitalize(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
+        style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
+//        style.setSelectedItem(StringUtils.capitalize(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
         family.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
         autoHilite.setSelected(model.getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue());
     }
