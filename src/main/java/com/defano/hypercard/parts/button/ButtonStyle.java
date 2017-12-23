@@ -5,8 +5,9 @@ package com.defano.hypercard.parts.button;
  */
 public enum ButtonStyle {
 
-    DEFAULT("Default"),
+    NATIVE("Native"),
     CLASSIC("Classic"),
+    DEFAULT("Default"),
     ROUND_RECT("Round Rect"),
     CHECKBOX("Checkbox"),
     RADIO("Radio"),
@@ -39,6 +40,6 @@ public enum ButtonStyle {
             }
         }
 
-        return DEFAULT;
+        return NATIVE;
     }
 }

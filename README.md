@@ -590,9 +590,10 @@ Buttons come in a variety of _styles_ which affect their look-and-feel. HyperTal
 
 Style                                      | Name          | Notes
 -------------------------------------------|---------------|----------------------
-![Round Rect](doc/images/roundrect.png)    | `round rect`  | HyperCard's original push button style; drawn as a round-rectangle with a drop shadow.
-![Default](doc/images/default.png)         | `default`     | A push button whose style matches that of the operating system.
+![Native](doc/images/native.png)           | `native`      | A push button whose style matches that of the current operating system.
 ![Classic](doc/images/classic.png)         | `classic`     | A push button drawn in the style of Mac OS Classic.
+![Default](doc/images/default.png)         | `default`     | A Mac OS Classic push button with a heavy outline (indicating the button in a dialog that is selected by pressing enter).
+![Round Rect](doc/images/roundrect.png)    | `round rect`  | HyperCard's original push button style; drawn as a round-rectangle with a drop shadow.
 ![Shadow](doc/images/shadow.png)           | `shadow`      | A push button drawn with a drop-shadow decoration.
 ![Oval](doc/images/oval.png)               | `oval` | A push button drawn with an oval border.
 ![Rectangular](doc/images/rectangular.png) | `rectangular` | A push button drawn with a rectangular border.

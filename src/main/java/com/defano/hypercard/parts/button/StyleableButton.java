@@ -75,7 +75,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
         switch (style) {
             case CHECKBOX:
                 return new CheckboxButton(this);
-            case DEFAULT:
+            case NATIVE:
                 return new DefaultButton(this);
             case ROUND_RECT:
                 return new RoundRectButton(this);
@@ -93,6 +93,8 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
                 return new OvalButton(this);
             case CLASSIC:
                 return new ClassicButton(this);
+            case DEFAULT:
+                return new DefaultClassicButton(this);
             case SHADOW:
                 return new ShadowButton(this);
 

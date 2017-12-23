@@ -4,19 +4,20 @@ import com.defano.hypercard.border.RoundRectBorder;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 public class ClassicButton extends AbstractLabelButton implements ButtonComponent {
 
-    private final static int ARC_DIAMETER = 6;      // Rounded corner diameter
+    protected final static int ARC_DIAMETER = 6;      // Rounded corner diameter
     private final static int HILITE_INSET = 1;
 
     public ClassicButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
         setOpaque(false);
         setBackground(Color.WHITE);
-        setBorder(new RoundRectBorder(ARC_DIAMETER));
+        setBorder(getButtonBorder());
     }
 
     @Override
@@ -45,4 +46,7 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
         }
     }
 
+    protected Border getButtonBorder() {
+        return new RoundRectBorder(ARC_DIAMETER);
+    }
 }
