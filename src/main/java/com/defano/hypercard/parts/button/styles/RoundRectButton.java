@@ -22,7 +22,7 @@ public class RoundRectButton extends AbstractLabelButton implements ButtonCompon
         if (isHilited) {
             g.setColor(Color.BLACK);
 
-            // Add 1px margin to fill to prevent missed pixels around the corners
+            // Expand fill area into the border to prevent unfilled/aliased pixels in the corners
             g.fillRoundRect(
                     getInsets().left - 1,
                     getInsets().top - 1,

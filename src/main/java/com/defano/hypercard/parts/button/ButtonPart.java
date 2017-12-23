@@ -2,7 +2,6 @@ package com.defano.hypercard.parts.button;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.awt.MouseStillDown;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
@@ -11,6 +10,7 @@ import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.Interpreter;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.window.forms.ButtonPropertyEditor;
@@ -33,8 +33,8 @@ import java.lang.ref.WeakReference;
  */
 public class ButtonPart extends StyleableButton implements CardLayerPart, MouseListener, PropertyChangeObserver {
 
-    private static final int DEFAULT_WIDTH = 160;
-    private static final int DEFAULT_HEIGHT = 40;
+    private static final int DEFAULT_WIDTH = 120;
+    private static final int DEFAULT_HEIGHT = 30;
 
     private final Owner owner;
     private ButtonModel partModel;

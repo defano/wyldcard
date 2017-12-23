@@ -1,5 +1,6 @@
 package com.defano.hypercard.parts.util;
 
+import com.defano.hypercard.parts.button.styles.AbstractLabelButton;
 import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;
@@ -281,7 +282,13 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
                 // Special case: found component is a container... uh oh
                 if (c instanceof Container) {
 
-                    // Give priority to scroll pane's viewport if it's hit
+                    // Special case: Certain button types are implemented as containers; don't traverse button
+                    //  hierarchies when we hit one of these.
+                    if (c instanceof AbstractLabelButton) {
+                        return c;
+                    }
+
+                    // Special case: Give priority to scroll pane's viewport if it's hit
                     if (c instanceof JScrollPane) {
                         Component viewPortView = ((JScrollPane)c).getViewport().getView();
                         Point childHidPoint = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), c);
