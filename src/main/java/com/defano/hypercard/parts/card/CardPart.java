@@ -174,6 +174,19 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     /**
+     * Adds a new button (with default attributes) to this card using the given bounding rectangle. Represents the
+     * behavior of the user command-draging with the button tool active.
+     * // TODO: Should probably be moved to CardModel
+     */
+    public ButtonPart newButton(Rectangle rectangle) {
+        CardLayer layer = CardLayerPart.getActivePartLayer();
+        ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner(), rectangle);
+        addButton(newButton);
+
+        return newButton;
+    }
+
+    /**
      * Adds a new field (with default attributes) to this card. Represents the behavior of the user choosing
      * "New Field" from the Objects menu.
      * // TODO: Should probably be moved to CardModel
@@ -182,6 +195,17 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner());
         addField(newField);
+    }
+
+    /**
+     * Adds a new field with a given geometry to this card.
+     * // TODO: Should probably be moved to CardModel
+     */
+    public FieldPart newField(Rectangle rectangle) {
+        CardLayer layer = CardLayerPart.getActivePartLayer();
+        FieldPart newField = FieldPart.newField(this, layer.asOwner(), rectangle);
+        addField(newField);
+        return newField;
     }
 
     /**

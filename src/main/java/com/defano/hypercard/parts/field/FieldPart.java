@@ -64,10 +64,19 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
      * @return The newly created FieldPart
      */
     public static FieldPart newField(CardPart parent, Owner owner) {
+        return newField(parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    }
+
+    /**
+     * Creates a new field with default attributes on the given card.
+     * @param parent The card in which the field should be generated.
+     * @return The newly created FieldPart
+     */
+    public static FieldPart newField(CardPart parent, Owner owner, Rectangle rectangle) {
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
         // Place the field in the center of the card
-        newField.initProperties(new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), parent.getPartModel());
+        newField.initProperties(rectangle, parent.getPartModel());
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());

@@ -54,7 +54,17 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @return The new button.
      */
     public static ButtonPart newButton(CardPart parent, Owner owner) {
-        ButtonPart newButton = fromGeometry(parent, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT), owner);
+        return newButton(parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    }
+
+    /**
+     * Creates a new button on the given card with a given geometry.
+     *
+     * @param parent The card that this button will belong to.
+     * @return The new button.
+     */
+    public static ButtonPart newButton(CardPart parent, Owner owner, Rectangle rectangle) {
+        ButtonPart newButton = fromGeometry(parent, rectangle, owner);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
@@ -62,6 +72,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         return newButton;
     }
+
 
     /**
      * Creates a new button on the given card with the provided geometry.
