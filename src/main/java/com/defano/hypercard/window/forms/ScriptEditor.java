@@ -1,7 +1,7 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.runtime.CompilationUnit;
+import com.defano.hypercard.runtime.interpreter.CompilationUnit;
 import com.defano.hypercard.runtime.HyperCardProperties;
 import com.defano.hypercard.util.HandlerComboBox;
 import com.defano.hypercard.util.TextLineNumber;
@@ -14,7 +14,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.defano.hypercard.util.SquigglePainter;
-import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import org.antlr.v4.runtime.Token;

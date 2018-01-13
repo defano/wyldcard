@@ -7,7 +7,7 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.ToolsContext;

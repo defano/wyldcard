@@ -4,7 +4,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.MessageCompletionObserver;
-import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

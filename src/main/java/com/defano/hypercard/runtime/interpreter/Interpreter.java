@@ -1,25 +1,17 @@
-package com.defano.hypercard.runtime;
+package com.defano.hypercard.runtime.interpreter;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.functions.UserFunction;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
+import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.hypertalk.exception.HtSyntaxException;
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
-import com.defano.hypertalk.HyperTalkTreeVisitor;
-import com.defano.hypertalk.HyperTalkErrorListener;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.expressions.functions.UserFunction;
-import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.parser.HyperTalkLexer;
-import com.defano.hypertalk.parser.HyperTalkParser;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import javax.swing.*;
 import java.util.concurrent.*;
@@ -28,9 +20,9 @@ import java.util.concurrent.*;
  * A facade and thread model for executing HyperTalk scripts. All script compilation and execution should flow through
  * this class to assure proper threading.
  */
-public class Interpreter {
+public class Interpreter implements TwoPhaseParser {
 
-    private final static int MAX_COMPILE_THREADS  = 1;          // Simultaneous background compile tasks
+    private final static int MAX_COMPILE_THREADS  = 1;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 12;         // Simultaneous scripts executing
     private final static int MAX_LISTENER_THREADS = 12;         // Simultaneous listeners waiting for handler completion
 
@@ -50,21 +42,21 @@ public class Interpreter {
     }
 
     /**
-     * Preemptively compiles the given script on a background compile thread and invokes the CompileCompletionObserver
+     * Preemptively compiles the given script on a background thread and invokes the CompileCompletionObserver
      * when complete.
      *
      * Note that this method cancels any previously requested compilation except the currently executing compilation,
-     * if one is executing. Thus, invocation of the observer to indicate completion is not guaranteed. Some jobs will
-     * be canceled before they run and thus never complete.
+     * if one is executing. Thus, invocation of the completion observer is not guaranteed. Some jobs will be canceled
+     * before they run and thus never complete.
      *
-     * This method is primarily useful for compile-as-you-type syntax checking.
+     * This method is primarily useful for parse-as-you-type syntax checking.
      *
-     * @param scriptText The script to compile.
+     * @param scriptText The script to parse.
      * @param observer A non-null callback to fire when compilation is complete.
      */
     public static void compileInBackground(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
 
-        // Preempt any previously enqueued compile jobs
+        // Preempt any previously enqueued parse jobs
         backgroundCompileExecutor.getQueue().clear();
 
         backgroundCompileExecutor.submit(() -> {
@@ -72,7 +64,7 @@ public class Interpreter {
             Object compiledScript = null;
 
             try {
-                compiledScript = compile(compilationUnit, scriptText);
+                compiledScript = TwoPhaseParser.parseScript(compilationUnit, scriptText);
             } catch (HtException e) {
                 generatedError = e;
             }
@@ -81,40 +73,26 @@ public class Interpreter {
         });
     }
 
-    private static Object compile(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
-        HyperTalkErrorListener errors = new HyperTalkErrorListener();
-        HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        HyperTalkParser parser = new HyperTalkParser(tokens);
-        parser.removeErrorListeners();        // don't log to console
-        parser.addErrorListener(errors);
-
-        try {
-            ParseTree tree = compilationUnit.getParseTree(parser);
-
-            if (!errors.errors.isEmpty()) {
-                throw errors.errors.get(0);
-            }
-
-            return new HyperTalkTreeVisitor().visit(tree);
-        } catch (RecognitionException e) {
-            throw new HtSyntaxException(e);
-        }
-    }
-
+    /**
+     * Compiles the given "scriptlet" on the current thread.
+     *
+     * @param scriptText The script text to parse.
+     * @return The compiled Script object (the root of the abstract syntax tree)
+     * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
+     */
     public static Script compileScriptlet(String scriptText) throws HtException {
-        return (Script) compile(CompilationUnit.SCRIPTLET, scriptText);
+        return (Script) TwoPhaseParser.parseScript(CompilationUnit.SCRIPTLET, scriptText);
     }
 
     /**
      * Compiles the given script on the current thread.
      *
-     * @param scriptText The script text to compile
-     * @return The compiled Script object
+     * @param scriptText The script text to parse.
+     * @return The compiled Script object (the root of the abstract syntax tree)
      * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
      */
     public static Script compileScript(String scriptText) throws HtException {
-        return (Script) compile(CompilationUnit.SCRIPT, scriptText);
+        return (Script) TwoPhaseParser.parseScript(CompilationUnit.SCRIPT, scriptText);
     }
 
     /**
@@ -176,19 +154,6 @@ public class Interpreter {
         }
 
         return null;
-    }
-
-    public static <T> T evaluate(CompilationUnit compilationUnit, Value value, Class<T> klass) {
-        try {
-            Object ast = Interpreter.compile(compilationUnit, value.stringValue());
-            if (ast.getClass().isAssignableFrom(klass)) {
-                return (T) ast;
-            } else {
-                return null;
-            }
-        } catch (HtSyntaxException e) {
-            return null;
-        }
     }
 
     /**
@@ -302,6 +267,11 @@ public class Interpreter {
         return messageExecutor;
     }
 
+    /**
+     * Gets the number of scripts that are either actively executing or waiting to be executed. Returns 0 when HyperCard
+     * is "idle".
+     * @return The number of active or pending scripts
+     */
     public static int getPendingScriptCount() {
         return scriptExecutor.getActiveCount() + scriptExecutor.getQueue().size();
     }

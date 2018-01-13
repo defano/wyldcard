@@ -1,4 +1,4 @@
-package com.defano.hypercard.runtime;
+package com.defano.hypercard.runtime.interpreter;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;

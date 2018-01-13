@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;

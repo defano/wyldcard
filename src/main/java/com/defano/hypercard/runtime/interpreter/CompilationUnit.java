@@ -1,4 +1,4 @@
-package com.defano.hypercard.runtime;
+package com.defano.hypercard.runtime.interpreter;
 
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.tree.ParseTree;

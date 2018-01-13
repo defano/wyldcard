@@ -7,6 +7,7 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackObservable;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.ExpressionList;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;

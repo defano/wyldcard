@@ -15,7 +15,7 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ToolsContext;

@@ -1,4 +1,4 @@
-package com.defano.hypercard.runtime;
+package com.defano.hypercard.runtime.interpreter;
 
 import com.defano.hypertalk.exception.HtException;
 

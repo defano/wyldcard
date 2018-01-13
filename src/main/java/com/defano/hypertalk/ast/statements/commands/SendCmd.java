@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.runtime.Interpreter;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
