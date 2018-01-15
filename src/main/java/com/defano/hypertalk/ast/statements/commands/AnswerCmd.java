@@ -2,16 +2,16 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.CountDownLatch;
-
-import javax.swing.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class AnswerCmd extends Command {
 
@@ -55,6 +55,7 @@ public class AnswerCmd extends Command {
     private void answer (Value msg, Value choice1, Value choice2, Value choice3) {
 
         CountDownLatch latch = new CountDownLatch(1);
+        AtomicInteger choice = new AtomicInteger();
 
         SwingUtilities.invokeLater(() -> {
             Component parent = WindowManager.getStackWindow().getWindowPanel();
@@ -70,15 +71,8 @@ public class AnswerCmd extends Command {
                 choices = new Object[]{choice1};
             }
 
-            int choice = JOptionPane.showOptionDialog(parent, msg, "Answer",
-                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
-
-            switch (choice) {
-                case 0:     ExecutionContext.getContext().setIt(choice1); break;
-                case 1:     ExecutionContext.getContext().setIt(choice2); break;
-                case 2:     ExecutionContext.getContext().setIt(choice3); break;
-                default:     ExecutionContext.getContext().setIt(new Value()); break;
-            }
+            choice.set(JOptionPane.showOptionDialog(parent, msg, "Answer",
+                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]));
 
             latch.countDown();
         });
@@ -87,6 +81,13 @@ public class AnswerCmd extends Command {
             latch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        }
+
+        switch (choice.get()) {
+            case 0:     ExecutionContext.getContext().setIt(choice1); break;
+            case 1:     ExecutionContext.getContext().setIt(choice2); break;
+            case 2:     ExecutionContext.getContext().setIt(choice3); break;
+            default:    ExecutionContext.getContext().setIt(new Value()); break;
         }
     }
 

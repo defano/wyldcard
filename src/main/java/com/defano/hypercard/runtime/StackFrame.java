@@ -21,9 +21,6 @@ public class StackFrame {
         this.symbols = symbols;
         this.globalsInScope = globalsInScope;
         this.returnValue = returnValue;
-        
-        // "it" is implemented as a global variable that's always in scope
-        globalsInScope.add("it");
     }
 
     public String getMessage() {

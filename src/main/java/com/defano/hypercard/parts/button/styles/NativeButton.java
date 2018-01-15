@@ -13,11 +13,11 @@ import com.defano.hypertalk.ast.model.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public class DefaultButton extends JButton implements ButtonComponent, IconAlignable {
+public class NativeButton extends JButton implements ButtonComponent, IconAlignable {
 
     private final ToolEditablePart toolEditablePart;
 
-    public DefaultButton(ToolEditablePart toolEditablePart) {
+    public NativeButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
         super.addMouseListener(toolEditablePart);
@@ -36,7 +36,7 @@ public class DefaultButton extends JButton implements ButtonComponent, IconAlign
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue();
-                DefaultButton.super.setText(showName ? newValue.stringValue() : "");
+                NativeButton.super.setText(showName ? newValue.stringValue() : "");
                 break;
 
             case ButtonModel.PROP_ENABLED:

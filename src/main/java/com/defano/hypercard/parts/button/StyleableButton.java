@@ -76,7 +76,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
             case CHECKBOX:
                 return new CheckboxButton(this);
             case NATIVE:
-                return new DefaultButton(this);
+                return new NativeButton(this);
             case ROUND_RECT:
                 return new RoundRectButton(this);
             case RADIO:

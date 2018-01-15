@@ -4,7 +4,7 @@ import javax.swing.text.*;
 import java.awt.*;
 
 /**
- * Highlight painter that renders a black outline around the highlighted text. Used to highlight found text via the
+ * Highlight painter that renders a red outline around the highlighted text. Used to highlight found text via the
  * 'find' command.
  */
 public class FoundSelectionHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
@@ -25,8 +25,7 @@ public class FoundSelectionHighlightPainter extends DefaultHighlighter.DefaultHi
      * @param view View painting for
      * @return region drawing occurred in
      */
-    public Shape paintLayer(Graphics g, int offs0, int offs1,
-                            Shape bounds, JTextComponent c, View view) {
+    public Shape paintLayer(Graphics g, int offs0, int offs1, Shape bounds, JTextComponent c, View view) {
         Color color = getColor();
 
         if (color == null) {

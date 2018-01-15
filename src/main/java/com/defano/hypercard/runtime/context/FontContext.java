@@ -28,7 +28,9 @@ import java.util.Set;
  * observe selections from the menus, and the menus observe the style of focused text entities.
  *
  * Choosing a size, font family or style from a menu should change only the property selected. For example,
- * making a selection bold should not also change the font to whatever font is shown selected in the Font menu.
+ * making a selection bold should not also change the font to whatever font is shown selected in the Font menu, nor
+ * should choosing bold affect any other styles--like italic or underline--that may also be applied to the selection
+ * at large, or to a subset of the selection.
  *
  * Note that the "plain" style is an unusual case: Typically, it represents the absence of any other style. But, when
  * focusing text with multiple styles the "Plain" menu item can appear checked alongside other styles.

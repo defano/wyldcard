@@ -2,17 +2,17 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.CountDownLatch;
-
-import javax.swing.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AskCmd extends Command {
 
@@ -43,23 +43,23 @@ public class AskCmd extends Command {
     private void ask (Value question, Value suggestion) {
 
         CountDownLatch latch = new CountDownLatch(1);
-
+        AtomicReference<String> result = new AtomicReference<>();
+        
         SwingUtilities.invokeLater(() -> {
             Component parent = WindowManager.getStackWindow().getWindowPanel();
 
-            String result = (String)JOptionPane.showInputDialog(
+            result.set((String) JOptionPane.showInputDialog(
                     parent,
                     question,
                     "Ask",
                     JOptionPane.PLAIN_MESSAGE,
                     null,
                     null,
-                    suggestion);
+                    suggestion));
 
-            if (result == null)
-                result = "";
+            if (result.get() == null)
+                result.set("");
 
-            ExecutionContext.getContext().setIt(new Value(result));
             latch.countDown();
         });
 
@@ -68,6 +68,8 @@ public class AskCmd extends Command {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+
+        ExecutionContext.getContext().setIt(new Value(result.get()));
     }
     
     private void ask (Value question) {

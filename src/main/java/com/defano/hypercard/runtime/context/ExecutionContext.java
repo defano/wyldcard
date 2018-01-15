@@ -287,11 +287,10 @@ public class ExecutionContext {
 
     /**
      * Sets the current value of the implicit 'it' variable in this context.
-     * // TODO: This is not correctly implemented. It should not be global, but bound locally in each frame.
      * @param value The value of 'it'.
      */
     public void setIt (Object value) {
-        globals.put("it", new Value(value.toString()));
+        setVariable("it", new Value(value));
     }
 
     /**
@@ -299,7 +298,7 @@ public class ExecutionContext {
      * @return The value of 'it'.
      */
     public Value getIt () {
-        return globals.get("it");
+        return getVariable("it");
     }
 
     /**
@@ -335,8 +334,7 @@ public class ExecutionContext {
     }
 
     /**
-     * Determines if "me" is bound in the current context (it wont be in all contexts, as when entering an expression
-     * in the message box, for example).
+     * Determines if "me" is bound in the current context.
      *
      * @return True if me is bound; false otherwise
      */

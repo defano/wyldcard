@@ -9,15 +9,15 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 
 /**
- * A singleton representing the HyperCard state of 'the selection'; a special container representing the active text
+ * A singleton managing HyperCard's view of the 'the selection'; a special container representing the active text
  * selection.
  */
 public class SelectionContext {
 
     private final static SelectionContext instance = new SelectionContext();
 
-    private PartSpecifier theSelectionPart;
-    private Range theSelectionRange;
+    private PartSpecifier theSelectionPart;     // Part holding 'the selection'
+    private Range theSelectionRange;            // Range of characters selected
 
     private SelectionContext() {
     }
