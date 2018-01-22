@@ -27,7 +27,7 @@ public class PartEditor implements AWTEventListener {
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        ToolEditablePart part = PartToolContext.getInstance().getSelectedPartProvider().get();
+        ToolEditablePart part = PartToolContext.getInstance().getSelectedPart();
 
         // User pressed the mouse
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {

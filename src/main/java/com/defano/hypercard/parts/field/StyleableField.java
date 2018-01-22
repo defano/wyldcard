@@ -1,19 +1,20 @@
 package com.defano.hypercard.parts.field;
 
-import com.defano.hypercard.runtime.context.FontContext;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.*;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * The "view" object representing a styleable HyperCard field.
@@ -27,6 +28,7 @@ import java.util.Observer;
 public abstract class StyleableField implements Styleable<FieldStyle,FieldComponent>, ToolEditablePart, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
+    private Disposable toolModeSubscription;
     private FieldComponent fieldComponent;
     private boolean isBeingEdited;
 
@@ -105,7 +107,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
         fieldComponent.partOpened();
 
         getPartModel().addPropertyChangedObserver(fieldComponent);
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
+        toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
         KeyboardManager.addGlobalKeyListener(this);
     }
 
@@ -115,7 +117,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
         getPartModel().removePropertyChangedObserver(fieldComponent);
         KeyboardManager.removeGlobalKeyListener(this);
-        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
+        toolModeSubscription.dispose();
     }
 
     @Override
@@ -123,9 +125,9 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
         getComponent().repaint();
     }
 
-    private class ToolModeObserver implements Observer {
+    private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
-        public void update(Observable o, Object arg) {
+        public void accept(ToolMode toolMode) {
             onToolModeChanged();
         }
     }

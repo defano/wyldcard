@@ -2,13 +2,13 @@ package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fx.CurtainManager;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
@@ -19,13 +19,16 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents the controller object of the stack itself. See {@link StackModel} for the data model.
@@ -40,8 +43,8 @@ public class StackPart implements PropertyChangeObserver {
     private StackModel stackModel;
     private final List<StackObserver> observers = new ArrayList<>();
     private CardPart currentCard;
-    private final Provider<Integer> cardCountProvider = new Provider<>(0);
-    private final Provider<CardPart> cardClipboardProvider = new Provider<>();
+    private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
+    private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
     private StackPart() {}
 
@@ -75,7 +78,7 @@ public class StackPart implements PropertyChangeObserver {
     public void open(StackModel model) {
         this.stackModel = model;
         this.currentCard = buildCardPart(model.getCurrentCardIndex());
-        this.cardCountProvider.set(stackModel.getCardCount());
+        this.cardCountProvider.onNext(stackModel.getCardCount());
 
         this.stackModel.addPropertyChangedObserver(this);
 
@@ -95,8 +98,8 @@ public class StackPart implements PropertyChangeObserver {
     public void saveAs() {
         String defaultName = "Untitled";
 
-        if (HyperCard.getInstance().getSavedStackFileProvider().get() != null) {
-            defaultName = HyperCard.getInstance().getSavedStackFileProvider().get().getName();
+        if (HyperCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
+            defaultName = HyperCard.getInstance().getSavedStackFileProvider().blockingFirst().get().getName();
         } else if (stackModel.getStackName() != null && !stackModel.getStackName().isEmpty()) {
             defaultName = stackModel.getStackName();
         }
@@ -238,7 +241,7 @@ public class StackPart implements PropertyChangeObserver {
 
             int deletedCardIndex = stackModel.getCurrentCardIndex();
             stackModel.deleteCardModel();
-            cardCountProvider.set(stackModel.getCardCount());
+            cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
             return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
@@ -258,7 +261,7 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         stackModel.newCardWithNewBackground();
-        cardCountProvider.set(stackModel.getCardCount());
+        cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
         return goNextCard(null);
@@ -274,7 +277,7 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
-        cardCountProvider.set(stackModel.getCardCount());
+        cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
         return goNextCard(null);
@@ -285,8 +288,8 @@ public class StackPart implements PropertyChangeObserver {
      * stack).
      */
     public void cutCard() {
-        cardClipboardProvider.set(getDisplayedCard());
-        cardCountProvider.set(stackModel.getCardCount());
+        cardClipboardProvider.onNext(Optional.of(getDisplayedCard()));
+        cardCountProvider.onNext(stackModel.getCardCount());
 
         deleteCard();
     }
@@ -295,7 +298,7 @@ public class StackPart implements PropertyChangeObserver {
      * Copies the current card to the card clipboard for pasting elsewhere in the stack.
      */
     public void copyCard() {
-        cardClipboardProvider.set(getDisplayedCard());
+        cardClipboardProvider.onNext(Optional.of(getDisplayedCard()));
     }
 
     /**
@@ -303,14 +306,14 @@ public class StackPart implements PropertyChangeObserver {
      * if the clipboard is empty.
      */
     public void pasteCard() {
-        if (cardClipboardProvider.get() != null) {
+        if (cardClipboardProvider.blockingFirst().isPresent()) {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
-            CardModel card = cardClipboardProvider.get().getCardModel().copyOf();
+            CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
             card.defineProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
 
             stackModel.insertCard(card);
-            cardCountProvider.set(stackModel.getCardCount());
+            cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
             goNextCard(null);
@@ -321,7 +324,7 @@ public class StackPart implements PropertyChangeObserver {
      * Gets an observable object containing the contents of the card clipboard.
      * @return The card clipboard provider.
      */
-    public Provider<CardPart> getCardClipboardProvider() {
+    public Observable<Optional<CardPart>> getCardClipboardProvider() {
         return cardClipboardProvider;
     }
 
@@ -339,7 +342,7 @@ public class StackPart implements PropertyChangeObserver {
      */
     public void invalidateCache() {
         this.currentCard = buildCardPart(getStackModel().getCurrentCardIndex());
-        this.cardCountProvider.set(stackModel.getCardCount());
+        this.cardCountProvider.onNext(stackModel.getCardCount());
 
         fireOnCardOrderChanged();
     }
@@ -348,7 +351,7 @@ public class StackPart implements PropertyChangeObserver {
      * Gets an observable object containing the number of card in the stack.
      * @return The card count provider
      */
-    public Provider<Integer> getCardCountProvider() {
+    public Observable<Integer> getCardCountProvider() {
         return cardCountProvider;
     }
 

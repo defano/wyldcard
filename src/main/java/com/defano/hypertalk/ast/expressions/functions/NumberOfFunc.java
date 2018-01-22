@@ -59,7 +59,7 @@ public class NumberOfFunc extends Expression {
             case MENUS:
                 return new Value(HyperCardMenuBar.instance.getMenuCount());
             case CARDS:
-                return new Value(HyperCard.getInstance().getStack().getCardCountProvider().get());
+                return new Value(HyperCard.getInstance().getStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:
                 return new Value(HyperCard.getInstance().getStack().getStackModel().getMarkedCards().size());
             case BKGNDS:

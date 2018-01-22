@@ -1,18 +1,17 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.window.HyperCardDialog;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Observable;
-import java.util.Observer;
 
-public class PatternPalette extends HyperCardDialog implements Observer {
+public class PatternPalette extends HyperCardDialog implements Consumer {
 
     private final static int PATTERN_WIDTH = 30;
     private final static int PATTERN_HEIGHT = 20;
@@ -74,9 +73,9 @@ public class PatternPalette extends HyperCardDialog implements Observer {
 
         redrawPatternButtons();
 
-        ToolsContext.getInstance().getFillPatternProvider().addObserverAndUpdate(this);
-        ToolsContext.getInstance().getBackgroundColorProvider().addObserverAndUpdate(this);
-        ToolsContext.getInstance().getForegroundColorProvider().addObserverAndUpdate(this);
+        ToolsContext.getInstance().getFillPatternProvider().subscribe(this);
+        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(this);
+        ToolsContext.getInstance().getForegroundColorProvider().subscribe(this);
     }
 
     @Override
@@ -113,7 +112,7 @@ public class PatternPalette extends HyperCardDialog implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object newValue) {
+    public void accept(Object newValue) {
         if (newValue instanceof Integer) {
             if ((int) newValue >= 0 && (int) newValue < 40) {
 

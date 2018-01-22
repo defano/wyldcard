@@ -1,13 +1,12 @@
 package com.defano.hypercard.menu;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.window.forms.IconCreator;
-import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.clipboard.CardActionListener;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.IconCreator;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
@@ -68,7 +67,7 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).deleteSelection())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
                 .build(this);
 
         this.addSeparator();
@@ -81,13 +80,13 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardCountProvider(), c -> c < 2))
+                .withDisabledProvider(HyperCard.getInstance().getStack().getCardCountProvider().map(c -> c < 2))
                 .withAction(e -> HyperCard.getInstance().getStack().deleteCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardCountProvider(), c -> c < 2))
+                .withDisabledProvider(HyperCard.getInstance().getStack().getCardCountProvider().map(c -> c < 2))
                 .withAction(e -> HyperCard.getInstance().getStack().cutCard())
                 .build(this);
 
@@ -98,7 +97,7 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardClipboardProvider(), Objects::isNull))
+                .withDisabledProvider(HyperCard.getInstance().getStack().getCardClipboardProvider().map(Objects::isNull))
                 .withAction(e -> HyperCard.getInstance().getStack().pasteCard())
                 .build(this);
 
@@ -119,12 +118,12 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
                 .withAction(e -> WindowBuilder.make(new IconCreator())
                         .resizeable(false)
                         .withTitle("Create Icon")
                         .asModal()
-                        .withModel(ToolsContext.getInstance().getSelectedImageProvider().get())
+                        .withModel(ToolsContext.getInstance().getSelectedImage())
                         .build())
                 .withShortcut('I')
                 .build(this);
@@ -152,7 +151,7 @@ public class EditMenu extends HyperCardMenu {
             MenuItemBuilder.ofCheckType()
                     .named(thisLaf.getName())
                     .withAction(a -> WindowManager.setLookAndFeel(thisLaf.getClassName()))
-                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(WindowManager.getLookAndFeelClassProvider(), value -> thisLaf.getClassName().equals(value)))
+                    .withCheckmarkProvider(WindowManager.getLookAndFeelClassProvider().map(value -> thisLaf.getClassName().equals(value)))
                     .build(laf);
         }
     }

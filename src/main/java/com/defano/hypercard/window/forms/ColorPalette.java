@@ -47,9 +47,9 @@ public class ColorPalette extends HyperCardDialog {
         backgroundChooserPanel.add(backgroundChooser);
         lineChooserPanel.add(lineChooser);
 
-        ToolsContext.getInstance().getForegroundColorProvider().addObserverAndUpdate((o, arg) -> foregroundChooser.setColor((Color) arg));
-        ToolsContext.getInstance().getBackgroundColorProvider().addObserverAndUpdate((o, arg) -> backgroundChooser.setColor((Color) arg));
-        ToolsContext.getInstance().getLinePaintProvider().addObserverAndUpdate((o, arg) -> lineChooser.setColor((Color) arg));
+        ToolsContext.getInstance().getForegroundColorProvider().subscribe(foregroundChooser::setColor);
+        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(backgroundChooser::setColor);
+        ToolsContext.getInstance().getLinePaintProvider().subscribe(paint -> lineChooser.setColor((Color) paint));
 
         foregroundChooser.getSelectionModel().addChangeListener(e -> ToolsContext.getInstance().setForegroundColor(foregroundChooser.getColor()));
         backgroundChooser.getSelectionModel().addChangeListener(e -> ToolsContext.getInstance().setBackgroundColor(backgroundChooser.getColor()));

@@ -11,9 +11,8 @@ import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.window.forms.BackgroundPropertyEditor;
 import com.defano.hypercard.window.forms.CardPropertyEditor;
 import com.defano.hypercard.window.forms.StackPropertyEditor;
-import com.defano.jmonet.model.ImmutableProvider;
 
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The HyperCard Objects menu.
@@ -27,18 +26,18 @@ public class ObjectsMenu extends HyperCardMenu {
 
         // Show this menu only when an object tool is active
         // Show this menu only when a paint tool is active
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> ObjectsMenu.this.setVisible(ToolMode.PAINT != arg));
+        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> !(value instanceof ButtonPart)))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPartProvider().get().editProperties())
+                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
+                .withAction(a -> PartToolContext.getInstance().getSelectedPart().editProperties())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Field Info...")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), value -> !(value instanceof FieldPart)))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPartProvider().get().editProperties())
+                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
+                .withAction(a -> PartToolContext.getInstance().getSelectedPart().editProperties())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -75,14 +74,14 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Bring Closer")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
+                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(Optional::isPresent))
                 .withAction(a -> PartToolContext.getInstance().bringSelectedPartCloser())
                 .withShortcut('=')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Send Further")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(PartToolContext.getInstance().getSelectedPartProvider(), Objects::isNull))
+                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(Optional::isPresent))
                 .withAction(a -> PartToolContext.getInstance().sendSelectedPartFurther())
                 .withShortcut('-')
                 .build(this);

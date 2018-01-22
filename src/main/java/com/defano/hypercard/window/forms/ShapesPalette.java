@@ -1,16 +1,15 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
-public class ShapesPalette extends HyperCardDialog implements Observer {
+public class ShapesPalette extends HyperCardDialog implements Consumer<Integer> {
 
     private JPanel shapesPanel;
 
@@ -31,7 +30,7 @@ public class ShapesPalette extends HyperCardDialog implements Observer {
         hexagon.addActionListener(e -> selectShape(6));
         octogon.addActionListener(e -> selectShape(8));
 
-        ToolsContext.getInstance().getShapeSidesProvider().addObserverAndUpdate(this);
+        ToolsContext.getInstance().getShapeSidesProvider().subscribe(this);
     }
 
     @Override
@@ -61,21 +60,19 @@ public class ShapesPalette extends HyperCardDialog implements Observer {
         return null;
     }
 
-    public void selectShape(int sides) {
+    private void selectShape(int sides) {
         ToolsContext.getInstance().setShapeSides(sides);
     }
 
     @Override
-    public void update(Observable o, Object newValue) {
-        if (newValue instanceof Integer) {
-            for (JButton thisShape : allShapes) {
-                thisShape.setEnabled(true);
-            }
+    public void accept(Integer newValue) {
+        for (JButton thisShape : allShapes) {
+            thisShape.setEnabled(true);
+        }
 
-            JButton selectedButton = getButtonForShape((int) newValue);
-            if (selectedButton != null) {
-                selectedButton.setEnabled(false);
-            }
+        JButton selectedButton = getButtonForShape((int) newValue);
+        if (selectedButton != null) {
+            selectedButton.setEnabled(false);
         }
     }
 

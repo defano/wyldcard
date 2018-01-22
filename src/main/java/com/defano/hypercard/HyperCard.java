@@ -1,25 +1,28 @@
 package com.defano.hypercard;
 
+import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.cursor.CursorManager;
+import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.parts.editor.PartEditor;
+import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.FileContext;
-import com.defano.hypercard.awt.KeyboardManager;
-import com.defano.hypercard.awt.MouseManager;
-import com.defano.hypercard.parts.editor.PartEditor;
-import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.parts.stack.StackModel;
-import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.window.HyperTalkErrorDialog;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Optional;
 
 /**
  * The HyperCard runtime environment; this is the program's main class and is
@@ -30,7 +33,7 @@ public class HyperCard {
 
     private static HyperCard instance;
     private final StackPart stackPart;
-    private final Provider<File> savedStackFileProvider = new Provider<>();
+    private final Subject<Optional<File>> savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
     public static void main(String argv[]) {
         try {
@@ -72,12 +75,16 @@ public class HyperCard {
         return instance;
     }
 
-    public Provider<File> getSavedStackFileProvider() {
+    public Observable<Optional<File>> getSavedStackFileProvider() {
         return savedStackFileProvider;
     }
 
+    public File getSavedStackFile() {
+        return savedStackFileProvider.blockingFirst().orElse(null);
+    }
+
     public void setSavedStackFile(File savedStackFileProvider) {
-        this.savedStackFileProvider.set(savedStackFileProvider);
+        this.savedStackFileProvider.onNext(Optional.of(savedStackFileProvider));
     }
 
     public StackPart getStack() {
@@ -113,7 +120,7 @@ public class HyperCard {
         if (isDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(stackPart.getDisplayedCard(), "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                getStack().save(getSavedStackFileProvider().get());
+                getStack().save(getSavedStackFileProvider().blockingFirst().get());
             }
         }
 
@@ -126,7 +133,7 @@ public class HyperCard {
      */
     private boolean isDirty() {
         try {
-            String savedStack = new String(Files.readAllBytes(getSavedStackFileProvider().get().toPath()), StandardCharsets.UTF_8);
+            String savedStack = new String(Files.readAllBytes(getSavedStackFileProvider().blockingFirst().get().toPath()), StandardCharsets.UTF_8);
             String currentStack = Serializer.serialize(getStack().getStackModel());
             return !savedStack.equalsIgnoreCase(currentStack);
         } catch (Exception e) {

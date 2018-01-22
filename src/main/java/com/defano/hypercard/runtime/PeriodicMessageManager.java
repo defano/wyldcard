@@ -34,8 +34,8 @@ public class PeriodicMessageManager implements Runnable, StackObservable {
     private PeriodicMessageManager() {
 
         // Stop tracking 'within' when not in browse mode
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
-            if (arg != ToolMode.BROWSE) {
+        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {
+            if (toolMode != ToolMode.BROWSE) {
                 withinParts.clear();
             }
         });

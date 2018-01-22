@@ -29,7 +29,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-        return TransferablePart.from(PartToolContext.getInstance().getSelectedPartProvider().get());
+        return TransferablePart.from(PartToolContext.getInstance().getSelectedPart());
     }
 
     @Override

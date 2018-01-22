@@ -1,25 +1,24 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.runtime.context.FontContext;
-import com.defano.hypercard.window.HyperCardDialog;
-import com.defano.hypertalk.ast.model.ToolType;
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.DoubleClickListenable;
+import com.defano.hypercard.paint.ToolMode;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.HyperCardDialog;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
-import com.defano.hypercard.window.WindowManager;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.l2fprod.common.swing.JFontChooser;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
-public class PaintToolsPalette extends HyperCardDialog implements Observer {
+public class PaintToolsPalette extends HyperCardDialog implements Consumer {
     private JPanel palettePanel;
 
     private JButton selection;
@@ -81,7 +80,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
         text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
 
-        ToolsContext.getInstance().getShapesFilledProvider().addObserverAndUpdate((o, filled) -> {
+        ToolsContext.getInstance().getShapesFilledProvider().subscribe(filled -> {
             boolean isFilled = (Boolean) filled;
 
             rectangle.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
@@ -92,8 +91,8 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
             polygon.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/polygon_filled.png" : "/icons/polygon.png")));
         });
 
-        ToolsContext.getInstance().getPaintToolProvider().addObserver(this);
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> {
+        ToolsContext.getInstance().getPaintToolProvider().subscribe(this);
+        ToolsContext.getInstance().getToolModeProvider().subscribe(arg -> {
             if (arg == ToolMode.BROWSE) {
                 enableAllTools();
                 finger.setEnabled(false);
@@ -171,7 +170,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object newValue) {
+    public void accept(Object newValue) {
 
         if (newValue instanceof PaintTool) {
             PaintTool selectedTool = (PaintTool) newValue;

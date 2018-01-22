@@ -37,7 +37,7 @@ public class ArtVandelay {
 
         if (fd.getFiles().length > 0) {
             try {
-                exportPaint(fd.getFiles()[0], ToolsContext.getInstance().getSelectedImageProvider().get());
+                exportPaint(fd.getFiles()[0], ToolsContext.getInstance().getSelectedImage());
             } catch (IOException e) {
                 HyperCard.getInstance().showErrorDialog(new HtSemanticException("Can't export paint in that format."));
             }

@@ -2,11 +2,10 @@ package com.defano.hypercard.menu;
 
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The HyperCard Paint menu.
@@ -19,7 +18,7 @@ public class PaintMenu extends HyperCardMenu {
         super("Paint");
 
         // Show this menu only when a paint tool is active
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate((o, arg) -> PaintMenu.this.setVisible(ToolMode.PAINT == arg));
+        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> PaintMenu.this.setVisible(ToolMode.PAINT == toolMode));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Select")
@@ -43,25 +42,25 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Invert")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).invert())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Pickup")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).pickupSelection())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Darken")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustBrightness(-20))
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Lighten")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustBrightness(20))
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -72,25 +71,25 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Left")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).rotateLeft())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Right")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).rotateRight())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Vertical")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).flipVertical())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Horizontal")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).flipHorizontal())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         this.addSeparator();
@@ -98,13 +97,13 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("More Opaque")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustTransparency(20))
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("More Transparent")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).adjustTransparency(-20))
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         this.addSeparator();
@@ -124,7 +123,7 @@ public class PaintMenu extends HyperCardMenu {
 
         JMenuItem reduceColorMenu = MenuItemBuilder.ofHeirarchicalType()
                 .named("Reduce Color")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
                 MenuItemBuilder.ofDefaultType()

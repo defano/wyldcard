@@ -28,7 +28,7 @@ public class PrintStackAction extends PrintActionDelegate {
     @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
-        if (pageIndex < HyperCard.getInstance().getStack().getCardCountProvider().get()) {
+        if (pageIndex < HyperCard.getInstance().getStack().getCardCountProvider().blockingFirst()) {
             // Translate printable content to top-left printable coordinate of the page
             Graphics2D g2d = (Graphics2D)g;
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());

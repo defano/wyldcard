@@ -60,7 +60,7 @@ public class StackPropertyEditor extends HyperCardDialog {
     @Override
     public void bindModel(Object data) {
         model = (StackModel) data;
-        File stackFile = HyperCard.getInstance().getSavedStackFileProvider().get();
+        File stackFile = HyperCard.getInstance().getSavedStackFile();
 
         stackName.setText(model.getStackName());
         cardCountLabel.setText(StringUtils.pluralize(model.getCardCount(), "Stack contains %d card.", "Stack contains %d cards."));
@@ -149,24 +149,5 @@ public class StackPropertyEditor extends HyperCardDialog {
         backgroundCountLabel = new JLabel();
         backgroundCountLabel.setText("Stack contains 1 background.");
         propertiesPanel.add(backgroundCountLabel, new GridConstraints(6, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-    }
-
-    /**
-     * @noinspection ALL
-     */
-    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
-        if (currentFont == null) return null;
-        String resultName;
-        if (fontName == null) {
-            resultName = currentFont.getName();
-        } else {
-            Font testFont = new Font(fontName, Font.PLAIN, 10);
-            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
-                resultName = fontName;
-            } else {
-                resultName = currentFont.getName();
-            }
-        }
-        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 }

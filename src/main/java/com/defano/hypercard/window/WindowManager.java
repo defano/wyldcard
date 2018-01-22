@@ -2,7 +2,9 @@ package com.defano.hypercard.window;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.window.forms.*;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 
@@ -17,10 +19,10 @@ public class WindowManager {
     private final static BrushesPalette brushesPalette = new BrushesPalette();
     private final static ColorPalette colorPalette = new ColorPalette();
 
-    private final static Provider<String> lookAndFeelClassProvider = new Provider<>();
+    private final static Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
     public static void start() {
-        lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
+        lookAndFeelClassProvider.onNext(UIManager.getSystemLookAndFeelClassName());
 
         // Create the main window, center it on the screen and display it
         WindowBuilder.make(stackWindow)
@@ -127,7 +129,7 @@ public class WindowManager {
     }
 
     public static void setLookAndFeel(String lafClassName) {
-        lookAndFeelClassProvider.set(lafClassName);
+        lookAndFeelClassProvider.onNext(lafClassName);
 
         SwingUtilities.invokeLater(() -> {
             try {
@@ -147,7 +149,7 @@ public class WindowManager {
         });
     }
 
-    public static Provider<String> getLookAndFeelClassProvider() {
+    public static Observable<String> getLookAndFeelClassProvider() {
         return lookAndFeelClassProvider;
     }
 
