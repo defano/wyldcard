@@ -2,26 +2,25 @@ package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.awt.MouseStillDown;
-import com.defano.hypercard.runtime.context.FontContext;
-import com.defano.hypercard.parts.model.PropertiesModel;
-import com.defano.hypercard.runtime.PeriodicMessageManager;
-import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.window.forms.FieldPropertyEditor;
-import com.defano.hypercard.window.forms.ScriptEditor;
-import com.defano.hypercard.window.WindowBuilder;
+import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.DeferredKeyEventComponent;
 import com.defano.hypercard.parts.card.CardLayerPart;
-import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
-import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.HyperCardProperties;
-import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.runtime.PeriodicMessageManager;
+import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.window.WindowBuilder;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.FieldPropertyEditor;
+import com.defano.hypercard.window.forms.ScriptEditor;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
@@ -80,10 +79,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
         newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
-
-        // When a new field is created, make the field tool active and select the newly created part
-        ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
-        PartToolContext.getInstance().setSelectedPart(newField);
 
         return newField;
     }

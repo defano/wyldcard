@@ -44,8 +44,8 @@ public class PartToolContext {
     public void setSelectedPart(ToolEditablePart part) {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON || ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
             deselectAllParts();
-            selectedPart.onNext(Optional.of(part));
             part.setSelectedForEditing(true);
+            selectedPart.onNext(Optional.of(part));
         }
     }
 

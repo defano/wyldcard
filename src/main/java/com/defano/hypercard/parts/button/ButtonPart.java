@@ -7,10 +7,8 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
-import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypercard.window.forms.ButtonPropertyEditor;
@@ -64,13 +62,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @return The new button.
      */
     public static ButtonPart newButton(CardPart parent, Owner owner, Rectangle rectangle) {
-        ButtonPart newButton = fromGeometry(parent, rectangle, owner);
-
-        // When a new button is created, make the button tool active and select the newly created button
-        ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
-        PartToolContext.getInstance().setSelectedPart(newButton);
-
-        return newButton;
+        return fromGeometry(parent, rectangle, owner);
     }
 
 

@@ -122,7 +122,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
     @Override
     public void onAntsMoved() {
-        getComponent().repaint();
+        SwingUtilities.invokeLater(getFieldComponent()::repaint);
     }
 
     private class ToolModeObserver implements Consumer<ToolMode> {

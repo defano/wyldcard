@@ -54,12 +54,16 @@ public class PartEditor implements AWTEventListener {
     private void doNewField() {
         CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
         FieldPart theField = theCard.newField(new Rectangle(clickLoc, NEW_PART_DIM));
+        PartToolContext.getInstance().setSelectedPart(theField);
+
         new PartResizer(theField, theCard);
     }
 
     private void doNewButton() {
         CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
         ButtonPart theButton = theCard.newButton(new Rectangle(clickLoc, NEW_PART_DIM));
+        PartToolContext.getInstance().setSelectedPart(theButton);
+
         new PartResizer(theButton, theCard);
     }
 

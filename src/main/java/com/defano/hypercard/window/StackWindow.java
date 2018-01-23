@@ -110,9 +110,6 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         this.stack = newStack;
         this.card = this.stack.getDisplayedCard();
         cardPanel.setPreferredSize(this.stack.getStackModel().getSize());
-
-        displayCard(this.stack.getDisplayedCard());
-        invalidateWindowTitle();
     }
 
     /** {@inheritDoc} */

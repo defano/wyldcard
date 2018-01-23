@@ -11,6 +11,7 @@ import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.PartsTable;
+import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.search.SearchContext;
@@ -61,7 +62,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     private Disposable editingBackgroundSubscription;
     private Disposable foregroundScaleSubscription;
     private Disposable backgroundScaleSubscription;
-    private Disposable cardModelSubscription;
 
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
@@ -176,6 +176,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
         addButton(newButton);
+
+        // When a new button is created, make the button tool active and select the newly created button
+        ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
+        PartToolContext.getInstance().setSelectedPart(newButton);
     }
 
     /**
@@ -200,6 +204,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner());
         addField(newField);
+
+        // When a new button is created, make the button tool active and select the newly created button
+        ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
+        PartToolContext.getInstance().setSelectedPart(newField);
     }
 
     /**

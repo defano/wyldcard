@@ -120,7 +120,7 @@ public class HyperCard {
         if (isDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(stackPart.getDisplayedCard(), "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                getStack().save(getSavedStackFileProvider().blockingFirst().get());
+                getStack().save(getSavedStackFile());
             }
         }
 

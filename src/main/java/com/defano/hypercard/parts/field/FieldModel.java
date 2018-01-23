@@ -126,6 +126,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         super.initialize();
 
         this.currentCardId = new ThreadLocal<>();
+        this.currentCardId.set(ExecutionContext.getContext().getCurrentCard().getId());
 
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));

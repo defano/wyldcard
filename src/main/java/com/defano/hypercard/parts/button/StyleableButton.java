@@ -149,7 +149,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
 
     @Override
     public void onAntsMoved() {
-        getComponent().repaint();
+        SwingUtilities.invokeLater(getComponent()::repaint);
     }
 
     private boolean isAutoHilited() {

@@ -400,7 +400,8 @@ public class StackPart implements PropertyChangeObserver {
         return activateCard(cardIndex);
     }
 
-    private void deactivateCard(boolean addToBackstack) {
+    private void deactivateCard(boolean pushToStack) {
+        CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
         ToolsContext.getInstance().getPaintTool().deactivate();
@@ -409,13 +410,13 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         // When requested, push the current card onto the backstack
-        if (addToBackstack) {
-            stackModel.getBackStack().push(getDisplayedCard().getId());
+        if (pushToStack) {
+            stackModel.getBackStack().push(displayedCard.getId());
         }
 
         // Notify observers that current card is going away
-        fireOnCardClosing(getDisplayedCard());
-        getDisplayedCard().partClosed();
+        fireOnCardClosing(displayedCard);
+        displayedCard.partClosed();
     }
 
     private CardPart activateCard (int cardIndex) {
