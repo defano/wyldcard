@@ -23,7 +23,7 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> StackPart.newStack().activate())
+                .withAction(e -> StackPart.newStack().bindToWindow(WindowManager.getStackWindow()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -40,14 +40,14 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack")
-                .withAction(e -> HyperCard.getInstance().save())
+                .withAction(e -> HyperCard.getInstance().saveActiveStack())
                 .withEnabledProvider(HyperCard.getInstance().getSavedStackFileProvider().map(Optional::isPresent))
                 .withShortcut('S')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack As...")
-                .withAction(e -> HyperCard.getInstance().saveAs())
+                .withAction(e -> HyperCard.getInstance().saveActiveStackAs())
                 .withShiftShortcut('S')
                 .build(this);
 

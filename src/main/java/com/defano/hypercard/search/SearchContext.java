@@ -152,7 +152,7 @@ public class SearchContext {
         int searchFrom = 0;
         Range result;
 
-        int cardId = HyperCard.getInstance().getStack().getStackModel().getCardModel(cardIndex).getId();
+        int cardId = HyperCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId();
         String fieldText = fieldModel.getText(cardId);
 
         do {

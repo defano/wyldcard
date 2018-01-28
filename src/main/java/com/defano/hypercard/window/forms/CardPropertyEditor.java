@@ -85,8 +85,8 @@ public class CardPropertyEditor extends HyperCardDialog {
         long fieldCount = card.getCardModel().getPartCount(PartType.FIELD, Owner.CARD);
         long buttonCount = card.getCardModel().getPartCount(PartType.BUTTON, Owner.CARD);
 
-        int cardNumber = HyperCard.getInstance().getDisplayedCard().getCardModel().getCardIndexInStack() + 1;
-        int cardCount = HyperCard.getInstance().getStack().getCardCountProvider().blockingFirst();
+        int cardNumber = HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().getCardIndexInStack() + 1;
+        int cardCount = HyperCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst();
 
         cardNumberLabel.setText(cardNumber + " out of " + cardCount);
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d card button.", "Contains %d card buttons."));

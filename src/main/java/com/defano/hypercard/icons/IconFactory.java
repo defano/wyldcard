@@ -25,7 +25,7 @@ public class IconFactory {
     }
 
     public static List<ButtonIcon> getStackIcons() {
-        return HyperCard.getInstance().getStack().getStackModel().getUserIcons();
+        return HyperCard.getInstance().getActiveStack().getStackModel().getUserIcons();
     }
 
     public static ButtonIcon findIconForValue(Value value) {

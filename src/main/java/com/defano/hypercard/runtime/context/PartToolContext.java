@@ -50,11 +50,11 @@ public class PartToolContext {
     }
 
     public void deselectAllParts() {
-        for (ButtonPart thisButton : HyperCard.getInstance().getDisplayedCard().getButtons()) {
+        for (ButtonPart thisButton : HyperCard.getInstance().getActiveStackDisplayedCard().getButtons()) {
             thisButton.setSelectedForEditing(false);
         }
 
-        for (FieldPart thisField : HyperCard.getInstance().getDisplayedCard().getFields()) {
+        for (FieldPart thisField : HyperCard.getInstance().getActiveStackDisplayedCard().getFields()) {
             thisField.setSelectedForEditing(false);
         }
 
@@ -72,7 +72,7 @@ public class PartToolContext {
     public void deleteSelectedPart() {
         Optional<ToolEditablePart> selectedPart = this.selectedPart.blockingFirst();
         selectedPart.ifPresent(part -> {
-            HyperCard.getInstance().getDisplayedCard().getCardModel().removePartModel(part.getPartModel());
+            HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().removePartModel(part.getPartModel());
             this.selectedPart.onNext(Optional.empty());
         });
     }

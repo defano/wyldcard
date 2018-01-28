@@ -15,7 +15,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> HyperCard.getInstance().getStack().popCard(null))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().popCard(null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -39,25 +39,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> HyperCard.getInstance().getStack().goFirstCard(null))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().goFirstCard(null))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> HyperCard.getInstance().getStack().goPrevCard(null))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().goPrevCard(null))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> HyperCard.getInstance().getStack().goNextCard(null))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().goNextCard(null))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> HyperCard.getInstance().getStack().goLastCard(null))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().goLastCard(null))
                 .withShortcut('4')
                 .build(this);
 

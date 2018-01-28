@@ -1,6 +1,6 @@
 package com.defano.hypercard.window;
 
-import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.window.forms.*;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -26,10 +26,9 @@ public class WindowManager {
 
         // Create the main window, center it on the screen and display it
         WindowBuilder.make(stackWindow)
-                .withTitle(HyperCard.getInstance().getStack().getStackModel().getStackName())
                 .quitOnClose()
                 .ownsMenubar()
-                .withModel(HyperCard.getInstance().getStack())
+                .withModel(StackPart.newStack())
                 .build();
 
         JFrame stackFrame = stackWindow.getWindow();

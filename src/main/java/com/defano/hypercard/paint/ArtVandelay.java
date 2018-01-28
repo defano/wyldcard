@@ -64,8 +64,8 @@ public class ArtVandelay {
             BufferedImage importedImage = ImageIO.read(file);
 
             if (importedImage != null) {
-                int cardHeight = HyperCard.getInstance().getDisplayedCard().getHeight();
-                int cardWidth = HyperCard.getInstance().getDisplayedCard().getWidth();
+                int cardHeight = HyperCard.getInstance().getActiveStackDisplayedCard().getHeight();
+                int cardWidth = HyperCard.getInstance().getActiveStackDisplayedCard().getWidth();
                 int cardCenterX = cardWidth / 2;
                 int cardCenterY = cardHeight / 2;
 

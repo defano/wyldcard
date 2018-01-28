@@ -25,18 +25,18 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getDisplayedCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas());
         CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> HyperCard.getInstance().getDisplayedCard().getCanvas().undo())
+                .withAction(e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().undo())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> HyperCard.getInstance().getDisplayedCard().getCanvas().redo())
+                .withAction(e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().redo())
                 .build(this);
 
         this.addSeparator();
@@ -75,31 +75,31 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> HyperCard.getInstance().getStack().newCard())
+                .withAction(e -> HyperCard.getInstance().getActiveStack().newCard())
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .withDisabledProvider(HyperCard.getInstance().getStack().getCardCountProvider().map(c -> c < 2))
-                .withAction(e -> HyperCard.getInstance().getStack().deleteCard())
+                .withDisabledProvider(HyperCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().deleteCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
-                .withDisabledProvider(HyperCard.getInstance().getStack().getCardCountProvider().map(c -> c < 2))
-                .withAction(e -> HyperCard.getInstance().getStack().cutCard())
+                .withDisabledProvider(HyperCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().cutCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .withAction(e -> HyperCard.getInstance().getStack().copyCard())
+                .withAction(e -> HyperCard.getInstance().getActiveStack().copyCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
-                .withDisabledProvider(HyperCard.getInstance().getStack().getCardClipboardProvider().map(Objects::isNull))
-                .withAction(e -> HyperCard.getInstance().getStack().pasteCard())
+                .withEnabledProvider(HyperCard.getInstance().getActiveStackCardClipboardProvider().map(Optional::isPresent))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().pasteCard())
                 .build(this);
 
         this.addSeparator();

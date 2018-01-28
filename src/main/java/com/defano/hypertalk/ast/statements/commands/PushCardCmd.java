@@ -26,7 +26,7 @@ public class PushCardCmd extends Command {
     @Override
     protected void onExecute() throws HtException {
         if (destinationExp == null) {
-            push(HyperCard.getInstance().getDisplayedCard().getId());
+            push(HyperCard.getInstance().getActiveStackDisplayedCard().getId());
         } else {
 
             Integer pushCardId = null;
@@ -51,14 +51,14 @@ public class PushCardCmd extends Command {
         if (model instanceof CardModel) {
             return model.getId();
         } else if (model instanceof BackgroundModel) {
-            int cardIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfBackground(model.getId());
-            return HyperCard.getInstance().getStack().getStackModel().getCardModel(cardIndex).getId();
+            int cardIndex = HyperCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
+            return HyperCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId();
         } else {
             return null;
         }
     }
 
     private void push(int cardId) {
-        HyperCard.getInstance().getStack().getStackModel().getBackStack().push(cardId);
+        HyperCard.getInstance().getActiveStack().getStackModel().getBackStack().push(cardId);
     }
 }

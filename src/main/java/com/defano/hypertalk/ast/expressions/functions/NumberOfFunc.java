@@ -59,14 +59,14 @@ public class NumberOfFunc extends Expression {
             case MENUS:
                 return new Value(HyperCardMenuBar.instance.getMenuCount());
             case CARDS:
-                return new Value(HyperCard.getInstance().getStack().getCardCountProvider().blockingFirst());
+                return new Value(HyperCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:
-                return new Value(HyperCard.getInstance().getStack().getStackModel().getMarkedCards().size());
+                return new Value(HyperCard.getInstance().getActiveStack().getStackModel().getMarkedCards().size());
             case BKGNDS:
-                return new Value(HyperCard.getInstance().getStack().getStackModel().getBackgroundCount());
+                return new Value(HyperCard.getInstance().getActiveStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
                 BackgroundModel model = expression.partFactor(BackgroundModel.class, new HtSemanticException("No such background."));
-                return new Value(HyperCard.getInstance().getStack().getStackModel().getCardsInBackground(model.getId()).size());
+                return new Value(HyperCard.getInstance().getActiveStack().getStackModel().getCardsInBackground(model.getId()).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }

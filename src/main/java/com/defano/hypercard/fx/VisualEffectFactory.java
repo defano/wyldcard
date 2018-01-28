@@ -25,7 +25,7 @@ public class VisualEffectFactory {
     }
 
     public static PlainEffect createScreenLock() {
-        BufferedImage screenShot = HyperCard.getInstance().getDisplayedCard().getScreenshot();
+        BufferedImage screenShot = HyperCard.getInstance().getActiveStackDisplayedCard().getScreenshot();
 
         PlainEffect effect = new PlainEffect();
         effect.setSource(screenShot);

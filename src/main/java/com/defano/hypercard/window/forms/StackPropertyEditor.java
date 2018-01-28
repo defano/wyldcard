@@ -1,12 +1,12 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.StringUtils;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
-import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -14,7 +14,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.text.DecimalFormat;
+import java.util.Optional;
 
 public class StackPropertyEditor extends HyperCardDialog {
     private StackModel model;
@@ -45,7 +45,9 @@ public class StackPropertyEditor extends HyperCardDialog {
                     .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
                     .build();
         });
+
         resizeButton.addActionListener(e -> model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel())));
+        resizableCheckBox.addActionListener(e -> model.setKnownProperty(StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
     }
 
     @Override
@@ -61,23 +63,14 @@ public class StackPropertyEditor extends HyperCardDialog {
     @Override
     public void bindModel(Object data) {
         model = (StackModel) data;
-        File stackFile = HyperCard.getInstance().getSavedStackFile();
+        Optional<File> stackFile = model.getSavedStackFileProvider().blockingFirst();
 
         stackName.setText(model.getStackName());
         cardCountLabel.setText(StringUtils.pluralize(model.getCardCount(), "Stack contains %d card.", "Stack contains %d cards."));
         backgroundCountLabel.setText(StringUtils.pluralize(model.getBackgroundCount(), "Stack contains %d background.", "Stack contains %d backgrounds."));
-        locationLabel.setText(stackFile == null ? "(Not saved)" : stackFile.getAbsolutePath());
-        sizeLabel.setText(humanReadableFileSize(Serializer.serialize(model).length()));
-    }
-
-    private String humanReadableFileSize(long size) {
-        if (size <= 0) {
-            return "0";
-        }
-
-        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
-        int magnitude = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, magnitude)) + " " + units[magnitude];
+        locationLabel.setText(stackFile.map(File::getAbsolutePath).orElse("(Not saved)"));
+        sizeLabel.setText(StringUtils.humanReadableFileSize(Serializer.serialize(model).length()));
+        resizableCheckBox.setSelected(model.getKnownProperty(StackModel.PROP_RESIZABLE).booleanValue());
     }
 
     private void updateProperties() {

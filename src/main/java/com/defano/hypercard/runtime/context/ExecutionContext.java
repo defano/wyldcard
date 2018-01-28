@@ -200,7 +200,7 @@ public class ExecutionContext {
      * @throws PartException Thrown if no such part exists
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
-        return HyperCard.getInstance().getStack().getStackModel().findPart(ps);
+        return HyperCard.getInstance().getActiveStack().getStackModel().findPart(ps);
     }
 
     /**
@@ -264,25 +264,25 @@ public class ExecutionContext {
      * interrogate when looking for parts and properties.
      *
      * In most cases, this method returns the card visible to the user (not accounting for screen lock; equivalent to
-     * {@link HyperCard#getDisplayedCard()} but during certain operations (like card sorting) this method may return a
+     * {@link HyperCard#getActiveStackDisplayedCard()} but during certain operations (like card sorting) this method may return a
      * different value.
      *
      * In general, scripts should always use this method for getting a reference to the active card; UI elements (like
-     * menus and palettes) should use {@link HyperCard#getDisplayedCard()}.
+     * menus and palettes) should use {@link HyperCard#getActiveStackDisplayedCard()}.
      *
      * @return The active card in the context of this script execution.
      */
     public CardPart getCurrentCard() {
         CardPart currentCard = this.card.get();
         if (currentCard == null) {
-            return HyperCard.getInstance().getDisplayedCard();
+            return HyperCard.getInstance().getActiveStackDisplayedCard();
         } else {
             return currentCard;
         }
     }
 
     public StackPart getCurrentStack() {
-        return HyperCard.getInstance().getStack();
+        return HyperCard.getInstance().getActiveStack();
     }
 
     /**

@@ -33,7 +33,7 @@ public class CursorManager {
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the card changes
-        HyperCard.getInstance().getStack().addObserver(new StackObservable() {
+        HyperCard.getInstance().getActiveStack().addObserver(new StackObservable() {
             @Override
             public void onCardOpened(CardPart newCard) {
                 updateCursor();

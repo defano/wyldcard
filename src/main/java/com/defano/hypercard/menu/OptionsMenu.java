@@ -22,8 +22,8 @@ public class OptionsMenu extends HyperCardMenu {
 
         JMenuItem grid = MenuItemBuilder.ofHeirarchicalType()
                 .named("Grid")
-                .withAction(a -> HyperCard.getInstance().getDisplayedCard().getCanvas().setGridSpacing(1))
-                .withCheckmarkProvider(HyperCard.getInstance().getDisplayedCard().getCanvas().getGridSpacingProvider().map(t -> t != 1))
+                .withAction(a -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().setGridSpacing(1))
+                .withCheckmarkProvider(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().getGridSpacingProvider().map(t -> t != 1))
                 .build(this);
 
                 MenuItemBuilder.ofCheckType()
@@ -53,7 +53,7 @@ public class OptionsMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
                 .withAction(a -> ToolsContext.getInstance().toggleMagnifier())
-                .withCheckmarkProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t.getToolType() == PaintToolType.MAGNIFIER || HyperCard.getInstance().getDisplayedCard().getCanvas().getScale() != 1.0))
+                .withCheckmarkProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t.getToolType() == PaintToolType.MAGNIFIER || HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().getScale() != 1.0))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

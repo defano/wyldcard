@@ -42,10 +42,10 @@ public class SortCardsCmd extends Command {
     @Override
     public void onExecute() throws HtException {
         // Remember which card we're currently viewing
-        int thisCardId = HyperCard.getInstance().getDisplayedCard().getCardModel().getId();
+        int thisCardId = HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().getId();
 
         // Get a copy of the list of cards in the stack
-        List<CardModel> allCards = HyperCard.getInstance().getStack().getStackModel().getCardModels();
+        List<CardModel> allCards = HyperCard.getInstance().getActiveStack().getStackModel().getCardModels();
 
         // Filter list for cards indicated for sorting (i.e., marked cards; cards of a given background)
         List<CardModel> sortCards = filterCards(allCards);
@@ -58,16 +58,16 @@ public class SortCardsCmd extends Command {
             List<CardModel> orderedCards = mergeCards(allCards, sortCards);
 
             // Update the stack with the modified card order and invalidate the card cache
-            HyperCard.getInstance().getStack().getStackModel().setCardModels(orderedCards);
+            HyperCard.getInstance().getActiveStack().getStackModel().setCardModels(orderedCards);
 
         } catch (HtUncheckedSemanticException e) {
             // Error occurred sorting; revert all changes
-            HyperCard.getInstance().getStack().getStackModel().setCardModels(allCards);
+            HyperCard.getInstance().getActiveStack().getStackModel().setCardModels(allCards);
             HyperCard.getInstance().showErrorDialog(e.getHtCause());
         } finally {
             // Because card order  may have changed, lets navigate back to where we started
-            HyperCard.getInstance().getStack().invalidateCache();
-            HyperCard.getInstance().getStack().goCard(indexOfCardId(HyperCard.getInstance().getStack().getStackModel().getCardModels(), thisCardId), null, false);
+            HyperCard.getInstance().getActiveStack().invalidateCache();
+            HyperCard.getInstance().getActiveStack().goCard(indexOfCardId(HyperCard.getInstance().getActiveStack().getStackModel().getCardModels(), thisCardId), null, false);
         }
     }
 

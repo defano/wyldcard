@@ -50,7 +50,7 @@ public class PeriodicMessageManager implements Runnable, StackObservable {
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        HyperCard.getInstance().getStack().addObserver(this);
+        HyperCard.getInstance().getActiveStack().addObserver(this);
     }
 
     public void addWithin(PartModel part) {

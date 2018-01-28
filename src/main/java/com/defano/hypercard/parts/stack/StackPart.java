@@ -10,6 +10,8 @@ import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.window.StackWindow;
+import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.SystemMessage;
@@ -34,11 +36,10 @@ import java.util.Optional;
  */
 public class StackPart implements PropertyChangeObserver {
 
-    public final static String FILE_EXTENSION = ".stack";
-
     private StackModel stackModel;
-    private final List<StackObserver> observers = new ArrayList<>();
     private CardPart currentCard;
+
+    private final List<StackObserver> observers = new ArrayList<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
     private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
@@ -58,7 +59,9 @@ public class StackPart implements PropertyChangeObserver {
         return stackPart;
     }
 
-    public StackPart activate() {
+    public void bindToWindow(StackWindow stackWindow) {
+        stackWindow.bindModel(this);
+
         goCard(stackModel.getCurrentCardIndex(), null, false);
         fireOnStackOpened();
         fireOnCardDimensionChanged(stackModel.getDimension());
@@ -68,7 +71,6 @@ public class StackPart implements PropertyChangeObserver {
         fireOnCardOpened(getDisplayedCard());
 
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
-        return this;
     }
 
     /**
@@ -236,7 +238,7 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     /**
-     * Copies the current card to the card clipboard for pasting elsewhere in the stack.
+     * Copies the displayed card to the card clipboard for pasting elsewhere in the stack.
      */
     public void copyCard() {
         cardClipboardProvider.onNext(Optional.of(getDisplayedCard()));
@@ -251,6 +253,7 @@ public class StackPart implements PropertyChangeObserver {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
             CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
+            card.relinkParentPartModel(getStackModel());
             card.defineProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
 
             stackModel.insertCard(card);
@@ -319,6 +322,10 @@ public class StackPart implements PropertyChangeObserver {
 
                 // Re-load the card model into the size
                 activateCard(stackModel.getCurrentCardIndex());
+                break;
+
+            case StackModel.PROP_RESIZABLE:
+                WindowManager.getStackWindow().setAllowResizing(newValue.booleanValue());
                 break;
         }
     }
