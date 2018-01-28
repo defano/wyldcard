@@ -45,6 +45,7 @@ public abstract class HyperCardFrame extends JFrame implements HyperCardWindow<J
             }
         });
 
+        setResizable(true);
     }
 
     @Override

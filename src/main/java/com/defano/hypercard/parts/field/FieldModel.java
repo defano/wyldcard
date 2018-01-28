@@ -24,8 +24,8 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * A data model representing a field part on a card. See {@link FieldPart} for the associated controller object.
- * This model is a mess. Just go with it:
+ * A data model representing a field. See {@link FieldPart} for the associated controller object. This model is a mess.
+ * Just go with it...
  * <p>
  * First: HyperCard mixes rich text (as edited by the user in the view) with plaintext (as written or read via script).
  * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can

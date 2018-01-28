@@ -25,8 +25,8 @@ import java.awt.event.MouseEvent;
  * Note that we cannot simply extend a Swing component because the underlying component bound to this view can change at
  * runtime (i.e., a push button can morph into a radio button or combo box).
  * <p>
- * This class provides common functionality for "stylable" button parts; the actual style of the button is provided by
- * a concrete subclass.
+ * This class provides common functionality for "styleable" buttons; the actual look-and-feel of the button is provided
+ * by a subclass of {@link ButtonComponent}.
  */
 public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonComponent>, ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
 
@@ -106,7 +106,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
-    public void setEnabledRecursively(boolean enabled) {
+    public void setComponentHierarchyEnabled(boolean enabled) {
         getComponent().setEnabled(enabled);
     }
 

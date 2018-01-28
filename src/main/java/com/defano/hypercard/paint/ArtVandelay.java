@@ -32,7 +32,7 @@ public class ArtVandelay {
 
     public static void exportPaint() {
         FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
-        fd.setFile("*.png");
+        fd.setFile("Untitled.png");
         fd.setVisible(true);
 
         if (fd.getFiles().length > 0) {

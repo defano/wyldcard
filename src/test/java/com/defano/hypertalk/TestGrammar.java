@@ -35,6 +35,12 @@ public class TestGrammar {
 
         System.out.println("Warm-compiled test script in " + (end - start) + "ms.");
 
+        start = System.currentTimeMillis();
+        Interpreter.compileScript(testScript);
+        end = System.currentTimeMillis();
+
+        System.out.println("Hot-compiled test script in " + (end - start) + "ms.");
+
     }
 
 }

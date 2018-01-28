@@ -17,10 +17,6 @@ import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.window.WindowBuilder;
-import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.window.forms.FieldPropertyEditor;
-import com.defano.hypercard.window.forms.ScriptEditor;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
@@ -97,29 +93,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         field.partModel = model;
 
         return field;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void editScript() {
-        WindowBuilder.make(new ScriptEditor())
-                .withTitle("Script of field " + partModel.getKnownProperty(FieldModel.PROP_NAME).stringValue())
-                .withModel(partModel)
-                .resizeable(true)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
-                .build();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void editProperties() {
-        WindowBuilder.make(new FieldPropertyEditor())
-                .asModal()
-                .withTitle(getName())
-                .withModel(partModel)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
-                .resizeable(false)
-                .build();
     }
 
     /** {@inheritDoc} */
@@ -304,7 +277,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
                 getComponent().repaint();
                 break;
             case FieldModel.PROP_VISIBLE:
-                setVisibleOnCard(newValue.booleanValue());
+                setVisibleWhenBrowsing(newValue.booleanValue());
                 break;
             case CardLayerPartModel.PROP_ZORDER:
                 getCard().onDisplayOrderChanged();

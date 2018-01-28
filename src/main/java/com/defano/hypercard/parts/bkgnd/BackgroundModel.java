@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * A data model representing a card background. There is no view associated with this model; rather this data is
- * incorporated into the {@link CardPart} view object when rendered.
+ * incorporated/merged into the {@link CardPart} controller object when rendered.
  */
 public class BackgroundModel extends PartModel implements LayeredPartFinder {
 

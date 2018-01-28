@@ -1,26 +1,33 @@
 package com.defano.hypercard.parts;
 
-import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.KeyListenable;
 import com.defano.hypercard.awt.MouseListenable;
+import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;
-import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
+import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.WindowBuilder;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.ButtonPropertyEditor;
+import com.defano.hypercard.window.forms.FieldPropertyEditor;
+import com.defano.hypercard.window.forms.ScriptEditor;
+import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 /**
- * An interface defining actions common to all tool-editable parts (i.e., buttons and fields that can be edited
- * using the button tool or field tool).
+ * An interface defining actions common to all tool-editable parts (buttons and fields that can be edited using the
+ * button tool or field tool).
  */
 public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLayerPart {
 
@@ -40,17 +47,6 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     boolean isSelectedForEditing();
 
     /**
-     * Show the property editor for this part; implies the user has selected and double-clicked the part, or chosen
-     * the appropriate command from the Objects menu.
-     */
-    void editProperties();
-
-    /**
-     * Show the script editor for this part; implies the user has selected and double-control-clicked the part.
-     */
-    void editScript();
-
-    /**
      * Gets the Part object associated with this ToolEditablePart.
      * @return The associated Part
      */
@@ -62,14 +58,37 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      */
     ToolType getEditTool();
 
-    void setEnabledRecursively(boolean enabled);
+    void setComponentHierarchyEnabled(boolean enabled);
 
     /**
-     * Returns the size of the drag handle square to be rendered in the marching ants.
-     * @return The size, in pixels, of the handle
+     * Show the script editor for this part.
+     *
+     * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
+     * command from the Objects menu.
      */
-    default int getResizeDragHandleSize() {
-        return 8;
+    default void editScript() {
+        WindowBuilder.make(new ScriptEditor())
+                .withTitle("Script of " + getName())
+                .withModel(getPartModel())
+                .resizeable(true)
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .build();
+    }
+
+    /**
+     * Show the property editor for this part.
+     *
+     * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
+     * the Objects menu.
+     */
+    default void editProperties() {
+        WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
+                .asModal()
+                .withTitle(getName())
+                .withModel(getPartModel())
+                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .resizeable(false)
+                .build();
     }
 
     /**
@@ -77,7 +96,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * @return The drag handle bounds.
      */
     default Rectangle getResizeDragHandle() {
-        return new Rectangle(getComponent().getWidth() - getResizeDragHandleSize(), getComponent().getHeight() - getResizeDragHandleSize(), getResizeDragHandleSize(), getResizeDragHandleSize());
+        final int dragHandleSize = 8;
+        return new Rectangle(getComponent().getWidth() - dragHandleSize, getComponent().getHeight() - dragHandleSize, dragHandleSize, dragHandleSize);
     }
 
     /**
@@ -106,7 +126,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Invoke to indicate that the selected tool has been changed by the user.
      */
     default void onToolModeChanged() {
-        setVisibleOnCard(!isHidden());
+        setVisibleWhenBrowsing(!isHidden());
         setEnabledOnCard(isEnabled());
     }
 
@@ -127,13 +147,14 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     }
 
     /**
-     * Sets whether this part should be visible on the card (mutating its "visible" HyperTalk property), but the actual
-     * visibility of the Swing component may be overridden by tool context (i.e., hidden parts will be visible when
-     * the part tool is active; visible parts in the foreground may be hidden when editing the background).
+     * Sets whether this part should be visible on the card (mutating its "visible" HyperTalk property) when in browse
+     * mode, taking into account that the actual visibility of the UI component may be overridden by tool context (i.e.,
+     * hidden parts will be visible when the part tool is active; foreground parts visible when browsing may be hidden
+     * when editing the background).
      *
      * @param visibleOnCard True to make it visible; false otherwise
      */
-    default void setVisibleOnCard(boolean visibleOnCard) {
+    default void setVisibleWhenBrowsing(boolean visibleOnCard) {
         getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
 
         // Force hide when part is in foreground and foreground is hidden
@@ -157,7 +178,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
         // Force disabled when part tool is active
         boolean forceDisabled = isPartToolActive();
-        setEnabledRecursively(enabledOnCard && !forceDisabled);
+        setComponentHierarchyEnabled(enabledOnCard && !forceDisabled);
     }
 
     /**
@@ -193,14 +214,15 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     @Override
     default void mouseClicked(MouseEvent e) {
+        boolean wasDoubleClicked = isSelectedForEditing() && e.getClickCount() == 2;
 
         // Double-command click to edit script
-        if (isSelectedForEditing() && e.getClickCount() == 2 && (e.isControlDown() || e.isMetaDown())) {
+        if (wasDoubleClicked && (e.isControlDown() || e.isMetaDown())) {
             editScript();
         }
 
         // Double-click to edit properties
-        else if (isSelectedForEditing() && e.getClickCount() == 2) {
+        else if (wasDoubleClicked) {
             editProperties();
         }
 

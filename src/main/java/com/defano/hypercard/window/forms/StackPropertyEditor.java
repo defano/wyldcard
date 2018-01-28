@@ -28,6 +28,7 @@ public class StackPropertyEditor extends HyperCardDialog {
     private JButton resizeButton;
     private JLabel locationLabel;
     private JLabel sizeLabel;
+    private JCheckBox resizableCheckBox;
 
     public StackPropertyEditor() {
         saveButton.addActionListener(e -> {
@@ -149,5 +150,9 @@ public class StackPropertyEditor extends HyperCardDialog {
         backgroundCountLabel = new JLabel();
         backgroundCountLabel.setText("Stack contains 1 background.");
         propertiesPanel.add(backgroundCountLabel, new GridConstraints(6, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        resizableCheckBox = new JCheckBox();
+        resizableCheckBox.setText("Resizable");
+        resizableCheckBox.setToolTipText("When checked, the stack window can be resized by dragging from the corners.");
+        propertiesPanel.add(resizableCheckBox, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 }

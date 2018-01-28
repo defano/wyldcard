@@ -3,13 +3,13 @@ package com.defano.hypercard.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ArtVandelay;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.print.PrintCardAction;
 import com.defano.hypercard.runtime.print.PrintStackAction;
 import com.defano.hypercard.window.WindowManager;
 
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The HyperCard File menu.
@@ -23,12 +23,12 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> HyperCard.getInstance().openStack(StackModel.newStackModel("Untitled")))
+                .withAction(e -> StackPart.newStack().activate())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
-                .withAction(e -> HyperCard.getInstance().getStack().open())
+                .withAction(e -> HyperCard.getInstance().open())
                 .withShortcut('O')
                 .build(this);
 
@@ -40,14 +40,14 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack")
-                .withAction(e -> HyperCard.getInstance().getStack().save(HyperCard.getInstance().getSavedStackFile()))
-                .withDisabledProvider(HyperCard.getInstance().getSavedStackFileProvider().map(op -> !op.isPresent()))
+                .withAction(e -> HyperCard.getInstance().save())
+                .withEnabledProvider(HyperCard.getInstance().getSavedStackFileProvider().map(Optional::isPresent))
                 .withShortcut('S')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack As...")
-                .withAction(e -> HyperCard.getInstance().getStack().saveAs())
+                .withAction(e -> HyperCard.getInstance().saveAs())
                 .withShiftShortcut('S')
                 .build(this);
 
@@ -62,7 +62,7 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Export Paint...")
                 .withAction(e -> ArtVandelay.exportPaint())
-                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
         this.addSeparator();

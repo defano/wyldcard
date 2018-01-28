@@ -9,9 +9,7 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.SystemMessage;
@@ -24,8 +22,6 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,86 +44,31 @@ public class StackPart implements PropertyChangeObserver {
 
     private StackPart() {}
 
+    public static StackPart newStack() {
+        return fromStackModel(StackModel.newStackModel("Untitled"));
+    }
+
     public static StackPart fromStackModel(StackModel model) {
         StackPart stackPart = new StackPart();
         stackPart.stackModel = model;
         stackPart.currentCard = stackPart.buildCardPart(model.getCurrentCardIndex());
+        stackPart.cardCountProvider.onNext(model.getCardCount());
+        stackPart.stackModel.addPropertyChangedObserver(stackPart);
 
         return stackPart;
     }
 
-    /**
-     * Prompts the user to choose a stack file to open.
-     */
-    public void open() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
-        fd.setMultipleMode(false);
-        fd.setFilenameFilter((dir, name) -> name.endsWith(FILE_EXTENSION));
-        fd.setVisible(true);
-        if (fd.getFiles().length > 0) {
-            StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
-            HyperCard.getInstance().setSavedStackFile(fd.getFiles()[0]);
-            open(model);
-        }
-    }
-
-    /**
-     * Opens the stack represented by the given model inside the stack window.
-     * @param model The data model of the stack to open.
-     */
-    public void open(StackModel model) {
-        this.stackModel = model;
-        this.currentCard = buildCardPart(model.getCurrentCardIndex());
-        this.cardCountProvider.onNext(stackModel.getCardCount());
-
-        this.stackModel.addPropertyChangedObserver(this);
-
-        goCard(model.getCurrentCardIndex(), null, false);
+    public StackPart activate() {
+        goCard(stackModel.getCurrentCardIndex(), null, false);
         fireOnStackOpened();
-        fireOnCardDimensionChanged(model.getDimension());
+        fireOnCardDimensionChanged(stackModel.getDimension());
 
         getStackModel().receiveMessage(SystemMessage.OPEN_STACK.messageName);
         getDisplayedCard().partOpened();
         fireOnCardOpened(getDisplayedCard());
+
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
-    }
-
-    /**
-     * Prompts the user to choose a file in which to save the current stack.
-     */
-    public void saveAs() {
-        String defaultName = "Untitled";
-
-        if (HyperCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
-            defaultName = HyperCard.getInstance().getSavedStackFileProvider().blockingFirst().get().getName();
-        } else if (stackModel.getStackName() != null && !stackModel.getStackName().isEmpty()) {
-            defaultName = stackModel.getStackName();
-        }
-
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
-        fd.setFile(defaultName);
-        fd.setVisible(true);
-        if (fd.getFiles().length > 0) {
-            File f = fd.getFiles()[0];
-            save(new File(f.getAbsolutePath() + FILE_EXTENSION));
-        }
-    }
-
-    /**
-     * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
-     * @param file The file where the stack should be saved
-     */
-    public void save(File file) {
-        if (file == null) {
-            saveAs();
-        } else {
-            try {
-                Serializer.serialize(file, HyperCard.getInstance().getStack().getStackModel());
-                HyperCard.getInstance().setSavedStackFile(file);
-            } catch (IOException e) {
-                HyperCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
-            }
-        }
+        return this;
     }
 
     /**
@@ -390,17 +331,17 @@ public class StackPart implements PropertyChangeObserver {
         }
     }
 
-    private CardPart go(int cardIndex, boolean pushToBackstack) {
+    private CardPart go(int cardIndex, boolean push) {
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
             return getDisplayedCard();
         }
 
-        deactivateCard(pushToBackstack);
+        deactivateCard(push);
         return activateCard(cardIndex);
     }
 
-    private void deactivateCard(boolean pushToStack) {
+    private void deactivateCard(boolean push) {
         CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
@@ -410,7 +351,7 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         // When requested, push the current card onto the backstack
-        if (pushToStack) {
+        if (push) {
             stackModel.getBackStack().push(displayedCard.getId());
         }
 

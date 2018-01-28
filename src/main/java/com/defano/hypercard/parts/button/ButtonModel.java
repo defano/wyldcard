@@ -12,8 +12,7 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * A data model representing a button part on a card. See {@link ButtonPart} for the
- * associated view object.
+ * A data model representing a button. See {@link ButtonPart} for the associated controller object.
  */
 public class ButtonModel extends CardLayerPartModel {
 

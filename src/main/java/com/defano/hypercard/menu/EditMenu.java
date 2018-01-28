@@ -12,6 +12,7 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The HyperCard Edit menu.
@@ -118,7 +119,7 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
-                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .withAction(e -> WindowBuilder.make(new IconCreator())
                         .resizeable(false)
                         .withTitle("Create Icon")

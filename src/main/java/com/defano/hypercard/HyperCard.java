@@ -5,7 +5,6 @@ import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.cursor.CursorManager;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.editor.PartEditor;
-import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.ExecutionContext;
@@ -15,8 +14,6 @@ import com.defano.hypercard.window.HyperTalkErrorDialog;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.exception.HtException;
 import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.io.File;
@@ -29,11 +26,9 @@ import java.util.Optional;
  * responsible for initializing the HyperCard window, tracking mouse changes
  * and reporting exceptions to the user.
  */
-public class HyperCard {
+public class HyperCard extends StackManager {
 
     private static HyperCard instance;
-    private final StackPart stackPart;
-    private final Subject<Optional<File>> savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
     public static void main(String argv[]) {
         try {
@@ -52,7 +47,7 @@ public class HyperCard {
 
     private HyperCard() {
 
-        stackPart = StackPart.fromStackModel(StackModel.newStackModel("Untitled"));
+        stackPart = StackPart.newStack();
 
         // Fire up the key and mouse listeners
         KeyboardManager.start();
@@ -63,7 +58,7 @@ public class HyperCard {
             WindowManager.start();
             CursorManager.getInstance().start();
 
-            stackPart.open(stackPart.getStackModel());
+            stackPart.activate();
             PeriodicMessageManager.getInstance().start();
         });
 
@@ -75,27 +70,9 @@ public class HyperCard {
         return instance;
     }
 
-    public Observable<Optional<File>> getSavedStackFileProvider() {
-        return savedStackFileProvider;
-    }
-
-    public File getSavedStackFile() {
-        return savedStackFileProvider.blockingFirst().orElse(null);
-    }
-
-    public void setSavedStackFile(File savedStackFileProvider) {
-        this.savedStackFileProvider.onNext(Optional.of(savedStackFileProvider));
-    }
-
     public StackPart getStack() {
         return stackPart;
     }
-
-    public void openStack(StackModel model) {
-        stackPart.open(model);
-        stackPart.goCard(stackPart.getStackModel().getCurrentCardIndex(), null, false);
-    }
-
 
     /**
      * Gets the card currently displayed in the stack window (no accounting for screen lock).
@@ -120,7 +97,7 @@ public class HyperCard {
         if (isDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(stackPart.getDisplayedCard(), "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
             if (dialogResult == JOptionPane.YES_OPTION) {
-                getStack().save(getSavedStackFile());
+                save(getStack().getStackModel(), getSavedStackFile());
             }
         }
 

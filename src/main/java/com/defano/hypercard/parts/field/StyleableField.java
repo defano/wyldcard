@@ -97,7 +97,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
     }
 
     @Override
-    public void setEnabledRecursively(boolean enabled) {
+    public void setComponentHierarchyEnabled(boolean enabled) {
         getComponent().setEnabled(enabled);
         getHyperCardTextPane().setEnabled(enabled);
     }

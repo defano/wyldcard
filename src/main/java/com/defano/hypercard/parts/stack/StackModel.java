@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class StackModel extends PartModel implements StackPartFinder {
 
     private static final int BACKSTACK_DEPTH = 20;
+    public static final String PROP_RESIZABLE = "resizable";
 
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
@@ -46,6 +47,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
+        defineProperty(PROP_RESIZABLE, new Value(true), false);
 
         initialize();
     }
@@ -160,6 +162,14 @@ public class StackModel extends PartModel implements StackPartFinder {
         } else {
             throw new IllegalArgumentException("No such background.");
         }
+    }
+
+    public boolean isResizable() {
+        return getKnownProperty(PROP_RESIZABLE).booleanValue();
+    }
+
+    public void setResizable(boolean resizable) {
+        setKnownProperty(PROP_RESIZABLE, new Value(resizable));
     }
 
     public Dimension getSize() {
