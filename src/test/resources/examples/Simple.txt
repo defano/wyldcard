@@ -1,0 +1,16 @@
+on mouseUp
+	put the ticks into startTime
+
+	-- much faster if we copy cd fld 1 into a temporary variable
+	repeat with n = 1 to the number of lines in cd fld 1
+		if line n of cd fld 1 contains "#" then  -- ignore lines without alternative labels
+			put offset("#", line n of cd fld 1) into firstChar
+			put the number of chars in line n of cd fld 1 into lastChar
+			delete chars firstChar to lastChar of line n of cd fld 1
+		end if
+	end repeat
+
+	-- How long did it take?
+	put the ticks - startTime into duration
+	put "Completed in " & duration / 60.0 & " seconds"
+end mouseUp

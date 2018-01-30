@@ -49,7 +49,7 @@ public class HyperCard extends StackManager {
             CursorManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
 
-            setActiveStack(StackPart.newStack());
+            activateStack(StackPart.newStack(), true);
         });
 
         // Close all open files before we die
@@ -68,9 +68,16 @@ public class HyperCard extends StackManager {
 
         // Prompt to save if user has unsaved changes
         if (isActiveStackDirty()) {
-            int dialogResult = JOptionPane.showConfirmDialog(getActiveStack().getDisplayedCard(), "Save changes to stack?", "Save", JOptionPane.YES_NO_OPTION);
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                save(getActiveStack().getStackModel());
+            int dialogResult = JOptionPane.showConfirmDialog(
+                    getActiveStack().getDisplayedCard(),
+                    "Save changes to stack?",
+                    "Save",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (dialogResult == JOptionPane.CLOSED_OPTION) {
+                return;
+            } else if (dialogResult == JOptionPane.YES_OPTION) {
+                saveActiveStack();
             }
         }
 

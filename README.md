@@ -817,9 +817,9 @@ sort the lines of card field "Names" by the middle word of each  -- or by middle
 
 Use the `find` command to find text anywhere in the stack or anywhere within a specified field. HyperCard supported a variety of search strategies, but HyperTalk Java implements a reduced set. All searches are case insensitive.
 
-The syntax for searching is `find [<searchable>] [international] <factor> [in <field>] [of marked cards]` where:
+The syntax for searching is `find [<strategy>] [international] <factor> [in <field>] [of marked cards]` where:
 
-* `<searchable>` is one of `word`, `chars`, `whole`, `string`. When no `searchable` value is specified, the behavior associated with `chars` is assumed. See the table below for a detailed description of each
+* `<strategy>` is one of `word`, `chars`, `whole`, or `string`. When no `<strategy>` value is specified, `whole` is assumed. See the table below for a detailed description of each
 * `international` had special meaning in HyperCard (matching diphthongs and diacriticals); it has no meaning in HyperTalk Java but is allowable in the syntax
 * `<factor>` is a single-term expression representing the text to find
 * `<field>` optionally specifies that the search should only take place within the single, specified field
@@ -827,11 +827,10 @@ The syntax for searching is `find [<searchable>] [international] <factor> [in <f
 
 Strategy    | Description
 ------------|-------------------------------------
-`word`      | Finds entire words that begin with the given search term. For example, `find word "fi"` in `Find me fast!` matches `Find` but `find word "nd"` in the same text matches nothing.
-`whole`     | Same behavior as `word`
-`chars`     | Finds the given search term appearing anywhere in searchable text.
-`whole`     | Same behavior as `chars`
-`string`    | Same behavior as `chars`
+`word`      | Finds whole words in the searchable text. Search term should not contain any whitespace (if it is expected to match any text). Only whole words will match; substrings contained within a word will not.
+`chars`     | Finds a substring that occurs entirely within the bounds of a word (does not cross word boundaries). Search term should not include whitespace (if it is expected to match anything).
+`whole`     | Finds a substring that starts at the beginning of a word. Search term may contain whitespace, and search results may cross word boundaries (but will always start at a word boundary).
+`string`    | Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found text may cross word boundaries.
 
 Consider these examples,
 

@@ -869,7 +869,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSearchableSubstring(HyperTalkParser.SearchableSubstringContext ctx) {
-        return SearchType.SUBSTRING;
+        return SearchType.WHOLE;
     }
 
     @Override

@@ -18,6 +18,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Optional;
 
+/**
+ * Provides methods to open, close, save and focus stacks.
+ * TODO: Build out infrastructure to support multiple stack windows
+ */
 public class StackManager {
 
     private StackPart activeStack = StackPart.newStack();
@@ -26,10 +30,10 @@ public class StackManager {
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
 
-    public File getSavedStackFile() {
-        return savedStackFile.getObservable().blockingFirst().orElse(null);
-    }
-
+    /**
+     * Gets the active stack (the stack that currently has focus).
+     * @return The active stack
+     */
     public StackPart getActiveStack() {
         return activeStack;
     }
@@ -46,27 +50,33 @@ public class StackManager {
         if (fd.getFiles().length > 0) {
             StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
             model.setSavedStackFile(fd.getFiles()[0]);
-            setActiveStack(StackPart.fromStackModel(model));
+            activateStack(StackPart.fromStackModel(model), true);
         }
     }
 
-    public void setActiveStack(StackPart stackPart) {
+    /**
+     * Makes the given stack the "active" stack--that is, the stack in focus which the menu bar and message box are
+     * associated with. The active stack represents the stack with
+     * @param stackPart The stack to activate
+     * @param inNewWindow When true, binds the stack to a new stack window
+     */
+    public void activateStack(StackPart stackPart, boolean inNewWindow) {
         activeStack = stackPart;
-        activeStack.bindToWindow(WindowManager.getStackWindow());
+
         cardCount.setSource(activeStack.getCardCountProvider());
         cardClipboard.setSource(activeStack.getCardClipboardProvider());
         savedStackFile.setSource(activeStack.getStackModel().getSavedStackFileProvider());
-    }
 
-    public void saveActiveStackAs() {
-        saveAs(activeStack.getStackModel());
+        if (inNewWindow) {
+            activeStack.bindToWindow(WindowManager.getStackWindow());
+        }
     }
 
     /**
      * Prompts the user to choose a file in which to save the current stack; provided user chooses a file (doesn't
      * cancel), the stack is saved to this file.
      */
-    public void saveAs(StackModel stackModel) {
+    private void saveAs(StackModel stackModel) {
         String defaultName = "Untitled";
 
         if (HyperCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
@@ -88,15 +98,25 @@ public class StackManager {
         }
     }
 
+    /**
+     * Saves the active stack to its associated file (acts like "Save as" if no file is associated).
+     */
     public void saveActiveStack() {
-        if (savedStackFile.getObservable().blockingFirst().isPresent()) {
-            save(activeStack.getStackModel(), savedStackFile.getObservable().blockingFirst().get());
-        } else {
-            saveAs(activeStack.getStackModel());
-        }
+        save(activeStack.getStackModel());
     }
 
-    public void save(StackModel stackModel) {
+    /**
+     * Prompts the user to select a file, then saves the active stack to this file.
+     */
+    public void saveActiveStackAs() {
+        save(activeStack.getStackModel(), null);
+    }
+
+    /**
+     * Saves the given stack model to its associated file (acts like "Save as" if no file is associated).
+     * @param stackModel The StackModel to save.
+     */
+    private void save(StackModel stackModel) {
         Optional<File> saveFile = savedStackFile.getObservable().blockingFirst();
         save(stackModel, saveFile.orElse(null));
     }
@@ -163,6 +183,13 @@ public class StackManager {
         return cardClipboard.getObservable();
     }
 
+    /**
+     * Gets an observable optional file representing the file to which the active stack is current bound (that is, the
+     * file where the stack was last saved or opened from).
+     *
+     * An empty optional indicates the stack has never been saved and has no associated file.
+     * @return An observable optional file.
+     */
     public Observable<Optional<File>> getSavedStackFileProvider() {
         return savedStackFile.getObservable();
     }
