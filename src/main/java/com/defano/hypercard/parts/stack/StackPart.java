@@ -39,7 +39,8 @@ public class StackPart implements PropertyChangeObserver {
     private StackModel stackModel;
     private CardPart currentCard;
 
-    private final List<StackObserver> observers = new ArrayList<>();
+    private final List<StackObserver> stackObservers = new ArrayList<>();
+    private final List<StackNavigationObserver> stackNavigationObservers = new ArrayList<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
     private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
@@ -304,7 +305,15 @@ public class StackPart implements PropertyChangeObserver {
      * @param observer The observer
      */
     public void addObserver (StackObserver observer) {
-        observers.add(observer);
+        stackObservers.add(observer);
+    }
+
+    /**
+     * Adds an observer of stack navigation changes (i.e., user changed cards)
+     * @param observer The observer
+     */
+    public void addNavigationObserver(StackNavigationObserver observer) {
+        stackNavigationObservers.add(observer);
     }
 
     /** {@inheritDoc} */
@@ -398,7 +407,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnStackOpened () {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackObserver observer : stackObservers) {
                 observer.onStackOpened(StackPart.this);
             }
         });
@@ -406,7 +415,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardClosing (CardPart closingCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardClosed(closingCard);
             }
         });
@@ -414,7 +423,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardOpened (CardPart openedCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardOpened(openedCard);
             }
         });
@@ -422,15 +431,15 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardDimensionChanged(Dimension newDimension) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onCardDimensionChanged(newDimension);
+            for (StackObserver observer : stackObservers) {
+                observer.onStackDimensionChanged(newDimension);
             }
         });
     }
 
     private void fireOnStackNameChanged(String newName) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackObserver observer : stackObservers) {
                 observer.onStackNameChanged(newName);
             }
         });
@@ -438,7 +447,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardOrderChanged() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackObserver observer : stackObservers) {
                 observer.onCardOrderChanged();
             }
         });

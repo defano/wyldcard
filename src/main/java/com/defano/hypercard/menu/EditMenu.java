@@ -32,11 +32,14 @@ public class EditMenu extends HyperCardMenu {
                 .named("Undo")
                 .withShortcut('Z')
                 .withAction(e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().undo())
+                .withEnabledProvider(HyperCard.getInstance().getIsUndoableProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
+                .withShiftShortcut('Z')
                 .withAction(e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().redo())
+                .withEnabledProvider(HyperCard.getInstance().getIsRedoableProvider())
                 .build(this);
 
         this.addSeparator();

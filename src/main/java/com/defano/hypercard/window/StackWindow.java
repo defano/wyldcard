@@ -4,9 +4,7 @@ import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.fx.CurtainObserver;
 import com.defano.hypercard.paint.ArtVandelay;
 import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.parts.stack.ScreenCurtain;
-import com.defano.hypercard.parts.stack.StackObserver;
-import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.parts.stack.*;
 import com.defano.hypercard.parts.util.MouseEventDispatcher;
 import com.defano.hypercard.util.FileDrop;
 import com.defano.hypercard.util.ThreadUtils;
@@ -18,7 +16,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends HyperCardFrame implements StackObserver, CurtainObserver {
+public class StackWindow extends HyperCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;
@@ -85,6 +83,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
             getWindowPanel().setPreferredSize(this.stack.getStackModel().getSize());
 
             this.stack.addObserver(this);
+            this.stack.addNavigationObserver(this);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
         }
@@ -107,12 +106,6 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
 
     /** {@inheritDoc} */
     @Override
-    public void onCardClosed(CardPart oldCard) {
-        // Nothing to do
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void onCardOpened(CardPart newCard) {
         displayCard(newCard);
         invalidateWindowTitle();
@@ -120,7 +113,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
 
     /** {@inheritDoc} */
     @Override
-    public void onCardDimensionChanged(Dimension newDimension) {
+    public void onStackDimensionChanged(Dimension newDimension) {
         ThreadUtils.assertDispatchThread();
 
         getWindowPanel().setPreferredSize(newDimension);

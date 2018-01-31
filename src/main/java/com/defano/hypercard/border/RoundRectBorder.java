@@ -38,7 +38,9 @@ public class RoundRectBorder implements Border {
 
     @Override
     public Insets getBorderInsets(Component c) {
-        return new Insets(stokeWidth, stokeWidth, stokeWidth, stokeWidth);
+        int floor = (int) Math.floor(stokeWidth / 2.0);
+        int ceil = (int) Math.ceil(stokeWidth / 2.0);
+        return new Insets(floor, floor, ceil, ceil);
     }
 
     @Override

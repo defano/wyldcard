@@ -57,7 +57,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private Disposable fontFamilySubscription;
 
     private final ToolEditablePart toolEditablePart;
-    private final Throttle fontSelectionThrottle = new Throttle(500);
+    private final static Throttle fontSelectionThrottle = new Throttle(500);
 
     // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
     // menu remains useful for text property changes.

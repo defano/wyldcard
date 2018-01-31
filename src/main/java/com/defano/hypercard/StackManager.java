@@ -2,6 +2,7 @@ package com.defano.hypercard;
 
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.parts.stack.StackNavigationObserver;
 import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.serializer.Serializer;
@@ -22,13 +23,15 @@ import java.util.Optional;
  * Provides methods to open, close, save and focus stacks.
  * TODO: Build out infrastructure to support multiple stack windows
  */
-public class StackManager {
+public class StackManager implements StackNavigationObserver {
 
     private StackPart activeStack = StackPart.newStack();
 
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
+    private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
+    private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
 
     /**
      * Gets the active stack (the stack that currently has focus).
@@ -66,6 +69,7 @@ public class StackManager {
         cardCount.setSource(activeStack.getCardCountProvider());
         cardClipboard.setSource(activeStack.getCardClipboardProvider());
         savedStackFile.setSource(activeStack.getStackModel().getSavedStackFileProvider());
+        activeStack.addNavigationObserver(this);
 
         if (inNewWindow) {
             activeStack.bindToWindow(WindowManager.getStackWindow());
@@ -192,5 +196,19 @@ public class StackManager {
      */
     public Observable<Optional<File>> getSavedStackFileProvider() {
         return savedStackFile.getObservable();
+    }
+
+    public Observable<Boolean> getIsUndoableProvider() {
+        return isUndoable.getObservable();
+    }
+
+    public Observable<Boolean> getIsRedoableProvider() {
+        return isRedoable.getObservable();
+    }
+
+    @Override
+    public void onCardOpened(CardPart newCard) {
+        isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
+        isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
     }
 }

@@ -17,6 +17,6 @@ public class DefaultClassicButton extends ClassicButton {
 
     @Override
     protected Border getButtonBorder() {
-        return new DoubleRoundRectBorder(INNER_BORDER_WIDTH, ARC_DIAMETER, BORDER_SEPARATION, OUTER_BORDER_WIDTH, ARC_DIAMETER * 2);
+        return new DoubleRoundRectBorder(INNER_BORDER_WIDTH, getButtonCornerDiameter(), BORDER_SEPARATION, OUTER_BORDER_WIDTH, getButtonCornerDiameter() * 2);
     }
 }

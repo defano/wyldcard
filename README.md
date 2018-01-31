@@ -815,7 +815,7 @@ sort the lines of card field "Names" by the middle word of each  -- or by middle
 
 ### Searching
 
-Use the `find` command to find text anywhere in the stack or anywhere within a specified field. HyperCard supported a variety of search strategies, but HyperTalk Java implements a reduced set. All searches are case insensitive.
+Use the `find` command to find text anywhere in the stack or anywhere within a specified field. All searches are case insensitive.
 
 The syntax for searching is `find [<strategy>] [international] <factor> [in <field>] [of marked cards]` where:
 
@@ -830,7 +830,7 @@ Strategy    | Description
 `word`      | Finds whole words in the searchable text. Search term should not contain any whitespace (if it is expected to match any text). Only whole words will match; substrings contained within a word will not.
 `chars`     | Finds a substring that occurs entirely within the bounds of a word (does not cross word boundaries). Search term should not include whitespace (if it is expected to match anything).
 `whole`     | Finds a substring that starts at the beginning of a word. Search term may contain whitespace, and search results may cross word boundaries (but will always start at a word boundary).
-`string`    | Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found text may cross word boundaries.
+`string`    | Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found-text may cross word boundaries.
 
 Consider these examples,
 
@@ -934,7 +934,7 @@ Each musical note is written in the format `<name>[<octave>][<accidental>][<dura
 * `<name>` is a single character representing the pitch; one of `c`, `d`, `e`, `f`, `g`, `a`, `b` or `r` (for a rest note).
 * `<octave>` is a single-digit integer representing the note's octave; higher numbers are higher pitched. One of `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, or `8`.
 * `<accidental>` is a half-note increase or decrease in pitch; of one `b` (flat, decreased pitch) or `#` (sharp, increased pitch).
-* `<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (once whose duration is played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).
+* `<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).
 
 When not explicitly specified, each note "inherits" its duration and octave from the previous note played. The first note in the musical sequence is assumed to be a 4th-octave quarter note (if not explicitly noted). For example, in the musical sequence `"g ce5 d"`, the first note (`g`) is played as a quarter note in the 4th octave, but the third note (`d`) is played as an eighth note in the 5th octave.
 
