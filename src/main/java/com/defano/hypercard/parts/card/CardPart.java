@@ -51,6 +51,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     private CardModel cardModel;
 
+    private final static int CANVAS_UNDO_DEPTH = 20;
+
     private final PartsTable<FieldPart> fields = new PartsTable<>();
     private final PartsTable<ButtonPart> buttons = new PartsTable<>();
 
@@ -90,13 +92,13 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         card.setTransferHandler(new CardPartTransferHandler(card));
 
         // Setup the foreground paint canvas
-        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage()));
+        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(), CANVAS_UNDO_DEPTH));
         card.getForegroundCanvas().addCanvasCommitObserver(card);
         card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
         card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage()));
+        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage(), CANVAS_UNDO_DEPTH));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
