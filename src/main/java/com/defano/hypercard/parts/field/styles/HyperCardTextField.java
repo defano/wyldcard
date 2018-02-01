@@ -57,7 +57,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private Disposable fontFamilySubscription;
 
     private final ToolEditablePart toolEditablePart;
-    private final static Throttle fontSelectionThrottle = new Throttle(500);
+    private final static Throttle fontSelectionThrottle = new Throttle("font-selection-throttle", 500);
 
     // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
     // menu remains useful for text property changes.
@@ -429,7 +429,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private void updateFocusedFontSelection() {
 
         // Style calculation can be costly for large selections; throttle repeated requests in the background
-        fontSelectionThrottle.submit(() -> {
+        fontSelectionThrottle.submitOnUiThread(() -> {
             Range selection = getSelectedTextRange();
 
             Set<Value> styles = new HashSet<>();

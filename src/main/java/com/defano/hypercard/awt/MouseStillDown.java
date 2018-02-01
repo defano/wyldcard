@@ -10,7 +10,7 @@ import java.awt.event.MouseEvent;
 public class MouseStillDown {
 
     private final static int MOUSE_STILL_DOWN_PERIOD_MS = 350;
-    private final static Throttle mouseStillPressedThrottle = new Throttle(MOUSE_STILL_DOWN_PERIOD_MS);
+    private final static Throttle mouseStillPressedThrottle = new Throttle("mouse-still-down-throttle", MOUSE_STILL_DOWN_PERIOD_MS);
 
     /**
      * Invoke when {@link java.awt.event.MouseListener#mousePressed(MouseEvent)} event occurs, and the given

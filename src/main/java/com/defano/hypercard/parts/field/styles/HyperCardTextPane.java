@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class HyperCardTextPane extends JTextPane {
 
-    private static Throttle lineCalculationThrottle = new Throttle(50);
+    private static Throttle lineCalculationThrottle = new Throttle("line-calculation-throttle", 50);
 
     private boolean wrapText = true;
     private boolean scrollable = true;

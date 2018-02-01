@@ -13,12 +13,13 @@ import java.util.concurrent.*;
 public class Throttle {
 
     private final int periodMs;
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("throttle-executor-%d").build());
+    private final ScheduledExecutorService executor;
 
     private List<Future> pendingUpdates = new ArrayList<>();
 
-    public Throttle(int periodMs) {
+    public Throttle(String name, int periodMs) {
         this.periodMs = periodMs;
+        this.executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat(name).build());
     }
 
     /**
