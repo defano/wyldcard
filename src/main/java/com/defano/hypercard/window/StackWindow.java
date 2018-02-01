@@ -4,8 +4,10 @@ import com.defano.hypercard.fx.CurtainManager;
 import com.defano.hypercard.fx.CurtainObserver;
 import com.defano.hypercard.paint.ArtVandelay;
 import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.parts.stack.*;
-import com.defano.hypercard.parts.util.MouseEventDispatcher;
+import com.defano.hypercard.parts.stack.ScreenCurtain;
+import com.defano.hypercard.parts.stack.StackNavigationObserver;
+import com.defano.hypercard.parts.stack.StackObserver;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.util.FileDrop;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.util.Throttle;
@@ -33,11 +35,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
         ThreadUtils.assertDispatchThread();
 
         cardPanel.setLayout(new BorderLayout(0, 0));
-        cardPanel.add(screenCurtain);
         cardPanel.setLayer(screenCurtain, CURTAIN_LAYER);
-
-        // Pass mouse events send to the curtain to card panel behind it
-        MouseEventDispatcher.bindTo(screenCurtain, () -> new Component[] {card});
+        cardPanel.add(screenCurtain);
 
         CurtainManager.getInstance().addScreenCurtainObserver(this);
     }
@@ -49,12 +48,16 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     public void invalidateWindowTitle() {
         ThreadUtils.assertDispatchThread();
 
+        // Don't update title when screen is locked
+        if (screenCurtain.isVisible()) {
+            return;
+        }
+
         String stackName = card.getCardModel().getStackModel().getStackName();
         int cardNumber = card.getCardModel().getCardIndexInStack() + 1;
         int cardCount = stack.getCardCountProvider().blockingFirst();
-        boolean isEditingBackground = card.isForegroundHidden();
 
-        if (isEditingBackground) {
+        if (card.isForegroundHidden()) {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
@@ -78,12 +81,12 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
         if (data instanceof StackPart) {
             this.stack = (StackPart) data;
-            this.card = this.stack.getDisplayedCard();
+            this.card = stack.getDisplayedCard();
 
-            getWindowPanel().setPreferredSize(this.stack.getStackModel().getSize());
+            getWindowPanel().setPreferredSize(stack.getStackModel().getSize());
 
-            this.stack.addObserver(this);
-            this.stack.addNavigationObserver(this);
+            stack.addObserver(this);
+            stack.addNavigationObserver(this);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
         }
@@ -107,7 +110,23 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     /** {@inheritDoc} */
     @Override
     public void onCardOpened(CardPart newCard) {
-        displayCard(newCard);
+        ThreadUtils.assertDispatchThread();
+
+        this.card = newCard;
+
+        // Listen for image files that are dropped onto the card
+        new FileDrop(card, ArtVandelay::importPaint);
+
+        for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
+            cardPanel.remove(c);
+        }
+
+        cardPanel.setLayer(card, CARD_LAYER);
+        cardPanel.add(card);
+
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
         invalidateWindowTitle();
     }
 
@@ -128,32 +147,19 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     /** {@inheritDoc} */
     @Override
-    public void onCurtainUpdated(BufferedImage screenCurtain) {
-        this.screenCurtain.setCurtainImage(screenCurtain);
+    public void onCurtainUpdated(BufferedImage curtainImage) {
+        this.screenCurtain.setCurtainImage(curtainImage);
+
+        // Refresh title when unlocking screen
+        if (curtainImage == null) {
+            invalidateWindowTitle();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void onCardOrderChanged() {
         invalidateWindowTitle();
-    }
-
-    private void displayCard(CardPart card) {
-        ThreadUtils.assertDispatchThread();
-
-        this.card = card;
-
-        // Listen for image files that are dropped onto the card
-        new FileDrop(card, ArtVandelay::importPaint);
-
-        for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
-            cardPanel.remove(c);
-        }
-
-        cardPanel.add(card);
-        cardPanel.setLayer(card, CARD_LAYER);
-        cardPanel.revalidate();
-        cardPanel.repaint();
     }
 
     private class CardResizeObserver extends ComponentAdapter {

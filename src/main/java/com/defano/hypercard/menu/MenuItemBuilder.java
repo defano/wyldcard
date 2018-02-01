@@ -29,10 +29,6 @@ public class MenuItemBuilder {
         return new MenuItemBuilder(new JCheckBoxMenuItem());
     }
 
-    public static MenuItemBuilder ofRadioType () {
-        return new MenuItemBuilder(new JRadioButtonMenuItem());
-    }
-
     public static MenuItemBuilder ofDefaultType () {
         return new MenuItemBuilder(new JMenuItem());
     }
@@ -41,7 +37,7 @@ public class MenuItemBuilder {
         return new MenuItemBuilder(new JMenuItem(action));
     }
 
-    public static MenuItemBuilder ofHeirarchicalType() {
+    public static MenuItemBuilder ofHierarchicalType() {
         return new MenuItemBuilder(new JMenu());
     }
 

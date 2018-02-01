@@ -598,8 +598,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     public void partOpened() {
         editingBackgroundSubscription = ToolsContext.getInstance().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
-        foregroundScaleSubscription = getForegroundCanvas().getScaleProvider().subscribe(foregroundScaleObserver);
-        backgroundScaleSubscription = getBackgroundCanvas().getScaleProvider().subscribe(backgroundScaleObserver);
+        foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
+        backgroundScaleSubscription = getBackgroundCanvas().getScaleObservable().subscribe(backgroundScaleObserver);
 
         getForegroundCanvas().getSurface().addMouseListener(this);
         getForegroundCanvas().getSurface().addKeyListener(this);
@@ -734,7 +734,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
                 getBackgroundCanvas().setScale(1.0);
             }
 
-            setForegroundVisible(!isEditingBackground);
+            ThreadUtils.invokeAndWaitAsNeeded(() -> setForegroundVisible(!isEditingBackground));
         }
     }
 

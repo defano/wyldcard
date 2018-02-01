@@ -44,23 +44,22 @@ public class HyperCardMenuBar extends JMenuBar {
         add(StyleMenu.instance);
     }
 
-    public String doMenu(String theMenuItem) throws HtSemanticException {
+    public void doMenu(String theMenuItem) throws HtSemanticException {
+        ThreadUtils.assertWorkerThread();
+
         JMenuItem foundMenuItem = findMenuItemByName(theMenuItem);
         if (foundMenuItem != null) {
-
-            ThreadUtils.invokeAndWaitAsNeeded(new Runnable() {
-                @Override
-                public void run() {
-                    for (ActionListener thisAction : foundMenuItem.getActionListeners()) {
-                        thisAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doMenu"));
-                    }
+            ActionEvent event = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "doMenu");
+            for (ActionListener thisAction : foundMenuItem.getActionListeners()) {
+                if (thisAction instanceof DeferredMenuAction) {
+                    ((DeferredMenuAction) thisAction).blockingInvokeActionPerformed(event);
+                } else {
+                    thisAction.actionPerformed(event);
                 }
-            });
-
-            return foundMenuItem.getParent().getName();
+            }
+        } else {
+            throw new HtSemanticException("Can't find menu item " + theMenuItem);
         }
-
-        throw new HtSemanticException("Can't find menu item " + theMenuItem);
     }
 
     public void createMenu(String name) throws HtSemanticException {
@@ -81,7 +80,7 @@ public class HyperCardMenuBar extends JMenuBar {
         WindowManager.getStackWindow().getWindow().pack();
     }
 
-    public JMenu findMenuByNumber(int index) throws HtSemanticException {
+    public JMenu findMenuByNumber(int index) {
         if (index < 0 || index >= getMenuCount()) {
             return null;
         }
@@ -101,7 +100,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return null;
     }
 
-    public JMenuItem findMenuItemByName(String name) {
+    private JMenuItem findMenuItemByName(String name) {
         for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
             JMenu thisMenu = this.getMenu(thisMenuIndex);
 

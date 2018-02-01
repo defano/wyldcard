@@ -336,11 +336,11 @@ public class ToolsContext {
 
         // Create and activate new paint tool
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
-                .withStrokeSubject(getStrokeProviderForTool(selectedToolType))
-                .withStrokePaintSubject(linePaintProvider)
-                .withFillPaintSubject(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.create(t)) : Optional.empty()))
-                .withFontSubject(FontContext.getInstance().getPaintFontProvider())
-                .withShapeSidesSubject(shapeSidesProvider)
+                .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
+                .withStrokePaintObservable(linePaintProvider)
+                .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.create(t)) : Optional.empty()))
+                .withFontObservable(FontContext.getInstance().getPaintFontProvider())
+                .withShapeSidesObservable(shapeSidesProvider)
                 .makeActiveOnCanvas(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas())
                 .build();
 
@@ -358,7 +358,7 @@ public class ToolsContext {
 
         // Update selected image provider (so UI can tell when a selection exists)
         if (selectedTool instanceof AbstractSelectionTool) {
-            setSelectedImage(((AbstractSelectionTool) selectedTool).getSelectedImageSubject());
+            setSelectedImage(((AbstractSelectionTool) selectedTool).getSelectedImageObservable());
         }
 
         // Setup "Draw Multiple" and "Draw Centered" options on tools that support them

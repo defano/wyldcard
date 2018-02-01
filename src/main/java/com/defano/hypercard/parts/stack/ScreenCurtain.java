@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.parts.card.CardPart;
+import com.defano.hypercard.util.ThreadUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,11 +29,14 @@ public class ScreenCurtain extends JLabel {
      *                     underneath.
      */
     public void setCurtainImage(BufferedImage curtainImage) {
+        ThreadUtils.assertDispatchThread();
+
         setVisible(curtainImage != null);
 
         if (curtainImage != null) {
             this.setIcon(new ImageIcon(curtainImage));
             this.setPreferredSize(new Dimension(curtainImage.getWidth(), curtainImage.getHeight()));
+            this.setSize(curtainImage.getWidth(), curtainImage.getHeight());
             this.invalidate();
         }
     }

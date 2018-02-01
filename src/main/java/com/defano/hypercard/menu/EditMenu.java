@@ -146,7 +146,7 @@ public class EditMenu extends HyperCardMenu {
 
         this.addSeparator();
 
-        JMenuItem laf = MenuItemBuilder.ofHeirarchicalType()
+        JMenuItem laf = MenuItemBuilder.ofHierarchicalType()
                 .named("Look & Feel")
                 .build(this);
 

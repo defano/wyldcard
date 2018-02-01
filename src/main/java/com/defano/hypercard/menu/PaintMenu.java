@@ -121,7 +121,7 @@ public class PaintMenu extends HyperCardMenu {
 
         this.addSeparator();
 
-        JMenuItem reduceColorMenu = MenuItemBuilder.ofHeirarchicalType()
+        JMenuItem reduceColorMenu = MenuItemBuilder.ofHierarchicalType()
                 .named("Reduce Color")
                 .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
