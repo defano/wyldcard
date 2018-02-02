@@ -83,7 +83,7 @@ public interface HyperCardWindow<WindowType extends Window> {
 
     default void applyMenuBar() {
         if (getWindow() instanceof JFrame) {
-            if (ownsMenubar() || WindowManager.isMacOs()) {
+            if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
                 ((JFrame) getWindow()).setJMenuBar(HyperCardMenuBar.instance);
             } else {
                 ((JFrame) getWindow()).setJMenuBar(null);

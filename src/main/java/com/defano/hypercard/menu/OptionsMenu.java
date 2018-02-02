@@ -65,14 +65,14 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Line Size...")
-                .withAction(a -> WindowManager.getLinesPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getLinesPalette().getWindowVisibleProvider())
+                .withAction(a -> WindowManager.getInstance().getLinesPalette().setVisible(true))
+                .withDisabledProvider(WindowManager.getInstance().getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Brush Shape...")
-                .withAction(a -> WindowManager.getBrushesPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getBrushesPalette().getWindowVisibleProvider())
+                .withAction(a -> WindowManager.getInstance().getBrushesPalette().setVisible(true))
+                .withDisabledProvider(WindowManager.getInstance().getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -82,8 +82,8 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Polygon Sides...")
-                .withAction(a -> WindowManager.getShapesPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
+                .withAction(a -> WindowManager.getInstance().getShapesPalette().setVisible(true))
+                .withDisabledProvider(WindowManager.getInstance().getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();

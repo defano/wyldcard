@@ -121,7 +121,7 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Other...")
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
+                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
                 .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
     }

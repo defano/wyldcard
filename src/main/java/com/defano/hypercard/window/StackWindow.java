@@ -80,6 +80,12 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
         ThreadUtils.assertDispatchThread();
 
         if (data instanceof StackPart) {
+
+            if (this.stack != null) {
+                stack.removeObserver(this);
+                stack.removeNavigationObserver(this);
+            }
+
             this.stack = (StackPart) data;
             this.card = stack.getDisplayedCard();
 

@@ -20,40 +20,40 @@ public class ToolsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Tools")
-                .withAction(e -> WindowManager.getPaintToolsPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getPaintToolsPalette().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getPaintToolsPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getPaintToolsPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Patterns")
-                .withAction(e -> WindowManager.getPatternsPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getPatternsPalette().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getPatternsPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getPatternsPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Colors")
-                .withAction(e -> WindowManager.getColorPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getColorPalette().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getColorPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getColorPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Shapes")
-                .withAction(e -> WindowManager.getShapesPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getShapesPalette().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getShapesPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Brushes")
-                .withAction(e -> WindowManager.getBrushesPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getBrushesPalette().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getBrushesPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Lines")
-                .withAction(e -> WindowManager.getLinesPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getLinesPalette().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getLinesPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();

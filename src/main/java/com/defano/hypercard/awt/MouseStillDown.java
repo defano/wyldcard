@@ -21,7 +21,7 @@ public class MouseStillDown {
      */
     public static void then (Runnable r) {
         mouseStillPressedThrottle.submitOnUiThread(() -> {
-            if (MouseManager.isMouseDown()) {
+            if (MouseManager.getInstance().isMouseDown()) {
                 r.run();
             }
         });

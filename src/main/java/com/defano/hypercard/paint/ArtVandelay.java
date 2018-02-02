@@ -20,7 +20,7 @@ import java.io.IOException;
 public class ArtVandelay {
 
     public static void importPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> isFileSupportedForImporting(name));
         fd.setVisible(true);
@@ -31,7 +31,7 @@ public class ArtVandelay {
     }
 
     public static void exportPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
         fd.setFile("Untitled.png");
         fd.setVisible(true);
 

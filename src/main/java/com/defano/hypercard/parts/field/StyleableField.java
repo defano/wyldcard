@@ -108,7 +108,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
 
         getPartModel().addPropertyChangedObserver(fieldComponent);
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
-        KeyboardManager.addGlobalKeyListener(this);
+        KeyboardManager.getInstance().addGlobalKeyListener(this);
     }
 
     @Override
@@ -116,7 +116,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
         fieldComponent.partClosed();
 
         getPartModel().removePropertyChangedObserver(fieldComponent);
-        KeyboardManager.removeGlobalKeyListener(this);
+        KeyboardManager.getInstance().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }
 

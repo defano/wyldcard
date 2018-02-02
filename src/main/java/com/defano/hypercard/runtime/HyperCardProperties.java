@@ -127,12 +127,12 @@ public class HyperCardProperties extends PropertiesModel {
         });
         defineComputedGetterProperty(PROP_PATTERN, (model, propertyName) -> new Value (ToolsContext.getInstance().getFillPattern()));
 
-        defineComputedGetterProperty(PROP_MOUSEH, (model, propertyName) -> new Value(MouseManager.getMouseLoc().x));
-        defineComputedGetterProperty(PROP_MOUSEV, (model, propertyName) -> new Value(MouseManager.getMouseLoc().y));
-        defineComputedGetterProperty(PROP_SCREENRECT, (model, propertyName) -> new Value(WindowManager.getStackWindow().getWindow().getGraphicsConfiguration().getBounds()));
-        defineComputedGetterProperty(PROP_CLICKLOC, (model, propertyName) -> new Value(MouseManager.getClickLoc()));
-        defineComputedGetterProperty(PROP_CLICKH, (model, propertyName) -> new Value(MouseManager.getClickLoc().x));
-        defineComputedGetterProperty(PROP_CLICKV, (model, propertyName) -> new Value(MouseManager.getClickLoc().y));
+        defineComputedGetterProperty(PROP_MOUSEH, (model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().x));
+        defineComputedGetterProperty(PROP_MOUSEV, (model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().y));
+        defineComputedGetterProperty(PROP_SCREENRECT, (model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getGraphicsConfiguration().getBounds()));
+        defineComputedGetterProperty(PROP_CLICKLOC, (model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
+        defineComputedGetterProperty(PROP_CLICKH, (model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));
+        defineComputedGetterProperty(PROP_CLICKV, (model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().y));
         defineComputedGetterProperty(PROP_SOUND, (model, propertyName) -> new Value(SoundPlayer.getSound()));
 
         defineComputedGetterProperty(PROP_SELECTEDLINE, (model, propertyName) -> {

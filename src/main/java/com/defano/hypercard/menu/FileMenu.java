@@ -3,7 +3,6 @@ package com.defano.hypercard.menu;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ArtVandelay;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.print.PrintCardAction;
 import com.defano.hypercard.runtime.print.PrintStackAction;
@@ -23,7 +22,7 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> StackPart.newStack().bindToWindow(WindowManager.getStackWindow()))
+                .withAction(e -> HyperCard.getInstance().newStack())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -35,7 +34,7 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Close Stack")
                 .withShortcut('W')
-                .disabled()
+                .withAction(e -> HyperCard.getInstance().quit())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -111,7 +110,7 @@ public class FileMenu extends HyperCardMenu {
                 .disabled()
                 .build(this);
 
-        if (!WindowManager.isMacOs()) {
+        if (!WindowManager.getInstance().isMacOs()) {
 
             this.addSeparator();
 

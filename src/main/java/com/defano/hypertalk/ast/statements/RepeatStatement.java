@@ -137,7 +137,7 @@ public class RepeatStatement extends Statement {
 
     private void rest() throws HtException {
 
-        if (KeyboardManager.isBreakSequence) {
+        if (KeyboardManager.getInstance().isBreakSequence()) {
             throw new HtSemanticException("Script aborted.");
         } else {
             try {

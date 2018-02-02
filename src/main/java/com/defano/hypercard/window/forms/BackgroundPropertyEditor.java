@@ -49,7 +49,7 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
                     .withTitle("Script of " + backgroundModel.getKnownProperty(BackgroundModel.PROP_NAME).stringValue())
                     .withModel(backgroundModel)
                     .resizeable(true)
-                    .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .build();
         });
     }

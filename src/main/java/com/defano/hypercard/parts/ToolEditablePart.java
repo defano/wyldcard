@@ -71,7 +71,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
                 .withTitle("Script of " + getName())
                 .withModel(getPartModel())
                 .resizeable(true)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                 .build();
     }
 
@@ -86,7 +86,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
                 .asModal()
                 .withTitle(getName())
                 .withModel(getPartModel())
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                 .resizeable(false)
                 .build();
     }

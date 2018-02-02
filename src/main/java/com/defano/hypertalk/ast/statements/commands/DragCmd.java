@@ -63,6 +63,6 @@ public class DragCmd extends Command {
         int x2 = to.getItems().get(0).integerValue();
         int y2 = to.getItems().get(1).integerValue();
 
-        MouseManager.dragFrom(new Point(x1, y1), new Point(x2, y2), withShift, withOption, withCommand);
+        MouseManager.getInstance().dragFrom(new Point(x1, y1), new Point(x2, y2), withShift, withOption, withCommand);
     }
 }

@@ -70,14 +70,14 @@ public class HyperCardMenuBar extends JMenuBar {
         add(new HyperCardMenu(name));
 
         // Required on non-macOS systems when menu is modified by message window
-        WindowManager.getStackWindow().getWindow().pack();
+        WindowManager.getInstance().getStackWindow().getWindow().pack();
     }
 
     public void deleteMenu(JMenu menu) {
         super.remove(menu);
 
         // Required on non-macOS systems when menu is modified by message window
-        WindowManager.getStackWindow().getWindow().pack();
+        WindowManager.getInstance().getStackWindow().getWindow().pack();
     }
 
     public JMenu findMenuByNumber(int index) {

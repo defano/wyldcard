@@ -42,7 +42,7 @@ public class StackPropertyEditor extends HyperCardDialog {
                     .withTitle("Script of stack " + model.getKnownProperty(StackModel.PROP_NAME).stringValue())
                     .withModel(model)
                     .resizeable(true)
-                    .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .build();
         });
 

@@ -57,7 +57,7 @@ public interface PartFinder {
         } else if (ps instanceof PartOrdinalSpecifier) {
             foundPart = findPartByOrdinal((PartOrdinalSpecifier) ps, parts);
         } else if (ps instanceof PartMessageSpecifier) {
-            foundPart = WindowManager.getMessageWindow().getPartModel();
+            foundPart = WindowManager.getInstance().getMessageWindow().getPartModel();
         } else if (ps instanceof CompositePartSpecifier) {
             throw new PartException("Can't find that.");
         } else {

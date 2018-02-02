@@ -68,27 +68,25 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
 
         // Double-click actions
         eraser.addMouseListener((DoubleClickListenable) e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().clearCanvas());
-        shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getShapesPalette().setVisible(true));
-        line.addMouseListener((DoubleClickListenable) e -> WindowManager.getLinesPalette().setVisible(true));
-        paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getBrushesPalette().setVisible(true));
-        spraypaint.addMouseListener((DoubleClickListenable) e -> WindowManager.getBrushesPalette().setVisible(true));
+        shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getShapesPalette().setVisible(true));
+        line.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getLinesPalette().setVisible(true));
+        paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getBrushesPalette().setVisible(true));
+        spraypaint.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getBrushesPalette().setVisible(true));
         rectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         roundRectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         oval.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
-        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
+        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
 
         ToolsContext.getInstance().getShapesFilledProvider().subscribe(filled -> {
-            boolean isFilled = (Boolean) filled;
-
-            rectangle.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
-            roundRectangle.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
-            oval.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/oval_filled.png" : "/icons/oval.png")));
-            curve.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/curve_filled.png" : "/icons/curve.png")));
-            shape.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/shape_filled.png" : "/icons/shape.png")));
-            polygon.setIcon(new ImageIcon(getClass().getResource(isFilled ? "/icons/polygon_filled.png" : "/icons/polygon.png")));
+            rectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
+            roundRectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
+            oval.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/oval_filled.png" : "/icons/oval.png")));
+            curve.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/curve_filled.png" : "/icons/curve.png")));
+            shape.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/shape_filled.png" : "/icons/shape.png")));
+            polygon.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/polygon_filled.png" : "/icons/polygon.png")));
         });
 
         ToolsContext.getInstance().getPaintToolProvider().subscribe(this);
@@ -175,7 +173,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
         if (newValue instanceof PaintTool) {
             PaintTool selectedTool = (PaintTool) newValue;
 
-            // Special case; "pseudo-tools" re-enable all HyperCard paint tools
+            // Special case; "pseudo" transform tools highlight selection tools
             if (selectedTool.getToolType() == PaintToolType.SLANT ||
                     selectedTool.getToolType() == PaintToolType.ROTATE ||
                     selectedTool.getToolType() == PaintToolType.MAGNIFIER ||
@@ -183,6 +181,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
                     selectedTool.getToolType() == PaintToolType.PROJECTION ||
                     selectedTool.getToolType() == PaintToolType.RUBBERSHEET) {
                 enableAllTools();
+                selection.setEnabled(false);
             } else {
                 JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
 

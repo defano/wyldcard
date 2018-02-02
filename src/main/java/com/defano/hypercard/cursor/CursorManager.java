@@ -21,8 +21,7 @@ public class CursorManager {
     private final static CursorManager instance = new CursorManager();
     private HyperCardCursor activeCursor = HyperCardCursor.HAND;
 
-    private CursorManager() {
-    }
+    private CursorManager() {}
 
     public static CursorManager getInstance() {
         return instance;
@@ -70,8 +69,8 @@ public class CursorManager {
         }
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
-            WindowManager.getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
+            WindowManager.getInstance().getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
+            WindowManager.getInstance().getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
         });
     }
 }

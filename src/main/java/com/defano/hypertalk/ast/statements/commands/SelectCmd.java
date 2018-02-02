@@ -119,7 +119,7 @@ public class SelectCmd extends Command {
         CardLayerPart part = HyperCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getStackWindow().requestFocus();
+            WindowManager.getInstance().getStackWindow().requestFocus();
 
             ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);

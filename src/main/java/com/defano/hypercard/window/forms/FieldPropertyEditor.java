@@ -56,7 +56,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of field " + fieldName.getText())
                     .withModel(model)
-                    .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .resizeable(true)
                     .build();
         });

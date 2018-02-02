@@ -154,8 +154,8 @@ public class EditMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofCheckType()
                     .named(thisLaf.getName())
-                    .withAction(a -> WindowManager.setLookAndFeel(thisLaf.getClassName()))
-                    .withCheckmarkProvider(WindowManager.getLookAndFeelClassProvider().map(value -> thisLaf.getClassName().equals(value)))
+                    .withAction(a -> WindowManager.getInstance().setLookAndFeel(thisLaf.getClassName()))
+                    .withCheckmarkProvider(WindowManager.getInstance().getLookAndFeelClassProvider().map(value -> thisLaf.getClassName().equals(value)))
                     .build(laf);
         }
     }

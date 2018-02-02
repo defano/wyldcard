@@ -309,11 +309,27 @@ public class StackPart implements PropertyChangeObserver {
     }
 
     /**
+     * Removes an observer of stack changes.
+     * @param observer The observer
+     */
+    public void removeObserver (StackObserver observer) {
+        stackObservers.remove(observer);
+    }
+
+    /**
      * Adds an observer of stack navigation changes (i.e., user changed cards)
      * @param observer The observer
      */
     public void addNavigationObserver(StackNavigationObserver observer) {
         stackNavigationObservers.add(observer);
+    }
+
+    /**
+     * Removes an observer of stack navigation changes.
+     * @param observer The observer to remove
+     */
+    public void removeNavigationObserver(StackNavigationObserver observer) {
+        stackNavigationObservers.remove(observer);
     }
 
     /** {@inheritDoc} */
@@ -334,7 +350,7 @@ public class StackPart implements PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getStackWindow().setAllowResizing(newValue.booleanValue());
+                WindowManager.getInstance().getStackWindow().setAllowResizing(newValue.booleanValue());
                 break;
         }
     }

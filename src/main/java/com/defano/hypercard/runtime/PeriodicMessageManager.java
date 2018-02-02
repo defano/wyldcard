@@ -31,16 +31,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
     private final ScheduledExecutorService idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("periodic-executor-%d").build());
     private final Vector<PartModel> withinParts = new Vector<>();
 
-    private PeriodicMessageManager() {
-
-        // Stop tracking 'within' when not in browse mode
-        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {
-            if (toolMode != ToolMode.BROWSE) {
-                withinParts.clear();
-            }
-        });
-
-    }
+    private PeriodicMessageManager() {}
 
     public static PeriodicMessageManager getInstance() {
         return instance;
@@ -51,6 +42,13 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
 
         // Stop tracking 'within' when card goes away
         HyperCard.getInstance().getActiveStack().addNavigationObserver(this);
+
+        // Stop tracking 'within' when not in browse mode
+        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {
+            if (toolMode != ToolMode.BROWSE) {
+                withinParts.clear();
+            }
+        });
     }
 
     public void addWithin(PartModel part) {

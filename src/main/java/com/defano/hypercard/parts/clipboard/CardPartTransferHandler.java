@@ -52,7 +52,7 @@ public class CardPartTransferHandler extends TransferHandler {
             ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getActiveStackDisplayedCard().importPart(part, layer);
 
             // Position pasted part over the mouse cursor
-            importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getMouseLoc()));
+            importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc()));
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

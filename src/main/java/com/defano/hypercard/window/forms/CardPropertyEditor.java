@@ -46,7 +46,7 @@ public class CardPropertyEditor extends HyperCardDialog {
                     .withTitle("Script of " + cardModel.getKnownProperty(CardModel.PROP_NAME).stringValue())
                     .withModel(cardModel)
                     .resizeable(true)
-                    .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
+                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .build();
         });
     }

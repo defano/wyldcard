@@ -42,38 +42,41 @@ public class StackManager implements StackNavigationObserver {
     }
 
     /**
+     * Creates and activates a new, empty stack with default dimensions.
+     */
+    public void newStack() {
+        activateStack(StackPart.newStack());
+    }
+
+    /**
      * Prompts the user to choose a stack file to open. If a valid stack file is chosen, the stack is opened and made
      * the active stack.
      */
     public void open() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
             StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
             model.setSavedStackFile(fd.getFiles()[0]);
-            activateStack(StackPart.fromStackModel(model), true);
+            activateStack(StackPart.fromStackModel(model));
         }
     }
 
     /**
      * Makes the given stack the "active" stack--that is, the stack in focus which the menu bar and message box are
-     * associated with. The active stack represents the stack with
+     * associated with. The active stack represents the stack with application focus.
      * @param stackPart The stack to activate
-     * @param inNewWindow When true, binds the stack to a new stack window
      */
-    public void activateStack(StackPart stackPart, boolean inNewWindow) {
+    private void activateStack(StackPart stackPart) {
         activeStack = stackPart;
 
         cardCount.setSource(activeStack.getCardCountProvider());
         cardClipboard.setSource(activeStack.getCardClipboardProvider());
         savedStackFile.setSource(activeStack.getStackModel().getSavedStackFileProvider());
         activeStack.addNavigationObserver(this);
-
-        if (inNewWindow) {
-            activeStack.bindToWindow(WindowManager.getStackWindow());
-        }
+        activeStack.bindToWindow(WindowManager.getInstance().getStackWindow());
     }
 
     /**
@@ -89,7 +92,7 @@ public class StackManager implements StackNavigationObserver {
             defaultName = stackModel.getStackName();
         }
 
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setFile(defaultName);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {

@@ -270,7 +270,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         setPartsOnLayerVisible(Owner.CARD, visible);
 
         // Notify the window manager that background editing mode changed
-        WindowManager.getStackWindow().invalidateWindowTitle();
+        WindowManager.getInstance().getStackWindow().invalidateWindowTitle();
     }
 
     /**

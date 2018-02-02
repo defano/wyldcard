@@ -65,14 +65,14 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Find...")
-                .withAction(e -> WindowManager.getMessageWindow().doFind())
+                .withAction(e -> WindowManager.getInstance().getMessageWindow().doFind())
                 .withShortcut('F')
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Message")
-                .withAction(e -> WindowManager.getMessageWindow().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getMessageWindow().getWindowVisibleProvider())
+                .withAction(e -> WindowManager.getInstance().getMessageWindow().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getMessageWindow().getWindowVisibleProvider())
                 .withShortcut('M')
                 .build(this);
 

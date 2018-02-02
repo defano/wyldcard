@@ -46,7 +46,7 @@ public class AskCmd extends Command {
         AtomicReference<String> result = new AtomicReference<>();
         
         SwingUtilities.invokeLater(() -> {
-            Component parent = WindowManager.getStackWindow().getWindowPanel();
+            Component parent = WindowManager.getInstance().getStackWindow().getWindowPanel();
 
             result.set((String) JOptionPane.showInputDialog(
                     parent,

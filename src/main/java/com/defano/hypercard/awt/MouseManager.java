@@ -19,15 +19,13 @@ import java.util.Set;
  */
 public class MouseManager {
 
+    public static final MouseManager instance = new MouseManager();
+
     private static boolean mouseIsDown;
     private static Point clickLoc = new Point();
 
     private static final Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
     private static final Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
-
-    public static void start() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
-    }
 
     public interface MousePressedObserver {
         void onMousePressed();
@@ -37,22 +35,33 @@ public class MouseManager {
         void onMouseReleased();
     }
 
-    public static Point getClickLoc() {
+    public static MouseManager getInstance() {
+        return instance;
+    }
+
+    private MouseManager() {}
+
+    public void start() {
+        Toolkit.getDefaultToolkit().addAWTEventListener(listener, AWTEvent.MOUSE_EVENT_MASK);
+    }
+
+    public Point getClickLoc() {
         return clickLoc;
     }
 
-    public static Point getMouseLoc() {
-        CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
+    public Point getMouseLoc() {
+        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
 
         return mouseLoc;
     }
 
-    public static void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
+    public void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        SwingUtilities.convertPointToScreen(p1, HyperCard.getInstance().getActiveStackDisplayedCard());
-        SwingUtilities.convertPointToScreen(p2, HyperCard.getInstance().getActiveStackDisplayedCard());
+        Component cardComponent = HyperCard.getInstance().getActiveStackDisplayedCard();
+        SwingUtilities.convertPointToScreen(p1, cardComponent);
+        SwingUtilities.convertPointToScreen(p2, cardComponent);
 
         try {
             Robot r = new Robot();
@@ -78,7 +87,7 @@ public class MouseManager {
         }
     }
 
-    public static void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
+    public void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
         SwingUtilities.convertPointToScreen(p, HyperCard.getInstance().getActiveStackDisplayedCard());
 
@@ -104,19 +113,19 @@ public class MouseManager {
         }
     }
 
-    public static boolean isMouseDown() {
+    public boolean isMouseDown() {
         return mouseIsDown;
     }
 
-    public static void notifyOnMousePressed(MousePressedObserver observer) {
+    public void notifyOnMousePressed(MousePressedObserver observer) {
         pressedObserverSet.add(observer);
     }
 
-    public static void notifyOnMouseReleased(MouseReleasedObserver observer) {
+    public void notifyOnMouseReleased(MouseReleasedObserver observer) {
         releasedObserverSet.add(observer);
     }
 
-    private static final AWTEventListener listener = event -> {
+    private final AWTEventListener listener = event -> {
 
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseIsDown = true;
@@ -129,7 +138,7 @@ public class MouseManager {
         }
     };
 
-    private static void fireOnMousePressed() {
+    private void fireOnMousePressed() {
         for (MousePressedObserver thisObserver : pressedObserverSet) {
             thisObserver.onMousePressed();
         }
@@ -137,7 +146,7 @@ public class MouseManager {
         pressedObserverSet.clear();
     }
 
-    private static void fireOnMouseReleased() {
+    private void fireOnMouseReleased() {
         for (MouseReleasedObserver thisObserver : releasedObserverSet) {
             thisObserver.onMouseReleased();
         }

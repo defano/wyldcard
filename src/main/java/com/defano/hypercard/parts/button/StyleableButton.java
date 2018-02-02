@@ -137,13 +137,13 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
         getPartModel().addPropertyChangedObserver(buttonComponent);
         getPartModel().notifyPropertyChangedObserver(buttonComponent);
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
-        KeyboardManager.addGlobalKeyListener(this);
+        KeyboardManager.getInstance().addGlobalKeyListener(this);
     }
 
     @Override
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(buttonComponent);
-        KeyboardManager.removeGlobalKeyListener(this);
+        KeyboardManager.getInstance().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }
 

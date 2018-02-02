@@ -3,8 +3,7 @@ package com.defano.hypercard;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.cursor.CursorManager;
-import com.defano.hypercard.parts.editor.PartEditor;
-import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.parts.editor.PartManager;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.FileContext;
 import com.defano.hypercard.window.HyperTalkErrorDialog;
@@ -22,9 +21,18 @@ public class HyperCard extends StackManager {
 
     private static HyperCard instance;
 
+    public static HyperCard getInstance() {
+        return instance;
+    }
+
     public static void main(String argv[]) {
+        instance = new HyperCard();
+    }
+
+    private HyperCard() {
+
         try {
-            // Display the frame's menu as the Mac OS menubar
+            // Configure macOS environment
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.macos.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "HyperCard");
@@ -34,30 +42,19 @@ public class HyperCard extends StackManager {
             e.printStackTrace();
         }
 
-        instance = new HyperCard();
-    }
-
-    private HyperCard() {
-
-        // Fire up the key and mouse listeners
-        KeyboardManager.start();
-        MouseManager.start();
-        PartEditor.start();
-
         SwingUtilities.invokeLater(() -> {
-            WindowManager.start();
+            KeyboardManager.getInstance().start();
+            MouseManager.getInstance().start();
+            PartManager.getInstance().start();
+            WindowManager.getInstance().start();
             CursorManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
 
-            activateStack(StackPart.newStack(), true);
+            newStack();
         });
 
         // Close all open files before we die
         Runtime.getRuntime().addShutdownHook(new Thread(() -> FileContext.getInstance().closeAll()));
-    }
-
-    public static HyperCard getInstance() {
-        return instance;
     }
 
     public void showErrorDialog(HtException e) {

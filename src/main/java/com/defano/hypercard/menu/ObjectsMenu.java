@@ -46,7 +46,7 @@ public class ObjectsMenu extends HyperCardMenu {
                         .asModal()
                         .withTitle("Card Properties")
                         .withModel(HyperCard.getInstance().getActiveStackDisplayedCard())
-                        .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
@@ -56,7 +56,7 @@ public class ObjectsMenu extends HyperCardMenu {
                         .withTitle("Background Properties")
                         .asModal()
                         .withModel(HyperCard.getInstance().getActiveStackDisplayedCard())
-                        .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
@@ -66,7 +66,7 @@ public class ObjectsMenu extends HyperCardMenu {
                         .withTitle("Stack Properties")
                         .asModal()
                         .withModel(HyperCard.getInstance().getActiveStack().getStackModel())
-                        .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
