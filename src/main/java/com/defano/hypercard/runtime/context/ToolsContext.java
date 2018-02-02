@@ -7,18 +7,21 @@ import com.defano.hypertalk.ast.model.ExpressionList;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
 import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 /**
  * A singleton representation of paint tool context. Responsible for all configurable properties of the paint subsystem
@@ -29,202 +32,247 @@ public class ToolsContext {
     private final static ToolsContext instance = new ToolsContext();
 
     // Tool mode properties
-    private final Provider<ToolMode> toolModeProvider = new Provider<>(ToolMode.BROWSE);
+    private final Subject<ToolMode> toolModeProvider = BehaviorSubject.createDefault(ToolMode.BROWSE);
 
     // Properties that the tools provide to us...
-    private final ImmutableProvider<BufferedImage> selectedImageProvider = new ImmutableProvider<>();
+    private final Subject<Optional<BufferedImage>> selectedImageProvider = BehaviorSubject.createDefault(Optional.empty());
 
     // Properties that we provide the tools...
-    private final Provider<Boolean> shapesFilled = new Provider<>(false);
-    private final Provider<Boolean> isEditingBackground = new Provider<>(false);
-    private final Provider<Stroke> lineStrokeProvider = new Provider<>(new BasicStroke(2));
-    private final Provider<BasicBrush> eraserStrokeProvider = new Provider<>(BasicBrush.SQUARE_12X12);
-    private final Provider<BasicBrush> brushStrokeProvider = new Provider<>(BasicBrush.ROUND_12X12);
-    private final Provider<Paint> linePaintProvider = new Provider<>(Color.black);
-    private final Provider<Integer> fillPatternProvider = new Provider<>(0);
-    private final Provider<Integer> shapeSidesProvider = new Provider<>(5);
-    private final Provider<PaintTool> paintToolProvider = new Provider<>(PaintToolBuilder.create(PaintToolType.ARROW).build());
-    private final Provider<Boolean> drawMultiple = new Provider<>(false);
-    private final Provider<Boolean> drawCentered = new Provider<>(false);
-    private final Provider<Color> foregroundColorProvider = new Provider<>(Color.BLACK);
-    private final Provider<Color> backgroundColorProvider = new Provider<>(Color.WHITE);
+    private final Subject<Boolean> shapesFilled = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> isEditingBackground = BehaviorSubject.createDefault(false);
+    private final Subject<Stroke> lineStrokeProvider = BehaviorSubject.createDefault(new BasicStroke(2));
+    private final Subject<BasicBrush> eraserStrokeProvider = BehaviorSubject.createDefault(BasicBrush.SQUARE_12X12);
+    private final Subject<BasicBrush> brushStrokeProvider = BehaviorSubject.createDefault(BasicBrush.ROUND_12X12);
+    private final Subject<Paint> linePaintProvider = BehaviorSubject.createDefault(Color.black);
+    private final Subject<Integer> fillPatternProvider = BehaviorSubject.createDefault(0);
+    private final Subject<Integer> shapeSidesProvider = BehaviorSubject.createDefault(5);
+    private final Subject<PaintTool> paintToolProvider = BehaviorSubject.createDefault(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private final Subject<Boolean> drawMultiple = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> drawCentered = BehaviorSubject.createDefault(false);
+    private final Subject<Color> foregroundColorProvider = BehaviorSubject.createDefault(Color.BLACK);
+    private final Subject<Color> backgroundColorProvider = BehaviorSubject.createDefault(Color.WHITE);
 
     // Properties that we provide the canvas
-    private final Provider<Integer> gridSpacingProvider = new Provider<>(1);
+    private final Subject<Integer> gridSpacingProvider = BehaviorSubject.createDefault(1);
 
     private PaintToolType lastToolType;
-
-    private ToolsContext() {
-        gridSpacingProvider.addObserver((o, arg) -> HyperCard.getInstance().getDisplayedCard().getCanvas().setGridSpacing((Integer) arg));
-    }
+    private Disposable selectedImageSubscription;
+    private Disposable gridSpacingSubscription;
 
     public static ToolsContext getInstance() {
         return instance;
     }
 
     public void setGridSpacing(int spacing) {
-        gridSpacingProvider.set(spacing);
+        if (instance.gridSpacingSubscription == null) {
+            instance.gridSpacingSubscription = instance.gridSpacingProvider.subscribe(integer -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().setGridSpacing(integer));
+        }
+        gridSpacingProvider.onNext(spacing);
     }
 
-    public Provider<Integer> getGridSpacingProvider() {
+    public int getGridSpacing() {
+        return gridSpacingProvider.blockingFirst();
+    }
+
+    public Subject<Integer> getGridSpacingProvider() {
         return gridSpacingProvider;
     }
 
-    public Provider<Stroke> getLineStrokeProvider() {
+    public Subject<Stroke> getLineStrokeProvider() {
         return lineStrokeProvider;
     }
 
-    public Provider<Paint> getLinePaintProvider() {
+    public Subject<Paint> getLinePaintProvider() {
         return linePaintProvider;
     }
 
     public void setLinePaint(Paint p) {
-        linePaintProvider.set(p);
+        linePaintProvider.onNext(p);
     }
 
     public void reactivateTool(PaintCanvas canvas) {
-        paintToolProvider.get().deactivate();
-        paintToolProvider.get().activate(canvas);
+        paintToolProvider.blockingFirst().deactivate();
+        paintToolProvider.blockingFirst().activate(canvas);
     }
 
-    public Provider<PaintTool> getPaintToolProvider() {
+    public Subject<PaintTool> getPaintToolProvider() {
         return paintToolProvider;
     }
 
-    public Provider<ToolMode> getToolModeProvider() {
+    public Subject<ToolMode> getToolModeProvider() {
         return toolModeProvider;
     }
 
     public ToolMode getToolMode() {
-        return toolModeProvider.get();
+        return toolModeProvider.blockingFirst();
     }
 
     public PaintTool getPaintTool() {
-        return paintToolProvider.get();
+        return paintToolProvider.blockingFirst();
     }
 
     public void selectAll() {
         SelectionTool tool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-        tool.createSelection(new Rectangle(0, 0, HyperCard.getInstance().getDisplayedCard().getWidth() - 1, HyperCard.getInstance().getDisplayedCard().getHeight() - 1));
+        tool.createSelection(new Rectangle(0, 0, HyperCard.getInstance().getActiveStackDisplayedCard().getWidth() - 1, HyperCard.getInstance().getActiveStackDisplayedCard().getHeight() - 1));
     }
 
     public Color getForegroundColor() {
-        return foregroundColorProvider.get();
+        return foregroundColorProvider.blockingFirst();
     }
 
     public void setForegroundColor(Color color) {
-        foregroundColorProvider.set(color);
+        foregroundColorProvider.onNext(color);
     }
 
     public Color getBackgroundColor() {
-        return backgroundColorProvider.get();
+        return backgroundColorProvider.blockingFirst();
     }
 
     public void setBackgroundColor(Color color) {
-        backgroundColorProvider.set(color);
+        backgroundColorProvider.onNext(color);
     }
 
-    public Provider<Color> getBackgroundColorProvider() {
+    public Subject<Color> getBackgroundColorProvider() {
         return backgroundColorProvider;
     }
 
-    public Provider<Color> getForegroundColorProvider() {
+    public Subject<Color> getForegroundColorProvider() {
         return foregroundColorProvider;
     }
 
     public void setSelectedBrush(BasicBrush brush) {
-        brushStrokeProvider.set(brush);
+        brushStrokeProvider.onNext(brush);
     }
 
-    public Provider<BasicBrush> getSelectedBrushProvider() {
+    public BasicBrush getSelectedBrush() {
+        return brushStrokeProvider.blockingFirst();
+    }
+
+    public Subject<BasicBrush> getSelectedBrushProvider() {
         return brushStrokeProvider;
     }
 
     public void toggleDrawCentered() {
-        drawCentered.set(!drawCentered.get());
+        setDrawCentered(!isDrawCentered());
     }
 
-    public Provider<Boolean> getDrawCenteredProvider() {
+    public void setDrawCentered(boolean drawCentered) {
+        this.drawCentered.onNext(drawCentered);
+    }
+
+    public boolean isDrawCentered() {
+        return this.drawCentered.blockingFirst();
+    }
+
+    public Subject<Boolean> getDrawCenteredProvider() {
         return drawCentered;
     }
 
     public void toggleDrawMultiple() {
-        drawMultiple.set(!drawMultiple.get());
+        setDrawMultiple(!isDrawMultiple());
     }
 
-    public Provider<Boolean> getDrawMultipleProvider() {
+    public void setDrawMultiple(boolean drawMultiple) {
+        this.drawMultiple.onNext(drawMultiple);
+    }
+
+    public boolean isDrawMultiple() {
+        return this.drawMultiple.blockingFirst();
+    }
+
+    public Subject<Boolean> getDrawMultipleProvider() {
         return drawMultiple;
     }
 
-    public ImmutableProvider<BufferedImage> getSelectedImageProvider() {
+    public Subject<Optional<BufferedImage>> getSelectedImageProvider() {
         return selectedImageProvider;
     }
 
-    public void setShapeSides(int shapeSides) {
-        shapeSidesProvider.set(shapeSides);
+    public BufferedImage getSelectedImage() {
+        return selectedImageProvider.blockingFirst().orElse(null);
     }
 
-    public Provider<Integer> getShapeSidesProvider() {
+    public void setShapeSides(int shapeSides) {
+        shapeSidesProvider.onNext(shapeSides);
+    }
+
+    public int getShapeSides() {
+        return shapeSidesProvider.blockingFirst();
+    }
+
+    public Subject<Integer> getShapeSidesProvider() {
         return shapeSidesProvider;
     }
 
-    public Provider<Integer> getFillPatternProvider() {
+    public Subject<Integer> getFillPatternProvider() {
         return fillPatternProvider;
+    }
+
+    public int getFillPattern() {
+        return fillPatternProvider.blockingFirst();
+    }
+
+    public void setFillPattern(int pattern) {
+        fillPatternProvider.onNext(pattern);
     }
 
     public void toggleMagnifier() {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
-            HyperCard.getInstance().getDisplayedCard().getCanvas().setScale(1.0);
+            HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().setScale(1.0);
             forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
-        } else if (HyperCard.getInstance().getDisplayedCard().getCanvas().getScale() != 1.0) {
-            HyperCard.getInstance().getDisplayedCard().getCanvas().setScale(1.0);
+        } else if (HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().getScale() != 1.0) {
+            HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().setScale(1.0);
         } else {
             forceToolSelection(ToolType.MAGNIFIER, false);
         }
     }
 
     public void setLineWidth(int width) {
-        lineStrokeProvider.set(new BasicStroke(width));
+        lineStrokeProvider.onNext(new BasicStroke(width));
     }
 
     public int getLineWidth() {
-        return Math.round((int) ((BasicStroke) lineStrokeProvider.get()).getLineWidth());
+        return Math.round((int) ((BasicStroke) lineStrokeProvider.blockingFirst()).getLineWidth());
     }
 
     public void setPattern(int patternId) {
-        fillPatternProvider.set(patternId);
+        fillPatternProvider.onNext(patternId);
     }
 
     public boolean isEditingBackground() {
-        return isEditingBackground.get();
+        return isEditingBackground.blockingFirst();
     }
 
-    public ImmutableProvider<Boolean> isEditingBackgroundProvider() {
+    public Subject<Boolean> isEditingBackgroundProvider() {
         return isEditingBackground;
     }
 
     public void toggleIsEditingBackground() {
         getPaintTool().deactivate();
-        isEditingBackground.set(!isEditingBackground.get());
-        reactivateTool(HyperCard.getInstance().getDisplayedCard().getCanvas());
+        isEditingBackground.onNext(!isEditingBackground.blockingFirst());
+        reactivateTool(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas());
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {
         getPaintTool().deactivate();
-        this.isEditingBackground.set(isEditingBackground);
-        reactivateTool(HyperCard.getInstance().getDisplayedCard().getCanvas());
+        this.isEditingBackground.onNext(isEditingBackground);
+        reactivateTool(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas());
     }
 
     public boolean isShapesFilled() {
-        return shapesFilled.get();
+        return shapesFilled.blockingFirst();
+    }
+
+    public void setShapesFilled(boolean shapesFilled) {
+        this.shapesFilled.onNext(shapesFilled);
     }
 
     public void toggleShapesFilled() {
-        shapesFilled.set(!shapesFilled.get());
-        forceToolSelection(ToolType.fromPaintTool(paintToolProvider.get().getToolType()), false);
+        shapesFilled.onNext(!shapesFilled.blockingFirst());
+        forceToolSelection(ToolType.fromPaintTool(paintToolProvider.blockingFirst().getToolType()), false);
     }
 
-    public Provider<Boolean> getShapesFilledProvider() {
+    public Subject<Boolean> getShapesFilledProvider() {
         return shapesFilled;
     }
 
@@ -238,7 +286,7 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        HyperCard.getInstance().getDisplayedCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(null, toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(null, toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 forceToolSelection(toolType, false);
             }
@@ -263,17 +311,17 @@ public class ToolsContext {
 
         switch (tool) {
             case BROWSE:
-                toolModeProvider.set(ToolMode.BROWSE);
+                toolModeProvider.onNext(ToolMode.BROWSE);
                 break;
             case BUTTON:
-                toolModeProvider.set(ToolMode.BUTTON);
+                toolModeProvider.onNext(ToolMode.BUTTON);
                 break;
             case FIELD:
-                toolModeProvider.set(ToolMode.FIELD);
+                toolModeProvider.onNext(ToolMode.FIELD);
                 break;
 
             default:
-                toolModeProvider.set(ToolMode.PAINT);
+                toolModeProvider.onNext(ToolMode.PAINT);
                 break;
         }
 
@@ -288,29 +336,29 @@ public class ToolsContext {
 
         // Create and activate new paint tool
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
-                .withStrokeProvider(getStrokeProviderForTool(selectedToolType))
-                .withStrokePaintProvider(linePaintProvider)
-                .withFillPaintProvider(Provider.derivedFrom(fillPatternProvider, t -> isShapesFilled() || !selectedToolType.isShapeTool() ? HyperCardPatternFactory.create(t) : (Paint) null))
-                .withFontProvider(FontContext.getInstance().getPaintFontProvider())
-                .withShapeSidesProvider(shapeSidesProvider)
-                .makeActiveOnCanvas(HyperCard.getInstance().getDisplayedCard().getCanvas())
+                .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
+                .withStrokePaintObservable(linePaintProvider)
+                .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.create(t)) : Optional.empty()))
+                .withFontObservable(FontContext.getInstance().getPaintFontProvider())
+                .withShapeSidesObservable(shapeSidesProvider)
+                .makeActiveOnCanvas(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas())
                 .build();
 
         // When requested, move current selection over to the new tool
         if (keepSelection) {
-            PaintTool lastTool = paintToolProvider.get();
+            PaintTool lastTool = paintToolProvider.blockingFirst();
             if (lastTool instanceof AbstractSelectionTool && selectedTool instanceof AbstractSelectionTool) {
                 ((AbstractSelectionTool) lastTool).morphSelection((AbstractSelectionTool) selectedTool);
             }
         }
 
         // Deactivate current tool
-        lastToolType = paintToolProvider.get().getToolType();
-        paintToolProvider.get().deactivate();
+        lastToolType = paintToolProvider.blockingFirst().getToolType();
+        paintToolProvider.blockingFirst().deactivate();
 
         // Update selected image provider (so UI can tell when a selection exists)
         if (selectedTool instanceof AbstractSelectionTool) {
-            selectedImageProvider.setSource(((AbstractSelectionTool) selectedTool).getSelectedImageProvider());
+            setSelectedImage(((AbstractSelectionTool) selectedTool).getSelectedImageObservable());
         }
 
         // Setup "Draw Multiple" and "Draw Centered" options on tools that support them
@@ -319,22 +367,29 @@ public class ToolsContext {
             ((AbstractBoundsTool) selectedTool).setDrawCentered(drawCentered);
         }
 
-        paintToolProvider.set(selectedTool);
+        paintToolProvider.onNext(selectedTool);
         return selectedTool;
     }
 
-    private Provider<Stroke> getStrokeProviderForTool(PaintToolType type) {
+    private Observable<Stroke> getStrokeProviderForTool(PaintToolType type) {
         switch (type) {
             case PAINTBRUSH:
             case AIRBRUSH:
-                return new Provider<>(brushStrokeProvider, value -> value.stroke);
+                return brushStrokeProvider.map(value -> value.stroke);
 
             case ERASER:
-                return new Provider<>(eraserStrokeProvider, value -> value.stroke);
+                return eraserStrokeProvider.map(value -> value.stroke);
 
             default:
                 return lineStrokeProvider;
         }
+    }
+
+    private void setSelectedImage(Observable<Optional<BufferedImage>> imageProvider) {
+        if (selectedImageSubscription != null) {
+            selectedImageSubscription.dispose();
+        }
+        selectedImageSubscription = imageProvider.subscribe(selectedImageProvider::onNext);
     }
 
 }

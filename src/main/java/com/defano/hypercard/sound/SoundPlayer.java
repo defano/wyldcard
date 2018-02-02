@@ -106,7 +106,7 @@ public class SoundPlayer {
         for (String thisNoteString : notes.stringValue().split("\\s+")) {
 
             // Break out of playback sequence if user type cmd-.
-            if (KeyboardManager.isBreakSequence) return;
+            if (KeyboardManager.getInstance().isBreakSequence()) return;
 
             MusicalNote thisNote = MusicalNote.fromString(lastNote, thisNoteString.toLowerCase());
 

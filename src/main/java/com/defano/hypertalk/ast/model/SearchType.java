@@ -20,10 +20,5 @@ public enum SearchType {
     /**
      * Partial strings anywhere, including spaces (ignores word boundaries).
      */
-    STRING,
-
-    /**
-     * Whole or partial strings starting from the beginning of a word.
-     */
-    SUBSTRING
+    STRING
 }

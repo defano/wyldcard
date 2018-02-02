@@ -13,10 +13,14 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +28,10 @@ import java.util.stream.Collectors;
 public class StackModel extends PartModel implements StackPartFinder {
 
     private static final int BACKSTACK_DEPTH = 20;
+    public final static String FILE_EXTENSION = ".stack";
+
+    public static final String PROP_RESIZABLE = "resizable";
+
 
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
@@ -34,6 +42,9 @@ public class StackModel extends PartModel implements StackPartFinder {
     private List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
     private final Map<String, byte[]> userIcons;
+
+    // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
+    private transient Subject<Optional<File>> savedStackFileProvider;
 
     private StackModel(String stackName, Dimension dimension) {
         super(PartType.STACK, Owner.HYPERCARD, null);
@@ -46,6 +57,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
+        defineProperty(PROP_RESIZABLE, new Value(false), false);
 
         initialize();
     }
@@ -60,10 +72,12 @@ public class StackModel extends PartModel implements StackPartFinder {
     public void initialize() {
         super.initialize();
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getStackWindow().getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getStackWindow().getWindow().getY()));
-        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getStackWindow().getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getStackWindow().getWindow().setLocation(WindowManager.getStackWindow().getWindow().getX(), value.integerValue()));
+        this.savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
+
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow().getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(WindowManager.getInstance().getStackWindow().getWindow().getX(), value.integerValue()));
     }
 
     @Override
@@ -77,6 +91,21 @@ public class StackModel extends PartModel implements StackPartFinder {
         for (BackgroundModel thisBkgnd : backgroundModels.values()) {
             thisBkgnd.relinkParentPartModel(this);
         }
+    }
+
+    public Observable<Optional<File>> getSavedStackFileProvider() {
+        return savedStackFileProvider;
+    }
+
+    public void setSavedStackFile(File file) {
+        this.savedStackFileProvider.onNext(Optional.of(file));
+
+        String filename = file.getName();
+        if (filename.endsWith(FILE_EXTENSION)) {
+            filename = filename.substring(0, filename.length() - FILE_EXTENSION.length());
+        }
+
+        setKnownProperty(PROP_NAME, new Value(filename));
     }
 
     public static StackModel newStackModel(String stackName) {
@@ -160,6 +189,14 @@ public class StackModel extends PartModel implements StackPartFinder {
         } else {
             throw new IllegalArgumentException("No such background.");
         }
+    }
+
+    public boolean isResizable() {
+        return getKnownProperty(PROP_RESIZABLE).booleanValue();
+    }
+
+    public void setResizable(boolean resizable) {
+        setKnownProperty(PROP_RESIZABLE, new Value(resizable));
     }
 
     public Dimension getSize() {

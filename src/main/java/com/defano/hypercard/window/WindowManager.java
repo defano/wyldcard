@@ -1,33 +1,42 @@
 package com.defano.hypercard.window;
 
-import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.window.forms.*;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 
 public class WindowManager {
 
-    private final static StackWindow stackWindow = new StackWindow();
-    private final static MessageWindow messageWindow = new MessageWindow();
-    private final static PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
-    private final static ShapesPalette shapesPalette = new ShapesPalette();
-    private final static LinesPalette linesPalette = new LinesPalette();
-    private final static PatternPalette patternsPalette = new PatternPalette();
-    private final static BrushesPalette brushesPalette = new BrushesPalette();
-    private final static ColorPalette colorPalette = new ColorPalette();
+    private final static WindowManager instance = new WindowManager();
 
-    private final static Provider<String> lookAndFeelClassProvider = new Provider<>();
+    private final StackWindow stackWindow = new StackWindow();
+    private final MessageWindow messageWindow = new MessageWindow();
+    private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
+    private final ShapesPalette shapesPalette = new ShapesPalette();
+    private final LinesPalette linesPalette = new LinesPalette();
+    private final PatternPalette patternsPalette = new PatternPalette();
+    private final BrushesPalette brushesPalette = new BrushesPalette();
+    private final ColorPalette colorPalette = new ColorPalette();
 
-    public static void start() {
-        lookAndFeelClassProvider.set(UIManager.getSystemLookAndFeelClassName());
+    private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
+
+    public static WindowManager getInstance() {
+        return instance;
+    }
+
+    private WindowManager() {}
+
+    public void start() {
+        lookAndFeelClassProvider.onNext(UIManager.getSystemLookAndFeelClassName());
 
         // Create the main window, center it on the screen and display it
         WindowBuilder.make(stackWindow)
-                .withTitle(HyperCard.getInstance().getStack().getStackModel().getStackName())
                 .quitOnClose()
                 .ownsMenubar()
-                .withModel(HyperCard.getInstance().getStack())
+                .withModel(StackPart.newStack())
                 .build();
 
         JFrame stackFrame = stackWindow.getWindow();
@@ -81,39 +90,39 @@ public class WindowManager {
         stackFrame.requestFocus();
     }
 
-    public static StackWindow getStackWindow() {
+    public StackWindow getStackWindow() {
         return stackWindow;
     }
 
-    public static MessageWindow getMessageWindow() {
+    public MessageWindow getMessageWindow() {
         return messageWindow;
     }
 
-    public static PaintToolsPalette getPaintToolsPalette() {
+    public PaintToolsPalette getPaintToolsPalette() {
         return paintToolsPalette;
     }
 
-    public static ShapesPalette getShapesPalette() {
+    public ShapesPalette getShapesPalette() {
         return shapesPalette;
     }
 
-    public static LinesPalette getLinesPalette() {
+    public LinesPalette getLinesPalette() {
         return linesPalette;
     }
 
-    public static PatternPalette getPatternsPalette() {
+    public PatternPalette getPatternsPalette() {
         return patternsPalette;
     }
 
-    public static BrushesPalette getBrushesPalette() {
+    public BrushesPalette getBrushesPalette() {
         return brushesPalette;
     }
 
-    public static ColorPalette getColorPalette() {
+    public ColorPalette getColorPalette() {
         return colorPalette;
     }
 
-    public static HyperCardWindow[] allWindows() {
+    public HyperCardWindow[] allWindows() {
         return new HyperCardWindow[] {
                 getStackWindow(),
                 getMessageWindow(),
@@ -126,8 +135,8 @@ public class WindowManager {
         };
     }
 
-    public static void setLookAndFeel(String lafClassName) {
-        lookAndFeelClassProvider.set(lafClassName);
+    public void setLookAndFeel(String lafClassName) {
+        lookAndFeelClassProvider.onNext(lafClassName);
 
         SwingUtilities.invokeLater(() -> {
             try {
@@ -147,11 +156,11 @@ public class WindowManager {
         });
     }
 
-    public static Provider<String> getLookAndFeelClassProvider() {
+    public Observable<String> getLookAndFeelClassProvider() {
         return lookAndFeelClassProvider;
     }
 
-    public static boolean isMacOs() {
+    public boolean isMacOs() {
         return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
     }
 }

@@ -2,15 +2,15 @@ package com.defano.hypercard.parts.stack;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.fx.CurtainManager;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.window.StackWindow;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -19,13 +19,14 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents the controller object of the stack itself. See {@link StackModel} for the data model.
@@ -35,96 +36,42 @@ import java.util.List;
  */
 public class StackPart implements PropertyChangeObserver {
 
-    public final static String FILE_EXTENSION = ".stack";
-
     private StackModel stackModel;
-    private final List<StackObserver> observers = new ArrayList<>();
     private CardPart currentCard;
-    private final Provider<Integer> cardCountProvider = new Provider<>(0);
-    private final Provider<CardPart> cardClipboardProvider = new Provider<>();
+
+    private final List<StackObserver> stackObservers = new ArrayList<>();
+    private final List<StackNavigationObserver> stackNavigationObservers = new ArrayList<>();
+    private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
+    private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
     private StackPart() {}
+
+    public static StackPart newStack() {
+        return fromStackModel(StackModel.newStackModel("Untitled"));
+    }
 
     public static StackPart fromStackModel(StackModel model) {
         StackPart stackPart = new StackPart();
         stackPart.stackModel = model;
         stackPart.currentCard = stackPart.buildCardPart(model.getCurrentCardIndex());
+        stackPart.cardCountProvider.onNext(model.getCardCount());
+        stackPart.stackModel.addPropertyChangedObserver(stackPart);
 
         return stackPart;
     }
 
-    /**
-     * Prompts the user to choose a stack file to open.
-     */
-    public void open() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
-        fd.setMultipleMode(false);
-        fd.setFilenameFilter((dir, name) -> name.endsWith(FILE_EXTENSION));
-        fd.setVisible(true);
-        if (fd.getFiles().length > 0) {
-            StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
-            HyperCard.getInstance().setSavedStackFile(fd.getFiles()[0]);
-            open(model);
-        }
-    }
+    public void bindToWindow(StackWindow stackWindow) {
+        stackWindow.bindModel(this);
 
-    /**
-     * Opens the stack represented by the given model inside the stack window.
-     * @param model The data model of the stack to open.
-     */
-    public void open(StackModel model) {
-        this.stackModel = model;
-        this.currentCard = buildCardPart(model.getCurrentCardIndex());
-        this.cardCountProvider.set(stackModel.getCardCount());
-
-        this.stackModel.addPropertyChangedObserver(this);
-
-        goCard(model.getCurrentCardIndex(), null, false);
+        goCard(stackModel.getCurrentCardIndex(), null, false);
         fireOnStackOpened();
-        fireOnCardDimensionChanged(model.getDimension());
+        fireOnCardDimensionChanged(stackModel.getDimension());
 
         getStackModel().receiveMessage(SystemMessage.OPEN_STACK.messageName);
         getDisplayedCard().partOpened();
         fireOnCardOpened(getDisplayedCard());
+
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
-    }
-
-    /**
-     * Prompts the user to choose a file in which to save the current stack.
-     */
-    public void saveAs() {
-        String defaultName = "Untitled";
-
-        if (HyperCard.getInstance().getSavedStackFileProvider().get() != null) {
-            defaultName = HyperCard.getInstance().getSavedStackFileProvider().get().getName();
-        } else if (stackModel.getStackName() != null && !stackModel.getStackName().isEmpty()) {
-            defaultName = stackModel.getStackName();
-        }
-
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
-        fd.setFile(defaultName);
-        fd.setVisible(true);
-        if (fd.getFiles().length > 0) {
-            File f = fd.getFiles()[0];
-            save(new File(f.getAbsolutePath() + FILE_EXTENSION));
-        }
-    }
-
-    /**
-     * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
-     * @param file The file where the stack should be saved
-     */
-    public void save(File file) {
-        if (file == null) {
-            saveAs();
-        } else {
-            try {
-                Serializer.serialize(file, HyperCard.getInstance().getStack().getStackModel());
-                HyperCard.getInstance().setSavedStackFile(file);
-            } catch (IOException e) {
-                HyperCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
-            }
-        }
     }
 
     /**
@@ -238,7 +185,7 @@ public class StackPart implements PropertyChangeObserver {
 
             int deletedCardIndex = stackModel.getCurrentCardIndex();
             stackModel.deleteCardModel();
-            cardCountProvider.set(stackModel.getCardCount());
+            cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
             return activateCard(deletedCardIndex == 0 ? 0 : deletedCardIndex - 1);
@@ -258,7 +205,7 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         stackModel.newCardWithNewBackground();
-        cardCountProvider.set(stackModel.getCardCount());
+        cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
         return goNextCard(null);
@@ -274,7 +221,7 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
-        cardCountProvider.set(stackModel.getCardCount());
+        cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
         return goNextCard(null);
@@ -285,17 +232,17 @@ public class StackPart implements PropertyChangeObserver {
      * stack).
      */
     public void cutCard() {
-        cardClipboardProvider.set(getDisplayedCard());
-        cardCountProvider.set(stackModel.getCardCount());
+        cardClipboardProvider.onNext(Optional.of(getDisplayedCard()));
+        cardCountProvider.onNext(stackModel.getCardCount());
 
         deleteCard();
     }
 
     /**
-     * Copies the current card to the card clipboard for pasting elsewhere in the stack.
+     * Copies the displayed card to the card clipboard for pasting elsewhere in the stack.
      */
     public void copyCard() {
-        cardClipboardProvider.set(getDisplayedCard());
+        cardClipboardProvider.onNext(Optional.of(getDisplayedCard()));
     }
 
     /**
@@ -303,14 +250,15 @@ public class StackPart implements PropertyChangeObserver {
      * if the clipboard is empty.
      */
     public void pasteCard() {
-        if (cardClipboardProvider.get() != null) {
+        if (cardClipboardProvider.blockingFirst().isPresent()) {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
-            CardModel card = cardClipboardProvider.get().getCardModel().copyOf();
+            CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
+            card.relinkParentPartModel(getStackModel());
             card.defineProperty(CardModel.PROP_ID, new Value(getStackModel().getNextCardId()), true);
 
             stackModel.insertCard(card);
-            cardCountProvider.set(stackModel.getCardCount());
+            cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
             goNextCard(null);
@@ -321,7 +269,7 @@ public class StackPart implements PropertyChangeObserver {
      * Gets an observable object containing the contents of the card clipboard.
      * @return The card clipboard provider.
      */
-    public Provider<CardPart> getCardClipboardProvider() {
+    public Observable<Optional<CardPart>> getCardClipboardProvider() {
         return cardClipboardProvider;
     }
 
@@ -339,7 +287,7 @@ public class StackPart implements PropertyChangeObserver {
      */
     public void invalidateCache() {
         this.currentCard = buildCardPart(getStackModel().getCurrentCardIndex());
-        this.cardCountProvider.set(stackModel.getCardCount());
+        this.cardCountProvider.onNext(stackModel.getCardCount());
 
         fireOnCardOrderChanged();
     }
@@ -348,7 +296,7 @@ public class StackPart implements PropertyChangeObserver {
      * Gets an observable object containing the number of card in the stack.
      * @return The card count provider
      */
-    public Provider<Integer> getCardCountProvider() {
+    public Observable<Integer> getCardCountProvider() {
         return cardCountProvider;
     }
 
@@ -357,7 +305,31 @@ public class StackPart implements PropertyChangeObserver {
      * @param observer The observer
      */
     public void addObserver (StackObserver observer) {
-        observers.add(observer);
+        stackObservers.add(observer);
+    }
+
+    /**
+     * Removes an observer of stack changes.
+     * @param observer The observer
+     */
+    public void removeObserver (StackObserver observer) {
+        stackObservers.remove(observer);
+    }
+
+    /**
+     * Adds an observer of stack navigation changes (i.e., user changed cards)
+     * @param observer The observer
+     */
+    public void addNavigationObserver(StackNavigationObserver observer) {
+        stackNavigationObservers.add(observer);
+    }
+
+    /**
+     * Removes an observer of stack navigation changes.
+     * @param observer The observer to remove
+     */
+    public void removeNavigationObserver(StackNavigationObserver observer) {
+        stackNavigationObservers.remove(observer);
     }
 
     /** {@inheritDoc} */
@@ -376,6 +348,10 @@ public class StackPart implements PropertyChangeObserver {
                 // Re-load the card model into the size
                 activateCard(stackModel.getCurrentCardIndex());
                 break;
+
+            case StackModel.PROP_RESIZABLE:
+                WindowManager.getInstance().getStackWindow().setAllowResizing(newValue.booleanValue());
+                break;
         }
     }
 
@@ -387,17 +363,18 @@ public class StackPart implements PropertyChangeObserver {
         }
     }
 
-    private CardPart go(int cardIndex, boolean pushToBackstack) {
+    private CardPart go(int cardIndex, boolean push) {
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
             return getDisplayedCard();
         }
 
-        deactivateCard(pushToBackstack);
+        deactivateCard(push);
         return activateCard(cardIndex);
     }
 
-    private void deactivateCard(boolean addToBackstack) {
+    private void deactivateCard(boolean push) {
+        CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
         ToolsContext.getInstance().getPaintTool().deactivate();
@@ -406,13 +383,13 @@ public class StackPart implements PropertyChangeObserver {
         ToolsContext.getInstance().setIsEditingBackground(false);
 
         // When requested, push the current card onto the backstack
-        if (addToBackstack) {
-            stackModel.getBackStack().push(getDisplayedCard().getId());
+        if (push) {
+            stackModel.getBackStack().push(displayedCard.getId());
         }
 
         // Notify observers that current card is going away
-        fireOnCardClosing(getDisplayedCard());
-        getDisplayedCard().partClosed();
+        fireOnCardClosing(displayedCard);
+        displayedCard.partClosed();
     }
 
     private CardPart activateCard (int cardIndex) {
@@ -446,7 +423,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnStackOpened () {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackObserver observer : stackObservers) {
                 observer.onStackOpened(StackPart.this);
             }
         });
@@ -454,7 +431,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardClosing (CardPart closingCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardClosed(closingCard);
             }
         });
@@ -462,7 +439,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardOpened (CardPart openedCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardOpened(openedCard);
             }
         });
@@ -470,15 +447,15 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardDimensionChanged(Dimension newDimension) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
-                observer.onCardDimensionChanged(newDimension);
+            for (StackObserver observer : stackObservers) {
+                observer.onStackDimensionChanged(newDimension);
             }
         });
     }
 
     private void fireOnStackNameChanged(String newName) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackObserver observer : stackObservers) {
                 observer.onStackNameChanged(newName);
             }
         });
@@ -486,7 +463,7 @@ public class StackPart implements PropertyChangeObserver {
 
     private void fireOnCardOrderChanged() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (StackObserver observer : observers) {
+            for (StackObserver observer : stackObservers) {
                 observer.onCardOrderChanged();
             }
         });

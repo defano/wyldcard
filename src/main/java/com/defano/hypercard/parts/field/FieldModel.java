@@ -1,7 +1,6 @@
 package com.defano.hypercard.parts.field;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
-import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.styles.HyperCardTextField;
 import com.defano.hypercard.parts.finder.LayeredPartFinder;
@@ -9,7 +8,8 @@ import com.defano.hypercard.parts.model.LogicalLinkObserver;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.util.FieldUtilities;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -19,13 +19,14 @@ import com.defano.hypertalk.utils.Range;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
 import java.util.*;
 
 /**
- * A data model representing a field part on a card. See {@link FieldPart} for the associated controller object.
- * This model is a mess. Just go with it:
+ * A data model representing a field. See {@link FieldPart} for the associated controller object. This model is a mess.
+ * Just go with it...
  * <p>
  * First: HyperCard mixes rich text (as edited by the user in the view) with plaintext (as written or read via script).
  * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can
@@ -126,6 +127,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         super.initialize();
 
         this.currentCardId = new ThreadLocal<>();
+        this.currentCardId.set(ExecutionContext.getContext().getCurrentCard().getId());
 
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
@@ -638,19 +640,22 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
         if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onAutoSelectionChanged(selectedLines));
+            SwingUtilities.invokeLater(() -> observer.onAutoSelectionChanged(selectedLines));
         }
     }
 
     private void fireDocumentChangeObserver(StyledDocument document) {
         if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onStyledDocumentChanged(document));
+            SwingUtilities.invokeLater(() -> observer.onStyledDocumentChanged(document));
         }
     }
 
     private void fireSelectionChange(Range selection) {
+        // Update 'the selection' HyperCard property
+        SelectionContext.getInstance().setSelection(getPartSpecifier(), selection);
+
         if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onSelectionChange(selection));
+            SwingUtilities.invokeLater(() -> observer.onSelectionChange(selection));
         }
     }
 

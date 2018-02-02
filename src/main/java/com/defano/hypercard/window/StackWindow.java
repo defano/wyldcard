@@ -1,14 +1,16 @@
 package com.defano.hypercard.window;
 
-import com.defano.hypercard.fx.CurtainObserver;
 import com.defano.hypercard.fx.CurtainManager;
+import com.defano.hypercard.fx.CurtainObserver;
 import com.defano.hypercard.paint.ArtVandelay;
-import com.defano.hypercard.util.FileDrop;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.ScreenCurtain;
-import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.parts.stack.StackNavigationObserver;
 import com.defano.hypercard.parts.stack.StackObserver;
-import com.defano.hypercard.parts.util.MouseEventDispatcher;
+import com.defano.hypercard.parts.stack.StackPart;
+import com.defano.hypercard.util.FileDrop;
+import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypercard.util.Throttle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,33 +18,25 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends HyperCardFrame implements StackObserver, CurtainObserver {
+public class StackWindow extends HyperCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;
 
     private StackPart stack;
     private CardPart card;
+
     private final JLayeredPane cardPanel = new JLayeredPane();
     private final ScreenCurtain screenCurtain = new ScreenCurtain();
+    private final CardResizeObserver cardResizeObserver = new CardResizeObserver();
+    private final FrameResizeObserver frameResizeObserver = new FrameResizeObserver();
 
     public StackWindow() {
+        ThreadUtils.assertDispatchThread();
+
         cardPanel.setLayout(new BorderLayout(0, 0));
-
-        cardPanel.add(screenCurtain);
         cardPanel.setLayer(screenCurtain, CURTAIN_LAYER);
-
-        // Keep size of screen curtain the same as this component (can't use a LayoutManager to do this because
-        // other components require absolute layout)
-        cardPanel.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                screenCurtain.setSize(e.getComponent().getSize());
-            }
-        });
-
-        // Pass mouse events send to the curtain to card panel behind it
-        MouseEventDispatcher.bindTo(screenCurtain, () -> new Component[] {card});
+        cardPanel.add(screenCurtain);
 
         CurtainManager.getInstance().addScreenCurtainObserver(this);
     }
@@ -51,29 +45,19 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
         return card;
     }
 
-    private void displayCard(CardPart card) {
-        this.card = card;
+    public void invalidateWindowTitle() {
+        ThreadUtils.assertDispatchThread();
 
-        // Listen for image files that are dropped onto the card
-        new FileDrop(card, ArtVandelay::importPaint);
-
-        for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
-            cardPanel.remove(c);
+        // Don't update title when screen is locked
+        if (screenCurtain.isVisible()) {
+            return;
         }
 
-        cardPanel.add(card);
-        cardPanel.setLayer(card, CARD_LAYER);
-        cardPanel.revalidate();
-        cardPanel.repaint();
-    }
-
-    public void invalidateWindowTitle() {
         String stackName = card.getCardModel().getStackModel().getStackName();
         int cardNumber = card.getCardModel().getCardIndexInStack() + 1;
-        int cardCount = stack.getCardCountProvider().get();
-        boolean isEditingBackground = card.isForegroundHidden();
+        int cardCount = stack.getCardCountProvider().blockingFirst();
 
-        if (isEditingBackground) {
+        if (card.isForegroundHidden()) {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount + " (Background)");
         } else {
             getWindow().setTitle(stackName + " - Card " + cardNumber + " of " + cardCount);
@@ -93,12 +77,22 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
     /** {@inheritDoc} */
     @Override
     public void bindModel(Object data) {
-        if (data instanceof StackPart) {
-            this.stack = (StackPart) data;
-            this.card = this.stack.getDisplayedCard();
+        ThreadUtils.assertDispatchThread();
 
-            this.getWindowPanel().setPreferredSize(this.stack.getStackModel().getSize());
-            this.stack.addObserver(this);
+        if (data instanceof StackPart) {
+
+            if (this.stack != null) {
+                stack.removeObserver(this);
+                stack.removeNavigationObserver(this);
+            }
+
+            this.stack = (StackPart) data;
+            this.card = stack.getDisplayedCard();
+
+            getWindowPanel().setPreferredSize(stack.getStackModel().getSize());
+
+            stack.addObserver(this);
+            stack.addNavigationObserver(this);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
         }
@@ -107,30 +101,46 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
     /** {@inheritDoc} */
     @Override
     public void onStackOpened(StackPart newStack) {
-        this.stack = newStack;
-        this.card = this.stack.getDisplayedCard();
-        cardPanel.setPreferredSize(this.stack.getStackModel().getSize());
+        ThreadUtils.assertDispatchThread();
 
-        displayCard(this.stack.getDisplayedCard());
-        invalidateWindowTitle();
-    }
+        stack = newStack;
+        card = stack.getDisplayedCard();
 
-    /** {@inheritDoc} */
-    @Override
-    public void onCardClosed(CardPart oldCard) {
-        // Nothing to do
+        cardPanel.setPreferredSize(stack.getStackModel().getSize());
+        setAllowResizing(stack.getStackModel().isResizable());
+
+        cardPanel.addComponentListener(cardResizeObserver);
+        getWindow().addComponentListener(frameResizeObserver);
     }
 
     /** {@inheritDoc} */
     @Override
     public void onCardOpened(CardPart newCard) {
-        displayCard(newCard);
+        ThreadUtils.assertDispatchThread();
+
+        this.card = newCard;
+
+        // Listen for image files that are dropped onto the card
+        new FileDrop(card, ArtVandelay::importPaint);
+
+        for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
+            cardPanel.remove(c);
+        }
+
+        cardPanel.setLayer(card, CARD_LAYER);
+        cardPanel.add(card);
+
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
         invalidateWindowTitle();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void onCardDimensionChanged(Dimension newDimension) {
+    public void onStackDimensionChanged(Dimension newDimension) {
+        ThreadUtils.assertDispatchThread();
+
         getWindowPanel().setPreferredSize(newDimension);
         getWindow().pack();
     }
@@ -143,13 +153,43 @@ public class StackWindow extends HyperCardFrame implements StackObserver, Curtai
 
     /** {@inheritDoc} */
     @Override
-    public void onCurtainUpdated(BufferedImage screenCurtain) {
-        this.screenCurtain.setCurtainImage(screenCurtain);
+    public void onCurtainUpdated(BufferedImage curtainImage) {
+        this.screenCurtain.setCurtainImage(curtainImage);
+
+        // Refresh title when unlocking screen
+        if (curtainImage == null) {
+            invalidateWindowTitle();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void onCardOrderChanged() {
         invalidateWindowTitle();
+    }
+
+    private class CardResizeObserver extends ComponentAdapter {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            screenCurtain.setSize(e.getComponent().getSize());
+        }
+    }
+
+    private class FrameResizeObserver extends ComponentAdapter {
+        private final Throttle resizeThrottle = new Throttle("frame-resize-throttle", 500);
+
+        @Override
+        public void componentResized(ComponentEvent e) {
+            resizeThrottle.submitOnUiThread(() -> {
+                Insets windowInsets = getWindow().getInsets();
+
+                int newCardHeight = getWindow().getHeight() - windowInsets.top - windowInsets.bottom;
+                int newCardWidth = getWindow().getWidth() - windowInsets.left - windowInsets.right;
+
+                if (stack.getStackModel().isResizable()) {
+                    stack.getStackModel().setDimension(new Dimension(newCardWidth, newCardHeight));
+                }
+            });
+        }
     }
 }

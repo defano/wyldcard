@@ -1,22 +1,23 @@
 package com.defano.hypercard.parts.button;
 
-import com.defano.hypercard.runtime.context.FontContext;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.Styleable;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.styles.*;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * The "view" object representing a styleable HyperCard button.
@@ -24,12 +25,13 @@ import java.util.Observer;
  * Note that we cannot simply extend a Swing component because the underlying component bound to this view can change at
  * runtime (i.e., a push button can morph into a radio button or combo box).
  * <p>
- * This class provides common functionality for "stylable" button parts; the actual style of the button is provided by
- * a concrete subclass.
+ * This class provides common functionality for "styleable" buttons; the actual look-and-feel of the button is provided
+ * by a subclass of {@link ButtonComponent}.
  */
 public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonComponent>, ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
+    private Disposable toolModeSubscription;
     private ButtonComponent buttonComponent;
     private boolean isBeingEdited = false;
 
@@ -104,7 +106,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
-    public void setEnabledRecursively(boolean enabled) {
+    public void setComponentHierarchyEnabled(boolean enabled) {
         getComponent().setEnabled(enabled);
     }
 
@@ -134,29 +136,29 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     public void partOpened() {
         getPartModel().addPropertyChangedObserver(buttonComponent);
         getPartModel().notifyPropertyChangedObserver(buttonComponent);
-        ToolsContext.getInstance().getToolModeProvider().addObserverAndUpdate(toolModeObserver);
-        KeyboardManager.addGlobalKeyListener(this);
+        toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
+        KeyboardManager.getInstance().addGlobalKeyListener(this);
     }
 
     @Override
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(buttonComponent);
-        KeyboardManager.removeGlobalKeyListener(this);
-        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
+        KeyboardManager.getInstance().removeGlobalKeyListener(this);
+        toolModeSubscription.dispose();
     }
 
     @Override
     public void onAntsMoved() {
-        getComponent().repaint();
+        SwingUtilities.invokeLater(getComponent()::repaint);
     }
 
     private boolean isAutoHilited() {
         return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
-    private class ToolModeObserver implements Observer {
+    private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
-        public void update(Observable o, Object arg) {
+        public void accept(ToolMode toolMode) throws Exception {
             onToolModeChanged();
         }
     }

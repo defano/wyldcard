@@ -1,16 +1,15 @@
 package com.defano.hypercard.window.forms;
 
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.hypercard.runtime.context.ToolsContext;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
-public class LinesPalette extends HyperCardDialog implements Observer {
+public class LinesPalette extends HyperCardDialog implements Consumer<Stroke> {
     private JPanel linesPanel;
 
     private JButton px1;
@@ -31,7 +30,7 @@ public class LinesPalette extends HyperCardDialog implements Observer {
         px6.addActionListener(l -> select(6));
 
         allLines = new JButton[]{px1, px2, px3, px4, px5, px6};
-        ToolsContext.getInstance().getLineStrokeProvider().addObserverAndUpdate(this);
+        ToolsContext.getInstance().getLineStrokeProvider().subscribe(this);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class LinesPalette extends HyperCardDialog implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object newValue) {
+    public void accept(Stroke newValue) {
 
         if (newValue instanceof BasicStroke) {
             int newWidth = (int) ((BasicStroke) newValue).getLineWidth();

@@ -12,29 +12,29 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     public void onPrintRequested() {
-        this.jobName = "Stack " + HyperCard.getInstance().getStack().getStackModel().getStackName();
+        this.jobName = "Stack " + HyperCard.getInstance().getActiveStack().getStackModel().getStackName();
     }
 
     @Override
     public void onPrintStarted() {
-        this.currentCard = HyperCard.getInstance().getDisplayedCard().getCardModel().getCardIndexInStack();
+        this.currentCard = HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().getCardIndexInStack();
     }
 
     @Override
     protected void onPrintCompleted(boolean successfully) {
-        HyperCard.getInstance().getStack().goCard(currentCard, null, false);
+        HyperCard.getInstance().getActiveStack().goCard(currentCard, null, false);
     }
 
     @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
-        if (pageIndex < HyperCard.getInstance().getStack().getCardCountProvider().get()) {
+        if (pageIndex < HyperCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst()) {
             // Translate printable content to top-left printable coordinate of the page
             Graphics2D g2d = (Graphics2D)g;
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
             // Need to transition to card in order to print it
-            HyperCard.getInstance().getStack().goCard(pageIndex, null, false).printAll(g);
+            HyperCard.getInstance().getActiveStack().goCard(pageIndex, null, false).printAll(g);
 
             return PAGE_EXISTS;
         } else {

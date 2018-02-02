@@ -98,7 +98,7 @@ public class SelectCmd extends Command {
         }
 
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);
-        ButtonPart part = (ButtonPart) HyperCard.getInstance().getDisplayedCard().getPart(partModel);
+        ButtonPart part = (ButtonPart) HyperCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
         ButtonComponent component = (ButtonComponent) part.getButtonComponent();
         if (component instanceof MenuButton) {
@@ -116,10 +116,10 @@ public class SelectCmd extends Command {
         }
 
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);
-        CardLayerPart part = HyperCard.getInstance().getDisplayedCard().getPart(partModel);
+        CardLayerPart part = HyperCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getStackWindow().requestFocus();
+            WindowManager.getInstance().getStackWindow().requestFocus();
 
             ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);

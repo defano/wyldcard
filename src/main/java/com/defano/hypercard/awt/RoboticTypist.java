@@ -25,7 +25,7 @@ public class RoboticTypist {
     private Robot robot;
 
     private RoboticTypist() {
-        commandKey = WindowManager.isMacOs() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+        commandKey = WindowManager.getInstance().isMacOs() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
 
         keystrokeMap.put('\n', new KeyStroke(KeyEvent.VK_ENTER, false));
         keystrokeMap.put('\t', new KeyStroke(KeyEvent.VK_TAB, false));

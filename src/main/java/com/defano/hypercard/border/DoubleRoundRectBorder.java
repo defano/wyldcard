@@ -46,10 +46,10 @@ public class DoubleRoundRectBorder implements Border {
         // Draw inner stroke
         g2d.setStroke(new BasicStroke(innerWidth));
         g2d.draw(new RoundRectangle2D.Double(
-                outerWidth + separation + halfInner,
-                outerWidth + separation + halfInner,
-                width - outerWidth * 2 - innerWidth - separation * 2,
-                height - outerWidth * 2 - innerWidth - separation * 2,
+                outerWidth + separation + innerWidth,
+                outerWidth + separation + innerWidth,
+                width - outerWidth * 2 - innerWidth * 2 - separation * 2,
+                height - outerWidth * 2 - innerWidth * 2 - separation * 2,
                 innerArcSize,
                 innerArcSize
         ));

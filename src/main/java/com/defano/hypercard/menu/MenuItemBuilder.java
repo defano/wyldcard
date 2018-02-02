@@ -1,6 +1,6 @@
 package com.defano.hypercard.menu;
 
-import com.defano.jmonet.model.ImmutableProvider;
+import io.reactivex.Observable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +15,9 @@ import java.util.List;
 public class MenuItemBuilder {
 
     private final JMenuItem item;
-    private ImmutableProvider<Boolean> checkmarkProvider;
-    private ImmutableProvider<Boolean> disabledProvider;
+    private Observable<Boolean> checkmarkProvider;
+    private Observable<Boolean> disabledProvider;
+    private Observable<Boolean> enabledProvider;
     private List<ActionListener> actionListeners = new ArrayList<>();
     private Integer atIndex;
 
@@ -28,10 +29,6 @@ public class MenuItemBuilder {
         return new MenuItemBuilder(new JCheckBoxMenuItem());
     }
 
-    public static MenuItemBuilder ofRadioType () {
-        return new MenuItemBuilder(new JRadioButtonMenuItem());
-    }
-
     public static MenuItemBuilder ofDefaultType () {
         return new MenuItemBuilder(new JMenuItem());
     }
@@ -40,7 +37,7 @@ public class MenuItemBuilder {
         return new MenuItemBuilder(new JMenuItem(action));
     }
 
-    public static MenuItemBuilder ofHeirarchicalType() {
+    public static MenuItemBuilder ofHierarchicalType() {
         return new MenuItemBuilder(new JMenu());
     }
 
@@ -64,7 +61,7 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public MenuItemBuilder withCheckmarkProvider(ImmutableProvider<Boolean> checkmarkProvider) {
+    public MenuItemBuilder withCheckmarkProvider(Observable<Boolean> checkmarkProvider) {
         this.checkmarkProvider = checkmarkProvider;
         return this;
     }
@@ -74,8 +71,13 @@ public class MenuItemBuilder {
         return this;
     }
 
-    public MenuItemBuilder withDisabledProvider(ImmutableProvider<Boolean> disabledProvider) {
+    public MenuItemBuilder withDisabledProvider(Observable<Boolean> disabledProvider) {
         this.disabledProvider = disabledProvider;
+        return this;
+    }
+
+    public MenuItemBuilder withEnabledProvider(Observable<Boolean> enabledProvider) {
+        this.enabledProvider = enabledProvider;
         return this;
     }
 
@@ -119,13 +121,18 @@ public class MenuItemBuilder {
         }
 
         if (checkmarkProvider != null) {
-            checkmarkProvider.addObserver((o, newValue) -> item.setSelected((boolean) newValue));
-            item.setSelected(checkmarkProvider.get());
+            checkmarkProvider.subscribe(checked -> item.setSelected(checked));
+            item.setSelected(checkmarkProvider.blockingFirst());
         }
 
         if (disabledProvider != null) {
-            disabledProvider.addObserver((o, arg) -> item.setEnabled(!(boolean) arg));
-            item.setEnabled(!disabledProvider.get());
+            disabledProvider.subscribe(disabled -> item.setEnabled(!disabled));
+            item.setEnabled(!disabledProvider.blockingFirst());
+        }
+
+        if (enabledProvider != null) {
+            enabledProvider.subscribe(enabled -> item.setEnabled(enabled));
+            item.setEnabled(enabledProvider.blockingFirst());
         }
 
         if (atIndex == null) {

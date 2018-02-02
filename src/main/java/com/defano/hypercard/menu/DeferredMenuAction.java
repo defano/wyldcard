@@ -20,6 +20,7 @@ public class DeferredMenuAction implements ActionListener {
 
     private final static ExecutorService delegatedActionExecutor = Executors.newCachedThreadPool();
 
+    private CountDownLatch blocker;
     private final List<ActionListener> actionListeners;
     private final String theMenu;
     private final String theMenuItem;
@@ -30,6 +31,16 @@ public class DeferredMenuAction implements ActionListener {
         this.theMenuItem = theMenuItem;
     }
 
+    /**
+     * Attempts to perform the requested action, if and only if the current card's message passing heirarchy does not
+     * trap the 'doMenu' message. (This allows scripts to conditionally trap or override the behavior of a menu item).
+     *
+     * Note that while this action "waits" for the message passing to occur, it does not block the current thread. Use
+     * {@link #blockingInvokeActionPerformed(ActionEvent)} for situations when subsequent code is dependent on the
+     * side effects of this action.
+     *
+     * @param e The ActionEvent to perform.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -40,7 +51,7 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            HyperCard.getInstance().getDisplayedCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, new ExpressionList(null, theMenu, theMenuItem), (command, wasTrapped, err) -> {
+            HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, new ExpressionList(null, theMenu, theMenuItem), (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });
@@ -57,6 +68,31 @@ public class DeferredMenuAction implements ActionListener {
                     ThreadUtils.invokeAndWaitAsNeeded(() -> thisAction.actionPerformed(e));
                 }
             }
+
+            if (blocker != null) {
+                blocker.countDown();
+            }
         });
+    }
+
+    /**
+     * Performs the requested action, blocking the current thread until the action has been completed or trapped in
+     * script.
+     *
+     * This method cannot be executed on the Swing dispatch thread, as many scripts will require this thread in order to
+     * complete.
+     *
+     * @param e The ActionEvent to perform.
+     */
+    public void blockingInvokeActionPerformed(ActionEvent e) {
+        ThreadUtils.assertWorkerThread();
+
+        blocker = new CountDownLatch(1);
+        actionPerformed(e);
+        try {
+            blocker.await();
+        } catch (InterruptedException e1) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

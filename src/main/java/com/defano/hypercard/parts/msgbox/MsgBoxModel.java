@@ -20,20 +20,20 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_CONTENTS, new Value(), false);
-        defineComputedGetterProperty(PROP_CONTENTS, (model, propertyName) -> new Value(WindowManager.getMessageWindow().getMsgBoxText()));
+        defineComputedGetterProperty(PROP_CONTENTS, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText()));
 
-        defineProperty(PROP_WIDTH, new Value(WindowManager.getMessageWindow().getWindow().getWidth()), true);
-        defineProperty(PROP_HEIGHT, new Value(WindowManager.getMessageWindow().getWindow().getHeight()), true);
+        defineProperty(PROP_WIDTH, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getWidth()), true);
+        defineProperty(PROP_HEIGHT, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getHeight()), true);
         defineProperty(PROP_NAME, new Value("Message"), true);
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getMessageWindow().getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getMessageWindow().getWindow().setLocation(value.integerValue(), WindowManager.getMessageWindow().getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getMessageWindow().getWindow().getY()));
 
-        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getMessageWindow().getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getMessageWindow().getWindow().setLocation(WindowManager.getMessageWindow().getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(WindowManager.getInstance().getMessageWindow().getWindow().getX(), value.integerValue()));
 
-        defineComputedGetterProperty(PROP_VISIBLE, (model, propertyName) -> new Value(WindowManager.getMessageWindow().isVisible()));
-        defineComputedSetterProperty(PROP_VISIBLE, (model, propertyName, value) -> WindowManager.getMessageWindow().setVisible(value.booleanValue()));
+        defineComputedGetterProperty(PROP_VISIBLE, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().isVisible()));
+        defineComputedSetterProperty(PROP_VISIBLE, (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().setVisible(value.booleanValue()));
     }
 
     /**
@@ -49,7 +49,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
      */
     @Override
     public void setSelection(Range selection) {
-        JTextComponent messageBox = WindowManager.getMessageWindow().getTextComponent();
+        JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         messageBox.setSelectionStart(selection.start);
         messageBox.setSelectionEnd(selection.end);
     }
@@ -59,7 +59,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
      */
     @Override
     public Range getSelection() {
-        JTextComponent messageBox = WindowManager.getMessageWindow().getTextComponent();
+        JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         return Range.ofMarkAndDot(messageBox.getSelectionStart(), messageBox.getSelectionEnd());
     }
 
@@ -68,7 +68,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
      */
     @Override
     public String getText() {
-        JTextComponent messageBox = WindowManager.getMessageWindow().getTextComponent();
+        JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         return messageBox.getText();
     }
 

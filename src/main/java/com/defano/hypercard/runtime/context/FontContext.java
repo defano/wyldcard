@@ -3,8 +3,9 @@ package com.defano.hypercard.runtime.context;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.jmonet.model.Provider;
 import com.google.common.collect.Sets;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import java.awt.*;
 import java.util.Collection;
@@ -50,23 +51,23 @@ public class FontContext {
     private final static int DEFAULT_FONT_SIZE = 12;
 
     // Font, size and style of last-focused text element (focused element may contain a mix of sizes, fonts and styles)
-    private final Provider<Set<Value>> focusedFontFamilyProvider = new Provider<>(Sets.newHashSet(new Value(DEFAULT_FONT_FAMILY)));
-    private final Provider<Set<Value>> focusedFontSizeProvider = new Provider<>(Sets.newHashSet(new Value(DEFAULT_FONT_SIZE)));
-    private final Provider<Boolean> focusedPlainProvider = new Provider<>(true);
-    private final Provider<Boolean> focusedBoldProvider = new Provider<>(false);
-    private final Provider<Boolean> focusedItalicProvider = new Provider<>(false);
-    private final Provider<Boolean> focusedUnderlineProvider = new Provider<>(false);
-    private final Provider<Boolean> focusedStrikethroughProvider = new Provider<>(false);
-    private final Provider<Boolean> focusedSuperscriptProvider = new Provider<>(false);
-    private final Provider<Boolean> focusedSubscriptProvider = new Provider<>(false);
+    private final Subject<Set<Value>> focusedFontFamilyProvider = BehaviorSubject.createDefault(Sets.newHashSet(new Value(DEFAULT_FONT_FAMILY)));
+    private final Subject<Set<Value>> focusedFontSizeProvider = BehaviorSubject.createDefault(Sets.newHashSet(new Value(DEFAULT_FONT_SIZE)));
+    private final Subject<Boolean> focusedPlainProvider = BehaviorSubject.createDefault(true);
+    private final Subject<Boolean> focusedBoldProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> focusedItalicProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> focusedUnderlineProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> focusedStrikethroughProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> focusedSuperscriptProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> focusedSubscriptProvider = BehaviorSubject.createDefault(false);
 
     // Font, size and style of last font, size and style chosen by the user from the menus or chooser dialog
-    private final Provider<Value> selectedFontFamilyProvider = new Provider<>(new Value(DEFAULT_FONT_FAMILY));
-    private final Provider<Value> selectedFontSizeProvider = new Provider<>(new Value(DEFAULT_FONT_SIZE));
-    private final Provider<Value> selectedFontStyleProvider = new Provider<>(new Value(DEFAULT_FONT_STYLE));
+    private final Subject<Value> selectedFontFamilyProvider = BehaviorSubject.createDefault(new Value(DEFAULT_FONT_FAMILY));
+    private final Subject<Value> selectedFontSizeProvider = BehaviorSubject.createDefault(new Value(DEFAULT_FONT_SIZE));
+    private final Subject<Value> selectedFontStyleProvider = BehaviorSubject.createDefault(new Value(DEFAULT_FONT_STYLE));
 
     // For JMonet use only; components should listen for and react to font, style and size changes individually.
-    private final Provider<Font> paintFontProvider = new Provider<>(FontUtils.getFontByNameStyleSize(DEFAULT_FONT_FAMILY, DEFAULT_FONT_STYLE_CONST, DEFAULT_FONT_SIZE));
+    private final Subject<Font> paintFontProvider = BehaviorSubject.createDefault(FontUtils.getFontByNameStyleSize(DEFAULT_FONT_FAMILY, DEFAULT_FONT_STYLE_CONST, DEFAULT_FONT_SIZE));
 
     public static FontContext getInstance() {
         return instance;
@@ -75,14 +76,14 @@ public class FontContext {
     private FontContext() {
 
         // Change in selected font should always change focused font
-        selectedFontFamilyProvider.addObserver((o, arg) -> focusedFontFamilyProvider.set(Sets.newHashSet((Value) arg)));
-        selectedFontSizeProvider.addObserver((o, arg) -> focusedFontSizeProvider.set(Sets.newHashSet((Value) arg)));
-        selectedFontStyleProvider.addObserver((o, arg) -> setFocusedFontStyle(TextStyleSpecifier.fromFontStyle((Value) arg), false));
+        selectedFontFamilyProvider.subscribe(value -> focusedFontFamilyProvider.onNext(Sets.newHashSet(value)));
+        selectedFontSizeProvider.subscribe(value -> focusedFontSizeProvider.onNext(Sets.newHashSet(value)));
+        selectedFontStyleProvider.subscribe(value -> setFocusedFontStyle(TextStyleSpecifier.fromFontStyle(value), false));
 
         // Change in selected font should update paint tool
-        selectedFontFamilyProvider.addObserver((o, arg) -> paintFontProvider.set(FontUtils.getFontByNameStyleSize(String.valueOf(arg), getFocusedTextStyle().getAwtFontStyle(), getFocusedTextStyle().getFontSize())));
-        selectedFontStyleProvider.addObserver((o, arg) -> paintFontProvider.set(FontUtils.getFontByNameStyleSize(getFocusedTextStyle().getFontFamily(), TextStyleSpecifier.convertHyperTalkStyleToAwt((Value) arg), getFocusedTextStyle().getFontSize())));
-        selectedFontSizeProvider.addObserver((o, arg) -> paintFontProvider.set(FontUtils.getFontByNameStyleSize(getFocusedTextStyle().getFontFamily(), getFocusedTextStyle().getAwtFontStyle(), ((Value) arg).integerValue())));
+        selectedFontFamilyProvider.subscribe(value -> paintFontProvider.onNext(FontUtils.getFontByNameStyleSize(String.valueOf(value), getFocusedTextStyle().getAwtFontStyle(), getFocusedTextStyle().getFontSize())));
+        selectedFontStyleProvider.subscribe(value -> paintFontProvider.onNext(FontUtils.getFontByNameStyleSize(getFocusedTextStyle().getFontFamily(), TextStyleSpecifier.convertHyperTalkStyleToAwt(value), getFocusedTextStyle().getFontSize())));
+        selectedFontSizeProvider.subscribe(value -> paintFontProvider.onNext(FontUtils.getFontByNameStyleSize(getFocusedTextStyle().getFontFamily(), getFocusedTextStyle().getAwtFontStyle(), value.integerValue())));
     }
 
     /**
@@ -105,16 +106,16 @@ public class FontContext {
      */
     public void setFocusedTextStyle(TextStyleSpecifier tss) {
         if (tss != null) {
-            focusedFontFamilyProvider.set(Sets.newHashSet(new Value(tss.getFontFamily())));
-            focusedFontSizeProvider.set(Sets.newHashSet(new Value(tss.getFontSize())));
+            focusedFontFamilyProvider.onNext(Sets.newHashSet(new Value(tss.getFontFamily())));
+            focusedFontSizeProvider.onNext(Sets.newHashSet(new Value(tss.getFontSize())));
 
-            focusedPlainProvider.set(tss.isPlain());
-            focusedBoldProvider.set(tss.isBold());
-            focusedItalicProvider.set(tss.isItalic());
-            focusedUnderlineProvider.set(tss.isUnderline());
-            focusedStrikethroughProvider.set(tss.isItalic());
-            focusedSubscriptProvider.set(tss.isSubscript());
-            focusedSuperscriptProvider.set(tss.isSubscript());
+            focusedPlainProvider.onNext(tss.isPlain());
+            focusedBoldProvider.onNext(tss.isBold());
+            focusedItalicProvider.onNext(tss.isItalic());
+            focusedUnderlineProvider.onNext(tss.isUnderline());
+            focusedStrikethroughProvider.onNext(tss.isItalic());
+            focusedSubscriptProvider.onNext(tss.isSubscript());
+            focusedSuperscriptProvider.onNext(tss.isSubscript());
         }
     }
 
@@ -123,7 +124,7 @@ public class FontContext {
      * @param size The font size.
      */
     public void setSelectedFontSize(int size) {
-        selectedFontSizeProvider.set(new Value(size));
+        selectedFontSizeProvider.onNext(new Value(size));
     }
 
     /**
@@ -134,66 +135,78 @@ public class FontContext {
     public void toggleSelectedFontStyle(Value style) {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(getFocusedHyperTalkFontStyle());
         tss.toggleFontStyle(style);
-        selectedFontStyleProvider.set(tss.getHyperTalkStyle());
+        selectedFontStyleProvider.onNext(tss.getHyperTalkStyle());
     }
 
     public void setSelectedFontStyle(Value style) {
-        selectedFontStyleProvider.set(style);
+        selectedFontStyleProvider.onNext(style);
     }
 
     public void setSelectedFontFamily(String fontName) {
-        selectedFontFamilyProvider.set(new Value(fontName));
+        selectedFontFamilyProvider.onNext(new Value(fontName));
     }
 
-    public Provider<Value> getSelectedFontFamilyProvider() {
+    public Value getSelectedFontFamily() {
+        return selectedFontFamilyProvider.blockingFirst();
+    }
+
+    public Subject<Value> getSelectedFontFamilyProvider() {
         return selectedFontFamilyProvider;
     }
 
-    public Provider<Value> getSelectedFontSizeProvider() {
+    public Subject<Value> getSelectedFontSizeProvider() {
         return selectedFontSizeProvider;
     }
 
-    public Provider<Value> getSelectedFontStyleProvider() {
+    public Value getSelectedFontSize() {
+        return selectedFontSizeProvider.blockingFirst();
+    }
+
+    public Subject<Value> getSelectedFontStyleProvider() {
         return selectedFontStyleProvider;
     }
 
-    public Provider<Font> getPaintFontProvider() {
+    public Value getSelectedFontStyle() {
+        return selectedFontStyleProvider.blockingFirst();
+    }
+
+    public Subject<Font> getPaintFontProvider() {
         return paintFontProvider;
     }
 
-    public Provider<Set<Value>> getFocusedFontFamilyProvider() {
+    public Subject<Set<Value>> getFocusedFontFamilyProvider() {
         return focusedFontFamilyProvider;
     }
 
-    public Provider<Set<Value>> getFocusedFontSizeProvider() {
+    public Subject<Set<Value>> getFocusedFontSizeProvider() {
         return focusedFontSizeProvider;
     }
 
-    public Provider<Boolean> getFocusedBoldProvider() {
+    public Subject<Boolean> getFocusedBoldProvider() {
         return focusedBoldProvider;
     }
 
-    public Provider<Boolean> getFocusedItalicProvider() {
+    public Subject<Boolean> getFocusedItalicProvider() {
         return focusedItalicProvider;
     }
 
-    public Provider<Boolean> getFocusedUnderlineProvider() {
+    public Subject<Boolean> getFocusedUnderlineProvider() {
         return focusedUnderlineProvider;
     }
 
-    public Provider<Boolean> getFocusedStrikethroughProvider() {
+    public Subject<Boolean> getFocusedStrikethroughProvider() {
         return focusedStrikethroughProvider;
     }
 
-    public Provider<Boolean> getFocusedSuperscriptProvider() {
+    public Subject<Boolean> getFocusedSuperscriptProvider() {
         return focusedSuperscriptProvider;
     }
 
-    public Provider<Boolean> getFocusedSubscriptProvider() {
+    public Subject<Boolean> getFocusedSubscriptProvider() {
         return focusedSubscriptProvider;
     }
 
-    public Provider<Boolean> getFocusedPlainProvider() {
+    public Subject<Boolean> getFocusedPlainProvider() {
         return focusedPlainProvider;
     }
 
@@ -209,9 +222,9 @@ public class FontContext {
      */
     public TextStyleSpecifier getFocusedTextStyle() {
         return TextStyleSpecifier.fromNameStyleSize(
-                (Value) focusedFontFamilyProvider.get().toArray()[0],
+                (Value) focusedFontFamilyProvider.blockingFirst().toArray()[0],
                 getFocusedHyperTalkFontStyle(),
-                (Value) focusedFontSizeProvider.get().toArray()[0]
+                (Value) focusedFontSizeProvider.blockingFirst().toArray()[0]
         );
     }
 
@@ -223,24 +236,24 @@ public class FontContext {
      */
     private Value getFocusedHyperTalkFontStyle() {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(new Value("plain"));
-        tss.setBold(focusedBoldProvider.get());
-        tss.setItalic(focusedItalicProvider.get());
-        tss.setUnderline(focusedUnderlineProvider.get());
-        tss.setStrikeThrough(focusedStrikethroughProvider.get());
-        tss.setSubscript(focusedSubscriptProvider.get());
-        tss.setSuperscript(focusedSuperscriptProvider.get());
+        tss.setBold(focusedBoldProvider.blockingFirst());
+        tss.setItalic(focusedItalicProvider.blockingFirst());
+        tss.setUnderline(focusedUnderlineProvider.blockingFirst());
+        tss.setStrikeThrough(focusedStrikethroughProvider.blockingFirst());
+        tss.setSubscript(focusedSubscriptProvider.blockingFirst());
+        tss.setSuperscript(focusedSuperscriptProvider.blockingFirst());
 
         return tss.getHyperTalkStyle();
     }
 
     private void setFocusedFontStyle(TextStyleSpecifier tss, boolean includePlain) {
-        focusedPlainProvider.set(tss.isPlain() || includePlain);
-        focusedBoldProvider.set(tss.isBold());
-        focusedItalicProvider.set(tss.isItalic());
-        focusedUnderlineProvider.set(tss.isUnderline());
-        focusedStrikethroughProvider.set(tss.isStrikeThrough());
-        focusedSuperscriptProvider.set(tss.isSuperscript());
-        focusedSubscriptProvider.set(tss.isSubscript());
+        focusedPlainProvider.onNext(tss.isPlain() || includePlain);
+        focusedBoldProvider.onNext(tss.isBold());
+        focusedItalicProvider.onNext(tss.isItalic());
+        focusedUnderlineProvider.onNext(tss.isUnderline());
+        focusedStrikethroughProvider.onNext(tss.isStrikeThrough());
+        focusedSuperscriptProvider.onNext(tss.isSuperscript());
+        focusedSubscriptProvider.onNext(tss.isSubscript());
     }
 
     public void setFocusedHyperTalkFontStyles(Collection<Value> values) {

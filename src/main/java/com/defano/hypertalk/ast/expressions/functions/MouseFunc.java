@@ -12,6 +12,6 @@ public class MouseFunc extends Expression {
     }
     
     public Value onEvaluate() {
-        return MouseManager.isMouseDown() ? new Value("down") : new Value("up");
+        return MouseManager.getInstance().isMouseDown() ? new Value("down") : new Value("up");
     }
 }

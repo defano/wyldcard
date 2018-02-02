@@ -1,12 +1,11 @@
 package com.defano.hypercard.util;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Throttles a repeated invocation of a Runnable to assure that it never executes faster than the provided period.
@@ -14,12 +13,13 @@ import java.util.concurrent.TimeUnit;
 public class Throttle {
 
     private final int periodMs;
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService executor;
 
     private List<Future> pendingUpdates = new ArrayList<>();
 
-    public Throttle(int periodMs) {
+    public Throttle(String name, int periodMs) {
         this.periodMs = periodMs;
+        this.executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat(name).build());
     }
 
     /**
@@ -43,6 +43,10 @@ public class Throttle {
 
         // Schedule job
         pendingUpdates.add(executor.schedule(runnable, periodMs, TimeUnit.MILLISECONDS));
+    }
+
+    public void shutdown() {
+        executor.shutdown();
     }
 
 }

@@ -1,18 +1,18 @@
 package com.defano.hypercard.menu;
 
 import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.window.forms.IconCreator;
-import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.parts.clipboard.CardActionListener;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.IconCreator;
 import com.defano.jmonet.clipboard.CanvasClipboardActionListener;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * The HyperCard Edit menu.
@@ -25,18 +25,21 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getDisplayedCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas());
         CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> HyperCard.getInstance().getDisplayedCard().getCanvas().undo())
+                .withAction(e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().undo())
+                .withEnabledProvider(HyperCard.getInstance().getIsUndoableProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
-                .withAction(e -> HyperCard.getInstance().getDisplayedCard().getCanvas().redo())
+                .withShiftShortcut('Z')
+                .withAction(e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().redo())
+                .withEnabledProvider(HyperCard.getInstance().getIsRedoableProvider())
                 .build(this);
 
         this.addSeparator();
@@ -68,38 +71,38 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
                 .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).deleteSelection())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> HyperCard.getInstance().getStack().newCard())
+                .withAction(e -> HyperCard.getInstance().getActiveStack().newCard())
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardCountProvider(), c -> c < 2))
-                .withAction(e -> HyperCard.getInstance().getStack().deleteCard())
+                .withDisabledProvider(HyperCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().deleteCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardCountProvider(), c -> c < 2))
-                .withAction(e -> HyperCard.getInstance().getStack().cutCard())
+                .withDisabledProvider(HyperCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().cutCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .withAction(e -> HyperCard.getInstance().getStack().copyCard())
+                .withAction(e -> HyperCard.getInstance().getActiveStack().copyCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(HyperCard.getInstance().getStack().getCardClipboardProvider(), Objects::isNull))
-                .withAction(e -> HyperCard.getInstance().getStack().pasteCard())
+                .withEnabledProvider(HyperCard.getInstance().getActiveStackCardClipboardProvider().map(Optional::isPresent))
+                .withAction(e -> HyperCard.getInstance().getActiveStack().pasteCard())
                 .build(this);
 
         this.addSeparator();
@@ -119,12 +122,12 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getSelectedImageProvider(), Objects::isNull))
+                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .withAction(e -> WindowBuilder.make(new IconCreator())
                         .resizeable(false)
                         .withTitle("Create Icon")
                         .asModal()
-                        .withModel(ToolsContext.getInstance().getSelectedImageProvider().get())
+                        .withModel(ToolsContext.getInstance().getSelectedImage())
                         .build())
                 .withShortcut('I')
                 .build(this);
@@ -143,7 +146,7 @@ public class EditMenu extends HyperCardMenu {
 
         this.addSeparator();
 
-        JMenuItem laf = MenuItemBuilder.ofHeirarchicalType()
+        JMenuItem laf = MenuItemBuilder.ofHierarchicalType()
                 .named("Look & Feel")
                 .build(this);
 
@@ -151,8 +154,8 @@ public class EditMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofCheckType()
                     .named(thisLaf.getName())
-                    .withAction(a -> WindowManager.setLookAndFeel(thisLaf.getClassName()))
-                    .withCheckmarkProvider(ImmutableProvider.derivedFrom(WindowManager.getLookAndFeelClassProvider(), value -> thisLaf.getClassName().equals(value)))
+                    .withAction(a -> WindowManager.getInstance().setLookAndFeel(thisLaf.getClassName()))
+                    .withCheckmarkProvider(WindowManager.getInstance().getLookAndFeelClassProvider().map(value -> thisLaf.getClassName().equals(value)))
                     .build(laf);
         }
     }

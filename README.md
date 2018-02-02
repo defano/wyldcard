@@ -2,7 +2,7 @@
 
 [Features](#features) | [Getting Started](#getting-started) | [Building](doc/BUILDING.md) | [HyperTalk Language Reference](#the-hypertalk-language)
 
-An effort to recreate Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+An effort to clone Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
 ![Hero](doc/images/hero.png)
 
@@ -75,11 +75,13 @@ This project represents a homework assignment gone awry and is in no way associa
 
 [Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
-HyperCard's native language, _HyperTalk_, is an event-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_) that contains a script providing a _handler_ for the given message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts or to themselves, too.
+_This guide describes HyperTalk as implemented by this project; Apple's HyperCard implements a superset of the language features described within. Wherever a language feature provided by HyperTalk Java differs from HyperCard, an attempt has been made to note the difference._
+
+HyperCard's native language, _HyperTalk_, is a message-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) that contains a script offering a _handler_ for the given message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts or to themselves, too.
 
 HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and interpreted as a number, boolean, or list depending on context. HyperCard does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.
 
-Keywords and symbols in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is no different from `myvar`; `field "my field"` refers to the same part as `field "My Field"`. Comments are preceded by `--`.
+Keywords and symbols in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is no different from `myvar`; `field "my field"` refers to the same part as `field "My Field"`. A comment is preceded by `--` and terminates at the end of the line (there are no multi-line comments in HyperTalk).
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -116,7 +118,7 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-HyperCard supported a soft-wrap character (`¬`) that could be used to break a long statement across multiple lines. To simplify data entry, this application also supports using the pipe character (`|`) for this purpose. Both symbols must be immediately followed by a carriage-return to be valid. For example:
+That said, HyperCard supports a soft-wrap character (`¬`) that could be used to break a long statement across multiple lines. To simplify script entry, this application also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
 
 ```
 answer "This is totally acceptable!" |
@@ -124,17 +126,15 @@ answer "This is totally acceptable!" |
   or "Hate it"
 ```
 
-As you enter script text into the script editor or message box, HyperTalk Java will flag syntax errors as you type by underlining the offending text with a red squiggle.
-
 ## Stacks of Cards
 
 HyperCard allows users to author and interact with _stacks_.
 
-A HyperCard stack is an ordered list of _cards_ with only one card visible to the user at a time (like slides in a PowerPoint deck). When the user navigates from one card to another, the contents of the new card appear in place of the old card. (The transition between the two may optionally be animated using a _visual effect_.)
+A HyperCard stack is an ordered list of _cards_ where only one card is visible to the user at a time (like slides in a PowerPoint deck). When the user navigates from one card to another, the contents of the new card appear in place of the old card. (The transition between the two can be animated using a _visual effect_.)
 
-Each card is comprised of two layers of graphics and user interface elements: a _background layer_ and a foreground layer (also called the _card layer_). Each card has its own unique foreground, but its background can be shared between cards. A background can contain graphics, buttons, text fields and scripts that are common to multiple cards in a stack. A stack can have multiple backgrounds, and cards sharing a given background do not have to be contiguous.
+Each card is comprised of two layers of graphics and user interface elements: a _background layer_ and a foreground layer (also called the _card layer_). Each card has its own unique foreground, but its background can be shared between cards. A background contains graphics, buttons, text fields and scripts that are common to any card in the stack sharing that background. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
 
-Cards in the stack can be referred to by their name, their position in the stack, or their relative position in their background.
+Cards in the stack can be referred to in script by name (`card "Accounting"`), id (`card id 22`), position in the stack (`card 13`), or relative position in their background (`the second card of the last background`).
 
 ### Navigating between cards
 
@@ -161,7 +161,7 @@ go to card 4 of background 2
 
 Stacks, backgrounds, cards, buttons and fields are scriptable in the HyperTalk language.
 
-A script consists of a set of _message handlers_ and _function handlers_ that describe how the part reacts when HyperCard (or another script) sends a message to it. A message handler handles incoming messages; a _function handler_ is a subroutine that optionally returns a value to its caller.
+A script consists of a set of _message handlers_ and _function handlers_ that describe how the object reacts when HyperCard (or another script) sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
 
 For example, a button could contain the script:
 
@@ -171,7 +171,7 @@ on mouseUp
 end mouseUp
 ```
 
-In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog box).
+In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog).
 
 HyperTalk Java automatically sends the following messages to parts as the user interacts with the stack:
 
@@ -221,15 +221,13 @@ Parts do not need to implement a handler for every message they might receive. M
 
 ### Message passing order
 
-Messages follow a _message passing order_. If a part receives a message and does not have a handler to handle it, or, if its handler invokes the `pass` command, then the message is forwarded to the next part in the sequence.
+Messages automatically traverse a _message passing hierarchy_: If a part receives a message and does not have a handler to handle it (or, if its handler invokes the `pass` command), then the message is forwarded to the next part in the sequence.
 
 Messages follow this order:
 
 **Buttons** and **fields** pass messages to the **card** or **background** on which they appear; a card passes messages to its **background**; and a background passes messages to its **stack**. If the stack does not trap the message, then the message is passed back to **HyperCard** which handles the message itself.
 
-This design allows parts to "override" certain HyperCard behaviors by _trapping_ the associated event message (like overriding the behavior of a what a menu item does by trapping the `doMenu` message).
-
-For example, add the following script to a field to disallow entry any of any character other than an even number:
+This design allows parts to override certain HyperCard behaviors by _trapping_ the associated event message. For example, add the following script to a field to disallow entry any of any character other than an even number:
 
 ```
 on keyDown theKey
@@ -248,22 +246,22 @@ on choose theTool, toolNumber
 end choose
 ```
 
-Anytime a command is executed in HyperTalk a message of the same name is sent to the current card, providing the same capability for trapping command behavior. Adding the following script to a card, background or stack prevents the `subtract` command from doing its job:
+Anytime a command is executed in HyperTalk a message of the same name is sent to the current card, providing the same capability for trapping command behavior. Adding the following script to a card, background or stack prevents the `create` command from doing its job:
 
 ```
-on subtract
-  answer "Wouldn't you rather add?" with "Yes" or "No"
-  if it is not "Yes" then pass subtract
-end subtract
+on create
+  answer "Are you sure you want to create a menu?" with "Yes" or "No"
+  if it is "Yes" then pass create
+end create
 ```
 
 ## Expressions
 
 [Operators](#operators) | [Factors](#factors) | [Literals](#constants-and-literals)
 
-An _expression_ is anything in HyperTalk that represents or produces a _value_. Constants (like `3.14`, `quote` or `"Hello world!"`), containers and variables (`myVar`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `fibonacci(empty, 0, 1, 200)`) are all expressions.
+An _expression_ is any fragment of the language that represents or produces a _value_. Constants (like `3.14`, `quote` or `"Hello world!"`), containers and variables (`myVar`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `fibonacci(empty, 0, 1, 200)`) are all expressions.
 
-A powerful aspect of HyperTalk's expression language is its ability to refer to a _chunk_ of an expression. A script can get or set any range of words, characters, lines, or (comma-delimited) items in a value by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), or by ordinal (`the third line of`).
+A powerful aspect of HyperTalk's expression language is its ability to refer to a _chunk_ of an expression. A script can get or set any range of words, characters, lines, or comma-delimited items in a value by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), or by ordinal (`the third line of`).
 
 Consider these chunked expressions:
 
@@ -345,9 +343,9 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is an expression referring to an object that HyperCard tries to interpret in whichever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
+A _factor_ is an expression specifying an object (a stack, background, card, button or field) that HyperCard interprets in whichever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
-For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field contains anything other than a valid card expression (such as, `next card`) then HyperCard will produce an error.
+For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field doesn't refer to a card (such as, `next card`) then HyperCard will produce an error.
 
 #### How factors work in HyperTalk Java
 
@@ -363,9 +361,7 @@ When a HyperTalk Java command expects an expression conforming to a specific typ
 
 The table below lists special values that are treated as _constants_ in the language; any unquoted use of these terms evaluates to the specified value.
 
-Additionally, any single-word unquoted literal that is not a language keyword and not an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat` is equivalent to `put "neat"` (unless a variable named `neat` is in scope, in which case the variable's value will be `put`).
-
-HyperCard allowed for certain multi-word unquoted literals; these are not allowed in HyperTalk Java (`put hello world` results in a syntax error).
+Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be used assumed). HyperCard sometimes allowed for multi-word unquoted literals (depending on the context of their use); these are never allowed in HyperTalk Java (e.g., `put hello world` results in a syntax error).
 
 Constant     | Value
 -------------|---------------------------------------
@@ -398,9 +394,9 @@ on mouseDown
 end mouseDown
 ```
 
-Local variables in HyperTalk are lexically scoped. That is, they retain their value only within the handler from which they were created.
+Local variables in HyperTalk are lexically scoped; they retain their value only within the handler from which they were created.
 
-A variable may be made global by explicitly declaring it so with the `global` keyword. Global variables are accessible from any script in any in the stack, and once created, they retain their value until the stack is closed. Note that variables that are not explicitly declared as global are considered local, even if a global variable of the same name exists.
+A variable may be made global by explicitly declaring it so with the `global` keyword. Global variables are accessible from any script in any in the stack, and once created, they retain their value until the stack is closed. Note that variables not explicitly declared `global` are considered local, even if a global variable of the same name exists.
 
 ```
 --
@@ -416,12 +412,12 @@ on mouseUp
 end mouseUp
 
 function f
-  answer fivr	     -- fivr is neither a local or global variable here; displays "fivr"
+  return fivr	     -- fivr is neither a local or global variable here; returns "fivr"
 end f
 
 function y
   global fivr
-  answer fivr	     -- Displays "5"
+  return fivr	     -- returns "5"
 end y
 ```
 
@@ -815,11 +811,11 @@ sort the lines of card field "Names" by the middle word of each  -- or by middle
 
 ### Searching
 
-Use the `find` command to find text anywhere in the stack or anywhere within a specified field. HyperCard supported a variety of search strategies, but HyperTalk Java implements a reduced set. All searches are case insensitive.
+Use the `find` command to find text anywhere in the stack or anywhere within a specified field. All searches are case insensitive.
 
-The syntax for searching is `find [<searchable>] [international] <factor> [in <field>] [of marked cards]` where:
+The syntax for searching is `find [<strategy>] [international] <factor> [in <field>] [of marked cards]` where:
 
-* `<searchable>` is one of `word`, `chars`, `whole`, `string`. When no `searchable` value is specified, the behavior associated with `chars` is assumed. See the table below for a detailed description of each
+* `<strategy>` is one of `word`, `chars`, `whole`, or `string`. When no `<strategy>` value is specified, `whole` is assumed. See the table below for a detailed description of each
 * `international` had special meaning in HyperCard (matching diphthongs and diacriticals); it has no meaning in HyperTalk Java but is allowable in the syntax
 * `<factor>` is a single-term expression representing the text to find
 * `<field>` optionally specifies that the search should only take place within the single, specified field
@@ -827,11 +823,10 @@ The syntax for searching is `find [<searchable>] [international] <factor> [in <f
 
 Strategy    | Description
 ------------|-------------------------------------
-`word`      | Finds entire words that begin with the given search term. For example, `find word "fi"` in `Find me fast!` matches `Find` but `find word "nd"` in the same text matches nothing.
-`whole`     | Same behavior as `word`
-`chars`     | Finds the given search term appearing anywhere in searchable text.
-`whole`     | Same behavior as `chars`
-`string`    | Same behavior as `chars`
+`word`      | Finds whole words in the searchable text. Search term should not contain any whitespace (if it is expected to match any text). Only whole words will match; substrings contained within a word will not.
+`chars`     | Finds a substring that occurs entirely within the bounds of a word (does not cross word boundaries). Search term should not include whitespace (if it is expected to match anything).
+`whole`     | Finds a substring that starts at the beginning of a word. Search term may contain whitespace, and search results may cross word boundaries (but will always start at a word boundary).
+`string`    | Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found-text may cross word boundaries.
 
 Consider these examples,
 
@@ -935,7 +930,7 @@ Each musical note is written in the format `<name>[<octave>][<accidental>][<dura
 * `<name>` is a single character representing the pitch; one of `c`, `d`, `e`, `f`, `g`, `a`, `b` or `r` (for a rest note).
 * `<octave>` is a single-digit integer representing the note's octave; higher numbers are higher pitched. One of `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, or `8`.
 * `<accidental>` is a half-note increase or decrease in pitch; of one `b` (flat, decreased pitch) or `#` (sharp, increased pitch).
-* `<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (once whose duration is played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).
+* `<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).
 
 When not explicitly specified, each note "inherits" its duration and octave from the previous note played. The first note in the musical sequence is assumed to be a 4th-octave quarter note (if not explicitly noted). For example, in the musical sequence `"g ce5 d"`, the first note (`g`) is played as a quarter note in the 4th octave, but the third note (`d`) is played as an eighth note in the 5th octave.
 

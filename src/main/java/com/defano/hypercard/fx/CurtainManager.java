@@ -47,7 +47,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
             // Unlock with effect
             if (effectSpecifier != null) {
                 BufferedImage from = activeEffect.getSource();
-                BufferedImage to = HyperCard.getInstance().getDisplayedCard().getScreenshot();
+                BufferedImage to = HyperCard.getInstance().getActiveStackDisplayedCard().getScreenshot();
                 startEffect(VisualEffectFactory.create(effectSpecifier, from, to));
             }
 

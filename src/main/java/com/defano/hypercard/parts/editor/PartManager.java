@@ -15,19 +15,27 @@ import java.awt.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
 
-public class PartEditor implements AWTEventListener {
+public class PartManager implements AWTEventListener {
+
+    private final static PartManager instance = new PartManager();
 
     // Initial size of new part when user command-drags
     private final static Dimension NEW_PART_DIM = new Dimension(10,10);
     private Point clickLoc;
 
-    public static void start() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(new PartEditor(), AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+    private PartManager() {}
+
+    public static PartManager getInstance() {
+        return instance;
+    }
+
+    public void start() {
+        Toolkit.getDefaultToolkit().addAWTEventListener(new PartManager(), AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
     }
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        ToolEditablePart part = PartToolContext.getInstance().getSelectedPartProvider().get();
+        ToolEditablePart part = PartToolContext.getInstance().getSelectedPart();
 
         // User pressed the mouse
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
@@ -41,7 +49,7 @@ public class PartEditor implements AWTEventListener {
 
         // User dragged the mouse
         else if (event.getID() == MouseEvent.MOUSE_DRAGGED) {
-            if (KeyboardManager.isCtrlCommandDown && part == null){
+            if (KeyboardManager.getInstance().isCtrlCommandDown() && part == null){
                 if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON) {
                     doNewButton();
                 } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
@@ -52,19 +60,23 @@ public class PartEditor implements AWTEventListener {
     }
 
     private void doNewField() {
-        CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         FieldPart theField = theCard.newField(new Rectangle(clickLoc, NEW_PART_DIM));
+        PartToolContext.getInstance().setSelectedPart(theField);
+
         new PartResizer(theField, theCard);
     }
 
     private void doNewButton() {
-        CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         ButtonPart theButton = theCard.newButton(new Rectangle(clickLoc, NEW_PART_DIM));
+        PartToolContext.getInstance().setSelectedPart(theButton);
+
         new PartResizer(theButton, theCard);
     }
 
     private void doPartEdit(ToolEditablePart part) {
-        CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         Point partLocalMouseLoc = SwingUtilities.convertPoint(theCard, clickLoc, part.getComponent());
 
         Rectangle r = new Rectangle();
@@ -89,7 +101,7 @@ public class PartEditor implements AWTEventListener {
     }
 
     private void updateClickLoc() {
-        CardPart theCard = WindowManager.getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         this.clickLoc = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(clickLoc, theCard);
     }

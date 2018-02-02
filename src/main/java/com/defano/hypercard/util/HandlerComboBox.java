@@ -12,7 +12,7 @@ import java.util.Collections;
 
 public class HandlerComboBox extends JComboBox<String> {
 
-    public final static String SEPARATOR = "[---]";
+    private final static String SEPARATOR = "[---]";
 
     public interface HandlerComboBoxDelegate {
         Collection<String> getImplementedHandlers(HandlerComboBox theComboBox);

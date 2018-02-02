@@ -5,26 +5,32 @@ import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.awt.MouseMotionListenable;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
-import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.runtime.context.FontContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.util.Throttle;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.utils.Range;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import javax.swing.text.rtf.RTFEditorKit;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An abstract HyperCard text field. That is, a field without a specific style bound to it. Encapsulates the styleable,
@@ -32,8 +38,8 @@ import java.util.*;
  */
 public abstract class HyperCardTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
 
-    public final static int WIDE_MARGIN_PX = 15;
-    public final static int NARROW_MARGIN_PX = 1;
+    protected final static int WIDE_MARGIN_PX = 15;
+    protected final static int NARROW_MARGIN_PX = 1;
 
     private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
@@ -45,11 +51,16 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private final ScrollObserver scrollObserver = new ScrollObserver();
     private final FocusObserver focusObserver = new FocusObserver();
 
+    private Disposable toolModeSubscription;
+    private Disposable fontSizeSubscription;
+    private Disposable fontStyleSubscription;
+    private Disposable fontFamilySubscription;
+
     private final ToolEditablePart toolEditablePart;
-    private final Throttle fontSelectionThrottle = new Throttle(500);
+    private final static Throttle fontSelectionThrottle = new Throttle("font-selection-throttle", 500);
 
     // Non-Mac L&Fs cause focus to be lost when user clicks on menu bar; this boolean overrides that behavior so that
-    // menu remains useful for text property changes
+    // menu remains useful for text property changes.
     private boolean didLoseFocusToMenu = false;
 
     public HyperCardTextField(ToolEditablePart toolEditablePart) {
@@ -64,7 +75,6 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         getViewport().addChangeListener(e -> {
             textPane.invalidateViewport(getViewport());
         });
-
     }
 
     /**
@@ -174,12 +184,11 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
 
         // Get notified when field tool is selected
-        ToolsContext.getInstance().getToolModeProvider().addObserver(toolModeObserver);
-        ToolsContext.getInstance().getToolModeProvider().notifyObservers(toolModeObserver);
+        toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
 
-        FontContext.getInstance().getSelectedFontFamilyProvider().addObserver(fontFamilyObserver);
-        FontContext.getInstance().getSelectedFontStyleProvider().addObserver(fontStyleObserver);
-        FontContext.getInstance().getSelectedFontSizeProvider().addObserver(fontSizeObserver);
+        fontFamilySubscription = FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);
+        fontStyleSubscription = FontContext.getInstance().getSelectedFontStyleProvider().subscribe(fontStyleObserver);
+        fontSizeSubscription = FontContext.getInstance().getSelectedFontSizeProvider().subscribe(fontSizeObserver);
 
         // React to scripted changes to the field model
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(this);
@@ -226,11 +235,10 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         toolEditablePart.getPartModel().removePropertyChangedObserver(this);
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(null);
 
-        FontContext.getInstance().getSelectedFontFamilyProvider().deleteObserver(fontFamilyObserver);
-        FontContext.getInstance().getSelectedFontStyleProvider().deleteObserver(fontStyleObserver);
-        FontContext.getInstance().getSelectedFontSizeProvider().deleteObserver(fontSizeObserver);
-
-        ToolsContext.getInstance().getToolModeProvider().deleteObserver(toolModeObserver);
+        fontFamilySubscription.dispose();
+        fontStyleSubscription.dispose();
+        fontSizeSubscription.dispose();
+        toolModeSubscription.dispose();
     }
 
     /**
@@ -421,7 +429,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private void updateFocusedFontSelection() {
 
         // Style calculation can be costly for large selections; throttle repeated requests in the background
-        fontSelectionThrottle.submit(() -> {
+        fontSelectionThrottle.submitOnUiThread(() -> {
             Range selection = getSelectedTextRange();
 
             Set<Value> styles = new HashSet<>();
@@ -448,66 +456,51 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
                 }
             }
 
-            FontContext.getInstance().getFocusedFontFamilyProvider().set(families);
-            FontContext.getInstance().getFocusedFontSizeProvider().set(sizes);
+            FontContext.getInstance().getFocusedFontFamilyProvider().onNext(families);
+            FontContext.getInstance().getFocusedFontSizeProvider().onNext(sizes);
             FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
         });
     }
 
-    private class FontStyleObserver implements Observer {
-        /**
-         * {@inheritDoc}
-         */
+    private class FontStyleObserver implements Consumer<Value> {
         @Override
-        public void update(Observable o, Object arg) {
+        public void accept(Value style) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle((Value) arg));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle(style));
             }
         }
     }
 
-    private class FontSizeObserver implements Observer {
-        /**
-         * {@inheritDoc}
-         */
+    private class FontSizeObserver implements Consumer<Value> {
         @Override
-        public void update(Observable o, Object arg) {
+        public void accept(Value size) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize((Value) arg));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize(size));
             }
         }
     }
 
-    private class FontFamilyObserver implements Observer {
-        /**
-         * {@inheritDoc}
-         */
+    private class FontFamilyObserver implements Consumer<Value> {
         @Override
-        public void update(Observable o, Object arg) {
+        public void accept(Value family) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily((Value) arg));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily(family));
             }
         }
     }
 
-    private class ToolModeObserver implements Observer {
-        /**
-         * {@inheritDoc}
-         */
+    private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
-        public void update(Observable o, Object arg) {
-            textPane.setFocusable(ToolMode.BROWSE == arg);
+        public void accept(ToolMode toolMode) {
+            textPane.setFocusable(ToolMode.BROWSE == toolMode);
 
-            setHorizontalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            setVerticalScrollBarPolicy(ToolMode.FIELD == arg ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            setEditable(ToolMode.FIELD != arg && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
+            setHorizontalScrollBarPolicy(ToolMode.FIELD == toolMode ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            setVerticalScrollBarPolicy(ToolMode.FIELD == toolMode ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            setEditable(ToolMode.FIELD != toolMode && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
         }
     }
 
     private class AutoTabKeyObserver implements KeyListenable {
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_TAB &&
@@ -520,8 +513,6 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     }
 
     private class AutoSelectObserver implements MouseListenable, MouseMotionListenable {
-
-        /** {@inheritDoc} */
         @Override
         public void mousePressed(MouseEvent e) {
             if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue()) {
@@ -530,7 +521,6 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public void mouseDragged(MouseEvent e) {
             if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue() &&
@@ -543,7 +533,6 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     }
 
     private class ScrollObserver implements AdjustmentListener {
-        /** {@inheritDoc} */
         @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             toolEditablePart.getPartModel().setKnownProperty(FieldModel.PROP_SCROLL, new Value(e.getValue()), true);
@@ -551,13 +540,11 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     }
 
     private class FocusObserver implements FocusListener {
-        /** {@inheritDoc} */
         @Override
         public void focusGained(FocusEvent e) {
             didLoseFocusToMenu = false;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void focusLost(FocusEvent e) {
             didLoseFocusToMenu = e.getOppositeComponent() instanceof JRootPane;

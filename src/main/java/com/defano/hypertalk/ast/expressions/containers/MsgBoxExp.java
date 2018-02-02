@@ -19,13 +19,13 @@ public class MsgBoxExp extends ContainerExp {
 
     @Override
     public Value onEvaluate() throws HtException {
-        Value value = new Value(WindowManager.getMessageWindow().getMsgBoxText());
+        Value value = new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText());
         return chunkOf(value, getChunk());
     }
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
-        Value destValue = new Value(WindowManager.getMessageWindow().getMsgBoxText());
+        Value destValue = new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText());
 
         // Operating on a chunk of the existing value
         if (getChunk() != null)
@@ -33,13 +33,13 @@ public class MsgBoxExp extends ContainerExp {
         else
             destValue = Value.setValue(destValue, preposition, value);
 
-        WindowManager.getMessageWindow().setMsgBoxText(destValue.stringValue());
+        WindowManager.getInstance().getMessageWindow().setMsgBoxText(destValue.stringValue());
         ExecutionContext.getContext().setIt(destValue);
 
         // If message is hidden, show it but don't focus it
-        if (!WindowManager.getMessageWindow().isVisible()) {
+        if (!WindowManager.getInstance().getMessageWindow().isVisible()) {
             SwingUtilities.invokeLater(() -> {
-                MessageWindow message = WindowManager.getMessageWindow();
+                MessageWindow message = WindowManager.getInstance().getMessageWindow();
                 message.setFocusableWindowState(false);
                 message.setVisible(true);
                 message.setFocusableWindowState(true);

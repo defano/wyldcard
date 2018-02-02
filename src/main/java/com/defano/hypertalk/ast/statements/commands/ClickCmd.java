@@ -50,7 +50,7 @@ public class ClickCmd extends Command {
             int xLoc = clickLoc.getItems().get(0).integerValue();
             int yLoc = clickLoc.getItems().get(1).integerValue();
 
-            MouseManager.clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
+            MouseManager.getInstance().clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
         } else {
             throw new HtSemanticException(clickLoc.stringValue() + " is not a valid location.");
         }

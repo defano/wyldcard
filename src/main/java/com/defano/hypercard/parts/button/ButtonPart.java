@@ -7,14 +7,8 @@ import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
-import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.window.WindowBuilder;
-import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.window.forms.ButtonPropertyEditor;
-import com.defano.hypercard.window.forms.ScriptEditor;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -64,13 +58,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
      * @return The new button.
      */
     public static ButtonPart newButton(CardPart parent, Owner owner, Rectangle rectangle) {
-        ButtonPart newButton = fromGeometry(parent, rectangle, owner);
-
-        // When a new button is created, make the button tool active and select the newly created button
-        ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
-        PartToolContext.getInstance().setSelectedPart(newButton);
-
-        return newButton;
+        return fromGeometry(parent, rectangle, owner);
     }
 
 
@@ -114,27 +102,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.partClosed();
         partModel.removePropertyChangedObserver(this);
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
-    }
-
-    @Override
-    public void editScript() {
-        WindowBuilder.make(new ScriptEditor())
-                .withTitle("Script of button " + partModel.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
-                .withModel(partModel)
-                .resizeable(true)
-                .withLocationStaggeredOver(WindowManager.getStackWindow().getWindowPanel())
-                .build();
-    }
-
-    @Override
-    public void editProperties() {
-        WindowBuilder.make(new ButtonPropertyEditor())
-                .asModal()
-                .resizeable(false)
-                .withTitle(getName())
-                .withModel(partModel)
-                .withLocationCenteredOver(WindowManager.getStackWindow().getWindowPanel())
-                .build();
     }
 
     @Override
@@ -241,7 +208,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
                 setEnabledOnCard(newValue.booleanValue());
                 break;
             case ButtonModel.PROP_VISIBLE:
-                setVisibleOnCard(newValue.booleanValue());
+                setVisibleWhenBrowsing(newValue.booleanValue());
                 break;
             case ButtonModel.PROP_ZORDER:
                 getCard().onDisplayOrderChanged();

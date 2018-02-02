@@ -1,7 +1,7 @@
 package com.defano.hypercard.window;
 
 import com.defano.hypercard.menu.HyperCardMenuBar;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +37,7 @@ public interface HyperCardWindow<WindowType extends Window> {
 
     boolean ownsMenubar();
     void setOwnsMenubar(boolean ownsMenubar);
-    Provider<Boolean> getWindowVisibleProvider();
+    Observable<Boolean> getWindowVisibleProvider();
 
     /**
      * Specifies the default button in this window (i.e., the button that will be hilited and which activates when the
@@ -83,7 +83,7 @@ public interface HyperCardWindow<WindowType extends Window> {
 
     default void applyMenuBar() {
         if (getWindow() instanceof JFrame) {
-            if (ownsMenubar() || WindowManager.isMacOs()) {
+            if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
                 ((JFrame) getWindow()).setJMenuBar(HyperCardMenuBar.instance);
             } else {
                 ((JFrame) getWindow()).setJMenuBar(null);

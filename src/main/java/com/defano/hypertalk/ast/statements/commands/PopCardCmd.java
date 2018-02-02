@@ -14,6 +14,6 @@ public class PopCardCmd extends Command {
 
     @Override
     protected void onExecute() throws HtException, Breakpoint {
-        HyperCard.getInstance().getStack().popCard(null);
+        HyperCard.getInstance().getActiveStack().popCard(null);
     }
 }

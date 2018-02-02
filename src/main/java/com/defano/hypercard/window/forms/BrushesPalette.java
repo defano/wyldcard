@@ -1,17 +1,16 @@
 package com.defano.hypercard.window.forms;
 
-import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.window.HyperCardDialog;
+import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.jmonet.tools.brushes.BasicBrush;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
 
-public class BrushesPalette extends HyperCardDialog implements Observer {
+public class BrushesPalette extends HyperCardDialog implements Consumer<BasicBrush> {
 
     private JPanel brushesPanel;
 
@@ -46,7 +45,7 @@ public class BrushesPalette extends HyperCardDialog implements Observer {
         line8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.LINE_8));
         line4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.LINE_4));
 
-        ToolsContext.getInstance().getSelectedBrushProvider().addObserverAndUpdate(this);
+        ToolsContext.getInstance().getSelectedBrushProvider().subscribe(this);
     }
 
     @Override
@@ -60,14 +59,12 @@ public class BrushesPalette extends HyperCardDialog implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        BasicBrush newBrush = (BasicBrush) arg;
-
+    public void accept(BasicBrush brush) {
         for (JButton thisButton : allButtons) {
             thisButton.setEnabled(true);
         }
 
-        getButtonForBrush(newBrush).setEnabled(false);
+        getButtonForBrush(brush).setEnabled(false);
     }
 
     private JButton getButtonForBrush(BasicBrush newBrush) {

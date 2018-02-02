@@ -42,7 +42,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'Go back'
         if (destinationExp == null) {
-            HyperCard.getInstance().getStack().popCard(visualEffect);
+            HyperCard.getInstance().getActiveStack().popCard(visualEffect);
         }
 
         else {
@@ -55,7 +55,7 @@ public class GoCmd extends Command {
                 throw new HtSemanticException("No such card.");
             } else {
                 Integer finalCardIndex = cardIndex;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> HyperCard.getInstance().getStack().goCard(finalCardIndex, visualEffect, true));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> HyperCard.getInstance().getActiveStack().goCard(finalCardIndex, visualEffect, true));
             }
         }
     }
@@ -68,9 +68,9 @@ public class GoCmd extends Command {
 
         int destinationIndex;
         if (model instanceof CardModel) {
-            destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfCard((CardModel) model);
+            destinationIndex = HyperCard.getInstance().getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
         } else if (model instanceof BackgroundModel) {
-            destinationIndex = HyperCard.getInstance().getStack().getStackModel().getIndexOfBackground(model.getId());
+            destinationIndex = HyperCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
         } else {
             return null;
         }

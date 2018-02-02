@@ -5,7 +5,6 @@ import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.l2fprod.common.swing.JFontChooser;
 
 import java.awt.*;
@@ -45,28 +44,28 @@ public class StyleMenu extends HyperCardMenu {
                 .named("Underline")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("underline")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedUnderlineProvider())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Strikethrough")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("strikethrough")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedStrikethroughProvider())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Superscript")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("superscript")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedSuperscriptProvider())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Subscript")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("subscript")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedSubscriptProvider())
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -84,46 +83,46 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("9")
                 .withAction(e -> FontContext.getInstance().setSelectedFontSize(9))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> e.contains(new Value(9))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(9))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("10")
                 .withAction(e -> FontContext.getInstance().setSelectedFontSize(10))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> e.contains(new Value(10))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(10))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("12")
                 .withAction(e -> FontContext.getInstance().setSelectedFontSize(12))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> e.contains(new Value(12))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(12))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("14")
                 .withAction(e -> FontContext.getInstance().setSelectedFontSize(14))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> e.contains(new Value(14))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(14))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("18")
                 .withAction(e -> FontContext.getInstance().setSelectedFontSize(18))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> e.contains(new Value(18))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(18))))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("24")
                 .withAction(e -> FontContext.getInstance().setSelectedFontSize(24))
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> e.contains(new Value(24))))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> e.contains(new Value(24))))
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Other...")
-                .withCheckmarkProvider(ImmutableProvider.derivedFrom(FontContext.getInstance().getFocusedFontSizeProvider(), e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
-                .withDisabledProvider(ImmutableProvider.derivedFrom(ToolsContext.getInstance().getToolModeProvider(), value -> value != ToolMode.BROWSE))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
+                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
     }
 

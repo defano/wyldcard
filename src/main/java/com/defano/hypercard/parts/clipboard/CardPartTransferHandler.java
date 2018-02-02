@@ -29,7 +29,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-        return TransferablePart.from(PartToolContext.getInstance().getSelectedPartProvider().get());
+        return TransferablePart.from(PartToolContext.getInstance().getSelectedPart());
     }
 
     @Override
@@ -49,10 +49,10 @@ public class CardPartTransferHandler extends TransferHandler {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
             CardLayer layer = CardLayerPart.getActivePartLayer();
-            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getDisplayedCard().importPart(part, layer);
+            ToolEditablePart importedPart = (ToolEditablePart) HyperCard.getInstance().getActiveStackDisplayedCard().importPart(part, layer);
 
             // Position pasted part over the mouse cursor
-            importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getMouseLoc()));
+            importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc()));
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

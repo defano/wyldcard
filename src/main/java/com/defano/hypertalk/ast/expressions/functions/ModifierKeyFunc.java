@@ -20,11 +20,11 @@ public class ModifierKeyFunc extends Expression {
     public Value onEvaluate() throws HtSemanticException {
         switch (modifierKey) {
             case COMMAND:
-                return new Value(KeyboardManager.isCtrlCommandDown ? "down" : "up");
+                return new Value(KeyboardManager.getInstance().isCtrlCommandDown() ? "down" : "up");
             case OPTION:
-                return new Value(KeyboardManager.isAltOptionDown ? "down" : "up");
+                return new Value(KeyboardManager.getInstance().isAltOptionDown() ? "down" : "up");
             case SHIFT:
-                return new Value(KeyboardManager.isShiftDown ? "down" : "up");
+                return new Value(KeyboardManager.getInstance().isShiftDown() ? "down" : "up");
         }
 
         throw new HtSemanticException("Bug! Unimplemented modifier key: " + modifierKey);

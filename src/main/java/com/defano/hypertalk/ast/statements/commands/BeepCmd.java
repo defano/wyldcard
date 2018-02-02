@@ -30,7 +30,7 @@ public class BeepCmd extends Command {
             Toolkit.getDefaultToolkit().beep();
             try {
                 Thread.sleep(250);
-                if (KeyboardManager.isBreakSequence) {
+                if (KeyboardManager.getInstance().isBreakSequence()) {
                     throw new HtSemanticException("Script aborted.");
                 }
             } catch (InterruptedException e) {

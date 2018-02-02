@@ -2,9 +2,9 @@ package com.defano.hypercard.cursor;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.parts.stack.StackObservable;
+import com.defano.hypercard.parts.stack.StackNavigationObserver;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
@@ -21,8 +21,7 @@ public class CursorManager {
     private final static CursorManager instance = new CursorManager();
     private HyperCardCursor activeCursor = HyperCardCursor.HAND;
 
-    private CursorManager() {
-    }
+    private CursorManager() {}
 
     public static CursorManager getInstance() {
         return instance;
@@ -30,10 +29,10 @@ public class CursorManager {
 
     public void start() {
         // Update cursor when the tool mode changes...
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> updateCursor());
+        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the card changes
-        HyperCard.getInstance().getStack().addObserver(new StackObservable() {
+        HyperCard.getInstance().getActiveStack().addNavigationObserver(new StackNavigationObserver() {
             @Override
             public void onCardOpened(CardPart newCard) {
                 updateCursor();
@@ -70,8 +69,8 @@ public class CursorManager {
         }
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
-            WindowManager.getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
+            WindowManager.getInstance().getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
+            WindowManager.getInstance().getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
         });
     }
 }

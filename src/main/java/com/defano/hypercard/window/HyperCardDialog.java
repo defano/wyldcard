@@ -1,6 +1,8 @@
 package com.defano.hypercard.window;
 
-import com.defano.jmonet.model.Provider;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.awt.event.ComponentAdapter;
@@ -10,26 +12,26 @@ import java.awt.event.WindowEvent;
 
 public abstract class HyperCardDialog extends JDialog implements HyperCardWindow<JDialog> {
 
-    private final Provider<Boolean> windowVisibleProvider = new Provider<>(false);
+    private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
     private boolean ownsMenubar;
 
     public HyperCardDialog() {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                windowVisibleProvider.set(true);
+                windowVisibleProvider.onNext(true);
             }
 
             @Override
             public void componentHidden(ComponentEvent e) {
-                windowVisibleProvider.set(false);
+                windowVisibleProvider.onNext(false);
             }
         });
 
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                windowVisibleProvider.set(false);
+                windowVisibleProvider.onNext(false);
             }
         });
     }
@@ -40,7 +42,7 @@ public abstract class HyperCardDialog extends JDialog implements HyperCardWindow
     }
 
     @Override
-    public Provider<Boolean> getWindowVisibleProvider() {
+    public Observable<Boolean> getWindowVisibleProvider() {
         return windowVisibleProvider;
     }
 

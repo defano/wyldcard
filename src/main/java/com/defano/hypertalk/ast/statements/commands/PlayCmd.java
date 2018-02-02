@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypercard.sound.SoundPlayer;
-import com.defano.hypertalk.ast.model.specifiers.MusicSpecifier;
+import com.defano.hypertalk.ast.model.MusicalScore;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -9,9 +9,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PlayCmd extends Command {
 
-    private final MusicSpecifier music;
+    private final MusicalScore music;
 
-    public PlayCmd(ParserRuleContext context, MusicSpecifier music) {
+    public PlayCmd(ParserRuleContext context, MusicalScore music) {
         super(context, "play");
         this.music = music;
     }

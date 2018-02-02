@@ -10,8 +10,7 @@ import java.awt.geom.RoundRectangle2D;
 
 public class ClassicButton extends AbstractLabelButton implements ButtonComponent {
 
-    protected final static int ARC_DIAMETER = 6;      // Rounded corner diameter
-    private final static int HILITE_INSET = 1;
+    private final static int ARC_DIAMETER = 6;      // Rounded corner diameter
 
     public ClassicButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
@@ -36,14 +35,18 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
         if (isHilited) {
             g.setColor(Color.BLACK);
             g.fill(new RoundRectangle2D.Double(
-                    getInsets().left + HILITE_INSET,
-                    getInsets().top + HILITE_INSET,
-                    getWidth() - getInsets().left - getInsets().right - HILITE_INSET * 2,
-                    getHeight() - getInsets().top - getInsets().bottom - HILITE_INSET * 2,
+                    getInsets().left,
+                    getInsets().top,
+                    getWidth() - getInsets().left - getInsets().right,
+                    getHeight() - getInsets().top - getInsets().bottom,
                     ARC_DIAMETER,
                     ARC_DIAMETER
             ));
         }
+    }
+
+    protected int getButtonCornerDiameter() {
+        return ARC_DIAMETER;
     }
 
     protected Border getButtonBorder() {

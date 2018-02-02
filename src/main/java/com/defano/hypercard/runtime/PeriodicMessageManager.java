@@ -2,11 +2,11 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.parts.stack.StackObservable;
+import com.defano.hypercard.parts.stack.StackNavigationObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.ExpressionList;
 import com.defano.hypertalk.ast.model.SystemMessage;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Mechanism for sending periodic messages to parts. Periodic messages include 'idle' and 'mouseWithin'.
  */
-public class PeriodicMessageManager implements Runnable, StackObservable {
+public class PeriodicMessageManager implements Runnable, StackNavigationObserver {
 
     private final static int IDLE_PERIOD_MS = 200;              // Frequency that periodic messages are sent
     private final static int IDLE_DEFERRAL_CYCLES = 50;         // Number of cycles we defer if error is encountered
@@ -31,16 +31,7 @@ public class PeriodicMessageManager implements Runnable, StackObservable {
     private final ScheduledExecutorService idleTimeExecutor = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("periodic-executor-%d").build());
     private final Vector<PartModel> withinParts = new Vector<>();
 
-    private PeriodicMessageManager() {
-
-        // Stop tracking 'within' when not in browse mode
-        ToolsContext.getInstance().getToolModeProvider().addObserver((o, arg) -> {
-            if (arg != ToolMode.BROWSE) {
-                withinParts.clear();
-            }
-        });
-
-    }
+    private PeriodicMessageManager() {}
 
     public static PeriodicMessageManager getInstance() {
         return instance;
@@ -50,7 +41,14 @@ public class PeriodicMessageManager implements Runnable, StackObservable {
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        HyperCard.getInstance().getStack().addObserver(this);
+        HyperCard.getInstance().getActiveStack().addNavigationObserver(this);
+
+        // Stop tracking 'within' when not in browse mode
+        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {
+            if (toolMode != ToolMode.BROWSE) {
+                withinParts.clear();
+            }
+        });
     }
 
     public void addWithin(PartModel part) {

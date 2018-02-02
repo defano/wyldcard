@@ -2,7 +2,6 @@ package com.defano.hypercard.parts.card;
 
 import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.awt.MouseStillDown;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.Part;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.ButtonPart;
@@ -12,6 +11,8 @@ import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.PartsTable;
+import com.defano.hypercard.runtime.context.PartToolContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.search.SearchContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -27,6 +28,8 @@ import com.defano.jmonet.clipboard.CanvasTransferHandler;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.base.PaintTool;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,8 +38,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * The "controller" object representing a card in the stack. Note that a card cannot exist apart from a Stack; this
@@ -50,6 +51,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     private CardModel cardModel;
 
+    private final static int CANVAS_UNDO_DEPTH = 20;
+
     private final PartsTable<FieldPart> fields = new PartsTable<>();
     private final PartsTable<ButtonPart> buttons = new PartsTable<>();
 
@@ -57,6 +60,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     private final ForegroundScaleObserver foregroundScaleObserver = new ForegroundScaleObserver();
     private final BackgroundScaleObserver backgroundScaleObserver = new BackgroundScaleObserver();
     private final CardModelObserver cardModelObserver = new CardPartModelObserver();
+
+    private Disposable editingBackgroundSubscription;
+    private Disposable foregroundScaleSubscription;
+    private Disposable backgroundScaleSubscription;
 
     /**
      * Instantiates the CardPart occurring at a specified position in a the stack.
@@ -85,13 +92,13 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         card.setTransferHandler(new CardPartTransferHandler(card));
 
         // Setup the foreground paint canvas
-        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage()));
+        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(), CANVAS_UNDO_DEPTH));
         card.getForegroundCanvas().addCanvasCommitObserver(card);
         card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
         card.getForegroundCanvas().setSize(stack.getWidth(), stack.getHeight());
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage()));
+        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage(), CANVAS_UNDO_DEPTH));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(), stack.getHeight());
@@ -171,6 +178,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
         addButton(newButton);
+
+        // When a new button is created, make the button tool active and select the newly created button
+        ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
+        PartToolContext.getInstance().setSelectedPart(newButton);
     }
 
     /**
@@ -195,6 +206,10 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner());
         addField(newField);
+
+        // When a new button is created, make the button tool active and select the newly created button
+        ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
+        PartToolContext.getInstance().setSelectedPart(newField);
     }
 
     /**
@@ -255,7 +270,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         setPartsOnLayerVisible(Owner.CARD, visible);
 
         // Notify the window manager that background editing mode changed
-        WindowManager.getStackWindow().invalidateWindowTitle();
+        WindowManager.getInstance().getStackWindow().invalidateWindowTitle();
     }
 
     /**
@@ -582,9 +597,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public void partOpened() {
-        ToolsContext.getInstance().isEditingBackgroundProvider().addObserver(editingBackgroundObserver);
-        getForegroundCanvas().getScaleProvider().addObserver(foregroundScaleObserver);
-        getBackgroundCanvas().getScaleProvider().addObserver(backgroundScaleObserver);
+        editingBackgroundSubscription = ToolsContext.getInstance().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
+        foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
+        backgroundScaleSubscription = getBackgroundCanvas().getScaleObservable().subscribe(backgroundScaleObserver);
 
         getForegroundCanvas().getSurface().addMouseListener(this);
         getForegroundCanvas().getSurface().addKeyListener(this);
@@ -604,9 +619,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         // Remove their Swing components from the card to free memory
         removeAll();
 
-        ToolsContext.getInstance().isEditingBackgroundProvider().deleteObserver(editingBackgroundObserver);
-        getForegroundCanvas().getScaleProvider().deleteObserver(foregroundScaleObserver);
-        getBackgroundCanvas().getScaleProvider().deleteObserver(backgroundScaleObserver);
+        editingBackgroundSubscription.dispose();
+        foregroundScaleSubscription.dispose();
+        backgroundScaleSubscription.dispose();
 
         getForegroundCanvas().getSurface().removeMouseListener(this);
         getForegroundCanvas().getSurface().removeKeyListener(this);
@@ -692,25 +707,25 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         // Nothing to do
     }
 
-    private class BackgroundScaleObserver implements Observer {
+    private class BackgroundScaleObserver implements Consumer<Double> {
         @Override
-        public void update(Observable o, Object scale) {
-            setPartsOnLayerVisible(Owner.BACKGROUND, ((Double) scale) == 1.0);
+        public void accept(Double scale) throws Exception {
+            setPartsOnLayerVisible(Owner.BACKGROUND, ( scale) == 1.0);
         }
     }
 
-    private class ForegroundScaleObserver implements Observer {
+    private class ForegroundScaleObserver implements Consumer<Double> {
         @Override
-        public void update(Observable o, Object scale) {
+        public void accept(Double scale) {
             setPartsOnLayerVisible(Owner.CARD, ((Double) scale) == 1.0);
             setPartsOnLayerVisible(Owner.BACKGROUND, ((Double) scale) == 1.0);
             setBackgroundVisible(((Double) scale) == 1.0);
         }
     }
 
-    private class EditingBackgroundObserver implements Observer {
+    private class EditingBackgroundObserver implements Consumer<Boolean> {
         @Override
-        public void update(Observable o, Object isEditingBackground) {
+        public void accept(Boolean isEditingBackground) {
             if (getForegroundCanvas() != null) {
                 getForegroundCanvas().setScale(1.0);
             }
@@ -719,7 +734,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
                 getBackgroundCanvas().setScale(1.0);
             }
 
-            setForegroundVisible(!(boolean) isEditingBackground);
+            ThreadUtils.invokeAndWaitAsNeeded(() -> setForegroundVisible(!isEditingBackground));
         }
     }
 

@@ -45,8 +45,8 @@ public class PartMover {
                 Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
                 SwingUtilities.convertPointFromScreen(mouseLoc, withinInst);
 
-                int newTop = KeyboardManager.isShiftDown ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
-                int newLeft = KeyboardManager.isShiftDown ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
+                int newTop = KeyboardManager.getInstance().isShiftDown() ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
+                int newLeft = KeyboardManager.getInstance().isShiftDown() ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
 
                 try {
                     partInst.setProperty(PartModel.PROP_TOP, new Value(newTop));
@@ -92,7 +92,7 @@ public class PartMover {
                     NumberUtils.range(mouseLoc.y, 0, partComp.getHeight())
             );
 
-            MouseManager.notifyOnMouseReleased(() -> done = true);
+            MouseManager.getInstance().notifyOnMouseReleased(() -> done = true);
             executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
         }
     }

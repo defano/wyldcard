@@ -12,14 +12,22 @@ import java.util.Set;
  */
 public class KeyboardManager {
 
-    public static boolean isShiftDown;
-    public static boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)
-    public static boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac
-    public static boolean isBreakSequence;
+    private final static KeyboardManager instance = new KeyboardManager();
+
+    private boolean isShiftDown;
+    private boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)
+    private boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac
+    private boolean isBreakSequence;
 
     private final static Set<KeyListener> observers = new HashSet<>();
 
-    public static void start() {
+    private KeyboardManager() {}
+
+    public static KeyboardManager getInstance() {
+        return instance;
+    }
+
+    public void start() {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
             isShiftDown = e.isShiftDown();
             isAltOptionDown = e.isAltDown();
@@ -33,12 +41,28 @@ public class KeyboardManager {
         });
     }
 
-    public static void addGlobalKeyListener(KeyListener observer) {
+    public void addGlobalKeyListener(KeyListener observer) {
         observers.add(observer);
     }
 
-    public static boolean removeGlobalKeyListener(KeyListener observer) {
+    public boolean removeGlobalKeyListener(KeyListener observer) {
         return observers.remove(observer);
+    }
+
+    public boolean isShiftDown() {
+        return isShiftDown;
+    }
+
+    public boolean isAltOptionDown() {
+        return isAltOptionDown;
+    }
+
+    public boolean isCtrlCommandDown() {
+        return isCtrlCommandDown;
+    }
+
+    public boolean isBreakSequence() {
+        return isBreakSequence;
     }
 
     private static void fireGlobalKeyListeners(KeyEvent e) {

@@ -170,7 +170,7 @@ public interface Messagable {
 
         switch (type) {
             case BACKGROUND:
-                return HyperCard.getInstance().getStack().getStackModel();
+                return HyperCard.getInstance().getActiveStack().getStackModel();
             case MESSAGE_BOX:
                 return ExecutionContext.getContext().getCurrentCard().getCardModel();
             case CARD:

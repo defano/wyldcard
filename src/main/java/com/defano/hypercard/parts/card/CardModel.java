@@ -67,8 +67,8 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         });
 
         // Card inherits size and location properties from the stack
-        delegateProperties(Lists.newArrayList(PROP_RECT, PROP_RECTANGLE, PROP_TOP, PROP_LEFT, PROP_BOTTOM, PROP_RIGHT, PROP_TOPLEFT, PROP_BOTTOMRIGHT, PROP_HEIGHT, PROP_WIDTH),
-                property -> HyperCard.getInstance().getStack().getStackModel());
+        delegateProperties(Lists.newArrayList(PROP_RECT, PROP_RECTANGLE, PROP_TOP, PROP_LEFT, PROP_BOTTOM, PROP_RIGHT, PROP_TOPLEFT, PROP_BOTTOMRIGHT, PROP_HEIGHT, PROP_WIDTH, StackModel.PROP_RESIZABLE),
+                property -> HyperCard.getInstance().getActiveStack().getStackModel());
     }
 
     /**

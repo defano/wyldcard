@@ -36,10 +36,10 @@ public class SearchContext {
 
     /**
      * Performs a search of the given query. Search results in field text are highlighted (boxed) and the foundLine,
-     * foundText, foundChunk and foundField HyperCard properties being updated.
+     * foundText, foundChunk and foundField HyperCard properties are updated accordingly.
      *
-     * If the given query is the same as the last query, this method "continues" the previous search finding and
-     * highlighting the next matching substring.
+     * If the given query is the same as the last query, this method "continues" the previous search, finding and
+     * highlighting the next matching string.
      *
      * @param query The query to perform
      * @throws HtException Thrown if the query refers to a bogus field
@@ -152,7 +152,7 @@ public class SearchContext {
         int searchFrom = 0;
         Range result;
 
-        int cardId = HyperCard.getInstance().getStack().getStackModel().getCardModel(cardIndex).getId();
+        int cardId = HyperCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId();
         String fieldText = fieldModel.getText(cardId);
 
         do {

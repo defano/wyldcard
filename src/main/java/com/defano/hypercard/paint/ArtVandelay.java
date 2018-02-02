@@ -20,7 +20,7 @@ import java.io.IOException;
 public class ArtVandelay {
 
     public static void importPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> isFileSupportedForImporting(name));
         fd.setVisible(true);
@@ -31,13 +31,13 @@ public class ArtVandelay {
     }
 
     public static void exportPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
-        fd.setFile("*.png");
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
+        fd.setFile("Untitled.png");
         fd.setVisible(true);
 
         if (fd.getFiles().length > 0) {
             try {
-                exportPaint(fd.getFiles()[0], ToolsContext.getInstance().getSelectedImageProvider().get());
+                exportPaint(fd.getFiles()[0], ToolsContext.getInstance().getSelectedImage());
             } catch (IOException e) {
                 HyperCard.getInstance().showErrorDialog(new HtSemanticException("Can't export paint in that format."));
             }
@@ -64,8 +64,8 @@ public class ArtVandelay {
             BufferedImage importedImage = ImageIO.read(file);
 
             if (importedImage != null) {
-                int cardHeight = HyperCard.getInstance().getDisplayedCard().getHeight();
-                int cardWidth = HyperCard.getInstance().getDisplayedCard().getWidth();
+                int cardHeight = HyperCard.getInstance().getActiveStackDisplayedCard().getHeight();
+                int cardWidth = HyperCard.getInstance().getActiveStackDisplayedCard().getWidth();
                 int cardCenterX = cardWidth / 2;
                 int cardCenterY = cardHeight / 2;
 
