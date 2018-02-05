@@ -2,6 +2,7 @@ package com.defano.hypercard.menu;
 
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.jmonet.algo.dither.*;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 
 import javax.swing.*;
@@ -126,54 +127,117 @@ public class PaintMenu extends HyperCardMenu {
                 .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
                 .build(this);
 
-                MenuItemBuilder.ofDefaultType()
+        MenuItemBuilder.ofDefaultType()
                         .named("Black & White")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(0))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(0, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
 
                 MenuItemBuilder.ofDefaultType()
                         .named("8 Grays")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(8))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(8, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("32 Grays")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(32))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(32, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("64 Grays")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(64))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(64, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("256 Grays")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(256))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(256, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
 
                 MenuItemBuilder.ofDefaultType()
                         .named("8 Colors")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(8))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(8, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("32 Colors")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(32))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(32, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("64 Colors")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(64))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(64, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("256 Colors")
-                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(256))
+                        .withAction(p -> ((AbstractSelectionTool)ToolsContext.getInstance().getPaintTool()).reduceColor(256, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);
+
+                reduceColorMenu.add(new JSeparator());
+
+                JMenuItem ditherMenu = MenuItemBuilder.ofHierarchicalType()
+                        .named("Dithering")
+                        .build(reduceColorMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("None")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new NullDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof NullDitherer))
+                                .build(ditherMenu);
+
+                        ditherMenu.add(new JSeparator());
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Atkinson")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new AtkinsonDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof AtkinsonDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Burkes")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new BurkesDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof BurkesDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Floyd Steinberg")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new FloydSteinbergDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof FloydSteinbergDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Jarvis Judice Ninke")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new JarvisJudiceNinkeDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof JarvisJudiceNinkeDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Sierra")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new SierraDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof SierraDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Sierra Two")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new SierraTwoDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof SierraTwoDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Sierra Lite")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new SierraLiteDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof SierraLiteDitherer))
+                                .build(ditherMenu);
+
+                        MenuItemBuilder.ofCheckType()
+                                .named("Stucki")
+                                .withAction(a -> ToolsContext.getInstance().setDitherer(new StuckiDitherer()))
+                                .withCheckmarkProvider(ToolsContext.getInstance().getDithererProvider().map(d -> d instanceof StuckiDitherer))
+                                .build(ditherMenu);
+
     }
 
     public void reset() {

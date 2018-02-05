@@ -9,7 +9,7 @@ import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
-import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 
 import java.awt.*;
 

@@ -27,7 +27,7 @@ import com.defano.jmonet.clipboard.CanvasTransferDelegate;
 import com.defano.jmonet.clipboard.CanvasTransferHandler;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
-import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
