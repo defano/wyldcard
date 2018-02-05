@@ -34,7 +34,7 @@ public class MusicalNote {
                 name == null ? previousNote.getFrequency().getName() : name,
                 accidental == null ? '-' : accidental,
                 octave == null ? previousNote.getFrequency().getOctave() : octave,
-                duration == null ? previousNote.duration : duration);
+                duration == null ? previousNote.duration.getUndotted() : duration);
     }
 
     public MusicalPitch getFrequency() {

@@ -3,30 +3,28 @@ package com.defano.hypercard.sound;
 public enum  MusicalDuration {
 
     WHOLE(1),
-    HALF(1.0/2.0),
-    QUARTER(1.0/4.0),
-    EIGHTH(1.0/8.0),
-    SIXTEENTH(1.0/16.0),
-    THIRTY_SECOND(1.0/32.0),
-    SIXTY_FOURTH(1.0/64.0);
+    WHOLE_DOTTED(1.5),
+    HALF(0.5),
+    HALF_DOTTED(0.75),
+    QUARTER(0.25),
+    QUARTER_DOTTED(0.375),
+    EIGHTH(0.125),
+    EIGHTH_DOTTED(0.1875),
+    SIXTEENTH(0.0625),
+    SIXTEENTH_DOTTED(0.09375),
+    THIRTY_SECOND(0.03125),
+    THIRTY_SECOND_DOTTED(0.046875),
+    SIXTY_FOURTH(0.015625),
+    SIXTY_FOURTH_DOTTED(0.0234375);
 
     private final double relativeDuration;
-    private boolean dotted = false;
 
     MusicalDuration(double relativeDuration) {
         this.relativeDuration = relativeDuration;
     }
 
-    public boolean isDotted() {
-        return dotted;
-    }
-
-    public void setDotted(boolean dotted) {
-        this.dotted = dotted;
-    }
-
     public double getRelativeDuration() {
-        return isDotted() ? this.relativeDuration + (this.relativeDuration / 2) : this.relativeDuration;
+        return this.relativeDuration;
     }
 
     public double getDurationMs(int forBpm) {
@@ -34,6 +32,20 @@ public enum  MusicalDuration {
         double MILLISECONDS_PER_SECOND = 1000.0;
 
         return ((SECONDS_PER_MINUTE / forBpm) * MILLISECONDS_PER_SECOND) * getRelativeDuration();
+    }
+
+    public MusicalDuration getUndotted() {
+        switch (this) {
+            case WHOLE_DOTTED: return WHOLE;
+            case HALF_DOTTED: return HALF;
+            case QUARTER_DOTTED: return QUARTER;
+            case EIGHTH_DOTTED: return EIGHTH;
+            case SIXTEENTH_DOTTED: return SIXTEENTH;
+            case THIRTY_SECOND_DOTTED: return THIRTY_SECOND;
+            case SIXTY_FOURTH_DOTTED: return SIXTY_FOURTH;
+
+            default: return this;
+        }
     }
 
     public static MusicalDuration fromString(String duration) {
@@ -44,21 +56,21 @@ public enum  MusicalDuration {
         MusicalDuration value;
 
         switch (duration.charAt(0)) {
-            case 'w': value = WHOLE; break;
-            case 'h': value = HALF; break;
-            case 'q': value = QUARTER; break;
-            case 'e': value = EIGHTH; break;
-            case 's': value = SIXTEENTH; break;
-            case 't': value = THIRTY_SECOND; break;
-            case 'x': value = SIXTY_FOURTH; break;
+            case 'w': value = parseDot(duration) ? WHOLE_DOTTED : WHOLE; break;
+            case 'h': value = parseDot(duration) ? HALF_DOTTED : HALF; break;
+            case 'q': value = parseDot(duration) ? QUARTER_DOTTED : QUARTER; break;
+            case 'e': value = parseDot(duration) ? EIGHTH_DOTTED : EIGHTH; break;
+            case 's': value = parseDot(duration) ? SIXTEENTH_DOTTED : SIXTEENTH; break;
+            case 't': value = parseDot(duration) ? THIRTY_SECOND_DOTTED : THIRTY_SECOND; break;
+            case 'x': value = parseDot(duration) ? SIXTY_FOURTH_DOTTED : SIXTY_FOURTH; break;
 
-            default: return MusicalDuration.QUARTER;
-        }
-
-        if (duration.contains(".")) {
-            value.setDotted(true);
+            default: value = parseDot(duration) ? QUARTER_DOTTED : QUARTER;
         }
 
         return value;
+    }
+
+    private static boolean parseDot(String duration) {
+        return duration.contains(".");
     }
 }
