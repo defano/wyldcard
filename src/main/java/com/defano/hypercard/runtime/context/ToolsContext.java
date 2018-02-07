@@ -362,6 +362,7 @@ public class ToolsContext {
                 .withStrokePaintObservable(linePaintProvider)
                 .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.create(t)) : Optional.empty()))
                 .withFontObservable(FontContext.getInstance().getPaintFontProvider())
+                .withFontColorObservable(foregroundColorProvider)
                 .withShapeSidesObservable(shapeSidesProvider)
                 .withIntensityObservable(intensityProvider)
                 .withDrawCenteredObservable(drawCenteredProvider)

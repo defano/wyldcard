@@ -29,6 +29,12 @@ public interface TwoPhaseParser {
      * @throws HtSyntaxException Thrown if an error occurs while parsing the script.
      */
     static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
+
+        // Nothing to do for empty scripts
+        if (scriptText == null || scriptText.length() == 0) {
+            return new Script();
+        }
+
         Object parseTree = parseSLL(compilationUnit, scriptText);
 
         if (parseTree == null) {
@@ -74,7 +80,8 @@ public interface TwoPhaseParser {
 
     /**
      * "First phase" parsing attempt. Provides better performance than {@link #parseLL(CompilationUnit, String)}, but
-     * will erroneously report syntax errors when parsing script text utilizing certain parts of the grammar.
+     * will erroneously report syntax errors when parsing script text utilizing certain, ambiguous, parts of the
+     * grammar.
      *
      * @param compilationUnit The unit of work to compile/parse. Represents the grammar's start symbol that should be
      *                        used.

@@ -2,12 +2,13 @@ package com.defano.hypercard.parts.model;
 
 import com.defano.hypercard.parts.Messagable;
 import com.defano.hypercard.parts.card.CardLayer;
+import com.defano.hypercard.runtime.interpreter.CompilationUnit;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypertalk.ast.expressions.LiteralPartExp;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.expressions.LiteralPartExp;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -169,12 +170,10 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         defineComputedGetterProperty(PROP_SCRIPT, (model, propertyName) -> model.getKnownProperty(PROP_SCRIPTTEXT));
         defineComputedSetterProperty(PROP_SCRIPT, (model, propertyName, value) -> {
             model.setKnownProperty(PROP_SCRIPTTEXT, value);
-            try {
-                script = Interpreter.compileScript(value.stringValue());
-            } catch (HtException e) {
-                script = new Script();
-            }
+            precompile();
         });
+
+        precompile();
     }
 
     public Rectangle getRect() {
@@ -193,6 +192,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public PartType getType() {
         return type;
+    }
+
+    private void precompile() {
+        if (hasProperty(PROP_SCRIPTTEXT)) {
+            Interpreter.compileInBackground(CompilationUnit.SCRIPT, getKnownProperty(PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
+                if (generatedError == null) {
+                    script = (Script) compiledScript;
+                }
+            });
+        }
     }
 
     public Script getScript() {

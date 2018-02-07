@@ -22,7 +22,7 @@ import java.util.concurrent.*;
  */
 public class Interpreter implements TwoPhaseParser {
 
-    private final static int MAX_COMPILE_THREADS  = 1;          // Simultaneous background parse tasks
+    private final static int MAX_COMPILE_THREADS  = 6;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 12;         // Simultaneous scripts executing
     private final static int MAX_LISTENER_THREADS = 12;         // Simultaneous listeners waiting for handler completion
 
