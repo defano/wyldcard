@@ -86,6 +86,12 @@ public class OptionsMenu extends HyperCardMenu {
                 .withDisabledProvider(WindowManager.getInstance().getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
+        MenuItemBuilder.ofDefaultType()
+                .named("Spray Intensity...")
+                .withAction(a -> WindowManager.getInstance().getIntensityPalette().setVisible(true))
+                .withDisabledProvider(WindowManager.getInstance().getIntensityPalette().getWindowVisibleProvider())
+                .build(this);
+
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()

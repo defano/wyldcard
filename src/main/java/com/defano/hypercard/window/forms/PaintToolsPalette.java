@@ -9,7 +9,7 @@ import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.l2fprod.common.swing.JFontChooser;
@@ -71,7 +71,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
         shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getShapesPalette().setVisible(true));
         line.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getLinesPalette().setVisible(true));
         paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getBrushesPalette().setVisible(true));
-        spraypaint.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getBrushesPalette().setVisible(true));
+        spraypaint.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getIntensityPalette().setVisible(true));
         rectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         roundRectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         oval.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());

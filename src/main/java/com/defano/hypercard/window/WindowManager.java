@@ -20,6 +20,7 @@ public class WindowManager {
     private final PatternPalette patternsPalette = new PatternPalette();
     private final BrushesPalette brushesPalette = new BrushesPalette();
     private final ColorPalette colorPalette = new ColorPalette();
+    private final IntensityPalette intensityPalette = new IntensityPalette();
 
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
@@ -81,6 +82,12 @@ public class WindowManager {
                 .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
+        WindowBuilder.make(intensityPalette)
+                .notInitiallyVisible()
+                .dockTo(stackWindow)
+                .withLocationUnderneath(paintToolsPalette.getWindow())
+                .build();
+
         WindowBuilder.make(colorPalette)
                 .withTitle("Colors")
                 .notInitiallyVisible()
@@ -120,6 +127,10 @@ public class WindowManager {
 
     public ColorPalette getColorPalette() {
         return colorPalette;
+    }
+
+    public IntensityPalette getIntensityPalette() {
+        return intensityPalette;
     }
 
     public HyperCardWindow[] allWindows() {

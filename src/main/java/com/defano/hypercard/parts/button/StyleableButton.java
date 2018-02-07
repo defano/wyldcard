@@ -148,7 +148,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
-    public void onAntsMoved() {
+    public void onAntsMoved(Stroke ants) {
         SwingUtilities.invokeLater(getComponent()::repaint);
     }
 
@@ -158,7 +158,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
 
     private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
-        public void accept(ToolMode toolMode) throws Exception {
+        public void accept(ToolMode toolMode) {
             onToolModeChanged();
         }
     }

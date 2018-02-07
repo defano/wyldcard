@@ -121,7 +121,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
     }
 
     @Override
-    public void onAntsMoved() {
+    public void onAntsMoved(Stroke ants) {
         SwingUtilities.invokeLater(getFieldComponent()::repaint);
     }
 
