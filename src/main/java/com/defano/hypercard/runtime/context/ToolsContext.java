@@ -360,7 +360,7 @@ public class ToolsContext {
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintObservable(linePaintProvider)
-                .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.create(t)) : Optional.empty()))
+                .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.getInstance().getPattern(t)) : Optional.empty()))
                 .withFontObservable(FontContext.getInstance().getPaintFontProvider())
                 .withFontColorObservable(foregroundColorProvider)
                 .withShapeSidesObservable(shapeSidesProvider)

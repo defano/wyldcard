@@ -104,7 +104,7 @@ public class PatternPalette extends HyperCardDialog implements Consumer {
     private BufferedImage createIconForButton(int width, int height, int patternId) {
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setPaint(HyperCardPatternFactory.create(patternId));
+        g.setPaint(HyperCardPatternFactory.getInstance().getPattern(patternId));
         g.fillRect(0, 0, width, height);
         g.dispose();
 

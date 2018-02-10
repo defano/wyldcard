@@ -40,7 +40,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Fill")
                 .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableImageSelection))
-                .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(HyperCardPatternFactory.create(ToolsContext.getInstance().getFillPattern())))
+                .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(HyperCardPatternFactory.getInstance().getPattern(ToolsContext.getInstance().getFillPattern())))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

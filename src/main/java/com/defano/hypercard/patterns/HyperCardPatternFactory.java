@@ -6,8 +6,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class HyperCardPatternFactory {
+
+    private final static HyperCardPatternFactory instance = new HyperCardPatternFactory();
 
     private final static int SPRITE_MATRIX_WIDTH = 17;
     private final static int SPRITE_MATRIX_HEIGHT = 12;
@@ -15,12 +18,27 @@ public class HyperCardPatternFactory {
     private final static int PATTERN_WIDTH = 8;
     private final static int PATTERN_HEIGHT = 8;
 
-    public static TexturePaint create (int id) {
+    private HashMap<Integer, TexturePaint> patterns = new HashMap<>();
 
+    private HyperCardPatternFactory() {
+        for (int index = 0; index < 40; index++) {
+            patterns.put(index, create(index));
+        }
+    }
+
+    public static HyperCardPatternFactory getInstance() {
+        return instance;
+    }
+
+    public TexturePaint getPattern(int id) {
         if (id > 39) {
             throw new IllegalArgumentException("No such pattern. Patterns are numbered 0 to 39.");
         }
 
+        return patterns.get(id);
+    }
+
+    private static TexturePaint create(int id) {
         int row = (id / 4);
         int column = (id % 4);
 
