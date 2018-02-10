@@ -1,7 +1,5 @@
-package com.defano.hypertalk.ast.expressions.functions;
+package com.defano.hypertalk.ast.model;
 
-import com.defano.hypertalk.ast.model.NamedBlock;
-import com.defano.hypertalk.ast.model.ParameterList;
 import com.defano.hypertalk.ast.statements.StatementList;
 
 public class UserFunction extends NamedBlock {

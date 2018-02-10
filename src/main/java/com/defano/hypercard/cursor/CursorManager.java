@@ -5,12 +5,12 @@ import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.stack.StackNavigationObserver;
 import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
 import com.defano.jmonet.tools.builder.PaintTool;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -68,7 +68,7 @@ public class CursorManager {
             tool.setToolCursor(effectiveCursor);
         }
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+        SwingUtilities.invokeLater(() -> {
             WindowManager.getInstance().getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
             WindowManager.getInstance().getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
         });

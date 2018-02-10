@@ -8,7 +8,7 @@ import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.expressions.functions.UserFunction;
+import com.defano.hypertalk.ast.model.UserFunction;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.CheckedFuture;

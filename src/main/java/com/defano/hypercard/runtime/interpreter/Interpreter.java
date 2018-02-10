@@ -2,7 +2,7 @@ package com.defano.hypercard.runtime.interpreter;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.functions.UserFunction;
+import com.defano.hypertalk.ast.model.UserFunction;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;

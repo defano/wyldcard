@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.model;
 
-import com.defano.hypertalk.ast.expressions.functions.UserFunction;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 

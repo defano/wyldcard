@@ -176,7 +176,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     }
 
     private class FrameResizeObserver extends ComponentAdapter {
-        private final Throttle resizeThrottle = new Throttle("frame-resize-throttle", 500);
+        private final Throttle resizeThrottle = new Throttle("window-resize-throttle", 500);
 
         @Override
         public void componentResized(ComponentEvent e) {
