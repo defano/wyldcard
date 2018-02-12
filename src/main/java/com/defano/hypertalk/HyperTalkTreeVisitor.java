@@ -1860,6 +1860,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case PARAM_COUNT: return new ParamCountFunc(ctx);
             case PARAMS: return new ParamsFunc(ctx);
             case PROPERTY_DELEGATED: return new PropertyDelegatedFunc(ctx, ctx.zeroArgFunc().getText());
+            case TARGET: return new TargetFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -1980,6 +1981,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitPropDelegatedFunc(HyperTalkParser.PropDelegatedFuncContext ctx) {
         return BuiltInFunction.PROPERTY_DELEGATED;
+    }
+
+    @Override
+    public Object visitTargetFunc(HyperTalkParser.TargetFuncContext ctx) {
+        return BuiltInFunction.TARGET;
     }
 
     @Override

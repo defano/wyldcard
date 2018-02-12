@@ -4,14 +4,13 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.msgbox.MsgBoxModel;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.util.SquigglePainter;
 import com.defano.hypercard.window.HyperCardFrame;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.utils.Range;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -25,7 +24,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class MessageWindow extends HyperCardFrame implements PropertyChangeObserver {
 
@@ -163,7 +161,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
             try {
                 if (!getMsgBoxText().trim().isEmpty()) {
                     String messageText = getMsgBoxText();
-                    Interpreter.executeString(new PartMessageSpecifier(), messageText).get();
+                    Interpreter.executeString(new PartMessageSpecifier(), messageText).checkedGet();
 
                     // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
                     if (Interpreter.isExpressionStatement(messageText)) {
@@ -172,8 +170,6 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
                 }
             } catch (HtException e) {
                 HyperCard.getInstance().showErrorDialog(e);
-            } catch (InterruptedException | ExecutionException e) {
-                HyperCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred while executing the message."));
             }
         });
     }
