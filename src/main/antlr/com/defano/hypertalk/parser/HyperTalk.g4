@@ -471,6 +471,7 @@ zeroArgFunc
     | 'selectedchunk'                                                                                                   # propDelegatedFunc
     | 'selectedfield'                                                                                                   # propDelegatedFunc
     | 'selectedline'                                                                                                    # propDelegatedFunc
+    | 'target'                                                                                                          # targetFunc
     | 'clicktext'                                                                                                       # propDelegatedFunc
     | 'mouseh'                                                                                                          # propDelegatedFunc
     | 'mousev'                                                                                                          # propDelegatedFunc

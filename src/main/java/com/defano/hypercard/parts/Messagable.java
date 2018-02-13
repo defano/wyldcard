@@ -2,16 +2,14 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.runtime.MessageCompletionObserver;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.context.ToolsContext;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.model.UserFunction;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.google.common.util.concurrent.CheckedFuture;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -79,27 +77,20 @@ public interface Messagable {
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        CheckedFuture<Boolean, HtException> trapped = Interpreter.executeHandler(getMe(), getScript(), command, arguments);
-        trapped.addListener(() -> {
-            try {
-
-                // Did this part trap this command?
-                if (trapped.checkedGet()) {
-                    onCompletion.onMessagePassed(command, true, null);
+        Interpreter.asyncExecuteHandler(getMe(), getScript(), command, arguments, (me, script, handler, trappedMessage) -> {
+            // Did this part trap this command?
+            if (trappedMessage) {
+                onCompletion.onMessagePassed(command, true, null);
+            } else {
+                // Get next recipient in message passing order; null if no other parts receive message
+                Messagable nextRecipient = getNextMessageRecipient(getMe().getType());
+                if (nextRecipient == null) {
+                    onCompletion.onMessagePassed(command, false, null);
                 } else {
-                    // Get next recipient in message passing order; null if no other parts receive message
-                    Messagable nextRecipient = getNextMessageRecipient(getMe().getType());
-                    if (nextRecipient == null) {
-                        onCompletion.onMessagePassed(command, false, null);
-                    } else {
-                        nextRecipient.receiveMessage(command, arguments, onCompletion);
-                    }
+                    nextRecipient.receiveMessage(command, arguments, onCompletion);
                 }
-
-            } catch (HtException e) {
-                onCompletion.onMessagePassed(command, false, e);
             }
-        }, Interpreter.getCompletionListenerExecutor());
+        });
     }
 
     /**
@@ -157,7 +148,7 @@ public interface Messagable {
             function = target.getScript().getFunction(functionName);
         }
 
-        return Interpreter.executeFunction(target.getMe(), function, arguments);
+        return Interpreter.blockingExecuteFunction(target.getMe(), function, arguments);
     }
 
     /**

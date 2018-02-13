@@ -35,7 +35,7 @@ public class PartIdSpecifier implements PartSpecifier {
 
     @Override
     public String getHyperTalkIdentifier () {
-        if (getOwner() == null) {
+        if (getOwner() == null || getOwner() == Owner.STACK) {
             return type.toString().toLowerCase() + " id " + id;
         } else {
             return getOwner().name().toLowerCase() + " " + type.toString().toLowerCase() + " id " + id;

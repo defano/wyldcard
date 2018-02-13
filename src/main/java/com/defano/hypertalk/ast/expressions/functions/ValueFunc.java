@@ -18,6 +18,6 @@ public class ValueFunc extends Expression {
     @Override
     public Value onEvaluate() throws HtException {
         String toEvaluate = expression.evaluate().stringValue();
-        return Interpreter.evaluate(toEvaluate);
+        return Interpreter.blockingEvaluate(toEvaluate);
     }
 }

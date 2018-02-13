@@ -2,8 +2,8 @@ package com.defano.hypercard.runtime;
 
 import com.defano.hypertalk.ast.model.Value;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Implements a list of symbols (variables) and methods for getting and setting
@@ -14,7 +14,7 @@ public class SymbolTable {
     private final Map<String, Value> table;
     
     public SymbolTable () {
-        table = new HashMap<>();
+        table = new ConcurrentHashMap<>();
     }
     
     public Value get (String id) {

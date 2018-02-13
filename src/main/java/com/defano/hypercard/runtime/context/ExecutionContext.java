@@ -36,8 +36,8 @@ public class ExecutionContext {
 
     private static final ExecutionContext instance = new ExecutionContext();
 
-    // Globals are shared across threads. Race condition? What race condition!?
-    private final SymbolTable globals;
+    // Globals are shared across threads. SymbolTable is thread safe.
+    private final SymbolTable globals = new SymbolTable();
 
     /*
      * In this implementation, when HyperCard sends a system-defined message to a part
@@ -49,10 +49,9 @@ public class ExecutionContext {
     private final ThreadLocal<Stack<PartSpecifier>> me = new ThreadLocal<>();
     private final ThreadLocal<Value> result = new ThreadLocal<>();
     private final ThreadLocal<CardPart> card = new ThreadLocal<>();
+    private final ThreadLocal<PartSpecifier> theTarget = new ThreadLocal<>();
 
-    private ExecutionContext() {
-        globals = new SymbolTable();
-    }
+    private ExecutionContext() {}
 
     /**
      * Gets the execution context associated with the current thread. Each thread holds a ThreadLocal-reference to
@@ -99,7 +98,7 @@ public class ExecutionContext {
 
     /**
      * The name of the (last) message passed from this frame. Typically set in response to 'pass xxx'. Used to tell
-     * the execution environment that parts down the message passing hierarchy should continue to process the messaage
+     * the execution environment that parts down the message passing hierarchy should continue to process the message
      * (i.e., the script did not trap the message).
      *
      * @return The name of the passed message.
@@ -395,6 +394,22 @@ public class ExecutionContext {
     }
 
     /**
+     * Gets "the target", that is, the first object in the message passing hierarchy that received the message.
+     * @return A PartSpecifier representing the target
+     */
+    public PartSpecifier getTarget() {
+        return theTarget.get();
+    }
+
+    /**
+     * Sets "the target", that is, the first object in the message passing hierarchy that received the message.
+     * @param theTarget The target PartSpecifier
+     */
+    public void setTarget(PartSpecifier theTarget) {
+        this.theTarget.set(theTarget);
+    }
+
+    /**
      * Sends a message to a part on the current card.
      *
      * @param ps A specifier identifying the part
@@ -432,7 +447,7 @@ public class ExecutionContext {
         this.frame.set(stackFrame);
     }
 
-    private StackFrame getFrame() {
+    public StackFrame getFrame() {
         return frame.get();
     }
 }
