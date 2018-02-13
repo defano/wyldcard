@@ -4,12 +4,11 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.parts.model.PropertiesModel;
 import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.msgbox.MsgBoxModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypercard.runtime.interpreter.MessageEvaluationObserver;
 import com.defano.hypercard.util.SquigglePainter;
 import com.defano.hypercard.window.HyperCardFrame;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.utils.Range;
@@ -86,7 +85,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     private void checkSyntax() {
         try {
             messageBox.getHighlighter().removeAllHighlights();
-            Interpreter.compileScriptlet(messageBox.getText());
+            Interpreter.blockingCompileScriptlet(messageBox.getText());
         } catch (HtException e) {
             squiggleHighlight(e);
         }
@@ -157,21 +156,23 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     }
 
     private void evaluateMessageBox() {
-        Interpreter.getMessageExecutor().execute(() -> {
-            try {
-                if (!getMsgBoxText().trim().isEmpty()) {
-                    String messageText = getMsgBoxText();
-                    Interpreter.executeString(new PartMessageSpecifier(), messageText).checkedGet();
-
+        if (!getMsgBoxText().trim().isEmpty()) {
+            String messageText = getMsgBoxText();
+            Interpreter.asyncEvaluateMessage(messageText, new MessageEvaluationObserver() {
+                @Override
+                public void onMessageEvaluated(String result) {
                     // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
-                    if (Interpreter.isExpressionStatement(messageText)) {
-                        setMsgBoxText(ExecutionContext.getContext().getIt().stringValue());
+                    if (result != null) {
+                        setMsgBoxText(result);
                     }
                 }
-            } catch (HtException e) {
-                HyperCard.getInstance().showErrorDialog(e);
-            }
-        });
+
+                @Override
+                public void onEvaluationError(HtException exception) {
+                    HyperCard.getInstance().showErrorDialog(exception);
+                }
+            });
+        }
     }
 
     {

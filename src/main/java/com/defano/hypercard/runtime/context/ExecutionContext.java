@@ -447,7 +447,7 @@ public class ExecutionContext {
         this.frame.set(stackFrame);
     }
 
-    private StackFrame getFrame() {
+    public StackFrame getFrame() {
         return frame.get();
     }
 }

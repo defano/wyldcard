@@ -14,7 +14,7 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public interface TwoPhaseParser {
+public class TwoPhaseParser {
 
     /**
      * Performs a two-phase parse of the given HyperTalk script text. First attempts to parse the script using the SLL
@@ -28,7 +28,7 @@ public interface TwoPhaseParser {
      * @return The root of the abstract syntax tree associated with the given compilation unit (i.e., {@link Script}).
      * @throws HtSyntaxException Thrown if an error occurs while parsing the script.
      */
-    static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
+    public static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
 
         // Nothing to do for empty scripts
         if (scriptText == null || scriptText.length() == 0) {
@@ -54,7 +54,7 @@ public interface TwoPhaseParser {
      * @return The root of the abstract syntax tree associated with the given compilation unit (i.e., {@link Script}).
      * @throws HtSyntaxException Thrown if an error occurs while parsing the script.
      */
-    static Object parseLL(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
+    private static Object parseLL(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
         HyperTalkErrorListener errors = new HyperTalkErrorListener();
         HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -89,7 +89,7 @@ public interface TwoPhaseParser {
      * @return The root of the abstract syntax tree associated with the given compilation unit (i.e., {@link Script}),
      * or null if parsing fails.
      */
-    static Object parseSLL(CompilationUnit compilationUnit, String scriptText) {
+    private static Object parseSLL(CompilationUnit compilationUnit, String scriptText) {
         HyperTalkLexer lexer = new HyperTalkLexer(new CaseInsensitiveInputStream(scriptText));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         HyperTalkParser parser = new HyperTalkParser(tokens);

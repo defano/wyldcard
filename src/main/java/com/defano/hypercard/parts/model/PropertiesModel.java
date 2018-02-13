@@ -358,13 +358,9 @@ public class PropertiesModel {
     }
 
     private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
-
-        // Make local copy to prevent concurrent change exceptions
-        final Set<PropertyChangeObserver> listeners = new HashSet<>(this.changeObservers);
-
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (PropertyChangeObserver listener : listeners) {
-                listener.onPropertyChanged(this, property, oldValue, value);
+            for (Object listener : this.changeObservers.toArray()) {
+                ((PropertyChangeObserver) listener).onPropertyChanged(this, property, oldValue, value);
             }
         });
     }

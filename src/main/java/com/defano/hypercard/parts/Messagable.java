@@ -2,10 +2,10 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.MessageCompletionObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -77,9 +77,9 @@ public interface Messagable {
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Interpreter.executeHandler(getMe(), getScript(), command, arguments, trapped -> {
+        Interpreter.asyncExecuteHandler(getMe(), getScript(), command, arguments, (me, script, handler, trappedMessage) -> {
             // Did this part trap this command?
-            if (trapped) {
+            if (trappedMessage) {
                 onCompletion.onMessagePassed(command, true, null);
             } else {
                 // Get next recipient in message passing order; null if no other parts receive message
@@ -148,7 +148,7 @@ public interface Messagable {
             function = target.getScript().getFunction(functionName);
         }
 
-        return Interpreter.executeFunction(target.getMe(), function, arguments);
+        return Interpreter.blockingExecuteFunction(target.getMe(), function, arguments);
     }
 
     /**

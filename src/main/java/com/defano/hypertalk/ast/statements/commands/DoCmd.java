@@ -16,6 +16,6 @@ public class DoCmd extends Command {
     }
     
     public void onExecute () throws HtException {
-        Interpreter.executeString(null, script.evaluate().toString()).checkedGet();
+        Interpreter.asyncExecuteString(null, script.evaluate().toString()).checkedGet();
     }
 }

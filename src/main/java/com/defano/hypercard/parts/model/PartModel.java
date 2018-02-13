@@ -196,7 +196,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     private void precompile() {
         if (hasProperty(PROP_SCRIPTTEXT)) {
-            Interpreter.compileInBackground(CompilationUnit.SCRIPT, getKnownProperty(PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
+            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
                 if (generatedError == null) {
                     script = (Script) compiledScript;
                 }
@@ -207,7 +207,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     public Script getScript() {
         if (script == null) {
             try {
-                script = Interpreter.compileScript(getKnownProperty(PROP_SCRIPTTEXT).stringValue());
+                script = Interpreter.blockingCompileScript(getKnownProperty(PROP_SCRIPTTEXT).stringValue());
             } catch (HtException e) {
                 e.printStackTrace();
             }
@@ -240,6 +240,10 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public String getName() {
         return getKnownProperty(PROP_NAME).stringValue();
+    }
+
+    public PartSpecifier getPartSpecifier() {
+        return new PartIdSpecifier(getOwner(), getType(), getId());
     }
 
     /**

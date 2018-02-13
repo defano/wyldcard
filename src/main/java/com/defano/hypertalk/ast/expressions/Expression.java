@@ -80,7 +80,7 @@ public abstract class Expression extends ASTNode {
             if (clazz.isAssignableFrom(model.getClass())) {
                 return (T) model;
             } else {
-                PartExp refExp = Interpreter.evaluate(partExp.evaluate(), PartExp.class);
+                PartExp refExp = Interpreter.blockingEvaluate(partExp.evaluate(), PartExp.class);
                 return refExp == null ? null : refExp.partFactor(clazz);
             }
         } catch (HtException e) {
@@ -215,7 +215,7 @@ public abstract class Expression extends ASTNode {
         }
 
         try {
-            return Interpreter.evaluate(this.evaluate(), klazz);
+            return Interpreter.blockingEvaluate(this.evaluate(), klazz);
         } catch (HtException e) {
             return null;
         }

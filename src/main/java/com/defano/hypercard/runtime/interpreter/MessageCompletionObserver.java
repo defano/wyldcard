@@ -1,4 +1,4 @@
-package com.defano.hypercard.runtime;
+package com.defano.hypercard.runtime.interpreter;
 
 import com.defano.hypertalk.exception.HtException;
 
@@ -8,7 +8,8 @@ import com.defano.hypertalk.exception.HtException;
 public interface MessageCompletionObserver {
 
     /**
-     * Invoked after a message has been sent to a part and its message passing hierarchy.
+     * Invoked after a message has been sent to a part (and its message passing hierarchy, if the part did not provide
+     * a handler for the message).
      *
      * @param message The command that was passed.
      * @param wasTrapped True if the part or another part in the message passing hierarchy trapped the command,
