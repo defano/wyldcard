@@ -1,8 +1,8 @@
 package com.defano.hypercard.window.forms;
 
+import com.defano.hypercard.paint.PaintBrush;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.window.HyperCardDialog;
-import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import io.reactivex.functions.Consumer;
@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class BrushesPalette extends HyperCardDialog implements Consumer<BasicBrush> {
+public class BrushesPalette extends HyperCardDialog implements Consumer<PaintBrush> {
 
     private JPanel brushesPanel;
 
@@ -32,18 +32,18 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<BasicBru
     public BrushesPalette() {
         allButtons = new JButton[]{square16, square12, square8, square4, round16, round12, round8, round4, line16, line12, line8, line4};
 
-        square16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.SQUARE_16X16));
-        square12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.SQUARE_12X12));
-        square8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.SQUARE_8X8));
-        square4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.SQUARE_4X4));
-        round16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.ROUND_16X16));
-        round12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.ROUND_12X12));
-        round8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.ROUND_8X8));
-        round4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.ROUND_4X4));
-        line16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.LINE_16));
-        line12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.LINE_12));
-        line8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.LINE_8));
-        line4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(BasicBrush.LINE_4));
+        square16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_16X16));
+        square12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_12X12));
+        square8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_8X8));
+        square4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_4X4));
+        round16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_16X16));
+        round12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_12X12));
+        round8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_8X8));
+        round4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_4X4));
+        line16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_16));
+        line12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_12));
+        line8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_8));
+        line4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_4));
 
         ToolsContext.getInstance().getSelectedBrushProvider().subscribe(this);
     }
@@ -59,7 +59,7 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<BasicBru
     }
 
     @Override
-    public void accept(BasicBrush brush) {
+    public void accept(PaintBrush brush) {
         for (JButton thisButton : allButtons) {
             thisButton.setEnabled(true);
         }
@@ -67,7 +67,7 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<BasicBru
         getButtonForBrush(brush).setEnabled(false);
     }
 
-    private JButton getButtonForBrush(BasicBrush newBrush) {
+    private JButton getButtonForBrush(PaintBrush newBrush) {
         switch (newBrush) {
             case SQUARE_16X16:
                 return square16;

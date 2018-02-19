@@ -1,6 +1,7 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.paint.PaintBrush;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
 import com.defano.hypertalk.ast.model.ExpressionList;
@@ -9,12 +10,13 @@ import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.model.ImageAntiAliasingMode;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
-import com.defano.jmonet.tools.brushes.BasicBrush;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
+import com.defano.jmonet.tools.builder.StrokeBuilder;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -41,8 +43,8 @@ public class ToolsContext {
     // Properties that we provide the tools...
     private final Subject<Boolean> shapesFilledProvider = BehaviorSubject.createDefault(false);
     private final Subject<Boolean> isEditingBackground = BehaviorSubject.createDefault(false);
-    private final Subject<Stroke> lineStrokeProvider = BehaviorSubject.createDefault(new BasicStroke(2));
-    private final Subject<BasicBrush> brushStrokeProvider = BehaviorSubject.createDefault(BasicBrush.ROUND_12X12);
+    private final Subject<Stroke> lineStrokeProvider = BehaviorSubject.createDefault(StrokeBuilder.withBasicStroke().ofWidth(2).withRoundCap().withRoundJoin().build());
+    private final Subject<PaintBrush> brushStrokeProvider = BehaviorSubject.createDefault(PaintBrush.ROUND_12X12);
     private final Subject<Paint> linePaintProvider = BehaviorSubject.createDefault(Color.black);
     private final Subject<Integer> fillPatternProvider = BehaviorSubject.createDefault(0);
     private final Subject<Integer> shapeSidesProvider = BehaviorSubject.createDefault(5);
@@ -142,15 +144,15 @@ public class ToolsContext {
         return foregroundColorProvider;
     }
 
-    public void setSelectedBrush(BasicBrush brush) {
+    public void setSelectedBrush(PaintBrush brush) {
         brushStrokeProvider.onNext(brush);
     }
 
-    public BasicBrush getSelectedBrush() {
+    public PaintBrush getSelectedBrush() {
         return brushStrokeProvider.blockingFirst();
     }
 
-    public Subject<BasicBrush> getSelectedBrushProvider() {
+    public Subject<PaintBrush> getSelectedBrushProvider() {
         return brushStrokeProvider;
     }
 
@@ -250,7 +252,7 @@ public class ToolsContext {
     }
 
     public void setLineWidth(int width) {
-        lineStrokeProvider.onNext(new BasicStroke(width));
+        lineStrokeProvider.onNext(StrokeBuilder.withBasicStroke().ofWidth(width).withRoundCap().withRoundJoin().build());
     }
 
     public int getLineWidth() {
@@ -367,6 +369,7 @@ public class ToolsContext {
                 .withIntensityObservable(intensityProvider)
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
+                .withAntiAliasing(ImageAntiAliasingMode.BILINEAR)
                 .makeActiveOnCanvas(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas())
                 .build();
 
