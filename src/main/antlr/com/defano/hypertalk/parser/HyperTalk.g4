@@ -374,6 +374,7 @@ expression
     : factor                                                                                                            # factorExp
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
+    | 'there is' op=('a'|'an'|'no'|'not a'|'not an') expression                                                         # existenceExp
     | expression '^' expression                                                                                         # caratExp
     | expression op=('mod'| 'div'| '/'| '*') expression                                                                 # multiplicationExp
     | expression op=('+'| '-') expression                                                                               # additionExp

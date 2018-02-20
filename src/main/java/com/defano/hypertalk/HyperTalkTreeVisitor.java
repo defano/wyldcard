@@ -1560,6 +1560,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitExistenceExp(HyperTalkParser.ExistenceExpContext ctx) {
+        return new ExistenceExp(ctx, (Expression) visit(ctx.expression()), ctx.op.getText());
+    }
+
+    @Override
     public Object visitAdditionExp(HyperTalkParser.AdditionExpContext ctx) {
         return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
     }

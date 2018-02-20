@@ -317,6 +317,8 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 |1 (highest) | `( )`           | Grouping
 |2           | `-`             | Negation for numbers (unary)
 |            | `not`	         | Negation for boolean values (unary)
+|            | `there is a[n]` | Determines if the expression to the right of the operator refers to an existent stack part (unary)
+|            | `there is not a[n]`, `there is no` | Negation of object existence (unary)
 |3           | `^`             | Exponentiation for numbers
 |4           | `*`             | Multiplication for numbers
 |            | `/`             | Division for numbers
@@ -964,6 +966,8 @@ repeat with v = 1 to the number of items in the voices
   speak "Hi, my name is " & theVoice with voice theVoice
 end repeat
 ```
+
+Speaking occurs asynchronously to other script actions (that is, the rest of the script continues to execute while the text is being spoken). Subsequent calls to `speak` will be enqueued and begin "speaking" when the current speech is complete. Use `the speech` function to determine what (if any) text is currently being spoken; `the speech` returns the text currently being spoken or `done` when nothing is being spoken.  
 
 HyperTalk Java utilizes the [MaryTTS library](http://mary.dfki.de) for text-to-speech capabilities and does not delegate to the operating system. Therefore, voices installed on your system are not available to HyperTalk Java. HyperTalk Java provides a function called `the voices` that returns a list of available speaking voices (note that this function does not exist in HyperCard).
 
