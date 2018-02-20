@@ -12,6 +12,7 @@ allprojects {
 
 repositories {
 	mavenCentral()
+	jcenter()
 	mavenLocal()
 }
 
@@ -48,6 +49,10 @@ dependencies {
 	compile ('com.defano.jsegue:jsegue:0.0.1') {changing = true}
 	compile 'org.bitbucket.cowwoc.diff-match-patch:diff-match-patch:1.0'
 	compile 'com.l2fprod.common:l2fprod-common-fontchooser:6.9.1'
+	compile group: 'de.dfki.mary', name: 'voice-cmu-slt-hsmm', version: '5.2'
+	compile group: 'de.dfki.mary', name: 'voice-cmu-bdl-hsmm', version: '5.2'
+	compile group: 'de.dfki.mary', name: 'voice-cmu-rms-hsmm', version: '5.2'
+	compile group: 'de.dfki.mary', name: 'voice-dfki-prudence-hsmm', version: '5.2'
 
 	testCompile 'junit:junit:4.12'
 	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'

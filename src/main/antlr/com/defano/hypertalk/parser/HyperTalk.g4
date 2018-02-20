@@ -201,6 +201,9 @@ commandStmnt
     | 'sort' expression sortDirection sortStyle 'by' expression                                                         # sortBkgndCardsCmd
     | 'sort' 'the'? cards of expression sortDirection sortStyle 'by' expression                                         # sortBkgndCardsCmd
     | 'sort' 'the'? 'marked' cards of expression sortDirection sortStyle 'by' expression                                # sortMarkedBkgndCardsCmd
+    | 'speak' expression                                                                                                # speakCmd
+    | 'speak' expression 'with' gender=('male'|'female'|'neuter'|'robotic') 'voice'                                     # speakGenderCmd
+    | 'speak' expression 'with' 'voice' expression                                                                      # speakVoiceCmd
     | 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
     | 'type' expression                                                                                                 # typeCmdStmt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
@@ -472,6 +475,8 @@ zeroArgFunc
     | 'selectedfield'                                                                                                   # propDelegatedFunc
     | 'selectedline'                                                                                                    # propDelegatedFunc
     | 'target'                                                                                                          # targetFunc
+    | 'speech'                                                                                                          # speechFunc
+    | 'voices'                                                                                                          # voicesFunc
     | 'clicktext'                                                                                                       # propDelegatedFunc
     | 'mouseh'                                                                                                          # propDelegatedFunc
     | 'mousev'                                                                                                          # propDelegatedFunc

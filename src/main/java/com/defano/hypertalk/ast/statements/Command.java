@@ -14,6 +14,10 @@ import java.util.concurrent.CountDownLatch;
  * Represents a HyperTalk command statement. HyperTalk commands are somewhat unusual in that their execution causes
  * a message to be sent the current card message hierarchy, and if the card, background, or stack traps the message,
  * then the command does not execute.
+ *
+ * This base class provides logic for sending the command's name to the current card hierarchy and invoking the
+ * subclass's implementation of the command ({@link #onExecute()}) if and only if the command was not trapped by the
+ * card.
  */
 public abstract class Command extends Statement implements MessageCompletionObserver {
 

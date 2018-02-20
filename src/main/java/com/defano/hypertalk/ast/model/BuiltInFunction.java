@@ -64,5 +64,7 @@ public enum BuiltInFunction {
     PARAM,
     OFFSET,
     PROPERTY_DELEGATED,
-    TARGET
+    TARGET,
+    SPEECH,
+    VOICES
 }

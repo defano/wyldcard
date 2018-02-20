@@ -112,6 +112,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSpeakCmd(HyperTalkParser.SpeakCmdContext ctx) {
+        return new SpeakCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitSpeakGenderCmd(HyperTalkParser.SpeakGenderCmdContext ctx) {
+        return new SpeakCmd(ctx, (Expression) visit(ctx.expression()), new LiteralExp(ctx, ctx.gender.getText()));
+    }
+
+    @Override
+    public Object visitSpeakVoiceCmd(HyperTalkParser.SpeakVoiceCmdContext ctx) {
+        return new SpeakCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
     public Object visitKeywordToolExpr(HyperTalkParser.KeywordToolExprContext ctx) {
         return new LiteralExp(ctx, ctx.getText());
     }
@@ -1861,6 +1876,8 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case PARAMS: return new ParamsFunc(ctx);
             case PROPERTY_DELEGATED: return new PropertyDelegatedFunc(ctx, ctx.zeroArgFunc().getText());
             case TARGET: return new TargetFunc(ctx);
+            case SPEECH: return new SpeechFunc(ctx);
+            case VOICES: return new VoicesFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -1986,6 +2003,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitTargetFunc(HyperTalkParser.TargetFuncContext ctx) {
         return BuiltInFunction.TARGET;
+    }
+
+    @Override
+    public Object visitSpeechFunc(HyperTalkParser.SpeechFuncContext ctx) {
+        return BuiltInFunction.SPEECH;
+    }
+
+    @Override
+    public Object visitVoicesFunc(HyperTalkParser.VoicesFuncContext ctx) {
+        return BuiltInFunction.VOICES;
     }
 
     @Override

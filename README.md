@@ -838,7 +838,7 @@ find "Hyper" in background field "Card"  -- Searches only this one field
 
 ## Audio Visual Effects
 
-[Visual Effects](#visual-effects) | [Sound Effects](#sound-effects) | [Music](#music)
+[Visual Effects](#visual-effects) | [Sound Effects](#sound-effects) | [Music](#music) | [Text to Speech](#text-to-speech)
 
 HyperTalk Java supports a nearly identical set of visual and sound effects as HyperCard.
 
@@ -945,8 +945,27 @@ Use `the sound` function to determine the currently playing sound (returns `done
 ```
 play flute "c d e f g"
 wait until the sound is done
-put "Finally, peace and quiet!"
+put "Finally some peace and quiet!"
 ```
+
+### Text to speech
+
+HyperTalk Java can speak text using one of several pre-installed, English-speaking voices. The syntax for speaking text is `speak <text> [ with { <gender> voice } | { voice <name>} ]` where:
+
+* `<text>` is an expression representing the text to be spoken.
+* `<gender>` is one of `male`, `female`, `robotic` or `neuter`. If a voice of the requested gender is unavailable, then the default voice will be used.
+* `<name>` is the name of an installed voice (an item in `the voices`). If the requested voice is not available, then the default voice will be used.
+
+For example, this script will have each voice introduce itself to you:
+
+```
+repeat with v = 1 to the number of items in the voices
+  put item v of the voices into theVoice
+  speak "Hi, my name is " & theVoice with voice theVoice
+end repeat
+```
+
+HyperTalk Java utilizes the [MaryTTS library](http://mary.dfki.de) for text-to-speech capabilities and does not delegate to the operating system. Therefore, voices installed on your system are not available to HyperTalk Java. HyperTalk Java provides a function called `the voices` that returns a list of available speaking voices (note that this function does not exist in HyperCard).
 
 ## Commands
 
@@ -998,6 +1017,7 @@ Command	         | Description
 `set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `show`           | Makes a part visible on the card, for example `show button "My Button"`.
 `sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
+`speak`          | Speaks text in a default or specified voice. See the "Text to speech" section for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
 `type`           | Emulates the user typing a sequence of characters at the keyboard. For example, `type "Hello world!"`. Add `with commandKey` to simulate typing a control sequence, for example, `type "v" with commandKey` to invoke the "Paste" command from the "Edit" menu.
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
@@ -1075,6 +1095,7 @@ Function        | Description
 `selectedText`  | Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists. For example, `answer the selectedText`
 `shiftKey`      | Returns the current state of the shift key, either `up` or `down`. For example, `wait until the shiftKey is down`
 `sin`           | Returns the trigonometric sine of the given argument, represented in radians.
+`speech`        | Returns the text currently being spoken via the `speak` command, or `done` if nothing is being spoken.
 `sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.
 `sound`         | Returns the name of the currently playing sound, or `done` if no sound is being played.
 `sum`           | Returns the sum of the arguments. For example, `sum(1,3,8)` yields `9`.
@@ -1084,6 +1105,7 @@ Function        | Description
 `tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
+`voices`        | Returns a list of installed voices. This function is unique to HyperTalk Java and does not exist in HyperCard.
 
 ### User-defined functions
 

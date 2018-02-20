@@ -1,11 +1,11 @@
 package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -49,16 +49,16 @@ public abstract class Expression extends ASTNode {
      * type. Returns null if the expression cannot be evaluated as a part of this type (either because this expression
      * cannot be factored into a valid part expression, or because the resultant part expression does not refer to
      * an existing part).
-     *
+     * <p>
      * For example, if the expression "cd fld 1" was evaluated as a CardPart.class, the text of card field 1 would be
      * interpreted as a HyperTalk expression, that, if containing a reference to a card (for example, if the field
      * contained the text "the last card") then a CardPart representing the last card in the stack would be returned.
-     *
+     * <p>
      * If, in this example, card field 1 contained an expression like "cd fld 2", then this method would attempt to
      * evaluate the text of card field 2 looking for a valid card reference.
      *
      * @param clazz The class of part model to coerce this expression to.
-     * @param <T> A subtype of PartModel
+     * @param <T>   A subtype of PartModel
      * @return The part model referred to by this expression or null if the expression does not refer to a part of this
      * type.
      */
@@ -91,8 +91,9 @@ public abstract class Expression extends ASTNode {
     /**
      * A convenience form of {@link #partFactor(Class)} that throws an exception rather than returning null if this
      * expression cannot be evaluated as a {@link PartModel} of the requested type.
-     * @param clazz The class of part model to coerce this expression to.
-     * @param <T> A subtype of PartModel
+     *
+     * @param clazz   The class of part model to coerce this expression to.
+     * @param <T>     A subtype of PartModel
      * @param orError An exception to be thrown if the factor cannot be evaluated as requested.
      * @return The part model referred to by this expression or null if the expression does not refer to a part of this
      * type.
@@ -109,20 +110,18 @@ public abstract class Expression extends ASTNode {
 
     /**
      * Attempts to evaluate this expression as a factor conforming to one of a prioritized list of acceptable types.
-     *
-     * For example, if this expression is 'cd fld 1' but the only acceptable type is
-     *
-     * When the factor can be evaluated as an acceptable type, the associated {@link FactorAction} is invoked. No more
-     * than one {@link FactorAction} will be invoked (but no actions will be invoked if this expression cannot be
+     * <p>
+     * When the expression can be evaluated as an acceptable type, the associated {@link FactorAction} is invoked. No
+     * more than one {@link FactorAction} will be invoked (but no actions will be invoked if this expression cannot be
      * interpreted as an acceptable type).
-     *
+     * <p>
      * This method enables a recursive, context-sensitive evaluation of terms.
      *
      * @param evaluations A prioritized order list of acceptable factor types, plus an action associated with each
      * @return True if this expression can be interpreted as an acceptable type (indicates that a {@link FactorAction}
      * was invoked); false otherwise.
      * @throws HtException Thrown if an invoked {@link FactorAction} produces an exception. Will not be thrown as part
-     * of the process of evaluating the expression.
+     *                     of the process of evaluating the expression.
      */
     public boolean factor(FactorAssociation... evaluations) throws HtException {
 
@@ -130,7 +129,7 @@ public abstract class Expression extends ASTNode {
         // continue attempting to factor as if the expression was not grouped.
         if (this instanceof GroupExp) {
             try {
-                LiteralExp exp = new LiteralExp(null, this.ungrouped().evaluate());
+                LiteralExp exp = new LiteralExp(null, this.ungroup().evaluate());
                 if (exp.factor(evaluations)) {
                     return true;
                 }
@@ -141,8 +140,8 @@ public abstract class Expression extends ASTNode {
 
         // Base case: this expression (not including parens) directly matches the requested type, then take action
         for (FactorAssociation thisEvaluation : evaluations) {
-            if (thisEvaluation.expressionType.isAssignableFrom(this.ungrouped().getClass())) {
-                thisEvaluation.action.accept(this.ungrouped());
+            if (thisEvaluation.expressionType.isAssignableFrom(this.ungroup().getClass())) {
+                thisEvaluation.action.accept(this.ungroup());
                 return true;
             }
         }
@@ -166,7 +165,7 @@ public abstract class Expression extends ASTNode {
      * in the requested format.
      *
      * @param clazz The requested type of expression to factor this expression into.
-     * @param <T> The requested factor subtype of {@link Expression}
+     * @param <T>   The requested factor subtype of {@link Expression}
      * @return This expression interpreted as the requested type, or null if unable to interpret as requested.
      */
     public <T extends Expression> T factor(Class<T> clazz) {
@@ -184,9 +183,9 @@ public abstract class Expression extends ASTNode {
      * A convenience form of {@link #factor(FactorAssociation[])} that accepts a single, acceptable expression type and
      * an exception to throw if this expression cannot be interpreted as the requested type.
      *
-     * @param clazz The requested type of expression to factor this expression into.
+     * @param clazz   The requested type of expression to factor this expression into.
      * @param orError The exception to be throw if this expression cannot be factored.
-     * @param <T> The requested factor subtype of {@link Expression}
+     * @param <T>     The requested factor subtype of {@link Expression}
      * @return A factored representation of this expression as T
      * @throws HtException Thrown if the factorization fails.
      */
@@ -201,17 +200,17 @@ public abstract class Expression extends ASTNode {
 
     /**
      * Attempts to evaluate this expression as an Expression of the requested subtype.
-     *
+     * <p>
      * Evaluates this expression as a HyperTalk {@link Value}, then invokes the {@link Interpreter} to re-parse the
      * value. If the re-interpreted value matches the requested type then it is returned. Otherwise, null is returned.
      *
      * @param klazz The requested class to evaluate this expression as.
-     * @param <T> The requested Expression subtype.
+     * @param <T>   The requested Expression subtype.
      * @return This expression evaluated as the requested type or null.
      */
     private <T extends Expression> T evaluateAs(Class<T> klazz) {
-        if (this.ungrouped().getClass().isAssignableFrom(klazz)) {
-            return (T) this.ungrouped();
+        if (this.ungroup().getClass().isAssignableFrom(klazz)) {
+            return (T) this.ungroup();
         }
 
         try {
@@ -227,9 +226,9 @@ public abstract class Expression extends ASTNode {
      *
      * @return The un-grouped portion of this expression.
      */
-    private Expression ungrouped() {
+    private Expression ungroup() {
         if (this instanceof GroupExp) {
-            return ((GroupExp) this).expression.ungrouped();
+            return ((GroupExp) this).expression.ungroup();
         } else {
             return this;
         }
