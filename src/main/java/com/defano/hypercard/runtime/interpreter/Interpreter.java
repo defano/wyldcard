@@ -34,7 +34,7 @@ public class Interpreter {
 
     /**
      * Preemptively compiles the given script text on a background thread and invokes the CompileCompletionObserver
-     * when complete.
+     * (on the background thread) when complete.
      * <p>
      * Note that this method cancels any previously requested compilation except the currently executing one (if one is
      * executing). Thus, invocation of the completion observer is not guaranteed; some jobs will be canceled

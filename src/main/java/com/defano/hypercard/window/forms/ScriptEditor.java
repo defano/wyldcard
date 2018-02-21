@@ -1,22 +1,22 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.fonts.FontUtils;
-import com.defano.hypercard.runtime.interpreter.CompilationUnit;
+import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.hypercard.runtime.interpreter.CompilationUnit;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.util.HandlerComboBox;
+import com.defano.hypercard.util.SquigglePainter;
 import com.defano.hypercard.util.TextLineNumber;
 import com.defano.hypercard.window.HyperCardFrame;
-import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.utils.Range;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.defano.hypercard.util.SquigglePainter;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtSyntaxException;
 import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
@@ -87,29 +87,31 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     private void checkSyntax() {
         Interpreter.asyncCompile(CompilationUnit.SCRIPT, scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
-            if (compiledScript != null) {
-                ScriptEditor.this.compiledScript = (Script) compiledScript;
-            }
-            scriptField.getHighlighter().removeAllHighlights();
-            handlersMenu.invalidateDataset();
-            functionsMenu.invalidateDataset();
-
-            if (generatedError instanceof HtSyntaxException) {
-                Range offendingRange = generatedError.getBreadcrumb().getCharRange();
-                Token offendingToken = generatedError.getBreadcrumb().getToken();
-
-                if (offendingRange != null) {
-                    setHighlightedSelection(offendingRange.start, offendingRange.end);
-                } else {
-                    setHighlightedLine(offendingToken.getLine());
+            SwingUtilities.invokeLater(() -> {
+                if (compiledScript != null) {
+                    ScriptEditor.this.compiledScript = (Script) compiledScript;
                 }
+                scriptField.getHighlighter().removeAllHighlights();
+                handlersMenu.invalidateDataset();
+                functionsMenu.invalidateDataset();
 
-                syntaxErrorText.setText(generatedError.getMessage());
-            } else if (generatedError != null) {
-                setHighlightedLine();
-            } else {
-                syntaxErrorText.setText("");
-            }
+                if (generatedError instanceof HtSyntaxException) {
+                    Range offendingRange = generatedError.getBreadcrumb().getCharRange();
+                    Token offendingToken = generatedError.getBreadcrumb().getToken();
+
+                    if (offendingRange != null) {
+                        setHighlightedSelection(offendingRange.start, offendingRange.end);
+                    } else {
+                        setHighlightedLine(offendingToken.getLine());
+                    }
+
+                    syntaxErrorText.setText(generatedError.getMessage());
+                } else if (generatedError != null) {
+                    setHighlightedLine();
+                } else {
+                    syntaxErrorText.setText("");
+                }
+            });
         });
     }
 
