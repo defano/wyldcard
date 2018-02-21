@@ -1005,7 +1005,7 @@ Command	         | Description
 `find`           | Finds text in the stack or in a given field. Several forms of the command, see the "Searching & Sorting" section. For example, `find chars "blah" of marked cards`.
 `get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
-`hide`           | Makes a part invisible on the card, for example `hide button id 0` (has the same effect of setting the `visible` property of the part to false, i.e., `set the visible of button id 0 to false`)
+`hide`           | Makes a part or image layer invisible on the card. Syntax is `hide <part-factor>`, `hide {card | background} picture`, or `hide picture of {<card-factor> | <bkgnd-factor>}`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
 `lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
 `open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.
@@ -1019,7 +1019,7 @@ Command	         | Description
 `select`         | Selects a button or field as if the user had chosen the button or field tool and clicked on the part, or selects a range of text in a field, or moves the selection caret in a field. `select <part>`, `select empty`, `select { before / after / } text of <part>`, `select { before / after / } <chunk> of <part>`.
 `send`           | Send a message with optional arguments to a part; `send "mouseUp" to field id 3` or `send "myMessage 1,2" to this card`
 `set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
-`show`           | Makes a part visible on the card, for example `show button "My Button"`.
+`hide`           | Makes a part or image layer visible on the card. Syntax is `show <part-factor>`, `show {card | background} picture`, or `show picture of {<card-factor> | <bkgnd-factor>}`. For example `show button "My Button"`, `show picture of card 2`, or `show card picture`.
 `sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
 `speak`          | Speaks text in a default or specified voice. See the "Text to speech" section for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`

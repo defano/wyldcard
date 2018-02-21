@@ -12,7 +12,6 @@ import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.expressions.functions.*;
 import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.ast.statements.*;
-import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
@@ -62,8 +61,38 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitHideThisCardPictCmd(HyperTalkParser.HideThisCardPictCmdContext ctx) {
+        return new PictureVisibleCmd(ctx, Owner.CARD, false);
+    }
+
+    @Override
+    public Object visitHideThisBkgndPictCmd(HyperTalkParser.HideThisBkgndPictCmdContext ctx) {
+        return new PictureVisibleCmd(ctx, Owner.BACKGROUND, false);
+    }
+
+    @Override
+    public Object visitHidePictCmd(HyperTalkParser.HidePictCmdContext ctx) {
+        return new PictureVisibleCmd(ctx, null, (Expression) visit(ctx.expression()), false);
+    }
+
+    @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
         return new SetPropertyCmd(ctx, (Expression) visit(ctx.expression()), PartModel.PROP_VISIBLE, new Value(true));
+    }
+
+    @Override
+    public Object visitShowThisCardPictCmd(HyperTalkParser.ShowThisCardPictCmdContext ctx) {
+        return new PictureVisibleCmd(ctx, Owner.CARD, true);
+    }
+
+    @Override
+    public Object visitShowThisBkgndPictCmd(HyperTalkParser.ShowThisBkgndPictCmdContext ctx) {
+        return new PictureVisibleCmd(ctx, Owner.BACKGROUND, true);
+    }
+
+    @Override
+    public Object visitShowPictCmd(HyperTalkParser.ShowPictCmdContext ctx) {
+        return new PictureVisibleCmd(ctx, null, (Expression) visit(ctx.expression()), true);
     }
 
     @Override
@@ -626,7 +655,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
         StatementList statementList = (StatementList) visit(ctx.statementList());
 
         if (ctx.statement() != null) {
-            statementList.append((Statement) visit(ctx.statement()));
+            statementList.prepend((Statement) visit(ctx.statement()));
         }
 
         return statementList;
@@ -984,7 +1013,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitUnlockScreenCmdStmt(HyperTalkParser.UnlockScreenCmdStmtContext ctx) {
-        return new SetPropertyCmd(ctx, HyperCardProperties.PROP_LOCKSCREEN, new Value(false));
+        return new UnlockScreenCmd(ctx);
     }
 
     @Override

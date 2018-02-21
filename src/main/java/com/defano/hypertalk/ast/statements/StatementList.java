@@ -18,10 +18,10 @@ public class StatementList extends Statement {
     public StatementList (ParserRuleContext context, Statement s) {
         super(context);
         list = new ArrayList<>();
-        append(s);
+        prepend(s);
     }
 
-    public StatementList append (Statement s) {
+    public StatementList prepend(Statement s) {
         list.add(0, s);
         return this;
     }

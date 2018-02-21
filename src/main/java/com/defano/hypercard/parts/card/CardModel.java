@@ -29,6 +29,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_MARKED = "marked";
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_NAME = "name";
+    public final static String PROP_SHOWPICT = "showpict";
 
     private int backgroundId = 0;
     private final Collection<FieldModel> fields = new ArrayList<>();
@@ -47,6 +48,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         defineProperty(PROP_CANTDELETE, new Value(false), false);
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CONTENTS, new Value(""), false);
+        defineProperty(PROP_SHOWPICT, new Value(true), false);
 
         initialize();
     }

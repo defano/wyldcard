@@ -26,6 +26,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_ID = "id";
     public final static String PROP_NAME = "name";
     public final static String PROP_CANTDELETE = "cantdelete";
+    public final static String PROP_SHOWPICT = "showpict";
 
     private byte[] backgroundImage;
     private final Collection<ButtonModel> buttonModels;
@@ -41,6 +42,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
         defineProperty(PROP_CONTENTS, new Value(""), false);
+        defineProperty(PROP_SHOWPICT, new Value(true), false);
 
         // When no name of card is provided, returns 'background id xxx'
         defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {

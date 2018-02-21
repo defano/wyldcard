@@ -19,12 +19,13 @@ import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
+
+import static io.reactivex.subjects.BehaviorSubject.createDefault;
 
 /**
  * A singleton representation of paint tool context. Responsible for all configurable properties of the paint subsystem
@@ -35,29 +36,29 @@ public class ToolsContext {
     private final static ToolsContext instance = new ToolsContext();
 
     // Tool mode properties
-    private final Subject<ToolMode> toolModeProvider = BehaviorSubject.createDefault(ToolMode.BROWSE);
+    private final Subject<ToolMode> toolModeProvider = createDefault(ToolMode.BROWSE);
 
     // Properties that the tools provide to us...
-    private final Subject<Optional<BufferedImage>> selectedImageProvider = BehaviorSubject.createDefault(Optional.empty());
+    private final Subject<Optional<BufferedImage>> selectedImageProvider = createDefault(Optional.empty());
 
     // Properties that we provide the tools...
-    private final Subject<Boolean> shapesFilledProvider = BehaviorSubject.createDefault(false);
-    private final Subject<Boolean> isEditingBackground = BehaviorSubject.createDefault(false);
-    private final Subject<Stroke> lineStrokeProvider = BehaviorSubject.createDefault(StrokeBuilder.withBasicStroke().ofWidth(2).withRoundCap().withRoundJoin().build());
-    private final Subject<PaintBrush> brushStrokeProvider = BehaviorSubject.createDefault(PaintBrush.ROUND_12X12);
-    private final Subject<Paint> linePaintProvider = BehaviorSubject.createDefault(Color.black);
-    private final Subject<Integer> fillPatternProvider = BehaviorSubject.createDefault(0);
-    private final Subject<Integer> shapeSidesProvider = BehaviorSubject.createDefault(5);
-    private final Subject<PaintTool> paintToolProvider = BehaviorSubject.createDefault(PaintToolBuilder.create(PaintToolType.ARROW).build());
-    private final Subject<Boolean> drawMultipleProvider = BehaviorSubject.createDefault(false);
-    private final Subject<Boolean> drawCenteredProvider = BehaviorSubject.createDefault(false);
-    private final Subject<Color> foregroundColorProvider = BehaviorSubject.createDefault(Color.BLACK);
-    private final Subject<Color> backgroundColorProvider = BehaviorSubject.createDefault(Color.WHITE);
-    private final Subject<Double> intensityProvider = BehaviorSubject.createDefault(0.1);
-    private final Subject<Ditherer> dithererProvider = BehaviorSubject.createDefault(new FloydSteinbergDitherer());
+    private final Subject<Boolean> shapesFilledProvider = createDefault(false);
+    private final Subject<Boolean> isEditingBackground = createDefault(false);
+    private final Subject<Stroke> lineStrokeProvider = createDefault(StrokeBuilder.withBasicStroke().ofWidth(2).withRoundCap().withRoundJoin().build());
+    private final Subject<PaintBrush> brushStrokeProvider = createDefault(PaintBrush.ROUND_12X12);
+    private final Subject<Paint> linePaintProvider = createDefault(Color.black);
+    private final Subject<Integer> fillPatternProvider = createDefault(0);
+    private final Subject<Integer> shapeSidesProvider = createDefault(5);
+    private final Subject<PaintTool> paintToolProvider = createDefault(PaintToolBuilder.create(PaintToolType.ARROW).build());
+    private final Subject<Boolean> drawMultipleProvider = createDefault(false);
+    private final Subject<Boolean> drawCenteredProvider = createDefault(false);
+    private final Subject<Color> foregroundColorProvider = createDefault(Color.BLACK);
+    private final Subject<Color> backgroundColorProvider = createDefault(Color.WHITE);
+    private final Subject<Double> intensityProvider = createDefault(0.1);
+    private final Subject<Ditherer> dithererProvider = createDefault(new FloydSteinbergDitherer());
 
     // Properties that we provide the canvas
-    private final Subject<Integer> gridSpacingProvider = BehaviorSubject.createDefault(1);
+    private final Subject<Integer> gridSpacingProvider = createDefault(1);
 
     private PaintToolType lastToolType;
     private Disposable selectedImageSubscription;
@@ -361,7 +362,7 @@ public class ToolsContext {
         // Create and activate new paint tool
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
-                .withStrokePaintObservable(linePaintProvider)
+                .withStrokePaintObservable(getStrokePaintProviderForTool(selectedToolType))
                 .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.getInstance().getPattern(t)) : Optional.empty()))
                 .withFontObservable(FontContext.getInstance().getPaintFontProvider())
                 .withFontColorObservable(foregroundColorProvider)
@@ -403,6 +404,17 @@ public class ToolsContext {
 
             default:
                 return lineStrokeProvider;
+        }
+    }
+
+    private Observable<Paint> getStrokePaintProviderForTool(PaintToolType type) {
+        switch (type) {
+            case PAINTBRUSH:
+            case AIRBRUSH:
+                return fillPatternProvider.map(patternId -> HyperCardPatternFactory.getInstance().getPattern(patternId));
+
+            default:
+                return linePaintProvider;
         }
     }
 

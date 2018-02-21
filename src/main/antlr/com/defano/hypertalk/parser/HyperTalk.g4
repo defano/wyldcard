@@ -165,6 +165,9 @@ commandStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
     | 'hide' expression                                                                                                 # hideCmdStmnt
+    | 'hide' card 'picture'                                                                                             # hideThisCardPictCmd
+    | 'hide' background 'picture'                                                                                       # hideThisBkgndPictCmd
+    | 'hide' 'picture' of expression                                                                                  # hidePictCmd
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
@@ -192,6 +195,9 @@ commandStmnt
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' expression 'to' expression                                                                                 # sendCmdStmnt
     | 'show' expression                                                                                                 # showCmdStmnt
+    | 'show' card 'picture'                                                                                             # showThisCardPictCmd
+    | 'show' background 'picture'                                                                                       # showThisBkgndPictCmd
+    | 'show' 'picture' of expression                                                                                    # showPictCmd
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
@@ -374,7 +380,7 @@ expression
     : factor                                                                                                            # factorExp
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
-    | 'there is' op=('a'|'an'|'no'|'not a'|'not an') expression                                                         # existenceExp
+    | 'there' op=('is a'|'is an'|'is no'|'is not a'|'is not an') expression                                             # existenceExp
     | expression '^' expression                                                                                         # caratExp
     | expression op=('mod'| 'div'| '/'| '*') expression                                                                 # multiplicationExp
     | expression op=('+'| '-') expression                                                                               # additionExp

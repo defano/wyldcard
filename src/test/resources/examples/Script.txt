@@ -463,6 +463,17 @@ on commandsTest
 
     hide field "bananas"
     hide the third cd btn
+    hide card picture
+    hide bkgnd picture
+    hide picture of the last card
+    hide picture of background id 2
+
+    show field "bananas"
+    show the third cd btn
+    show card picture
+    show bkgnd picture
+    show picture of the last card
+    show picture of background id 2
 
     lock screen
 
@@ -693,6 +704,10 @@ on operatorsTest
     x is not within y
     x and y
     x or y
+    there is a card button "my button"
+    there is a card field id 2
+    there is not a first background
+    there is no field 13
 
 end operatorsTest
 

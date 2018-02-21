@@ -9,6 +9,8 @@ import com.defano.hypercard.parts.clipboard.CardPartTransferHandler;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldPart;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.PartsTable;
 import com.defano.hypercard.runtime.context.PartToolContext;
@@ -47,7 +49,7 @@ import java.util.Collection;
  * See {@link CardLayeredPane} for the view object.
  * See {@link CardModel} for the model object.
  */
-public class CardPart extends CardLayeredPane implements Part, CanvasCommitObserver, CanvasTransferDelegate, MouseListenable, KeyListener {
+public class CardPart extends CardLayeredPane implements Part, CanvasCommitObserver, CanvasTransferDelegate, MouseListenable, KeyListener, PropertyChangeObserver {
 
     private CardModel cardModel;
 
@@ -606,6 +608,12 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         getPartModel().receiveMessage(SystemMessage.OPEN_CARD.messageName);
         ((CardModel) getPartModel()).setObserver(cardModelObserver);
+
+        getCardModel().addPropertyChangedObserver(this);
+        getCardModel().notifyPropertyChangedObserver(this);
+
+        getCardModel().getBackgroundModel().addPropertyChangedObserver(this);
+        getCardModel().getBackgroundModel().notifyPropertyChangedObserver(this);
     }
 
     /** {@inheritDoc} */
@@ -631,6 +639,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         setTransferHandler(null);
         ((CardModel) getPartModel()).setObserver(null);
+
+        getCardModel().removePropertyChangedObserver(this);
+        getCardModel().getBackgroundModel().removePropertyChangedObserver(this);
 
         super.dispose();
     }
@@ -705,6 +716,19 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     public void keyReleased(KeyEvent e) {
         // Nothing to do
+    }
+
+    @Override
+    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+        switch (property.toLowerCase()) {
+            case CardModel.PROP_SHOWPICT:
+                if (model == getCardModel()) {
+                    setCardImageVisible(newValue.booleanValue());
+                } else if (model == getCardModel().getBackgroundModel()) {
+                    setBackgroundImageVisible(newValue.booleanValue());
+                }
+                break;
+        }
     }
 
     private class BackgroundScaleObserver implements Consumer<Double> {

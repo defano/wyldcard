@@ -70,6 +70,28 @@ public abstract class CardLayeredPane extends JLayeredPane {
         add(foregroundCanvas);
     }
 
+    public void setBackgroundImageVisible(boolean visible) {
+        if (visible) {
+            setBackgroundCanvas(backgroundCanvas);
+        } else {
+            remove(backgroundCanvas);
+        }
+
+        this.invalidate();
+        this.repaint();
+    }
+
+    public void setCardImageVisible(boolean visible) {
+        if (visible) {
+            setForegroundCanvas(foregroundCanvas);
+        } else {
+            remove(foregroundCanvas);
+        }
+
+        this.invalidate();
+        this.repaint();
+    }
+
     public JMonetCanvas getBackgroundCanvas() {
         return backgroundCanvas;
     }
