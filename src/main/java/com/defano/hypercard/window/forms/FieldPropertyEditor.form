@@ -287,7 +287,7 @@
                   <text value="Width:"/>
                 </properties>
               </component>
-              <component id="cd4f4" class="javax.swing.JTextField" binding="fieldHeight">
+              <component id="ed518" class="javax.swing.JSpinner" binding="fieldHeight">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="50" height="-1"/>
@@ -296,7 +296,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="3be59" class="javax.swing.JTextField" binding="fieldWidth">
+              <component id="4df9f" class="javax.swing.JSpinner" binding="fieldWidth">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="50" height="-1"/>
@@ -321,7 +321,7 @@
                   <text value="Left:"/>
                 </properties>
               </component>
-              <component id="d5116" class="javax.swing.JTextField" binding="fieldTop">
+              <component id="879bd" class="javax.swing.JSpinner" binding="fieldTop">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="50" height="-1"/>
@@ -330,7 +330,7 @@
                 </constraints>
                 <properties/>
               </component>
-              <component id="8b49" class="javax.swing.JTextField" binding="fieldLeft">
+              <component id="74621" class="javax.swing.JSpinner" binding="fieldLeft">
                 <constraints>
                   <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="50" height="-1"/>

@@ -1,10 +1,10 @@
 package com.defano.hypercard.window.forms;
 
 import com.defano.hypercard.fonts.TextStyleSpecifier;
-import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldStyle;
 import com.defano.hypercard.util.StringUtils;
+import com.defano.hypercard.window.ActionBindable;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
@@ -19,17 +19,17 @@ import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("unchecked")
-public class FieldPropertyEditor extends HyperCardDialog {
+public class FieldPropertyEditor extends HyperCardDialog implements ActionBindable {
 
     private FieldModel model;
 
     private JPanel fieldEditor;
     private JTextField fieldName;
     private JLabel idLabelValue;
-    private JTextField fieldHeight;
-    private JTextField fieldWidth;
-    private JTextField fieldTop;
-    private JTextField fieldLeft;
+    private JSpinner fieldHeight;
+    private JSpinner fieldWidth;
+    private JSpinner fieldTop;
+    private JSpinner fieldLeft;
     private JCheckBox isVisible;
     private JCheckBox isWrapText;
     private JCheckBox isLockText;
@@ -106,10 +106,10 @@ public class FieldPropertyEditor extends HyperCardDialog {
 
             fieldName.setText(model.getKnownProperty(FieldModel.PROP_NAME).stringValue());
             idLabelValue.setText(model.getKnownProperty(FieldModel.PROP_ID).stringValue());
-            fieldTop.setText(model.getKnownProperty(FieldModel.PROP_TOP).stringValue());
-            fieldLeft.setText(model.getKnownProperty(FieldModel.PROP_LEFT).stringValue());
-            fieldHeight.setText(model.getKnownProperty(FieldModel.PROP_HEIGHT).stringValue());
-            fieldWidth.setText(model.getKnownProperty(FieldModel.PROP_WIDTH).stringValue());
+            fieldTop.setValue(model.getKnownProperty(FieldModel.PROP_TOP).integerValue());
+            fieldLeft.setValue(model.getKnownProperty(FieldModel.PROP_LEFT).integerValue());
+            fieldHeight.setValue(model.getKnownProperty(FieldModel.PROP_HEIGHT).integerValue());
+            fieldWidth.setValue(model.getKnownProperty(FieldModel.PROP_WIDTH).integerValue());
             isLockText.setSelected(model.getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
             isVisible.setSelected(model.getKnownProperty(FieldModel.PROP_VISIBLE).booleanValue());
             isWrapText.setSelected(model.getKnownProperty(FieldModel.PROP_DONTWRAP).booleanValue());
@@ -127,7 +127,7 @@ public class FieldPropertyEditor extends HyperCardDialog {
             multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
             textStyleButton.addActionListener(e -> {
-                Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", ((CardLayerPartModel) model).getTextStyle().toFont());
+                Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getTextStyle().toFont());
                 if (selection != null) {
                     model.setTextStyle(TextStyleSpecifier.fromFont(selection));
                 }
@@ -136,6 +136,20 @@ public class FieldPropertyEditor extends HyperCardDialog {
             onEnabledChanged();
             onAutoSelectChanged();
 
+            bindActions(a -> updateProperties(),
+                    fieldTop,
+                    fieldLeft,
+                    fieldHeight,
+                    fieldWidth,
+                    isWideMargins,
+                    isWrapText,
+                    showLines,
+                    style,
+                    enabled,
+                    autoSelect,
+                    multipleLines,
+                    scrolling);
+
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + model);
         }
@@ -143,10 +157,10 @@ public class FieldPropertyEditor extends HyperCardDialog {
 
     private void updateProperties() {
         model.setKnownProperty(FieldModel.PROP_NAME, new Value(fieldName.getText()));
-        model.setKnownProperty(FieldModel.PROP_TOP, new Value(fieldTop.getText()));
-        model.setKnownProperty(FieldModel.PROP_LEFT, new Value(fieldLeft.getText()));
-        model.setKnownProperty(FieldModel.PROP_HEIGHT, new Value(fieldHeight.getText()));
-        model.setKnownProperty(FieldModel.PROP_WIDTH, new Value(fieldWidth.getText()));
+        model.setKnownProperty(FieldModel.PROP_TOP, new Value(fieldTop.getValue()));
+        model.setKnownProperty(FieldModel.PROP_LEFT, new Value(fieldLeft.getValue()));
+        model.setKnownProperty(FieldModel.PROP_HEIGHT, new Value(fieldHeight.getValue()));
+        model.setKnownProperty(FieldModel.PROP_WIDTH, new Value(fieldWidth.getValue()));
         model.setKnownProperty(FieldModel.PROP_LOCKTEXT, new Value(isLockText.isSelected()));
         model.setKnownProperty(FieldModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
         model.setKnownProperty(FieldModel.PROP_DONTWRAP, new Value(isWrapText.isSelected()));
@@ -316,9 +330,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
         final JLabel label5 = new JLabel();
         label5.setText("Width:");
         panel4.add(label5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        fieldHeight = new JTextField();
+        fieldHeight = new JSpinner();
         panel4.add(fieldHeight, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
-        fieldWidth = new JTextField();
+        fieldWidth = new JSpinner();
         panel4.add(fieldWidth, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         final JLabel label6 = new JLabel();
         label6.setText("Top:");
@@ -326,9 +340,9 @@ public class FieldPropertyEditor extends HyperCardDialog {
         final JLabel label7 = new JLabel();
         label7.setText("Left:");
         panel4.add(label7, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        fieldTop = new JTextField();
+        fieldTop = new JSpinner();
         panel4.add(fieldTop, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
-        fieldLeft = new JTextField();
+        fieldLeft = new JSpinner();
         panel4.add(fieldLeft, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         final Spacer spacer4 = new Spacer();
         fieldEditor.add(spacer4, new GridConstraints(2, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));

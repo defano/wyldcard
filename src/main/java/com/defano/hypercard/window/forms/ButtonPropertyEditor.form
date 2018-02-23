@@ -264,7 +264,7 @@
               <text value="Width:"/>
             </properties>
           </component>
-          <component id="b1163" class="javax.swing.JTextField" binding="buttonHeight">
+          <component id="7fc59" class="javax.swing.JSpinner" binding="buttonHeight">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="50" height="-1"/>
@@ -273,7 +273,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="af20a" class="javax.swing.JTextField" binding="buttonWidth">
+          <component id="d6bf" class="javax.swing.JSpinner" binding="buttonWidth">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="50" height="-1"/>
@@ -298,7 +298,7 @@
               <text value="Left:"/>
             </properties>
           </component>
-          <component id="33d07" class="javax.swing.JTextField" binding="buttonTop">
+          <component id="3610f" class="javax.swing.JSpinner" binding="buttonTop">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="50" height="-1"/>
@@ -307,7 +307,7 @@
             </constraints>
             <properties/>
           </component>
-          <component id="bab67" class="javax.swing.JTextField" binding="buttonLeft">
+          <component id="e7161" class="javax.swing.JSpinner" binding="buttonLeft">
             <constraints>
               <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
                 <preferred-size width="50" height="-1"/>

@@ -4,6 +4,7 @@ import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.ButtonStyle;
 import com.defano.hypercard.parts.model.PartModel;
+import com.defano.hypercard.window.ActionBindable;
 import com.defano.hypercard.window.HyperCardDialog;
 import com.defano.hypercard.window.WindowBuilder;
 import com.defano.hypercard.window.WindowManager;
@@ -16,16 +17,16 @@ import com.l2fprod.common.swing.JFontChooser;
 import javax.swing.*;
 import java.awt.*;
 
-public class ButtonPropertyEditor extends HyperCardDialog {
+public class ButtonPropertyEditor extends HyperCardDialog implements ActionBindable {
     private ButtonModel model;
 
     private JButton saveButton;
     private JButton editScriptButton;
     private JTextField buttonName;
-    private JTextField buttonHeight;
-    private JTextField buttonWidth;
-    private JTextField buttonTop;
-    private JTextField buttonLeft;
+    private JSpinner buttonHeight;
+    private JSpinner buttonWidth;
+    private JSpinner buttonTop;
+    private JSpinner buttonLeft;
     private JCheckBox isVisible;
     private JCheckBox isShowTitle;
     private JCheckBox isEnabled;
@@ -81,6 +82,7 @@ public class ButtonPropertyEditor extends HyperCardDialog {
             model.addElement(thisStyle);
         }
         style.setModel(model);
+
     }
 
     @Override
@@ -111,25 +113,35 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         idLabelValue.setText(String.valueOf(model.getId()));
 
         buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-        buttonTop.setText(model.getKnownProperty(ButtonModel.PROP_TOP).stringValue());
-        buttonLeft.setText(model.getKnownProperty(ButtonModel.PROP_LEFT).stringValue());
-        buttonHeight.setText(model.getKnownProperty(ButtonModel.PROP_HEIGHT).stringValue());
-        buttonWidth.setText(model.getKnownProperty(ButtonModel.PROP_WIDTH).stringValue());
+        buttonTop.setValue(model.getKnownProperty(ButtonModel.PROP_TOP).integerValue());
+        buttonLeft.setValue(model.getKnownProperty(ButtonModel.PROP_LEFT).integerValue());
+        buttonHeight.setValue(model.getKnownProperty(ButtonModel.PROP_HEIGHT).integerValue());
+        buttonWidth.setValue(model.getKnownProperty(ButtonModel.PROP_WIDTH).integerValue());
         isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
         isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue());
         isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
         style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
-//        style.setSelectedItem(StringUtils.capitalize(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
         family.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
         autoHilite.setSelected(model.getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue());
+
+        bindActions(a -> updateProperties(),
+                isEnabled,
+                isShowTitle,
+                isVisible,
+                style,
+                buttonName,
+                buttonHeight,
+                buttonLeft,
+                buttonTop,
+                buttonWidth);
     }
 
     private void updateProperties() {
         model.setKnownProperty(ButtonModel.PROP_NAME, new Value(buttonName.getText()));
-        model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getText()));
-        model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getText()));
-        model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getText()));
-        model.setKnownProperty(ButtonModel.PROP_WIDTH, new Value(buttonWidth.getText()));
+        model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getValue()));
+        model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getValue()));
+        model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getValue()));
+        model.setKnownProperty(ButtonModel.PROP_WIDTH, new Value(buttonWidth.getValue()));
         model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
         model.setKnownProperty(ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
         model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
@@ -276,9 +288,9 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         final JLabel label5 = new JLabel();
         label5.setText("Width:");
         panel2.add(label5, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        buttonHeight = new JTextField();
+        buttonHeight = new JSpinner();
         panel2.add(buttonHeight, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
-        buttonWidth = new JTextField();
+        buttonWidth = new JSpinner();
         panel2.add(buttonWidth, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         final JLabel label6 = new JLabel();
         label6.setText("Top:");
@@ -286,9 +298,9 @@ public class ButtonPropertyEditor extends HyperCardDialog {
         final JLabel label7 = new JLabel();
         label7.setText("Left:");
         panel2.add(label7, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        buttonTop = new JTextField();
+        buttonTop = new JSpinner();
         panel2.add(buttonTop, new GridConstraints(0, 3, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
-        buttonLeft = new JTextField();
+        buttonLeft = new JSpinner();
         panel2.add(buttonLeft, new GridConstraints(1, 3, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(50, -1), new Dimension(50, -1), 0, false));
         final JLabel label8 = new JLabel();
         label8.setText("Height:");
