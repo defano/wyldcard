@@ -167,7 +167,8 @@ commandStmnt
     | 'hide' expression                                                                                                 # hideCmdStmnt
     | 'hide' card 'picture'                                                                                             # hideThisCardPictCmd
     | 'hide' background 'picture'                                                                                       # hideThisBkgndPictCmd
-    | 'hide' 'picture' of expression                                                                                  # hidePictCmd
+    | 'hide' 'picture' of expression                                                                                    # hidePictCmd
+    | 'hide' 'titlebar'                                                                                                 # hideTitleBar
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
@@ -198,6 +199,7 @@ commandStmnt
     | 'show' card 'picture'                                                                                             # showThisCardPictCmd
     | 'show' background 'picture'                                                                                       # showThisBkgndPictCmd
     | 'show' 'picture' of expression                                                                                    # showPictCmd
+    | 'show' 'titlebar'                                                                                                 # showTitleBarCmd
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
     | 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd

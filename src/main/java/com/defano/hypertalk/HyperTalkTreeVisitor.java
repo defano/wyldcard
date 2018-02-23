@@ -76,6 +76,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitHideTitleBar(HyperTalkParser.HideTitleBarContext ctx) {
+        return new TitleBarVisibleCmd(ctx, false);
+    }
+
+    @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
         return new SetPropertyCmd(ctx, (Expression) visit(ctx.expression()), PartModel.PROP_VISIBLE, new Value(true));
     }
@@ -93,6 +98,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitShowPictCmd(HyperTalkParser.ShowPictCmdContext ctx) {
         return new PictureVisibleCmd(ctx, null, (Expression) visit(ctx.expression()), true);
+    }
+
+    @Override
+    public Object visitShowTitleBarCmd(HyperTalkParser.ShowTitleBarCmdContext ctx) {
+        return new TitleBarVisibleCmd(ctx, true);
     }
 
     @Override

@@ -2,7 +2,7 @@
 
 [Features](#features) | [Getting Started](#getting-started) | [Building](doc/BUILDING.md) | [HyperTalk Language Reference](#the-hypertalk-language)
 
-An effort to clone Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+An effort to reproduce Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
 ![Hero](doc/images/hero.png)
 
@@ -16,7 +16,7 @@ Apple called it "programming for the rest of us." Steve Wozniak called it ["the 
 
 ## Features
 
-HyperTalk Java attempts to maintain high-fidelity to Apple's original software rather than to modernize it.  
+HyperTalk Java attempts to maintain high-fidelity to Apple's original software rather than to modernize it. That said, HyperTalk Java is not a HyperCard replacement and cannot open or import old stacks created in HyperCard.
 
 #### Organize information
 
@@ -40,9 +40,9 @@ HyperTalk Java attempts to maintain high-fidelity to Apple's original software r
 
 #### Play with sounds and effects
 
-* Play HyperCard's original sound effects (`flute`, `harpsichord` and `boing`), and `dial` telephone numbers.
+* Play HyperCard's original sound effects (`flute`, `harpsichord` and `boing`), `dial` telephone numbers, and `speak` text.
 * Synthesize sounds into a sequence of musical notes supporting pitch, octave, accidental, duration and tempo.
-* Animate cards and parts by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
+* Animate cards and object by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
 ### What's missing?
 
@@ -77,7 +77,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 _This guide describes HyperTalk as implemented by this project; Apple's HyperCard implements a superset of the language features described within. Wherever a language feature provided by HyperTalk Java differs from HyperCard, an attempt has been made to note the difference._
 
-HyperCard's native language, _HyperTalk_, is a message-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) that contains a script offering a _handler_ for the given message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts or to themselves, too.
+HyperCard's native language, _HyperTalk_, is a message-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) that contains a script providing a _handler_ for the received message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts (or to themselves), too.
 
 HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and interpreted as a number, boolean, or list depending on context. HyperCard does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.
 
@@ -89,15 +89,9 @@ A simple script to prompt the user to enter their name then greet them might loo
 -- This is my first script
 
 on mouseUp
-  ask "Tell me your name" with "I'd rather not"
-
-  if it is "I'd rather not" or it is empty then
-    answer "Then I can't very well say hello, can I?"
-  else
-    put "Hello " && it into greeting
-    answer greeting with "Why, thanks!"
-  end if
-
+  ask "Hi! What's your name?"
+  put it into theName
+  if theName is not empty then answer "Pleasure to meet you, " & theName & "."
 end mouseUp
 
 ```
@@ -118,7 +112,7 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-That said, HyperCard supports a soft-wrap character (`¬`) that could be used to break a long statement across multiple lines. To simplify script entry, this application also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
+However, HyperCard supports a line-wrap character (`¬`) that can be used to break a long statement across multiple lines. To simplify script entry, this application also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
 
 ```
 answer "This is totally acceptable!" |
@@ -128,15 +122,13 @@ answer "This is totally acceptable!" |
 
 ## Stacks of Cards
 
-HyperCard allows users to author and interact with _stacks_.
+HyperCard defines the concept of a _stack_ of _cards_ analogous to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements like buttons, checkboxes, menus, and input fields.
 
-A HyperCard stack is an ordered list of _cards_ where only one card is visible to the user at a time (like slides in a PowerPoint deck). When the user navigates from one card to another, the contents of the new card appear in place of the old card. (The transition between the two can be animated using a _visual effect_.)
-
-Each card is comprised of two layers of graphics and user interface elements: a _background layer_ and a foreground layer (also called the _card layer_). Each card has its own unique foreground, but its background can be shared between cards. A background contains graphics, buttons, text fields and scripts that are common to any card in the stack sharing that background. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
-
-Cards in the stack can be referred to in script by name (`card "Accounting"`), id (`card id 22`), position in the stack (`card 13`), or relative position in their background (`the second card of the last background`).
+Each card is comprised of two layers of graphics and user interface elements: a _background layer_ and a foreground called the _card layer_. Each card has a unique foreground, but its background may be shared between cards. A background contains graphics, buttons, text fields and scripts that are common to any card sharing that background. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
 
 ### Navigating between cards
+
+Cards in a stack can be referred to by name (`card "Accounting"`), id (`card id 22`), their position in the stack (`card 13`), or their relative position in their background (`the second card of the last background`).
 
 Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or use the HyperTalk `go` command:
 
@@ -544,7 +536,7 @@ put "2 * 2 = 4" after card field "Math" of the first card
 
 [Buttons](#buttons) | [Fields](#fields) | [Menus](#menus) | [HyperCard](#hypercard-properties)
 
-A property is a HyperTalk-addressable attribute that determines how a part looks, feels, and reacts to user interaction. Properties in HyperTalk Java are "first-class" containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
+A property is a HyperTalk-addressable attribute that determines how a part looks, feels, and reacts to user interaction. Properties in HyperTalk Java are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
 
 For example,
 
@@ -1005,7 +997,7 @@ Command	         | Description
 `find`           | Finds text in the stack or in a given field. Several forms of the command, see the "Searching & Sorting" section. For example, `find chars "blah" of marked cards`.
 `get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
-`hide`           | Makes a part or image layer invisible on the card. Syntax is `hide <part-factor>`, `hide {card / background} picture`, or `hide picture of {<card-factor> / <bkgnd-factor>}`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
+`hide`           | Makes a part, image layer, or window title bar invisible. Syntax is `hide <part-factor>`, `hide {card / background} picture`, `hide picture of {<card-factor> / <bkgnd-factor>}`, or `hide titleBar`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
 `lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
 `open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.
@@ -1019,7 +1011,7 @@ Command	         | Description
 `select`         | Selects a button or field as if the user had chosen the button or field tool and clicked on the part, or selects a range of text in a field, or moves the selection caret in a field. `select <part>`, `select empty`, `select { before / after / } text of <part>`, `select { before / after / } <chunk> of <part>`.
 `send`           | Send a message with optional arguments to a part; `send "mouseUp" to field id 3` or `send "myMessage 1,2" to this card`
 `set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
-`show`           | Makes a part or image layer visible on the card. Syntax is `show <part-factor>`, `show {card / background} picture`, or `show picture of {<card-factor> / <bkgnd-factor>}`. For example `show button "My Button"`, `show picture of card 2`, or `show card picture`.
+`show`           | Makes a part, image layer, or window title bar visible. Syntax is `show <part-factor>`, `show {card / background} picture`, `show picture of {<card-factor> / <bkgnd-factor>}`, or `show titleBar`. For example `show button "My Button"`, `show picture of card 2`, or `show card picture`.
 `sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
 `speak`          | Speaks text in a default or specified voice. See the "Text to speech" section for details.
 `subtract`       | Subtracts a value from a container; `subtract (10 * 3) from item 2 of field "items"`
