@@ -170,6 +170,16 @@ public class TestChunkUtils {
 
     @Test
     public void testGetWord() {
+        // Quoted words
+        assertEquals("\"W1\"", ChunkUtils.getChunk(ChunkType.WORD, "\"W1\"  \"W2\"\t \"W3\"\n\n\n\"W4\"", 1, 0));
+        assertEquals("\'W1\'", ChunkUtils.getChunk(ChunkType.WORD, "\'W1\'  \'W2\'\t \'W3\'\n\n\n\'W4\'", 1, 0));
+
+        // Words without letters
+        assertEquals("@#$", ChunkUtils.getChunk(ChunkType.WORD, "@#$  %^\t &*\n\n\n()", 1, 0));
+        assertEquals("%^", ChunkUtils.getChunk(ChunkType.WORD, "@#$  %^\t &*\n\n\n()", 2, 0));
+        assertEquals("&*", ChunkUtils.getChunk(ChunkType.WORD, "@#$  %^\t &*\n\n\n()", 3, 0));
+        assertEquals("()", ChunkUtils.getChunk(ChunkType.WORD, "@#$  %^\t &*\n\n\n()", 4, 0));
+
         // By integer
         assertEquals("W1", ChunkUtils.getChunk(ChunkType.WORD, "W1  W2\t W3\n\n\nW4", 1, 0));
         assertEquals("W2", ChunkUtils.getChunk(ChunkType.WORD, "W1  W2\t W3\n\n\nW4", 2, 0));
