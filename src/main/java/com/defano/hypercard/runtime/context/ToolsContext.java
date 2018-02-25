@@ -68,15 +68,15 @@ public class ToolsContext {
         return instance;
     }
 
+    public int getGridSpacing() {
+        return gridSpacingProvider.blockingFirst();
+    }
+
     public void setGridSpacing(int spacing) {
         if (instance.gridSpacingSubscription == null) {
             instance.gridSpacingSubscription = instance.gridSpacingProvider.subscribe(integer -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().setGridSpacing(integer));
         }
         gridSpacingProvider.onNext(spacing);
-    }
-
-    public int getGridSpacing() {
-        return gridSpacingProvider.blockingFirst();
     }
 
     public Subject<Integer> getGridSpacingProvider() {
@@ -145,12 +145,12 @@ public class ToolsContext {
         return foregroundColorProvider;
     }
 
-    public void setSelectedBrush(PaintBrush brush) {
-        brushStrokeProvider.onNext(brush);
-    }
-
     public PaintBrush getSelectedBrush() {
         return brushStrokeProvider.blockingFirst();
+    }
+
+    public void setSelectedBrush(PaintBrush brush) {
+        brushStrokeProvider.onNext(brush);
     }
 
     public Subject<PaintBrush> getSelectedBrushProvider() {
@@ -161,12 +161,12 @@ public class ToolsContext {
         setDrawCentered(!isDrawCentered());
     }
 
-    public void setDrawCentered(boolean drawCentered) {
-        this.drawCenteredProvider.onNext(drawCentered);
-    }
-
     public boolean isDrawCentered() {
         return this.drawCenteredProvider.blockingFirst();
+    }
+
+    public void setDrawCentered(boolean drawCentered) {
+        this.drawCenteredProvider.onNext(drawCentered);
     }
 
     public Subject<Boolean> getDrawCenteredProvider() {
@@ -177,12 +177,12 @@ public class ToolsContext {
         setDrawMultiple(!isDrawMultiple());
     }
 
-    public void setDrawMultiple(boolean drawMultiple) {
-        this.drawMultipleProvider.onNext(drawMultiple);
-    }
-
     public boolean isDrawMultiple() {
         return this.drawMultipleProvider.blockingFirst();
+    }
+
+    public void setDrawMultiple(boolean drawMultiple) {
+        this.drawMultipleProvider.onNext(drawMultiple);
     }
 
     public Subject<Boolean> getDrawMultipleProvider() {
@@ -197,12 +197,19 @@ public class ToolsContext {
         return selectedImageProvider.blockingFirst().orElse(null);
     }
 
-    public void setShapeSides(int shapeSides) {
-        shapeSidesProvider.onNext(shapeSides);
+    private void setSelectedImage(Observable<Optional<BufferedImage>> imageProvider) {
+        if (selectedImageSubscription != null) {
+            selectedImageSubscription.dispose();
+        }
+        selectedImageSubscription = imageProvider.subscribe(selectedImageProvider::onNext);
     }
 
     public int getShapeSides() {
         return shapeSidesProvider.blockingFirst();
+    }
+
+    public void setShapeSides(int shapeSides) {
+        shapeSidesProvider.onNext(shapeSides);
     }
 
     public Subject<Integer> getShapeSidesProvider() {
@@ -221,12 +228,12 @@ public class ToolsContext {
         fillPatternProvider.onNext(pattern);
     }
 
-    public void setIntensity(double intensity) {
-        intensityProvider.onNext(intensity);
-    }
-
     public double getIntensity() {
         return intensityProvider.blockingFirst();
+    }
+
+    public void setIntensity(double intensity) {
+        intensityProvider.onNext(intensity);
     }
 
     public Ditherer getDitherer() {
@@ -252,12 +259,12 @@ public class ToolsContext {
         }
     }
 
-    public void setLineWidth(int width) {
-        lineStrokeProvider.onNext(StrokeBuilder.withBasicStroke().ofWidth(width).withRoundCap().withRoundJoin().build());
-    }
-
     public int getLineWidth() {
         return Math.round((int) ((BasicStroke) lineStrokeProvider.blockingFirst()).getLineWidth());
+    }
+
+    public void setLineWidth(int width) {
+        lineStrokeProvider.onNext(StrokeBuilder.withBasicStroke().ofWidth(width).withRoundCap().withRoundJoin().build());
     }
 
     public void setPattern(int patternId) {
@@ -370,7 +377,7 @@ public class ToolsContext {
                 .withIntensityObservable(intensityProvider)
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
-                .withAntiAliasing(ImageAntiAliasingMode.BILINEAR)
+                .withAntiAliasing(getAntiAliasingModeForTool(selectedToolType))
                 .makeActiveOnCanvas(HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas())
                 .build();
 
@@ -395,6 +402,16 @@ public class ToolsContext {
         return selectedTool;
     }
 
+    private ImageAntiAliasingMode getAntiAliasingModeForTool(PaintToolType type) {
+        switch (type) {
+            case PAINTBRUSH:
+                return ImageAntiAliasingMode.OFF;
+
+            default:
+                return ImageAntiAliasingMode.BILINEAR;
+        }
+    }
+
     private Observable<Stroke> getStrokeProviderForTool(PaintToolType type) {
         switch (type) {
             case PAINTBRUSH:
@@ -416,13 +433,6 @@ public class ToolsContext {
             default:
                 return linePaintProvider;
         }
-    }
-
-    private void setSelectedImage(Observable<Optional<BufferedImage>> imageProvider) {
-        if (selectedImageSubscription != null) {
-            selectedImageSubscription.dispose();
-        }
-        selectedImageSubscription = imageProvider.subscribe(selectedImageProvider::onNext);
     }
 
 }

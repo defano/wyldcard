@@ -18,16 +18,22 @@ public class HyperCardPatternFactory {
     private final static int PATTERN_WIDTH = 8;
     private final static int PATTERN_HEIGHT = 8;
 
-    private HashMap<Integer, TexturePaint> patterns = new HashMap<>();
+    private HashMap<Integer, TexturePaint> patternCache = new HashMap<>();
 
     private HyperCardPatternFactory() {
-        for (int index = 0; index < 40; index++) {
-            patterns.put(index, create(index));
-        }
+        invalidatePatternCache();
     }
 
     public static HyperCardPatternFactory getInstance() {
         return instance;
+    }
+
+    public void invalidatePatternCache() {
+        patternCache.clear();
+
+        for (int index = 0; index < 40; index++) {
+            patternCache.put(index, create(index));
+        }
     }
 
     public TexturePaint getPattern(int id) {
@@ -35,7 +41,7 @@ public class HyperCardPatternFactory {
             throw new IllegalArgumentException("No such pattern. Patterns are numbered 0 to 39.");
         }
 
-        return patterns.get(id);
+        return patternCache.get(id);
     }
 
     private static TexturePaint create(int id) {

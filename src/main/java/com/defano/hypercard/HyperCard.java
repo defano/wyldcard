@@ -4,6 +4,7 @@ import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.cursor.CursorManager;
 import com.defano.hypercard.parts.editor.PartManager;
+import com.defano.hypercard.patterns.PatternManager;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.FileContext;
 import com.defano.hypercard.window.HyperTalkErrorDialog;
@@ -50,6 +51,7 @@ public class HyperCard extends StackManager {
             WindowManager.getInstance().start();
             CursorManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
+            PatternManager.getInstance().start();
 
             newStack();
         });
