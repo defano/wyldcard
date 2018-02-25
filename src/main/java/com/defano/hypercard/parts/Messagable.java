@@ -67,6 +67,8 @@ public interface Messagable {
      * @param command      The name of the command; cannot be null.
      * @param arguments    The arguments to pass to this command; cannot be null.
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
+     *                     Note that this callback will not fire if the script terminates as a result of an error or
+     *                     breakpoint.
      */
     default void receiveMessage(String command, ExpressionList arguments, MessageCompletionObserver onCompletion) {
 

@@ -31,8 +31,6 @@ public class HandlerExecutionTask implements Callable<String> {
     @Override
     public String call() throws HtException {
 
-//        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-
         ExecutionContext.getContext().pushContext();
         ExecutionContext.getContext().pushMe(me);
         ExecutionContext.getContext().setMessage(handler.name);

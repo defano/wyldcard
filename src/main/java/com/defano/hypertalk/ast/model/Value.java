@@ -212,6 +212,14 @@ public class Value implements StyledComparable<Value> {
             return false;
     }
 
+    public boolean checkedBooleanValue() throws HtException {
+        if (isBoolean()) {
+            return booleanValue();
+        } else {
+            throw new HtSemanticException("Expected true or false here.");
+        }
+    }
+
     public Rectangle rectangleValue() {
         if (isRect()) {
             int left = getItemAt(0).integerValue();

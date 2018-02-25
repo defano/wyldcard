@@ -9,7 +9,6 @@ import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.google.common.base.Function;
 import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
@@ -174,7 +173,9 @@ public class Interpreter {
      * @param script             The script of the part
      * @param command            The command handler name.
      * @param arguments          A list of expressions representing arguments passed with the message
-     * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran
+     * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
+     *                           Note that this observer will not fire if the script terminates as a result of an
+     *                           exception or breakpoint.
      */
     public static void asyncExecuteHandler(PartSpecifier me, Script script, String command, ExpressionList arguments, HandlerCompletionObserver completionObserver) {
         NamedBlock handler = script.getHandler(command);
@@ -184,24 +185,40 @@ public class Interpreter {
             handler = NamedBlock.emptyPassBlock(command);
         }
 
-        Futures.transform(asyncExecuteBlock(me, handler, arguments), (Function<String, Void>) passedMessage -> {
+        Futures.addCallback(asyncExecuteBlock(me, handler, arguments), new FutureCallback<String>() {
+            @Override
+            public void onSuccess(String passedMessage) {
 
-            // Handler did not invoke pass: message was trapped
-            if (completionObserver != null && passedMessage == null || passedMessage.isEmpty()) {
-                completionObserver.onHandlerRan(me, script, command, true);
+                // Handler did not invoke pass: message was trapped
+                if (completionObserver != null && passedMessage == null || passedMessage.isEmpty()) {
+                    completionObserver.onHandlerRan(me, script, command, true);
+                }
+
+                // Handler invoked pass; message not trapped
+                else if (completionObserver != null && passedMessage.equalsIgnoreCase(command)) {
+                    completionObserver.onHandlerRan(me, script, command, false);
+                }
+
+                // Semantic error: Handler passed a message other than the one being handled.
+                else {
+                    HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
+                }
+
             }
 
-            // Handler invoked pass; message not trapped
-            else if (completionObserver != null && passedMessage.equalsIgnoreCase(command)) {
-                completionObserver.onHandlerRan(me, script, command, false);
-            }
+            @Override
+            public void onFailure(Throwable t) {
 
-            // Semantic error: Handler passed a message other than the one being handled.
-            else {
-                HyperCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
-            }
+                // HyperTalk error occurred during execution
+                if (t instanceof HtException) {
+                    HyperCard.getInstance().showErrorDialog((HtException) t);
+                }
 
-            return null;
+                // So other error occurred that we're ill-equipped to deal with
+                else {
+                    HyperCard.getInstance().showErrorDialog(new HtSemanticException("An unexpected error occurred."));
+                }
+            }
         });
     }
 

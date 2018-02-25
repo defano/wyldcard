@@ -92,14 +92,14 @@ public class RepeatStatement extends Statement {
 
         // While loop
         if (duration.polarity == RepeatDuration.POLARITY_WHILE) {
-            while (duration.condition.evaluate().booleanValue()) {
+            while (duration.condition.evaluate().checkedBooleanValue()) {
                 iterate();
             }
         }
 
         // Until loop
         if (duration.polarity == RepeatDuration.POLARITY_UNTIL) {
-            while (!duration.condition.evaluate().booleanValue()) {
+            while (!duration.condition.evaluate().checkedBooleanValue()) {
                 iterate();
             }
         }

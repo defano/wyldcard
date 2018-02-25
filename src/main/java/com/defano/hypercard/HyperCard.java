@@ -8,6 +8,7 @@ import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.FileContext;
 import com.defano.hypercard.window.HyperTalkErrorDialog;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 
 import javax.swing.*;
@@ -59,6 +60,9 @@ public class HyperCard extends StackManager {
 
     public void showErrorDialog(HtException e) {
         HyperTalkErrorDialog.getInstance().showError(e);
+
+        // Abort further script execution
+        throw new ExitToHyperCardException();
     }
 
     public void quit() {
