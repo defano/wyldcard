@@ -34,6 +34,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     private Disposable toolModeSubscription;
     private ButtonComponent buttonComponent;
     private boolean isBeingEdited = false;
+    private boolean isFocused = false;      // Indicates user pressed mouse while over part
 
     public StyleableButton(ButtonStyle style) {
         buttonComponent = getComponentForStyle(style);
@@ -113,6 +114,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     @Override
     public void mousePressed(MouseEvent e) {
         ToolEditablePart.super.mousePressed(e);
+        this.isFocused = true;
 
         if (isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilight)) {
@@ -122,8 +124,31 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
+    public void mouseEntered(MouseEvent e) {
+        ToolEditablePart.super.mouseEntered(e);
+
+        if (isAutoHilited() && isFocused) {
+            if (!(buttonComponent instanceof SharedHilight)) {
+                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
+            }
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        ToolEditablePart.super.mouseExited(e);
+
+        if (isAutoHilited()) {
+            if (!(buttonComponent instanceof SharedHilight)) {
+                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
+            }
+        }
+    }
+
+    @Override
     public void mouseReleased(MouseEvent e) {
         ToolEditablePart.super.mouseReleased(e);
+        this.isFocused = false;
 
         if (!isSelectedForEditing() && isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilight)) {

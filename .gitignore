@@ -14,3 +14,4 @@ HyperTalk-Java.app.html
 HyperTalk-Java.app.jnlp
 
 hypertalk-java.jar
+*.log

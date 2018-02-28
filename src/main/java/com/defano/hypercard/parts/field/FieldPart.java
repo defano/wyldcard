@@ -197,8 +197,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     @Override
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
+        boolean isStillInFocus = new Rectangle(this.getFieldComponent().getSize()).contains(e.getPoint());
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        // Do not set mouseUp if cursor is not released while over the part
+        if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
         }
     }
