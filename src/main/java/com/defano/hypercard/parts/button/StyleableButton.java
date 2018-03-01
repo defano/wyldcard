@@ -127,6 +127,10 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     public void mouseEntered(MouseEvent e) {
         ToolEditablePart.super.mouseEntered(e);
 
+        if (e.getButton() == 0) {
+            isFocused = false;
+        }
+
         if (isAutoHilited() && isFocused) {
             if (!(buttonComponent instanceof SharedHilight)) {
                 getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));

@@ -1,11 +1,6 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.model.Ordinal;
-import com.defano.hypertalk.ast.model.Preposition;
-import com.defano.hypertalk.ast.model.ChunkType;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class TestChunkUtils {
 

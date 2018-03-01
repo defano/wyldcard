@@ -14,11 +14,11 @@ import java.util.Map;
 /**
  * A hack to re-dispatch mouse events to parts (Swing components) in the background layer
  * that are obstructed by the foreground (card-layer) graphics canvas.
- *
+ * <p>
  * Swing does not support the concept of a component which is "transparent" to mouse events. That
  * is, a component (like a canvas) that covers buttons behind it--even if that component is
  * graphically transparent--prevents mouse events from reaching the obscured components.
- *
+ * <p>
  * In order to get the card's foreground canvas to appear on top of parts in the background,
  * and yet still allow the background parts to receive mouse clicks, drags, enters and exits, we
  * have to capture mouse events on the canvas then translate and re-dispatch them on the
@@ -26,17 +26,17 @@ import java.util.Map;
  */
 public class MouseEventDispatcher implements MouseListener, MouseMotionListener {
 
+    // Mapping of component hashCode to whether we think this mouse is inside its bounds
+    private final Map<Integer, Boolean> mouseWithinMap = new HashMap<>();
     // Source component whose mouse events we're re-dispatching to components behind it
     private Component source;
-
     // Enumerator of parts behind the source
     private ComponentEnumerator enumerator;
 
-    // Mapping of component hashCode to whether we think this mouse is inside its bounds
-    private final Map<Integer,Boolean> mouseWithinMap = new HashMap<>();
-
-    // The component currently being dragged.
-    private Component dragging = null;
+    private MouseEventDispatcher(Component source, ComponentEnumerator enumerator) {
+        this.enumerator = enumerator;
+        this.source = source;
+    }
 
     public static MouseEventDispatcher bindTo(Component source, ComponentEnumerator delegate) {
         MouseEventDispatcher instance = new MouseEventDispatcher(source, delegate);
@@ -50,11 +50,6 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
         source.removeMouseMotionListener(this);
         this.source = null;
         this.enumerator = null;
-    }
-
-    private MouseEventDispatcher(Component source, ComponentEnumerator enumerator) {
-        this.enumerator = enumerator;
-        this.source = source;
     }
 
     @Override
@@ -100,52 +95,33 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
      */
     private void delegateEvent(MouseEvent e) {
 
-        // Stop tracking a drag event
-        if (e.getID() == MouseEvent.MOUSE_RELEASED) {
-            stopDragging();
-        }
-
         // Detect and send mouseEnter and mouseExit events
         synthesizeChildEntryExitEvents(e);
 
-        // Drag in progress; continue to send event only to component that was originally dragged
-        if (isDragging() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
-            MouseEvent localEvent = SwingUtilities.convertMouseEvent(source, e, dragging);
-            dragging.dispatchEvent(localEvent);
-        }
+        Component c = findHit(e);       // Find component behind source
+        if (c != null) {
 
-        // No drag in progress; dispatch normally
-        else {
-            Component c = findHit(e);       // Find component behind source
-            if (c != null) {
-
-                // TODO: Canvas shouldn't behave unusually in this respect.
-                if (c instanceof JMonetCanvas) {
-                    ((JMonetCanvas)c).getSurface().dispatchEvent(e);
-                }
-
-                // Obscured components will not automatically receive focus; force focus as needed
-                if (e.getID() == MouseEvent.MOUSE_CLICKED ||
-                        e.getID() == MouseEvent.MOUSE_DRAGGED ||
-                        e.getID() == MouseEvent.MOUSE_PRESSED) {
-                    c.requestFocus();
-                }
-
-                // Translate and dispatch event
-                MouseEvent localEvent = SwingUtilities.convertMouseEvent(source, e, c);
-                c.dispatchEvent(localEvent);
-
-                // Track that we're dragging a component
-                if (e.getID() == MouseEvent.MOUSE_DRAGGED) {
-                    startDragging(c);
-                }
+            // TODO: Canvas shouldn't behave unusually in this respect.
+            if (c instanceof JMonetCanvas) {
+                ((JMonetCanvas) c).getSurface().dispatchEvent(e);
             }
+
+            // Obscured components will not automatically receive focus; force focus as needed
+            if (e.getID() == MouseEvent.MOUSE_CLICKED ||
+                    e.getID() == MouseEvent.MOUSE_DRAGGED ||
+                    e.getID() == MouseEvent.MOUSE_PRESSED) {
+                c.requestFocus();
+            }
+
+            // Translate and dispatch event
+            MouseEvent localEvent = SwingUtilities.convertMouseEvent(source, e, c);
+            c.dispatchEvent(localEvent);
         }
     }
 
     /**
      * Track and dispatch mouse-enter and mouse-exit events on the background parts.
-     *
+     * <p>
      * This is a bit more complicated than first expected; we cannot simply translate the
      * source component's mouseEnter/mouseExit events as those fire only when the
      * mouse enters/exits the source, NOT when entering or exiting a component behind it.
@@ -154,24 +130,20 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
      */
     private void synthesizeChildEntryExitEvents(MouseEvent e) {
 
-        // Only care about mouseMoved events
-        if (e.getID() == MouseEvent.MOUSE_MOVED) {
+        for (Component c : enumerator.getComponentsInZOrder()) {
 
-            for (Component c : enumerator.getComponentsInZOrder()) {
+            if (c instanceof ContainerWrappedPart) {
+                c = ((ContainerWrappedPart) c).getWrappedComponent();
+            }
 
-                if (c instanceof ContainerWrappedPart) {
-                    c = ((ContainerWrappedPart) c).getWrappedComponent();
-                }
+            MouseEvent localEvent = SwingUtilities.convertMouseEvent(source, e, c);
 
-                MouseEvent localEvent = SwingUtilities.convertMouseEvent(source, e, c);
+            if (didMouseEnter(c, e)) {
+                c.dispatchEvent(synthesizeEvent(c, localEvent, MouseEvent.MOUSE_ENTERED));
+            }
 
-                if (didMouseEnter(c, e)) {
-                    c.dispatchEvent(synthesizeEvent(c, localEvent, MouseEvent.MOUSE_ENTERED));
-                }
-
-                if (didMouseExit(c, e)) {
-                    c.dispatchEvent(synthesizeEvent(c, localEvent, MouseEvent.MOUSE_EXITED));
-                }
+            if (didMouseExit(c, e)) {
+                c.dispatchEvent(synthesizeEvent(c, localEvent, MouseEvent.MOUSE_EXITED));
             }
         }
     }
@@ -226,8 +198,8 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
      * replaced by the given arguments.
      *
      * @param source The source of the event to be created
-     * @param e The MouseEvent to copy
-     * @param newId The new event ID
+     * @param e      The MouseEvent to copy
+     * @param newId  The new event ID
      * @return The new MouseEvent
      */
     private MouseEvent synthesizeEvent(Component source, MouseEvent e, int newId) {
@@ -240,29 +212,6 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
                 e.getClickCount(),
                 e.isPopupTrigger(),
                 e.getButton());
-    }
-
-    /**
-     * Track that the given component is being dragged.
-     * @param c The component being dragged.
-     */
-    private void startDragging(Component c) {
-        dragging = c;
-    }
-
-    /**
-     * Track that the user has stopped dragging.
-     */
-    private void stopDragging() {
-        dragging = null;
-    }
-
-    /**
-     * Determine if a component is being dragged based on the last event dispatched.
-     * @return True if a component is being dragged; false otherwise.
-     */
-    private boolean isDragging() {
-        return dragging != null;
     }
 
     /**
@@ -293,7 +242,7 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
 
                     // Special case: Give priority to scroll pane's viewport if it's hit
                     if (c instanceof JScrollPane) {
-                        Component viewPortView = ((JScrollPane)c).getViewport().getView();
+                        Component viewPortView = ((JScrollPane) c).getViewport().getView();
                         Point childHidPoint = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), c);
                         if (viewPortView.contains(childHidPoint)) {
                             return viewPortView;
