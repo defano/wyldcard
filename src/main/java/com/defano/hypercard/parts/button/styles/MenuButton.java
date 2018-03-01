@@ -1,5 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
@@ -25,6 +26,7 @@ public class MenuButton extends JComboBox<String> implements ButtonComponent {
 
         this.addMouseListener(toolEditablePart);
         this.addKeyListener(toolEditablePart);
+        this.setBorder(PartBorderFactory.createEmptyBorder());
 
         final Component[] components = this.getComponents();
         for(final Component component : components) {

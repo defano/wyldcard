@@ -13,24 +13,27 @@ import com.defano.hypercard.window.WindowManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.AWTEventListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-public class PartManager implements AWTEventListener {
+public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
 
-    private final static PartManager instance = new PartManager();
+    private final static PartEditManager instance = new PartEditManager();
 
     // Initial size of new part when user command-drags
     private final static Dimension NEW_PART_DIM = new Dimension(10,10);
     private Point clickLoc;
+    private boolean isScriptEditMode = false;
 
-    private PartManager() {}
+    private PartEditManager() {}
 
-    public static PartManager getInstance() {
+    public static PartEditManager getInstance() {
         return instance;
     }
 
     public void start() {
-        Toolkit.getDefaultToolkit().addAWTEventListener(new PartManager(), AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        Toolkit.getDefaultToolkit().addAWTEventListener(instance, AWTEvent.MOUSE_EVENT_MASK | AWTEvent.MOUSE_MOTION_EVENT_MASK);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(instance);
     }
 
     @Override
@@ -106,4 +109,22 @@ public class PartManager implements AWTEventListener {
         SwingUtilities.convertPointFromScreen(clickLoc, theCard);
     }
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        boolean isAltOptionDown = e.isAltDown();
+        boolean isCtrlCommandDown = e.isMetaDown() || e.isControlDown();
+        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
+
+        if (isScriptEditMode) {
+            theCard.repaint();
+        }
+
+        isScriptEditMode = isAltOptionDown && isCtrlCommandDown;
+
+        if (isScriptEditMode) {
+            theCard.repaint();
+        }
+
+        return false;
+    }
 }

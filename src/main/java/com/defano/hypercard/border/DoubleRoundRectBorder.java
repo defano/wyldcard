@@ -4,14 +4,14 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
-public class DoubleRoundRectBorder implements Border {
+public class DoubleRoundRectBorder implements Border, ColorStateBorder {
     private final int innerWidth;
     private final int outerWidth;
     private final int separation;
     private final int innerArcSize;
     private final int outerArcSize;
 
-    public DoubleRoundRectBorder(int innerWidth, int innerArcSize, int separation, int outerWidth, int outerArcSize) {
+    DoubleRoundRectBorder(int innerWidth, int innerArcSize, int separation, int outerWidth, int outerArcSize) {
         this.innerWidth = innerWidth;
         this.separation = separation;
         this.outerWidth = outerWidth;
@@ -29,8 +29,7 @@ public class DoubleRoundRectBorder implements Border {
         double halfInner = innerWidth / 2.0;
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        g2d.setColor(c.isEnabled() ? Color.BLACK : Color.GRAY);
+        g2d.setPaint(getBorderColor(c));
 
         // Draw outer stroke
         g2d.setStroke(new BasicStroke(outerWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));

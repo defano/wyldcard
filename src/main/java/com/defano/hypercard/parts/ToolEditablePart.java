@@ -1,6 +1,7 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.awt.KeyListenable;
+import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.button.ButtonComponent;
@@ -216,8 +217,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     default void mouseClicked(MouseEvent e) {
         boolean wasDoubleClicked = isSelectedForEditing() && e.getClickCount() == 2;
 
-        // Double-command click to edit script
-        if (wasDoubleClicked && (e.isControlDown() || e.isMetaDown())) {
+        // Command-option click to edit script
+        if (KeyboardManager.getInstance().isCommandOptionDown()) {
             editScript();
         }
 

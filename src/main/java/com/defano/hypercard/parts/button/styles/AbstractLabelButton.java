@@ -4,6 +4,7 @@ import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.icons.ButtonIcon;
 import com.defano.hypercard.icons.IconFactory;
 import com.defano.hypercard.icons.AlphaImageIcon;
+import com.defano.hypercard.parts.ContainerWrappedPart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonModel;
@@ -14,7 +15,7 @@ import com.defano.hypertalk.ast.model.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class AbstractLabelButton extends JPanel implements ButtonComponent, IconAlignable {
+public abstract class AbstractLabelButton extends JPanel implements ContainerWrappedPart, ButtonComponent, IconAlignable {
 
     protected final Color DEFAULT_HILITE_COLOR = new Color(0, 0, 0, 0x90);
 
@@ -113,6 +114,11 @@ public abstract class AbstractLabelButton extends JPanel implements ButtonCompon
     @Override
     public JComponent getIconComponent() {
         return label;
+    }
+
+    @Override
+    public JComponent getWrappedComponent() {
+        return this;
     }
 
     private Color getLabelColor() {

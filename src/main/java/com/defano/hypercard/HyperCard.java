@@ -3,7 +3,7 @@ package com.defano.hypercard;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.awt.MouseManager;
 import com.defano.hypercard.cursor.CursorManager;
-import com.defano.hypercard.parts.editor.PartManager;
+import com.defano.hypercard.parts.editor.PartEditManager;
 import com.defano.hypercard.patterns.PatternManager;
 import com.defano.hypercard.runtime.PeriodicMessageManager;
 import com.defano.hypercard.runtime.context.FileContext;
@@ -47,7 +47,7 @@ public class HyperCard extends StackManager {
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();
             MouseManager.getInstance().start();
-            PartManager.getInstance().start();
+            PartEditManager.getInstance().start();
             WindowManager.getInstance().start();
             CursorManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();

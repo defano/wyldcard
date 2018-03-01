@@ -1,16 +1,15 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.RectangleBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class TransparentButton extends AbstractLabelButton {
 
     public TransparentButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
-        setBorder(BorderFactory.createEmptyBorder());
+        setBorder(PartBorderFactory.createEmptyBorder());
         setOpaque(false);
     }
 
@@ -27,9 +26,9 @@ public class TransparentButton extends AbstractLabelButton {
         super.setEnabled(enabled);
 
         if (enabled) {
-            setBorder(BorderFactory.createEmptyBorder());
+            setBorder(PartBorderFactory.createEmptyBorder());
         } else {
-            setBorder(new RectangleBorder());
+            setBorder(PartBorderFactory.createLineBorder());
         }
     }
 }

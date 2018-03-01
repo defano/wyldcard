@@ -1,8 +1,8 @@
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class OpaqueButton extends AbstractLabelButton {
@@ -11,7 +11,7 @@ public class OpaqueButton extends AbstractLabelButton {
         super(toolEditablePart);
         setOpaque(true);
         setBackground(Color.WHITE);
-        setBorder(BorderFactory.createEmptyBorder());
+        setBorder(PartBorderFactory.createEmptyBorder());
     }
 
     @Override

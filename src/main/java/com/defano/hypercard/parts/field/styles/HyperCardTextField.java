@@ -3,6 +3,7 @@ package com.defano.hypercard.parts.field.styles;
 import com.defano.hypercard.awt.KeyListenable;
 import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.awt.MouseMotionListenable;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.ToolMode;
@@ -71,6 +72,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         textPane.setEditorKit(new RTFEditorKit());
 
         this.setViewportView(textPane);
+        textPane.setBorder(PartBorderFactory.createEmptyBorder());
 
         getViewport().addChangeListener(e -> {
             textPane.invalidateViewport(getViewport());

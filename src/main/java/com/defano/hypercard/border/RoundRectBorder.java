@@ -6,16 +6,16 @@ import java.awt.*;
 /**
  * Draws a round rectangle border on a Swing component.
  */
-public class RoundRectBorder implements Border {
+public class RoundRectBorder implements Border, ColorStateBorder {
 
     private final int stokeWidth;
     private final int arcSize;
 
-    public RoundRectBorder(int arcSize) {
+    RoundRectBorder(int arcSize) {
         this(arcSize, 1);
     }
 
-    public RoundRectBorder(int arcSize, int strokeWidth) {
+    RoundRectBorder(int arcSize, int strokeWidth) {
         this.arcSize = arcSize;
         this.stokeWidth = strokeWidth;
     }
@@ -28,7 +28,7 @@ public class RoundRectBorder implements Border {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2d.setColor(c.isEnabled() ? Color.BLACK : Color.GRAY);
+        g2d.setPaint(getBorderColor(c));
         g2d.setStroke(new BasicStroke(stokeWidth));
         g2d.drawRoundRect(0, 0, width - stokeWidth, height - stokeWidth, arcSize, arcSize);
 

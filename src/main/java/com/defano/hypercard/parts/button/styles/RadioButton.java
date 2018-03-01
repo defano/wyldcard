@@ -1,5 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
@@ -24,6 +25,8 @@ public class RadioButton extends JRadioButton implements SharedHilight, ButtonCo
         super.addActionListener(this);
         super.addMouseListener(toolEditablePart);
         super.addKeyListener(toolEditablePart);
+        super.setBorder(PartBorderFactory.createEmptyBorder());
+        super.setBorderPainted(true);
     }
 
     @Override

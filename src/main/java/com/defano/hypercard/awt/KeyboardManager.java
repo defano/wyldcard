@@ -65,6 +65,10 @@ public class KeyboardManager {
         return isBreakSequence;
     }
 
+    public boolean isCommandOptionDown() {
+        return isAltOptionDown() && isCtrlCommandDown();
+    }
+
     private static void fireGlobalKeyListeners(KeyEvent e) {
         Set<KeyListener> listeners = new HashSet<>(observers);
 

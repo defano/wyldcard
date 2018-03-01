@@ -33,7 +33,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private Disposable toolModeSubscription;
     private ButtonComponent buttonComponent;
-    private boolean isBeingEdited = false;
+    private boolean isBeingEdited = false;  // Indicates part is selected for editing (has marching ants)
     private boolean isFocused = false;      // Indicates user pressed mouse while over part
 
     public StyleableButton(ButtonStyle style) {

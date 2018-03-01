@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.DropShadowBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ public class ShadowButton extends AbstractLabelButton {
 
     public ShadowButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
-        setBorder(new DropShadowBorder());
+        setBorder(PartBorderFactory.createDropShadowBorder());
         setOpaque(false);
         setBackground(Color.WHITE);
     }

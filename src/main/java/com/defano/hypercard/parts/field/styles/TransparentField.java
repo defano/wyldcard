@@ -1,8 +1,8 @@
 package com.defano.hypercard.parts.field.styles;
 
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
+import com.defano.hypercard.runtime.context.ToolsContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,9 +17,6 @@ public class TransparentField extends HyperCardTextField {
         setOpaque(false);
         getTextPane().setOpaque(false);
         getViewport().setOpaque(false);
-
-        setBorder(BorderFactory.createEmptyBorder());
-        getTextPane().setBorder(BorderFactory.createEmptyBorder());
 
         getViewport().setBackground(TRANSPARENT);
         setBackground(TRANSPARENT);

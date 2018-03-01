@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.OvalBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
@@ -9,7 +9,7 @@ public class OvalButton extends AbstractLabelButton {
 
     public OvalButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
-        setBorder(new OvalBorder());
+        setBorder(PartBorderFactory.createOvalBorder());
         setOpaque(false);
     }
 

@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.RectangleBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ public class RectangularButton extends AbstractLabelButton {
 
     public RectangularButton(ToolEditablePart toolEditablePart) {
         super(toolEditablePart);
-        setBorder(new RectangleBorder());
+        setBorder(PartBorderFactory.createLineBorder());
         setOpaque(true);
         setBackground(Color.WHITE);
     }

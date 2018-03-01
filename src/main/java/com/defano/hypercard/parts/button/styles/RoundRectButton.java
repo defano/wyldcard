@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.RoundRectShadowBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 
@@ -14,7 +14,7 @@ public class RoundRectButton extends AbstractLabelButton implements ButtonCompon
         super(toolEditablePart);
         setOpaque(false);
         setBackground(Color.WHITE);
-        setBorder(new RoundRectShadowBorder(ARC_DIAMETER));
+        setBorder(PartBorderFactory.createRoundRectShadowBorder(ARC_DIAMETER));
     }
 
     @Override

@@ -8,17 +8,17 @@ import java.awt.geom.Rectangle2D;
 /**
  * Draws a rectangular border with a drop-shadow on the bottom and right edges of a Swing component.
  */
-public class DropShadowBorder implements Border {
+public class DropShadowBorder implements Border, ColorStateBorder {
 
     private final int strokeWidth;      // Width of the rectangular border, in px
     private final int shadowWidth;      // Width of the shadow line, in px
     private final int shadowInset;      // Inset of shadow line from bottom-left and top-right, in px
 
-    public DropShadowBorder() {
+    DropShadowBorder() {
         this(1, 2, 5);
     }
 
-    public DropShadowBorder(int strokeWidth, int shadowWidth, int shadowInset) {
+    DropShadowBorder(int strokeWidth, int shadowWidth, int shadowInset) {
         this.strokeWidth = strokeWidth;
         this.shadowWidth = shadowWidth;
         this.shadowInset = shadowInset;
@@ -38,7 +38,7 @@ public class DropShadowBorder implements Border {
         // Overlay drop-shadow onto border by 1px to prevent any weirdness related to anti-aliasing and HDPI screens;
         // thus shadowWidth needs to be 1px larger than the desired visible shadow.
 
-        g2d.setPaint(c.isEnabled() ? Color.BLACK : Color.GRAY);
+        g2d.setPaint(getBorderColor(c));
         g2d.setStroke(new BasicStroke(strokeWidth));
         g2d.draw(new Rectangle2D.Double(halfStroke, halfStroke, width - shadowWidth - strokeWidth + 1, height - shadowWidth - strokeWidth + 1));
 

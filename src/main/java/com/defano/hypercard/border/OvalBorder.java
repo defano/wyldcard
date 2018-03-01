@@ -7,15 +7,15 @@ import java.awt.geom.Ellipse2D;
 /**
  * Draws an oval/circular border on a Swing component.
  */
-public class OvalBorder implements Border {
+public class OvalBorder implements Border, ColorStateBorder {
 
     private final int strokeWidth;
 
-    public OvalBorder() {
+    OvalBorder() {
         this(1);
     }
 
-    public OvalBorder(int strokeWidth) {
+    OvalBorder(int strokeWidth) {
         this.strokeWidth = strokeWidth;
     }
 
@@ -29,7 +29,7 @@ public class OvalBorder implements Border {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2d.setColor(c.isEnabled() ? Color.BLACK : Color.GRAY);
+        g2d.setPaint(getBorderColor(c));
         g2d.setStroke(new BasicStroke(strokeWidth));
         g2d.draw(new Ellipse2D.Double(halfStroke, halfStroke, width - strokeWidth, height - strokeWidth));
 

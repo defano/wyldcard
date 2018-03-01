@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.DoubleRoundRectBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 
 import javax.swing.border.Border;
@@ -17,6 +17,6 @@ public class DefaultClassicButton extends ClassicButton {
 
     @Override
     protected Border getButtonBorder() {
-        return new DoubleRoundRectBorder(INNER_BORDER_WIDTH, getButtonCornerDiameter(), BORDER_SEPARATION, OUTER_BORDER_WIDTH, getButtonCornerDiameter() * 2);
+        return PartBorderFactory.createDoubleRoundRectBorder(INNER_BORDER_WIDTH, getButtonCornerDiameter(), BORDER_SEPARATION, OUTER_BORDER_WIDTH, getButtonCornerDiameter() * 2);
     }
 }

@@ -9,17 +9,17 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Draws a round-rectangle border with a single-pixel drop shadow on the bottom-right side.
  */
-public class RoundRectShadowBorder implements Border {
+public class RoundRectShadowBorder implements Border, ColorStateBorder {
 
     private final int arcSize;
     private final int strokeWidth;
     private final int shadowWidth;
 
-    public RoundRectShadowBorder(int arcSize) {
+    RoundRectShadowBorder(int arcSize) {
         this(arcSize, 1, 2);
     }
 
-    public RoundRectShadowBorder(int arcSize, int strokeWidth, int shadowWidth) {
+    RoundRectShadowBorder(int arcSize, int strokeWidth, int shadowWidth) {
         this.arcSize = arcSize;
         this.strokeWidth = strokeWidth;
         this.shadowWidth = shadowWidth;
@@ -37,7 +37,7 @@ public class RoundRectShadowBorder implements Border {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2d.setPaint(c.isEnabled() ? Color.BLACK : Color.GRAY);
+        g2d.setPaint(getBorderColor(c));
         g2d.setStroke(new BasicStroke(strokeWidth));
         g2d.draw(new RoundRectangle2D.Double(halfStroke, halfStroke, width - strokeWidth - shadowWidth, height - strokeWidth - shadowWidth, arcSize, arcSize));
 

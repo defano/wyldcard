@@ -1,6 +1,6 @@
 package com.defano.hypercard.parts.button.styles;
 
-import com.defano.hypercard.border.RoundRectBorder;
+import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.ButtonComponent;
 
@@ -50,6 +50,6 @@ public class ClassicButton extends AbstractLabelButton implements ButtonComponen
     }
 
     protected Border getButtonBorder() {
-        return new RoundRectBorder(ARC_DIAMETER);
+        return PartBorderFactory.createRoundRectBorder(ARC_DIAMETER);
     }
 }
