@@ -8,10 +8,10 @@ import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.fonts.TextStyleSpecifier;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.field.FieldComponent;
 import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.field.FieldModelObserver;
 import com.defano.hypercard.parts.model.PropertiesModel;
+import com.defano.hypercard.parts.model.PropertyChangeObserver;
 import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.util.ThreadUtils;
@@ -37,7 +37,7 @@ import java.util.Set;
  * An abstract HyperCard text field. That is, a field without a specific style bound to it. Encapsulates the styleable,
  * editable text component and the scrollable surface in which it is embedded.
  */
-public abstract class HyperCardTextField extends JScrollPane implements FieldComponent, DocumentListener, CaretListener, FieldModelObserver {
+public abstract class HyperCardTextField extends JScrollPane implements PropertyChangeObserver, DocumentListener, CaretListener, FieldModelObserver {
 
     protected final static int WIDE_MARGIN_PX = 15;
     protected final static int NARROW_MARGIN_PX = 1;
@@ -161,27 +161,15 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public HyperCardTextPane getTextPane() {
         return textPane;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setEditable(boolean editable) {
         super.setEnabled(editable);
         textPane.setEditable(editable);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void partOpened() {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
 
@@ -218,10 +206,6 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
         SwingUtilities.invokeLater(() -> textPane.autoSelectLines(model.getAutoSelectedLines()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void partClosed() {
         enqueueModelUpdateRequest();
         textPane.getStyledDocument().removeDocumentListener(this);

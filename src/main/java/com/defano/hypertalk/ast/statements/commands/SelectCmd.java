@@ -3,7 +3,7 @@ package com.defano.hypertalk.ast.statements.commands;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.HyperCardButton;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.button.styles.MenuButton;
 import com.defano.hypercard.parts.card.CardLayerPart;
@@ -100,7 +100,7 @@ public class SelectCmd extends Command {
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);
         ButtonPart part = (ButtonPart) HyperCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
-        ButtonComponent component = (ButtonComponent) part.getButtonComponent();
+        HyperCardButton component = (HyperCardButton) part.getButtonComponent();
         if (component instanceof MenuButton) {
             ((MenuButton) component).selectItem(chunk.start.evaluate().integerValue());
         } else {

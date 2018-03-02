@@ -6,7 +6,7 @@ import com.defano.hypercard.icons.ButtonIcon;
 import com.defano.hypercard.icons.IconFactory;
 import com.defano.hypercard.parts.ContainerWrappedPart;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.HyperCardButton;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.button.IconAlignable;
 import com.defano.hypercard.parts.model.PropertiesModel;
@@ -15,7 +15,7 @@ import com.defano.hypertalk.ast.model.Value;
 import javax.swing.*;
 import java.awt.*;
 
-public class NativeButton extends JPanel implements ContainerWrappedPart, ButtonComponent, IconAlignable {
+public class NativeButton extends JPanel implements ContainerWrappedPart, HyperCardButton, IconAlignable {
 
     private final ToolEditablePart toolEditablePart;
     private final JButton button;

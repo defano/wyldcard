@@ -4,11 +4,11 @@ import com.defano.hypercard.awt.KeyListenable;
 import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.awt.MouseListenable;
 import com.defano.hypercard.paint.ToolMode;
-import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.HyperCardButton;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.parts.card.CardLayerPart;
 import com.defano.hypercard.parts.card.CardLayerPartModel;
-import com.defano.hypercard.parts.field.FieldComponent;
+import com.defano.hypercard.parts.field.styles.HyperCardTextField;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
@@ -206,9 +206,9 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     @Override
     default void mousePressed(MouseEvent e) {
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) {
+        if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
             PartToolContext.getInstance().setSelectedPart(this);
-        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent) {
+        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField) {
             PartToolContext.getInstance().setSelectedPart(this);
         }
     }
@@ -228,8 +228,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         }
 
         // Single click to select part
-        else if ((ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof ButtonComponent) ||
-                (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof FieldComponent))
+        else if ((ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
+                (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
         {
             PartToolContext.getInstance().setSelectedPart(this);
         }

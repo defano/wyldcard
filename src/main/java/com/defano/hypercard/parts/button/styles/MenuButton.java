@@ -3,7 +3,7 @@ package com.defano.hypercard.parts.button.styles;
 import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.fonts.FontUtils;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.HyperCardButton;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.model.PropertiesModel;
@@ -16,7 +16,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 
-public class MenuButton extends JComboBox<String> implements ButtonComponent {
+public class MenuButton extends JComboBox<String> implements HyperCardButton {
 
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();

@@ -26,13 +26,13 @@ import java.awt.event.MouseEvent;
  * runtime (i.e., a push button can morph into a radio button or combo box).
  * <p>
  * This class provides common functionality for "styleable" buttons; the actual look-and-feel of the button is provided
- * by a subclass of {@link ButtonComponent}.
+ * by a subclass of {@link HyperCardButton}.
  */
-public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonComponent>, ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
+public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCardButton>, ToolEditablePart, PropertyChangeObserver, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private Disposable toolModeSubscription;
-    private ButtonComponent buttonComponent;
+    private HyperCardButton buttonComponent;
     private boolean isBeingEdited = false;  // Indicates part is selected for editing (has marching ants)
     private boolean isFocused = false;      // Indicates user pressed mouse while over part
 
@@ -74,7 +74,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,ButtonCom
     }
 
     @Override
-    public ButtonComponent getComponentForStyle(ButtonStyle style) {
+    public HyperCardButton getComponentForStyle(ButtonStyle style) {
         switch (style) {
             case CHECKBOX:
                 return new CheckboxButton(this);

@@ -2,11 +2,11 @@ package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.border.PartBorderFactory;
 import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.HyperCardButton;
 
 import java.awt.*;
 
-public class RoundRectButton extends AbstractLabelButton implements ButtonComponent {
+public class RoundRectButton extends AbstractLabelButton implements HyperCardButton {
 
     private final static int ARC_DIAMETER = 14;     // Rounded corner diameter
 

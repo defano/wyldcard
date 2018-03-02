@@ -1,7 +1,7 @@
 package com.defano.hypercard.parts.button.styles;
 
 import com.defano.hypercard.border.PartBorderFactory;
-import com.defano.hypercard.parts.button.ButtonComponent;
+import com.defano.hypercard.parts.button.HyperCardButton;
 import com.defano.hypercard.parts.button.ButtonPart;
 import com.defano.hypercard.parts.ToolEditablePart;
 import com.defano.hypercard.parts.button.SharedHilight;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class CheckboxButton extends JCheckBox implements SharedHilight, ButtonComponent, ActionListener {
+public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCardButton, ActionListener {
 
     private final ToolEditablePart toolEditablePart;
 
