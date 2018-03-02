@@ -195,7 +195,7 @@ public class HyperCardTextPane extends JTextPane {
     public void invalidateViewport(JViewport viewport) {
         if (viewport != null) {
 
-            lineCalculationThrottle.submitOnUiThread(() -> {
+            lineCalculationThrottle.submitOnUiThread(hashCode(), () -> {
                 Point startPoint = viewport.getViewPosition();
                 Dimension size = viewport.getExtentSize();
                 Point endPoint = new Point(startPoint.x + size.width, startPoint.y + size.height);

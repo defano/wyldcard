@@ -25,11 +25,11 @@ import java.awt.*;
  * This class provides common functionality for "styleable" field parts; the actual style of the field is provided by
  * a concrete subclass.
  */
-public abstract class StyleableField implements Styleable<FieldStyle,FieldComponent>, ToolEditablePart, MarchingAntsObserver {
+public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTextField>, ToolEditablePart, MarchingAntsObserver {
 
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
     private Disposable toolModeSubscription;
-    private FieldComponent fieldComponent;
+    private HyperCardTextField fieldComponent;
     private boolean isBeingEdited;
 
     public StyleableField(FieldStyle style) {
@@ -62,11 +62,11 @@ public abstract class StyleableField implements Styleable<FieldStyle,FieldCompon
     public void setStyle(FieldStyle style) {
         Component oldComponent = getFieldComponent();
         fieldComponent = getComponentForStyle(style);
-        replaceViewComponent(oldComponent, (JComponent) fieldComponent);
+        replaceViewComponent(oldComponent, fieldComponent);
     }
 
     @Override
-    public FieldComponent getComponentForStyle(FieldStyle style) {
+    public HyperCardTextField getComponentForStyle(FieldStyle style) {
         switch (style) {
             case TRANSPARENT:
                 return new TransparentField(this);

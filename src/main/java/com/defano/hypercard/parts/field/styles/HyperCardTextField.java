@@ -431,7 +431,7 @@ public abstract class HyperCardTextField extends JScrollPane implements FieldCom
     private void updateFocusedFontSelection() {
 
         // Style calculation can be costly for large selections; throttle repeated requests in the background
-        fontSelectionThrottle.submitOnUiThread(() -> {
+        fontSelectionThrottle.submitOnUiThread(hashCode(), () -> {
             Range selection = getSelectedTextRange();
 
             Set<Value> styles = new HashSet<>();

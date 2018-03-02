@@ -15,7 +15,7 @@ public class Throttle {
     private final int periodMs;
     private final ScheduledExecutorService executor;
 
-    private List<Future> pendingUpdates = new ArrayList<>();
+    private ConcurrentHashMap<Long, List<Future>> pendingUpdates = new ConcurrentHashMap<>();
 
     public Throttle(String name, int periodMs) {
         this.periodMs = periodMs;
@@ -34,15 +34,33 @@ public class Throttle {
         submit(() -> SwingUtilities.invokeLater(runnable));
     }
 
-    public void submit(Runnable runnable) {
+    public void submitOnUiThread(long requesterId, Runnable runnable) {
+        submit(requesterId, () -> SwingUtilities.invokeLater(runnable));
+    }
+
+    public void submit(long requesterId, Runnable runnable) {
         // Cancel pending jobs
-        for (Future pendingUpdate : pendingUpdates) {
+        for (Future pendingUpdate : getUpdatesForId(requesterId)) {
             pendingUpdate.cancel(false);
         }
         pendingUpdates.clear();
 
         // Schedule job
-        pendingUpdates.add(executor.schedule(runnable, periodMs, TimeUnit.MILLISECONDS));
+        getUpdatesForId(requesterId).add(executor.schedule(runnable, periodMs, TimeUnit.MILLISECONDS));
+    }
+
+    public void submit(Runnable runnable) {
+        submit(Long.MAX_VALUE, runnable);
+    }
+
+    private List<Future> getUpdatesForId(long requesterId) {
+        if (pendingUpdates.contains(requesterId)) {
+            return pendingUpdates.get(requesterId);
+        }
+
+        ArrayList<Future> updates = new ArrayList<>();
+        pendingUpdates.put(requesterId, updates);
+        return updates;
     }
 
     public void shutdown() {
