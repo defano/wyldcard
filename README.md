@@ -802,9 +802,9 @@ sort cards of background id 2 by the random of 2
 
 ### Sorting the contents of a container
 
-The contents of a HyperTalk container can also be sorted using the command `sort <chunks> {of | in} <container> [<direction>] [<style>] [by <expression>]` where:
+The contents of a HyperTalk container (or a chunk of a container) can be sorted using the command `sort <chunks> {of | in} <container> [<direction>] [<style>] [by <expression>]` where:
 
-* `<chunks>` is `[the] lines` or `[the] words`
+* `<chunks>` is `[the] lines`, `[the] words`, `[the] items`, or `[the] chars` (HyperCard only support sorting by `items` or `lines`.)
 * `<container>` identifies a HyperTalk variable, part, or property
 * `<direction>` is either `ascending` or `descending`
 * `<style>` is `text`, `numeric`, `dateTime` or `international` (as described earlier)
@@ -814,7 +814,7 @@ Consider these examples,
 
 ```
 sort the lines of menu "Edit"                                    -- alphabetize items of Edit menu
-sort the items of myListVar descending numeric
+sort the items of the last line of myVar descending numeric
 sort the lines of card field "Names" by the last word of each    -- sort names by last name
 sort the lines of card field "Names" by the middle word of each  -- or by middle name
 ```

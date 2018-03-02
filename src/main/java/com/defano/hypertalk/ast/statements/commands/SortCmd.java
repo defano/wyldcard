@@ -56,23 +56,40 @@ public class SortCmd extends Command {
     }
 
     private void putSortedItems(ContainerExp container, List<Value> sortedItems) throws HtException {
-        if (chunkType == ChunkType.LINE) {
-            container.putValue(Value.ofLines(sortedItems), Preposition.INTO);
-        } else {
-            container.putValue(Value.ofItems(sortedItems), Preposition.INTO);
+        switch (chunkType) {
+            case WORD:
+                container.putValue(Value.ofWords(sortedItems), Preposition.INTO);
+                break;
+            case LINE:
+                container.putValue(Value.ofLines(sortedItems), Preposition.INTO);
+                break;
+            case ITEM:
+                container.putValue(Value.ofItems(sortedItems), Preposition.INTO);
+                break;
+            case CHAR:
+                container.putValue(Value.ofChars(sortedItems), Preposition.INTO);
+                break;
+
+            default:
+                throw new HtSemanticException("Can't sort by that.");
         }
     }
 
     private List<Value> getItemsToSort(ContainerExp container) throws HtException {
-        if (chunkType != ChunkType.LINE && chunkType != ChunkType.ITEM) {
-            throw new HtSemanticException("Can only sort by lines or items.");
+        switch (chunkType) {
+            case WORD:
+                return container.evaluate().getWords();
+            case ITEM:
+                return container.evaluate().getItems();
+            case LINE:
+                return container.evaluate().getLines();
+            case CHAR:
+                return container.evaluate().getChars();
+
+            default:
+                throw new HtSemanticException("Can't sort by that.");
         }
 
-        if (chunkType == ChunkType.LINE) {
-            return container.evaluate().getLines();
-        } else {
-            return container.evaluate().getItems();
-        }
     }
 
 }

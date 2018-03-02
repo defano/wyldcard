@@ -255,6 +255,8 @@ sortDirection
 sortChunkType
     : 'the'? line of                                                                                                    # sortChunkLines
     | 'the'? item of                                                                                                    # sortChunkItems
+    | 'the'? word of                                                                                                    # sortChunkWords
+    | 'the'? character of                                                                                               # sortChunkChars
     |                                                                                                                   # sortChunkDefault
     ;
 

@@ -251,6 +251,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitSortChunkWords(HyperTalkParser.SortChunkWordsContext ctx) {
+        return ChunkType.WORD;
+    }
+
+    @Override
+    public Object visitSortChunkChars(HyperTalkParser.SortChunkCharsContext ctx) {
+        return ChunkType.CHAR;
+    }
+
+    @Override
     public Object visitSortChunkDefault(HyperTalkParser.SortChunkDefaultContext ctx) {
         return ChunkType.LINE;
     }

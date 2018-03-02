@@ -133,7 +133,7 @@ public class ChunkUtils {
      * @param chunkType The ChunkType whose regular expression should be returned.
      * @return The regex for the given chunk type.
      */
-    static Pattern getRegexForChunkType(ChunkType chunkType) {
+    public static Pattern getRegexForChunkType(ChunkType chunkType) {
 
         switch (chunkType) {
             case CHAR:

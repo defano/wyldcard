@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  * Representation of value in HyperTalk; all values are stored internally
@@ -28,27 +29,29 @@ public class Value implements StyledComparable<Value> {
     private Boolean booleanValue;
 
     public static Value ofLines(List<Value> lines) {
-        StringBuilder builder = new StringBuilder();
-
-        for (int index = 0; index < lines.size(); index++) {
-            builder.append(lines.get(index));
-
-            if (index < lines.size() - 1) {
-                builder.append("\n");
-            }
-        }
-
-        return new Value(builder.toString());
+        return ofValues(lines, "\n");
     }
 
     public static Value ofItems(List<Value> items) {
+        return ofValues(items, ",");
+    }
+
+    public static Value ofWords(List<Value> words) {
+        return ofValues(words, " ");
+    }
+
+    public static Value ofChars(List<Value> chars) {
+        return ofValues(chars, "");
+    }
+
+    private static Value ofValues(List<Value> values, String delimiter) {
         StringBuilder builder = new StringBuilder();
 
-        for (int index = 0; index < items.size(); index++) {
-            builder.append(items.get(index));
+        for (int index = 0; index < values.size(); index++) {
+            builder.append(values.get(index));
 
-            if (index < items.size() - 1) {
-                builder.append(",");
+            if (index < values.size() - 1) {
+                builder.append(delimiter);
             }
         }
 
@@ -245,38 +248,39 @@ public class Value implements StyledComparable<Value> {
     }
 
     public List<Value> getItems() {
-        List<Value> list = new ArrayList<>();
-        
-        for (String item : value.split(","))
-            list.add(new Value(item));
-            
-        return list;
+        return getChunks(ChunkType.ITEM);
     }
 
     public Value getItemAt(int index) {
-        if (getItems().size() > index) {
-            return new Value(getItems().get(index));
+        List<Value> items = getItems();
+        if (items.size() > index) {
+            return new Value(items.get(index));
         } else {
             return new Value();
         }
     }
 
     public List<Value> getLines() {
-        List<Value> list = new ArrayList<>();
-
-        for (String thisLine : value.split("\n")) {
-            list.add(new Value(thisLine));
-        }
-
-        return list;
+        return getChunks(ChunkType.LINE);
     }
 
     public List<Value> getWords() {
-        ArrayList<Value> words = new ArrayList<>();
-        for (int i = 1; i <= ChunkUtils.getCount(ChunkType.WORD, stringValue()); i++) {
-            words.add(new Value(ChunkUtils.getChunk(ChunkType.WORD, this.stringValue(), i, i)));
+        return getChunks(ChunkType.WORD);
+    }
+    
+    public List<Value> getChars() {
+        return getChunks(ChunkType.CHAR);
+    }
+
+    public List<Value> getChunks(ChunkType type) {
+        Matcher matcher = ChunkUtils.getRegexForChunkType(type).matcher(value);
+        ArrayList<Value> chunks = new ArrayList<>();
+
+        while (matcher.find()) {
+            chunks.add(new Value(matcher.group()));
         }
-        return words;
+
+        return chunks;
     }
 
     public int itemCount () {
