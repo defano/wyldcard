@@ -251,7 +251,7 @@ end create
 
 [Operators](#operators) | [Factors](#factors) | [Literals](#constants-and-literals)
 
-An _expression_ is any fragment of the language that represents or produces a _value_. Constants (like `3.14`, `quote` or `"Hello world!"`), containers and variables (`myVar`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `fibonacci(empty, 0, 1, 200)`) are all expressions.
+An _expression_ is anything in HyperTalk that represents or produces a _value_. Constants (like `3.14`, `quote` or `"Hello world!"`), containers and variables (`myVar`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `fibonacci(empty, 0, 1, 200)`) are all expressions.
 
 A powerful aspect of HyperTalk's expression language is its ability to refer to a _chunk_ of an expression. A script can get or set any range of words, characters, lines, or comma-delimited items in a value by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), or by ordinal (`the third line of`).
 
@@ -487,7 +487,7 @@ put "[redacted]" into the selection
 
 ## Parts
 
-[Part IDs](#part-ids) | [Part Numbers](#part-numbers) | [Part Names](#part-names)
+[Part IDs](#part-ids) | [Part Numbers](#part-numbers) | [Part Names](#part-names) | [Menus](#menus)
 
 A _part_ is a scriptable user interface element.
 
@@ -532,11 +532,68 @@ get the height of background button "My Neat Button"
 put "2 * 2 = 4" after card field "Math" of the first card
 ```
 
+### Menus
+
+HyperTalk can control the menus that appear in the menu bar and determine their behavior. Unlike buttons or fields, however, changes to the menu bar are not "saved" as part of the stack, nor are they restricted to the current stack. Modifications to the menu bar will not be automatically restored when opening a saved stack document, and opening a new stack does not restore the menu bar to its default state.
+
+Even though the behavior of a menu is scriptable, menus themselves do not "contain" a script, and they are not assigned an ID or a part number.
+
+The list of menus appearing in the menu bar is retrievable via `the menus` function. For example, `if the menus contains "Edit" then delete menu "Edit"`
+
+#### Referring to menus
+
+A menu or menu item can be addressed by name (`"Edit" menu`, `"Undo" menuItem of menu "Edit"`) or by its position (`the third menu`, `menu 5`, `menuItem 6 of menu "Font"`). When referring to a menu, the resultant value is a line-separated list of menu items that appear in the menu (using a hyphen character, `-`, to denote a separator). When referring to a menu item, the value of the item is its name (i.e., `"Undo" menuItem of menu "Edit"` yields `Undo`).
+
+For example,
+
+```
+if menu "Objects" contains "Card Info..." then answer "Try choosing 'Card Info...'"
+put the second menu into editMenuItems    -- typically all the menu items in the Edit menu
+answer the first menuItem of menu "Edit"  -- typically responds with 'Undo'
+```
+
+#### Creating menus and menu items
+
+New menus are added to the menu bar using the `create` command and removed using the `delete` command. For example, `create menu "My Custom Menu"` or `if the menus contains "My Custom Menu" then delete menu "My Custom Menu"`. Note that when creating a new menu, it will be added to the end of the menu bar (furthest right position).
+
+You cannot create two menus that share the same name, nor can you delete a menu that does not exist.
+
+The value of each menu is treated as a list; you can add, delete, or modify menu items by mutating items in the menu's value. For example, to replace the contents of a menu `put "Item 1,-,Item 2" into menu "My Custom Menu"`. To append items to a menu, `put "Item 3" after the last line of menu "My Custom Menu"`. To delete a menu item, `delete the second line of menu "Edit"`
+
+Use the `reset menuBar` command to eliminate any changes you've made to the menu bar and restore the default HyperTalk Java menus and menu items.
+
+#### Responding to user selections in the menu bar
+
+Menus created by script have no default behavior. When the user chooses a menu from the menu bar, the `doMenu` message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior. (Note that `menu`-styled buttons do not send the `doMenu` message; only menus in the menu bar send this message).
+
+For example, place the following handler in a stack script to prompt the user to confirm if they really want to edit the background of the card:
+
+```
+on doMenu theMenu, theMenuItem
+  if theMenu is "Edit" and theMenuItem is "Background" then
+    answer "Are you sure you want to edit the background?" with "OK" or "Cancel"
+    if it is "OK" then pass doMenu
+  else
+    pass doMenu  -- Don't interrupt other menu selections
+  end if
+end doMenu
+```
+
+By invoking `pass doMenu` we're letting HyperCard respond to these menu selections. In the case where the user chooses "Background" and does not click "OK" in the dialog box, we are not passing `doMenu` and thereby "trapping" the menu selection and preventing HyperCard from acting upon it.
+
+#### Special considerations
+
+Menus in HyperTalk Java differ from Apple's HyperCard in a few nuanced ways:
+
+* In Apple's HyperCard, if you created a menu item with the same name as a HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in HyperTalk Java.
+* HyperTalk Java cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (thus, the stack cannot take action when the user selects an item from them).
+* When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
+
 ## Properties
 
-[Buttons](#buttons) | [Fields](#fields) | [Menus](#menus) | [HyperCard](#hypercard-properties)
+[Buttons](#buttons) | [Fields](#fields) | [Menu Items](#menu-items) | [Cards & Backgrounds](#cards-and-backgrounds) | [HyperCard](#hypercard-properties)
 
-A property is a HyperTalk-addressable attribute that determines how a part looks, feels, and reacts to user interaction. Properties in HyperTalk Java are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
+A property is a HyperTalk-addressable attribute that determines how an object looks, feels, and reacts to user interaction. Properties in HyperTalk Java are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
 
 For example,
 
@@ -547,7 +604,7 @@ set the itemDelimiter to "|"
 repeat while the mouseLoc is within the rect of me
 ```
 
-All buttons and fields have these properties:
+All objects share these properties:
 
 Property      | Description
 --------------|--------------------------
@@ -563,16 +620,22 @@ Property      | Description
 `rectangle`   | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rect`.
 `right`       | Returns or sets the right-most border of the part's location, moving the part horizontally but not affecting its width.
 `script`      | Retrieves or replaces the current script of the part
+`top`         | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
+`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
+`width`       | Returns or sets the width of the part (in pixels)
+
+In addition to the properties listed above, all button and field parts share these properties:
+
+Property      | Description
+--------------|--------------------------
 `selectedText`| For fields, returns the currently selected text. For buttons, returns the selected menu item of `menu`-style buttons or the empty string for all other button styles. This property is read-only; it cannot be set via HyperTalk.
-`style`       | Sets or retrieves the style of the part (see the tables below for available styles).
+`style`       | Sets or retrieves the style of the part (see the tables below for available button and field styles).
 `textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
 `textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
 `textSize`    | Returns or sets the size (in points) of the part's text.
 `textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic` (plus `strikeThrough`, `underline`, `subscript` and `superscript` when addressing fields). Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
-`top`         | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
-`topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the part is not drawn on the screen and receives no messages from HyperCard. This value can also be accessed using the `hide` and `show` commands.
-`width`       | Returns or sets the width of the part (in pixels)
+
 
 ### Buttons
 
@@ -593,7 +656,7 @@ Style                                      | Name          | Notes
 ![Default](doc/images/radio.png)           | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
 ![Default](doc/images/menu.png)            | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
 
-In addition to the properties common to all parts, a button has these additional properties:
+In addition to the properties common to all parts, a button has these additional unique properties:
 
 Property    | Description
 ------------|------------
@@ -604,7 +667,7 @@ Property    | Description
 
 ### Fields
 
-In HyperTalk Java, fields come in four styles. Apple's HyperCard provided a specific style of scrollable text field. In HyperTalk Java, every style of field is scrollable, but scrolling can be disabled with the `scrolling` property.
+In HyperTalk Java, fields come in four styles. Apple's HyperCard provided a specific style of scrollable text field. In HyperTalk Java, every style of field is scrollable, but scrolling can be disabled by setting the `scrolling` property to `false`.
 
 Style                                            | Name          | Notes
 -------------------------------------------------|---------------|-------------------------
@@ -628,7 +691,7 @@ Property        | Description
 `sharedText`    | When `true`, each card in the background shares the same text in the field. When `false`, each card in the background can place a unique value into the field. Has no effect on card fields.
 `wideMargins`   | Returns or sets whether the field is drawn with a wider, 15-pixel margin between its text and border.
 
-#### Text properties
+#### Text
 
 The properties of text within a field can also be addressed in HyperTalk: A script may get or set the font, size and style of a chunk of text within a field.
 
@@ -645,58 +708,9 @@ set the textStyle of the last word of card field "Some Text" to "bold, italic"
 add 3 to the textSize of the middle line of field 6
 ```
 
-### Menus
+### Menu Items
 
-HyperTalk can control the menus that appear in the menu bar and determine their behavior. Unlike buttons or fields, however, changes to the menu bar are not "saved" as part of the stack, nor are they restricted to the current stack. Modifications to the menu bar will not be automatically restored when opening a saved stack document, and opening a new stack does not restore the menu bar to its default state.
-
-Even though the behavior of a menu is scriptable, menus themselves do not "contain" a script, and they are not assigned an ID or a part number.
-
-The list of menus appearing in the menu bar is retrievable via `the menus` function. For example, `if the menus contains "Edit" then delete menu "Edit"`
-
-#### Referring to menus
-
-A menu or menu item can be addressed by name (`"Edit" menu`, `"Undo" menuItem of menu "Edit"`) or by its position (`the third menu`, `menu 5`, `menuItem 6 of menu "Font"`). When referring to a menu, the resultant value is a line-separated list of menu items that appear in the menu (using the string `-` to denote a separator). When referring to a menu item, the value of the item is its name (i.e., `"Undo" menuItem of menu "Edit"` yields `Undo`).
-
-For example,
-
-```
-if menu "Objects" contains "Card Info..." then answer "Try choosing 'Card Info...'"
-put the second menu into editMenuItems    -- typically all the menu items in the Edit menu
-answer the first menuItem of menu "Edit"  -- typically responds with 'Undo'
-```
-
-#### Creating menus and menu items
-
-New menus are added to the menu bar using the `create` command and removed using the `delete` command. For example, `create menu "My Custom Menu"` or `if the menus contains "My Custom Menu" then delete menu "My Custom Menu"`. Note that when creating a new menu, it will be added to the end of the menu bar (furthest right position).
-
-You cannot create two menus that share the same name, nor can you delete a menu that does not exist.
-
-The value of each menu is treated as a list; you can add, delete, or modify menu items by mutating items in the menu's value. For example, to replace the contents of a menu `put "Item 1,-,Item 2" into menu "My Custom Menu"`. To append items to a menu, `put "Item 3" after the last line of menu "My Custom Menu"`. To delete a menu item, `delete the second line of menu "Edit"`
-
-Use the `reset menuBar` command to eliminate any changes you've made to the menu bar and restore the default menus and menu items.
-
-#### Responding to user selections in the menu bar
-
-Menus created by script have no default behavior. When the user chooses a menu from the menu bar, the `doMenu` message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior. (Note that `menu`-styled buttons do not send the `doMenu` message; only menus in the menu bar send this message).
-
-For example, place the following handler in a stack script to prompt the user to confirm if they really want to edit the background of the card:
-
-```
-on doMenu theMenu, theMenuItem
-  if theMenu is "Edit" and theMenuItem is "Background" then
-    answer "Are you sure you want to edit the background?" with "OK" or "Cancel"
-    if it is "OK" then pass doMenu
-  else
-    pass doMenu  -- Don't interrupt other menu selections
-  end if
-end doMenu
-```
-
-By invoking `pass doMenu` we're letting HyperCard respond to these menu selections. In the case where the user chooses "Background" and does not click "OK" in the dialog box, we are not passing `doMenu` and thereby "trapping" the menu selection and preventing HyperCard from acting upon it.
-
-#### Properties of a menu item
-
-The name, accelerator key, disabled state and checkmark of a menu item can be scripted in HyperTalk by referring to these properties.
+The name, accelerator key, disabled state and checkmark of a menu item can be modified in HyperTalk by referring to these properties.
 
 Menu Property   | Description
 ----------------|---------------
@@ -705,13 +719,15 @@ Menu Property   | Description
 `enabled`       | A boolean value representing whether the menu item is enabled (selectable). For example, `set the enabled of menuItem "Back" of menu "Go" to false`. Also available via the `enable` and `disable` commands.
 `checkmark`     | A boolean value indicating whether the menu has a checkmark next to it. For example, `set the checkmark of menuItem "Plain" of menu "Style" to not the checkmark of menuItem "Plain" of menu "Style"`
 
-#### Special considerations
+### Cards and Backgrounds
 
-Menus in HyperTalk Java differ from Apple's HyperCard in a few nuanced ways:
+Cards and backgrounds are objects in HyperCard that support these unique properties:
 
-* In Apple's HyperCard, if you created a menu item with the same name as a HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in HyperTalk Java.
-* HyperTalk Java cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (thus, the stack cannot take action when the user selects an item from them).
-* When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
+Property     | Description
+-------------|----------------------
+`marked`     | A general use logical-valued "flag" indicating the card is somehow special useful to classify or limit search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
+`cantDelete` | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
+`showPict`   | A logical value specifying if the card or background picture is visible.
 
 ### HyperCard Properties
 
@@ -736,7 +752,7 @@ Global Property | Description
 `lineSize`      | The width, in pixels, of the line/outline drawn by paint tools.
 `multiple`      | A boolean value indicating whether shapes are being drawn multiple (equivalent to "Draw Multiple" in the "Options" menu).
 `pattern`       | Gets or sets the number of selected paint pattern. Patterns are numbered 0 to 39. Setting to a value outside this range has no effect.
-`polySides`     | An integer represeting the number of sides drawn using the polygon tool.
+`polySides`     | An integer representing the number of sides drawn using the polygon tool.
 `scriptTextFont`| The name of the font family used in the script editor; default is `Monaco`.
 `scriptTextSize`| The size, in points, of the text of the script editor; default is `12`.
 `systemVersion` | The read-only version number of the Java Virtual Machine executing HyperTalk Java, for example, `1.8.0_131`.
