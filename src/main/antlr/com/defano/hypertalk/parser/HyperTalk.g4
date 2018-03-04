@@ -151,6 +151,7 @@ commandStmnt
     | 'domenu' expression                                                                                               # doMenuCmdStmt
     | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
     | 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
+    | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmdStmt
     | 'enable' expression                                                                                               # enableExpStmnt
     | 'exit' handlerName                                                                                                # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
@@ -655,6 +656,7 @@ propertyName
     | 'top'
     | 'center'
     | 'scroll'
+    | 'script'
     | ID
     ;
 

@@ -8,6 +8,8 @@
 
 package com.defano.hypertalk;
 
+import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypertalk.exception.HtException;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 

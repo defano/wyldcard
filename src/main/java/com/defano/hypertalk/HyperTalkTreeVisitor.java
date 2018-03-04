@@ -2,16 +2,20 @@ package com.defano.hypertalk;
 
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.HyperCardProperties;
-import com.defano.hypertalk.ast.statements.commands.*;
+import com.defano.hypertalk.ast.expressions.*;
+import com.defano.hypertalk.ast.expressions.containers.*;
+import com.defano.hypertalk.ast.expressions.functions.*;
 import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.statements.*;
+import com.defano.hypertalk.ast.statements.commands.*;
+import com.defano.hypertalk.ast.statements.conditional.EditScriptCmd;
 import com.defano.hypertalk.ast.statements.conditional.IfStatement;
 import com.defano.hypertalk.ast.statements.conditional.ThenElseBlock;
 import com.defano.hypertalk.ast.statements.loop.*;
-import com.defano.hypertalk.ast.expressions.containers.*;
-import com.defano.hypertalk.ast.expressions.*;
-import com.defano.hypertalk.ast.expressions.functions.*;
-import com.defano.hypertalk.ast.model.specifiers.*;
-import com.defano.hypertalk.ast.statements.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;
@@ -799,6 +803,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitDragWithKeyCmdStmt(HyperTalkParser.DragWithKeyCmdStmtContext ctx) {
         return new DragCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (ExpressionList) visit(ctx.argumentList()));
+    }
+
+    @Override
+    public Object visitEditScriptCmdStmt(HyperTalkParser.EditScriptCmdStmtContext ctx) {
+        return new EditScriptCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override

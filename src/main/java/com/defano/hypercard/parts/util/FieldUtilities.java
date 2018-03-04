@@ -99,6 +99,17 @@ public class FieldUtilities {
         return text.substring(0, Math.min(text.length(), charIndex + 1)).split("\\n").length;
     }
 
+    /**
+     * Determines the displayed line on which a given character is rendered on a JTextComponent.
+     *
+     * The displayed line is the line that the character appears on after the string has been wrapped to fit the bounds
+     * of the text view. This is not necessarily the same as the physical line of the character (i.e., the number of
+     * '\n' characters that proceed it).
+     *
+     * @param comp      The text component
+     * @param charIdx   The index of the requested character
+     * @return          The displayed line number of the character
+     */
     public static int getWrappedLineOfChar(JTextComponent comp, int charIdx) {
         int charCount = 0;
         int lineCount = 0;

@@ -1,5 +1,8 @@
 package com.defano.hypertalk.utils;
 
+import com.defano.hypertalk.ast.model.Convertible;
+import com.defano.hypertalk.ast.model.ConvertibleDateFormat;
+import com.defano.hypertalk.ast.model.Value;
 import org.junit.Test;
 
 import java.util.Calendar;

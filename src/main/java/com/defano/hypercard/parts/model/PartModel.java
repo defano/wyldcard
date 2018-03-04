@@ -4,6 +4,11 @@ import com.defano.hypercard.parts.Messagable;
 import com.defano.hypercard.parts.card.CardLayer;
 import com.defano.hypercard.runtime.interpreter.CompilationUnit;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.hypercard.window.WindowBuilder;
+import com.defano.hypercard.window.WindowManager;
+import com.defano.hypercard.window.forms.ButtonPropertyEditor;
+import com.defano.hypercard.window.forms.FieldPropertyEditor;
+import com.defano.hypercard.window.forms.ScriptEditor;
 import com.defano.hypertalk.ast.expressions.LiteralPartExp;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -307,6 +312,37 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public void setScriptEditorCaretPosition(int scriptEditorCaretPosition) {
         this.scriptEditorCaretPosition = scriptEditorCaretPosition;
+    }
+
+    /**
+     * Show the script editor for this part.
+     *
+     * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
+     * command from the Objects menu.
+     */
+    public void editScript() {
+        WindowBuilder.make(new ScriptEditor())
+                .withTitle("Script of " + getName())
+                .withModel(this)
+                .resizeable(true)
+                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                .build();
+    }
+
+    /**
+     * Show the property editor for this part.
+     *
+     * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
+     * the Objects menu.
+     */
+    public void editProperties() {
+        WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
+                .asModal()
+                .withTitle(getName())
+                .withModel(this)
+                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                .resizeable(false)
+                .build();
     }
 
     @Override

@@ -416,6 +416,9 @@ on commandsTest
     drag from 10,10 to "100,100"
     drag from the mouseloc to 10,10 with shiftkey, optionkey
 
+    edit the script of cd btn 1
+    edit script of this card
+
     enable fld "My Field"
     enable menuitem "Undo" of menu "Edit"
     enable menu "File"
