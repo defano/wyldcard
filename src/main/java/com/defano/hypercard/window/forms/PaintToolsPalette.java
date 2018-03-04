@@ -41,33 +41,34 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
     private JButton field;
 
     private JButton[] allTools;
+    private ToolType lastTool;
 
     public PaintToolsPalette() {
         allTools = new JButton[]{selection, lasso, pencil, paintbrush, eraser, line, spraypaint, rectangle, roundRectangle, fill, oval, text, curve, polygon, shape, finger, button, field};
 
         // Single click actions
-        finger.addActionListener(e -> toolSelected(ToolType.BROWSE));
-        button.addActionListener(e -> toolSelected(ToolType.BUTTON));
-        field.addActionListener(e -> toolSelected(ToolType.FIELD));
+        finger.addActionListener(e -> selectTool(ToolType.BROWSE));
+        button.addActionListener(e -> selectTool(ToolType.BUTTON));
+        field.addActionListener(e -> selectTool(ToolType.FIELD));
 
-        pencil.addActionListener(e -> toolSelected(ToolType.PENCIL));
-        paintbrush.addActionListener(e -> toolSelected(ToolType.BRUSH));
-        eraser.addActionListener(e -> toolSelected(ToolType.ERASER));
-        line.addActionListener(e -> toolSelected(ToolType.LINE));
-        rectangle.addActionListener(e -> toolSelected(ToolType.RECTANGLE));
-        roundRectangle.addActionListener(e -> toolSelected(ToolType.ROUNDRECT));
-        polygon.addActionListener(e -> toolSelected(ToolType.POLYGON));
-        selection.addActionListener(e -> toolSelected(ToolType.SELECT));
-        oval.addActionListener(e -> toolSelected(ToolType.OVAL));
-        shape.addActionListener(e -> toolSelected(ToolType.SHAPE));
-        text.addActionListener(e -> toolSelected(ToolType.TEXT));
-        fill.addActionListener(e -> toolSelected(ToolType.BUCKET));
-        spraypaint.addActionListener(e -> toolSelected(ToolType.SPRAY));
-        curve.addActionListener(e -> toolSelected(ToolType.CURVE));
-        lasso.addActionListener(e -> toolSelected(ToolType.LASSO));
+        pencil.addActionListener(e -> selectTool(ToolType.PENCIL));
+        paintbrush.addActionListener(e -> selectTool(ToolType.BRUSH));
+        eraser.addActionListener(e -> selectTool(ToolType.ERASER));
+        line.addActionListener(e -> selectTool(ToolType.LINE));
+        rectangle.addActionListener(e -> selectTool(ToolType.RECTANGLE));
+        roundRectangle.addActionListener(e -> selectTool(ToolType.ROUNDRECT));
+        polygon.addActionListener(e -> selectTool(ToolType.POLYGON));
+        selection.addActionListener(e -> selectTool(ToolType.SELECT));
+        oval.addActionListener(e -> selectTool(ToolType.OVAL));
+        shape.addActionListener(e -> selectTool(ToolType.SHAPE));
+        text.addActionListener(e -> selectTool(ToolType.TEXT));
+        fill.addActionListener(e -> selectTool(ToolType.BUCKET));
+        spraypaint.addActionListener(e -> selectTool(ToolType.SPRAY));
+        curve.addActionListener(e -> selectTool(ToolType.CURVE));
+        lasso.addActionListener(e -> selectTool(ToolType.LASSO));
 
         // Double-click actions
-        eraser.addMouseListener((DoubleClickListenable) e -> HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().clearCanvas());
+        eraser.addMouseListener((DoubleClickListenable) e -> eraseAll());
         shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getShapesPalette().setVisible(true));
         line.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getLinesPalette().setVisible(true));
         paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getBrushesPalette().setVisible(true));
@@ -114,7 +115,13 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
         // Nothing to do
     }
 
-    private void toolSelected(ToolType tool) {
+    private void eraseAll() {
+        HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().clearCanvas();
+        selectTool(lastTool);
+    }
+
+    private void selectTool(ToolType tool) {
+        lastTool = ToolsContext.getInstance().getSelectedTool();
         ToolsContext.getInstance().chooseTool(tool);
     }
 
