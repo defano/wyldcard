@@ -7,6 +7,7 @@ import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
+import com.defano.hypercard.runtime.serializer.BufferedImageSerializer;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.model.Owner;
@@ -34,7 +35,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     private int backgroundId = 0;
     private final Collection<FieldModel> fields = new ArrayList<>();
     private final Collection<ButtonModel> buttons = new ArrayList<>();
-    private byte[] cardImage;
+    private BufferedImage cardImage;
 
     private transient CardModelObserver observer;
 
@@ -153,7 +154,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
      * @param image The card image.
      */
     public void setCardImage(BufferedImage image) {
-        this.cardImage = Serializer.serializeImage(image);
+        this.cardImage = image;
     }
 
     /**
@@ -162,7 +163,11 @@ public class CardModel extends PartModel implements LayeredPartFinder {
      * @return The foreground image.
      */
     public BufferedImage getCardImage() {
-        return Serializer.deserializeImage(this.cardImage);
+        if (cardImage == null) {
+            return BufferedImageSerializer.emptyImage();
+        } else {
+            return this.cardImage;
+        }
     }
 
     /**

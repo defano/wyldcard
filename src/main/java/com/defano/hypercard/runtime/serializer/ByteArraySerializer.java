@@ -8,7 +8,7 @@ import java.util.Base64;
 /**
  * Used to serialize/deserialize an array of bytes into a Base64-encoded string.
  */
-class ImageSerializer implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
+class ByteArraySerializer implements JsonSerializer<byte[]>, JsonDeserializer<byte[]> {
     public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         return Base64.getDecoder().decode(json.getAsString());
     }

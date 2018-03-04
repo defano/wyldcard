@@ -6,7 +6,6 @@ import com.defano.hypercard.parts.bkgnd.BackgroundModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.finder.StackPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.LimitedDepthStack;
 import com.defano.hypercard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
@@ -32,7 +31,6 @@ public class StackModel extends PartModel implements StackPartFinder {
 
     public static final String PROP_RESIZABLE = "resizable";
 
-
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
     private int nextCardId = 0;
@@ -41,7 +39,7 @@ public class StackModel extends PartModel implements StackPartFinder {
     private LimitedDepthStack<Integer> backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
     private List<CardModel> cardModels;
     private final Map<Integer, BackgroundModel> backgroundModels;
-    private final Map<String, byte[]> userIcons;
+    private final Map<String, BufferedImage> userIcons;
 
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
@@ -266,7 +264,7 @@ public class StackModel extends PartModel implements StackPartFinder {
     }
 
     public void createIcon(String name, BufferedImage image) {
-        userIcons.put(name, Serializer.serializeImage(image));
+        userIcons.put(name, image);
     }
 
     public List<ButtonIcon> getUserIcons() {

@@ -1,6 +1,7 @@
 package com.defano.hypercard.icons;
 
 import javax.swing.*;
+import java.awt.image.BufferedImage;
 
 /**
  * A {@link ButtonIcon} backed by a user-generated image.
@@ -8,9 +9,9 @@ import javax.swing.*;
 public class UserIcon implements ButtonIcon {
 
     private final String name;
-    private final byte[] imageData;
+    private final BufferedImage imageData;
 
-    public UserIcon(String name, byte[] imageData) {
+    public UserIcon(String name, BufferedImage imageData) {
         this.name = name;
         this.imageData = imageData;
     }

@@ -1,13 +1,13 @@
 package com.defano.hypercard.parts.bkgnd;
 
-import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.button.ButtonModel;
 import com.defano.hypercard.parts.card.CardModel;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
-import com.defano.hypercard.runtime.serializer.Serializer;
+import com.defano.hypercard.runtime.serializer.BufferedImageSerializer;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -28,7 +28,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_SHOWPICT = "showpict";
 
-    private byte[] backgroundImage;
+    private BufferedImage backgroundImage;
     private final Collection<ButtonModel> buttonModels;
     private final Collection<FieldModel> fieldModels;
 
@@ -107,11 +107,15 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     }
 
     public void setBackgroundImage(BufferedImage image) {
-        this.backgroundImage = Serializer.serializeImage(image);
+        this.backgroundImage = image;
     }
 
     public BufferedImage getBackgroundImage() {
-        return Serializer.deserializeImage(this.backgroundImage);
+        if (this.backgroundImage == null) {
+            return BufferedImageSerializer.emptyImage();
+        } else {
+            return this.backgroundImage;
+        }
     }
 
     @Override
