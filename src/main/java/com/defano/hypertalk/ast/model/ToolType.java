@@ -147,6 +147,10 @@ public enum ToolType {
         throw new HtSemanticException("No tool number " + toolNumber +". (Tools are numbered 1-18.)");
     }
 
+    public boolean isHyperCardTool() {
+        return toolNames.size() > 0;
+    }
+
     public String getPrimaryToolName() {
         if (toolNames.size() == 0) {
             throw new IllegalStateException("This tool does not have a name in HyperTalk.");

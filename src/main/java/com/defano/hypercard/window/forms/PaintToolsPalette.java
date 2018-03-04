@@ -117,7 +117,10 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
 
     private void eraseAll() {
         HyperCard.getInstance().getActiveStackDisplayedCard().getCanvas().clearCanvas();
-        selectTool(lastTool);
+
+        if (lastTool.isHyperCardTool()) {
+            selectTool(lastTool);
+        }
     }
 
     private void selectTool(ToolType tool) {
