@@ -61,7 +61,7 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Export Paint...")
                 .withAction(e -> ArtVandelay.exportPaint())
-                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
         this.addSeparator();

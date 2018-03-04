@@ -1009,11 +1009,14 @@ Command	         | Description
 `doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that HyperCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
 `drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
 `enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
+`edit script`    | Displays the script editor of the given part. For example, `edit script of button id 3` or `edit the script of this card`.
 `exit`           | Interrupts the flow of execution. Use `exit to HyperCard` to immediately exit all pending script handlers; `exit <message>` to break out of a handler or function (for example, `exit mouseUp`); `exit repeat` to prematurely end execution of a loop. Note that the `exit` message is not sent to the card and cannot be trapped in script.
+`export paint`   | Saves an image of the displayed card (or the selected graphic, if a selection exists) to a given file. For example, `export paint to file "Card Image.png"`.
 `find`           | Finds text in the stack or in a given field. Several forms of the command, see the "Searching & Sorting" section. For example, `find chars "blah" of marked cards`.
 `get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `hide`           | Makes a part, image layer, or window title bar invisible. Syntax is `hide <part-factor>`, `hide {card / background} picture`, `hide picture of {<card-factor> / <bkgnd-factor>}`, or `hide titleBar`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
+`import paint`   | Pastes the graphics from a given file onto the current card's canvas (making the imported graphic the active selection). For example, `import paint from file "Card Image.png"`. 
 `lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
 `open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.

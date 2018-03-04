@@ -85,6 +85,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitImportPaintCmdStmt(HyperTalkParser.ImportPaintCmdStmtContext ctx) {
+        return new ImportPaintCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitShowCmdStmnt(HyperTalkParser.ShowCmdStmntContext ctx) {
         return new SetPropertyCmd(ctx, (Expression) visit(ctx.expression()), PartModel.PROP_VISIBLE, new Value(true));
     }
@@ -873,6 +878,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitExitToHyperCardCmdStmt(HyperTalkParser.ExitToHyperCardCmdStmtContext ctx) {
         return new ExitToHyperCardStatement(ctx);
+    }
+
+    @Override
+    public Object visitExportPaintCmdStmt(HyperTalkParser.ExportPaintCmdStmtContext ctx) {
+        return new ExportPaintCmd(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override

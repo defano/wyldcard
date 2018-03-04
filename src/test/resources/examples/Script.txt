@@ -428,6 +428,9 @@ on commandsTest
     exit repeat
     exit to hypercard
 
+    export paint to file x
+    export paint to file "image.png"
+
     find x
     find x in card field 1
     find x of marked cards
@@ -470,6 +473,8 @@ on commandsTest
     hide bkgnd picture
     hide picture of the last card
     hide picture of background id 2
+
+    import paint from file "My Image.png"
 
     show field "bananas"
     show the third cd btn

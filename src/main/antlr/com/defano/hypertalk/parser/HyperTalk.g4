@@ -156,6 +156,7 @@ commandStmnt
     | 'exit' handlerName                                                                                                # exitCmdStmt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
+    | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmdStmt
     | find expression                                                                                                   # findAnywhere
     | find expression of expression                                                                                     # findField
     | find expression of 'marked' cards                                                                                 # findMarkedCards
@@ -170,6 +171,7 @@ commandStmnt
     | 'hide' background 'picture'                                                                                       # hideThisBkgndPictCmd
     | 'hide' 'picture' of expression                                                                                    # hidePictCmd
     | 'hide' 'titlebar'                                                                                                 # hideTitleBar
+    | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
     | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
