@@ -742,7 +742,7 @@ HyperTalk Java supports these HyperCard properties:
 
 Global Property | Description
 ----------------|---------------
-`brush`         | An integer value between `0` and `11` indicating the active paintbrush.
+`brush`         | An integer value between `0` and `23` indicating the active paintbrush.
 `centered`      | A boolean value indicating whether shapes from center out, or corner-to-corner (equivalent to "Draw Centered" in the "Options" menu).
 `cursor`        | The name of the cursor to be displayed in place of the default, `hand` cursor; one of `ibeam`, `cross`, `plus` (same as `busy`), `watch`, `hand`, `arrow`, `busy` or `none`. Does not effect paint tool, button tool or field tool cursors. Resets to `hand` on idle. Some cursors may not be supported on all operating systems.
 `filled`        | A boolean value indicating whether shapes are being drawn filled (equivalent to "Draw Filled" in the "Options" menu).
@@ -1016,7 +1016,7 @@ Command	         | Description
 `get`            | Get the value of a part's property and places it into the implicit variable it; `get the visible of button id 0`
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `hide`           | Makes a part, image layer, or window title bar invisible. Syntax is `hide <part-factor>`, `hide {card / background} picture`, `hide picture of {<card-factor> / <bkgnd-factor>}`, or `hide titleBar`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
-`import paint`   | Pastes the graphics from a given file onto the current card's canvas (making the imported graphic the active selection). For example, `import paint from file "Card Image.png"`. 
+`import paint`   | Pastes the graphics from a given file onto the current card's canvas (making the imported graphic the active selection). For example, `import paint from file "Card Image.png"`.
 `lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
 `open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.

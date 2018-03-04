@@ -26,11 +26,30 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<PaintBru
     private JButton line12;
     private JButton line8;
     private JButton line4;
+    private JButton forward16;
+    private JButton forward12;
+    private JButton forward8;
+    private JButton forward4;
+    private JButton back16;
+    private JButton back12;
+    private JButton back8;
+    private JButton back4;
+    private JButton bar16;
+    private JButton bar4;
+    private JButton bar8;
+    private JButton bar12;
 
     private JButton[] allButtons;
 
     public BrushesPalette() {
-        allButtons = new JButton[]{square16, square12, square8, square4, round16, round12, round8, round4, line16, line12, line8, line4};
+        allButtons = new JButton[]{
+                square16, square12, square8, square4,
+                round16, round12, round8, round4,
+                line16, line12, line8, line4,
+                forward16, forward12, forward8, forward4,
+                back16, back12, back8, back4,
+                bar16, bar12, bar8, bar4
+        };
 
         square16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_16X16));
         square12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_12X12));
@@ -44,6 +63,18 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<PaintBru
         line12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_12));
         line8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_8));
         line4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_4));
+        forward16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_16));
+        forward12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_12));
+        forward8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_8));
+        forward4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_4));
+        back16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_16));
+        back12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_12));
+        back8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_8));
+        back4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_4));
+        bar16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_16));
+        bar12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_12));
+        bar8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_8));
+        bar4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_4));
 
         ToolsContext.getInstance().getSelectedBrushProvider().subscribe(this);
     }
@@ -93,6 +124,30 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<PaintBru
                 return line8;
             case LINE_4:
                 return line4;
+            case FORWARD_16:
+                return forward16;
+            case FORWARD_12:
+                return forward12;
+            case FORWARD_8:
+                return forward8;
+            case FORWARD_4:
+                return forward4;
+            case BACK_16:
+                return back16;
+            case BACK_12:
+                return back12;
+            case BACK_8:
+                return back8;
+            case BACK_4:
+                return back4;
+            case BAR_16:
+                return bar16;
+            case BAR_12:
+                return bar12;
+            case BAR_8:
+                return bar8;
+            case BAR_4:
+                return bar4;
         }
 
         return square16;
@@ -114,7 +169,7 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<PaintBru
      */
     private void $$$setupUI$$$() {
         brushesPanel = new JPanel();
-        brushesPanel.setLayout(new GridLayoutManager(4, 3, new Insets(0, 0, 0, 0), 0, 0));
+        brushesPanel.setLayout(new GridLayoutManager(4, 6, new Insets(0, 0, 0, 0), 0, 0));
         square16 = new JButton();
         square16.setIcon(new ImageIcon(getClass().getResource("/brushes/square_16x16.png")));
         square16.setText("");
@@ -151,19 +206,67 @@ public class BrushesPalette extends HyperCardDialog implements Consumer<PaintBru
         line16 = new JButton();
         line16.setIcon(new ImageIcon(getClass().getResource("/brushes/line_16.png")));
         line16.setText("");
-        brushesPanel.add(line16, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        brushesPanel.add(line16, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         line12 = new JButton();
         line12.setIcon(new ImageIcon(getClass().getResource("/brushes/line_12.png")));
         line12.setText("");
-        brushesPanel.add(line12, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        brushesPanel.add(line12, new GridConstraints(1, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         line8 = new JButton();
         line8.setIcon(new ImageIcon(getClass().getResource("/brushes/line_8.png")));
         line8.setText("");
-        brushesPanel.add(line8, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        brushesPanel.add(line8, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         line4 = new JButton();
         line4.setIcon(new ImageIcon(getClass().getResource("/brushes/line_4.png")));
         line4.setText("");
-        brushesPanel.add(line4, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        brushesPanel.add(line4, new GridConstraints(3, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        forward16 = new JButton();
+        forward16.setIcon(new ImageIcon(getClass().getResource("/brushes/forward_16.png")));
+        forward16.setText("");
+        brushesPanel.add(forward16, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        forward12 = new JButton();
+        forward12.setIcon(new ImageIcon(getClass().getResource("/brushes/forward_12.png")));
+        forward12.setText("");
+        brushesPanel.add(forward12, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        forward8 = new JButton();
+        forward8.setIcon(new ImageIcon(getClass().getResource("/brushes/forward_8.png")));
+        forward8.setText("");
+        brushesPanel.add(forward8, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        forward4 = new JButton();
+        forward4.setIcon(new ImageIcon(getClass().getResource("/brushes/forward_4.png")));
+        forward4.setText("");
+        brushesPanel.add(forward4, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        back16 = new JButton();
+        back16.setIcon(new ImageIcon(getClass().getResource("/brushes/back_16.png")));
+        back16.setText("");
+        brushesPanel.add(back16, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        back12 = new JButton();
+        back12.setIcon(new ImageIcon(getClass().getResource("/brushes/back_12.png")));
+        back12.setText("");
+        brushesPanel.add(back12, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        back8 = new JButton();
+        back8.setIcon(new ImageIcon(getClass().getResource("/brushes/back_8.png")));
+        back8.setText("");
+        brushesPanel.add(back8, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        back4 = new JButton();
+        back4.setIcon(new ImageIcon(getClass().getResource("/brushes/back_4.png")));
+        back4.setText("");
+        brushesPanel.add(back4, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bar16 = new JButton();
+        bar16.setIcon(new ImageIcon(getClass().getResource("/brushes/bar_16.png")));
+        bar16.setText("");
+        brushesPanel.add(bar16, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bar12 = new JButton();
+        bar12.setIcon(new ImageIcon(getClass().getResource("/brushes/bar_12.png")));
+        bar12.setText("");
+        brushesPanel.add(bar12, new GridConstraints(1, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bar8 = new JButton();
+        bar8.setIcon(new ImageIcon(getClass().getResource("/brushes/bar_8.png")));
+        bar8.setText("");
+        brushesPanel.add(bar8, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        bar4 = new JButton();
+        bar4.setIcon(new ImageIcon(getClass().getResource("/brushes/bar_4.png")));
+        bar4.setText("");
+        brushesPanel.add(bar4, new GridConstraints(3, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
