@@ -267,8 +267,8 @@
           <component id="7fc59" class="javax.swing.JSpinner" binding="buttonHeight">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="50" height="-1"/>
-                <maximum-size width="50" height="-1"/>
+                <preferred-size width="75" height="-1"/>
+                <maximum-size width="75" height="-1"/>
               </grid>
             </constraints>
             <properties/>
@@ -276,8 +276,8 @@
           <component id="d6bf" class="javax.swing.JSpinner" binding="buttonWidth">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="50" height="-1"/>
-                <maximum-size width="50" height="-1"/>
+                <preferred-size width="75" height="-1"/>
+                <maximum-size width="75" height="-1"/>
               </grid>
             </constraints>
             <properties/>
@@ -301,8 +301,8 @@
           <component id="3610f" class="javax.swing.JSpinner" binding="buttonTop">
             <constraints>
               <grid row="0" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="50" height="-1"/>
-                <maximum-size width="50" height="-1"/>
+                <preferred-size width="75" height="-1"/>
+                <maximum-size width="75" height="-1"/>
               </grid>
             </constraints>
             <properties/>
@@ -310,8 +310,8 @@
           <component id="e7161" class="javax.swing.JSpinner" binding="buttonLeft">
             <constraints>
               <grid row="1" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <preferred-size width="50" height="-1"/>
-                <maximum-size width="50" height="-1"/>
+                <preferred-size width="75" height="-1"/>
+                <maximum-size width="75" height="-1"/>
               </grid>
             </constraints>
             <properties/>

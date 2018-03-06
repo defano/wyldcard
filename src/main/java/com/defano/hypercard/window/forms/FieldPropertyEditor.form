@@ -290,8 +290,8 @@
               <component id="ed518" class="javax.swing.JSpinner" binding="fieldHeight">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="50" height="-1"/>
-                    <maximum-size width="50" height="-1"/>
+                    <preferred-size width="75" height="-1"/>
+                    <maximum-size width="75" height="-1"/>
                   </grid>
                 </constraints>
                 <properties/>
@@ -299,8 +299,8 @@
               <component id="4df9f" class="javax.swing.JSpinner" binding="fieldWidth">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="50" height="-1"/>
-                    <maximum-size width="50" height="-1"/>
+                    <preferred-size width="75" height="-1"/>
+                    <maximum-size width="75" height="-1"/>
                   </grid>
                 </constraints>
                 <properties/>
@@ -324,8 +324,8 @@
               <component id="879bd" class="javax.swing.JSpinner" binding="fieldTop">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="50" height="-1"/>
-                    <maximum-size width="50" height="-1"/>
+                    <preferred-size width="75" height="-1"/>
+                    <maximum-size width="75" height="-1"/>
                   </grid>
                 </constraints>
                 <properties/>
@@ -333,8 +333,8 @@
               <component id="74621" class="javax.swing.JSpinner" binding="fieldLeft">
                 <constraints>
                   <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <preferred-size width="50" height="-1"/>
-                    <maximum-size width="50" height="-1"/>
+                    <preferred-size width="75" height="-1"/>
+                    <maximum-size width="75" height="-1"/>
                   </grid>
                 </constraints>
                 <properties/>
