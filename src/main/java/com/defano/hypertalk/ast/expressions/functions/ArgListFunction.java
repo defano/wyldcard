@@ -1,8 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ExpressionList;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -11,19 +10,11 @@ import java.util.List;
 
 public abstract class ArgListFunction extends Expression {
 
-    private final ExpressionList argumentList;
-    private final Expression expression;
+    private final Expression arguments;
 
-    public ArgListFunction(ParserRuleContext context, ExpressionList argumentList) {
+    public ArgListFunction(ParserRuleContext context, Expression arguments) {
         super(context);
-        this.argumentList = argumentList;
-        this.expression = null;
-    }
-
-    public ArgListFunction(ParserRuleContext context, Expression singleArgument) {
-        super(context);
-        this.expression = singleArgument;
-        this.argumentList = null;
+        this.arguments = arguments;
     }
 
     /**
@@ -43,11 +34,7 @@ public abstract class ArgListFunction extends Expression {
      * @throws HtSemanticException If an error occurs evaluating the expressions.
      */
     public List<Value> evaluateArgumentList() throws HtException {
-        if (expression != null) {
-            return expression.evaluate().getItems();
-        } else {
-            return argumentList.evaluateDisallowingCoordinates();
-        }
+        return arguments.evaluateAsList();
     }
 
     /**
@@ -58,16 +45,7 @@ public abstract class ArgListFunction extends Expression {
      * @throws HtSemanticException If an error occurs evaluating the expressions.
      */
     public Value evaluateSingleArgumentList() throws HtException {
-        if (expression != null) {
-            return expression.evaluate();
-        } else {
-            List<Value> evaluatedList = argumentList.evaluate();
-            if (evaluatedList.size() == 1) {
-                return evaluatedList.get(0);
-            } else {
-                throw new HtSemanticException("Expected a single argument, but got " + evaluatedList.size() + " arguments.");
-            }
-        }
+        return arguments.evaluate();
     }
 
 }

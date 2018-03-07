@@ -3,10 +3,15 @@ package com.defano.hypercard.runtime.interpreter;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.model.NamedBlock;
+import com.defano.hypertalk.ast.model.Script;
+import com.defano.hypertalk.ast.model.UserFunction;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.*;
@@ -155,7 +160,7 @@ public class Interpreter {
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value blockingExecuteFunction(PartSpecifier me, UserFunction function, ExpressionList arguments) throws HtException {
+    public static Value blockingExecuteFunction(PartSpecifier me, UserFunction function, Expression arguments) throws HtException {
         ThreadUtils.assertWorkerThread();
         return new FunctionExecutionTask(me, function, arguments).call();
     }
@@ -177,7 +182,7 @@ public class Interpreter {
      *                           Note that this observer will not fire if the script terminates as a result of an
      *                           exception or breakpoint.
      */
-    public static void asyncExecuteHandler(PartSpecifier me, Script script, String command, ExpressionList arguments, HandlerCompletionObserver completionObserver) {
+    public static void asyncExecuteHandler(PartSpecifier me, Script script, String command, ListExp arguments, HandlerCompletionObserver completionObserver) {
         NamedBlock handler = script.getHandler(command);
 
         // Script does not have a handler for this message; create a "default" handler to pass it
@@ -209,13 +214,18 @@ public class Interpreter {
             @Override
             public void onFailure(Throwable t) {
 
+                if (t instanceof ExitToHyperCardException) {
+                    // Nothing to do
+                }
+
                 // HyperTalk error occurred during execution
-                if (t instanceof HtException) {
+                else if (t instanceof HtException) {
                     HyperCard.getInstance().showErrorDialog((HtException) t);
                 }
 
                 // So other error occurred that we're ill-equipped to deal with
                 else {
+                    t.printStackTrace();
                     HyperCard.getInstance().showErrorDialog(new HtSemanticException("An unexpected error occurred."));
                 }
             }
@@ -267,7 +277,7 @@ public class Interpreter {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<String, HtException> asyncExecuteString(PartSpecifier me, String statementList) throws HtException {
-        return asyncExecuteBlock(me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ExpressionList());
+        return asyncExecuteBlock(me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ListExp(null));
     }
 
     /**
@@ -292,7 +302,7 @@ public class Interpreter {
      * @param arguments The arguments to be passed to the block
      * @return A future to the name of the message passed from the block or null if no message was passed.
      */
-    private static CheckedFuture<String, HtException> asyncExecuteBlock(PartSpecifier me, NamedBlock handler, ExpressionList arguments) {
+    private static CheckedFuture<String, HtException> asyncExecuteBlock(PartSpecifier me, NamedBlock handler, ListExp arguments) {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, SwingUtilities.isEventDispatchThread(), handler, arguments);
 
         if (SwingUtilities.isEventDispatchThread()) {

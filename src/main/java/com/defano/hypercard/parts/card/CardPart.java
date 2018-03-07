@@ -19,6 +19,8 @@ import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.search.SearchContext;
 import com.defano.hypercard.util.ThreadUtils;
 import com.defano.hypercard.window.WindowManager;
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.jmonet.canvas.ChangeSet;
@@ -702,7 +704,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     @Override
     public void keyTyped(KeyEvent e) {
-        getPartModel().receiveMessage(SystemMessage.KEY_DOWN.messageName, new ExpressionList(null, String.valueOf(e.getKeyChar())));
+        getPartModel().receiveMessage(SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
     }
 
     @Override

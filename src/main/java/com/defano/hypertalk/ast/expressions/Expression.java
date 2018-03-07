@@ -10,6 +10,8 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.List;
+
 
 public abstract class Expression extends ASTNode {
 
@@ -42,6 +44,20 @@ public abstract class Expression extends ASTNode {
         }
 
         throw new IllegalStateException("Bug! Contextualized exception not thrown.");
+    }
+
+    /**
+     * Evaluates this expression as a list of comma-separated values.
+     *
+     * Note that this method is primarily intended for parsing comma-separated argument values in an argument list,
+     * point or rectangle literal. Therefore, it does not respect the itemDelimiter property (which does not apply to
+     * argument lists or coordinate literals).
+     *
+     * @return A list of Value objects
+     * @throws HtException Thrown to indicate a semantic error was encountered during evaluation.
+     */
+    public List<Value> evaluateAsList() throws HtException {
+        return onEvaluate().getListItems();
     }
 
     /**

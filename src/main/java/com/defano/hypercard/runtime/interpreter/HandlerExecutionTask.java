@@ -4,7 +4,7 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -18,10 +18,10 @@ public class HandlerExecutionTask implements Callable<String> {
 
     private final NamedBlock handler;
     private final PartSpecifier me;
-    private final ExpressionList arguments;
+    private final ListExp arguments;
     private final boolean isTheTarget;
 
-    public HandlerExecutionTask(PartSpecifier me, boolean isTheTarget, NamedBlock handler, ExpressionList arguments) {
+    public HandlerExecutionTask(PartSpecifier me, boolean isTheTarget, NamedBlock handler, ListExp arguments) {
         this.handler = handler;
         this.me = me;
         this.arguments = arguments;
@@ -31,6 +31,9 @@ public class HandlerExecutionTask implements Callable<String> {
     @Override
     public String call() throws HtException {
 
+        // Arguments passed to handler must be evaluated in the context of the caller (i.e., before we push a new stack frame)
+        List<Value> evaluatedArguments = arguments.evaluateAsList();
+
         ExecutionContext.getContext().pushContext();
         ExecutionContext.getContext().pushMe(me);
         ExecutionContext.getContext().setMessage(handler.name);
@@ -39,8 +42,6 @@ public class HandlerExecutionTask implements Callable<String> {
             ExecutionContext.getContext().setTarget(me);
         }
 
-        // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-        List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();
         ExecutionContext.getContext().setParams(evaluatedArguments);
 
         // Bind argument values to parameter variables in this context

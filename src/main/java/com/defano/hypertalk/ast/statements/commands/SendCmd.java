@@ -1,16 +1,15 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Script;
-import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.ArrayList;
 
 public class SendCmd extends Command {
 
@@ -30,7 +29,7 @@ public class SendCmd extends Command {
 
         MessageCmd messageCmd = interpretMessage(message.evaluate().stringValue());
         if (messageCmd == null) {
-            ExecutionContext.getContext().sendMessage(factor.evaluateAsSpecifier(), message.evaluate().stringValue(), new ArrayList<>());
+            ExecutionContext.getContext().sendMessage(factor.evaluateAsSpecifier(), message.evaluate().stringValue(), new ListExp(null));
         } else {
             messageCmd.onExecute();
         }

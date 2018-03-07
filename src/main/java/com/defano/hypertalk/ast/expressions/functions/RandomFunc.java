@@ -1,8 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ExpressionList;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -13,10 +12,6 @@ public class RandomFunc extends ArgListFunction {
 
     public RandomFunc(ParserRuleContext context, Expression bound) {
         super(context, bound);
-    }
-
-    public RandomFunc(ParserRuleContext context, ExpressionList argumentList) {
-        super(context, argumentList);
     }
 
     @Override

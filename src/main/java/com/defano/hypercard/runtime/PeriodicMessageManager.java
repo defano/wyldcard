@@ -8,7 +8,7 @@ import com.defano.hypercard.parts.stack.StackNavigationObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -88,7 +88,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
             if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
-                model.receiveMessage(message.messageName, new ExpressionList(), (command, wasTrapped, error) -> {
+                model.receiveMessage(message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.printStackTrace();
                         deferCycles = IDLE_DEFERRAL_CYCLES;

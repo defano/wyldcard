@@ -3,10 +3,10 @@ package com.defano.hypercard.runtime.interpreter;
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.model.ExpressionList;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -16,10 +16,10 @@ import java.util.concurrent.Callable;
 public class FunctionExecutionTask implements Callable<Value> {
 
     private final NamedBlock function;
-    private final ExpressionList arguments;
+    private final Expression arguments;
     private final PartSpecifier me;
 
-    public FunctionExecutionTask (PartSpecifier me, NamedBlock function, ExpressionList arguments) {
+    public FunctionExecutionTask (PartSpecifier me, NamedBlock function, Expression arguments) {
         this.function = function;
         this.arguments = arguments;
         this.me = me;
@@ -29,7 +29,7 @@ public class FunctionExecutionTask implements Callable<Value> {
     public Value call() throws HtException {
 
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
-        List<Value> evaluatedArguments = arguments.evaluateDisallowingCoordinates();
+        List<Value> evaluatedArguments = arguments.evaluateAsList();
 
         ExecutionContext.getContext().pushContext();
         ExecutionContext.getContext().pushMe(me);

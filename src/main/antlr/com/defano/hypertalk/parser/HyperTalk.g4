@@ -63,11 +63,6 @@ handlerName
     | commandName   // Handlers can take the name of a command keyword (other keywords are disallowed)
     ;
 
-argumentList
-    : expression                                                                                                        # singleExpArgList
-    | argumentList ',' expression                                                                                       # multiExpArgList
-    ;
-
 parameterList
     : ID                                                                                                                # singleParamList
     | parameterList ',' ID                                                                                              # multiParamList
@@ -120,7 +115,7 @@ repeatStatement
 
 messageStatement
     : ID                                                                                                                # noArgMsgCmdStmt
-    | ID argumentList                                                                                                   # argMsgCmdStmt
+    | ID listExpression                                                                                                 # argMsgCmdStmt
     ;
 
 commandStmnt
@@ -135,8 +130,8 @@ commandStmnt
     | 'beep' expression                                                                                                 # beepMultipleStmt
     | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmdStmt
     | 'choose' 'tool' toolExpression                                                                                    # chooseToolNumberCmdStmt
-    | 'click' 'at' expression                                                                                           # clickCmdStmt
-    | 'click' 'at' expression 'with' argumentList                                                                       # clickWithKeyCmdStmt
+    | 'click' 'at' listExpression                                                                                       # clickCmdStmt
+    | 'click' 'at' listExpression 'with' listExpression                                                                 # clickWithKeyCmdStmt
     | 'close' 'file' expression                                                                                         # closeFileCmdStmt
     | 'convert' container 'to' convertible                                                                              # convertContainerToCmd
     | 'convert' container 'from' convertible 'to' convertible                                                           # convertContainerFromToCmd
@@ -149,8 +144,8 @@ commandStmnt
     | 'divide' expression 'by' expression                                                                               # divideCmdStmnt
     | 'do' expression                                                                                                   # doCmdStmt
     | 'domenu' expression                                                                                               # doMenuCmdStmt
-    | 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
-    | 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
+    | 'drag' 'from' listExpression 'to' listExpression                                                                  # dragCmdStmt
+    | 'drag' 'from' listExpression 'to' listExpression 'with' listExpression                                            # dragWithKeyCmdStmt
     | 'edit' 'the'? 'script' of expression                                                                              # editScriptCmdStmt
     | 'enable' expression                                                                                               # enableExpStmnt
     | 'exit' handlerName                                                                                                # exitCmdStmt
@@ -181,8 +176,8 @@ commandStmnt
     | 'pop' card                                                                                                        # popCardCmdStmt
     | 'push' card                                                                                                       # pushCardCmdStmt
     | 'push' expression                                                                                                 # pushDestCmdStmt
-    | 'put' expression                                                                                                  # putIntoCmd
-    | 'put' expression preposition expression                                                                           # putPrepositionCmd
+    | 'put' listExpression                                                                                              # putIntoCmd
+    | 'put' listExpression preposition expression                                                                       # putPrepositionCmd
     | 'read' 'from' 'file' expression                                                                                   # readFileCmd
     | 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
     | 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
@@ -197,7 +192,7 @@ commandStmnt
     | 'select' 'before' expression                                                                                      # selectBeforeChunkCmd
     | 'select' 'after' expression                                                                                       # selectAfterChunkCmd
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
-    | 'send' expression 'to' expression                                                                                 # sendCmdStmnt
+    | 'send' listExpression 'to' expression                                                                             # sendCmdStmnt
     | 'show' expression                                                                                                 # showCmdStmnt
     | 'show' card 'picture'                                                                                             # showThisCardPictCmd
     | 'show' background 'picture'                                                                                       # showThisBkgndPictCmd
@@ -238,11 +233,11 @@ convertible
 conversionFormat
     : 'seconds'                                                                                                         # secondsConvFormat
     | 'dateitems'                                                                                                       # dateItemsConvFormat
-    | timeDateFormat 'date'                                                                                             # dateConvFormat
-    | timeDateFormat 'time'                                                                                             # timeConvFormat
+    | length 'date'                                                                                                     # dateConvFormat
+    | length 'time'                                                                                                     # timeConvFormat
     ;
 
-timeDateFormat
+length
     : ('english' | 'long')                                                                                              # longTimeFormat
     | ('abbreviated' | 'abbrev')                                                                                        # abbreviatedTimeFormat
     | 'short'                                                                                                           # shortTimeFormat
@@ -383,6 +378,11 @@ bkgndPart
     | position background                                                                                               # positionBkgndPart
     ;
 
+listExpression
+    : expression                                                                                                        # singletonListExp
+    | expression ',' listExpression                                                                                     # listExp
+    ;
+
 expression
     : factor                                                                                                            # factorExp
     | 'not' expression                                                                                                  # notExp
@@ -447,14 +447,14 @@ effectExpression
 
 functionCall
     : builtInFunc                                                                                                       # builtInFuncCall
-    | ID '(' argumentList? ')'                                                                                          # userArgFuncCall
+    | ID '(' listExpression? ')'                                                                                        # userArgFuncCall
     ;
 
 builtInFunc
     : 'the' zeroArgFunc                                                                                                 # builtinFuncNoArg
     | 'the'? singleArgFunc of factor                                                                                    # builtinFuncOneArgs
-    | singleArgFunc '(' expression ')'                                                                                  # builtinFuncOneArgs
-    | multiArgFunc '(' argumentList ')'                                                                                 # builtinFuncArgList
+    | singleArgFunc '(' listExpression ')'                                                                              # builtinFuncOneArgs
+    | multiArgFunc '(' listExpression ')'                                                                               # builtinFuncArgList
     ;
 
 zeroArgFunc
@@ -466,8 +466,8 @@ zeroArgFunc
     | 'optionkey'                                                                                                       # optionKeyFunc
     | 'ticks'                                                                                                           # ticksFunc
     | 'seconds'                                                                                                         # secondsFunc
-    | timeDateFormat 'time'                                                                                             # timeFunc
-    | timeDateFormat 'date'                                                                                             # dateFunc
+    | length 'time'                                                                                                     # timeFunc
+    | length 'date'                                                                                                     # dateFunc
     | 'tool'                                                                                                            # toolFunc
     | 'number' 'of' card? 'parts'                                                                                       # numberOfCardParts
     | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndParts
@@ -551,8 +551,6 @@ literal
     | mouseState                                                                                                        # literalExp
     | knownType                                                                                                         # literalExp
     | LITERAL                                                                                                           # literalExp
-    | TWO_ITEM_LIST                                                                                                     # literalExp
-    | FOUR_ITEM_LIST                                                                                                    # literalExp
     ;
 
 preposition
@@ -671,7 +669,7 @@ propertyValue
     | 'right'                                                                                                           # propertyValueLiteral
     | 'top'                                                                                                             # propertyValueLiteral
     | 'center'                                                                                                          # propertyValueLiteral
-    | expression                                                                                                        # propertyValueExp
+    | listExpression                                                                                                    # propertyValueExp
     ;
 
 commandName
@@ -870,14 +868,6 @@ NUMBER_LITERAL
 
 STRING_LITERAL
     : '"' ~('"' | '\r' | '\n')* '"'
-    ;
-
-TWO_ITEM_LIST
-    : (LITERAL ',' LITERAL)
-    ;
-
-FOUR_ITEM_LIST
-    : (LITERAL ',' LITERAL ',' LITERAL ',' LITERAL)
     ;
 
 ALPHA

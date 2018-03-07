@@ -1,11 +1,14 @@
 package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
+import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -40,7 +43,7 @@ public interface Messagable {
      * @param message The message to be passed.
      */
     default void receiveMessage(String message) {
-        receiveMessage(message, new ExpressionList(), (command, trapped, err) -> {
+        receiveMessage(message, new ListExp(null), (command, trapped, err) -> {
             if (err != null) {
                 HyperCard.getInstance().showErrorDialog(err);
             }
@@ -53,7 +56,7 @@ public interface Messagable {
      * @param message   The message to be passed
      * @param arguments The arguments to the message
      */
-    default void receiveMessage(String message, ExpressionList arguments) {
+    default void receiveMessage(String message, ListExp arguments) {
         receiveMessage(message, arguments, (command, trapped, err) -> {
             if (err != null) {
                 HyperCard.getInstance().showErrorDialog(err);
@@ -70,10 +73,12 @@ public interface Messagable {
      *                     Note that this callback will not fire if the script terminates as a result of an error or
      *                     breakpoint.
      */
-    default void receiveMessage(String command, ExpressionList arguments, MessageCompletionObserver onCompletion) {
+    default void receiveMessage(String command, ListExp arguments, MessageCompletionObserver onCompletion) {
 
-        // No commands are sent to buttons or fields when not in browse mode
-        if (ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isButtonOrFieldSpecifier()) {
+        // No commands are sent to buttons or fields when not in browse mode or cmd-option is down
+        if (KeyboardManager.getInstance().isCommandOptionDown() ||
+                ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isButtonOrFieldSpecifier())
+        {
             onCompletion.onMessagePassed(command, false, null);
             return;
         }
@@ -111,7 +116,7 @@ public interface Messagable {
      * @param e         The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
      *                  a short period of time).
      */
-    default void receiveAndDeferKeyEvent(String command, ExpressionList arguments, KeyEvent e, DeferredKeyEventComponent c) {
+    default void receiveAndDeferKeyEvent(String command, ListExp arguments, KeyEvent e, DeferredKeyEventComponent c) {
         InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
         e.consume();
 
@@ -133,7 +138,7 @@ public interface Messagable {
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
-    default Value invokeFunction(String functionName, ExpressionList arguments) throws HtException {
+    default Value invokeFunction(String functionName, Expression arguments) throws HtException {
         UserFunction function = getScript().getFunction(functionName);
         Messagable target = this;
 

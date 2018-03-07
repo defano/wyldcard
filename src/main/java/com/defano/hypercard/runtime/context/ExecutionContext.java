@@ -8,8 +8,8 @@ import com.defano.hypercard.parts.stack.StackPart;
 import com.defano.hypercard.runtime.HyperCardProperties;
 import com.defano.hypercard.runtime.StackFrame;
 import com.defano.hypercard.runtime.SymbolTable;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.Chunk;
-import com.defano.hypertalk.ast.model.ExpressionList;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -414,14 +414,15 @@ public class ExecutionContext {
      *
      * @param ps A specifier identifying the part
      * @param message The message to be sent
+     * @param arguments Message arguments
      * @throws PartException Thrown if the specified part does not exist
      */
-    public void sendMessage (PartSpecifier ps, String message, List<Value> messageArgs) throws PartException
+    public void sendMessage (PartSpecifier ps, String message, ListExp arguments) throws PartException
     {
         PartModel thePart = getPart(ps);
 
         if (thePart != null) {
-            thePart.receiveMessage(message, new ExpressionList(null, messageArgs));
+            thePart.receiveMessage(message, arguments);
         } else {
             throw new PartException("No such part.");
         }

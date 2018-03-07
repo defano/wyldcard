@@ -4,9 +4,10 @@ import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.paint.PaintBrush;
 import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.patterns.HyperCardPatternFactory;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -318,7 +319,7 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, new ExpressionList(null, toolType.getPrimaryToolName(), String.valueOf(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 forceToolSelection(toolType, false);
             }

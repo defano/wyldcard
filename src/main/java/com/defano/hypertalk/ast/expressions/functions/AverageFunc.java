@@ -1,8 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ExpressionList;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -10,10 +9,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.List;
 
 public class AverageFunc extends ArgListFunction {
-
-    public AverageFunc(ParserRuleContext context, ExpressionList argumentList) {
-        super(context, argumentList);
-    }
 
     public AverageFunc(ParserRuleContext context, Expression expression) {
         super(context, expression);

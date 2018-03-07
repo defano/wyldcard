@@ -1,11 +1,10 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -23,14 +22,9 @@ public class ChooseCmd extends Command {
         ToolsContext.getInstance().forceToolSelection(getChosenTool(), false);
     }
 
-    protected ExpressionList getEvaluatedMessageArguments() throws HtException {
+    protected ListExp getEvaluatedMessageArguments() throws HtException {
         ToolType theTool = getChosenTool();
-        ExpressionList arguments = new ExpressionList();
-
-        arguments.addArgument(new LiteralExp(null, theTool.getPrimaryToolName()));
-        arguments.addArgument(new LiteralExp(null, theTool.getToolNumber()));
-
-        return arguments;
+        return ListExp.fromValues(null, new Value(theTool.getPrimaryToolName()), new Value(theTool.getToolNumber()));
     }
 
     private ToolType getChosenTool() throws HtException {

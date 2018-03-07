@@ -247,6 +247,21 @@ public class Value implements StyledComparable<Value> {
         return new Point();
     }
 
+    /**
+     * Gets a list of comma-separated items contained in this value. This function ignores the itemDelimiter HyperCard
+     * property when splitting the value into items. Useful for parsing argument lists. See {@link #getItems()} for a
+     * method whose behavior respects the itemDelimiter.
+     *
+     * @return A list of zero or
+     */
+    public List<Value> getListItems() {
+        ArrayList<Value> items = new ArrayList<>();
+        for (String thisItem : value.split(",")) {
+            items.add(new Value(thisItem));
+        }
+        return items;
+    }
+
     public List<Value> getItems() {
         return getChunks(ChunkType.ITEM);
     }

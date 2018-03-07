@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class AnnuityFunc extends ArgListFunction {
 
-    public AnnuityFunc(ParserRuleContext context, ExpressionList expressionList) {
+    public AnnuityFunc(ParserRuleContext context, Expression expressionList) {
         super(context, expressionList);
     }
 

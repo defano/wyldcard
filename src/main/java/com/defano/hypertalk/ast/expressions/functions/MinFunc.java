@@ -1,8 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ExpressionList;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -11,10 +10,6 @@ public class MinFunc extends ArgListFunction {
 
     public MinFunc(ParserRuleContext context, Expression expression) {
         super(context, expression);
-    }
-
-    public MinFunc(ParserRuleContext context, ExpressionList arguments) {
-        super(context, arguments);
     }
 
     @Override

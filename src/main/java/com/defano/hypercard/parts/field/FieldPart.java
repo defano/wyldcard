@@ -17,6 +17,8 @@ import com.defano.hypercard.runtime.context.FontContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.utils.Range;
@@ -239,7 +241,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         super.keyTyped(e);
 
         if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get()) {
-            getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ExpressionList(null, String.valueOf(e.getKeyChar())), e, this);
+            getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))), e, this);
         }
     }
 

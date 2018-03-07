@@ -1,9 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypercard.awt.MouseManager;
-import com.defano.hypertalk.ast.model.ExpressionList;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -15,7 +14,7 @@ public class DragCmd extends Command {
 
     private final Expression from;
     private final Expression to;
-    private final ExpressionList modifierKeys;
+    private final Expression modifierKeys;
 
     public DragCmd(ParserRuleContext context, Expression from, Expression to) {
         super(context, "drag");
@@ -25,7 +24,7 @@ public class DragCmd extends Command {
         this.modifierKeys = null;
     }
 
-    public DragCmd(ParserRuleContext context, Expression from, Expression to, ExpressionList modifierKeys) {
+    public DragCmd(ParserRuleContext context, Expression from, Expression to, Expression modifierKeys) {
         super(context, "drag");
 
         this.from = from;
@@ -40,7 +39,7 @@ public class DragCmd extends Command {
         boolean withCommand = false;
 
         if (modifierKeys != null) {
-            for (Value thisModifier : modifierKeys.evaluate()) {
+            for (Value thisModifier : modifierKeys.evaluate().getItems()) {
                 withShift = thisModifier.equals(new Value("shiftKey")) || withShift;
                 withOption = thisModifier.equals(new Value("optionKey")) || withOption;
                 withCommand = (thisModifier.equals(new Value("commandKey")) || thisModifier.contains(new Value("cmdKey"))) || withCommand;

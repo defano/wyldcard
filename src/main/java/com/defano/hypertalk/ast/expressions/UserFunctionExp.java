@@ -1,8 +1,7 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -12,9 +11,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class UserFunctionExp extends Expression {
 
     public final String function;
-    public final ExpressionList arguments;
+    public final ListExp arguments;
 
-    public UserFunctionExp(ParserRuleContext context, String function, ExpressionList arguments) {
+    public UserFunctionExp(ParserRuleContext context, String function, ListExp arguments) {
         super(context);
         this.function = function;
         this.arguments = arguments;

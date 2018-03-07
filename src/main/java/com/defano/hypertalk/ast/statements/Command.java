@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -61,8 +61,8 @@ public abstract class Command extends Statement implements MessageCompletionObse
      * @return The argument list
      * @throws HtSemanticException Thrown if an error occurs evaluating arguments
      */
-    protected ExpressionList getEvaluatedMessageArguments() throws HtException {
-        return new ExpressionList();
+    protected ListExp getEvaluatedMessageArguments() throws HtException {
+        return new ListExp(null);
     }
 
     /** {@inheritDoc */

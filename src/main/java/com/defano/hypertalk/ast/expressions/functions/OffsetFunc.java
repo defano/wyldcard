@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class OffsetFunc extends ArgListFunction {
 
-    public OffsetFunc(ParserRuleContext context, ExpressionList arguments) {
+    public OffsetFunc(ParserRuleContext context, Expression arguments) {
         super(context, arguments);
     }
 

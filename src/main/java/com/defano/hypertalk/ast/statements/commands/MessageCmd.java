@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.ExpressionList;
+import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -11,9 +11,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class MessageCmd extends Statement {
 
     private final String message;
-    private final ExpressionList messageArgs;
+    private final ListExp messageArgs;
 
-    public MessageCmd(ParserRuleContext context, String message, ExpressionList messageArgs) {
+    public MessageCmd(ParserRuleContext context, String message, ListExp messageArgs) {
         super(context);
         this.message = message;
         this.messageArgs = messageArgs;
@@ -26,7 +26,7 @@ public class MessageCmd extends Statement {
         }
 
         try {
-            ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs.evaluateDisallowingCoordinates());
+            ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs);
         } catch (HtException e) {
             HyperCard.getInstance().showErrorDialog(e);
         }
