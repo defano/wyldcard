@@ -328,6 +328,7 @@ globalProperty
 
 partProperty
     : 'the'? propertyName of expression                                                                                 # propertySpecPart
+    | 'the'? length propertyName of expression                                                                          # lengthPropertySpecPart
     ;
 
 part

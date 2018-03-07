@@ -221,12 +221,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDateConvFormat(HyperTalkParser.DateConvFormatContext ctx) {
-        return ConvertibleDateFormat.ofDateLength((DateLength) visit(ctx.length()));
+        return ConvertibleDateFormat.ofDateLength((Adjective) visit(ctx.length()));
     }
 
     @Override
     public Object visitTimeConvFormat(HyperTalkParser.TimeConvFormatContext ctx) {
-        return ConvertibleDateFormat.ofTimeLength((DateLength) visit(ctx.length()));
+        return ConvertibleDateFormat.ofTimeLength((Adjective) visit(ctx.length()));
     }
 
     @Override
@@ -1306,6 +1306,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitLengthPropertySpecPart(HyperTalkParser.LengthPropertySpecPartContext ctx) {
+        return new PropertySpecifier((Adjective) visit(ctx.length()), (String) visit(ctx.propertyName()), (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitPropertyName(HyperTalkParser.PropertyNameContext ctx) {
         return ctx.getText();
     }
@@ -1703,12 +1708,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitTimeFunc(HyperTalkParser.TimeFuncContext ctx) {
-        return ((DateLength) visit(ctx.length())).getTimeFunction();
+        return ((Adjective) visit(ctx.length())).getTimeFunction();
     }
 
     @Override
     public Object visitDateFunc(HyperTalkParser.DateFuncContext ctx) {
-        return ((DateLength) visit(ctx.length())).getDateFunction();
+        return ((Adjective) visit(ctx.length())).getDateFunction();
     }
 
     @Override
@@ -1921,12 +1926,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case RESULT: return new ResultFunc(ctx);
             case TICKS: return new TicksFunc(ctx);
             case SECONDS: return new SecondsFunc(ctx);
-            case ABBREV_DATE: return new DateFunc(ctx, DateLength.ABBREVIATED);
-            case SHORT_DATE: return new DateFunc(ctx, DateLength.SHORT);
-            case LONG_DATE: return new DateFunc(ctx, DateLength.LONG);
-            case ABBREV_TIME: return new TimeFunc(ctx, DateLength.ABBREVIATED);
-            case LONG_TIME: return new TimeFunc(ctx, DateLength.LONG);
-            case SHORT_TIME: return new TimeFunc(ctx, DateLength.SHORT);
+            case ABBREV_DATE: return new DateFunc(ctx, Adjective.ABBREVIATED);
+            case SHORT_DATE: return new DateFunc(ctx, Adjective.SHORT);
+            case LONG_DATE: return new DateFunc(ctx, Adjective.LONG);
+            case ABBREV_TIME: return new TimeFunc(ctx, Adjective.ABBREVIATED);
+            case LONG_TIME: return new TimeFunc(ctx, Adjective.LONG);
+            case SHORT_TIME: return new TimeFunc(ctx, Adjective.SHORT);
             case OPTION_KEY: return new ModifierKeyFunc(ctx, ModifierKey.OPTION);
             case COMMAND_KEY: return new ModifierKeyFunc(ctx, ModifierKey.COMMAND);
             case SHIFT_KEY: return new ModifierKeyFunc(ctx, ModifierKey.SHIFT);
@@ -2088,22 +2093,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitLongTimeFormat(HyperTalkParser.LongTimeFormatContext ctx) {
-        return DateLength.LONG;
+        return Adjective.LONG;
     }
 
     @Override
     public Object visitAbbreviatedTimeFormat(HyperTalkParser.AbbreviatedTimeFormatContext ctx) {
-        return DateLength.ABBREVIATED;
+        return Adjective.ABBREVIATED;
     }
 
     @Override
     public Object visitShortTimeFormat(HyperTalkParser.ShortTimeFormatContext ctx) {
-        return DateLength.SHORT;
+        return Adjective.SHORT;
     }
 
     @Override
     public Object visitDefaultTimeFormat(HyperTalkParser.DefaultTimeFormatContext ctx) {
-        return DateLength.DEFAULT;
+        return Adjective.DEFAULT;
     }
 
     @Override

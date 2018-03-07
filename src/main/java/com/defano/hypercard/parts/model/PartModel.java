@@ -10,10 +10,7 @@ import com.defano.hypercard.window.forms.ButtonPropertyEditor;
 import com.defano.hypercard.window.forms.FieldPropertyEditor;
 import com.defano.hypercard.window.forms.ScriptEditor;
 import com.defano.hypertalk.ast.expressions.LiteralPartExp;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.Script;
-import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -179,6 +176,10 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         });
 
         precompile();
+    }
+
+    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+        return Adjective.DEFAULT;
     }
 
     public Rectangle getRect() {

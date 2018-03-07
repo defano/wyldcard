@@ -23,7 +23,7 @@ public enum ConvertibleDateFormat {
         this.dateFormat = format;
     }
 
-    public static ConvertibleDateFormat ofDateLength(DateLength length) {
+    public static ConvertibleDateFormat ofDateLength(Adjective length) {
         switch (length) {
             case LONG:
                 return LONG_DATE;
@@ -37,7 +37,7 @@ public enum ConvertibleDateFormat {
         }
     }
 
-    public static ConvertibleDateFormat ofTimeLength(DateLength length) {
+    public static ConvertibleDateFormat ofTimeLength(Adjective length) {
         switch (length) {
             case LONG:
                 return LONG_TIME;

@@ -1,10 +1,24 @@
 package com.defano.hypertalk.ast.model;
 
-public enum DateLength {
-    LONG,
-    SHORT,
-    ABBREVIATED,
-    DEFAULT;
+public enum Adjective {
+    LONG("long"),
+    SHORT("short"),
+    ABBREVIATED("abbreviated"),
+    DEFAULT("");
+
+    public final String hypertalkIdentifier;
+
+    Adjective(String hypertalkIdentifier) {
+        this.hypertalkIdentifier = hypertalkIdentifier;
+    }
+
+    public String apply(String propertyName) {
+        if (this == Adjective.DEFAULT) {
+            return propertyName;
+        } else {
+            return hypertalkIdentifier + " " + propertyName;
+        }
+    }
 
     public BuiltInFunction getTimeFunction() {
         switch (this) {

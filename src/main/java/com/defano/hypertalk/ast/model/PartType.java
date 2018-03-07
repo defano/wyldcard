@@ -1,7 +1,18 @@
 package com.defano.hypertalk.ast.model;
 
 public enum PartType {
-    FIELD, BUTTON, MESSAGE_BOX, CARD, BACKGROUND, STACK;
+    FIELD("field"),
+    BUTTON("button"),
+    MESSAGE_BOX("message"),
+    CARD("card"),
+    BACKGROUND("background"),
+    STACK("stack");
+
+    public final String hypertalkName;
+
+    PartType(String hypertalkName) {
+        this.hypertalkName = hypertalkName;
+    }
 
     public ToolType getEditTool() {
         switch (this) {

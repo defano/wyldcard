@@ -31,13 +31,13 @@ public class ObjectsMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")
                 .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().editProperties())
+                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Field Info...")
                 .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().editProperties())
+                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
