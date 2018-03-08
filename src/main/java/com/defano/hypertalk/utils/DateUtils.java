@@ -106,11 +106,11 @@ public class DateUtils {
      */
     @SuppressWarnings("deprecation")
     private static Date mergeDates(Date first, Date second, ConvertibleDateFormat secondFormat) {
-        if (first == null) {
+        if (first == null || second == null) {
             return null;
         }
 
-        if (second == null || secondFormat == null) {
+        if (secondFormat == null) {
             return first;
         }
 

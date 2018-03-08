@@ -167,7 +167,6 @@ public class ExecutionContext {
             mutable = Value.setValue(mutable, preposition, value);
 
         ExecutionContext.getContext().setVariable(symbol, mutable);
-//        ExecutionContext.getContext().setIt(mutable);
     }
 
     /**
@@ -194,6 +193,11 @@ public class ExecutionContext {
         return value;
     }
 
+    /**
+     * Determines if the given symbol name refers to an in-scope variable (local or global).
+     * @param symbol The symbol (variable name) to test
+     * @return True if the symbol is an in-scope variable, false otherwise
+     */
     public boolean isVariableInScope(String symbol) {
         return globals.exists(symbol) && getFrame().isGlobalInScope(symbol) || getFrame().symbols.exists(symbol);
     }
