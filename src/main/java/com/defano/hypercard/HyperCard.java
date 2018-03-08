@@ -61,6 +61,7 @@ public class HyperCard extends StackManager {
     }
 
     public void showErrorDialog(HtException e) {
+        // Does not block
         HyperTalkErrorDialog.getInstance().showError(e);
 
         // Abort further script execution

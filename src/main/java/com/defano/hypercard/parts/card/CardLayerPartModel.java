@@ -31,6 +31,10 @@ public abstract class CardLayerPartModel extends PartModel {
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";
 
+    // The id of the card to which this part is currently "bound"; used when referring to a part on a card other than
+    // the current card.
+    private transient ThreadLocal<Integer> currentCardId = new ThreadLocal<>();
+
     public CardLayerPartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super(type, owner, parentPartModel);
 
@@ -39,7 +43,7 @@ public abstract class CardLayerPartModel extends PartModel {
         defineProperty(PROP_SELECTEDLINE, new Value(""), true);
         defineProperty(PROP_SELECTEDCHUNK, new Value(""), true);
         defineProperty(PROP_TEXTSIZE, new Value(((Font) UIManager.get("Button.font")).getSize()), false);
-        defineProperty(PROP_TEXTFONT, new Value(((Font)UIManager.get("Button.font")).getFamily()), false);
+        defineProperty(PROP_TEXTFONT, new Value(((Font) UIManager.get("Button.font")).getFamily()), false);
         defineProperty(PROP_TEXTSTYLE, new Value("plain"), false);
         defineProperty(PROP_TEXTALIGN, new Value("center"), false);
         defineProperty(PROP_ENABLED, new Value(true), false);
@@ -50,11 +54,15 @@ public abstract class CardLayerPartModel extends PartModel {
     public void initialize() {
         super.initialize();
 
+        this.currentCardId = new ThreadLocal<>();
+        this.currentCardId.set(ExecutionContext.getContext().getCurrentCard().getId());
+
         defineComputedReadOnlyProperty(PROP_LONGNAME, (model, propertyName) -> new Value(getLongName()));
         defineComputedReadOnlyProperty(PROP_ABBREVNAME, (model, propertyName) -> new Value(getAbbrevName()));
         defineComputedReadOnlyProperty(PROP_SHORTNAME, (model, propertyName) -> new Value(getShortName()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public Adjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {
@@ -62,6 +70,11 @@ public abstract class CardLayerPartModel extends PartModel {
         } else {
             return Adjective.DEFAULT;
         }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAdjectiveSupportedProperty(String propertyName) {
+        return propertyName.equalsIgnoreCase(PROP_NAME);
     }
 
     public TextStyleSpecifier getTextStyle() {
@@ -82,10 +95,65 @@ public abstract class CardLayerPartModel extends PartModel {
         }
     }
 
+    /**
+     * Gets the ID of the card to which this part is bound in the current HyperTalk execution context. See
+     * {@link #setCurrentCardId(int)} for details. Returns the current card of the execution context when not explicitly
+     * set.
+     *
+     * @return The ID of the card to which this part is currently bound.
+     */
+    public int getCurrentCardId() {
+        if (this.currentCardId.get() == null) {
+            return ExecutionContext.getContext().getCurrentCard().getId();
+        }
+
+        return this.currentCardId.get();
+    }
+
+    /**
+     * Sets the ID of the card to which this part is bound in the current HyperTalk execution context.
+     * <p>
+     * This property has two primary uses:
+     * <p>
+     * 1. For the purposes of background fields that do not have the sharedText property set, this value determines
+     * which card's text is actively displayed in the field. For example, 'the first word of fld 1 of card id 3' does
+     * not necessarily refer to the same string as 'the first word of fld 1 of this card'. In the first case, this
+     * method should be invoked with '3' to assure that subsequent queries deal with the text bound to card id 3.
+     * <p>
+     * 2. When referring to 'the long name' of cards and buttons, the id of the referenced card is returned which is
+     * not necessarily the current card. For example, when evaluating 'the long name of button 3 of card 12', we need
+     * to know the ID of card 12.
+     * <p>
+     * @param cardId The ID of the card to which this part is currently bound.
+     */
+    public void setCurrentCardId(int cardId) {
+        this.currentCardId.set(cardId);
+    }
+
+    /**
+     * Gets the ID of the card to which this part is currently bound, or null, if the part is not currently bound to a
+     * card. See {@link #getCurrentCardId()}.
+     *
+     * @return The bound card id.
+     */
+    protected Integer getCurrentCardIdOrNull() {
+        return this.currentCardId.get();
+    }
+
+    /**
+     * Gets the "number" of this part (equivalent to its z-order within its layer).
+     *
+     * @return The part number.
+     */
     public long getPartNumber() {
         return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this);
     }
 
+    /**
+     * Gets the number of parts existing on the same layer (cd or bkgnd) as this part.
+     *
+     * @return The number of parts.
+     */
     public long getPartCount() {
         return ((LayeredPartFinder) getParentPartModel()).getPartCount(null, getOwner());
     }
@@ -99,8 +167,8 @@ public abstract class CardLayerPartModel extends PartModel {
     }
 
     public String getLongName() {
-        // TODO: Add 'of stack ...' portion (after supporting that HyperTalk syntax)
-        return getAbbrevName() + " of card id " + ExecutionContext.getContext().getCurrentCard().getId();
+        // TODO: Add 'of stack ...' portion of long name (after supporting that HyperTalk syntax)
+        return getAbbrevName() + " of card id " + getCurrentCardId();
     }
 
 }

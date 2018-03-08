@@ -69,8 +69,8 @@ parameterList
     ;
 
 statementList
-    : statement? NEWLINE statementList                                                                                  # multiStmntList
-    | statement NEWLINE+                                                                                                # singleStmntList
+    : statement NEWLINE+ statementList                                                                                  # multiStmntList
+    | statement NEWLINE                                                                                                # singleStmntList
     ;
 
 statement
@@ -109,7 +109,7 @@ elseStatement
     ;
 
 repeatStatement
-    : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
+    : 'repeat' repeatRange NEWLINE+ statementList 'end' 'repeat'                                                         # repeatStmntList
     | 'repeat' repeatRange NEWLINE+ 'end' 'repeat'                                                                      # repeatEmpty
     ;
 
@@ -344,21 +344,21 @@ part
 
 buttonPart
     : card? button 'id' factor                                                                                          # cardButtonIdPart
-    | background? button 'id' factor                                                                                    # bkgndButtonIdPart
-    | background? button factor                                                                                         # bkgndButtonPart
-    | ordinal background? button                                                                                        # bkgndButtonOrdinalPart
+    | background button 'id' factor                                                                                     # bkgndButtonIdPart
     | card? button factor                                                                                               # cardButtonPart
+    | background button factor                                                                                          # bkgndButtonPart
     | ordinal card? button                                                                                              # cardButtonOrdinalPart
+    | ordinal background button                                                                                         # bkgndButtonOrdinalPart
     | buttonPart of cardPart                                                                                            # buttonOfCardPart
     ;
 
 fieldPart
-    : card? field 'id' factor                                                                                           # cardFieldIdPart
+    : card field 'id' factor                                                                                            # cardFieldIdPart
     | background? field 'id' factor                                                                                     # bkgndFieldIdPart
+    | card field factor                                                                                                 # cardFieldPart
     | background? field factor                                                                                          # bkgndFieldPart
+    | ordinal card field                                                                                                # cardFieldOrdinalPart
     | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
-    | card? field factor                                                                                                # cardFieldPart
-    | ordinal card? field                                                                                               # cardFieldOrdinalPart
     | fieldPart of cardPart                                                                                             # fieldOfCardPart
     ;
 

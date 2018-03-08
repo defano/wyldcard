@@ -51,22 +51,6 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     private transient PartModel parentPartModel;
     private transient Script script = new Script();
 
-    /**
-     * Recursively re-establish the parent-child part model relationship. Sets the value returned by
-     * {@link #getParentPartModel()} to the given part model and causes this model to invoke this method on all its
-     * children.
-     *
-     * The relationship between a parent and it's child parts are persistent, but the reverse relationship (between
-     * child and parent) is transient. This is a side effect of the serialization engine being unable to deal with
-     * cycles in the model object graph (a child cannot depend on a parent that also depends on it.). Thus, as a
-     * workaround, we programmatically re-establish the child-to-parent relationship after the stack has completed
-     * deserializing from JSON.
-     *
-     * @param parentPartModel The {@link PartModel} of the parent of this part. Null for models that do not have a
-     *                        parent part (i.e., stacks and the message box).
-     */
-    public abstract void relinkParentPartModel(PartModel parentPartModel);
-
     public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
 
@@ -79,6 +63,22 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         initialize();
     }
+
+    /**
+     * Recursively re-establish the parent-child part model relationship. Sets the value returned by
+     * {@link #getParentPartModel()} to the given part model and causes this model to invoke this method on all its
+     * children.
+     * <p>
+     * The relationship between a parent and it's child parts are persistent, but the reverse relationship (between
+     * child and parent) is transient. This is a side effect of the serialization engine being unable to deal with
+     * cycles in the model object graph (a child cannot depend on a parent that also depends on it.). Thus, as a
+     * workaround, we programmatically re-establish the child-to-parent relationship after the stack has completed
+     * deserializing from JSON.
+     *
+     * @param parentPartModel The {@link PartModel} of the parent of this part. Null for models that do not have a
+     *                        parent part (i.e., stacks and the message box).
+     */
+    public abstract void relinkParentPartModel(PartModel parentPartModel);
 
     @PostConstruct
     @Override
@@ -178,8 +178,21 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         precompile();
     }
 
+    /**
+     * Gets the "default" adjective associated with a given property. That is, the length adjective that is
+     * automatically applied when referring to a property without explicitly specifying an adjective.
+     * <p>
+     * For example, 'the name of btn 1' actually refers to 'the abbreviated name' property.
+     *
+     * @param propertyName The name of the property whose default adjective should be returned.
+     * @return The default adjective.
+     */
     public Adjective getDefaultAdjectiveForProperty(String propertyName) {
         return Adjective.DEFAULT;
+    }
+
+    public boolean isAdjectiveSupportedProperty(String propertyName) {
+        return false;
     }
 
     public Rectangle getRect() {
@@ -221,12 +234,12 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         return script;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public Owner getOwner() {
+        return owner;
     }
 
-    public Owner getOwner() {
-         return owner;
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 
     public CardLayer getLayer() {
@@ -253,7 +266,17 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     }
 
     /**
+     * Gets the value of this part; thus, reads the value of the property returned by {@link #getValueProperty()}.
+     *
+     * @return The value of this property
+     */
+    public Value getValue() {
+        return getKnownProperty(getValueProperty());
+    }
+
+    /**
      * Sets the value of this part; thus, sets the value of the property returned by {@link #getValueProperty()}.
+     *
      * @param value The value of this part.
      */
     public void setValue(Value value) {
@@ -262,14 +285,6 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         } catch (Exception e) {
             throw new RuntimeException("Bug! Part's value cannot be set.");
         }
-    }
-
-    /**
-     * Gets the value of this part; thus, reads the value of the property returned by {@link #getValueProperty()}.
-     * @return The value of this property
-     */
-    public Value getValue() {
-        return getKnownProperty(getValueProperty());
     }
 
     /**
@@ -286,6 +301,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     /**
      * Gets a part specifier that refers to this part in the stack. If this part is a button or a field, the part
      * specifier is a {@link CompositePartSpecifier} referring to the button or field on a specific card or background.
+     *
      * @return A part specifier referring to this part.
      */
     public PartSpecifier getMe() {
@@ -317,7 +333,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     /**
      * Show the script editor for this part.
-     *
+     * <p>
      * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
      * command from the Objects menu.
      */
@@ -332,7 +348,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     /**
      * Show the property editor for this part.
-     *
+     * <p>
      * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
      * the Objects menu.
      */

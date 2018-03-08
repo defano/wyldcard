@@ -8,10 +8,12 @@ import com.defano.hypercard.parts.finder.LayeredPartFinder;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.BufferedImageSerializer;
+import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 
+import javax.annotation.PostConstruct;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +29,10 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_NAME = "name";
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_SHOWPICT = "showpict";
+
+    public static final String PROP_SHORTNAME = "short name";
+    public static final String PROP_ABBREVNAME = "abbreviated name";
+    public static final String PROP_LONGNAME = "long name";
 
     private BufferedImage backgroundImage;
     private final Collection<ButtonModel> buttonModels;
@@ -44,22 +50,34 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         defineProperty(PROP_CONTENTS, new Value(""), false);
         defineProperty(PROP_SHOWPICT, new Value(true), false);
 
-        // When no name of card is provided, returns 'background id xxx'
-        defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
-            Value raw = model.getRawProperty(propertyName);
-            if (raw == null || raw.isEmpty()) {
-                return new Value("background id " + model.getKnownProperty(PROP_ID));
-            } else {
-                return raw;
-            }
-        });
-
+        initialize();
     }
 
     public static BackgroundModel emptyBackground(int backgroundId, PartModel parentPartModel) {
         return new BackgroundModel(backgroundId, parentPartModel);
     }
 
+    @Override
+    @PostConstruct
+    public void initialize() {
+        super.initialize();
+
+        // When no name of card is provided, returns 'background id xxx'
+        defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
+            Value raw = model.getRawProperty(propertyName);
+            if (raw == null || raw.isEmpty()) {
+                return new Value("bkgnd id " + model.getKnownProperty(PROP_ID));
+            } else {
+                return raw;
+            }
+        });
+
+        defineComputedReadOnlyProperty(PROP_LONGNAME, (model, propertyName) -> new Value(getLongName()));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (model, propertyName) -> new Value(getAbbrevName()));
+        defineComputedReadOnlyProperty(PROP_SHORTNAME, (model, propertyName) -> new Value(getShortName()));
+    }
+
+    @Override
     public Collection<PartModel> getPartModels() {
         Collection<PartModel> models = new ArrayList<>();
 
@@ -68,6 +86,21 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         models.addAll(getCardModels());
 
         return models;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+        if (propertyName.equalsIgnoreCase(PROP_NAME)) {
+            return Adjective.ABBREVIATED;
+        } else {
+            return Adjective.DEFAULT;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAdjectiveSupportedProperty(String propertyName) {
+        return propertyName.equalsIgnoreCase(PROP_NAME);
     }
 
     public StackModel getStackModel() {
@@ -116,6 +149,28 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         } else {
             return this.backgroundImage;
         }
+    }
+
+    public boolean hasName() {
+        Value raw = getRawProperty(PROP_NAME);
+        return raw != null && !raw.isEmpty();
+    }
+
+    public String getShortName() {
+        return getKnownProperty(PROP_NAME).stringValue();
+    }
+
+    public String getAbbrevName() {
+        if (hasName()) {
+            return "bkgnd \"" + getShortName() + "\"";
+        } else {
+            return getShortName();
+        }
+    }
+
+    public String getLongName() {
+        // TODO: Add "of stack..." portion once implemented in HyperTalk
+        return getAbbrevName();
     }
 
     @Override

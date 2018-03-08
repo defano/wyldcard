@@ -50,7 +50,8 @@ public class PropertySpecifier {
     }
 
     /**
-     * Returns the name of the specified property with the specified adjective applied (where applicable).
+     * Returns the name of the specified property with the specified adjective applied (where applicable). For example,
+     * applying {@link Adjective#SHORT} to the property 'name' yields 'short name'
      * <p>
      * Certain properties (like name and id) support length adjectives (like 'long', 'short' or 'abbrev') when
      * applied to certain objects. This method attempts to compute an applied property name given a property
@@ -62,19 +63,22 @@ public class PropertySpecifier {
      * @return The adjective-applied name of the specified property.
      */
     public String getAdjectiveAppliedPropertyName() {
-        Adjective appliedAdjective = adjective;
+        PartModel model = getPartModel();
 
-        // Get the part-specified default adjective
-        if (adjective == Adjective.DEFAULT) {
-            PartModel model = getPartModel();
-            if (model != null) {
-                appliedAdjective = model.getDefaultAdjectiveForProperty(property);
+        // Apply adjective only to properties that support it
+        if (model != null && model.isAdjectiveSupportedProperty(property)) {
+            if (adjective == Adjective.DEFAULT) {
+                return model.getDefaultAdjectiveForProperty(property).apply(property);
+            } else {
+                return adjective.apply(property);
             }
         }
 
-        return appliedAdjective.apply(property);
+        // Ignore adjective on properties that don't support it (i.e., 'the long width' is the same as 'the width')
+        else {
+            return property;
+        }
     }
-
 
     public Chunk getChunk() {
         if (partExp == null) {

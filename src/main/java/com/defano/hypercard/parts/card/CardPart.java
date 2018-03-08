@@ -41,6 +41,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -241,6 +242,17 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     public Collection<FieldPart> getFields() {
         return fields.getParts();
+    }
+
+    /**
+     * Gets an unordered collection of card parts (buttons and fields) that exist on this card.
+     * @return The collection of existent buttons and fields.
+     */
+    public Collection<CardLayerPart> getCardParts() {
+        ArrayList<CardLayerPart> parts = new ArrayList<>();
+        parts.addAll(getButtons());
+        parts.addAll(getFields());
+        return parts;
     }
 
     /**

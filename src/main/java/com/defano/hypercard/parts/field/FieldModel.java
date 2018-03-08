@@ -80,7 +80,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     private final Set<Integer> sharedAutoSelection = new HashSet<>();
     private final Map<Integer, Set<Integer>> unsharedAutoSelection = new HashMap<>();
 
-    private transient ThreadLocal<Integer> currentCardId = new ThreadLocal<>();
     private transient FieldModelObserver observer;
     private transient Range selection;
 
@@ -125,9 +124,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     @Override
     public void initialize() {
         super.initialize();
-
-        this.currentCardId = new ThreadLocal<>();
-        this.currentCardId.set(ExecutionContext.getContext().getCurrentCard().getId());
 
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
         defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
@@ -293,27 +289,6 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         dmp.diffCleanupSemantic(diffs);
 
         return diffs;
-    }
-
-    /**
-     * For the purposes of background fields that do not have the sharedText property set, this value determines which
-     * card's text is actively displayed in the field.
-     * <p>
-     * We cannot simply query the active card ({@link ExecutionContext#getCurrentCard()}) to derive this value because
-     * part models are initialized <i>before</i> the card is changed.
-     *
-     * @param cardId The ID of the card on which this field is currently being displayed.
-     */
-    public void setCurrentCardId(int cardId) {
-        this.currentCardId.set(cardId);
-    }
-
-    public int getCurrentCardId() {
-        if (this.currentCardId.get() == null) {
-            return ExecutionContext.getContext().getCurrentCard().getId();
-        }
-
-        return this.currentCardId.get();
     }
 
     /** {@inheritDoc} */
@@ -639,13 +614,13 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     }
 
     private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
-        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
+        if (observer != null && getCurrentCardIdOrNull() == ExecutionContext.getContext().getCurrentCard().getId()) {
             SwingUtilities.invokeLater(() -> observer.onAutoSelectionChanged(selectedLines));
         }
     }
 
     private void fireDocumentChangeObserver(StyledDocument document) {
-        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
+        if (observer != null && getCurrentCardIdOrNull() == ExecutionContext.getContext().getCurrentCard().getId()) {
             SwingUtilities.invokeLater(() -> observer.onStyledDocumentChanged(document));
         }
     }
@@ -654,7 +629,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         // Update 'the selection' HyperCard property
         SelectionContext.getInstance().setSelection(getPartSpecifier(), selection);
 
-        if (observer != null && currentCardId.get() == ExecutionContext.getContext().getCurrentCard().getId()) {
+        if (observer != null && getCurrentCardIdOrNull() == ExecutionContext.getContext().getCurrentCard().getId()) {
             SwingUtilities.invokeLater(() -> observer.onSelectionChange(selection));
         }
     }

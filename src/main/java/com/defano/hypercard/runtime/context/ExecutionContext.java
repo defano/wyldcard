@@ -155,7 +155,10 @@ public class ExecutionContext {
     }
 
     public void setVariable(String symbol, Preposition preposition, Chunk chunk, Value value) throws HtException {
-        Value mutable = getVariable(symbol);
+
+        // When mutating the value of an un-scoped symbol, do not resolve the value of that symbol to be the symbols's
+        // name itself.
+        Value mutable = isVariableInScope(symbol) ? getVariable(symbol) : new Value();
 
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -164,7 +167,7 @@ public class ExecutionContext {
             mutable = Value.setValue(mutable, preposition, value);
 
         ExecutionContext.getContext().setVariable(symbol, mutable);
-        ExecutionContext.getContext().setIt(mutable);
+//        ExecutionContext.getContext().setIt(mutable);
     }
 
     /**
@@ -189,6 +192,10 @@ public class ExecutionContext {
             value = new Value(symbol);
 
         return value;
+    }
+
+    public boolean isVariableInScope(String symbol) {
+        return globals.exists(symbol) && getFrame().isGlobalInScope(symbol) || getFrame().symbols.exists(symbol);
     }
 
     /**

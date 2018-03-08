@@ -2,8 +2,8 @@ package com.defano.hypercard.parts.finder;
 
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
@@ -88,7 +88,11 @@ public interface StackPartFinder extends PartFinder {
 
             // Looking for button or field on the remote background
             if (ps.isBackgroundPartSpecifier()) {
-                foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
+                if (owningPart instanceof CardModel) {
+                    foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
+                } else {
+                    foundPart = findPart(ps.getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(ps.getOwner()));
+                }
             }
 
             // Looking for button or field on the remote card
@@ -102,8 +106,8 @@ public interface StackPartFinder extends PartFinder {
             }
 
             // Special case: Field needs to be evaluated in the context of the requested card
-            if (foundPart instanceof FieldModel) {
-                ((FieldModel) foundPart).setCurrentCardId(owningPart.getId());
+            if (foundPart instanceof CardLayerPartModel) {
+                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId());
             }
 
             return foundPart;
