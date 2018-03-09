@@ -27,6 +27,8 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Utilities;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
@@ -38,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * See {@link FieldModel} for the model object associated with this controller.
  * See {@link StyleableField} for the view object associated with this view.
  */
-public class FieldPart extends StyleableField implements CardLayerPart, Searchable, PropertyChangeObserver, DeferredKeyEventComponent {
+public class FieldPart extends StyleableField implements CardLayerPart, Searchable, PropertyChangeObserver, DeferredKeyEventComponent, FocusListener {
 
     private static final int DEFAULT_WIDTH = 250;
     private static final int DEFAULT_HEIGHT = 100;
@@ -120,6 +122,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         super.partClosed();
 
         partModel.removePropertyChangedObserver(this);
+        getHyperCardTextPane().removeFocusListener(this);
+
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
 
@@ -128,6 +132,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void partOpened() {
         super.partOpened();
         partModel.addPropertyChangedObserver(this);
+        getHyperCardTextPane().addFocusListener(this);
     }
 
     /** {@inheritDoc} */
@@ -327,5 +332,19 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     @Override
     public void dispatchEvent(AWTEvent event) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> getHyperCardTextPane().dispatchEvent(event));
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        if (getHyperCardTextPane().isEditable()) {
+            getPartModel().receiveMessage(SystemMessage.OPEN_FIELD.messageName);
+        }
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        if (getHyperCardTextPane().isEditable()) {
+            getPartModel().receiveMessage(SystemMessage.EXIT_FIELD.messageName);
+        }
     }
 }
