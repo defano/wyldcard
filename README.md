@@ -1090,6 +1090,7 @@ Function        | Description
 `message`       | Returns the contents of the message box. For example: `put the message box into aVar`. Also available as `message box` or `message window`
 `min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `3`.
 `mouse`         | Returns the current state of the left mouse button; either `up` or `down`
+`mouseClick`    | Returns whether the mouse was pressed at any point since the current handler began executing. 
 `mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
 `mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
 `mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.

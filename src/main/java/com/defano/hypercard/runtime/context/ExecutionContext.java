@@ -151,7 +151,7 @@ public class ExecutionContext {
         if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
             globals.put(symbol, v);
         else
-            getFrame().symbols.put(symbol, v);
+            getFrame().getSymbols().put(symbol, v);
     }
 
     public void setVariable(String symbol, Preposition preposition, Chunk chunk, Value value) throws HtException {
@@ -183,8 +183,8 @@ public class ExecutionContext {
 
         if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
             value = globals.get(symbol);
-        else if (getFrame().symbols.exists(symbol))
-            value = getFrame().symbols.get(symbol);
+        else if (getFrame().getSymbols().exists(symbol))
+            value = getFrame().getSymbols().get(symbol);
 
         // Allow the user to refer to literals without quotation marks
         else
@@ -199,7 +199,7 @@ public class ExecutionContext {
      * @return True if the symbol is an in-scope variable, false otherwise
      */
     public boolean isVariableInScope(String symbol) {
-        return globals.exists(symbol) && getFrame().isGlobalInScope(symbol) || getFrame().symbols.exists(symbol);
+        return globals.exists(symbol) && getFrame().isGlobalInScope(symbol) || getFrame().getSymbols().exists(symbol);
     }
 
     /**

@@ -470,6 +470,7 @@ zeroArgFunc
     | length 'time'                                                                                                     # timeFunc
     | length 'date'                                                                                                     # dateFunc
     | 'tool'                                                                                                            # toolFunc
+    | 'mouseclick'                                                                                                      # mouseClickFunc
     | 'number' 'of' card? 'parts'                                                                                       # numberOfCardParts
     | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndParts
     | 'number' 'of' card? button                                                                                        # numberOfCardButtons

@@ -34,15 +34,15 @@ public class HandlerExecutionTask implements Callable<String> {
         // Arguments passed to handler must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList();
 
+        // Push a new context
         ExecutionContext.getContext().pushContext();
         ExecutionContext.getContext().pushMe(me);
         ExecutionContext.getContext().setMessage(handler.name);
+        ExecutionContext.getContext().setParams(evaluatedArguments);
 
         if (isTheTarget) {
             ExecutionContext.getContext().setTarget(me);
         }
-
-        ExecutionContext.getContext().setParams(evaluatedArguments);
 
         // Bind argument values to parameter variables in this context
         for (int index = 0; index < handler.parameters.list.size(); index++) {
@@ -53,6 +53,7 @@ public class HandlerExecutionTask implements Callable<String> {
             ExecutionContext.getContext().setVariable(theParam, theArg);
         }
 
+        // Execute handler
         try {
             handler.statements.execute();
         } catch (TerminateHandlerBreakpoint e) {
@@ -65,6 +66,7 @@ public class HandlerExecutionTask implements Callable<String> {
 
         String passedMessage = ExecutionContext.getContext().getPassedMessage();
 
+        // Pop context
         ExecutionContext.getContext().popContext();
         ExecutionContext.getContext().popMe();
 

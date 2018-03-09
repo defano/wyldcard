@@ -1722,6 +1722,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMouseClickFunc(HyperTalkParser.MouseClickFuncContext ctx) {
+        return BuiltInFunction.MOUSECLICK;
+    }
+
+    @Override
     public Object visitLiteralFactor(HyperTalkParser.LiteralFactorContext ctx) {
         return new LiteralExp(ctx, visit(ctx.literal()));
     }
@@ -1954,6 +1959,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case TARGET: return new TargetFunc(ctx);
             case SPEECH: return new SpeechFunc(ctx);
             case VOICES: return new VoicesFunc(ctx);
+            case MOUSECLICK: return new MouseClickFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
