@@ -578,7 +578,7 @@ public class Value implements StyledComparable<Value> {
     }
 
     public boolean contains (Object v) {
-        return value.contains(v.toString());
+        return value.toLowerCase().contains(v.toString().toLowerCase());
     }
         
     public String toString () {

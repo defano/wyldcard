@@ -156,6 +156,11 @@ on testProperties
     put "name" into me
     put "before" before the first word of the name of me   -- not legal in HyperCard, okay here
 
+    -- stack properties
+    get the name of this stack
+    get the name of stack "My Stack"
+    set the name of this stack to "Renamed"
+
 end testProperties
 
 --
@@ -883,9 +888,13 @@ end f
 --
 
 on answer
+    statement
+    -- comment
 end answer
 
 on ask
+    -- comment
+    statement
 end ask
 
 on put

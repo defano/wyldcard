@@ -900,47 +900,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFindAnywhere(HyperTalkParser.FindAnywhereContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), false);
+        Expression searchType = ctx.expression().size() == 1 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm = ctx.expression().size() == 1 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        return new FindCmd(ctx, searchType, searchTerm, false);
     }
 
     @Override
     public Object visitFindField(HyperTalkParser.FindFieldContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), false);
+        Expression searchType  = ctx.expression().size() == 2 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        Expression searchField = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(1)) : (Expression) visit(ctx.expression(2));
+        return new FindCmd(ctx, searchType, searchTerm, searchField, false);
     }
 
     @Override
     public Object visitFindMarkedCards(HyperTalkParser.FindMarkedCardsContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), true);
+        Expression searchType = ctx.expression().size() == 1 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm = ctx.expression().size() == 1 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        return new FindCmd(ctx, searchType, searchTerm, true);
     }
 
     @Override
     public Object visitFindFieldMarkedCards(HyperTalkParser.FindFieldMarkedCardsContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), true);
-    }
-
-    @Override
-    public Object visitSearchableWord(HyperTalkParser.SearchableWordContext ctx) {
-        return SearchType.WORDS;
-    }
-
-    @Override
-    public Object visitSearchableChars(HyperTalkParser.SearchableCharsContext ctx) {
-        return SearchType.CHARS;
-    }
-
-    @Override
-    public Object visitSearchableWhole(HyperTalkParser.SearchableWholeContext ctx) {
-        return SearchType.WHOLE;
-    }
-
-    @Override
-    public Object visitSearchableString(HyperTalkParser.SearchableStringContext ctx) {
-        return SearchType.STRING;
-    }
-
-    @Override
-    public Object visitSearchableSubstring(HyperTalkParser.SearchableSubstringContext ctx) {
-        return SearchType.WHOLE;
+        Expression searchType  = ctx.expression().size() == 2 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        Expression searchField = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(1)) : (Expression) visit(ctx.expression(2));
+        return new FindCmd(ctx, searchType, searchTerm, searchField, true);
     }
 
     @Override
@@ -1302,12 +1287,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.propertyName()), (Expression) visit(ctx.expression()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (Expression) visit(ctx.factor()));
     }
 
     @Override
     public Object visitLengthPropertySpecPart(HyperTalkParser.LengthPropertySpecPartContext ctx) {
-        return new PropertySpecifier((Adjective) visit(ctx.length()), (String) visit(ctx.propertyName()), (Expression) visit(ctx.expression()));
+        return new PropertySpecifier((Adjective) visit(ctx.length()), (String) visit(ctx.propertyName()), (Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -1338,6 +1323,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCardPartPart(HyperTalkParser.CardPartPartContext ctx) {
         return visit(ctx.cardPart());
+    }
+
+    @Override
+    public Object visitStackPartPart(HyperTalkParser.StackPartPartContext ctx) {
+        return visit(ctx.stackPart());
+    }
+
+    @Override
+    public Object visitThisStackPart(HyperTalkParser.ThisStackPartContext ctx) {
+        return new StackPartExp(ctx);
+    }
+
+    @Override
+    public Object visitAnotherStackPart(HyperTalkParser.AnotherStackPartContext ctx) {
+        return new StackPartExp(ctx, (Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -1448,6 +1448,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitField(HyperTalkParser.FieldContext ctx) {
         return super.visitField(ctx);
+    }
+
+    @Override
+    public Object visitStack(HyperTalkParser.StackContext ctx) {
+        return super.visitStack(ctx);
     }
 
     @Override
@@ -1874,6 +1879,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitKnownType(HyperTalkParser.KnownTypeContext ctx) {
         return super.visitKnownType(ctx);
+    }
+
+    @Override
+    public Object visitFindType(HyperTalkParser.FindTypeContext ctx) {
+        return ctx.getText();
     }
 
     @Override

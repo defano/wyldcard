@@ -13,19 +13,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class FindCmd extends Command {
 
-    private final SearchType searchType;
+    private final Expression type;
     private final Expression term;
     private final Expression field;
     private final boolean onlyMarkedCards;
 
-    public FindCmd(ParserRuleContext context, SearchType searchType, Expression term, boolean onlyMarkedCards) {
+    public FindCmd(ParserRuleContext context, Expression searchType, Expression term, boolean onlyMarkedCards) {
         this(context, searchType, term, null, onlyMarkedCards);
     }
 
-    public FindCmd(ParserRuleContext context, SearchType searchType, Expression term, Expression field, boolean onlyMarkedCards) {
+    public FindCmd(ParserRuleContext context, Expression searchType, Expression term, Expression field, boolean onlyMarkedCards) {
         super(context, "find");
 
-        this.searchType = searchType;
+        this.type = searchType;
         this.term = term;
         this.field = field;
         this.onlyMarkedCards = onlyMarkedCards;
@@ -36,6 +36,10 @@ public class FindCmd extends Command {
         PartSpecifier fieldSpecifier = field == null ?
                 null :
                 field.factor(PartExp.class, new HtSemanticException("Can't search that.")).evaluateAsSpecifier();
+
+        SearchType searchType = type == null ?
+                SearchType.WHOLE :
+                SearchType.fromHyperTalk(type.evaluate().stringValue());
 
         SearchQuery query = fieldSpecifier == null ?
                 new SearchQuery(searchType, term.evaluate().stringValue(), onlyMarkedCards) :
