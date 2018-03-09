@@ -106,6 +106,9 @@ public class PatternPalette extends HyperCardDialog implements Consumer {
             allPatterns[index].setSize(PATTERN_WIDTH, PATTERN_HEIGHT);
             allPatterns[index].setPreferredSize(new Dimension(PATTERN_WIDTH, PATTERN_HEIGHT));
         }
+
+        palettePanel.invalidate();
+        palettePanel.repaint();
     }
 
     @Override
