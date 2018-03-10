@@ -67,11 +67,11 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 
 ## Frequently encountered problems
 
-### 1. Various classes in the `com.defano.hypertalk.parser` package don't exist. This project won't compile!
+#### 1. Various classes in the `com.defano.hypertalk.parser` package don't exist. This project won't compile!
 
 See the note at the top of this page. WyldCard makes use of generated Java sources created by Antlr4 (a parser generator tool). If you're missing classes in this package, you'll need to run the `gradle generateGrammarSource` task to recreate them.
 
-### 2. I imported this project into IntelliJ, but I get a weird `Duplicate method name "$$$getFont$$$"` error when I attempt to run it. What gives?
+#### 2. I imported this project into IntelliJ, but I get a weird `Duplicate method name "$$$getFont$$$"` error when I attempt to run it. What gives?
 
 See the [section above](#using-the-intellij-ide): IntelliJ, by default, attempts to compile window layouts directly into binary (`.class` files). This project must be configured to translate these forms into Java source code (for portability to other IDEs and build environments).
 
