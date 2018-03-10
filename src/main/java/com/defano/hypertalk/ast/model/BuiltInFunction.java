@@ -66,5 +66,6 @@ public enum BuiltInFunction {
     PROPERTY_DELEGATED,
     TARGET,
     SPEECH,
-    VOICES
+    VOICES,
+    MOUSECLICK
 }

@@ -41,6 +41,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -182,6 +183,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
         addButton(newButton);
+        newButton.getPartModel().receiveMessage(SystemMessage.NEW_BUTTON.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
@@ -197,6 +199,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner(), rectangle);
         addButton(newButton);
+        newButton.getPartModel().receiveMessage(SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -210,6 +213,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner());
         addField(newField);
+        newField.getPartModel().receiveMessage(SystemMessage.NEW_FIELD.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
@@ -224,6 +228,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner(), rectangle);
         addField(newField);
+        newField.getPartModel().receiveMessage(SystemMessage.NEW_FIELD.messageName);
         return newField;
     }
 
@@ -241,6 +246,17 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     public Collection<FieldPart> getFields() {
         return fields.getParts();
+    }
+
+    /**
+     * Gets an unordered collection of card parts (buttons and fields) that exist on this card.
+     * @return The collection of existent buttons and fields.
+     */
+    public Collection<CardLayerPart> getCardParts() {
+        ArrayList<CardLayerPart> parts = new ArrayList<>();
+        parts.addAll(getButtons());
+        parts.addAll(getFields());
+        return parts;
     }
 
     /**
@@ -488,6 +504,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         ButtonPart newButton = ButtonPart.fromModel(this, model);
         addButton(newButton);
+        newButton.getPartModel().receiveMessage(SystemMessage.NEW_BUTTON.messageName);
+
         return newButton;
     }
 
@@ -508,6 +526,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         FieldPart newField = FieldPart.fromModel(this, model);
         addField(newField);
+        newField.getPartModel().receiveMessage(SystemMessage.NEW_FIELD.messageName);
+
         return newField;
     }
 

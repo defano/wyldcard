@@ -10,6 +10,7 @@ import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.serializer.BufferedImageSerializer;
 import com.defano.hypercard.runtime.serializer.Serializer;
 import com.defano.hypercard.util.ThreadUtils;
+import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -31,6 +32,12 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_CANTDELETE = "cantdelete";
     public final static String PROP_NAME = "name";
     public final static String PROP_SHOWPICT = "showpict";
+    public static final String PROP_SHORTNAME = "short name";
+    public static final String PROP_ABBREVNAME = "abbreviated name";
+    public static final String PROP_LONGNAME = "long name";
+    public static final String PROP_SHORTID = "short id";
+    public static final String PROP_ABBREVID = "abbreviated id";
+    public static final String PROP_LONGID = "long id";
 
     private int backgroundId = 0;
     private final Collection<FieldModel> fields = new ArrayList<>();
@@ -58,6 +65,14 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     @PostConstruct
     public void initialize() {
         super.initialize();
+
+        defineComputedReadOnlyProperty(PROP_LONGNAME, (model, propertyName) -> new Value(getLongName()));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (model, propertyName) -> new Value(getAbbrevName()));
+        defineComputedReadOnlyProperty(PROP_SHORTNAME, (model, propertyName) -> new Value(getShortName()));
+
+        defineComputedReadOnlyProperty(PROP_LONGID, (model, propertyName) -> new Value(getLongId()));
+        defineComputedReadOnlyProperty(PROP_ABBREVID, (model, propertyName) -> new Value(getAbbrevId()));
+        defineComputedReadOnlyProperty(PROP_SHORTID, (model, propertyName) -> new Value(getShortId()));
 
         // When no name of card is provided, returns 'card id xxx'
         defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
@@ -204,6 +219,23 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         return getKnownProperty(PROP_MARKED).booleanValue();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+        if (propertyName.equalsIgnoreCase(PROP_NAME)) {
+            return Adjective.ABBREVIATED;
+        } else if (propertyName.equalsIgnoreCase(PROP_ID)) {
+            return Adjective.ABBREVIATED;
+        } else {
+            return Adjective.DEFAULT;
+        }
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAdjectiveSupportedProperty(String propertyName) {
+        return propertyName.equalsIgnoreCase(PROP_NAME) || propertyName.equalsIgnoreCase(PROP_ID);
+    }
+
     @Override
     public Collection<PartModel> getPartModels() {
         Collection<PartModel> models = new ArrayList<>();
@@ -226,6 +258,41 @@ public class CardModel extends PartModel implements LayeredPartFinder {
 
     public void setObserver(CardModelObserver observer) {
         this.observer = observer;
+    }
+
+    public String getShortId() {
+        return String.valueOf(getId());
+    }
+
+    public String getAbbrevId() {
+        return "card id " + getShortId();
+    }
+
+    public String getLongId() {
+        // TODO: Add "of stack..." portion once implemented in HyperTalk
+        return getAbbrevId();
+    }
+
+    public boolean hasName() {
+        Value raw = getRawProperty(PROP_NAME);
+        return raw != null && !raw.isEmpty();
+    }
+
+    public String getShortName() {
+        return getKnownProperty(PROP_NAME).stringValue();
+    }
+
+    public String getAbbrevName() {
+        if (hasName()) {
+            return "card \"" + getShortName() + "\"";
+        } else {
+            return getShortName();
+        }
+    }
+
+    public String getLongName() {
+        // TODO: Add "of stack..." portion once implemented in HyperTalk
+        return getAbbrevName();
     }
 
     private void firePartRemoved(PartModel part) {

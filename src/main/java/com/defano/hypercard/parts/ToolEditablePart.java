@@ -12,12 +12,6 @@ import com.defano.hypercard.parts.field.styles.HyperCardTextField;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.PartToolContext;
 import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.window.WindowBuilder;
-import com.defano.hypercard.window.WindowManager;
-import com.defano.hypercard.window.forms.ButtonPropertyEditor;
-import com.defano.hypercard.window.forms.FieldPropertyEditor;
-import com.defano.hypercard.window.forms.ScriptEditor;
-import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
@@ -60,37 +54,6 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     ToolType getEditTool();
 
     void setComponentHierarchyEnabled(boolean enabled);
-
-    /**
-     * Show the script editor for this part.
-     *
-     * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
-     * command from the Objects menu.
-     */
-    default void editScript() {
-        WindowBuilder.make(new ScriptEditor())
-                .withTitle("Script of " + getName())
-                .withModel(getPartModel())
-                .resizeable(true)
-                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                .build();
-    }
-
-    /**
-     * Show the property editor for this part.
-     *
-     * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
-     * the Objects menu.
-     */
-    default void editProperties() {
-        WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
-                .asModal()
-                .withTitle(getName())
-                .withModel(getPartModel())
-                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                .resizeable(false)
-                .build();
-    }
 
     /**
      * Returns a rectangle representing the bounds of the bottom-right drag handle for this part.
@@ -219,12 +182,12 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
         // Command-option click to edit script
         if (KeyboardManager.getInstance().isCommandOptionDown()) {
-            editScript();
+            getPartModel().editScript();
         }
 
         // Double-click to edit properties
         else if (wasDoubleClicked) {
-            editProperties();
+            getPartModel().editProperties();
         }
 
         // Single click to select part

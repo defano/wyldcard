@@ -2,7 +2,7 @@ package com.defano.hypercard.parts.finder;
 
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardLayer;
-import com.defano.hypercard.parts.field.FieldModel;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.window.WindowManager;
@@ -65,8 +65,8 @@ public interface PartFinder {
         }
 
         // Special case: Field needs to be evaluated in the context of the current card
-        if (foundPart instanceof FieldModel) {
-            ((FieldModel) foundPart).setCurrentCardId(ExecutionContext.getContext().getCurrentCard().getId());
+        if (foundPart instanceof CardLayerPartModel) {
+            ((CardLayerPartModel) foundPart).setCurrentCardId(ExecutionContext.getContext().getCurrentCard().getId());
         }
 
         return foundPart;

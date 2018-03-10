@@ -35,6 +35,8 @@ public class ButtonModel extends CardLayerPartModel {
     public static ButtonModel newButtonModel(Integer id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
         ButtonModel partModel = new ButtonModel(owner, parentPartModel);
 
+        partModel.setCurrentCardId(parentPartModel.getId());
+
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
         partModel.defineProperty(PROP_NAME, new Value("New Button"), false);

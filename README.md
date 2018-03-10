@@ -178,6 +178,7 @@ HyperTalk Java automatically sends the following messages to parts as the user i
  `doMenu`           | Sent to the current card when the user chooses a menu from the menu bar; passes the menu name and menu item name as arguments, for example, `doMenu "Edit", "Undo"`
  `enterKey`         | Sent when the enter key is pressed
  `enterInField`     | Sent when the enter key is pressed while typing in a field
+ `exitField`        | Sent to editable fields when they lose focus
  `functionKey`      | Sent when a function (i.e, F1) key is pressed; sends the number of the function key as its argument (`on functionKey whichKey`, where `whichKey` is a number between 1 and 12)
  `idle`             | Periodically sent to the current card when there are no other scripts executing
  `keyDown`          | Sent when a key is typed over a focused part; sends the key as an argument to the message, for example, `on keyDown theKey`
@@ -189,9 +190,12 @@ HyperTalk Java automatically sends the following messages to parts as the user i
  `mouseUp`          | Sent when the mouse is pressed and released over a part
  `mouseWithin`      | Send repeatedly to buttons and fields while the mouse is within their bounds
  `newCard`          | Sent to new cards when they are added to the stack.
+ `newButton`        | Sent to buttons when they are first added to the card or background; new buttons will have no script to handle this message (but pasted buttons may), and other parts in the message passing order may respond as well.
+ `newField`         | Sent to fields when they are first added to the card or background. See also `newButton`.
  `returnInField`    | Sent when the return key is pressed while typing in a field
  `returnKey`        | Sent when the return key is pressed
  `openCard`         | Sent to cards as they are navigated to
+ `openField`        | Sent to editable fields when they gain focus
  `openStack`        | Sent to a stack when it is opened
  `tabKey`           | Sent when the tab key is pressed
 
@@ -1090,6 +1094,7 @@ Function        | Description
 `message`       | Returns the contents of the message box. For example: `put the message box into aVar`. Also available as `message box` or `message window`
 `min`           | Returns the minimum number passed to the function. For example: `min(3,5,7.24,9)` evaluates to `3`.
 `mouse`         | Returns the current state of the left mouse button; either `up` or `down`
+`mouseClick`    | Returns whether the mouse was pressed at any point since the current handler began executing.
 `mouseH`        | Returns the x-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the left border of the card.
 `mouseLoc`      | Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel), for example: `the mouseLoc` returns `123,55`
 `mouseV`        | Returns the y-coordinate of `the mouseLoc`; the number of pixels the mouse cursor is from the top border of the card.

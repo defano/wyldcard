@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypertalk.ast.model.DateLength;
+import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -11,16 +11,16 @@ import java.util.Date;
 
 public class DateFunc extends Expression {
 
-    private final DateLength dateLength;
+    private final Adjective adjective;
 
-    public DateFunc(ParserRuleContext context, DateLength dateLength) {
+    public DateFunc(ParserRuleContext context, Adjective adjective) {
         super(context);
-        this.dateLength = dateLength;
+        this.adjective = adjective;
     }
 
     @Override
     public Value onEvaluate() throws HtSemanticException {
-        return DateUtils.valueOf(new Date(), dateLength);
+        return DateUtils.valueOf(new Date(), adjective);
     }
 
 }

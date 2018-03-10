@@ -23,6 +23,7 @@ public class MouseManager {
 
     private static boolean mouseIsDown;
     private static Point clickLoc = new Point();
+    private static Long clickTime;
 
     private static final Set<MousePressedObserver> pressedObserverSet = new HashSet<>();
     private static final Set<MouseReleasedObserver> releasedObserverSet = new HashSet<>();
@@ -47,6 +48,10 @@ public class MouseManager {
 
     public Point getClickLoc() {
         return clickLoc;
+    }
+
+    public Long getClickTimeMs() {
+        return clickTime;
     }
 
     public Point getMouseLoc() {
@@ -130,6 +135,7 @@ public class MouseManager {
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseIsDown = true;
             clickLoc = getMouseLoc();
+            clickTime = System.currentTimeMillis();
             fireOnMousePressed();
         }
         if (event.getID() == MouseEvent.MOUSE_RELEASED) {

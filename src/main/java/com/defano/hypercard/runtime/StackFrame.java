@@ -8,19 +8,29 @@ import java.util.List;
 
 public class StackFrame {
 
-    public final SymbolTable symbols;
+    private final long creationTime;
+    private final SymbolTable symbols;
     private final List<String> globalsInScope;
+
     private List<Value> params = new ArrayList<>();
     private String message = "";
-
     private String passedMessage;
     private VisualEffectSpecifier visualEffect;
     private Value returnValue;
     
     public StackFrame(SymbolTable symbols, List<String> globalsInScope, Value returnValue) {
+        this.creationTime = System.currentTimeMillis();
         this.symbols = symbols;
         this.globalsInScope = globalsInScope;
         this.returnValue = returnValue;
+    }
+
+    public long getCreationTimeMs() {
+        return creationTime;
+    }
+
+    public SymbolTable getSymbols() {
+        return symbols;
     }
 
     public String getMessage() {

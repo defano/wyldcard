@@ -108,6 +108,11 @@ on testLoops
         -- comment
     end repeat
 
+    repeat
+        -- comment
+        statement
+    end repeat
+
     repeat for x
 
     end repeat
@@ -150,6 +155,11 @@ on testProperties
     get the first char of the name of me
     put "name" into me
     put "before" before the first word of the name of me   -- not legal in HyperCard, okay here
+
+    -- stack properties
+    get the name of this stack
+    get the name of stack "My Stack"
+    set the name of this stack to "Renamed"
 
 end testProperties
 
@@ -691,9 +701,9 @@ on operatorsTest
     x is in y
     9.99 is a number
     9 is an integer
-    10,10 is a point
-    10,10,20,20 is a rect
-    10,10,20,20 is a rectangle
+    "10,10" is a point
+    "10,10,20,20" is a rect
+    "10,10,20,20" is a rectangle
     "1/1/2012" is a date
     true is a logical
     false is a boolean
@@ -705,7 +715,7 @@ on operatorsTest
     x is not a logical
     x is not a boolean
     x is not a bool
-    100,100 is not in 10,10,20,20
+    "100,100" is not in "10,10,20,20"
     x = y
     x is not y
     x is y
@@ -736,10 +746,6 @@ on literalsTest
     -2.
     3-2
     -2-4
-
-    -- Point & Rect Literals
-    10,10
-    0,0,100,100
 
     -- Line wrapping
     answer "How are you?" |
@@ -882,9 +888,13 @@ end f
 --
 
 on answer
+    statement
+    -- comment
 end answer
 
 on ask
+    -- comment
+    statement
 end ask
 
 on put

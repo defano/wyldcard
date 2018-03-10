@@ -221,12 +221,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitDateConvFormat(HyperTalkParser.DateConvFormatContext ctx) {
-        return ConvertibleDateFormat.ofDateLength((DateLength) visit(ctx.length()));
+        return ConvertibleDateFormat.ofDateLength((Adjective) visit(ctx.length()));
     }
 
     @Override
     public Object visitTimeConvFormat(HyperTalkParser.TimeConvFormatContext ctx) {
-        return ConvertibleDateFormat.ofTimeLength((DateLength) visit(ctx.length()));
+        return ConvertibleDateFormat.ofTimeLength((Adjective) visit(ctx.length()));
     }
 
     @Override
@@ -900,47 +900,32 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitFindAnywhere(HyperTalkParser.FindAnywhereContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), false);
+        Expression searchType = ctx.expression().size() == 1 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm = ctx.expression().size() == 1 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        return new FindCmd(ctx, searchType, searchTerm, false);
     }
 
     @Override
     public Object visitFindField(HyperTalkParser.FindFieldContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), false);
+        Expression searchType  = ctx.expression().size() == 2 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        Expression searchField = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(1)) : (Expression) visit(ctx.expression(2));
+        return new FindCmd(ctx, searchType, searchTerm, searchField, false);
     }
 
     @Override
     public Object visitFindMarkedCards(HyperTalkParser.FindMarkedCardsContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression()), true);
+        Expression searchType = ctx.expression().size() == 1 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm = ctx.expression().size() == 1 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        return new FindCmd(ctx, searchType, searchTerm, true);
     }
 
     @Override
     public Object visitFindFieldMarkedCards(HyperTalkParser.FindFieldMarkedCardsContext ctx) {
-        return new FindCmd(ctx, (SearchType) visit(ctx.find()), (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), true);
-    }
-
-    @Override
-    public Object visitSearchableWord(HyperTalkParser.SearchableWordContext ctx) {
-        return SearchType.WORDS;
-    }
-
-    @Override
-    public Object visitSearchableChars(HyperTalkParser.SearchableCharsContext ctx) {
-        return SearchType.CHARS;
-    }
-
-    @Override
-    public Object visitSearchableWhole(HyperTalkParser.SearchableWholeContext ctx) {
-        return SearchType.WHOLE;
-    }
-
-    @Override
-    public Object visitSearchableString(HyperTalkParser.SearchableStringContext ctx) {
-        return SearchType.STRING;
-    }
-
-    @Override
-    public Object visitSearchableSubstring(HyperTalkParser.SearchableSubstringContext ctx) {
-        return SearchType.WHOLE;
+        Expression searchType  = ctx.expression().size() == 2 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        Expression searchField = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(1)) : (Expression) visit(ctx.expression(2));
+        return new FindCmd(ctx, searchType, searchTerm, searchField, true);
     }
 
     @Override
@@ -1302,7 +1287,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitPropertySpecPart(HyperTalkParser.PropertySpecPartContext ctx) {
-        return new PropertySpecifier((String) visit(ctx.propertyName()), (Expression) visit(ctx.expression()));
+        return new PropertySpecifier((String) visit(ctx.propertyName()), (Expression) visit(ctx.factor()));
+    }
+
+    @Override
+    public Object visitLengthPropertySpecPart(HyperTalkParser.LengthPropertySpecPartContext ctx) {
+        return new PropertySpecifier((Adjective) visit(ctx.length()), (String) visit(ctx.propertyName()), (Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -1333,6 +1323,21 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCardPartPart(HyperTalkParser.CardPartPartContext ctx) {
         return visit(ctx.cardPart());
+    }
+
+    @Override
+    public Object visitStackPartPart(HyperTalkParser.StackPartPartContext ctx) {
+        return visit(ctx.stackPart());
+    }
+
+    @Override
+    public Object visitThisStackPart(HyperTalkParser.ThisStackPartContext ctx) {
+        return new StackPartExp(ctx);
+    }
+
+    @Override
+    public Object visitAnotherStackPart(HyperTalkParser.AnotherStackPartContext ctx) {
+        return new StackPartExp(ctx, (Expression) visit(ctx.factor()));
     }
 
     @Override
@@ -1443,6 +1448,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitField(HyperTalkParser.FieldContext ctx) {
         return super.visitField(ctx);
+    }
+
+    @Override
+    public Object visitStack(HyperTalkParser.StackContext ctx) {
+        return super.visitStack(ctx);
     }
 
     @Override
@@ -1703,17 +1713,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitTimeFunc(HyperTalkParser.TimeFuncContext ctx) {
-        return ((DateLength) visit(ctx.length())).getTimeFunction();
+        return ((Adjective) visit(ctx.length())).getTimeFunction();
     }
 
     @Override
     public Object visitDateFunc(HyperTalkParser.DateFuncContext ctx) {
-        return ((DateLength) visit(ctx.length())).getDateFunction();
+        return ((Adjective) visit(ctx.length())).getDateFunction();
     }
 
     @Override
     public Object visitToolFunc(HyperTalkParser.ToolFuncContext ctx) {
         return BuiltInFunction.TOOL;
+    }
+
+    @Override
+    public Object visitMouseClickFunc(HyperTalkParser.MouseClickFuncContext ctx) {
+        return BuiltInFunction.MOUSECLICK;
     }
 
     @Override
@@ -1867,6 +1882,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitFindType(HyperTalkParser.FindTypeContext ctx) {
+        return ctx.getText();
+    }
+
+    @Override
     public Object visitBuiltInFuncCall(HyperTalkParser.BuiltInFuncCallContext ctx) {
         return visit(ctx.builtInFunc());
     }
@@ -1921,12 +1941,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case RESULT: return new ResultFunc(ctx);
             case TICKS: return new TicksFunc(ctx);
             case SECONDS: return new SecondsFunc(ctx);
-            case ABBREV_DATE: return new DateFunc(ctx, DateLength.ABBREVIATED);
-            case SHORT_DATE: return new DateFunc(ctx, DateLength.SHORT);
-            case LONG_DATE: return new DateFunc(ctx, DateLength.LONG);
-            case ABBREV_TIME: return new TimeFunc(ctx, DateLength.ABBREVIATED);
-            case LONG_TIME: return new TimeFunc(ctx, DateLength.LONG);
-            case SHORT_TIME: return new TimeFunc(ctx, DateLength.SHORT);
+            case ABBREV_DATE: return new DateFunc(ctx, Adjective.ABBREVIATED);
+            case SHORT_DATE: return new DateFunc(ctx, Adjective.SHORT);
+            case LONG_DATE: return new DateFunc(ctx, Adjective.LONG);
+            case ABBREV_TIME: return new TimeFunc(ctx, Adjective.ABBREVIATED);
+            case LONG_TIME: return new TimeFunc(ctx, Adjective.LONG);
+            case SHORT_TIME: return new TimeFunc(ctx, Adjective.SHORT);
             case OPTION_KEY: return new ModifierKeyFunc(ctx, ModifierKey.OPTION);
             case COMMAND_KEY: return new ModifierKeyFunc(ctx, ModifierKey.COMMAND);
             case SHIFT_KEY: return new ModifierKeyFunc(ctx, ModifierKey.SHIFT);
@@ -1949,6 +1969,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case TARGET: return new TargetFunc(ctx);
             case SPEECH: return new SpeechFunc(ctx);
             case VOICES: return new VoicesFunc(ctx);
+            case MOUSECLICK: return new MouseClickFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -2088,22 +2109,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitLongTimeFormat(HyperTalkParser.LongTimeFormatContext ctx) {
-        return DateLength.LONG;
+        return Adjective.LONG;
     }
 
     @Override
     public Object visitAbbreviatedTimeFormat(HyperTalkParser.AbbreviatedTimeFormatContext ctx) {
-        return DateLength.ABBREVIATED;
+        return Adjective.ABBREVIATED;
     }
 
     @Override
     public Object visitShortTimeFormat(HyperTalkParser.ShortTimeFormatContext ctx) {
-        return DateLength.SHORT;
+        return Adjective.SHORT;
     }
 
     @Override
     public Object visitDefaultTimeFormat(HyperTalkParser.DefaultTimeFormatContext ctx) {
-        return DateLength.DEFAULT;
+        return Adjective.DEFAULT;
     }
 
     @Override

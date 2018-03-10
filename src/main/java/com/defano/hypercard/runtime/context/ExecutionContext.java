@@ -151,11 +151,14 @@ public class ExecutionContext {
         if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
             globals.put(symbol, v);
         else
-            getFrame().symbols.put(symbol, v);
+            getFrame().getSymbols().put(symbol, v);
     }
 
     public void setVariable(String symbol, Preposition preposition, Chunk chunk, Value value) throws HtException {
-        Value mutable = getVariable(symbol);
+
+        // When mutating the value of an un-scoped symbol, do not resolve the value of that symbol to be the symbols's
+        // name itself.
+        Value mutable = isVariableInScope(symbol) ? getVariable(symbol) : new Value();
 
         // Operating on a chunk of the existing value
         if (chunk != null)
@@ -164,7 +167,6 @@ public class ExecutionContext {
             mutable = Value.setValue(mutable, preposition, value);
 
         ExecutionContext.getContext().setVariable(symbol, mutable);
-        ExecutionContext.getContext().setIt(mutable);
     }
 
     /**
@@ -181,14 +183,23 @@ public class ExecutionContext {
 
         if (globals.exists(symbol) && getFrame().isGlobalInScope(symbol))
             value = globals.get(symbol);
-        else if (getFrame().symbols.exists(symbol))
-            value = getFrame().symbols.get(symbol);
+        else if (getFrame().getSymbols().exists(symbol))
+            value = getFrame().getSymbols().get(symbol);
 
         // Allow the user to refer to literals without quotation marks
         else
             value = new Value(symbol);
 
         return value;
+    }
+
+    /**
+     * Determines if the given symbol name refers to an in-scope variable (local or global).
+     * @param symbol The symbol (variable name) to test
+     * @return True if the symbol is an in-scope variable, false otherwise
+     */
+    public boolean isVariableInScope(String symbol) {
+        return globals.exists(symbol) && getFrame().isGlobalInScope(symbol) || getFrame().getSymbols().exists(symbol);
     }
 
     /**

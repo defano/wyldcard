@@ -10,7 +10,7 @@ import java.awt.*;
 public class FoundSelectionHighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
 
     public FoundSelectionHighlightPainter() {
-        super(Color.RED);
+        super(SystemColor.textHighlight);
     }
 
     /**

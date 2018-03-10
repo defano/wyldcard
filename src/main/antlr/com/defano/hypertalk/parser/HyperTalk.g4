@@ -69,7 +69,7 @@ parameterList
     ;
 
 statementList
-    : statement? NEWLINE statementList                                                                                  # multiStmntList
+    : statement NEWLINE+ statementList                                                                                  # multiStmntList
     | statement NEWLINE+                                                                                                # singleStmntList
     ;
 
@@ -109,7 +109,7 @@ elseStatement
     ;
 
 repeatStatement
-    : 'repeat' repeatRange NEWLINE statementList 'end' 'repeat'                                                         # repeatStmntList
+    : 'repeat' repeatRange NEWLINE+ statementList 'end' 'repeat'                                                        # repeatStmntList
     | 'repeat' repeatRange NEWLINE+ 'end' 'repeat'                                                                      # repeatEmpty
     ;
 
@@ -152,10 +152,10 @@ commandStmnt
     | 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
     | 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
     | 'export' 'paint' 'to' 'file' expression                                                                           # exportPaintCmdStmt
-    | find expression                                                                                                   # findAnywhere
-    | find expression of expression                                                                                     # findField
-    | find expression of 'marked' cards                                                                                 # findMarkedCards
-    | find expression of expression of 'marked' cards                                                                   # findFieldMarkedCards
+    | 'find' expression? 'international'? expression of expression of 'marked' cards                                    # findFieldMarkedCards
+    | 'find' expression? 'international'? expression of expression                                                      # findField
+    | 'find' expression? 'international'? expression of 'marked' cards                                                  # findMarkedCards
+    | 'find' expression? 'international'? expression                                                                    # findAnywhere
     | 'get' expression                                                                                                  # getCmdStmnt
     | 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
     | 'go' 'to'? expression                                                                                             # goCmdStmnt
@@ -239,7 +239,7 @@ conversionFormat
 
 length
     : ('english' | 'long')                                                                                              # longTimeFormat
-    | ('abbreviated' | 'abbrev')                                                                                        # abbreviatedTimeFormat
+    | ('abbreviated' | 'abbrev' | 'abbr')                                                                               # abbreviatedTimeFormat
     | 'short'                                                                                                           # shortTimeFormat
     |                                                                                                                   # defaultTimeFormat
     ;
@@ -327,7 +327,8 @@ globalProperty
     ;
 
 partProperty
-    : 'the'? propertyName of expression                                                                                 # propertySpecPart
+    : 'the'? propertyName of factor                                                                                     # propertySpecPart
+    | 'the'? length propertyName of factor                                                                              # lengthPropertySpecPart
     ;
 
 part
@@ -339,25 +340,31 @@ part
     | fieldPart                                                                                                         # fieldPartPart
     | bkgndPart                                                                                                         # bkgndPartPart
     | cardPart                                                                                                          # cardPartPart
+    | stackPart                                                                                                         # stackPartPart
+    ;
+
+stackPart
+    : 'this' stack                                                                                                      # thisStackPart
+    | stack factor                                                                                                      # anotherStackPart
     ;
 
 buttonPart
     : card? button 'id' factor                                                                                          # cardButtonIdPart
-    | background? button 'id' factor                                                                                    # bkgndButtonIdPart
-    | background? button factor                                                                                         # bkgndButtonPart
-    | ordinal background? button                                                                                        # bkgndButtonOrdinalPart
+    | background button 'id' factor                                                                                     # bkgndButtonIdPart
     | card? button factor                                                                                               # cardButtonPart
+    | background button factor                                                                                          # bkgndButtonPart
     | ordinal card? button                                                                                              # cardButtonOrdinalPart
+    | ordinal background button                                                                                         # bkgndButtonOrdinalPart
     | buttonPart of cardPart                                                                                            # buttonOfCardPart
     ;
 
 fieldPart
-    : card? field 'id' factor                                                                                           # cardFieldIdPart
+    : card field 'id' factor                                                                                            # cardFieldIdPart
     | background? field 'id' factor                                                                                     # bkgndFieldIdPart
+    | card field factor                                                                                                 # cardFieldPart
     | background? field factor                                                                                          # bkgndFieldPart
+    | ordinal card field                                                                                                # cardFieldOrdinalPart
     | ordinal background? field                                                                                         # bkgndFieldOrdinalPart
-    | card? field factor                                                                                                # cardFieldPart
-    | ordinal card? field                                                                                               # cardFieldOrdinalPart
     | fieldPart of cardPart                                                                                             # fieldOfCardPart
     ;
 
@@ -469,6 +476,7 @@ zeroArgFunc
     | length 'time'                                                                                                     # timeFunc
     | length 'date'                                                                                                     # dateFunc
     | 'tool'                                                                                                            # toolFunc
+    | 'mouseclick'                                                                                                      # mouseClickFunc
     | 'number' 'of' card? 'parts'                                                                                       # numberOfCardParts
     | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndParts
     | 'number' 'of' card? button                                                                                        # numberOfCardButtons
@@ -550,6 +558,7 @@ literal
     | modifierKey                                                                                                       # literalExp
     | mouseState                                                                                                        # literalExp
     | knownType                                                                                                         # literalExp
+    | findType                                                                                                          # literalExp
     | LITERAL                                                                                                           # literalExp
     ;
 
@@ -631,12 +640,11 @@ knownType
     | 'bool'
     ;
 
-find
-    : 'find' 'word' 'international'?                                                                                    # searchableWord
-    | 'find' 'chars' 'international'?                                                                                   # searchableChars
-    | 'find' 'whole' 'international'?                                                                                   # searchableWhole
-    | 'find' 'string' 'international'?                                                                                  # searchableString
-    | 'find' 'international'?                                                                                           # searchableSubstring
+findType
+    : 'word'
+    | 'chars'
+    | 'whole'
+    | 'string'
     ;
 
 // Not all properties need to be enumerated here, only those sharing a name with another keyword.
@@ -711,6 +719,8 @@ commandName
     | 'close'
     | 'select'
     | 'find'
+    | 'import'
+    | 'export'
     ;
 
 speed
@@ -776,9 +786,7 @@ position
     ;
 
 message
-    : 'the'? ('message' | 'msg')
-    | 'the'? ('message' | 'msg') 'box'
-    | 'the'? ('message' | 'msg') 'window'
+    : 'the'? ('message' | 'msg') ('box' | 'window' | )
     ;
 
 cards
@@ -814,6 +822,10 @@ field
     | 'flds'
     ;
 
+stack
+    : 'stack'
+    ;
+
 character
     : 'character'
     | 'characters'
@@ -838,8 +850,8 @@ item
 
 of
     : 'of'
-    | 'in'
     | 'from'
+    | 'in'
     ;
 
 ID

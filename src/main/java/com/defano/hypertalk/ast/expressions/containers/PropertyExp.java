@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.expressions.containers;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -26,14 +27,25 @@ public class PropertyExp extends ContainerExp {
     public Value onEvaluate() throws HtException {
         Value propertyValue;
 
+        // Getting the chunk of a property
         if (propertySpec.isChunkPropertySpecifier()) {
-            propertyValue = ChunkPropertiesDelegate.getProperty(propertySpec.getProperty(), propertySpec.getChunk(), getPartSpecifier());
-        } else if (propertySpec.isMenuItemPropertySpecifier()) {
+            propertyValue = ChunkPropertiesDelegate.getProperty(propertySpec.getAdjectiveAppliedPropertyName(), propertySpec.getChunk(), getPartSpecifier());
+        }
+
+        // Getting the property of a menu item
+        else if (propertySpec.isMenuItemPropertySpecifier()) {
             propertyValue = MenuPropertiesDelegate.getProperty(propertySpec.getProperty(), propertySpec.getMenuItem());
-        } else if (propertySpec.isGlobalPropertySpecifier()) {
+        }
+
+        // Getting a HyperCard (global) property
+        else if (propertySpec.isGlobalPropertySpecifier()) {
             propertyValue = HyperCardProperties.getInstance().getProperty(propertySpec.getProperty());
-        } else {
-            propertyValue = ExecutionContext.getContext().getPart(getPartSpecifier()).getProperty(getPropertyName());
+        }
+
+        // Getting a part property
+        else {
+            PartSpecifier partSpecifier = getPartSpecifier();
+            propertyValue = ExecutionContext.getContext().getPart(partSpecifier).getProperty(propertySpec.getAdjectiveAppliedPropertyName());
         }
 
         return chunkOf(propertyValue, getChunk());
@@ -41,6 +53,11 @@ public class PropertyExp extends ContainerExp {
 
     @Override
     public void putValue(Value value, Preposition preposition) throws HtException {
+
+        // Cannot set the adjective-form of a property (i.e., set 'the name' not 'the long name')
+        if (propertySpec.getAdjective() != Adjective.DEFAULT) {
+            throw new HtSemanticException("Cannot set that property.");
+        }
 
         if (propertySpec.isChunkPropertySpecifier()) {
             ChunkPropertiesDelegate.setProperty(propertySpec.getProperty(), value, propertySpec.getChunk(), getPartSpecifier());
@@ -60,7 +77,4 @@ public class PropertyExp extends ContainerExp {
         return propertySpec.getPartExp() == null ? null : propertySpec.getPartExp().evaluateAsSpecifier();
     }
 
-    public String getPropertyName() {
-        return propertySpec.getProperty();
-    }
 }

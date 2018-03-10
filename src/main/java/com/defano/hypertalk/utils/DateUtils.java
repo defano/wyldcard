@@ -2,7 +2,7 @@ package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.ast.model.ConvertibleDateFormat;
 import com.defano.hypertalk.ast.model.Convertible;
-import com.defano.hypertalk.ast.model.DateLength;
+import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Value;
 
 import java.text.*;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static Value valueOf(Date d, DateLength format) {
+    public static Value valueOf(Date d, Adjective format) {
         switch (format) {
             case LONG:
                 return new Value(ConvertibleDateFormat.LONG_DATE.dateFormat.format(d));
@@ -106,11 +106,11 @@ public class DateUtils {
      */
     @SuppressWarnings("deprecation")
     private static Date mergeDates(Date first, Date second, ConvertibleDateFormat secondFormat) {
-        if (first == null) {
+        if (first == null || second == null) {
             return null;
         }
 
-        if (second == null || secondFormat == null) {
+        if (secondFormat == null) {
             return first;
         }
 

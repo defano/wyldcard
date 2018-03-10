@@ -2,8 +2,8 @@ package com.defano.hypercard.parts.finder;
 
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.bkgnd.BackgroundModel;
+import com.defano.hypercard.parts.card.CardLayerPartModel;
 import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.field.FieldModel;
 import com.defano.hypercard.parts.model.PartModel;
 import com.defano.hypercard.parts.stack.StackModel;
 import com.defano.hypercard.runtime.context.ExecutionContext;
@@ -11,6 +11,7 @@ import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartPositionSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.google.common.collect.Lists;
 
@@ -39,7 +40,9 @@ public interface StackPartFinder extends PartFinder {
      */
     @Override
     default PartModel findPart(PartSpecifier ps) throws PartException {
-        if (ps instanceof CompositePartSpecifier) {
+        if (ps instanceof StackPartSpecifier) {
+            return findStackPart((StackPartSpecifier) ps);
+        } else if (ps instanceof CompositePartSpecifier) {
             return findCompositePart((CompositePartSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
@@ -86,12 +89,16 @@ public interface StackPartFinder extends PartFinder {
             // Recursively find the card or background containing the requested part
             PartModel owningPart = findPart(ps.getOwningPartExp().evaluateAsSpecifier());
 
-            // Looking for button or field on the remote background
+            // Looking for a background button or field on a remote card or background
             if (ps.isBackgroundPartSpecifier()) {
-                foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
+                if (owningPart instanceof CardModel) {
+                    foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
+                } else {
+                    foundPart = findPart(ps.getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(ps.getOwner()));
+                }
             }
 
-            // Looking for button or field on the remote card
+            // Looking for button or field on a remote card
             else if (ps.isCardPartSpecifier()) {
                 foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getPartsInDisplayOrder());
             }
@@ -102,14 +109,22 @@ public interface StackPartFinder extends PartFinder {
             }
 
             // Special case: Field needs to be evaluated in the context of the requested card
-            if (foundPart instanceof FieldModel) {
-                ((FieldModel) foundPart).setCurrentCardId(owningPart.getId());
+            if (foundPart instanceof CardLayerPartModel) {
+                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId());
             }
 
             return foundPart;
 
         } catch (HtException e) {
             throw new PartException(e);
+        }
+    }
+
+    default StackModel findStackPart(StackPartSpecifier ps) throws PartException {
+        if (ps.isThisStack()) {
+            return getStackModel();
+        } else {
+            throw new PartException("Referring to other stacks has not been implemented yet.");
         }
     }
 

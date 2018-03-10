@@ -79,6 +79,12 @@ public class StackModel extends PartModel implements StackPartFinder {
     }
 
     @Override
+    public Value getValue() {
+        return new Value();
+    }
+
+
+    @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
         this.setParentPartModel(parentPartModel);
 

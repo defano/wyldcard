@@ -2,9 +2,7 @@ package com.defano.hypercard.parts;
 
 import com.defano.hypercard.HyperCard;
 import com.defano.hypercard.awt.KeyboardManager;
-import com.defano.hypercard.paint.ToolMode;
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.context.ToolsContext;
 import com.defano.hypercard.runtime.interpreter.Interpreter;
 import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -76,8 +74,7 @@ public interface Messagable {
     default void receiveMessage(String command, ListExp arguments, MessageCompletionObserver onCompletion) {
 
         // No commands are sent to buttons or fields when not in browse mode or cmd-option is down
-        if (KeyboardManager.getInstance().isCommandOptionDown() ||
-                ToolsContext.getInstance().getToolMode() != ToolMode.BROWSE && getMe().isButtonOrFieldSpecifier())
+        if (KeyboardManager.getInstance().isCommandOptionDown())
         {
             onCompletion.onMessagePassed(command, false, null);
             return;

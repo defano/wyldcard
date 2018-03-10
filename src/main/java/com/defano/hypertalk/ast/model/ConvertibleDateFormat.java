@@ -9,10 +9,10 @@ import java.util.Date;
 public enum ConvertibleDateFormat {
     
     SECONDS(new SecondsDateFormat()),
-    DATE_ITEMS(new SimpleDateFormat("yyyy, MM, dd, H, mm, ss, F")),
-    LONG_DATE(new SimpleDateFormat("EEEEE, MMMMM dd, yyyy")),
-    SHORT_DATE(new SimpleDateFormat("MM/dd/yy")),
-    ABBREV_DATE(new SimpleDateFormat("EEE, MMM dd, yyyy")),
+    DATE_ITEMS(new SimpleDateFormat("yyyy,M,d,H,mm,ss,F")),
+    LONG_DATE(new SimpleDateFormat("EEEEE, MMMMM d, yyyy")),
+    SHORT_DATE(new SimpleDateFormat("M/d/yy")),
+    ABBREV_DATE(new SimpleDateFormat("EEE,MMM d,yyyy")),
     LONG_TIME(new SimpleDateFormat("h:mm:ss a")),
     SHORT_TIME(new SimpleDateFormat("h:mm a"));
 
@@ -23,7 +23,7 @@ public enum ConvertibleDateFormat {
         this.dateFormat = format;
     }
 
-    public static ConvertibleDateFormat ofDateLength(DateLength length) {
+    public static ConvertibleDateFormat ofDateLength(Adjective length) {
         switch (length) {
             case LONG:
                 return LONG_DATE;
@@ -37,7 +37,7 @@ public enum ConvertibleDateFormat {
         }
     }
 
-    public static ConvertibleDateFormat ofTimeLength(DateLength length) {
+    public static ConvertibleDateFormat ofTimeLength(Adjective length) {
         switch (length) {
             case LONG:
                 return LONG_TIME;
