@@ -75,7 +75,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 [Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
-_This guide describes HyperTalk as implemented by this project; Apple's HyperCard implements a superset of the language features described within. Wherever a language feature provided by HyperTalk Java differs from HyperCard, an attempt has been made to note the difference._
+_This guide describes HyperTalk as implemented by this project; not every aspect of HyperTalk has been implemented and wherever a language feature provided by HyperTalk Java differs from HyperCard, an attempt has been made to note the difference._
 
 HyperCard's native language, _HyperTalk_, is a message-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) that contains a script providing a _handler_ for the received message. HyperCard automatically sends messages (like `mouseEnter` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts (or to themselves), too.
 
@@ -151,9 +151,9 @@ go to card 4 of background 2
 
 ## Messages and handlers
 
-Stacks, backgrounds, cards, buttons and fields are scriptable in the HyperTalk language.
+A HyperTalk script consists of a set of _message handlers_ and _function handlers_ that describe how the object reacts when HyperCard (or another script) sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
 
-A script consists of a set of _message handlers_ and _function handlers_ that describe how the object reacts when HyperCard (or another script) sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
+Stacks, backgrounds, cards, buttons and fields are scriptable in the HyperTalk language.
 
 For example, a button could contain the script:
 
@@ -306,7 +306,7 @@ false is not "tr" & "ue" -- true, concatenating 'tr' with 'ue' produces a logica
 
 ### Operators
 
-An _operator_ is an expression that takes one or two values (_operands_), applies some _operation_ to them, and yields a new value. HyperTalk supports a standard suite of mathematical, logical and string operators:
+An _operator_ is an expression that takes one or two values (called _operands_), performs some _operation_ on them, and yields a new value. HyperTalk supports a standard suite of mathematical, logical, and string operators:
 
 |Precedence  | Operator        | Description
 |------------| ----------------|-------------
@@ -341,17 +341,17 @@ An _operator_ is an expression that takes one or two values (_operands_), applie
 
 ### Factors
 
-A _factor_ is an expression specifying an object (a stack, background, card, button or field) that HyperCard interprets in whichever way is most meaningful to the context of its usage. That is, a factor is a context-sensitive evaluation of an expression. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
+A _factor_ is an expression that refers to an object (like a card, button or field) that HyperCard interprets in whichever way is most meaningful to the context of its usage. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
-For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever card field 1 refers. If no such field exists, or if the text of that field doesn't refer to a card (such as, `next card`) then HyperCard will produce an error.
+For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever the text of card field 1 refers. If no such field exists, or if the text of that field doesn't refer to a card (such as, `next card`) then HyperCard will produce an error.
 
 #### How factors work in HyperTalk Java
 
-When a HyperTalk Java command expects an expression conforming to a specific type, it uses this algorithm to interpret the factor:
+When a HyperTalk command expects an expression conforming to a specific object type, it uses this algorithm to interpret the factor:
 
 1. If the expression is a _grouped expression_ (that is, it has parentheses around it) then the group is evaluated and the resulting value is re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object becomes the argument to the command. For example, if `card field 1` contains the text `card button 1`, then the command `hide (card field 1)` has the effect of hiding `card button 1`, not `card field 1`.
 
-2. If the expression is an _object literal_ referring to the expected object type, then the literal value is used as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself—and not the button—to be hidden (because `card field 1` is an object literal in `hide card field 1`).
+2. If the expression is an _object literal_ referring directly to the expected object type, then the literal value is used as the argument to the command. In the previous example, removing the parentheses from the command causes the field itself—and not the button—to be hidden (because `card field 1` is an object literal in `hide card field 1`).
 
 3. Finally, if none of the previous attempts produce a usable argument, then, following the same process described in the first step, the expression is evaluated, and the resulting value is then re-interpreted as a HyperTalk expression. If the re-interpreted expression refers to an object of the expected type, then that object is assumed to be the argument to the command.
 
@@ -359,7 +359,7 @@ When a HyperTalk Java command expects an expression conforming to a specific typ
 
 The table below lists special values that are treated as _constants_ in the language; any unquoted use of these terms evaluates to the specified value.
 
-Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be used assumed). HyperCard sometimes allowed for multi-word unquoted literals (depending on the context of their use); these are never allowed in HyperTalk Java (e.g., `put hello world` results in a syntax error).
+Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be used assumed). Note that multi-word unquoted literals are never allowed in HyperTalk Java (e.g., `put hello world` results in a syntax error).
 
 Constant     | Value
 -------------|---------------------------------------
@@ -377,9 +377,9 @@ Constant     | Value
 
 ## Containers
 
-[Variables](#variable-containers) | [Parts](#part-containers) | [Menus](#menu-containers) | [Message](#the-message) | [It](#the-it-container) | [Selection](#the-selection-container)
+[Variables](#variable-containers) | [Parts](#part-containers) | [Menus](#menu-containers) | [Message](#the-message) | [It](#the-it-container) | [Selection](#the-selection-container) | [Target](#the-target-container)
 
-A _container_ is anything in HyperCard that you can `put` a value into: Parts, variables, properties, menus, the message box, and the selection are each containers.
+A _container_ is anything in HyperCard that you can `put` a value into: parts, variables, properties, menus, the message box, the selection and the target are each containers.
 
 #### Variable containers
 
@@ -487,6 +487,19 @@ For example,
 ```
 if the selection is a number then multiply the selection by 10
 put "[redacted]" into the selection
+```
+
+#### The `target` container
+
+The `target` is somewhat unusual in that it is both a HyperTalk function (when used with `the`, as in `the target`) but also refers to a part itself. The built-in function `the target` returns a string expression referring to the part that the current message was originally sent to; `target` refers to the part itself.
+
+For example, consider the behavior of this script when added to a card field:
+
+```
+on mouseUp
+  answer the target   -- displays 'card field id x'
+  answer target       -- displays the text of this field
+end mouseUp
 ```
 
 ## Parts
@@ -1120,6 +1133,7 @@ Function        | Description
 `sound`         | Returns the name of the currently playing sound, or `done` if no sound is being played.
 `sum`           | Returns the sum of the arguments. For example, `sum(1,3,8)` yields `9`.
 `tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
+`target`        | Returns a HyperTalk expression referring to the part that first received the current message. For example, `the target` might yield `card button id 13`. Note that `the target` is a function, but `target` is a container.
 `ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
 `time`          | Returns the time of day in a variety of formats. Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` to yield a time in the format `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.
 `tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`

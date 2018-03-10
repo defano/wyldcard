@@ -67,17 +67,25 @@ public class HyperCardMenuBar extends JMenuBar {
             throw new HtSemanticException("A menu named " + name + " already exists.");
         }
 
-        add(new HyperCardMenu(name));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            add(new HyperCardMenu(name));
+            super.invalidate();
+            super.repaint();
 
-        // Required on non-macOS systems when menu is modified by message window
-        WindowManager.getInstance().getStackWindow().getWindow().pack();
+            // Required on non-macOS systems when menu is modified by message window
+            WindowManager.getInstance().getStackWindow().getWindow().pack();
+        });
     }
 
     public void deleteMenu(JMenu menu) {
-        super.remove(menu);
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            super.remove(menu);
+            super.invalidate();
+            super.repaint();
 
-        // Required on non-macOS systems when menu is modified by message window
-        WindowManager.getInstance().getStackWindow().getWindow().pack();
+            // Required on non-macOS systems when menu is modified by message window
+            WindowManager.getInstance().getStackWindow().getWindow().pack();
+        });
     }
 
     public JMenu findMenuByNumber(int index) {

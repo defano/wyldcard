@@ -1251,6 +1251,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitTargetDest(HyperTalkParser.TargetDestContext ctx) {
+        return new TargetExp(ctx);
+    }
+
+    @Override
     public Object visitExpressionMenu(HyperTalkParser.ExpressionMenuContext ctx) {
         return new MenuSpecifier((Expression) visit(ctx.factor()));
     }
