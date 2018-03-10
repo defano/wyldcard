@@ -17,7 +17,7 @@ public class KeyboardManager {
     private boolean isShiftDown;
     private boolean isAltOptionDown;          // Either 'alt' or 'option' (Mac)
     private boolean isCtrlCommandDown;        // Either 'ctrl' or 'command' (Mac
-    private boolean isBreakSequence;
+    private Long breakTime;
 
     private final static Set<KeyListener> observers = new HashSet<>();
 
@@ -33,7 +33,9 @@ public class KeyboardManager {
             isAltOptionDown = e.isAltDown();
             isCtrlCommandDown = e.isMetaDown() || e.isControlDown();
 
-            isBreakSequence = e.getKeyCode() == KeyEvent.VK_PERIOD && isCtrlCommandDown;
+            if (e.getKeyCode() == KeyEvent.VK_PERIOD && isCtrlCommandDown) {
+                breakTime = System.currentTimeMillis();
+            }
 
             fireGlobalKeyListeners(e);
 
@@ -49,6 +51,10 @@ public class KeyboardManager {
         return observers.remove(observer);
     }
 
+    public Long getBreakTime() {
+        return breakTime;
+    }
+
     public boolean isShiftDown() {
         return isShiftDown;
     }
@@ -59,10 +65,6 @@ public class KeyboardManager {
 
     public boolean isCtrlCommandDown() {
         return isCtrlCommandDown;
-    }
-
-    public boolean isBreakSequence() {
-        return isBreakSequence;
     }
 
     public boolean isCommandOptionDown() {

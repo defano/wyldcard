@@ -8,12 +8,11 @@ import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HyperTalkErrorDialog {
 
     private final static HyperTalkErrorDialog instance = new HyperTalkErrorDialog();
-    private AtomicBoolean errorDialogVisible = new AtomicBoolean(false);
+    private boolean errorDialogVisible = false;
 
     private HyperTalkErrorDialog() {
     }
@@ -24,7 +23,8 @@ public class HyperTalkErrorDialog {
 
     public void showError(HtException e) {
         SwingUtilities.invokeLater(() -> {
-            if (!errorDialogVisible.get()) {
+            if (!errorDialogVisible) {
+                errorDialogVisible = true;
 
                 if (isEditable(e)) {
                     showEditableError(e.getMessage(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
@@ -32,7 +32,7 @@ public class HyperTalkErrorDialog {
                     showUneditableError(e.getMessage());
                 }
 
-                errorDialogVisible.set(false);
+                errorDialogVisible = false;
             }
         });
         e.printStackTrace();

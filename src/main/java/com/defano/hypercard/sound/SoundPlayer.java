@@ -1,6 +1,6 @@
 package com.defano.hypercard.sound;
 
-import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -106,7 +106,7 @@ public class SoundPlayer {
         for (String thisNoteString : notes.stringValue().split("\\s+")) {
 
             // Break out of playback sequence if user type cmd-.
-            if (KeyboardManager.getInstance().isBreakSequence()) return;
+            if (ExecutionContext.getContext().didAbort()) return;
 
             MusicalNote thisNote = MusicalNote.fromString(lastNote, thisNoteString.toLowerCase());
 

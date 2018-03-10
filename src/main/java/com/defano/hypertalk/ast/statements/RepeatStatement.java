@@ -1,18 +1,12 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.breakpoints.TerminateIterationBreakpoint;
 import com.defano.hypertalk.ast.breakpoints.TerminateLoopBreakpoint;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.statements.loop.*;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.ast.statements.loop.RepeatCount;
-import com.defano.hypertalk.ast.statements.loop.RepeatDuration;
-import com.defano.hypertalk.ast.statements.loop.RepeatForever;
-import com.defano.hypertalk.ast.statements.loop.RepeatRange;
-import com.defano.hypertalk.ast.statements.loop.RepeatSpecifier;
-import com.defano.hypertalk.ast.statements.loop.RepeatWith;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -137,7 +131,7 @@ public class RepeatStatement extends Statement {
 
     private void rest() throws HtException {
 
-        if (KeyboardManager.getInstance().isBreakSequence()) {
+        if (ExecutionContext.getContext().didAbort()) {
             throw new HtSemanticException("Script aborted.");
         } else {
             try {

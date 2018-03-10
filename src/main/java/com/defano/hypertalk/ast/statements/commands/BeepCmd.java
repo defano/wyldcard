@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -30,7 +30,7 @@ public class BeepCmd extends Command {
             Toolkit.getDefaultToolkit().beep();
             try {
                 Thread.sleep(250);
-                if (KeyboardManager.getInstance().isBreakSequence()) {
+                if (ExecutionContext.getContext().didAbort()) {
                     throw new HtSemanticException("Script aborted.");
                 }
             } catch (InterruptedException e) {

@@ -1,7 +1,9 @@
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypercard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -28,6 +30,9 @@ public class StatementList extends Statement {
 
     public void onExecute() throws HtException, Breakpoint {
         for (Statement s : list) {
+            if (ExecutionContext.getContext().didAbort()) {
+                throw new HtSemanticException("Script aborted.");
+            }
             s.execute();
         }
     }

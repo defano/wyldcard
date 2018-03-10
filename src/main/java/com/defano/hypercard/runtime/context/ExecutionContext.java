@@ -1,6 +1,7 @@
 package com.defano.hypercard.runtime.context;
 
 import com.defano.hypercard.HyperCard;
+import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypercard.parts.PartException;
 import com.defano.hypercard.parts.card.CardPart;
 import com.defano.hypercard.parts.model.PartModel;
@@ -200,6 +201,19 @@ public class ExecutionContext {
      */
     public boolean isVariableInScope(String symbol) {
         return globals.exists(symbol) && getFrame().isGlobalInScope(symbol) || getFrame().getSymbols().exists(symbol);
+    }
+
+    /**
+     * Determines if the user requested to abort script execution since the time the current script began
+     * executing.
+     *
+     * @return True if script should be aborted, false otherwise
+     */
+    public boolean didAbort() {
+        Long breakTime = KeyboardManager.getInstance().getBreakTime();
+        Long startTime = getFrame().getCreationTimeMs();
+
+        return breakTime != null && startTime != null && breakTime > startTime;
     }
 
     /**
