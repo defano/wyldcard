@@ -19,7 +19,14 @@ public class ButtonModel extends CardLayerPartModel {
     public static final String PROP_STYLE = "style";
     public static final String PROP_FAMILY = "family";
     public static final String PROP_HILITE = "hilite";
-    public static final String PROP_AUTOHILIGHT = "autohilite";
+    public static final String PROP_HIGHLITE = "highlite";
+    public static final String PROP_HILIGHT = "hilight";
+    public static final String PROP_HIGHLIGHT = "highlight";
+    public static final String PROP_AUTOHILITE = "autohilite";
+    public static final String PROP_AUTOHIGHLITE = "autohighlite";
+    public static final String PROP_AUTOHILIGHT = "autohilight";
+    public static final String PROP_AUTOHIGHLIGHT = "autohighlight";
+
     public static final String PROP_SHOWNAME = "showname";
     public static final String PROP_ICON = "icon";
     public static final String PROP_ICONALIGN = "iconalign";
@@ -48,7 +55,7 @@ public class ButtonModel extends CardLayerPartModel {
         partModel.defineProperty(PROP_STYLE, new Value(ButtonStyle.ROUND_RECT.getName()), false);
         partModel.defineProperty(PROP_FAMILY, new Value(), false);
         partModel.defineProperty(PROP_HILITE, new Value(false), false);
-        partModel.defineProperty(PROP_AUTOHILIGHT, new Value(true), false);
+        partModel.defineProperty(PROP_AUTOHILITE, new Value(true), false);
         partModel.defineProperty(PROP_CONTENTS, new Value(), false);
         partModel.defineProperty(PROP_ICON, new Value(), false);
         partModel.defineProperty(PROP_ICONALIGN, new Value("default"), false);
@@ -74,6 +81,9 @@ public class ButtonModel extends CardLayerPartModel {
 
             return lines.get(selectedLineIdx);
         });
+
+        definePropertyAlias(PROP_HILITE, PROP_HIGHLITE, PROP_HILIGHT, PROP_HIGHLIGHT);
+        definePropertyAlias(PROP_AUTOHILITE, PROP_AUTOHIGHLITE, PROP_AUTOHILIGHT, PROP_AUTOHIGHLIGHT);
     }
 
     @Override

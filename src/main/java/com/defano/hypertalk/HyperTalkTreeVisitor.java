@@ -1306,6 +1306,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitPicture(HyperTalkParser.PictureContext ctx) {
+        return super.visitPicture(ctx);
+    }
+
+    @Override
+    public Object visitSeconds(HyperTalkParser.SecondsContext ctx) {
+        return super.visitSeconds(ctx);
+    }
+
+    @Override
     public Object visitButtonPartPart(HyperTalkParser.ButtonPartPartContext ctx) {
         return visit(ctx.buttonPart());
     }
@@ -1844,16 +1854,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitTickTimeUnit(HyperTalkParser.TickTimeUnitContext ctx) {
         return TimeUnit.TICKS;
-    }
-
-    @Override
-    public Object visitSecTimeUnit(HyperTalkParser.SecTimeUnitContext ctx) {
-        return TimeUnit.SECONDS;
-    }
-
-    @Override
-    public Object visitSecondTimeUnit(HyperTalkParser.SecondTimeUnitContext ctx) {
-        return TimeUnit.SECONDS;
     }
 
     @Override

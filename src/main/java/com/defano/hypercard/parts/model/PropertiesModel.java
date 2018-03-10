@@ -95,11 +95,14 @@ public class PropertiesModel {
      * 'rect' is the same as 'rectangle').
      *
      * @param property The name of the property to be aliased
-     * @param alsoKnownAs Another name by which the property can be addressed
+     * @param alsoKnownAs Another nam(s) by which the property can be addressed
      */
-    public void definePropertyAlias(String property, String alsoKnownAs) {
+    public void definePropertyAlias(String property, String... alsoKnownAs) {
         assertConstructed();
-        propertyAliases.put(alsoKnownAs.toLowerCase(), property.toLowerCase());
+
+        for (String thisAka : alsoKnownAs) {
+            propertyAliases.put(thisAka.toLowerCase(), property.toLowerCase());
+        }
     }
 
     /**

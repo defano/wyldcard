@@ -38,6 +38,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     public static final String PROP_RECTANGLE = "rectangle";
     public static final String PROP_TOPLEFT = "topleft";
     public static final String PROP_BOTTOMRIGHT = "bottomright";
+    public static final String PROP_BOTRIGHT = "botright";
     public static final String PROP_VISIBLE = "visible";
     public static final String PROP_LOC = "loc";
     public static final String PROP_LOCATION = "location";
@@ -143,6 +144,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 throw new HtSemanticException("Expected a point, but got " + value.stringValue());
             }
         });
+        definePropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
 
         defineComputedGetterProperty(PROP_BOTTOMRIGHT, (model, propertyName) ->
                 new Value(

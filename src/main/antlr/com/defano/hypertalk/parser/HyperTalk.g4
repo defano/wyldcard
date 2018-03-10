@@ -162,9 +162,9 @@ commandStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
     | 'hide' expression                                                                                                 # hideCmdStmnt
-    | 'hide' card 'picture'                                                                                             # hideThisCardPictCmd
-    | 'hide' background 'picture'                                                                                       # hideThisBkgndPictCmd
-    | 'hide' 'picture' of expression                                                                                    # hidePictCmd
+    | 'hide' card picture                                                                                               # hideThisCardPictCmd
+    | 'hide' background picture                                                                                         # hideThisBkgndPictCmd
+    | 'hide' picture of expression                                                                                      # hidePictCmd
     | 'hide' 'titlebar'                                                                                                 # hideTitleBar
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
@@ -194,9 +194,9 @@ commandStmnt
     | 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
     | 'send' listExpression 'to' expression                                                                             # sendCmdStmnt
     | 'show' expression                                                                                                 # showCmdStmnt
-    | 'show' card 'picture'                                                                                             # showThisCardPictCmd
-    | 'show' background 'picture'                                                                                       # showThisBkgndPictCmd
-    | 'show' 'picture' of expression                                                                                    # showPictCmd
+    | 'show' card picture                                                                                               # showThisCardPictCmd
+    | 'show' background picture                                                                                         # showThisBkgndPictCmd
+    | 'show' picture of expression                                                                                      # showPictCmd
     | 'show' 'titlebar'                                                                                                 # showTitleBarCmd
     | 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
     | 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
@@ -231,7 +231,7 @@ convertible
     ;
 
 conversionFormat
-    : 'seconds'                                                                                                         # secondsConvFormat
+    : seconds                                                                                                           # secondsConvFormat
     | 'dateitems'                                                                                                       # dateItemsConvFormat
     | length 'date'                                                                                                     # dateConvFormat
     | length 'time'                                                                                                     # timeConvFormat
@@ -472,7 +472,7 @@ zeroArgFunc
     | 'shiftkey'                                                                                                        # shiftKeyFunc
     | 'optionkey'                                                                                                       # optionKeyFunc
     | 'ticks'                                                                                                           # ticksFunc
-    | 'seconds'                                                                                                         # secondsFunc
+    | seconds                                                                                                           # secondsFunc
     | length 'time'                                                                                                     # timeFunc
     | length 'date'                                                                                                     # dateFunc
     | 'tool'                                                                                                            # toolFunc
@@ -723,6 +723,18 @@ commandName
     | 'export'
     ;
 
+picture
+    : 'picture'
+    | 'pict'
+    ;
+
+seconds
+    : 'seconds'
+    | 'secs'
+    | 'second'
+    | 'sec'
+    ;
+
 speed
     : 'fast'                                                                                                            # fastSpeed
     | ('slow' | 'slowly')                                                                                               # slowSpeed
@@ -774,9 +786,7 @@ effect
 timeUnit
     : 'ticks'                                                                                                           # ticksTimeUnit
     | 'tick'                                                                                                            # tickTimeUnit
-    | 'seconds'                                                                                                         # secondsTimeUnit
-    | 'sec'                                                                                                             # secTimeUnit
-    | 'second'                                                                                                          # secondTimeUnit
+    | seconds                                                                                                           # secondsTimeUnit
     ;
 
 position
