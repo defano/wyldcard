@@ -418,6 +418,7 @@ factor
 container
     : ID                                                                                                                # variableDest
     | 'the'? 'selection'                                                                                                # selectionDest
+    | 'target'                                                                                                          # targetDest
     | property                                                                                                          # propertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
