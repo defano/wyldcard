@@ -50,7 +50,9 @@ Any changes made to the HyperTalk grammar file (`HyperTalk.g4`) require the pars
 
 Once the parser has been regenerated, you'll be ready to make corresponding changes to the tree visitor class (`HyperTalkTreeVisitor`).
 
-## Modifying window, palette and dialog layouts
+## Using the IntelliJ IDE
+
+This project will not compile in IntelliJ without first changing the GUI Designer settings.
 
 The UI forms (window layouts) are generated using the GUI Designer built into IntelliJ's IDEA (Community Edition). Do not modify the generated source code by hand, as doing so will render those files incompatible with the GUI Designer tool.
 
@@ -62,5 +64,15 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 2. Navigate to "Editor" -> GUI Designer
 3. Select the "Java source code" option for GUI generation.
 4. Apply the changes and "Rebuild project" from the "Build" menu.
+
+## Frequently encountered problems
+
+### 1. Various classes in the `com.defano.hypertalk.parser` package don't exist. This project won't compile!
+
+See the note at the top of this page. WyldCard makes use of generated Java sources created by Antlr4 (a parser generator tool). If you're missing classes in this package, you'll need to run the `gradle generateGrammarSource` task to recreate them.
+
+### 2. I imported this project into IntelliJ, but I get a weird `Duplicate method name "$$$getFont$$$"` error when I attempt to run it. What gives?
+
+See the [section above](#using-the-intellij-ide): IntelliJ, by default, attempts to compile window layouts directly into binary (`.class` files). This project must be configured to translate these forms into Java source code (for portability to other IDEs and build environments).
 
 #### That's all folks...
