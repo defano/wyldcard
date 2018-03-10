@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.paint.PaintBrush;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.wyldcard.paint.PaintBrush;
+import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;

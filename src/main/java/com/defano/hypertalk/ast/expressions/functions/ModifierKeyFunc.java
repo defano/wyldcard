@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypercard.awt.KeyboardManager;
+import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.model.ModifierKey;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;

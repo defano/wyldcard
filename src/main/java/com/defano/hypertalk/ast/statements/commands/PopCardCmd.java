@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.HyperCard;
+import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -14,6 +14,6 @@ public class PopCardCmd extends Command {
 
     @Override
     protected void onExecute() throws HtException, Breakpoint {
-        HyperCard.getInstance().getActiveStack().popCard(null);
+        WyldCard.getInstance().getActiveStack().popCard(null);
     }
 }

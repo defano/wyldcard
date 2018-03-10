@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.util.ThreadUtils;
+import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;

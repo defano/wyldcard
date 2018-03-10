@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Value;
@@ -30,7 +30,7 @@ public abstract class Expression extends ASTNode {
     /**
      * Evaluates this expression, returning a HyperTalk {@link Value} or throwing a "contextualized" exception if an
      * error occurs during evaluation. A contextualized exception is one containing a
-     * {@link com.defano.hypercard.runtime.Breadcrumb} referring to the script token and script-owning part that
+     * {@link com.defano.wyldcard.runtime.Breadcrumb} referring to the script token and script-owning part that
      * resulted in the exception.
      *
      * @return The value that this expression evaluated to.

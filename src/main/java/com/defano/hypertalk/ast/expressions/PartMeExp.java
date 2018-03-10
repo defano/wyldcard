@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;

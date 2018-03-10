@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.bkgnd.BackgroundModel;
-import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.model.PartModel;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -26,7 +26,7 @@ public class PushCardCmd extends Command {
     @Override
     protected void onExecute() throws HtException {
         if (destinationExp == null) {
-            push(HyperCard.getInstance().getActiveStackDisplayedCard().getId());
+            push(WyldCard.getInstance().getActiveStackDisplayedCard().getId());
         } else {
 
             Integer pushCardId = null;
@@ -51,14 +51,14 @@ public class PushCardCmd extends Command {
         if (model instanceof CardModel) {
             return model.getId();
         } else if (model instanceof BackgroundModel) {
-            int cardIndex = HyperCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
-            return HyperCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId();
+            int cardIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
+            return WyldCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId();
         } else {
             return null;
         }
     }
 
     private void push(int cardId) {
-        HyperCard.getInstance().getActiveStack().getStackModel().getBackStack().push(cardId);
+        WyldCard.getInstance().getActiveStack().getStackModel().getBackStack().push(cardId);
     }
 }

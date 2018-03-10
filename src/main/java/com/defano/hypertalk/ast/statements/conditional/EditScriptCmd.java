@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.conditional;
 
-import com.defano.hypercard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;

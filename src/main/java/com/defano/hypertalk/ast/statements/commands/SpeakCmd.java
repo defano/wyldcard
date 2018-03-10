@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.sound.SpeechPlaybackExecutor;
+import com.defano.wyldcard.sound.SpeechPlaybackExecutor;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.SpeakingVoice;
 import com.defano.hypertalk.ast.statements.Command;

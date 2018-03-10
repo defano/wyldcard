@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
@@ -28,7 +28,7 @@ public class MessageCmd extends Statement {
         try {
             ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs);
         } catch (HtException e) {
-            HyperCard.getInstance().showErrorDialog(e);
+            WyldCard.getInstance().showErrorDialog(e);
         }
     }
 }

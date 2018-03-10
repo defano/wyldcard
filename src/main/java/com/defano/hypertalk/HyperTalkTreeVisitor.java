@@ -1,7 +1,7 @@
 package com.defano.hypertalk;
 
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.expressions.*;
 import com.defano.hypertalk.ast.expressions.containers.*;
 import com.defano.hypertalk.ast.expressions.functions.*;

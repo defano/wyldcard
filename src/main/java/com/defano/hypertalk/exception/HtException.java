@@ -1,6 +1,6 @@
 package com.defano.hypertalk.exception;
 
-import com.defano.hypercard.runtime.Breadcrumb;
+import com.defano.wyldcard.runtime.Breadcrumb;
 
 /**
  * A base class for all HyperTalk-related checked exceptions.

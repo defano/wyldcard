@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.wyldcard.window.forms.BrushesPalette">
+  <grid id="27dc6" binding="brushesPanel" layout-manager="GridLayoutManager" row-count="4" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="19289" class="javax.swing.JButton" binding="square16">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/square_16x16.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="f7c0e" class="javax.swing.JButton" binding="square12">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/square_12x12.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="f3505" class="javax.swing.JButton" binding="square8">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/square_8x8.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="1221f" class="javax.swing.JButton" binding="square4">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <hideActionText value="false"/>
+          <icon value="brushes/square_4x4.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="bbf95" class="javax.swing.JButton" binding="round16">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/round_16x16.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="403c4" class="javax.swing.JButton" binding="round12">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/round_12x12.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="f5297" class="javax.swing.JButton" binding="round8">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/round_8x8.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="6a61d" class="javax.swing.JButton" binding="round4">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/round_4x4.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="921e3" class="javax.swing.JButton" binding="line16">
+        <constraints>
+          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/line_16.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="89134" class="javax.swing.JButton" binding="line12">
+        <constraints>
+          <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/line_12.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="27d7f" class="javax.swing.JButton" binding="line8">
+        <constraints>
+          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/line_8.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="6ee46" class="javax.swing.JButton" binding="line4">
+        <constraints>
+          <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/line_4.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="58e62" class="javax.swing.JButton" binding="forward16">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/forward_16.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="92268" class="javax.swing.JButton" binding="forward12">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/forward_12.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="4a41b" class="javax.swing.JButton" binding="forward8">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/forward_8.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="b3d57" class="javax.swing.JButton" binding="forward4">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/forward_4.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="5e808" class="javax.swing.JButton" binding="back16">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/back_16.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="20d5d" class="javax.swing.JButton" binding="back12">
+        <constraints>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/back_12.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="ba87b" class="javax.swing.JButton" binding="back8">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/back_8.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="1b2cf" class="javax.swing.JButton" binding="back4">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/back_4.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="2a2d2" class="javax.swing.JButton" binding="bar16">
+        <constraints>
+          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/bar_16.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="b1e4f" class="javax.swing.JButton" binding="bar12">
+        <constraints>
+          <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/bar_12.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="35451" class="javax.swing.JButton" binding="bar8">
+        <constraints>
+          <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/bar_8.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="9f1c9" class="javax.swing.JButton" binding="bar4">
+        <constraints>
+          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="brushes/bar_4.png"/>
+          <text value=""/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

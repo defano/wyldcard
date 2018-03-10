@@ -1,8 +1,8 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypercard.parts.field.FieldModel;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.parts.field.FieldModel;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.CompositeChunk;
 import com.defano.hypertalk.ast.model.Value;

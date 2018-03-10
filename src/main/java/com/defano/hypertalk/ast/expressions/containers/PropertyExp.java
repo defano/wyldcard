@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;

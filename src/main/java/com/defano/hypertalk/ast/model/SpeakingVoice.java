@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model;
 
-import com.defano.hypercard.util.StringUtils;
+import com.defano.wyldcard.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

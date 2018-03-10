@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.context.FileContext;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;

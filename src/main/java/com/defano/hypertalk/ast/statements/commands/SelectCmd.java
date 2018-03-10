@@ -1,18 +1,18 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.runtime.context.ToolsContext;
-import com.defano.hypercard.parts.ToolEditablePart;
-import com.defano.hypercard.parts.button.HyperCardButton;
-import com.defano.hypercard.parts.button.ButtonPart;
-import com.defano.hypercard.parts.button.styles.MenuButton;
-import com.defano.hypercard.parts.card.CardLayerPart;
-import com.defano.hypercard.parts.field.AddressableSelection;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.context.PartToolContext;
-import com.defano.hypercard.util.ThreadUtils;
-import com.defano.hypercard.window.WindowManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.parts.ToolEditablePart;
+import com.defano.wyldcard.parts.button.HyperCardButton;
+import com.defano.wyldcard.parts.button.ButtonPart;
+import com.defano.wyldcard.parts.button.styles.MenuButton;
+import com.defano.wyldcard.parts.card.CardLayerPart;
+import com.defano.wyldcard.parts.field.AddressableSelection;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -98,7 +98,7 @@ public class SelectCmd extends Command {
         }
 
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);
-        ButtonPart part = (ButtonPart) HyperCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
+        ButtonPart part = (ButtonPart) WyldCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
         HyperCardButton component = (HyperCardButton) part.getButtonComponent();
         if (component instanceof MenuButton) {
@@ -116,7 +116,7 @@ public class SelectCmd extends Command {
         }
 
         PartModel partModel = ExecutionContext.getContext().getPart(specifier);
-        CardLayerPart part = HyperCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
+        CardLayerPart part = WyldCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             WindowManager.getInstance().getStackWindow().requestFocus();

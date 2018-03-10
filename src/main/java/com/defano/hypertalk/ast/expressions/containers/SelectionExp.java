@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
-import com.defano.hypercard.parts.field.AddressableSelection;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.SelectionContext;
-import com.defano.hypercard.util.ThreadUtils;
+import com.defano.wyldcard.parts.field.AddressableSelection;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.SelectionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;

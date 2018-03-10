@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.hypercard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.ParserRuleContext;

@@ -1,11 +1,11 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.parts.bkgnd.BackgroundModel;
-import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.util.ThreadUtils;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
@@ -42,7 +42,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'Go back'
         if (destinationExp == null) {
-            HyperCard.getInstance().getActiveStack().popCard(visualEffect);
+            WyldCard.getInstance().getActiveStack().popCard(visualEffect);
         }
 
         else {
@@ -55,7 +55,7 @@ public class GoCmd extends Command {
                 throw new HtSemanticException("No such card.");
             } else {
                 Integer finalCardIndex = cardIndex;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> HyperCard.getInstance().getActiveStack().goCard(finalCardIndex, visualEffect, true));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> WyldCard.getInstance().getActiveStack().goCard(finalCardIndex, visualEffect, true));
             }
         }
     }
@@ -68,9 +68,9 @@ public class GoCmd extends Command {
 
         int destinationIndex;
         if (model instanceof CardModel) {
-            destinationIndex = HyperCard.getInstance().getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
+            destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
         } else if (model instanceof BackgroundModel) {
-            destinationIndex = HyperCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
+            destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
         } else {
             return null;
         }

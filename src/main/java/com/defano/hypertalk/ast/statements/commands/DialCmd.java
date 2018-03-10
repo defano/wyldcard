@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.sound.SoundPlayer;
-import com.defano.hypercard.sound.SoundSample;
+import com.defano.wyldcard.sound.SoundPlayer;
+import com.defano.wyldcard.sound.SoundSample;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;

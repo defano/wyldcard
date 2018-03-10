@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
-import com.defano.hypercard.runtime.interpreter.MessageCompletionObserver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.exception.HtException;

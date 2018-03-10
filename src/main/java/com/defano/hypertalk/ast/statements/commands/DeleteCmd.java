@@ -1,11 +1,11 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.menu.HyperCardMenuBar;
-import com.defano.hypercard.parts.PartException;
-import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.model.PartModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.menu.HyperCardMenuBar;
+import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
@@ -55,7 +55,7 @@ public class DeleteCmd extends Command {
 
                 CardModel owner;
                 if (ps instanceof CompositePartSpecifier) {
-                    owner = HyperCard.getInstance().getActiveStack().getStackModel().findOwningCard((CompositePartSpecifier) ps);
+                    owner = WyldCard.getInstance().getActiveStack().getStackModel().findOwningCard((CompositePartSpecifier) ps);
                 } else {
                     owner = ExecutionContext.getContext().getCurrentCard().getCardModel();
                 }

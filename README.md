@@ -1,4 +1,4 @@
-# HyperTalk Java
+# WyldCard
 
 [Features](#features) | [Getting Started](#getting-started) | [Building](doc/BUILDING.md) | [HyperTalk Language Reference](#the-hypertalk-language)
 
@@ -16,40 +16,20 @@ Apple called it "programming for the rest of us." Steve Wozniak called it ["the 
 
 ## Features
 
-HyperTalk Java attempts to maintain high-fidelity to Apple's original software rather than to modernize it. That said, HyperTalk Java is not a HyperCard replacement and cannot open or import old stacks created in HyperCard.
+WyldCard attempts to maintain high-fidelity to Apple's original software rather than modernize it.
 
-#### Organize information
+* Organize information in stacks of cards: Cards support a foreground and background layer; buttons and fields come in a variety of styles similar to HyperCard's; text fields hold richly-styled text.
+* Paint and draw using all the original paint tools, patterns and image transforms (via the [JMonet library](https://www.github.com/defano/jmonet)). Supports full-color graphics and alpha transparency.
+* Attach scripts to buttons, fields, cards, backgrounds and stacks; most aspects of the HyperTalk 2.4.1 language have been implemented, including chunk expressions, message passing and context-sensitive evaluation of _factors_.
+* Compose music using HyperCard's original sound effects (`flute`, `harpsichord` and `boing`); `dial` telephone numbers; and `speak` text.
+* Animate cards and objects with one of 23 visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
-* Create, open, and save stacks of cards containing text, graphics, buttons, menus, sounds, and animations.
-* Cards support a foreground and background layer; buttons and fields come in a variety of styles similar to HyperCard's; text fields hold richly-styled text.
-* Sort cards and data; read and write text files from script; print individual cards or entire stacks of cards.
+#### How does this differ from HyperCard?
 
-#### Paint and draw
-
-* Paint using any of HyperCard's original tools, patterns, and 2D image transforms (all provided by the [JMonet library](https://www.github.com/defano/jmonet)).
-* Supports full-color graphics with alpha transparency, plus the ability to reduce color depth to give images a more vintage feel.
-* Drag-and-drop graphics onto the card; import and export graphics from the filesystem.
-* Includes many of the original button icons, plus the ability to create new icons from card graphics.
-
-#### Script your own software
-
-* Attach scripts to buttons, fields, cards, backgrounds and stacks; messages follow HyperCard's message passing order and can be trapped to override system behavior.
-* Supports much of the HyperTalk 2.x language (most of the built-in commands and functions have been implemented), including context-sensitive evaluation of _factors_.
-* Customize the application menu bar and author scripts that determine its behavior.
-* Powerful expression language sports compound mutable chunk operations (`put the first word of "Hello World" after the second item of the third line of card field "data"`).
-
-#### Play with sounds and effects
-
-* Play HyperCard's original sound effects (`flute`, `harpsichord` and `boing`), `dial` telephone numbers, and `speak` text.
-* Synthesize sounds into a sequence of musical notes supporting pitch, octave, accidental, duration and tempo.
-* Animate cards and object by locking and unlocking the screen with one of 23 animated visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
-
-### What's missing?
-
-* Can't open or import old HyperCard stacks.
+* WyldCard can't open or import old HyperCard stacks.
+* No home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
 * No multi-window or palette support (`open stack ... in new window`).
-* No Home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No support for external commands or functions (XCMDs/XFCNs).
+* No external commands or functions (XCMDs/XFCNs).
 
 ## Getting started
 
@@ -75,7 +55,7 @@ This project represents a homework assignment gone awry and is in no way associa
 
 [Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
-_This guide describes HyperTalk as implemented by this project; wherever a language feature provided by HyperTalk Java differs from HyperCard, an attempt has been made to note the difference._
+_This guide describes HyperTalk as implemented by this project; wherever a language feature provided by WyldCard differs from HyperCard, an attempt has been made to note the difference._
 
 HyperCard's native language, _HyperTalk_, is a message-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) that contains a script providing a _handler_ for the received message. HyperCard automatically sends messages (like `mouseDown` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts (or to themselves), too.
 
@@ -165,7 +145,7 @@ end mouseUp
 
 In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog).
 
-HyperTalk Java automatically sends the following messages to parts as the user interacts with the stack:
+WyldCard automatically sends the following messages to parts as the user interacts with the stack:
 
  Event Message      | Description
 --------------------|-----------------------------------------------------------------------------
@@ -345,7 +325,7 @@ A _factor_ is an expression that refers to an object (like a card, button or fie
 
 For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever the text of card field 1 refers. If no such field exists, or if the text of that field doesn't refer to a card (such as, `next card`) then HyperCard will produce an error.
 
-#### How factors work in HyperTalk Java
+#### How factors work in WyldCard
 
 When a HyperTalk command expects an expression conforming to a specific object type, it uses this algorithm to interpret the factor:
 
@@ -359,7 +339,7 @@ When a HyperTalk command expects an expression conforming to a specific object t
 
 The table below lists special values that are treated as _constants_ in the language; any unquoted use of these terms evaluates to the specified value.
 
-Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be used assumed). Multi-word unquoted literals are never allowed in HyperTalk Java (e.g., `put hello world` results in a syntax error).
+Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be used assumed). Multi-word unquoted literals are never allowed in WyldCard (e.g., `put hello world` results in a syntax error).
 
 Constant     | Value
 -------------|---------------------------------------
@@ -423,7 +403,7 @@ end y
 
 Like variables, a part can also be used to store value. When placing a value into a field, the text of the field is changed. However, when placing a value into a button, card, background or stack, the part's `contents` property is changed (the `contents` property does not affect these part's appearance in any way, and can only be seen / edited from the "Info..." dialog in the "Objects" menu). One exception: When dealing with `menu` styled buttons (combo boxes), the `contents` property determines the list of menu items available in the menu.
 
-In HyperCard, a value could only be placed into button or field parts; HyperTalk Java allows values to be placed into card, background and stack objects, too.
+In HyperCard, a value could only be placed into button or field parts; WyldCard allows values to be placed into card, background and stack objects, too.
 
 For example:
 
@@ -514,7 +494,7 @@ Buttons, fields, cards, backgrounds and the stack itself are parts. Menus are co
 
 Every part maintains a set of _properties_ that describe its look-and-feel (like its size, location and style). Modifying a part's properties modifies how way the part looks and behaves.
 
-Note that HyperTalk Java treats properties as "first class" containers than can be accessed in whole or by chunk using the `get`, `set` or `put` commands (this was not quite true in HyperCard).
+Note that WyldCard treats properties as "first class" containers than can be accessed in whole or by chunk using the `get`, `set` or `put` commands (this was not quite true in HyperCard).
 
 Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. (Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.) You can refer to buttons and fields on other cards in the stack, too (for example, `card button "Push Me" of card 3`).
 
@@ -579,7 +559,7 @@ You cannot create two menus that share the same name, nor can you delete a menu 
 
 The value of each menu is treated as a list; you can add, delete, or modify menu items by mutating items in the menu's value. For example, to replace the contents of a menu `put "Item 1,-,Item 2" into menu "My Custom Menu"`. To append items to a menu, `put "Item 3" after the last line of menu "My Custom Menu"`. To delete a menu item, `delete the second line of menu "Edit"`
 
-Use the `reset menuBar` command to eliminate any changes you've made to the menu bar and restore the default HyperTalk Java menus and menu items.
+Use the `reset menuBar` command to eliminate any changes you've made to the menu bar and restore the default WyldCard menus and menu items.
 
 #### Responding to user selections in the menu bar
 
@@ -602,17 +582,17 @@ By invoking `pass doMenu` we're letting HyperCard respond to these menu selectio
 
 #### Special considerations
 
-Menus in HyperTalk Java differ from Apple's HyperCard in a few nuanced ways:
+Menus in WyldCard differ from Apple's HyperCard in a few nuanced ways:
 
-* In Apple's HyperCard, if you created a menu item with the same name as a HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in HyperTalk Java.
-* HyperTalk Java cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (thus, the stack cannot take action when the user selects an item from them).
+* In Apple's HyperCard, if you created a menu item with the same name as a HyperCard menu item, the new item would inherit the behavior of HyperCard's original menu item. This is not true in WyldCard.
+* WyldCard cannot access or control the behavior of the menus produced by the operating system (such as the "Apple" or "HyperCard" menu on macOS systems). These menus cannot be deleted or modified, and selecting an item from one of these menus does not produce a `doMenu` message (thus, the stack cannot take action when the user selects an item from them).
 * When getting the contents of a menu from the menu bar, the result will be a list of lines (each line being the name of a menu item or `-` to denote a separator). This is true even if the menu items were `put` into the menu as a single-line list of values.
 
 ## Properties
 
 [Buttons](#buttons) | [Fields](#fields) | [Menu Items](#menu-items) | [Cards & Backgrounds](#cards-and-backgrounds) | [HyperCard](#hypercard-properties)
 
-A property is a HyperTalk-addressable attribute that determines how an object looks, feels, and reacts to user interaction. Properties in HyperTalk Java are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
+A property is a HyperTalk-addressable attribute that determines how an object looks, feels, and reacts to user interaction. Properties in WyldCard are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
 
 For example,
 
@@ -658,7 +638,7 @@ Property      | Description
 
 ### Buttons
 
-Buttons come in a variety of _styles_ which affect their look-and-feel. HyperTalk Java supports the following button styles:
+Buttons come in a variety of _styles_ which affect their look-and-feel. WyldCard supports the following button styles:
 
 Style                                      | Name          | Notes
 -------------------------------------------|---------------|----------------------
@@ -686,7 +666,7 @@ Property    | Description
 
 ### Fields
 
-In HyperTalk Java, fields come in four styles. Apple's HyperCard provided a specific style of scrollable text field. In HyperTalk Java, every style of field is scrollable, but scrolling can be disabled by setting the `scrolling` property to `false`.
+In WyldCard, fields come in four styles. Apple's HyperCard provided a specific style of scrollable text field. In WyldCard, every style of field is scrollable, but scrolling can be disabled by setting the `scrolling` property to `false`.
 
 Style                                            | Name          | Notes
 -------------------------------------------------|---------------|-------------------------
@@ -757,7 +737,7 @@ set the itemDelimiter to ","
 get the itemDelimiter
 ```
 
-HyperTalk Java supports these HyperCard properties:
+WyldCard supports these HyperCard properties:
 
 Global Property | Description
 ----------------|---------------
@@ -774,7 +754,7 @@ Global Property | Description
 `polySides`     | An integer representing the number of sides drawn using the polygon tool.
 `scriptTextFont`| The name of the font family used in the script editor; default is `Monaco`.
 `scriptTextSize`| The size, in points, of the text of the script editor; default is `12`.
-`systemVersion` | The read-only version number of the Java Virtual Machine executing HyperTalk Java, for example, `1.8.0_131`.
+`systemVersion` | The read-only version number of the Java Virtual Machine executing WyldCard, for example, `1.8.0_131`.
 `textFont`      | The currently active font family, as indicated by the selection in the "Font" menu.
 `textSize`      | The currently active font size, as indicated by the selection in the "Style" menu.
 `textStyle`     | The currently active font style, as indicated by the selection in the "Style" menu.
@@ -798,7 +778,7 @@ sort the cards of this stack by the first card field
 
 Cards are sorted by evaluating `<expression>` in the context of each card (`<expression>` being `the first card field` in the previous example). For example, if a stack has two cards, the contents of `the first card field` from each card will be compared; if the text of the second card's field is alphabetically before that of first card's, then the two card's will be switch positions. If the sort expression cannot be evaluated on each card (perhaps because one of the two cards has no fields) then the sort fails and no cards change position.
 
-When sorting things, you can specify how HyperTalk should interpret the data it compares. Possible formats are `text` (alphabetical order), `numeric` (numerical order), `dateTime` (interpret values as dates or times and order them chronologically) or `international` (same as `text` in HyperTalk Java).  
+When sorting things, you can specify how HyperTalk should interpret the data it compares. Possible formats are `text` (alphabetical order), `numeric` (numerical order), `dateTime` (interpret values as dates or times and order them chronologically) or `international` (same as `text` in WyldCard).  
 
 ```
 sort cards dateTime by field "Timestamp"    -- Sort chronologically
@@ -845,7 +825,7 @@ Use the `find` command to find text anywhere in the stack or anywhere within a s
 The syntax for searching is `find [<strategy>] [international] <factor> [in <field>] [of marked cards]` where:
 
 * `<strategy>` is one of `word`, `chars`, `whole`, or `string`. When no `<strategy>` value is specified, `whole` is assumed. See the table below for a detailed description of each
-* `international` had special meaning in HyperCard (matching diphthongs and diacriticals); it has no meaning in HyperTalk Java but is allowable in the syntax
+* `international` had special meaning in HyperCard (matching diphthongs and diacriticals); it has no meaning in WyldCard but is allowable in the syntax
 * `<factor>` is a single-term expression representing the text to find
 * `<field>` optionally specifies that the search should only take place within the single, specified field
 * `of marked cards` indicates that only marked cards should be searched. Has no effect if only a single field is being searched
@@ -869,13 +849,13 @@ find "Hyper" in background field "Card"  -- Searches only this one field
 
 [Visual Effects](#visual-effects) | [Sound Effects](#sound-effects) | [Music](#music) | [Text to Speech](#text-to-speech)
 
-HyperTalk Java supports a nearly identical set of visual and sound effects as HyperCard.
+WyldCard supports a nearly identical set of visual and sound effects as HyperCard.
 
 ### Visual Effects
 
-HyperTalk Java provides a selection of _visual effects_ that can be applied to card-to-card transitions or when "revealing" changes made by a script.
+WyldCard provides a selection of _visual effects_ that can be applied to card-to-card transitions or when "revealing" changes made by a script.
 
-A script can "lock" the screen to prevent the user from seeing what the script is doing. As long as the screen is locked, the user will see no changes made to the card or stack until HyperTalk Java is idle (has no more pending scripts to execute) or a script invokes the `unlock screen` command.
+A script can "lock" the screen to prevent the user from seeing what the script is doing. As long as the screen is locked, the user will see no changes made to the card or stack until WyldCard is idle (has no more pending scripts to execute) or a script invokes the `unlock screen` command.
 
 For example, consider this script which secretly navigates to the next card in the stack, draws a diagonal line on it, and then navigates back. While this script executes, the user has no knowledge that "behind the scenes" we've moved to another card and modified it:
 
@@ -890,7 +870,7 @@ on mouseUp
 end mouseUp
 ```
 
-When navigating between cards or unlocking the screen, a visual effect can be applied to animate the change. HyperTalk Java supports these animations:
+When navigating between cards or unlocking the screen, a visual effect can be applied to animate the change. WyldCard supports these animations:
 
 Visual Effect                                                  | Name                  | Description
 ---------------------------------------------------------------|-----------------------|--------------------------
@@ -936,7 +916,7 @@ go to card 3 with visual effect iris open to black very fast
 
 ### Sound Effects
 
-HyperTalk Java has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes with the `play` command. Touch-Tone phone sounds can be produced with the `dial` command, and the system alert sound can be emitted with `beep`.
+WyldCard has three built-in sounds (`harpsichord`, `flute` and `boing`) that can be played either as a simple sound effect or as a sequence of musical notes with the `play` command. Touch-Tone phone sounds can be produced with the `dial` command, and the system alert sound can be emitted with `beep`.
 
 ```
 play harpsichord
@@ -979,7 +959,7 @@ put "Finally some peace and quiet!"
 
 ### Text to speech
 
-HyperTalk Java can speak text using one of several pre-installed, English-speaking voices. The syntax for speaking text is `speak <text> [ with { <gender> voice } | { voice <name>} ]` where:
+WyldCard can speak text using one of several pre-installed, English-speaking voices. The syntax for speaking text is `speak <text> [ with { <gender> voice } | { voice <name>} ]` where:
 
 * `<text>` is an expression representing the text to be spoken.
 * `<gender>` is one of `male`, `female`, `robotic` or `neuter`. If a voice of the requested gender is unavailable, then the default voice will be used.
@@ -996,7 +976,7 @@ end repeat
 
 Speaking occurs asynchronously to other script actions (that is, the rest of the script continues to execute while the text is being spoken). Subsequent calls to `speak` will be enqueued and begin "speaking" when the current speech is complete. Use `the speech` function to determine what (if any) text is currently being spoken; `the speech` returns the text currently being spoken or `done` when nothing is being spoken.  
 
-HyperTalk Java utilizes the [MaryTTS library](http://mary.dfki.de) for text-to-speech capabilities and does not delegate to the operating system. Therefore, voices installed on your system are not available to HyperTalk Java. HyperTalk Java provides a function called `the voices` that returns a list of available speaking voices (note that this function does not exist in HyperCard).
+WyldCard utilizes the [MaryTTS library](http://mary.dfki.de) for text-to-speech capabilities and does not delegate to the operating system. Therefore, voices installed on your system are not available to WyldCard. WyldCard provides a function called `the voices` that returns a list of available speaking voices (note that this function does not exist in HyperCard).
 
 ## Commands
 
@@ -1006,7 +986,7 @@ A command does not represent a value and cannot be used as a term in an expressi
 
 Note that the execution of a command results in a message of the same name being sent to the current card, enabling the card, background or stack to intercept command messages and trap its behavior as needed. See the section on message passing for more information.
 
-HyperTalk Java provides all of the commands shown in the table below:
+WyldCard provides all of the commands shown in the table below:
 
 Command	         | Description
 -----------------|------------------------------
@@ -1036,7 +1016,7 @@ Command	         | Description
 `go`             | Transitions to a new card; `go to card 1` or `go next` or `go to the last card`
 `hide`           | Makes a part, image layer, or window title bar invisible. Syntax is `hide <part-factor>`, `hide {card / background} picture`, `hide picture of {<card-factor> / <bkgnd-factor>}`, or `hide titleBar`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
 `import paint`   | Pastes the graphics from a given file onto the current card's canvas (making the imported graphic the active selection). For example, `import paint from file "Card Image.png"`.
-`lock screen`    | "Locks" the screen until HyperTalk Java is idle or the screen is unlocked explicitly via the `unlock screen` command.
+`lock screen`    | "Locks" the screen until WyldCard is idle or the screen is unlocked explicitly via the `unlock screen` command.
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
 `open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.
 `play`           | Plays a sound (`boing`, `harpsichord` or `flute`) optionally as a series of notes (`c d# eh.`) and with an optional tempo (`play harpsichord tempo 200 "b a g a b b b"`). See the Sound and Music section for details.
@@ -1057,7 +1037,7 @@ Command	         | Description
 `unlock screen`  | Unlocks the screen while optionally applying a visual effect to the revealed changes. Use the syntax `unlock screen [with visual [effect] <effect-name> [to <image>] [<speed>]]` for animated transitions. See the "Visual Effects" section of this document for details.
 `visual effect`  | Specifies the visual effect to be used with any subsequent `go` command within the current handler. If the `go` command specifies its own visual effect, the `go` command's visual effect takes precedence. This command only affects navigation that occurs within the function/handler that invokes it.
 `wait`           | Waits for the specified condition or for the given amount of time. Follows the syntax `wait { [for] <count> { ticks `&#124;` seconds } `&#124;` until <condition> `&#124;` while <condition> }`. Valid examples include: `wait for 3 seconds`, `wait until the mouse is down`, `wait while the message box contains "hello"`
-`write`          | Writes text into a file that was previously opened with `open file`. Several forms, including `write <data> to file <filename>` (writes the expression `<data>` to the file, *overwriting the contents of the file*), `write <data> to file <filename> at end` (appends data to the end of the given file; `at end` can also be specified as `at eof`), `write <data> to file <filename> at <position>` (writes data to the file starting at the given `<position>`). Note that data is not actually written to disk until the file is closed or HyperTalk Java is quit.  
+`write`          | Writes text into a file that was previously opened with `open file`. Several forms, including `write <data> to file <filename>` (writes the expression `<data>` to the file, *overwriting the contents of the file*), `write <data> to file <filename> at end` (appends data to the end of the given file; `at end` can also be specified as `at eof`), `write <data> to file <filename> at <position>` (writes data to the file starting at the given `<position>`). Note that data is not actually written to disk until the file is closed or WyldCard is quit.  
 
 ## Functions
 
@@ -1092,7 +1072,7 @@ Function        | Description
 `compound`      | Given two arguments; an interest rate, and a number of periods, `compound` returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`. For example, to calculate how much a $1,000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years, `1000 * compound(.03, 6)` yields approximately `1194.05`.
 `cos`           | Returns the trigonometric cosine of the given argument, represented in radians.
 `date`          | Returns the current date in a variety of formats. Use `the date` or `the short date` to yield a date in the format `07/04/16`; use `the long date` or `the English date` for `Sunday, July 4, 2016`; use `the abbrev date` or `the abbreviated date` for `Sun, Jul 4, 2016`.
-`diskSpace`     | Returns the number of free bytes on the filesystem containing HyperTalk Java, or any specified filesystem. For example, `the diskSpace` or `the diskSpace of "/Volumes/Macintosh HD"`. Accepts the path of any disk, folder or file.
+`diskSpace`     | Returns the number of free bytes on the filesystem containing WyldCard, or any specified filesystem. For example, `the diskSpace` or `the diskSpace of "/Volumes/Macintosh HD"`. Accepts the path of any disk, folder or file.
 `exp`           | Returns the value of _e_ raised to the power of the given argument.
 `exp1`          | Returns the value of _1-e_ raised to the number of the given argument.
 `exp2`          | Returns the value of _2_ raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.
@@ -1141,7 +1121,7 @@ Function        | Description
 `tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
-`voices`        | Returns a list of installed voices. This function is unique to HyperTalk Java and does not exist in HyperCard.
+`voices`        | Returns a list of installed voices. This function is unique to WyldCard and does not exist in HyperCard.
 
 ### User-defined functions
 
@@ -1258,7 +1238,7 @@ At any point in the loop, the `next repeat` command may be used to terminate the
 
 `repeat forever`
 
-Executes the enclosed statement-list forever. Sort of. Type `cmd-.` or `ctrl-.` at anytime to break execution of the loop. Note that HyperTalk Java intelligently manages thread priority within an infinite loop; creating an infinite loop does not "lock up" the application.
+Executes the enclosed statement-list forever. Sort of. Type `cmd-.` or `ctrl-.` at anytime to break execution of the loop. Note that WyldCard intelligently manages thread priority within an infinite loop; creating an infinite loop does not "lock up" the application.
 
 ```
 -- Count to infinity (and beyond!)

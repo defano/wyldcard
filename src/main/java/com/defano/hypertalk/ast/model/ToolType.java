@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.model;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.google.common.collect.Lists;
-import com.defano.hypercard.paint.ToolMode;
+import com.defano.wyldcard.paint.ToolMode;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.ArrayList;

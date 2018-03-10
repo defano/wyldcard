@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.hypercard.HyperCard;
-import com.defano.hypercard.menu.HyperCardMenuBar;
-import com.defano.hypercard.parts.bkgnd.BackgroundModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.menu.HyperCardMenuBar;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Countable;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -59,14 +59,14 @@ public class NumberOfFunc extends Expression {
             case MENUS:
                 return new Value(HyperCardMenuBar.instance.getMenuCount());
             case CARDS:
-                return new Value(HyperCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst());
+                return new Value(WyldCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:
-                return new Value(HyperCard.getInstance().getActiveStack().getStackModel().getMarkedCards().size());
+                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getMarkedCards().size());
             case BKGNDS:
-                return new Value(HyperCard.getInstance().getActiveStack().getStackModel().getBackgroundCount());
+                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
                 BackgroundModel model = expression.partFactor(BackgroundModel.class, new HtSemanticException("No such background."));
-                return new Value(HyperCard.getInstance().getActiveStack().getStackModel().getCardsInBackground(model.getId()).size());
+                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getCardsInBackground(model.getId()).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }

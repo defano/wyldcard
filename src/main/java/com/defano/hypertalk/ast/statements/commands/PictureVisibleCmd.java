@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.parts.bkgnd.BackgroundModel;
-import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.Value;

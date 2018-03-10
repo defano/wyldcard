@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.search.SearchContext;
-import com.defano.hypercard.search.SearchQuery;
+import com.defano.wyldcard.search.SearchContext;
+import com.defano.wyldcard.search.SearchQuery;
 import com.defano.hypertalk.ast.model.SearchType;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;

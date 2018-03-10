@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.fx.CurtainManager;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.fx.CurtainManager;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;

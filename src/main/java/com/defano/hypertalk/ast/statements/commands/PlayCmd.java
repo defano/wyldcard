@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypercard.sound.SoundPlayer;
+import com.defano.wyldcard.sound.SoundPlayer;
 import com.defano.hypertalk.ast.model.MusicalScore;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;

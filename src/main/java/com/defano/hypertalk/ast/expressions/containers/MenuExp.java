@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
-import com.defano.hypercard.menu.MenuItemBuilder;
+import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;

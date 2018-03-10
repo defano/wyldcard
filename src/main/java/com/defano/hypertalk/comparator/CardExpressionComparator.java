@@ -1,10 +1,10 @@
 package com.defano.hypertalk.comparator;
 
-import com.defano.hypercard.parts.card.CardLayerPart;
-import com.defano.hypercard.parts.card.CardLayerPartModel;
-import com.defano.hypercard.parts.card.CardModel;
-import com.defano.hypercard.parts.card.CardPart;
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.parts.card.CardLayerPart;
+import com.defano.wyldcard.parts.card.CardLayerPartModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
