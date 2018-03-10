@@ -456,7 +456,7 @@ public class Value implements StyledComparable<Value> {
     public Value add (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be added to '" + v + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be added to '" + value + "'.");
         }
 
         try {
@@ -472,7 +472,7 @@ public class Value implements StyledComparable<Value> {
     public Value subtract (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be subtracted by '" + v + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be subtracted from '" + value + "'.");
         }
 
         try {
@@ -497,7 +497,7 @@ public class Value implements StyledComparable<Value> {
     public Value mod (Object val) throws HtSemanticException {
         Value v = new Value(val);
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be divided by '" + v + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be divided by '" + value + "'.");
         }
 
         if (isInteger() && v.isInteger())

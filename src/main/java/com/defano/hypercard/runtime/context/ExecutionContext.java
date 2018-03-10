@@ -19,7 +19,6 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -69,7 +68,7 @@ public class ExecutionContext {
      */
     public void pushContext () {
         getStack().push(getFrame());
-        setFrame(new StackFrame(new SymbolTable(), new ArrayList<>(), new Value()));
+        setFrame(new StackFrame());
     }
 
     /**
@@ -211,9 +210,9 @@ public class ExecutionContext {
      */
     public boolean didAbort() {
         Long breakTime = KeyboardManager.getInstance().getBreakTime();
-        Long startTime = getFrame().getCreationTimeMs();
+        long startTime = getFrame().getCreationTimeMs();
 
-        return breakTime != null && startTime != null && breakTime > startTime;
+        return breakTime != null && breakTime > startTime;
     }
 
     /**

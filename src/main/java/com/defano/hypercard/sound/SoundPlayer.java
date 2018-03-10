@@ -1,6 +1,6 @@
 package com.defano.hypercard.sound;
 
-import com.defano.hypercard.runtime.context.ExecutionContext;
+import com.defano.hypercard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -96,6 +96,7 @@ public class SoundPlayer {
      *              a tempo of 120 is assumed.
      */
     private static void playSynchronously(Value sound, Value notes, Value tempo) {
+        long playStartTime = System.currentTimeMillis();
         MusicalNote lastNote = MusicalNote.fromMiddleCQuarterNote();
 
         // Tempo is specified in eighth notes played per minute; convert to beats (whole notes) per minute
@@ -105,8 +106,13 @@ public class SoundPlayer {
         // Play each note
         for (String thisNoteString : notes.stringValue().split("\\s+")) {
 
-            // Break out of playback sequence if user type cmd-.
-            if (ExecutionContext.getContext().didAbort()) return;
+            // Break out of playback sequence if user type cmd-. Can't use ExecutionContext here because this
+            // executes in a non-handler thread
+            if (KeyboardManager.getInstance().getBreakTime() != null &&
+                    KeyboardManager.getInstance().getBreakTime() > playStartTime)
+            {
+                return;
+            }
 
             MusicalNote thisNote = MusicalNote.fromString(lastNote, thisNoteString.toLowerCase());
 

@@ -183,7 +183,7 @@ public class Interpreter {
      *                           exception or breakpoint.
      */
     public static void asyncExecuteHandler(PartSpecifier me, Script script, String command, ListExp arguments, HandlerCompletionObserver completionObserver) {
-        NamedBlock handler = script.getHandler(command);
+        NamedBlock handler = script == null ? null : script.getHandler(command);
 
         // Script does not have a handler for this message; create a "default" handler to pass it
         if (handler == null) {

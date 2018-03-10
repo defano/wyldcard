@@ -27,6 +27,9 @@ public class MessageEvaluationTask implements Callable<String> {
         if (ExecutionContext.getContext().getFrame() == null) {
             ExecutionContext.getContext().pushContext();
             ExecutionContext.getContext().pushMe(new PartMessageSpecifier());
+        } else {
+            // Set the creation time to allow script abort to work correctly
+            ExecutionContext.getContext().getFrame().setCreationTime(System.currentTimeMillis());
         }
 
         ExecutionContext.getContext().setTarget(HyperCard.getInstance().getActiveStackDisplayedCard().getCardModel().getPartSpecifier());
