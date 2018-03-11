@@ -46,15 +46,12 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
 
     @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
-        editScriptButton.addActionListener(e -> {
-            dispose();
-            WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
-                    .withModel(model)
-                    .resizeable(true)
-                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .build();
-        });
+        editScriptButton.addActionListener(e -> WindowBuilder.make(new ScriptEditor())
+                .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
+                .withModel(model)
+                .resizeable(true)
+                .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                .buildReplacing(this));
 
         contents.addActionListener(e -> showContentsEditor());
 
@@ -68,9 +65,10 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
                 .resizeable(false)
                 .withModel(model)
                 .asModal()
-                .build());
+                .buildReplacing(this));
 
         textStyle.addActionListener(e -> {
+            dispose();
             Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getTextStyle().toFont());
             if (selection != null) {
                 model.setTextStyle(TextStyleSpecifier.fromFont(selection));
@@ -151,6 +149,7 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
     }
 
     private void showContentsEditor() {
+        dispose();
         String contents = PartContentsEditor.editContents(model.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
         if (contents != null) {
             model.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));

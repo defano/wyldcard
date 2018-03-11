@@ -39,16 +39,18 @@ public class CardPropertyEditor extends HyperCardDialog {
             updateProperties();
         });
 
-        contentsButton.addActionListener(e -> showContentsEditor());
-        scriptButton.addActionListener(e -> {
+        contentsButton.addActionListener(e -> {
             dispose();
+            showContentsEditor();
+        });
+
+        scriptButton.addActionListener(e ->
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of " + cardModel.getKnownProperty(CardModel.PROP_NAME).stringValue())
                     .withModel(cardModel)
                     .resizeable(true)
                     .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .build();
-        });
+                    .buildReplacing(this));
     }
 
     private void updateProperties() {

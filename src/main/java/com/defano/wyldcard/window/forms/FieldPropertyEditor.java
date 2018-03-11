@@ -51,15 +51,13 @@ public class FieldPropertyEditor extends HyperCardDialog implements ActionBindab
     private JCheckBox scrolling;
 
     public FieldPropertyEditor() {
-        editScriptButton.addActionListener(e -> {
-            dispose();
+        editScriptButton.addActionListener(e ->
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of field " + fieldName.getText())
                     .withModel(model)
                     .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .resizeable(true)
-                    .build();
-        });
+                    .buildReplacing(this));
 
         saveButton.addActionListener(e -> {
             updateProperties();
@@ -127,6 +125,7 @@ public class FieldPropertyEditor extends HyperCardDialog implements ActionBindab
             multipleLines.setEnabled(model.getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue());
 
             textStyleButton.addActionListener(e -> {
+                dispose();
                 Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getTextStyle().toFont());
                 if (selection != null) {
                     model.setTextStyle(TextStyleSpecifier.fromFont(selection));

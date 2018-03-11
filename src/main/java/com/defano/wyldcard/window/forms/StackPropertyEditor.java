@@ -36,17 +36,19 @@ public class StackPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
-        editScriptButton.addActionListener(e -> {
-            dispose();
+        editScriptButton.addActionListener(e ->
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of stack " + model.getKnownProperty(StackModel.PROP_NAME).stringValue())
                     .withModel(model)
                     .resizeable(true)
                     .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .build();
+                    .buildReplacing(this));
+
+        resizeButton.addActionListener(e -> {
+            dispose();
+            model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel()));
         });
 
-        resizeButton.addActionListener(e -> model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel())));
         resizableCheckBox.addActionListener(e -> model.setKnownProperty(StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
     }
 

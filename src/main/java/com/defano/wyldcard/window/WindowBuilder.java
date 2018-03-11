@@ -18,6 +18,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private HyperCardFrame dock;
     private boolean isPalette = false;
     private boolean quitOnClose = false;
+    private boolean isModal = false;
 
     private WindowBuilder(T window) {
         this.window = window;
@@ -107,8 +108,13 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     public WindowBuilder asModal() {
-        this.window.setIsModal();
+        this.isModal = true;
         return this;
+    }
+
+    public T buildReplacing(HyperCardWindow window) {
+        window.getWindow().dispose();
+        return build();
     }
 
     public T build() {
@@ -186,8 +192,9 @@ public class WindowBuilder<T extends HyperCardWindow> {
             });
         }
 
-        // Bring window to front
-        SwingUtilities.invokeLater(() -> window.getWindow().toFront());
+        if (isModal) {
+            this.window.setIsModal();
+        }
 
         return window;
     }
