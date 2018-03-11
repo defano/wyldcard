@@ -755,6 +755,9 @@ on literalsTest
     ask "Yes?" ¬
         with "No"
 
+    ask "Yes?" ¬    -- Comments are acceptable here
+        with "No"
+
     -- mouse states
     the mouse is down
     the mouse is up

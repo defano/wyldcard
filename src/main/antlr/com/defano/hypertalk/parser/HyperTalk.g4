@@ -870,7 +870,7 @@ ID
     ;
 
 BREAK
-    : ('|' | '¬') NEWLINE -> skip
+    : ('|' | '¬') WHITESPACE? COMMENT? WHITESPACE? NEWLINE -> skip
     ;
 
 LITERAL
