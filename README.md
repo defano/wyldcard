@@ -61,7 +61,7 @@ HyperCard's native language, _HyperTalk_, is a message-driven scripting language
 
 HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and interpreted as a number, boolean, or list depending on context. HyperCard does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.
 
-Keywords and symbols in the HyperTalk language are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `myVar` is no different from `myvar`; `field "my field"` refers to the same part as `field "My Field"`. A comment is preceded by `--` and terminates at the end of the line (there are no multi-line comments in HyperTalk).
+Keywords and symbols are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `theName` is no different from `thename`. Comments are preceded by `--` and terminate at the end of the line (there are no multi-line comments in HyperTalk).
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
@@ -71,7 +71,7 @@ A simple script to prompt the user to enter their name then greet them might loo
 on mouseUp
   ask "Hi! What's your name?"
   put it into theName
-  if theName is not empty then answer "Pleasure to meet you, " & theName & "."
+  if theName is not empty then answer "Pleasure to meet you," && theName & "."
 end mouseUp
 
 ```
@@ -92,7 +92,7 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-However, HyperCard supports a line-wrap character (`¬`) that can be used to break a long statement across multiple lines. To simplify script entry, this application also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
+That said, HyperCard supports a line-wrap character (`¬`) that can be used to break a long statement across multiple lines. To simplify script entry, this application also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
 
 ```
 answer "This is totally acceptable!" |
@@ -102,9 +102,9 @@ answer "This is totally acceptable!" |
 
 ## Stacks of Cards
 
-HyperCard defines the concept of a _stack_ of _cards_ similar in concept to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements, called _parts_ (like buttons, menus, and text fields).
+HyperCard lets users interact with a document called a _stack_ that consists of a list of _cards_, conceptually similar to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements, called _parts_ (like buttons, menus, and text fields).
 
-Each card is consists of two layers: a _background layer_ and a _card layer_ (the foreground). Each card has its own unique foreground, but the graphics and parts in its background may be shared between cards. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
+Each card is comprised of two layers: a _background layer_ and a _card layer_ (the foreground). Each card has its own unique foreground, but its background may be shared between cards. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
 
 ### Navigating between cards
 
@@ -131,7 +131,7 @@ go to card 4 of background 2
 
 ## Messages and handlers
 
-A HyperTalk script consists of a set of _message handlers_ and _function handlers_ that describe how the object reacts when HyperCard sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
+A _script_ is a set of _message handlers_ and _function handlers_ that describe how the object reacts when HyperCard sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
 
 Stacks, backgrounds, cards, buttons and fields are scriptable in the HyperTalk language.
 
@@ -144,6 +144,26 @@ end mouseUp
 ```
 
 In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog).
+
+Simply invoking the name of a message as a statement in a script "sends" the message to the current part (and subsequently to other parts in its message passing hierarchy, if not trapped).
+
+Messages may optionally contain arguments. If a handler expects more parameters than actual arguments passed with the message, the unspecified parameters are bound to `empty` (`""`).
+
+```
+doSomethingCool                                   -- invokes the on doSomethingCool handler with no arguments
+doSomethingComplex "Some Value", "Another Value"  -- invokes handler with two arguments
+doSomethingComplex "Explicit"                     -- equivalent to doSomethingComplex "Explicit", ""
+```
+
+A handler for the `doSomethingComplex` message illustrated above might look like:
+
+```
+on doSomethingComplex firstArg, secondArg
+  put "You sent me" && firstArg && "and" && secondArg
+end doSomethingComplex
+```
+
+HyperTalk does not support handler [overloading](https://en.wikipedia.org/wiki/Function_overloading), that is, it does not differentiate between handlers that handle the same message but which accept a different number of arguments. When a script defines two handlers for the same message, the first handler (lexically) in the script will always be used to handle the message.
 
 WyldCard automatically sends the following messages to parts as the user interacts with the stack:
 
@@ -186,13 +206,6 @@ send mouseUp to button 1                          -- Make 'button 1' act as thou
 send doSomethingCool to field "myField"           -- call the 'on doSomethingCool' handler
 ```
 
-Alternately, a message can be sent directly to the current part by invoking the message name with an optional list of arguments, for example:
-
-```
-doSomethingCool                                   -- invokes the on doSomethingCool handler with no arguments
-doSomethingComplex "Some Value", "Another Value"  -- invokes handler with two arguments
-```
-
 Parts do not need to implement a handler for every message they might receive. Messages for which there are no handler are simply ignored.
 
 ### Message passing order
@@ -203,15 +216,19 @@ Messages follow this sequence:
 
 **Buttons** and **fields** pass messages to the **card** or **background** on which they appear; a card passes messages to its **background**; and a background passes messages to its **stack**. If the stack does not trap the message, then the message is passed back to **HyperCard** which handles the message itself.
 
-This design allows parts to override certain HyperCard behaviors by _trapping_ the associated event message. For example, add the following script to a field to disallow entry any of any character other than an even number:
+Exploiting the architecture empowers parts to override system behavior by _trapping_ the associated event message. For example, add the following script to a field to disallow entry any of any character other than an even number:
 
 ```
 on keyDown theKey
-  if theKey is a number and theKey mod 2 is 0 then pass keyDown
+	if theKey is a number then
+		if theKey mod 2 is 0 then pass keyDown
+	end if
 end keyDown
 ```
 
 This works because HyperCard passes the `keyDown` message to the field when a user types a character into it. The script's `on keyDown` handler passes the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing this handler and only conditionally passing the `keyDown` message back to HyperCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the text of the field).
+
+HyperTalk does not short-circuit logical evaluations (as most languages do). Therefore, the above example cannot be simplified to `if theKey is a number and theKey mod 2 is 0` because in the case of `theKey` being a non-numeric value, the `mod` expression will produce an error.
 
 You could prevent the user from choosing a tool on the tool palette by trapping the `choose` message in the script of the card, background or stack. For example:
 

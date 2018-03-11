@@ -1,5 +1,9 @@
 package com.defano.hypertalk;
 
+import com.defano.hypertalk.ast.expressions.operators.BinaryOperator;
+import com.defano.hypertalk.ast.expressions.operators.BinaryOperatorExp;
+import com.defano.hypertalk.ast.expressions.operators.UnaryOperator;
+import com.defano.hypertalk.ast.expressions.operators.UnaryOperatorExp;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.expressions.*;
@@ -1616,48 +1620,28 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitMultiplicationExp(HyperTalkParser.MultiplicationExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitOrExp(HyperTalkParser.OrExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.OR, (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitAndExp(HyperTalkParser.AndExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.AND, (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitEqualityExp(HyperTalkParser.EqualityExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitCaratExp(HyperTalkParser.CaratExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.EXP, (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitComparisonExp(HyperTalkParser.ComparisonExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
-    }
-
-    @Override
-    public Object visitExistenceExp(HyperTalkParser.ExistenceExpContext ctx) {
-        return new ExistenceExp(ctx, (Expression) visit(ctx.expression()), ctx.op.getText());
-    }
-
-    @Override
     public Object visitListExp(HyperTalkParser.ListExpContext ctx) {
         return new ListExp(ctx, (Expression) visit(ctx.expression()), (ListExp) visit(ctx.listExpression()));
     }
 
     @Override
-    public Object visitAdditionExp(HyperTalkParser.AdditionExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
+    public Object visitBinaryOpExp(HyperTalkParser.BinaryOpExpContext ctx) {
+        return BinaryOperatorExp.forOperator(ctx, BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitPowOpExp(HyperTalkParser.PowOpExpContext ctx) {
+        return BinaryOperatorExp.forOperator(ctx, BinaryOperator.EXP, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitBinaryAndExp(HyperTalkParser.BinaryAndExpContext ctx) {
+        return BinaryOperatorExp.forOperator(ctx, BinaryOperator.AND, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
+    public Object visitBinaryOrExp(HyperTalkParser.BinaryOrExpContext ctx) {
+        return BinaryOperatorExp.forOperator(ctx, BinaryOperator.OR, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
     }
 
     @Override
@@ -1667,12 +1651,17 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitNegateExp(HyperTalkParser.NegateExpContext ctx) {
-        return new UnaryOperatorExp(ctx, UnaryOperator.NEGATE, (Expression) visit(ctx.expression()));
+        return UnaryOperatorExp.forOperator(ctx, UnaryOperator.NEGATE, (Expression) visit(ctx.expression()));
     }
 
     @Override
     public Object visitNotExp(HyperTalkParser.NotExpContext ctx) {
-        return new UnaryOperatorExp(ctx, UnaryOperator.NOT, (Expression) visit(ctx.expression()));
+        return UnaryOperatorExp.forOperator(ctx, UnaryOperator.NOT, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitUnaryOpExp(HyperTalkParser.UnaryOpExpContext ctx) {
+        return UnaryOperatorExp.forOperator(ctx, UnaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -1844,11 +1833,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitCardninalExp(HyperTalkParser.CardninalExpContext ctx) {
         return LiteralExp.ofCardinal(ctx, ctx.getText());
-    }
-
-    @Override
-    public Object visitConcatExp(HyperTalkParser.ConcatExpContext ctx) {
-        return new BinaryOperatorExp(ctx, (Expression) visit(ctx.expression(0)), BinaryOperator.fromName(ctx.op.getText()), (Expression) visit(ctx.expression(1)));
     }
 
     @Override

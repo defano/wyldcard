@@ -60,8 +60,12 @@ public class HyperTalkErrorDialog {
                 options[0]);
 
         if (selection == 1) {
+            String name = offendingPart.hasProperty(PartModel.PROP_NAME) ?
+                    offendingPart.getKnownProperty(PartModel.PROP_NAME).stringValue() :
+                    "";
+
             ScriptEditor editor = (ScriptEditor) WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of " + offendingPart.getKnownProperty(PartModel.PROP_NAME).stringValue())
+                    .withTitle("Script of " + name)
                     .withModel(offendingPart)
                     .resizeable(true)
                     .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())

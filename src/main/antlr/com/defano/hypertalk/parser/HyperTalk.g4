@@ -394,15 +394,15 @@ expression
     : factor                                                                                                            # factorExp
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
-    | 'there' op=('is a'|'is an'|'is no'|'is not a'|'is not an') expression                                             # existenceExp
-    | expression '^' expression                                                                                         # caratExp
-    | expression op=('mod'| 'div'| '/'| '*') expression                                                                 # multiplicationExp
-    | expression op=('+'| '-') expression                                                                               # additionExp
-    | expression op=('&&'| '&') expression                                                                              # concatExp
-    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is not in'|'is a'|'is an'|'is not a'|'is not an'|'is within'|'is not within') expression # equalityExp
-    | expression op=('='|'is not'|'is'|'<>'|'≠') expression                                                             # comparisonExp
-    | expression 'and' expression                                                                                       # andExp
-    | expression 'or' expression                                                                                        # orExp
+    | op=('there is a'|'there is an'|'there is no'|'there is not a'|'there is not an') expression                       # unaryOpExp
+    | expression '^' expression                                                                                         # powOpExp
+    | expression op=('mod'| 'div'| '/'| '*') expression                                                                 # binaryOpExp
+    | expression op=('+'| '-') expression                                                                               # binaryOpExp
+    | expression op=('&&'| '&') expression                                                                              # binaryOpExp
+    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is not in'|'is a'|'is an'|'is not a'|'is not an'|'is within'|'is not within') expression # binaryOpExp
+    | expression op=('='|'is not'|'is'|'<>'|'≠') expression                                                             # binaryOpExp
+    | expression 'and' expression                                                                                       # binaryAndExp
+    | expression 'or' expression                                                                                        # binaryOrExp
     ;
 
 factor

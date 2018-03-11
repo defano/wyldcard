@@ -392,40 +392,35 @@ public class Value implements StyledComparable<Value> {
         return value.equals("");
     }
 
-    public Value lessThan (Object val) {
-        Value v = new Value(val);
+    public Value lessThan (Value v) {
         if (isFloat() && v.isFloat())
             return new Value(doubleValue() < v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) < 0);
     }
 
-    public Value greaterThan (Object val) {
-        Value v = new Value(val);
+    public Value greaterThan (Value v) {
         if (isFloat() && v.isFloat())
             return new Value(doubleValue() > v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) > 0);
     }
     
-    public Value greaterThanOrEqualTo (Object val) {
-        Value v = new Value(val);
+    public Value greaterThanOrEqualTo (Value v) {
         if (isFloat() && v.isFloat())
             return new Value (doubleValue() >= v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) >= 0);
     }
     
-    public Value lessThanOrEqualTo (Object val) {
-        Value v = new Value(val);
+    public Value lessThanOrEqualTo (Value v) {
         if (isFloat() && v.isFloat())
             return new Value(doubleValue() <= v.doubleValue());
         else
             return new Value(toString().compareTo(v.toString()) <= 0);
     }
     
-    public Value multiply (Object val) throws HtSemanticException {
-        Value v = new Value(val);
+    public Value multiply (Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be multiplied by '" + v + "'.");
         }
@@ -440,8 +435,7 @@ public class Value implements StyledComparable<Value> {
         }
     }
     
-    public Value divide (Object val) throws HtSemanticException {
-        Value v = new Value(val);
+    public Value divide (Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be divided by " + v + '.');
         }
@@ -453,8 +447,7 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    public Value add (Object val) throws HtSemanticException {
-        Value v = new Value(val);
+    public Value add (Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + v + "' cannot be added to '" + value + "'.");
         }
@@ -469,8 +462,7 @@ public class Value implements StyledComparable<Value> {
         }
     }
     
-    public Value subtract (Object val) throws HtSemanticException {
-        Value v = new Value(val);
+    public Value subtract (Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + v + "' cannot be subtracted from '" + value + "'.");
         }
@@ -485,8 +477,7 @@ public class Value implements StyledComparable<Value> {
         }
     }
     
-    public Value exponentiate (Object val) throws HtSemanticException {
-        Value v = new Value(val);
+    public Value exponentiate (Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
             throw new HtSemanticException("The value '" + value + "' cannot be raised to the power of '" + v + "'.");
         }
@@ -494,10 +485,9 @@ public class Value implements StyledComparable<Value> {
         return new Value(Math.pow(doubleValue(), v.doubleValue()));
     }
 
-    public Value mod (Object val) throws HtSemanticException {
-        Value v = new Value(val);
+    public Value mod (Value v) throws HtSemanticException {
         if (!isNumber() || !v.isNumber()) {
-            throw new HtSemanticException("The value '" + v + "' cannot be divided by '" + value + "'.");
+            throw new HtSemanticException("The value '" + v + "' cannot be mod by '" + value + "'.");
         }
 
         if (isInteger() && v.isInteger())
@@ -508,7 +498,7 @@ public class Value implements StyledComparable<Value> {
     
     public Value not () throws HtSemanticException {
         if (!isBoolean())
-            throw new HtSemanticException("The value '" + value + "' cannot be logically negated because it is not a boolean value.");
+            throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
         
         return new Value(!booleanValue());
     }
@@ -519,38 +509,55 @@ public class Value implements StyledComparable<Value> {
         else if (isFloat())
             return new Value(doubleValue() * -1);
         else {
-            throw new HtSemanticException("The value '" + value + "' cannot be negated because it is not a number.");
+            throw new HtSemanticException("Expected a number here, but got '" + value + "'.");
         }
     }
 
-    public Value and (Value val) throws HtSemanticException {
-        Value v = new Value(val);
-        if (!isBoolean() || !v.isBoolean()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be logically combined with '" + v + "'.");
+    public Value and (Value v) throws HtSemanticException {
+
+        // Allow for short circuit evaluation
+        if (!isBoolean()) {
+            throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
+        }
+
+        if (!booleanValue) {
+            return new Value(false);
+        }
+
+        if (!v.isBoolean()) {
+            throw new HtSemanticException("Expected a logical value here, but got '" + v + "'.");
         }
 
         return new Value(booleanValue() && v.booleanValue());
     }
     
-    public Value or (Value val) throws HtSemanticException {
-        Value v = new Value(val);
-        if (!isBoolean() || !v.isBoolean()) {
-            throw new HtSemanticException("The value '" + value + "' cannot be logically combined with '" + v + "'.");
+    public Value or (Value v) throws HtSemanticException {
+
+        if (!isBoolean()) {
+            throw new HtSemanticException("Expected a logical value here, but got '" + value + "'.");
+        }
+
+        if (booleanValue) {
+            return new Value(true);
+        }
+
+        if (!v.isBoolean()) {
+            throw new HtSemanticException("Expected a logical value here, but got '" + v + "'.");
         }
 
         return new Value(booleanValue() || v.booleanValue());
     }
 
-    public Value concat (Value val) {
-        return new Value(value + val.toString());
+    public Value concat (Value v) {
+        return new Value(value + v.toString());
     }
 
-    public Value within(Value val) throws HtSemanticException {
-        if (!isPoint() || !val.isRect()) {
-            throw new HtSemanticException("Cannot determine if '" + value + "' is within the bounds of '" + val.stringValue() + "'.");
+    public Value within(Value v) throws HtSemanticException {
+        if (!isPoint() || !v.isRect()) {
+            throw new HtSemanticException("Cannot determine if '" + value + "' is within the bounds of '" + v.stringValue() + "'.");
         }
 
-        return new Value(val.rectangleValue().contains(pointValue()));
+        return new Value(v.rectangleValue().contains(pointValue()));
     }
 
     public Value trunc() throws HtSemanticException {
@@ -577,8 +584,8 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    public boolean contains (Object v) {
-        return value.toLowerCase().contains(v.toString().toLowerCase());
+    public boolean contains (Value v) {
+        return value.toLowerCase().contains(v.stringValue().toLowerCase());
     }
         
     public String toString () {
