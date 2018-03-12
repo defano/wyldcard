@@ -5,6 +5,7 @@ import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
+import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.window.HyperTalkErrorDialog;
@@ -21,17 +22,13 @@ import javax.swing.*;
  */
 public class WyldCard extends StackManager {
 
-    private static WyldCard instance;
+    private static WyldCard instance = new WyldCard();
 
     public static WyldCard getInstance() {
         return instance;
     }
 
     public static void main(String argv[]) {
-        instance = new WyldCard();
-    }
-
-    private WyldCard() {
 
         try {
             // Configure macOS environment
@@ -44,14 +41,20 @@ public class WyldCard extends StackManager {
             e.printStackTrace();
         }
 
+        getInstance().startup();
+    }
+
+    private WyldCard() {}
+
+    private void startup() {
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();
             MouseManager.getInstance().start();
             PartEditManager.getInstance().start();
             WindowManager.getInstance().start();
             CursorManager.getInstance().start();
-            PeriodicMessageManager.getInstance().start();
             PatternManager.getInstance().start();
+            PeriodicMessageManager.getInstance().start();
 
             newStack();
         });

@@ -199,7 +199,15 @@ public class PropertiesModel {
         }
 
         if (computerSetters.keySet().contains(propertyName)) {
-            computerSetters.get(propertyName).setComputedValue(this, propertyName, value);
+            ComputedSetter setter = computerSetters.get(propertyName);
+            if (setter instanceof DispatchComputedSetter) {
+                String finalPropertyName = propertyName;
+                ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                    ((DispatchComputedSetter) setter).setComputedValue(PropertiesModel.this, finalPropertyName, value);
+                });
+            } else {
+                setter.setComputedValue(this, propertyName, value);
+            }
         } else {
             properties.put(propertyName, value);
         }

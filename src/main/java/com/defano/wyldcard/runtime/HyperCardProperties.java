@@ -54,6 +54,7 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_FOUNDFIELD = "foundfield";
     public final static String PROP_FOUNDLINE = "foundline";
     public final static String PROP_FOUNDTEXT = "foundtext";
+    public final static String PROP_LOCKMESSAGES = "lockmessages";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -69,7 +70,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_SELECTEDCHUNK, new Value(), true);
         defineProperty(PROP_SELECTEDFIELD, new Value(), true);
         defineProperty(PROP_SELECTEDLINE, new Value(), true);
-        defineProperty(PROP_LOCKSCREEN, new Value("false"), false);
+        defineProperty(PROP_LOCKSCREEN, new Value(false), false);
         defineProperty(PROP_CLICKTEXT, new Value(""), true);
         defineProperty(PROP_MOUSEH, new Value(0), true);
         defineProperty(PROP_MOUSEV, new Value(0), true);
@@ -84,6 +85,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_FOUNDFIELD, new Value(), true);
         defineProperty(PROP_FOUNDLINE, new Value(), true);
         defineProperty(PROP_FOUNDTEXT, new Value(), true);
+        defineProperty(PROP_LOCKMESSAGES, new Value(true), false);
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (model, propertyName) -> new Value(System.getProperty("java.version")));
 
@@ -178,7 +180,8 @@ public class HyperCardProperties extends PropertiesModel {
 
     public void resetProperties() {
         setKnownProperty(PROP_ITEMDELIMITER, new Value(","));
-        setKnownProperty(PROP_LOCKSCREEN, new Value("false"));
+        setKnownProperty(PROP_LOCKSCREEN, new Value(false));
+        setKnownProperty(PROP_LOCKMESSAGES, new Value(false));
 
         CursorManager.getInstance().setActiveCursor(HyperCardCursor.HAND);
     }

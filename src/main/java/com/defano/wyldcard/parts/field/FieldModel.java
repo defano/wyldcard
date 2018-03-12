@@ -1,11 +1,14 @@
 package com.defano.wyldcard.parts.field;
 
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.model.DispatchComputedSetter;
 import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
@@ -126,16 +129,16 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         super.initialize();
 
         defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
-        defineComputedSetterProperty(PROP_TEXT, (model, propertyName, value) -> replaceText(value.stringValue()));
+        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (model, propertyName, value) -> replaceText(value.stringValue()));
 
         defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(getTextFontFamily(0, getText().length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTFONT, (model, propertyName, value) -> setTextFontFamily(0, getText().length() + 1, value));
+        defineComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (model, propertyName, value) -> setTextFontFamily(0, getText().length() + 1, value));
 
         defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(getTextFontSize(0, getText().length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTSIZE, (model, propertyName, value) -> setTextFontSize(0, getText().length() + 1, value));
+        defineComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (model, propertyName, value) -> setTextFontSize(0, getText().length() + 1, value));
 
         defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
+        defineComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
 
         defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (model, propertyName) -> getSelectedText());
         defineComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (model, propertyName) -> getSelectedChunkExpression());

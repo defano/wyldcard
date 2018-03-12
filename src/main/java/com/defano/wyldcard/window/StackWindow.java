@@ -48,8 +48,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     public void invalidateWindowTitle() {
         ThreadUtils.assertDispatchThread();
 
-        // Don't update title when screen is locked
-        if (screenCurtain.isVisible()) {
+        // Don't update title when screen is locked or before card is loaded
+        if (screenCurtain.isVisible() || card == null) {
             return;
         }
 

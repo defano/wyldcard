@@ -91,6 +91,16 @@ public enum SystemMessage {
         this.sentOnlyTo.addAll(Arrays.asList(sentOnlyTo));
     }
 
+    /**
+     * Determines if the message is impacted by the 'lockMessages' system property.
+     * @param message The message name
+     * @return True if the lockMessages property prevents the message from being sent.
+     */
+    public static boolean isLockable(String message) {
+        SystemMessage systemMessage = SystemMessage.fromHandlerName(message);
+        return systemMessage != null && systemMessage == OPEN_CARD || systemMessage == OPEN_STACK || systemMessage == CLOSE_CARD;
+    }
+
     public static Collection<SystemMessage> messagesSentTo(PartType partType) {
         ArrayList<SystemMessage> messages = new ArrayList<>();
         for (SystemMessage thisMessage : SystemMessage.values()) {

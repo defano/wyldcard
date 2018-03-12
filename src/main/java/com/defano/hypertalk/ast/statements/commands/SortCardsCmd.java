@@ -65,9 +65,9 @@ public class SortCardsCmd extends Command {
             WyldCard.getInstance().getActiveStack().getStackModel().setCardModels(allCards);
             WyldCard.getInstance().showErrorDialog(e.getHtCause());
         } finally {
-            // Because card order  may have changed, lets navigate back to where we started
-            WyldCard.getInstance().getActiveStack().invalidateCache();
-            WyldCard.getInstance().getActiveStack().goCard(indexOfCardId(WyldCard.getInstance().getActiveStack().getStackModel().getCardModels(), thisCardId), null, false);
+            // Because card order may have changed, lets navigate back to where we started
+            int thisCardIdx = indexOfCardId(WyldCard.getInstance().getActiveStack().getStackModel().getCardModels(), thisCardId);
+            WyldCard.getInstance().getActiveStack().invalidateCache(thisCardIdx);
         }
     }
 

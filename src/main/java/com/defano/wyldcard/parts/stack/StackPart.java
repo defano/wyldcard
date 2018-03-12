@@ -53,9 +53,9 @@ public class StackPart implements PropertyChangeObserver {
     public static StackPart fromStackModel(StackModel model) {
         StackPart stackPart = new StackPart();
         stackPart.stackModel = model;
-        stackPart.currentCard = stackPart.buildCardPart(model.getCurrentCardIndex());
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
+        stackPart.currentCard = stackPart.openCard(model.getCurrentCardIndex());
 
         return stackPart;
     }
@@ -68,7 +68,6 @@ public class StackPart implements PropertyChangeObserver {
         fireOnCardDimensionChanged(stackModel.getDimension());
 
         getStackModel().receiveMessage(SystemMessage.OPEN_STACK.messageName);
-        getDisplayedCard().partOpened();
         fireOnCardOpened(getDisplayedCard());
 
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
@@ -179,7 +178,6 @@ public class StackPart implements PropertyChangeObserver {
      * @return The card now visible in the stack window, or null if the current card could not be deleted.
      */
     public CardPart deleteCard() {
-
         if (canDeleteCard()) {
             ToolsContext.getInstance().setIsEditingBackground(false);
 
@@ -284,12 +282,17 @@ public class StackPart implements PropertyChangeObserver {
     /**
      * Invalidates the card cache; useful only if modifying this stack's underlying stack model (i.e., as a
      * result of card sorting or re-ordering).
+     *
+     * @param cardIndex - The index of the card in the stack to transition to after invalidating the cache.
      */
-    public void invalidateCache() {
-        this.currentCard = buildCardPart(getStackModel().getCurrentCardIndex());
+    public void invalidateCache(int cardIndex) {
+        this.currentCard.partClosed();
+        this.currentCard = openCard(getStackModel().getCurrentCardIndex());
+
         this.cardCountProvider.onNext(stackModel.getCardCount());
 
         fireOnCardOrderChanged();
+        goCard(cardIndex, null, false);
     }
 
     /**
@@ -355,9 +358,11 @@ public class StackPart implements PropertyChangeObserver {
         }
     }
 
-    private CardPart buildCardPart(int index) {
+    private CardPart openCard(int index) {
         try {
-            return CardPart.fromPositionInStack(index, stackModel);
+            currentCard = CardPart.fromPositionInStack(index, stackModel);
+            ThreadUtils.invokeAndWaitAsNeeded(() -> currentCard.partOpened());
+            return currentCard;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create card.", e);
         }
@@ -396,20 +401,19 @@ public class StackPart implements PropertyChangeObserver {
 
         try {
             // Change card
-            currentCard = buildCardPart(cardIndex);
             stackModel.setCurrentCardIndex(cardIndex);
+            currentCard = openCard(cardIndex);
 
             // Notify observers of new card
-            currentCard.partOpened();
             fireOnCardOpened(currentCard);
 
-            // Reactive paint tool on new card's canvas
+            // Reactivate paint tool on new card's canvas
             ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
 
             return currentCard;
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create card.", e);
+            throw new RuntimeException("Failed to activate card.", e);
         }
     }
 

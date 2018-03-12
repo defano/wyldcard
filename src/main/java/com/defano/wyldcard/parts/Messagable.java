@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
@@ -65,33 +66,34 @@ public interface Messagable {
     /**
      * Sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing hierarchy.
      *
-     * @param command      The name of the command; cannot be null.
+     * @param message      The name of the command; cannot be null.
      * @param arguments    The arguments to pass to this command; cannot be null.
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
      *                     Note that this callback will not fire if the script terminates as a result of an error or
      *                     breakpoint.
      */
-    default void receiveMessage(String command, ListExp arguments, MessageCompletionObserver onCompletion) {
+    default void receiveMessage(String message, ListExp arguments, MessageCompletionObserver onCompletion) {
 
-        // No commands are sent to buttons or fields when not in browse mode or cmd-option is down
-        if (KeyboardManager.getInstance().isCommandOptionDown())
+        // No messages are sent cmd-option is down; some messages not sent when 'lockMessages' is true
+        if (KeyboardManager.getInstance().isCommandOptionDown() ||
+                (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_LOCKMESSAGES).booleanValue())
         {
-            onCompletion.onMessagePassed(command, false, null);
+            onCompletion.onMessagePassed(message, false, null);
             return;
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Interpreter.asyncExecuteHandler(getMe(), getScript(), command, arguments, (me, script, handler, trappedMessage) -> {
+        Interpreter.asyncExecuteHandler(getMe(), getScript(), message, arguments, (me, script, handler, trappedMessage) -> {
             // Did this part trap this command?
             if (trappedMessage) {
-                onCompletion.onMessagePassed(command, true, null);
+                onCompletion.onMessagePassed(message, true, null);
             } else {
                 // Get next recipient in message passing order; null if no other parts receive message
                 Messagable nextRecipient = getNextMessageRecipient(getMe().getType());
                 if (nextRecipient == null) {
-                    onCompletion.onMessagePassed(command, false, null);
+                    onCompletion.onMessagePassed(message, false, null);
                 } else {
-                    nextRecipient.receiveMessage(command, arguments, onCompletion);
+                    nextRecipient.receiveMessage(message, arguments, onCompletion);
                 }
             }
         });
