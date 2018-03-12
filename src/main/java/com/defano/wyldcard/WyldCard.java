@@ -1,11 +1,11 @@
 package com.defano.wyldcard;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
-import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.window.HyperTalkErrorDialog;

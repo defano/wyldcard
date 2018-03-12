@@ -9,6 +9,24 @@ allprojects {
 	targetCompatibility = 1.8
 }
 
+ext {
+	aspectjVersion = '1.8.5'
+}
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
+	}
+}
+
+apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
+
+weaveClasses.dependsOn compileJava
+classes.dependsOn weaveClasses
+
 repositories {
 	mavenCentral()
 	jcenter()
@@ -52,6 +70,7 @@ dependencies {
 	compile group: 'de.dfki.mary', name: 'voice-cmu-bdl-hsmm', version: '5.2'
 	compile group: 'de.dfki.mary', name: 'voice-cmu-rms-hsmm', version: '5.2'
 	compile group: 'de.dfki.mary', name: 'voice-dfki-prudence-hsmm', version: '5.2'
+	compile "org.aspectj:aspectjrt:1.8.13"
 
 	testCompile 'junit:junit:4.12'
 	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'

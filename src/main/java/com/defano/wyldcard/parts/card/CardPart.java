@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.parts.Part;
@@ -164,6 +165,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return The newly imported part (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
      */
+    @RunOnDispatch
     public Part importPart(Part part, CardLayer layer) throws HtException {
         if (part instanceof ButtonPart) {
             return importButton((ButtonPart) part, layer);
@@ -179,6 +181,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * "New Button" from the Objects menu.
      * // TODO: Should probably be moved to CardModel
      */
+    @RunOnDispatch
     public void newButton() {
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner());
@@ -195,6 +198,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * behavior of the user command-draging with the button tool active.
      * // TODO: Should probably be moved to CardModel
      */
+    @RunOnDispatch
     public ButtonPart newButton(Rectangle rectangle) {
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(this, layer.asOwner(), rectangle);
@@ -209,6 +213,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * "New Field" from the Objects menu.
      * // TODO: Should probably be moved to CardModel
      */
+    @RunOnDispatch
     public void newField() {
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner());
@@ -224,6 +229,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Adds a new field with a given geometry to this card.
      * // TODO: Should probably be moved to CardModel
      */
+    @RunOnDispatch
     public FieldPart newField(Rectangle rectangle) {
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(this, layer.asOwner(), rectangle);
@@ -282,6 +288,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      *
      * @param visible Shows the foreground when true; hides it otherwise.
      */
+    @RunOnDispatch
     private void setForegroundVisible(boolean visible) {
         if (getForegroundCanvas() != null) {
             getForegroundCanvas().setVisible(visible);
@@ -299,6 +306,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      *
      * @param visible True to show card parts; false to hide them
      */
+    @RunOnDispatch
     private void setPartsOnLayerVisible(Owner owningLayer, boolean visible) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (PartModel thisPartModel : getCardModel().getPartModels()) {
@@ -321,6 +329,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Hides or shows the background layer for this card.
      * @param isVisible True to show the background; false to hide it.
      */
+    @RunOnDispatch
     private void setBackgroundVisible(boolean isVisible) {
         if (getBackgroundCanvas() != null) {
             getBackgroundCanvas().setVisible(isVisible);
@@ -333,6 +342,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Removes a part (button or field) from this card. Has no effect if the part is not on this card.
      * @param part The part to be removed.
      */
+    @RunOnDispatch
     private void removePart(PartModel part) {
         if (part instanceof ButtonModel) {
             removeButtonView((ButtonModel) part);
@@ -349,6 +359,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      *
      * @param buttonModel The button to be removed.
      */
+    @RunOnDispatch
     private void removeButtonView(ButtonModel buttonModel) {
         ButtonPart button = buttons.getPart(buttonModel);
 
@@ -365,6 +376,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      *
      * @param fieldModel The field to be removed.
      */
+    @RunOnDispatch
     private void removeFieldView(FieldModel fieldModel) {
         FieldPart field = fields.getPart(fieldModel);
 
@@ -383,6 +395,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @param oldButtonComponent The old Swing component associated with this part.
      * @param newButtonComponent The new Swing component to be used.
      */
+    @RunOnDispatch
     public void replaceViewComponent(Part forPart, Component oldButtonComponent, Component newButtonComponent) {
         CardLayer partLayer = getCardLayer(oldButtonComponent);
         removeSwingComponent(oldButtonComponent);
@@ -477,6 +490,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /**
      * Notify all parts in this container that they are closing (ostensibly because the container itself is closing).
      */
+    @RunOnDispatch
     private void notifyPartsClosing() {
         for (ButtonPart p : buttons.getParts()) {
             p.partClosed();
@@ -497,6 +511,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return The newly imported button (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
      */
+    @RunOnDispatch
     private ButtonPart importButton(ButtonPart part, CardLayer layer) throws HtException {
         ButtonModel model = (ButtonModel) Serializer.copy(part.getPartModel());
         model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextButtonId()), true);
@@ -519,6 +534,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return The newly imported field (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
      */
+    @RunOnDispatch
     private FieldPart importField(FieldPart part, CardLayer layer) throws HtException {
         FieldModel model = (FieldModel) Serializer.copy(part.getPartModel());
         model.defineProperty(PartModel.PROP_ID, new Value(cardModel.getStackModel().getNextFieldId()), true);
@@ -535,6 +551,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Adds a field to this card in the layer indicated by the model. Assumes that the field has a unique ID.
      * @param field The field to add to this card.
      */
+    @RunOnDispatch
     private void addField(FieldPart field) {
         if (field.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(field.getPartModel());
@@ -551,6 +568,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Adds a button to this card. Assumes the button has a unique ID.
      * @param button The button to be added.
      */
+    @RunOnDispatch
     private void addButton(ButtonPart button) {
         if (button.getPartModel().getLayer() == CardLayer.CARD_PARTS) {
             cardModel.addPartModel(button.getPartModel());
@@ -569,6 +587,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @param thisPart The data model of the part to be added.
      * @throws HtException Thrown if an error occurs adding the part.
      */
+    @RunOnDispatch
     private void addViewFromModel(PartModel thisPart) throws HtException {
         switch (thisPart.getType()) {
             case BUTTON:
@@ -588,6 +607,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Removes a Swing component from this card's JLayeredPane.
      * @param component The component to remove.
      */
+    @RunOnDispatch
     private void removeSwingComponent(Component component) {
         remove(component);
         revalidate(); repaint();
@@ -598,6 +618,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @param component The component to add.
      * @param bounds The component's desired location and size.
      */
+    @RunOnDispatch
     private void addSwingComponent(Component component, Rectangle bounds, CardLayer layer) {
         component.setBounds(bounds);
         addToCardLayer(component, layer);
@@ -620,6 +641,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void partOpened() {
         editingBackgroundSubscription = ToolsContext.getInstance().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
         foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
@@ -640,6 +662,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void partClosed() {
         getPartModel().receiveMessage(SystemMessage.CLOSE_CARD.messageName);
 
@@ -692,6 +715,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     @Override
+    @RunOnDispatch
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
@@ -702,32 +726,38 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     @Override
+    @RunOnDispatch
     public void mousePressed(MouseEvent e) {
         getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
         MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
     }
 
     @Override
+    @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
         getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
     }
 
     @Override
+    @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
         getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
     }
 
     @Override
+    @RunOnDispatch
     public void mouseExited(MouseEvent e) {
         getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
     }
 
     @Override
+    @RunOnDispatch
     public void keyTyped(KeyEvent e) {
         getPartModel().receiveMessage(SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
     }
 
     @Override
+    @RunOnDispatch
     public void keyPressed(KeyEvent e) {
         BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
         if (bsm != null) {
@@ -736,11 +766,13 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     @Override
+    @RunOnDispatch
     public void keyReleased(KeyEvent e) {
         // Nothing to do
     }
 
     @Override
+    @RunOnDispatch
     public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property.toLowerCase()) {
             case CardModel.PROP_SHOWPICT:
