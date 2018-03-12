@@ -21,6 +21,7 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     private final SortDirection direction;
 
     private HashMap<CardModel, CardPart> cache = new HashMap<>();
+    private HashMap<CardModel, Value> sanityCache = new HashMap<>();
 
     public CardExpressionComparator(Expression expression, SortStyle sortStyle, SortDirection direction) {
         this.expression = expression;
@@ -34,13 +35,13 @@ public class CardExpressionComparator implements Comparator<CardModel> {
             // Evaluate expression in the context of card o1
             ExecutionContext.getContext().setCurrentCard(acquire(o1));
             ExecutionContext.getContext().pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId()));
-            Value o1Value = expression.evaluate();
+            Value o1Value = evaluate(o1);
             ExecutionContext.getContext().popMe();
 
             // Evaluate expression in the context of card o2
             ExecutionContext.getContext().setCurrentCard(acquire(o2));
             ExecutionContext.getContext().pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId()));
-            Value o2Value = expression.evaluate();
+            Value o2Value = evaluate(o2);
             ExecutionContext.getContext().popMe();
 
             // Stop overriding card context in this thread
@@ -54,6 +55,16 @@ public class CardExpressionComparator implements Comparator<CardModel> {
 
         } catch (HtException e) {
             throw new HtUncheckedSemanticException(e);
+        }
+    }
+
+    private Value evaluate(CardModel model) throws HtException {
+        if (sanityCache.containsKey(model)) {
+            return sanityCache.get(model);
+        } else {
+            Value evaluated = expression.evaluate();
+            sanityCache.put(model, evaluated);
+            return evaluated;
         }
     }
 
