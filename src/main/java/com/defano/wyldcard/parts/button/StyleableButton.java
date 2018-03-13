@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
@@ -45,12 +46,14 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public boolean isSelectedForEditing() {
         Window ancestorWindow = SwingUtilities.getWindowAncestor(getButtonComponent());
         return ancestorWindow != null && ancestorWindow.isActive() && isBeingEdited;
     }
 
     @Override
+    @RunOnDispatch
     public void setSelectedForEditing(boolean beingEdited) {
         isBeingEdited = beingEdited;
 
@@ -65,6 +68,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void setStyle(ButtonStyle style) {
         Component oldComponent = getButtonComponent();
         buttonComponent = getComponentForStyle(style);
@@ -107,11 +111,13 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void setComponentHierarchyEnabled(boolean enabled) {
         getComponent().setEnabled(enabled);
     }
 
     @Override
+    @RunOnDispatch
     public void mousePressed(MouseEvent e) {
         ToolEditablePart.super.mousePressed(e);
         this.isFocused = true;
@@ -124,6 +130,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
         ToolEditablePart.super.mouseEntered(e);
 
@@ -139,6 +146,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void mouseExited(MouseEvent e) {
         ToolEditablePart.super.mouseExited(e);
 
@@ -150,6 +158,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
         ToolEditablePart.super.mouseReleased(e);
         this.isFocused = false;
@@ -162,6 +171,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void partOpened() {
         getPartModel().addPropertyChangedObserver(buttonComponent);
         getPartModel().notifyPropertyChangedObserver(buttonComponent);
@@ -170,6 +180,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public void partClosed() {
         getPartModel().removePropertyChangedObserver(buttonComponent);
         KeyboardManager.getInstance().removeGlobalKeyListener(this);

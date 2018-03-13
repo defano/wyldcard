@@ -1,5 +1,8 @@
 package com.defano.wyldcard.parts;
 
+import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.wyldcard.awt.KeyListenable;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseListenable;
@@ -12,10 +15,8 @@ import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.hypertalk.ast.model.ToolType;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.jmonet.tools.util.MarchingAnts;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -90,8 +91,10 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Invoke to indicate that the selected tool has been changed by the user.
      */
     default void onToolModeChanged() {
-        setVisibleWhenBrowsing(!isHidden());
-        setEnabledOnCard(isEnabled());
+        SwingUtilities.invokeLater(() -> {
+            setVisibleWhenBrowsing(!isHidden());
+            setEnabledOnCard(isEnabled());
+        });
     }
 
     /**
@@ -103,7 +106,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     }
 
     /**
-     * Determines if this part is presently enabled on the card (as determined by its "enabled" property).
+     * Determines if this part is presently enabled on the card (as determined by its "enabled" property) and
+     * not currently disabled as a result of the part's edit tool being active.
      * @return True if enabled; false if disabled.
      */
     default boolean isEnabled() {

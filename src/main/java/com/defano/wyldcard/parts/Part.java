@@ -1,13 +1,12 @@
 package com.defano.wyldcard.parts;
 
-import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ToolsContext;
 
 import java.awt.*;
 
@@ -85,11 +84,10 @@ public interface Part {
     }
 
     /**
-     * Determines if the part tool associated with editing parts of this kind is currently active (i.e., is button tool
-     * active if this part is a button).
-     * @return True if the part tool is active; false otherwise.
+     * Determines if a part tool (button or field) is currently active.
+     * @return True if a part tool is active; false otherwise.
      */
     default boolean isPartToolActive() {
-        return ToolsContext.getInstance().getToolMode() == (getType() == PartType.BUTTON ? ToolMode.BUTTON : ToolMode.FIELD);
+        return ToolsContext.getInstance().getToolMode().isPartTool();
     }
 }

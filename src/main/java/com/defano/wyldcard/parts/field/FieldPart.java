@@ -191,10 +191,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        // Update the clickText property
-        setClickText(e);
+        if (SwingUtilities.isLeftMouseButton(e) && !isPartToolActive()) {
+            // Update the clickText property
+            setClickText(e);
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
             MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
@@ -207,7 +207,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         boolean isStillInFocus = new Rectangle(this.getFieldComponent().getSize()).contains(e.getPoint());
 
         // Do not set mouseUp if cursor is not released while over the part
-        if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus) {
+        if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
         }
     }
@@ -216,16 +216,22 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     @Override
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
-        PeriodicMessageManager.getInstance().addWithin(getPartModel());
+
+        if (!isPartToolActive()) {
+            getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
+            PeriodicMessageManager.getInstance().addWithin(getPartModel());
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
-        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+
+        if (!isPartToolActive()) {
+            getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
+            PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        }
     }
 
     /** {@inheritDoc} */
@@ -233,7 +239,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
 
-        if (e.getClickCount() == 2) {
+        if (e.getClickCount() == 2 && !isPartToolActive()) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
@@ -245,7 +251,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
 
-        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get()) {
+        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
             getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))), e, this);
         }
     }
@@ -255,7 +261,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
 
-        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get()) {
+        if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
             BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
             if (bsm != null) {
                 getPartModel().receiveAndDeferKeyEvent(bsm.message.messageName, bsm.boundArguments, e, this);

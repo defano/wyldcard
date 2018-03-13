@@ -787,17 +787,21 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     private class BackgroundScaleObserver implements Consumer<Double> {
         @Override
-        public void accept(Double scale) throws Exception {
-            setPartsOnLayerVisible(Owner.BACKGROUND, ( scale) == 1.0);
+        public void accept(Double scale) {
+            SwingUtilities.invokeLater(() -> {
+                setPartsOnLayerVisible(Owner.BACKGROUND, (scale) == 1.0);
+            });
         }
     }
 
     private class ForegroundScaleObserver implements Consumer<Double> {
         @Override
         public void accept(Double scale) {
-            setPartsOnLayerVisible(Owner.CARD, ((Double) scale) == 1.0);
-            setPartsOnLayerVisible(Owner.BACKGROUND, ((Double) scale) == 1.0);
-            setBackgroundVisible(((Double) scale) == 1.0);
+            SwingUtilities.invokeLater(() -> {
+                setPartsOnLayerVisible(Owner.CARD, scale == 1.0);
+                setPartsOnLayerVisible(Owner.BACKGROUND, scale == 1.0);
+                setBackgroundVisible(scale == 1.0);
+            });
         }
     }
 
