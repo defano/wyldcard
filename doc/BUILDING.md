@@ -65,6 +65,18 @@ To correct this, you need to configure IntelliJ to generate its GUI boilerplate 
 3. Select the "Java source code" option for GUI generation.
 4. Apply the changes and "Rebuild project" from the "Build" menu.
 
+## Thread auditing
+
+Java's Swing (UI) libraries are single threaded and require that all calls made to them execute on the Swing dispatch thread. Unfortunately, unlike, say, Android or iOS which have similar requirements, Swing does not complain if you violate this contract; you simply wind up with difficult-to-debug, _well-it-works-most-of-the-time_ race conditions.
+
+WyldCard includes an AspectJ (AOP) based thread auditing tool that will display a stack trace anytime it detects a method annotated with `@RunOnDispatch` as executing on a worker thread. This auditor is disabled by default. To enable it, run the app using Gradle with the `threadAudit` property defined:
+
+```
+$ gradle run -PthreadAudit
+```
+
+If everything goes according to plan, you should see the `:weaveClasses` task execute in the Gradle output.
+
 ## Frequently encountered problems
 
 #### 1. Various classes in the `com.defano.hypertalk.parser` package don't exist. This project won't compile!
