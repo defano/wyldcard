@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.msgbox;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.field.SelectableTextModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -20,7 +21,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_CONTENTS, new Value(), false);
-        defineComputedGetterProperty(PROP_CONTENTS, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText()));
+        defineComputedGetterProperty(PROP_CONTENTS, (model, propertyName) -> new Value(getText()));
 
         defineProperty(PROP_WIDTH, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getWidth()), true);
         defineProperty(PROP_HEIGHT, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getHeight()), true);
@@ -67,6 +68,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public String getText() {
         JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         return messageBox.getText();

@@ -220,9 +220,9 @@ Exploiting the architecture empowers parts to override system behavior by _trapp
 
 ```
 on keyDown theKey
-	if theKey is a number then
-		if theKey mod 2 is 0 then pass keyDown
-	end if
+  if theKey is a number then
+    if theKey mod 2 is 0 then pass keyDown
+  end if
 end keyDown
 ```
 

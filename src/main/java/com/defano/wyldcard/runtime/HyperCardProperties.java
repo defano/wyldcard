@@ -123,7 +123,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedGetterProperty(PROP_POLYSIDES, (model, propertyName) -> new Value (ToolsContext.getInstance().getShapeSides()));
 
         defineComputedSetterProperty(PROP_PATTERN, (model, propertyName, value) -> {
-            if (value.integerValue() >= 0 || value.integerValue() < 40) {
+            if (value.integerValue() >= 0 && value.integerValue() < 40) {
                 ToolsContext.getInstance().setFillPattern(value.integerValue());
             }
         });

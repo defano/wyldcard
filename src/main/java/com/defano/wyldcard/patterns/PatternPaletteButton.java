@@ -86,6 +86,9 @@ public class PatternPaletteButton extends JLabel {
         } else {
             setBorder(unselectedBorder);
         }
+
+        invalidate();
+        repaint();
     }
 
     private void invalidatePattern() {

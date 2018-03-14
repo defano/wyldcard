@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
@@ -82,6 +83,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         });
     }
 
+    @RunOnDispatch
     private void checkSyntax() {
         try {
             messageBox.getHighlighter().removeAllHighlights();
@@ -91,8 +93,8 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         }
     }
 
+    @RunOnDispatch
     private void squiggleHighlight(HtException e) {
-
         int squiggleStart = 0;
         int squiggleEnd = messageBox.getText().length();
 
@@ -130,6 +132,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     }
 
     @Override
+    @RunOnDispatch
     public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case MsgBoxModel.PROP_CONTENTS:
@@ -142,6 +145,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         partModel.setKnownProperty(MsgBoxModel.PROP_CONTENTS, new Value(text));
     }
 
+    @RunOnDispatch
     public String getMsgBoxText() {
         return getTextComponent().getText();
     }
@@ -149,6 +153,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     /**
      * Show the message window, populate the field with a find command, and position the caret inside the query string.
      */
+    @RunOnDispatch
     public void doFind() {
         setVisible(true);
         setMsgBoxText("find \"\"");

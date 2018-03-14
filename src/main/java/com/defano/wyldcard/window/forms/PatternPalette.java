@@ -1,6 +1,8 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.HyperCardDialog;
 import com.defano.wyldcard.patterns.PatternPaletteButton;
 import io.reactivex.functions.Consumer;
@@ -87,6 +89,7 @@ public class PatternPalette extends HyperCardDialog implements Consumer {
         // Nothing to do
     }
 
+    @RunOnDispatch
     private void attachButtonActions() {
         for (int index = 0; index < allPatterns.length; index++) {
             final int i = index;
@@ -99,6 +102,7 @@ public class PatternPalette extends HyperCardDialog implements Consumer {
         }
     }
 
+    @RunOnDispatch
     private void redrawPatternButtons() {
         for (int index = 0; index < allPatterns.length; index++) {
             allPatterns[index].setPatternId(index);
@@ -113,18 +117,20 @@ public class PatternPalette extends HyperCardDialog implements Consumer {
 
     @Override
     public void accept(Object newValue) {
-        if (newValue instanceof Integer) {
-            if ((int) newValue >= 0 && (int) newValue < 40) {
-                for (int index = 0; index < allPatterns.length; index++) {
-                    allPatterns[index].setSelected(false);
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (newValue instanceof Integer) {
+                if ((int) newValue >= 0 && (int) newValue < 40) {
+                    for (int index = 0; index < allPatterns.length; index++) {
+                        allPatterns[index].setSelected(false);
+                    }
 
-                allPatterns[(int) newValue].setSelected(true);
+                    allPatterns[(int) newValue].setSelected(true);
+                }
+            } else if (newValue instanceof Color) {
+                redrawPatternButtons();
+                ToolsContext.getInstance().setPattern(ToolsContext.getInstance().getFillPatternProvider().blockingFirst());
             }
-        } else if (newValue instanceof Color) {
-            redrawPatternButtons();
-            ToolsContext.getInstance().setPattern(ToolsContext.getInstance().getFillPatternProvider().blockingFirst());
-        }
+        });
     }
 
     {
