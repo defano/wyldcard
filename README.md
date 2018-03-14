@@ -356,7 +356,7 @@ When a HyperTalk command expects an expression conforming to a specific object t
 
 The table below lists special values that are treated as _constants_ in the language; any unquoted use of these terms evaluates to the specified value.
 
-Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be assumed). Multi-word unquoted literals are never allowed in WyldCard (e.g., `put hello world` results in a syntax error).
+Any single-word unquoted literal that is not a language keyword or an in-scope variable will be interpreted as though it were a quoted string literal. For example, `put neat into x` is equivalent to `put "neat" into x` (unless a variable named `neat` is in scope, in which case the variable's value will be used assumed). Multi-word unquoted literals are never allowed in WyldCard (e.g., `put hello world` results in a syntax error).
 
 Constant     | Value
 -------------|---------------------------------------
@@ -376,22 +376,22 @@ Constant     | Value
 
 [Variables](#variable-containers) | [Parts](#part-containers) | [Menus](#menu-containers) | [Message](#the-message) | [It](#the-it-container) | [Selection](#the-selection-container) | [Target](#the-target-container)
 
-A _container_ is anything in HyperCard that you can `put` a value into (an _l-value_): parts, variables, properties, menus, the message box, the selection and the target are all containers. HyperTalk uses the `put` command to place a value into a container; do not use `=` to assign values as you might in other languages.
+A _container_ is anything in HyperCard that you can `put` a value into: parts, variables, properties, menus, the message box, the selection and the target are all containers. HyperTalk uses the `put` command to place a value into a container; do not use `=` to assign values as you might in other languages.
 
 #### Variable containers
 
-In HyperTalk, variables are implicitly declared. Simply putting a value into a symbol "declares" that symbol as a variable. For example:
+In HyperTalk, variables are implicitly declared and initialized with the empty string. Simply referring to a variable within a script "declares" that variable initialized with `empty`. For example:
 
 ```
 on mouseDown
-  put "Look ma! No declaration" into theMessage  -- 'theMessage' is now a variable
+  put "Look ma! No declaration" into theMessage  -- 'theMessage' is a new variable
   answer theMessage
 end mouseDown
 ```
 
 Local variables in HyperTalk are lexically scoped; they retain their value only within the handler in which they were created.
 
-A variable may be made global by explicitly declaring it so with the `global` keyword. Global variables are accessible from any script in any in the stack, and once created, they retain their value until WyldCard is closed. Note that variables not explicitly declared `global` are considered local, even when a global variable of the same name exists.
+A variable may be made global by explicitly declaring it so with the `global` keyword. Global variables are accessible from any script in any in the stack, and once created, they retain their value until the stack is closed. Note that variables not explicitly declared `global` are considered local, even if a global variable of the same name exists.
 
 ```
 --
@@ -418,9 +418,9 @@ end y
 
 #### Part containers
 
-Like variables, a part can also be used to store value. When placing a value into a field, the text of the field is changed. However, when placing a value into a button, card, background or stack, the part's `contents` property is changed. The `contents` property does not affect these part's appearance in any way, and can only be seen or edited from the "Info..." dialog in the "Objects" menu. One exception: When dealing with `menu` styled buttons, the `contents` property determines the list of menu items available in the menu.
+Like variables, a part can also be used to store value. When placing a value into a field, the text of the field is changed. However, when placing a value into a button, card, background or stack, the part's `contents` property is changed (the `contents` property does not affect these part's appearance in any way, and can only be seen / edited from the "Info..." dialog in the "Objects" menu). One exception: When dealing with `popup` styled buttons (combo boxes), the `contents` property determines the list of menu items available in the popup.
 
-In HyperCard, a value could only be placed into button or field parts; WyldCard allows values to be placed into cards, backgrounds and stacks, too.
+In HyperCard, a value could only be placed into button or field parts; WyldCard allows values to be placed into card, background and stack objects, too.
 
 For example:
 
@@ -433,7 +433,7 @@ put "Yes,No" into button myMenuButton -- Menu-styled button gets two menu items 
 
 #### Menu containers
 
-Every menu in the menu bar, as well as buttons of the style `menu`, are containers whose value specifies the items that appear in them. The value placed into a menu container is interpreted as a list of items or lines, each of which represents an item in the menu. Any `-` (hyphen) value in the list is interpreted as menu separator.
+Every menu in the menu bar, as well as buttons of the style `popup`, are containers whose value specifies the items that appear in them. The value placed into a menu container is interpreted as a list of items or lines, each of which represents an item in the menu. Any `-` value in the list is interpreted as menu separator.
 
 For example:
 
@@ -451,8 +451,6 @@ Item 2
 Other...
 ```
 
-Note that retrieving items from a menu always produces a multi-line value, even when the values put into the menu were originally comma-separated.
-
 #### The message
 
 The _message box_ is a HyperCard window containing a single-line editable text field (you can show or hide this window from the "Go" menu). Text entered into the message is evaluated as a HyperTalk statement when you press enter. The contents of this field can by read or written as a container and is addressable as `[the] message`, `[the] message box` or `[the] message window`.
@@ -464,11 +462,11 @@ put " -- Add a comment" after the message box
 multiply the message by 3
 ```
 
-The message box is HyperTalk's _default container_. That is, when a container is not explicitly specified in a `put` command, the message box is assumed. For example, `put "Hello"` causes the message box to be displayed and for "Hello" to appear inside of it.
+Note that the message box is HyperTalk's _default container_. That is, when a container is not explicitly specified in an expression, the message box is assumed. For example, `put "Hello"` causes the message box to be displayed and for "Hello" to appear inside of it.
 
 #### The `it` container
 
-HyperTalk provides an implicit variable named `it`. Most expressions and some commands place a value into this variable so that `it` refers to the last retrieved value.
+HyperTalk provides an implicit variable named `it`. Most expressions and some commands place a value into this variable so that `it` refers to the last computed value.
 
 For example:
 
@@ -490,17 +488,15 @@ if the selection is a number then multiply the selection by 10
 put "[redacted]" into the selection
 ```
 
-List selections (from fields whose `autoSelect` property is `true`) are not treated as part of the selection. On some systems, its possible to have multiple selections within different fields active on the same card. In this case, only the last selected region of text becomes `the selection`.
-
 #### The `target` container
 
-The `target` is somewhat unusual in that it is both a HyperTalk function (when used with `the`, as in `the target`) but also refers to a part itself. The built-in function `the target` returns a string expression referring to the part that the current message was originally sent to; `target` refers to that part itself.
+The `target` is somewhat unusual in that it is both a HyperTalk function (when used with `the`, as in `the target`) but also refers to a part itself. The built-in function `the target` returns a string expression referring to the part that the current message was originally sent to; `target` refers to the part itself.
 
 For example, consider the behavior of this script when added to a card field:
 
 ```
 on mouseUp
-  answer the target   -- displays 'card field id xxx'
+  answer the target   -- displays 'card field id x'
   answer target       -- displays the text of this field
 end mouseUp
 ```
@@ -519,11 +515,9 @@ Note that WyldCard treats properties as "first class" containers than can be acc
 
 Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. (Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.) You can refer to buttons and fields on other cards in the stack, too (for example, `card button "Push Me" of card 3`).
 
-When referring to a part, only those parts that exist on the current card or background are accessible. For example, `get the width of cd btn id 7` fails if `cd btn id 7` is not on the current card. To refer to a part on a different card or background, specify the card or background explicitly. For example, `get the width of cd btn id 7 of card 13` or `put "Neato!" into fld "Reaction" of the next background`.
-
 ### Part IDs
 
-Each part in the stack (but not the stack itself) is assigned a unique ID which never changes and will never be reused (even if the part is deleted). A part can be referred to in script by its ID. For example:
+Each part in the stack is assigned a unique ID which never changes and will never be reused (even if the part is deleted). A part can be referred to in script by its ID. For example:
 
 ```
 hide card button id 0
@@ -536,7 +530,7 @@ Each part is assigned a number that represents its logical order within the cont
 
 For buttons and fields, this represents the drawing order of the part (_z-order_); Higher numbered parts are drawn before lowered numbered parts and thereby appear behind them. You cannot directly set a button or field's number, but the "Bring Closer" or "Send Further" commands in the "Objects" menu will affect the number assigned to it.
 
-For cards and backgrounds, this represents their position in the stack. Card number 1 is the first card in the stack, card number 2 is the second, and so forth. Backgrounds are similarly numbered by their first appearance in the stack.
+For cards and backgrounds, their number represents their position in the stack. Card number 1 is the first card in the stack, card number 2 is the second, and so forth. Backgrounds are similarly numbered by their first appearance in the stack.
 
 You can refer to fields and buttons relative to all other parts on the same layer of the card (`background part 14`) or relative to other parts of the same type (`bkgnd button 13` or `bkgnd field 3`). For example,
 
@@ -576,7 +570,9 @@ answer the first menuItem of menu "Edit"  -- typically responds with 'Undo'
 
 #### Creating menus and menu items
 
-New menus are added to the menu bar using the `create` command and removed with the `delete` command. For example, `create menu "My Custom Menu"` or `if the menus contains "My Custom Menu" then delete menu "My Custom Menu"`. Note that when creating a new menu, it will always be added to the end of the menu bar (furthest right position). You cannot create two menus that share the same name, nor can you delete a menu that does not exist.
+New menus are added to the menu bar using the `create` command and removed using the `delete` command. For example, `create menu "My Custom Menu"` or `if the menus contains "My Custom Menu" then delete menu "My Custom Menu"`. Note that when creating a new menu, it will be added to the end of the menu bar (furthest right position).
+
+You cannot create two menus that share the same name, nor can you delete a menu that does not exist.
 
 The value of each menu is treated as a list; you can add, delete, or modify menu items by mutating items in the menu's value. For example, to replace the contents of a menu `put "Item 1,-,Item 2" into menu "My Custom Menu"`. To append items to a menu, `put "Item 3" after the last line of menu "My Custom Menu"`. To delete a menu item, `delete the second line of menu "Edit"`
 
@@ -584,7 +580,7 @@ Use the `reset menuBar` command to eliminate any changes you've made to the menu
 
 #### Responding to user selections in the menu bar
 
-Menus created by script have no default behavior. When the user chooses a menu from the menu bar, the `doMenu` message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior. Note that `menu`-styled buttons do not send the `doMenu` message; only menus in the menu bar send this message.
+Menus created by script have no default behavior. When the user chooses a menu from the menu bar, the `doMenu` message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior. (Note that `popup`-styled buttons do not send the `doMenu` message; only menus in the menu bar send this message).
 
 For example, place the following handler in a stack script to prompt the user to confirm if they really want to edit the background of the card:
 
@@ -633,7 +629,7 @@ Property      | Description
 `contents`    | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
 `enabled`     | Returns or sets whether the button or field is enabled. When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands.
 `height`      | Returns or sets the height of the part (in pixels)
-`id`          | Returns the part's ID. Each part (except the stack) has a globally unique ID that is assigned by HyperCard at creation. This value cannot be set.
+`id`          | Returns the part's ID. Each part has a globally unique ID that is assigned by HyperCard at creation and cannot be changed.
 `left`        | Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.
 `location`    | Returns or sets the center point of the part. Also available as the `loc` property.
 `name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
@@ -648,13 +644,14 @@ In addition to the properties listed above, all button and field parts share the
 
 Property      | Description
 --------------|--------------------------
-`selectedText`| For fields, returns the currently selected text. For buttons, returns the selected menu item of `menu`-style buttons or `empty` for all other button styles. This property is read-only; it cannot be set via HyperTalk.
+`selectedText`| For fields, returns the currently selected text. For buttons, returns the selected menu item of `popup`-style buttons or the empty string for all other button styles. This property is read-only; it cannot be set via HyperTalk.
 `style`       | Sets or retrieves the style of the part (see the tables below for available button and field styles).
 `textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
 `textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
 `textSize`    | Returns or sets the size (in points) of the part's text.
 `textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic` (plus `strikeThrough`, `underline`, `subscript` and `superscript` when addressing fields). Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
-`visible`     | Returns or sets the visibility of the object (a logical value). When invisible, the part is not drawn on the screen and receives no messages from HyperCard. This value can also be accessed using the `hide` and `show` commands.
+`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the part is not drawn on the screen and receives no messages from HyperCard. This value can also be accessed using the `hide` and `show` commands.
+
 
 ### Buttons
 
@@ -671,16 +668,16 @@ Style                                      | Name          | Notes
 ![Rectangular](doc/images/rectangular.png) | `rectangular` | A push button drawn with a rectangular border.
 ![Transparent](doc/images/transparent.png) | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
 ![Opaque](doc/images/opaque.png)           | `opaque`      | A rectangular push button drawn without a border.
-![Default](doc/images/checkbox.png)        | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/radio.png)           | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/menu.png)            | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
+![Checkbox](doc/images/checkbox.png)       | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Radio](doc/images/radio.png)             | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Popup](doc/images/menu.png)              | `popup`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
 
 In addition to the properties common to all parts, a button has these additional unique properties:
 
 Property    | Description
 ------------|------------
 `autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
-`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
+`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on `popup` style buttons.
 `iconAlign` | Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property did not exist in HyperCard.
 `showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
 
@@ -714,11 +711,11 @@ Property        | Description
 
 The properties of text within a field can also be addressed in HyperTalk: A script may get or set the font, size and style of a chunk of text within a field.
 
-Property        | Description
-----------------|----------------------
-`textFont`      | Returns or sets the font family of the identified chunk of text
-`textSize`      | Returns or sets the text size of the identified chunk of text
-`textStyle`     | Returns or sets the style (`bold`, `italic` or `plain`, `underline`, `strikeThrough`, `superscript` or `subscript`) of the identified range of text.
+Property     | Description
+-------------|----------------------
+`textFont`   | Returns or sets the font family of the identified chunk of text
+`textSize`   | Returns or sets the text size of the identified chunk of text
+`textStyle`  | Returns or sets the style (`bold`, `italic` or `plain`, `underline`, `strikeThrough`, `superscript` or `subscript`) of the identified range of text.
 
 For example,
 
@@ -742,11 +739,11 @@ Menu Property   | Description
 
 Cards and backgrounds are objects in HyperCard that support these unique properties:
 
-Property        | Description
-----------------|----------------------
-`marked`        | A general use logical-valued "flag" indicating the card is somehow special useful to classify or limit search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
-`cantDelete`    | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
-`showPict`      | A logical value specifying if the card or background picture is visible.
+Property     | Description
+-------------|----------------------
+`marked`     | A general use logical-valued "flag" indicating the card is somehow special useful to classify or limit search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
+`cantDelete` | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
+`showPict`   | A logical value specifying if the card or background picture is visible.
 
 ### HyperCard Properties
 
@@ -841,7 +838,7 @@ sort the lines of card field "Names" by the middle word of each  -- or by middle
 
 ### Searching
 
-Use the `find` command to find text anywhere in the stack or anywhere within a specified field. All searches are case insensitive. Text found by this command is highlighted with a box drawn around it and the `foundChunk`, `foundField`, `foundLine` and `foundText` properties are updated with information about the current match.
+Use the `find` command to find text anywhere in the stack or anywhere within a specified field. All searches are case insensitive.
 
 The syntax for searching is `find [<strategy>] [international] <factor> [in <field>] [of marked cards]` where:
 
@@ -853,8 +850,8 @@ The syntax for searching is `find [<strategy>] [international] <factor> [in <fie
 
 Strategy    | Description
 ------------|-------------------------------------
-`word`      | Finds only whole words appearing within the searchable text. Search term should not contain any whitespace if it is expected to match any text. Only whole words will match; substrings contained within a word will not.
-`chars`     | Finds a substring that occurs entirely within the bounds of a word (does not cross whitespace boundaries). Search term should not include whitespace if it is expected to match anything.
+`word`      | Finds whole words in the searchable text. Search term should not contain any whitespace (if it is expected to match any text). Only whole words will match; substrings contained within a word will not.
+`chars`     | Finds a substring that occurs entirely within the bounds of a word (does not cross word boundaries). Search term should not include whitespace (if it is expected to match anything).
 `whole`     | Finds a substring that starts at the beginning of a word. Search term may contain whitespace, and search results may cross word boundaries (but will always start at a word boundary).
 `string`    | Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found-text may cross word boundaries.
 
@@ -1019,7 +1016,7 @@ Command	         | Description
 `click`          | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
 `close file`     | Closes a previously opened file, writing any changes made via the `write` command to disk. Has no effect if the file is not open. For example, `close file "/Users/matt/myfile.txt"`
 `convert`        | Converts a date and/or time from one format to another. Syntax is `convert { <container> / <value> } [[ from <format>] and <format>] to <format> [ and <format> ]` where `<format>` is one of `seconds` (an integer value equal to the number of seconds since the epoch, Jan. 1, 1970), `dateItems` (comma-separated list of integers `year, month, day, hour, minute, second, dayNumber`), `[ <adj> ] date`, or `[ <adj> ] time` where `<adj>` is one of `long`, `short`, `abbreviated`, `abbrev` or `english`. When a value is specified (rather than a container), the conversion result is placed into `it`.
-`create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
+`create menu`    | Creates a new menu in the menu bar, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
 `dial`           | Produces the sound of a sequence of DTMF dial tones, for example, `dial "1-800-588-2300"`.
 `delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
 `delete`         | Deletes a part from the card or background, or deletes a chunk of text from a container, for example, `delete the last line of card field "My List"`, `delete card button id 0`, `delete bkgnd field "Report"`

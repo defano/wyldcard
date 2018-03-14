@@ -11,7 +11,7 @@ public enum ButtonStyle {
     ROUND_RECT("Round Rect"),
     CHECKBOX("Checkbox"),
     RADIO("Radio"),
-    MENU("Menu"),
+    POPUP("Popup"),
     RECTANGULAR("Rectangular"),
     OVAL("Oval"),
     TRANSPARENT("Transparent"),

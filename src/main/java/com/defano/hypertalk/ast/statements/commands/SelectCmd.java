@@ -5,7 +5,7 @@ import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
 import com.defano.wyldcard.parts.button.ButtonPart;
-import com.defano.wyldcard.parts.button.styles.MenuButton;
+import com.defano.wyldcard.parts.button.styles.PopupButton;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -101,8 +101,8 @@ public class SelectCmd extends Command {
         ButtonPart part = (ButtonPart) WyldCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
 
         HyperCardButton component = (HyperCardButton) part.getButtonComponent();
-        if (component instanceof MenuButton) {
-            ((MenuButton) component).selectItem(chunk.start.evaluate().integerValue());
+        if (component instanceof PopupButton) {
+            ((PopupButton) component).selectItem(chunk.start.evaluate().integerValue());
         } else {
             throw new HtSemanticException("Can't select lines of this type of button.");
         }

@@ -88,8 +88,8 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
                 return new RoundRectButton(this);
             case RADIO:
                 return new RadioButton(this);
-            case MENU:
-                return new MenuButton(this);
+            case POPUP:
+                return new PopupButton(this);
             case RECTANGULAR:
                 return new RectangularButton(this);
             case TRANSPARENT:
