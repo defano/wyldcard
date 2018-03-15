@@ -18,7 +18,7 @@ public class EditScriptCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException, Breakpoint {
+    protected void onExecute() throws HtException {
         partExpression.partFactor(PartModel.class, new HtSemanticException("No such part.")).editScript();
     }
 }
