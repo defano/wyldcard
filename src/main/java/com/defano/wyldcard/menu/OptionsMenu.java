@@ -20,35 +20,11 @@ public class OptionsMenu extends HyperCardMenu {
         // Show this menu only when a paint tool is active
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> OptionsMenu.this.setVisible(ToolMode.PAINT == toolMode));
 
-        JMenuItem grid = MenuItemBuilder.ofHierarchicalType()
+        JMenuItem grid = MenuItemBuilder.ofCheckType()
                 .named("Grid")
-                .withAction(a -> WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().setGridSpacing(1))
-                .withCheckmarkProvider(WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().getGridSpacingObservable().map(t -> t != 1))
+                .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacing() == 8 ? 1 : 8))
+                .withCheckmarkProvider(ToolsContext.getInstance().getGridSpacingProvider().map(t -> t == 8))
                 .build(this);
-
-                MenuItemBuilder.ofCheckType()
-                        .named("2 px")
-                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacing() == 2 ? 1 : 2))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getGridSpacingProvider().map(t -> t == 2))
-                        .build(grid);
-
-                MenuItemBuilder.ofCheckType()
-                        .named("5 px")
-                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacing() == 5 ? 1 : 5))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getGridSpacingProvider().map(t -> t == 5))
-                        .build(grid);
-
-                MenuItemBuilder.ofCheckType()
-                        .named("8 px")
-                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacing() == 8 ? 1 : 8))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getGridSpacingProvider().map(t -> t == 8))
-                        .build(grid);
-
-                MenuItemBuilder.ofCheckType()
-                        .named("20 px")
-                        .withAction(a -> ToolsContext.getInstance().setGridSpacing(ToolsContext.getInstance().getGridSpacing() == 20 ? 1 : 20))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getGridSpacingProvider().map(t -> t == 20))
-                        .build(grid);
 
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
