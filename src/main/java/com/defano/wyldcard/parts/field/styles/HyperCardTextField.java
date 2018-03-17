@@ -86,7 +86,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void insertUpdate(DocumentEvent e) {
-        enqueueModelUpdateRequest();
+        syncModelToView();
         textPane.invalidateViewport(getViewport());
     }
 
@@ -96,7 +96,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void removeUpdate(DocumentEvent e) {
-        enqueueModelUpdateRequest();
+        syncModelToView();
         textPane.invalidateViewport(getViewport());
     }
 
@@ -106,7 +106,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void changedUpdate(DocumentEvent e) {
-        enqueueModelUpdateRequest();
+        syncModelToView();
         textPane.invalidateViewport(getViewport());
     }
 
@@ -218,7 +218,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
     @RunOnDispatch
     public void partClosed() {
-        enqueueModelUpdateRequest();
+        syncModelToView();
         textPane.getStyledDocument().removeDocumentListener(this);
 
         textPane.removeMouseListener(toolEditablePart);
@@ -337,7 +337,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         StyleConstants.setAlignment(alignment, FontUtils.getAlignmentStyleForValue(v));
         textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
 
-        enqueueModelUpdateRequest();
+        syncModelToView();
     }
 
     @RunOnDispatch
@@ -361,7 +361,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             }
         }
 
-        enqueueModelUpdateRequest();
+        syncModelToView();
         updateFocusedFontSelection();
     }
 
@@ -386,7 +386,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             }
         }
 
-        enqueueModelUpdateRequest();
+        syncModelToView();
         updateFocusedFontSelection();
     }
 
@@ -411,7 +411,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             }
         }
 
-        enqueueModelUpdateRequest();
+        syncModelToView();
         updateFocusedFontSelection();
     }
 
@@ -428,7 +428,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     }
 
     @RunOnDispatch
-    private void enqueueModelUpdateRequest() {
+    private void syncModelToView() {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
         model.setStyledDocument(textPane.getStyledDocument());
     }

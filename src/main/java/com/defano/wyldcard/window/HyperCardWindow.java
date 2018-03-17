@@ -2,6 +2,7 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menu.HyperCardMenuBar;
+import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
 
 import javax.swing.*;
@@ -19,6 +20,7 @@ public interface HyperCardWindow<WindowType extends Window> {
 
     /**
      * Update the contents of the window with the given model data.
+     *
      * @param data An object representing the data to be displayed in the window.
      */
     void bindModel(Object data);
@@ -26,19 +28,21 @@ public interface HyperCardWindow<WindowType extends Window> {
     /**
      * Close and dispose the window.
      */
-    @RunOnDispatch
     default void dispose() {
-        SwingUtilities.getWindowAncestor(getWindowPanel()).dispose();
+        ThreadUtils.invokeAndWaitAsNeeded(() -> SwingUtilities.getWindowAncestor(getWindowPanel()).dispose());
     }
 
     /**
      * Gets the AWT window object that is bound to this application window (e.g., a JFrame or JDialog).
+     *
      * @return The window object.
      */
     WindowType getWindow();
 
     boolean ownsMenubar();
+
     void setOwnsMenubar(boolean ownsMenubar);
+
     Observable<Boolean> getWindowVisibleProvider();
 
     /**
@@ -52,56 +56,65 @@ public interface HyperCardWindow<WindowType extends Window> {
         return null;
     }
 
-    @RunOnDispatch
     default void setContentPane(Container contentPane) {
-        if (getWindow() instanceof JDialog) {
-            ((JDialog) getWindow()).setContentPane(contentPane);
-        } else if (getWindow() instanceof JFrame) {
-            ((JFrame) getWindow()).setContentPane(contentPane);
-        }
-    }
-
-    @RunOnDispatch
-    default void setDefaultCloseOperation(int operation) {
-        if (getWindow() instanceof JDialog) {
-            ((JDialog) getWindow()).setDefaultCloseOperation(operation);
-        } else if (getWindow() instanceof JFrame) {
-            ((JFrame) getWindow()).setDefaultCloseOperation(operation);
-        }
-    }
-
-    @RunOnDispatch
-    default void setTitle(String title) {
-        if (getWindow() instanceof JDialog) {
-            ((JDialog) getWindow()).setTitle(title);
-        } else if (getWindow() instanceof JFrame) {
-            ((JFrame) getWindow()).setTitle(title);
-        }
-    }
-
-    @RunOnDispatch
-    default void setAllowResizing(boolean resizable) {
-        if (getWindow() instanceof JFrame) {
-            ((JFrame) getWindow()).setResizable(resizable);
-        } if (getWindow() instanceof JDialog) {
-            ((JDialog) getWindow()).setResizable(resizable);
-        }
-    }
-
-    @RunOnDispatch
-    default void applyMenuBar() {
-        if (getWindow() instanceof JFrame) {
-            if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
-                ((JFrame) getWindow()).setJMenuBar(HyperCardMenuBar.instance);
-            } else {
-                ((JFrame) getWindow()).setJMenuBar(null);
+        SwingUtilities.invokeLater(() -> {
+            if (getWindow() instanceof JDialog) {
+                ((JDialog) getWindow()).setContentPane(contentPane);
+            } else if (getWindow() instanceof JFrame) {
+                ((JFrame) getWindow()).setContentPane(contentPane);
             }
-        }
+        });
     }
 
-    @RunOnDispatch
+    default void setDefaultCloseOperation(int operation) {
+        SwingUtilities.invokeLater(() -> {
+            if (getWindow() instanceof JDialog) {
+                ((JDialog) getWindow()).setDefaultCloseOperation(operation);
+            } else if (getWindow() instanceof JFrame) {
+                ((JFrame) getWindow()).setDefaultCloseOperation(operation);
+            }
+        });
+    }
+
+    default void setTitle(String title) {
+        SwingUtilities.invokeLater(() -> {
+            if (getWindow() instanceof JDialog) {
+                ((JDialog) getWindow()).setTitle(title);
+            } else if (getWindow() instanceof JFrame) {
+                ((JFrame) getWindow()).setTitle(title);
+            }
+        });
+    }
+
+    default void setAllowResizing(boolean resizable) {
+        SwingUtilities.invokeLater(() -> {
+            if (getWindow() instanceof JFrame) {
+                ((JFrame) getWindow()).setResizable(resizable);
+            }
+            if (getWindow() instanceof JDialog) {
+                ((JDialog) getWindow()).setResizable(resizable);
+            }
+        });
+    }
+
+    default void applyMenuBar() {
+        SwingUtilities.invokeLater(() -> {
+            if (getWindow() instanceof JFrame) {
+                JFrame frame = (JFrame) getWindow();
+                if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
+                    frame.setJMenuBar(HyperCardMenuBar.getInstance());
+                } else {
+                    frame.setJMenuBar(null);
+                }
+            }
+
+            getWindow().pack();
+            getWindow().invalidate();
+        });
+    }
+
     default void toggleVisible() {
-        getWindow().setVisible(!getWindow().isVisible());
+        SwingUtilities.invokeLater(() -> getWindow().setVisible(!getWindow().isVisible()));
     }
 
     @RunOnDispatch

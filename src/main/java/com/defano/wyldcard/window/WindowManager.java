@@ -1,6 +1,8 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.menu.HyperCardMenuBar;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.window.forms.*;
 import io.reactivex.Observable;
@@ -148,7 +150,6 @@ public class WindowManager {
         };
     }
 
-    @RunOnDispatch
     public void setLookAndFeel(String lafClassName) {
         lookAndFeelClassProvider.onNext(lafClassName);
 
@@ -157,17 +158,19 @@ public class WindowManager {
                 UIManager.setLookAndFeel(lafClassName);
 
                 for (HyperCardWindow thisWindow : allWindows()) {
-                    thisWindow.applyMenuBar();
-
                     SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+
                     thisWindow.getWindow().pack();
-                    thisWindow.getWindow().invalidate();
+                    thisWindow.applyMenuBar();
                 }
+
+                stackWindow.applyMenuBar();
 
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
                 e.printStackTrace();
             }
         });
+
     }
 
     public Observable<String> getLookAndFeelClassProvider() {

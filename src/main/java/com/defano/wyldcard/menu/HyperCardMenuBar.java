@@ -1,5 +1,6 @@
 package com.defano.wyldcard.menu;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -13,12 +14,17 @@ import java.awt.event.ActionListener;
  */
 public class HyperCardMenuBar extends JMenuBar {
 
-    public final static HyperCardMenuBar instance = new HyperCardMenuBar();
+    private final static HyperCardMenuBar instance = new HyperCardMenuBar();
 
     private HyperCardMenuBar() {
         reset();
     }
 
+    public static HyperCardMenuBar getInstance() {
+        return instance;
+    }
+
+    @RunOnDispatch
     public void reset() {
         // Reset menu items in each menu
         FileMenu.instance.reset();
@@ -88,6 +94,7 @@ public class HyperCardMenuBar extends JMenuBar {
         });
     }
 
+    @RunOnDispatch
     public JMenu findMenuByNumber(int index) {
         if (index < 0 || index >= getMenuCount()) {
             return null;
@@ -96,6 +103,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return getMenu(index);
     }
 
+    @RunOnDispatch
     public JMenu findMenuByName(String name) {
         for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
             JMenu thisMenu = this.getMenu(thisMenuIndex);
@@ -108,6 +116,7 @@ public class HyperCardMenuBar extends JMenuBar {
         return null;
     }
 
+    @RunOnDispatch
     private JMenuItem findMenuItemByName(String name) {
         for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
             JMenu thisMenu = this.getMenu(thisMenuIndex);

@@ -31,10 +31,10 @@ public class MenuSpecifier {
             JMenu foundMenu;
             Value menuExprValue = menuExpr.evaluate();
 
-            foundMenu = HyperCardMenuBar.instance.findMenuByName(menuExprValue.stringValue());
+            foundMenu = HyperCardMenuBar.getInstance().findMenuByName(menuExprValue.stringValue());
 
             if (foundMenu == null) {
-                foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuExprValue.integerValue() - 1);
+                foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuExprValue.integerValue() - 1);
             }
 
             if (foundMenu == null) {
@@ -45,7 +45,7 @@ public class MenuSpecifier {
         }
 
         if (menuOrdinal != null) {
-            int menuCount = HyperCardMenuBar.instance.getMenuCount();
+            int menuCount = HyperCardMenuBar.getInstance().getMenuCount();
             JMenu foundMenu;
 
             if (menuCount == 0) {
@@ -54,16 +54,16 @@ public class MenuSpecifier {
 
             switch (menuOrdinal) {
                 case LAST:
-                    foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuCount - 1);
+                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuCount - 1);
                     break;
                 case MIDDLE:
-                    foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuCount / 2);
+                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuCount / 2);
                     break;
                 case ANY:
-                    foundMenu = HyperCardMenuBar.instance.findMenuByNumber(new Random().nextInt(menuCount));
+                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(new Random().nextInt(menuCount));
                     break;
                 default:
-                    foundMenu = HyperCardMenuBar.instance.findMenuByNumber(menuOrdinal.intValue() - 1);
+                    foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuOrdinal.intValue() - 1);
                     break;
             }
 

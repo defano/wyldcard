@@ -73,7 +73,7 @@ public class DeleteCmd extends Command {
     }
 
     private void deleteMenu(MenuExp menuExp) throws HtException {
-        HyperCardMenuBar.instance.deleteMenu(menuExp.menu.getSpecifiedMenu());
+        HyperCardMenuBar.getInstance().deleteMenu(menuExp.menu.getSpecifiedMenu());
     }
 
     private void deleteFromContainer(ContainerExp container) throws HtException {

@@ -17,6 +17,6 @@ public class DoMenuCmd extends Statement {
 
     @Override
     public void onExecute() throws HtException {
-        HyperCardMenuBar.instance.doMenu(theMenuItem.evaluate().stringValue());
+        HyperCardMenuBar.getInstance().doMenu(theMenuItem.evaluate().stringValue());
     }
 }

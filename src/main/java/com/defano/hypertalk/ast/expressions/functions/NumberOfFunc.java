@@ -57,7 +57,7 @@ public class NumberOfFunc extends Expression {
             case BKGND_FIELDS:
                 return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
-                return new Value(HyperCardMenuBar.instance.getMenuCount());
+                return new Value(HyperCardMenuBar.getInstance().getMenuCount());
             case CARDS:
                 return new Value(WyldCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:

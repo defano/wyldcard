@@ -206,7 +206,6 @@ public class HyperCardTextPane extends JTextPane {
         this.repaint();
     }
 
-    @RunOnDispatch
     public void invalidateViewport(JViewport viewport) {
         if (viewport != null) {
 

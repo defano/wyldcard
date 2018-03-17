@@ -16,12 +16,12 @@ public class MenusFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate() {
         StringBuilder builder = new StringBuilder();
-        for (int menuIndex = 0; menuIndex < HyperCardMenuBar.instance.getMenuCount(); menuIndex++) {
-            builder.append(HyperCardMenuBar.instance.getMenu(menuIndex).getText());
+        for (int menuIndex = 0; menuIndex < HyperCardMenuBar.getInstance().getMenuCount(); menuIndex++) {
+            builder.append(HyperCardMenuBar.getInstance().getMenu(menuIndex).getText());
 
-            if (menuIndex < HyperCardMenuBar.instance.getMenuCount() - 1) {
+            if (menuIndex < HyperCardMenuBar.getInstance().getMenuCount() - 1) {
                 builder.append("\n");
             }
         }

@@ -13,6 +13,6 @@ public class ResetMenuCmd extends Command {
 
     @Override
     public void onExecute() throws HtException {
-        HyperCardMenuBar.instance.reset();
+        HyperCardMenuBar.getInstance().reset();
     }
 }
