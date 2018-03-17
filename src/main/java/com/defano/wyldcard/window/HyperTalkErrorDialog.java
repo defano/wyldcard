@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.Breadcrumb;
 import com.defano.wyldcard.window.forms.ScriptEditor;
@@ -21,23 +22,23 @@ public class HyperTalkErrorDialog {
         return instance;
     }
 
+    @RunOnDispatch
     public void showError(HtException e) {
-        SwingUtilities.invokeLater(() -> {
-            if (!errorDialogVisible) {
-                errorDialogVisible = true;
+        if (!errorDialogVisible) {
+            errorDialogVisible = true;
 
-                if (isEditable(e)) {
-                    showEditableError(e.getMessage(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
-                } else {
-                    showUneditableError(e.getMessage());
-                }
-
-                errorDialogVisible = false;
+            if (isEditable(e)) {
+                showEditableError(e.getMessage(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
+            } else {
+                showUneditableError(e.getMessage());
             }
-        });
+
+            errorDialogVisible = false;
+        }
         e.printStackTrace();
     }
 
+    @RunOnDispatch
     private void showUneditableError(String message) {
         JOptionPane.showMessageDialog(
                 WindowManager.getInstance().getStackWindow().getWindowPanel(),
@@ -47,6 +48,7 @@ public class HyperTalkErrorDialog {
         );
     }
 
+    @RunOnDispatch
     private void showEditableError(String message, PartModel offendingPart, Token offendingToken) {
         Object[] options = {"OK", "Script..."};
         int selection = JOptionPane.showOptionDialog(
@@ -60,17 +62,7 @@ public class HyperTalkErrorDialog {
                 options[0]);
 
         if (selection == 1) {
-            String name = offendingPart.hasProperty(PartModel.PROP_NAME) ?
-                    offendingPart.getKnownProperty(PartModel.PROP_NAME).stringValue() :
-                    "";
-
-            ScriptEditor editor = (ScriptEditor) WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of " + name)
-                    .withModel(offendingPart)
-                    .resizeable(true)
-                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .build();
-            editor.moveCaretToPosition(offendingToken.getStartIndex());
+            offendingPart.editScript(offendingToken.getStartIndex());
         }
     }
 

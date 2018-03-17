@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.FontContext;
@@ -82,26 +83,30 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
         text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
 
         ToolsContext.getInstance().getShapesFilledProvider().subscribe(filled -> {
-            rectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
-            roundRectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
-            oval.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/oval_filled.png" : "/icons/oval.png")));
-            curve.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/curve_filled.png" : "/icons/curve.png")));
-            shape.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/shape_filled.png" : "/icons/shape.png")));
-            polygon.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/polygon_filled.png" : "/icons/polygon.png")));
+            SwingUtilities.invokeLater(() -> {
+                rectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
+                roundRectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
+                oval.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/oval_filled.png" : "/icons/oval.png")));
+                curve.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/curve_filled.png" : "/icons/curve.png")));
+                shape.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/shape_filled.png" : "/icons/shape.png")));
+                polygon.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/polygon_filled.png" : "/icons/polygon.png")));
+            });
         });
 
         ToolsContext.getInstance().getPaintToolProvider().subscribe(this);
         ToolsContext.getInstance().getToolModeProvider().subscribe(arg -> {
-            if (arg == ToolMode.BROWSE) {
-                enableAllTools();
-                finger.setEnabled(false);
-            } else if (arg == ToolMode.BUTTON) {
-                enableAllTools();
-                button.setEnabled(false);
-            } else if (arg == ToolMode.FIELD) {
-                enableAllTools();
-                field.setEnabled(false);
-            }
+            SwingUtilities.invokeLater(() -> {
+                if (arg == ToolMode.BROWSE) {
+                    enableAllTools();
+                    finger.setEnabled(false);
+                } else if (arg == ToolMode.BUTTON) {
+                    enableAllTools();
+                    button.setEnabled(false);
+                } else if (arg == ToolMode.FIELD) {
+                    enableAllTools();
+                    field.setEnabled(false);
+                }
+            });
         });
     }
 
@@ -169,6 +174,7 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
         }
     }
 
+    @RunOnDispatch
     private void enableAllTools() {
         for (JButton thisToolButton : allTools) {
             if (thisToolButton != null) {
@@ -179,28 +185,29 @@ public class PaintToolsPalette extends HyperCardDialog implements Consumer {
 
     @Override
     public void accept(Object newValue) {
+        SwingUtilities.invokeLater(() -> {
+            if (newValue instanceof PaintTool) {
+                PaintTool selectedTool = (PaintTool) newValue;
 
-        if (newValue instanceof PaintTool) {
-            PaintTool selectedTool = (PaintTool) newValue;
-
-            // Special case; "pseudo" transform tools highlight selection tools
-            if (selectedTool.getToolType() == PaintToolType.SLANT ||
-                    selectedTool.getToolType() == PaintToolType.ROTATE ||
-                    selectedTool.getToolType() == PaintToolType.MAGNIFIER ||
-                    selectedTool.getToolType() == PaintToolType.PERSPECTIVE ||
-                    selectedTool.getToolType() == PaintToolType.PROJECTION ||
-                    selectedTool.getToolType() == PaintToolType.RUBBERSHEET) {
-                enableAllTools();
-                selection.setEnabled(false);
-            } else {
-                JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
-
-                if (selectedToolButton != null) {
+                // Special case; "pseudo" transform tools highlight selection tools
+                if (selectedTool.getToolType() == PaintToolType.SLANT ||
+                        selectedTool.getToolType() == PaintToolType.ROTATE ||
+                        selectedTool.getToolType() == PaintToolType.MAGNIFIER ||
+                        selectedTool.getToolType() == PaintToolType.PERSPECTIVE ||
+                        selectedTool.getToolType() == PaintToolType.PROJECTION ||
+                        selectedTool.getToolType() == PaintToolType.RUBBERSHEET) {
                     enableAllTools();
-                    selectedToolButton.setEnabled(false);
+                    selection.setEnabled(false);
+                } else {
+                    JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
+
+                    if (selectedToolButton != null) {
+                        enableAllTools();
+                        selectedToolButton.setEnabled(false);
+                    }
                 }
             }
-        }
+        });
     }
 
     {

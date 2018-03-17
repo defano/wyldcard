@@ -1,12 +1,14 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.runtime.interpreter.MessageEvaluationObserver;
 import com.defano.wyldcard.util.SquigglePainter;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
@@ -23,6 +25,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MessageWindow extends HyperCardFrame implements PropertyChangeObserver {
 
@@ -82,6 +85,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         });
     }
 
+    @RunOnDispatch
     private void checkSyntax() {
         try {
             messageBox.getHighlighter().removeAllHighlights();
@@ -91,8 +95,8 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         }
     }
 
+    @RunOnDispatch
     private void squiggleHighlight(HtException e) {
-
         int squiggleStart = 0;
         int squiggleEnd = messageBox.getText().length();
 
@@ -130,6 +134,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     }
 
     @Override
+    @RunOnDispatch
     public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case MsgBoxModel.PROP_CONTENTS:
@@ -139,16 +144,19 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     }
 
     public void setMsgBoxText(String text) {
-        partModel.setKnownProperty(MsgBoxModel.PROP_CONTENTS, new Value(text));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> partModel.setKnownProperty(MsgBoxModel.PROP_CONTENTS, new Value(text)));
     }
 
     public String getMsgBoxText() {
-        return getTextComponent().getText();
+        AtomicReference<String> text = new AtomicReference<>();
+        ThreadUtils.invokeAndWaitAsNeeded(() -> text.set(getTextComponent().getText()));
+        return text.get();
     }
 
     /**
      * Show the message window, populate the field with a find command, and position the caret inside the query string.
      */
+    @RunOnDispatch
     public void doFind() {
         setVisible(true);
         setMsgBoxText("find \"\"");

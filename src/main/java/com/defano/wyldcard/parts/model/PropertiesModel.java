@@ -289,7 +289,14 @@ public class PropertiesModel {
         }
 
         if (computerGetters.keySet().contains(property)) {
-            return computerGetters.get(property).getComputedValue(this, property);
+            if (computerGetters.get(property) instanceof DispatchComputedGetter) {
+                final Value[] value = new Value[1];
+                String finalProperty = property;
+                ThreadUtils.invokeAndWaitAsNeeded(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(this, finalProperty));
+                return value[0];
+            } else {
+                return computerGetters.get(property).getComputedValue(this, property);
+            }
         } else {
             return properties.get(property.toLowerCase());
         }

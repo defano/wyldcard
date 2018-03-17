@@ -16,12 +16,12 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 
-public class MenuButton extends JComboBox<String> implements HyperCardButton {
+public class PopupButton extends JComboBox<String> implements HyperCardButton {
 
     private final ToolEditablePart toolEditablePart;
     private final DefaultComboBoxModel<String> menuItems = new DefaultComboBoxModel<>();
 
-    public MenuButton(ToolEditablePart toolEditablePart) {
+    public PopupButton(ToolEditablePart toolEditablePart) {
         this.toolEditablePart = toolEditablePart;
 
         this.addMouseListener(toolEditablePart);
@@ -29,7 +29,7 @@ public class MenuButton extends JComboBox<String> implements HyperCardButton {
         this.setBorder(PartBorderFactory.createEmptyBorder());
 
         final Component[] components = this.getComponents();
-        for(final Component component : components) {
+        for (final Component component : components) {
             component.addMouseListener(toolEditablePart);
             component.addKeyListener(toolEditablePart);
         }
@@ -94,6 +94,13 @@ public class MenuButton extends JComboBox<String> implements HyperCardButton {
         for (Value thisItem : items) {
             menuItems.addElement(thisItem.stringValue());
         }
+
+        // Convert item list to line list
+        toolEditablePart.getPartModel().setKnownProperty(PartModel.PROP_CONTENTS, Value.ofLines(items), true);
+    }
+
+    private boolean isDividerElement(Object element) {
+        return String.valueOf(element).trim().startsWith("-");
     }
 
     private class MenuButtonItemListener implements ActionListener {
@@ -122,10 +129,6 @@ public class MenuButton extends JComboBox<String> implements HyperCardButton {
 
             return this;
         }
-    }
-
-    private boolean isDividerElement(Object element) {
-        return String.valueOf(element).trim().startsWith("-");
     }
 
 }

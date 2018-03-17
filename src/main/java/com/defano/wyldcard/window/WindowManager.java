@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.window.forms.*;
 import io.reactivex.Observable;
@@ -30,6 +31,7 @@ public class WindowManager {
 
     private WindowManager() {}
 
+    @RunOnDispatch
     public void start() {
         lookAndFeelClassProvider.onNext(UIManager.getSystemLookAndFeelClassName());
 
@@ -146,6 +148,7 @@ public class WindowManager {
         };
     }
 
+    @RunOnDispatch
     public void setLookAndFeel(String lafClassName) {
         lookAndFeelClassProvider.onNext(lafClassName);
 
@@ -171,6 +174,7 @@ public class WindowManager {
         return lookAndFeelClassProvider;
     }
 
+    @RunOnDispatch
     public boolean isMacOs() {
         return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
     }

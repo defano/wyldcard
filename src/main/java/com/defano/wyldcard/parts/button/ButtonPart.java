@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.button;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -92,12 +93,14 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
+    @RunOnDispatch
     public void partOpened() {
         super.partOpened();
         partModel.addPropertyChangedObserver(this);
     }
 
     @Override
+    @RunOnDispatch
     public void partClosed() {
         super.partClosed();
         partModel.removePropertyChangedObserver(this);
@@ -120,6 +123,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
+    @RunOnDispatch
     public void replaceViewComponent(Component oldButtonComponent, Component newButtonComponent) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
@@ -143,49 +147,61 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     }
 
     @Override
+    @RunOnDispatch
     public void mousePressed(MouseEvent e) {
         super.mousePressed(e);
 
-        if (SwingUtilities.isLeftMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e) && !isPartToolActive()) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
             MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 
     @Override
+    @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
         boolean isStillInFocus = new Rectangle(this.getButtonComponent().getSize()).contains(e.getPoint());
 
         // Do not set mouseUp if cursor is not released while over the part
-        if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus) {
+        if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
         }
     }
 
     @Override
+    @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
         super.mouseEntered(e);
-        getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
-        PeriodicMessageManager.getInstance().addWithin(getPartModel());
+
+        if (!isPartToolActive()) {
+            getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
+            PeriodicMessageManager.getInstance().addWithin(getPartModel());
+        }
     }
 
     @Override
+    @RunOnDispatch
     public void mouseExited(MouseEvent e) {
         super.mouseExited(e);
-        getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
-        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+
+        if (!isPartToolActive()) {
+            getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
+            PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        }
     }
 
     @Override
+    @RunOnDispatch
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
-        if (e.getClickCount() == 2) {
+        if (e.getClickCount() == 2 && !isPartToolActive()) {
             getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 
     @Override
+    @RunOnDispatch
     public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:

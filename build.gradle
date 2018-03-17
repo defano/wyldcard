@@ -3,10 +3,27 @@ apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
+    }
+}
+
 allprojects {
 	apply plugin: 'java'
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
+}
+
+apply plugin: 'com.github.sedovalx.gradle-aspectj-binary'
+
+ext {
+	jdk = System.env.'JAVA_HOME'
+	aspectjVersion = '1.8.13'
+    weave = false
 }
 
 repositories {
@@ -15,17 +32,21 @@ repositories {
 	mavenLocal()
 }
 
-ext {
-	jdk = System.env.'JAVA_HOME'
-}
-
 configurations {
 	antlr
 }
 
 clean {
-    delete "generated-src/"
-	delete "bundles/"
+    delete 'generated-src/'
+	delete 'bundles/'
+}
+
+compileJava {
+    // Enable AspectJ-based thread auditor when '-PthreadAudit' is included on command line
+    if (project.hasProperty('threadAudit')) {
+        weaveClasses.dependsOn compileJava
+        classes.dependsOn weaveClasses
+    }
 }
 
 sourceSets {
@@ -52,6 +73,7 @@ dependencies {
 	compile group: 'de.dfki.mary', name: 'voice-cmu-bdl-hsmm', version: '5.2'
 	compile group: 'de.dfki.mary', name: 'voice-cmu-rms-hsmm', version: '5.2'
 	compile group: 'de.dfki.mary', name: 'voice-dfki-prudence-hsmm', version: '5.2'
+	compile "org.aspectj:aspectjrt:$aspectjVersion"
 
 	testCompile 'junit:junit:4.12'
 	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'

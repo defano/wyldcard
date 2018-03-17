@@ -14,6 +14,6 @@ public class IsNotInOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate() throws HtException {
-        return new Value(!lhs().contains(rhs()));
+        return new Value(!rhs().contains(lhs()));
     }
 }

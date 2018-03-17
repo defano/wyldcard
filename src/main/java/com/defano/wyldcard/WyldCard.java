@@ -1,17 +1,18 @@
 package com.defano.wyldcard;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
-import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.window.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.forms.BackgroundPropertyEditor;
 
 import javax.swing.*;
 
@@ -29,6 +30,8 @@ public class WyldCard extends StackManager {
     }
 
     public static void main(String argv[]) {
+
+        new BackgroundPropertyEditor();
 
         try {
             // Configure macOS environment
@@ -64,15 +67,14 @@ public class WyldCard extends StackManager {
     }
 
     public void showErrorDialog(HtException e) {
-        // Does not block
-        HyperTalkErrorDialog.getInstance().showError(e);
+        SwingUtilities.invokeLater(() -> HyperTalkErrorDialog.getInstance().showError(e));
 
         // Abort further script execution
         throw new ExitToHyperCardException();
     }
 
+    @RunOnDispatch
     public void quit() {
-
         // Prompt to save if user has unsaved changes
         if (isActiveStackDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(

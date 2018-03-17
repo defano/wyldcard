@@ -1,5 +1,9 @@
 package com.defano.wyldcard.parts;
 
+import com.defano.hypertalk.ast.model.ToolType;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.jmonet.tools.util.MarchingAnts;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseListenable;
@@ -12,10 +16,8 @@ import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.hypertalk.ast.model.ToolType;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.jmonet.tools.util.MarchingAnts;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -70,6 +72,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      *
      * @param g The graphics context in which to draw.
      */
+    @RunOnDispatch
     default void drawSelectionRectangle(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
@@ -90,8 +93,10 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Invoke to indicate that the selected tool has been changed by the user.
      */
     default void onToolModeChanged() {
-        setVisibleWhenBrowsing(!isHidden());
-        setEnabledOnCard(isEnabled());
+        SwingUtilities.invokeLater(() -> {
+            setVisibleWhenBrowsing(!isHidden());
+            setEnabledOnCard(isEnabled());
+        });
     }
 
     /**
@@ -103,7 +108,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     }
 
     /**
-     * Determines if this part is presently enabled on the card (as determined by its "enabled" property).
+     * Determines if this part is presently enabled on the card (as determined by its "enabled" property) and
+     * not currently disabled as a result of the part's edit tool being active.
      * @return True if enabled; false if disabled.
      */
     default boolean isEnabled() {
@@ -118,6 +124,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      *
      * @param visibleOnCard True to make it visible; false otherwise
      */
+    @RunOnDispatch
     default void setVisibleWhenBrowsing(boolean visibleOnCard) {
         getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
 
@@ -137,6 +144,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      *
      * @param enabledOnCard True to make the part enabled; false to disable.
      */
+    @RunOnDispatch
     default void setEnabledOnCard(boolean enabledOnCard) {
         getPartModel().setKnownProperty(CardLayerPartModel.PROP_ENABLED, new Value(enabledOnCard), true);
 
@@ -148,6 +156,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     /**
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
      */
+    @RunOnDispatch
     default void bringCloser() {
         getPart().setDisplayOrder(getZOrder() + 1);
     }
@@ -155,6 +164,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     /**
      * Adjust the z-order of this part, moving it one part further from the front of the part stack.
      */
+    @RunOnDispatch
     default void sendFurther() {
         getPart().setDisplayOrder(getZOrder() - 1);
     }
@@ -168,6 +178,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     }
 
     @Override
+    @RunOnDispatch
     default void mousePressed(MouseEvent e) {
         if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
             PartToolContext.getInstance().setSelectedPart(this);
@@ -177,6 +188,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     }
 
     @Override
+    @RunOnDispatch
     default void mouseClicked(MouseEvent e) {
         boolean wasDoubleClicked = isSelectedForEditing() && e.getClickCount() == 2;
 
@@ -199,6 +211,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     }
 
     @Override
+    @RunOnDispatch
     default void keyPressed(KeyEvent e) {
         if (isSelectedForEditing()) {
             int top = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(1).integerValue();

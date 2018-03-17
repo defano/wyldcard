@@ -4,6 +4,7 @@ import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.forms.ButtonPropertyEditor;
@@ -340,12 +341,24 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * command from the Objects menu.
      */
     public void editScript() {
-        WindowBuilder.make(new ScriptEditor())
-                .withTitle("Script of " + getName())
-                .withModel(this)
-                .resizeable(true)
-                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                .build();
+        editScript(0);
+    }
+
+    /**
+     * Show the script editor for this part.
+     * <p>
+     * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
+     * command from the Objects menu.
+     */
+    public void editScript(int caretPosition) {
+        ThreadUtils.invokeAndWaitAsNeeded(() ->
+                ((ScriptEditor) WindowBuilder.make(new ScriptEditor())
+                        .withTitle("Script of " + getName())
+                        .withModel(this)
+                        .resizeable(true)
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                        .build())
+                        .moveCaretToPosition(caretPosition));
     }
 
     /**
@@ -355,13 +368,14 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * the Objects menu.
      */
     public void editProperties() {
-        WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
-                .asModal()
-                .withTitle(getName())
-                .withModel(this)
-                .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                .resizeable(false)
-                .build();
+        ThreadUtils.invokeAndWaitAsNeeded(() ->
+                WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
+                        .asModal()
+                        .withTitle(getName())
+                        .withModel(this)
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                        .resizeable(false)
+                        .build());
     }
 
     @Override

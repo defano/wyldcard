@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.fx.CurtainObserver;
 import com.defano.wyldcard.paint.ArtVandelay;
@@ -32,8 +33,6 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     private final FrameResizeObserver frameResizeObserver = new FrameResizeObserver();
 
     public StackWindow() {
-        ThreadUtils.assertDispatchThread();
-
         cardPanel.setLayout(new BorderLayout(0, 0));
         cardPanel.setLayer(screenCurtain, CURTAIN_LAYER);
         cardPanel.add(screenCurtain);
@@ -45,9 +44,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
         return card;
     }
 
+    @RunOnDispatch
     public void invalidateWindowTitle() {
-        ThreadUtils.assertDispatchThread();
-
         // Don't update title when screen is locked or before card is loaded
         if (screenCurtain.isVisible() || card == null) {
             return;
@@ -76,9 +74,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void bindModel(Object data) {
-        ThreadUtils.assertDispatchThread();
-
         if (data instanceof StackPart) {
 
             if (this.stack != null) {
@@ -100,9 +97,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void onStackOpened(StackPart newStack) {
-        ThreadUtils.assertDispatchThread();
-
         stack = newStack;
         card = stack.getDisplayedCard();
 
@@ -115,9 +111,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void onCardOpened(CardPart newCard) {
-        ThreadUtils.assertDispatchThread();
-
         this.card = newCard;
 
         // Listen for image files that are dropped onto the card
@@ -138,21 +133,22 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void onStackDimensionChanged(Dimension newDimension) {
-        ThreadUtils.assertDispatchThread();
-
         getWindowPanel().setPreferredSize(newDimension);
         getWindow().pack();
     }
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void onStackNameChanged(String newName) {
         invalidateWindowTitle();
     }
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void onCurtainUpdated(BufferedImage curtainImage) {
         this.screenCurtain.setCurtainImage(curtainImage);
 
@@ -164,12 +160,14 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     /** {@inheritDoc} */
     @Override
+    @RunOnDispatch
     public void onCardOrderChanged() {
         invalidateWindowTitle();
     }
 
     private class CardResizeObserver extends ComponentAdapter {
         @Override
+        @RunOnDispatch
         public void componentResized(ComponentEvent e) {
             screenCurtain.setSize(e.getComponent().getSize());
         }

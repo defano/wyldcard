@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -46,6 +47,7 @@ public class PartContentsEditor extends JDialog {
         dispose();
     }
 
+    @RunOnDispatch
     public static String editContents(String contents, Component parent) {
         PartContentsEditor dialog = new PartContentsEditor();
         dialog.contentsField.setText(contents);

@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menu.HyperCardMenuBar;
 import io.reactivex.Observable;
 
@@ -25,6 +26,7 @@ public interface HyperCardWindow<WindowType extends Window> {
     /**
      * Close and dispose the window.
      */
+    @RunOnDispatch
     default void dispose() {
         SwingUtilities.getWindowAncestor(getWindowPanel()).dispose();
     }
@@ -45,10 +47,12 @@ public interface HyperCardWindow<WindowType extends Window> {
      *
      * @return The default button on this window, or null if no button is a default.
      */
+    @RunOnDispatch
     default JButton getDefaultButton() {
         return null;
     }
 
+    @RunOnDispatch
     default void setContentPane(Container contentPane) {
         if (getWindow() instanceof JDialog) {
             ((JDialog) getWindow()).setContentPane(contentPane);
@@ -57,6 +61,7 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
     }
 
+    @RunOnDispatch
     default void setDefaultCloseOperation(int operation) {
         if (getWindow() instanceof JDialog) {
             ((JDialog) getWindow()).setDefaultCloseOperation(operation);
@@ -65,6 +70,7 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
     }
 
+    @RunOnDispatch
     default void setTitle(String title) {
         if (getWindow() instanceof JDialog) {
             ((JDialog) getWindow()).setTitle(title);
@@ -73,6 +79,7 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
     }
 
+    @RunOnDispatch
     default void setAllowResizing(boolean resizable) {
         if (getWindow() instanceof JFrame) {
             ((JFrame) getWindow()).setResizable(resizable);
@@ -81,6 +88,7 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
     }
 
+    @RunOnDispatch
     default void applyMenuBar() {
         if (getWindow() instanceof JFrame) {
             if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
@@ -91,10 +99,12 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
     }
 
+    @RunOnDispatch
     default void toggleVisible() {
         getWindow().setVisible(!getWindow().isVisible());
     }
 
+    @RunOnDispatch
     default void setIsModal() {
         if (getWindow() instanceof JDialog) {
             ((JDialog) getWindow()).setModalityType(Dialog.ModalityType.APPLICATION_MODAL);

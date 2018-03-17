@@ -7,6 +7,7 @@ import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 import io.reactivex.Observable;
@@ -25,13 +26,17 @@ import java.util.Optional;
  */
 public class StackManager implements StackNavigationObserver {
 
-    private StackPart activeStack = StackPart.newStack();
+    private StackPart activeStack;
 
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
+
+    public StackManager() {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> StackManager.this.activeStack = StackPart.newStack());
+    }
 
     /**
      * Gets the active stack (the stack that currently has focus).

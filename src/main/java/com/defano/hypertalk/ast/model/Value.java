@@ -602,7 +602,13 @@ public class Value implements StyledComparable<Value> {
         if (isBoolean() && otherValue.isBoolean()) {
             return this.booleanValue() == otherValue.booleanValue();
         } else if (isInteger() && otherValue.isInteger()) {
-            return this.integerValue() == otherValue.integerValue();
+            // Weird special case: "" is a valid number (zero), but is not equal to 0
+            // Thus, '2 * "" == 0', but '0 <> ""' -- don't believe me, try it in HyperCard!
+            if (value.equals("") || otherValue.value.equals("")) {
+                return value.equals(otherValue.value);
+            } else {
+                return this.integerValue() == otherValue.integerValue();
+            }
         } else if ((isInteger() || isFloat()) && (otherValue.isInteger() || otherValue.isFloat())) {
             return this.doubleValue() == otherValue.doubleValue();
         } else {

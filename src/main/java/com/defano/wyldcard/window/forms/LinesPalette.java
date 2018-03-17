@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -44,6 +45,7 @@ public class LinesPalette extends HyperCardDialog implements Consumer<Stroke> {
     }
 
     @Override
+    @RunOnDispatch
     public void accept(Stroke newValue) {
 
         if (newValue instanceof BasicStroke) {

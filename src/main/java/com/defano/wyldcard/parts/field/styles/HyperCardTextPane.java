@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.field.styles;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.parts.field.highlighters.AutoSelectionHighlighterPainter;
@@ -70,6 +71,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public boolean getScrollableTracksViewportHeight() {
         return !scrollable || super.getScrollableTracksViewportHeight();
     }
@@ -78,6 +80,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public Dimension getPreferredSize() {
         if (wrapText) {
             return super.getPreferredSize();
@@ -90,6 +93,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public String getText() {
         try {
             return getStyledDocument().getText(0, getStyledDocument().getLength());
@@ -102,6 +106,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public String getSelectedText() {
         if (isAutoSelection()) {
             return getText().substring(getAutoSelectionRange().start, getAutoSelectionRange().end);
@@ -114,6 +119,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public int getSelectionStart() {
         if (isAutoSelection()) {
             return getAutoSelectionRange().start;
@@ -126,6 +132,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public int getSelectionEnd() {
         if (isAutoSelection()) {
             return getAutoSelectionRange().end;
@@ -134,6 +141,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     public void clearSearchHilights() {
         for (Highlighter.Highlight thisHighlight : highlighter.getHighlights()) {
             if (thisHighlight.getPainter() instanceof FoundSelectionHighlightPainter) {
@@ -145,6 +153,7 @@ public class HyperCardTextPane extends JTextPane {
         repaint();
     }
 
+    @RunOnDispatch
     public void applySearchHilight(Range range) {
         try {
             highlighter.addHighlight(range.start, range.end, foundPainter);
@@ -153,6 +162,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     private Range getAutoSelectionRange() {
         int[] lines = autoSelection.stream().mapToInt(Number::intValue).toArray();
         return FieldUtilities.getLinesRange(this, lines);
@@ -162,6 +172,7 @@ public class HyperCardTextPane extends JTextPane {
         return scrollable;
     }
 
+    @RunOnDispatch
     public void setScrollable(boolean scrollable) {
         this.scrollable = scrollable;
         rewrapText();
@@ -171,11 +182,13 @@ public class HyperCardTextPane extends JTextPane {
         return wrapText;
     }
 
+    @RunOnDispatch
     public void setWrapText(boolean wrapText) {
         this.wrapText = wrapText;
         rewrapText();
     }
 
+    @RunOnDispatch
     private void rewrapText() {
         // Cause the field to re-wrap the text inside of it
         this.setSize(this.getWidth() - 1, this.getHeight());
@@ -186,12 +199,14 @@ public class HyperCardTextPane extends JTextPane {
         return showLines;
     }
 
+    @RunOnDispatch
     public void setShowLines(boolean showLines) {
         this.showLines = showLines;
         this.baselinesCache = null;
         this.repaint();
     }
 
+    @RunOnDispatch
     public void invalidateViewport(JViewport viewport) {
         if (viewport != null) {
 
@@ -224,6 +239,7 @@ public class HyperCardTextPane extends JTextPane {
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
@@ -261,6 +277,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     private HashMap<Integer, Integer> buildLineCache() {
         this.baselinesCache = new HashMap<>();
         float lastLineHeight = 0;
@@ -288,6 +305,7 @@ public class HyperCardTextPane extends JTextPane {
      *
      * @return The natural width of the document.
      */
+    @RunOnDispatch
     private int getDocumentWidth() {
         try {
             View document = getUI().getRootView(this).getView(0);
@@ -303,6 +321,7 @@ public class HyperCardTextPane extends JTextPane {
      * @param line The index of the line whose height should be calculated; a value between 0 and {@link #getWrappedLineCount()}
      * @return The height, in pixels.
      */
+    @RunOnDispatch
     private float getLineHeight(int line) {
         int lineCount = 0;
         View document = getUI().getRootView(this).getView(0);
@@ -330,6 +349,7 @@ public class HyperCardTextPane extends JTextPane {
      *
      * @return The number of lines of text in the field; some lines may be wrapped.
      */
+    @RunOnDispatch
     private int getWrappedLineCount() {
         int lines = 0;
         View document = getUI().getRootView(this).getView(0);
@@ -351,6 +371,7 @@ public class HyperCardTextPane extends JTextPane {
      *
      * @param evt The location of the mouse click.
      */
+    @RunOnDispatch
     private void expandContentsToClickLoc(MouseEvent evt) {
         if (isEditable()) {
             int clickLine = getClickedLine(evt);
@@ -377,6 +398,7 @@ public class HyperCardTextPane extends JTextPane {
      * @param evt A point within the bounds of this component
      * @return The line number where the give point is located
      */
+    @RunOnDispatch
     public int getClickedLine(MouseEvent evt) {
 
         float cumulativeLineHeight = getInsets().top;
@@ -399,6 +421,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     public void autoSelectLines(Set<Integer> selectedLines) {
         if (selectedLines != null) {
             this.autoSelection.clear();
@@ -412,6 +435,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     private void autoSelectLine(int selectedLine) {
         Range clickRange = FieldUtilities.getLineRange(this, selectedLine);
         if (!clickRange.isEmpty()) {
@@ -419,6 +443,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     private void autoSelect(Range range) {
         try {
             highlighter.addHighlight(range.start, range.end, hilitePainter);
@@ -427,6 +452,7 @@ public class HyperCardTextPane extends JTextPane {
         }
     }
 
+    @RunOnDispatch
     private void removeAutoSelections() {
         highlighter.removeAllHighlights();
     }

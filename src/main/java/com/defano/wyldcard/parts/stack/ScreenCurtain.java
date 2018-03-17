@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.stack;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -28,9 +29,8 @@ public class ScreenCurtain extends JLabel {
      * @param curtainImage The image to drape over the stack window; null to open the curtain and reveal the card
      *                     underneath.
      */
+    @RunOnDispatch
     public void setCurtainImage(BufferedImage curtainImage) {
-        ThreadUtils.assertDispatchThread();
-
         setVisible(curtainImage != null);
 
         if (curtainImage != null) {

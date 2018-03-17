@@ -220,9 +220,9 @@ Exploiting the architecture empowers parts to override system behavior by _trapp
 
 ```
 on keyDown theKey
-	if theKey is a number then
-		if theKey mod 2 is 0 then pass keyDown
-	end if
+  if theKey is a number then
+    if theKey mod 2 is 0 then pass keyDown
+  end if
 end keyDown
 ```
 
@@ -418,7 +418,7 @@ end y
 
 #### Part containers
 
-Like variables, a part can also be used to store value. When placing a value into a field, the text of the field is changed. However, when placing a value into a button, card, background or stack, the part's `contents` property is changed (the `contents` property does not affect these part's appearance in any way, and can only be seen / edited from the "Info..." dialog in the "Objects" menu). One exception: When dealing with `menu` styled buttons (combo boxes), the `contents` property determines the list of menu items available in the menu.
+Like variables, a part can also be used to store value. When placing a value into a field, the text of the field is changed. However, when placing a value into a button, card, background or stack, the part's `contents` property is changed (the `contents` property does not affect these part's appearance in any way, and can only be seen / edited from the "Info..." dialog in the "Objects" menu). One exception: When dealing with `popup` styled buttons (combo boxes), the `contents` property determines the list of menu items available in the popup.
 
 In HyperCard, a value could only be placed into button or field parts; WyldCard allows values to be placed into card, background and stack objects, too.
 
@@ -433,7 +433,7 @@ put "Yes,No" into button myMenuButton -- Menu-styled button gets two menu items 
 
 #### Menu containers
 
-Every menu in the menu bar, as well as buttons of the style `menu`, are containers whose value specifies the items that appear in them. The value placed into a menu container is interpreted as a list of items or lines, each of which represents an item in the menu. Any `-` value in the list is interpreted as menu separator.
+Every menu in the menu bar, as well as buttons of the style `popup`, are containers whose value specifies the items that appear in them. The value placed into a menu container is interpreted as a list of items or lines, each of which represents an item in the menu. Any `-` value in the list is interpreted as menu separator.
 
 For example:
 
@@ -580,7 +580,7 @@ Use the `reset menuBar` command to eliminate any changes you've made to the menu
 
 #### Responding to user selections in the menu bar
 
-Menus created by script have no default behavior. When the user chooses a menu from the menu bar, the `doMenu` message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior. (Note that `menu`-styled buttons do not send the `doMenu` message; only menus in the menu bar send this message).
+Menus created by script have no default behavior. When the user chooses a menu from the menu bar, the `doMenu` message is sent to the current card. A handler placed in the card, background or stack script can intercept this message and provide custom behavior. (Note that `popup`-styled buttons do not send the `doMenu` message; only menus in the menu bar send this message).
 
 For example, place the following handler in a stack script to prompt the user to confirm if they really want to edit the background of the card:
 
@@ -644,7 +644,7 @@ In addition to the properties listed above, all button and field parts share the
 
 Property      | Description
 --------------|--------------------------
-`selectedText`| For fields, returns the currently selected text. For buttons, returns the selected menu item of `menu`-style buttons or the empty string for all other button styles. This property is read-only; it cannot be set via HyperTalk.
+`selectedText`| For fields, returns the currently selected text. For buttons, returns the selected menu item of `popup`-style buttons or the empty string for all other button styles. This property is read-only; it cannot be set via HyperTalk.
 `style`       | Sets or retrieves the style of the part (see the tables below for available button and field styles).
 `textAlign`   | Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.
 `textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
@@ -668,16 +668,16 @@ Style                                      | Name          | Notes
 ![Rectangular](doc/images/rectangular.png) | `rectangular` | A push button drawn with a rectangular border.
 ![Transparent](doc/images/transparent.png) | `transparent` | A push button drawn without any decoration or border; can be placed atop of graphics on the card to make any region of the card "clickable"
 ![Opaque](doc/images/opaque.png)           | `opaque`      | A rectangular push button drawn without a border.
-![Default](doc/images/checkbox.png)        | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/radio.png)           | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
-![Default](doc/images/menu.png)            | `menu`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
+![Checkbox](doc/images/checkbox.png)       | `checkbox`    | A checkbox drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Radio](doc/images/radio.png)             | `radio`       | A radio button drawn in the style provided by the operating system. When `autohilite` is true and the `family` property is an integer value, then clicking this button will cause the `hilite` of all other buttons in the family to become `false` and the `hilite` of this button to become true.
+![Popup](doc/images/menu.png)              | `popup`        | A drop-down (_combo box_) menu drawn in the style provided by the operating system. Each line of the button's contents are rendered as a selectable menu item.
 
 In addition to the properties common to all parts, a button has these additional unique properties:
 
 Property    | Description
 ------------|------------
 `autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
-`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on menu buttons.
+`hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on `popup` style buttons.
 `iconAlign` | Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property did not exist in HyperCard.
 `showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
 
@@ -1016,7 +1016,7 @@ Command	         | Description
 `click`          | Clicks the mouse at a provided location on the card, while optionally holding down one or more modifier keys; `click at "10, 10"` or `click at "130,220" with shiftKey, commandKey`. Valid modifier keys are `shiftKey`, `optionKey` and `commandKey`.
 `close file`     | Closes a previously opened file, writing any changes made via the `write` command to disk. Has no effect if the file is not open. For example, `close file "/Users/matt/myfile.txt"`
 `convert`        | Converts a date and/or time from one format to another. Syntax is `convert { <container> / <value> } [[ from <format>] and <format>] to <format> [ and <format> ]` where `<format>` is one of `seconds` (an integer value equal to the number of seconds since the epoch, Jan. 1, 1970), `dateItems` (comma-separated list of integers `year, month, day, hour, minute, second, dayNumber`), `[ <adj> ] date`, or `[ <adj> ] time` where `<adj>` is one of `long`, `short`, `abbreviated`, `abbrev` or `english`. When a value is specified (rather than a container), the conversion result is placed into `it`.
-`create menu`    | Creates a new menu in the menu bard, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
+`create menu`    | Creates a new menu in the menu bar, for example `create menu "Help"`. Use the `delete menu` command to remove menus or `reset menuBar` to restore the menubar to its default state.
 `dial`           | Produces the sound of a sequence of DTMF dial tones, for example, `dial "1-800-588-2300"`.
 `delete menu`    | Deletes a menu from the menu bar, for example `delete menu "File"`. Use `reset menuBar` command to restore the menu bar to its default state.
 `delete`         | Deletes a part from the card or background, or deletes a chunk of text from a container, for example, `delete the last line of card field "My List"`, `delete card button id 0`, `delete bkgnd field "Report"`

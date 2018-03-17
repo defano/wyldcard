@@ -7,11 +7,13 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
+import javax.swing.*;
 import java.util.Optional;
 
 /**
@@ -42,23 +44,27 @@ public class PartToolContext {
     }
 
     public void setSelectedPart(ToolEditablePart part) {
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON || ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
-            deselectAllParts();
-            part.setSelectedForEditing(true);
-            selectedPart.onNext(Optional.of(part));
+        if (ToolsContext.getInstance().getToolMode().isPartTool()) {
+            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                deselectAllParts();
+                part.setSelectedForEditing(true);
+                selectedPart.onNext(Optional.of(part));
+            });
         }
     }
 
     public void deselectAllParts() {
-        for (ButtonPart thisButton : WyldCard.getInstance().getActiveStackDisplayedCard().getButtons()) {
-            thisButton.setSelectedForEditing(false);
-        }
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (ButtonPart thisButton : WyldCard.getInstance().getActiveStackDisplayedCard().getButtons()) {
+                thisButton.setSelectedForEditing(false);
+            }
 
-        for (FieldPart thisField : WyldCard.getInstance().getActiveStackDisplayedCard().getFields()) {
-            thisField.setSelectedForEditing(false);
-        }
+            for (FieldPart thisField : WyldCard.getInstance().getActiveStackDisplayedCard().getFields()) {
+                thisField.setSelectedForEditing(false);
+            }
 
-        selectedPart.onNext(Optional.empty());
+            selectedPart.onNext(Optional.empty());
+        });
     }
 
     public void bringSelectedPartCloser() {

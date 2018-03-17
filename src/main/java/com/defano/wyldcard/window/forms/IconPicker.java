@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconFactory;
 import com.defano.wyldcard.util.WrapLayout;
@@ -53,6 +54,7 @@ public class IconPicker extends HyperCardDialog {
     }
 
     @Override
+    @RunOnDispatch
     public void bindModel(Object data) {
         this.model = (ButtonModel) data;
         selectedIconValue = this.model.getKnownProperty(ButtonModel.PROP_ICON);
@@ -71,6 +73,7 @@ public class IconPicker extends HyperCardDialog {
         invalidate();
     }
 
+    @RunOnDispatch
     private List<JButton> getButtons() {
         List<JButton> buttons = new ArrayList<>();
 
@@ -84,6 +87,7 @@ public class IconPicker extends HyperCardDialog {
         return buttons;
     }
 
+    @RunOnDispatch
     private JButton getButtonForIcon(ButtonIcon buttonIcon, boolean isSelected) {
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(BUTTON_SIZE, BUTTON_SIZE));
@@ -101,6 +105,7 @@ public class IconPicker extends HyperCardDialog {
         return button;
     }
 
+    @RunOnDispatch
     private void enableButtons() {
         for (JButton thisButton : buttons) {
             thisButton.setEnabled(true);

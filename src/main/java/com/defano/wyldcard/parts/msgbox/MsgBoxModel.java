@@ -1,7 +1,10 @@
 package com.defano.wyldcard.parts.msgbox;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.field.SelectableTextModel;
+import com.defano.wyldcard.parts.model.DispatchComputedGetter;
+import com.defano.wyldcard.parts.model.DispatchComputedSetter;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
@@ -20,20 +23,20 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_CONTENTS, new Value(), false);
-        defineComputedGetterProperty(PROP_CONTENTS, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText()));
+        defineComputedGetterProperty(PROP_CONTENTS, (DispatchComputedGetter) (model, propertyName) -> new Value(getText()));
 
         defineProperty(PROP_WIDTH, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getWidth()), true);
         defineProperty(PROP_HEIGHT, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getHeight()), true);
         defineProperty(PROP_NAME, new Value("Message"), true);
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getMessageWindow().getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (DispatchComputedGetter) (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (DispatchComputedSetter) (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getMessageWindow().getWindow().getY()));
 
-        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(WindowManager.getInstance().getMessageWindow().getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (DispatchComputedGetter) (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (DispatchComputedSetter) (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(WindowManager.getInstance().getMessageWindow().getWindow().getX(), value.integerValue()));
 
-        defineComputedGetterProperty(PROP_VISIBLE, (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().isVisible()));
-        defineComputedSetterProperty(PROP_VISIBLE, (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().setVisible(value.booleanValue()));
+        defineComputedGetterProperty(PROP_VISIBLE, (DispatchComputedGetter) (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().isVisible()));
+        defineComputedSetterProperty(PROP_VISIBLE, (DispatchComputedSetter) (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().setVisible(value.booleanValue()));
     }
 
     /**
@@ -67,6 +70,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
      * {@inheritDoc}
      */
     @Override
+    @RunOnDispatch
     public String getText() {
         JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         return messageBox.getText();
