@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private HyperCardFrame dock;
     private boolean isPalette = false;
     private boolean quitOnClose = false;
-    private boolean isModal = false;
 
     private WindowBuilder(T window) {
         this.window = window;
@@ -35,36 +35,43 @@ public class WindowBuilder<T extends HyperCardWindow> {
         return new WindowBuilder<>(window);
     }
 
+    @RunOnDispatch
     public WindowBuilder withTitle(String title) {
         this.window.setTitle(title);
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder resizeable(boolean resizable) {
         this.resizable = resizable;
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder quitOnClose() {
         this.quitOnClose = true;
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder withModel(Object model) {
         window.bindModel(model);
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder asPalette() {
         this.isPalette = true;
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder dockTo(HyperCardFrame window) {
         this.dock = window;
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder withLocationUnderneath(Component component) {
         this.window.getWindow().pack();
 
@@ -75,6 +82,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder withLocationLeftOf(Component component) {
         this.window.getWindow().pack();
 
@@ -85,11 +93,13 @@ public class WindowBuilder<T extends HyperCardWindow> {
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder withLocationCenteredOver(Component component) {
         relativeLocation = component;
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder withLocationStaggeredOver(Component component) {
         this.window.getWindow().pack();
         JRootPane root = SwingUtilities.getRootPane(component);
@@ -97,26 +107,31 @@ public class WindowBuilder<T extends HyperCardWindow> {
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder notInitiallyVisible() {
         this.initiallyVisible = false;
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder ownsMenubar() {
         this.window.setOwnsMenubar(true);
         return this;
     }
 
+    @RunOnDispatch
     public WindowBuilder asModal() {
-        this.isModal = true;
+        this.window.setIsModal();
         return this;
     }
 
+    @RunOnDispatch
     public T buildReplacing(HyperCardWindow window) {
         window.getWindow().dispose();
         return build();
     }
 
+    @RunOnDispatch
     public T build() {
         this.window.getWindow().pack();
 
@@ -190,10 +205,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
                     lastLocation = location;
                 }
             });
-        }
-
-        if (isModal) {
-            this.window.setIsModal();
         }
 
         return window;

@@ -5,10 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 
 public class ThreadUtils {
 
-    public static void assertDispatchThread() {
-        assertOrDie(SwingUtilities.isEventDispatchThread(), "Method must be executed on dispatch thread.");
-    }
-
     public static void assertWorkerThread() {
         assertOrDie(!SwingUtilities.isEventDispatchThread(), "Method must be executed on worker thread.");
     }

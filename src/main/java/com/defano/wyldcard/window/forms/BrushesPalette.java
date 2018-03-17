@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.HyperCardDialog;

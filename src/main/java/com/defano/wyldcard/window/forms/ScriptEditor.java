@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
@@ -115,6 +116,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         });
     }
 
+    @RunOnDispatch
     private void setHighlightedLine() {
         try {
             setHighlightedLine(scriptField.getLineOfOffset(scriptField.getCaretPosition()));
@@ -123,6 +125,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void setHighlightedSelection(int start, int end) {
         try {
             scriptField.getHighlighter().addHighlight(start, end, ERROR_HIGHLIGHTER);
@@ -131,6 +134,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void setHighlightedLine(int line) {
         try {
             setHighlightedSelection(scriptField.getLineStartOffset(line), scriptField.getLineEndOffset(line));
@@ -139,6 +143,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     public void moveCaretToPosition(int position) {
         try {
             scriptField.setCaretPosition(position);
@@ -159,6 +164,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
+    @RunOnDispatch
     public void bindModel(Object properties) {
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
@@ -177,6 +183,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
+    @RunOnDispatch
     public Collection<String> getImplementedHandlers(HandlerComboBox theComboBox) {
         if (theComboBox == functionsMenu) {
             return compiledScript == null ? new ArrayList<>() : compiledScript.getFunctions();
@@ -186,6 +193,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
+    @RunOnDispatch
     public Collection<String> getSystemMessages(HandlerComboBox theComboBox) {
         ArrayList<String> messages = new ArrayList<>();
         if (theComboBox == functionsMenu) {
@@ -201,6 +209,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
+    @RunOnDispatch
     public void jumpToHandler(HandlerComboBox theComboBox, String handler) {
 
         // Script is empty, add selected handler
@@ -228,10 +237,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void saveCaretPosition() {
         model.setScriptEditorCaretPosition(scriptField.getCaretPosition());
     }
 
+    @RunOnDispatch
     private void updateCaretPositionLabel() {
         try {
             int caretpos = scriptField.getCaretPosition();
@@ -245,6 +256,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void updateActiveHandler() {
         if (compiledScript != null) {
             handlersMenu.setActiveHandler(compiledScript.getNamedBlockForLine(currentLine()));
@@ -252,6 +264,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void appendFunctionTemplate() {
         appendNamedBlock("function", null, "myFunction", new String[]{"arg1", "arg2"});
     }
@@ -261,11 +274,13 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
      *
      * @param handlerName The name of the handler to append.
      */
+    @RunOnDispatch
     private void appendHandler(String handlerName) {
         SystemMessage message = SystemMessage.fromHandlerName(handlerName);
         appendNamedBlock("on", message.description, message.messageName, message.arguments);
     }
 
+    @RunOnDispatch
     private void appendNamedBlock(String blockOpener, String description, String blockName, String[] arguments) {
         int lastIndex = scriptField.getDocument().getLength();
         StringBuilder builder = new StringBuilder();
@@ -309,10 +324,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void jumpToLine(int lineIndex) {
         scriptField.setCaretPosition(scriptField.getDocument().getDefaultRootElement().getElement(lineIndex).getStartOffset());
     }
 
+    @RunOnDispatch
     private int currentLine() {
         int caretPos = scriptField.getCaretPosition();
         int rowNum = (caretPos == 0) ? 1 : 0;

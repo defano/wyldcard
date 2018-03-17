@@ -12,6 +12,7 @@ import com.defano.wyldcard.window.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.forms.BackgroundPropertyEditor;
 
 import javax.swing.*;
 
@@ -29,6 +30,8 @@ public class WyldCard extends StackManager {
     }
 
     public static void main(String argv[]) {
+
+        new BackgroundPropertyEditor();
 
         try {
             // Configure macOS environment

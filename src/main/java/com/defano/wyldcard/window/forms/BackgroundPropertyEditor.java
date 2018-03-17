@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardDialog;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -63,6 +64,7 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
     }
 
     @Override
+    @RunOnDispatch
     public void bindModel(Object data) {
         cardPart = (CardPart) data;
         backgroundModel = cardPart.getCardModel().getBackgroundModel();

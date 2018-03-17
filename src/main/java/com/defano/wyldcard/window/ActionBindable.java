@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.DocumentActionListener;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.event.ActionListener;
 
 public interface ActionBindable {
 
+    @RunOnDispatch
     default void bindActions(ActionListener actionListener, JComponent... components) {
         for (JComponent component : components) {
 

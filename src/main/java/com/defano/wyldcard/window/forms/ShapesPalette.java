@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -39,6 +40,7 @@ public class ShapesPalette extends HyperCardDialog implements Consumer<Integer> 
     }
 
     @Override
+    @RunOnDispatch
     public void bindModel(Object data) {
         // Nothing to do
     }
@@ -65,6 +67,7 @@ public class ShapesPalette extends HyperCardDialog implements Consumer<Integer> 
     }
 
     @Override
+    @RunOnDispatch
     public void accept(Integer newValue) {
         for (JButton thisShape : allShapes) {
             thisShape.setEnabled(true);

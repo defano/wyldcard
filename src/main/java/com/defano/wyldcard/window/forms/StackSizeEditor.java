@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -42,15 +43,18 @@ public class StackSizeEditor extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    @RunOnDispatch
     private void onOK() {
         stackDimension = new Dimension(Integer.parseInt(newWidth.getText()), Integer.parseInt(newHeight.getText()));
         dispose();
     }
 
+    @RunOnDispatch
     private void onCancel() {
         dispose();
     }
 
+    @RunOnDispatch
     public static Dimension editStackSize(Dimension currentSize, Component parent) {
         StackSizeEditor dialog = new StackSizeEditor();
         dialog.stackDimension = currentSize;

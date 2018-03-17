@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldStyle;
@@ -85,6 +86,7 @@ public class FieldPropertyEditor extends HyperCardDialog implements ActionBindab
     }
 
     @Override
+    @RunOnDispatch
     public void bindModel(Object data) {
         if (data instanceof FieldModel) {
             this.model = (FieldModel) data;

@@ -26,6 +26,7 @@ public interface HyperCardWindow<WindowType extends Window> {
     /**
      * Close and dispose the window.
      */
+    @RunOnDispatch
     default void dispose() {
         SwingUtilities.getWindowAncestor(getWindowPanel()).dispose();
     }

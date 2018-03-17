@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonStyle;
@@ -94,6 +95,7 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
     }
 
     @Override
+    @RunOnDispatch
     public void bindModel(Object data) {
         this.model = (ButtonModel) data;
 
@@ -148,6 +150,7 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
         model.setKnownProperty(ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
     }
 
+    @RunOnDispatch
     private void showContentsEditor() {
         dispose();
         String contents = PartContentsEditor.editContents(model.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
