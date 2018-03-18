@@ -11,6 +11,10 @@ public class PartBorderFactory {
         return createBorder(BorderFactory.createEmptyBorder());
     }
 
+    public static Border createEmptyBorder(int margin) {
+        return createBorder(BorderFactory.createEmptyBorder(margin, margin, margin, margin));
+    }
+
     public static Border createRoundRectShadowBorder(int arcSize) {
         return createBorder(new RoundRectShadowBorder(arcSize));
     }

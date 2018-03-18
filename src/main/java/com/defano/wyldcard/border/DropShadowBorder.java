@@ -14,11 +14,13 @@ public class DropShadowBorder implements Border, ColorStateBorder {
     private final int shadowWidth;      // Width of the shadow line, in px
     private final int shadowInset;      // Inset of shadow line from bottom-left and top-right, in px
 
-    DropShadowBorder() {
+    private int margin = 0;
+
+    public DropShadowBorder() {
         this(1, 2, 5);
     }
 
-    DropShadowBorder(int strokeWidth, int shadowWidth, int shadowInset) {
+    public DropShadowBorder(int strokeWidth, int shadowWidth, int shadowInset) {
         this.strokeWidth = strokeWidth;
         this.shadowWidth = shadowWidth;
         this.shadowInset = shadowInset;
@@ -54,9 +56,17 @@ public class DropShadowBorder implements Border, ColorStateBorder {
         g2d.setColor(oldColor);
     }
 
+    public int getMargin() {
+        return margin;
+    }
+
+    public void setMargin(int margin) {
+        this.margin = margin;
+    }
+
     @Override
     public Insets getBorderInsets(Component c) {
-        return new Insets(strokeWidth, strokeWidth, shadowWidth + strokeWidth - 1, shadowWidth + strokeWidth - 1);
+        return new Insets(margin + strokeWidth, margin + strokeWidth, margin + shadowWidth + strokeWidth - 1, margin + shadowWidth + strokeWidth - 1);
     }
 
     @Override
