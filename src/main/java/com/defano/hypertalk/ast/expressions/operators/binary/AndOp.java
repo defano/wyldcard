@@ -14,6 +14,6 @@ public class AndOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate() throws HtException {
-        return lhs().add(rhs());
+        return lhs().and(rhs());
     }
 }
