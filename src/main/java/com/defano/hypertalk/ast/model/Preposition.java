@@ -1,14 +1,24 @@
 package com.defano.hypertalk.ast.model;
 
 public enum Preposition {
-    BEFORE, AFTER, INTO;
+    /**
+     * Refers to the chunk directly preceding the specified chunk.
+     */
+    BEFORE,
 
-    public static Preposition fromString(String s) {
-        switch (s) {
-            case "before": return BEFORE;
-            case "after": return AFTER;
-            case "into": return INTO;
-            default: throw new IllegalArgumentException("Bug! Unimplemented preposition.");
-        }
-    }
+    /**
+     * Refers to the chunk directly following the specified chunk.
+     */
+    AFTER,
+
+    /**
+     * Refers to the specified chunk not including its delimiter.
+     */
+    INTO,
+
+    /**
+     * Refers to the specified chunk and its delimiter (preceding delimiter if not the first chunk;
+     * trailing delimiter if the first chunk.
+     */
+    REPLACING
 }

@@ -1,24 +1,25 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.FactorAssociation;
+import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
+import com.defano.hypertalk.ast.expressions.containers.MenuExp;
+import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menu.HyperCardMenuBar;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Preposition;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.expressions.containers.ContainerExp;
-import com.defano.hypertalk.ast.expressions.containers.MenuExp;
-import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
-import com.defano.hypertalk.ast.expressions.containers.PartExp;
-import com.defano.hypertalk.ast.expressions.*;
-import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
-import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class DeleteCmd extends Command {
@@ -73,10 +74,14 @@ public class DeleteCmd extends Command {
     }
 
     private void deleteMenu(MenuExp menuExp) throws HtException {
+        if (menuExp.getChunk() != null) {
+            throw new HtSemanticException("Can't delete a chunk of a menu.");
+        }
+
         HyperCardMenuBar.getInstance().deleteMenu(menuExp.menu.getSpecifiedMenu());
     }
 
     private void deleteFromContainer(ContainerExp container) throws HtException {
-        container.putValue(new Value(), Preposition.INTO);
+        container.putValue(new Value(), Preposition.REPLACING);
     }
 }

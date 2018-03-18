@@ -3,6 +3,7 @@ package com.defano.hypertalk.utils;
 import com.defano.hypertalk.ast.model.ChunkType;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.exception.HtSemanticException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,7 +11,42 @@ import static org.junit.Assert.assertEquals;
 public class TestChunkUtils {
 
     @Test
-    public void testPutAfterLine() {
+    public void testDeleteChunks() throws HtSemanticException {
+        assertEquals("L2\nL3", ChunkUtils.putChunk(ChunkType.LINE, Preposition.REPLACING, "L1\nL2\nL3", 1, 0, ""));
+        assertEquals("L1\nL3", ChunkUtils.putChunk(ChunkType.LINE, Preposition.REPLACING, "L1\nL2\nL3", 2, 0, ""));
+        assertEquals("L1\nL2", ChunkUtils.putChunk(ChunkType.LINE, Preposition.REPLACING, "L1\nL2\nL3", 3, 0, ""));
+
+        assertEquals("L3", ChunkUtils.putChunk(ChunkType.LINERANGE, Preposition.REPLACING, "L1\nL2\nL3", 1, 2, ""));
+        assertEquals("L1", ChunkUtils.putChunk(ChunkType.LINERANGE, Preposition.REPLACING, "L1\nL2\nL3", 2, 3, ""));
+        assertEquals("", ChunkUtils.putChunk(ChunkType.LINERANGE, Preposition.REPLACING, "L1\nL2\nL3", 1, 3, ""));
+
+        assertEquals("L2,L3", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.REPLACING, "L1,L2,L3", 1, 0, ""));
+        assertEquals("L1,L3", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.REPLACING, "L1,L2,L3", 2, 0, ""));
+        assertEquals("L1,L2", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.REPLACING, "L1,L2,L3", 3, 0, ""));
+
+        assertEquals("L3", ChunkUtils.putChunk(ChunkType.ITEMRANGE, Preposition.REPLACING, "L1,L2,L3", 1, 2, ""));
+        assertEquals("L1", ChunkUtils.putChunk(ChunkType.ITEMRANGE, Preposition.REPLACING, "L1,L2,L3", 2, 3, ""));
+        assertEquals("", ChunkUtils.putChunk(ChunkType.ITEMRANGE, Preposition.REPLACING, "L1,L2,L3", 1, 3, ""));
+
+        assertEquals("L2 L3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.REPLACING, "L1 L2 L3", 1, 0, ""));
+        assertEquals("L1 L3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.REPLACING, "L1 L2 L3", 2, 0, ""));
+        assertEquals("L1 L2", ChunkUtils.putChunk(ChunkType.WORD, Preposition.REPLACING, "L1 L2 L3", 3, 0, ""));
+
+        assertEquals("L3", ChunkUtils.putChunk(ChunkType.WORDRANGE, Preposition.REPLACING, "L1 L2 L3", 1, 2, ""));
+        assertEquals("L1", ChunkUtils.putChunk(ChunkType.WORDRANGE, Preposition.REPLACING, "L1 L2 L3", 2, 3, ""));
+        assertEquals("", ChunkUtils.putChunk(ChunkType.WORDRANGE, Preposition.REPLACING, "L1 L2 L3", 1, 3, ""));
+
+        assertEquals("23", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.REPLACING, "123", 1, 0, ""));
+        assertEquals("13", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.REPLACING, "123", 2, 0, ""));
+        assertEquals("12", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.REPLACING, "123", 3, 0, ""));
+
+        assertEquals("3", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.REPLACING, "123", 1, 2, ""));
+        assertEquals("1", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.REPLACING, "123", 2, 3, ""));
+        assertEquals("", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.REPLACING, "123", 1, 3, ""));
+    }
+
+    @Test
+    public void testPutAfterLine() throws HtSemanticException {
         assertEquals("L1\nx\n\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 1, 0, "x"));
         assertEquals("L1\n\nx\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 2, 0, "x"));
         assertEquals("L1\n\nL3\nx\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.AFTER, "L1\n\nL3\nL4", 3, 0, "x"));
@@ -22,7 +58,7 @@ public class TestChunkUtils {
 
 
     @Test
-    public void testPutBeforeLine() {
+    public void testPutBeforeLine() throws HtSemanticException {
         assertEquals("x\nL1\n\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 1, 0, "x"));
         assertEquals("L1\nx\n\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 2, 0, "x"));
         assertEquals("L1\n\nx\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.BEFORE, "L1\n\nL3\nL4", 3, 0, "x"));
@@ -33,7 +69,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutIntoLine() {
+    public void testPutIntoLine() throws HtSemanticException {
         assertEquals("x\n\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 1, 0, "x"));
         assertEquals("L1\nx\nL3\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 2, 0, "x"));
         assertEquals("L1\n\nx\nL4", ChunkUtils.putChunk(ChunkType.LINE, Preposition.INTO, "L1\n\nL3\nL4", 3, 0, "x"));
@@ -44,7 +80,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutAfterItem() {
+    public void testPutAfterItem() throws HtSemanticException {
         assertEquals("1,x, 2,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 1, 0, "x"));
         assertEquals("1, 2,x,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 2, 0, "x"));
         assertEquals("1, 2,\n3,x,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.AFTER, "1, 2,\n3,\t4", 3, 0, "x"));
@@ -55,7 +91,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutBeforeItem() {
+    public void testPutBeforeItem() throws HtSemanticException {
         assertEquals("x,1, 2,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 1, 0, "x"));
         assertEquals("1,x, 2,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 2, 0, "x"));
         assertEquals("1, 2,x,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.BEFORE, "1, 2,\n3,\t4", 3, 0, "x"));
@@ -66,7 +102,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutIntoItem() {
+    public void testPutIntoItem() throws HtSemanticException {
         assertEquals("x, 2,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4", 1, 0, "x"));
         assertEquals("1,x,\n3,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4", 2, 0, "x"));
         assertEquals("1, 2,x,\t4", ChunkUtils.putChunk(ChunkType.ITEM, Preposition.INTO, "1, 2,\n3,\t4", 3, 0, "x"));
@@ -78,28 +114,28 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutIntoWord() {
+    public void testPutIntoWord() throws HtSemanticException {
         assertEquals("x  W2\nW3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.INTO, "W1  W2\nW3", 1, 0, "x"));
         assertEquals("W1  x\nW3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.INTO, "W1  W2\nW3", 2, 0, "x"));
         assertEquals("W1  W2\nx", ChunkUtils.putChunk(ChunkType.WORD, Preposition.INTO, "W1  W2\nW3", 3, 0, "x"));
     }
 
     @Test
-    public void testPutBeforeWord() {
+    public void testPutBeforeWord() throws HtSemanticException {
         assertEquals("x W1  W2\nW3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.BEFORE, "W1  W2\nW3", 1, 0, "x"));
         assertEquals("W1  x W2\nW3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.BEFORE, "W1  W2\nW3", 2, 0, "x"));
         assertEquals("W1  W2\nx W3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.BEFORE, "W1  W2\nW3", 3, 0, "x"));
     }
 
     @Test
-    public void testPutAfterWord() {
+    public void testPutAfterWord() throws HtSemanticException {
         assertEquals("W1 x  W2\nW3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.AFTER, "W1  W2\nW3", 1, 0, "x"));
         assertEquals("W1  W2 x\nW3", ChunkUtils.putChunk(ChunkType.WORD, Preposition.AFTER, "W1  W2\nW3", 2, 0, "x"));
         assertEquals("W1  W2\nW3 x", ChunkUtils.putChunk(ChunkType.WORD, Preposition.AFTER, "W1  W2\nW3", 3, 0, "x"));
     }
 
     @Test
-    public void testPutIntoCharRange() {
+    public void testPutIntoCharRange() throws HtSemanticException {
         assertEquals("xCD", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 1, 2, "x"));
         assertEquals("AxxD", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 2, 3, "xx"));
         assertEquals("ABxx", ChunkUtils.putChunk(ChunkType.CHARRANGE, Preposition.INTO, "ABCD", 3, 4, "xx"));
@@ -108,7 +144,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutIntoChar() {
+    public void testPutIntoChar() throws HtSemanticException {
         // By integer
         assertEquals("xBCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", 1, 0, "x"));
         assertEquals("AxCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.INTO, "ABCD", 2, 0, "x"));
@@ -126,7 +162,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutBeforeChar() {
+    public void testPutBeforeChar() throws HtSemanticException {
         // By integer
         assertEquals("xABCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.BEFORE, "ABCD", 1, 0, "x"));
         assertEquals("AxBCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.BEFORE, "ABCD", 2, 0, "x"));
@@ -135,7 +171,7 @@ public class TestChunkUtils {
     }
 
     @Test
-    public void testPutAfterChar() {
+    public void testPutAfterChar() throws HtSemanticException {
         // By integer
         assertEquals("AxBCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.AFTER, "ABCD", 1, 0, "x"));
         assertEquals("ABxCD", ChunkUtils.putChunk(ChunkType.CHAR, Preposition.AFTER, "ABCD", 2, 0, "x"));

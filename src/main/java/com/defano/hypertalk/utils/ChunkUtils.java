@@ -60,15 +60,16 @@ public class ChunkUtils {
      * @return The string resulting from this put operation.
      * @see #putCompositeChunk(CompositeChunk, Preposition, String, String)
      */
-    public static String putChunk(ChunkType chunkType, Preposition preposition, String mutableString, int chunkNumber, int endChunkNumber, String mutatorString) {
+    public static String putChunk(ChunkType chunkType, Preposition preposition, String mutableString, int chunkNumber, int endChunkNumber, String mutatorString) throws HtSemanticException {
 
         if (!Ordinal.reservedValue(chunkNumber)) {
 
             int chunksInContainer = getCount(chunkType, mutableString);
 
             // Disallow mutating non-existent word/character chunks (lines/items are okay)
-            if ((chunkType == ChunkType.WORD || chunkType == ChunkType.CHAR) && chunksInContainer < chunkNumber) {
-                throw new IllegalArgumentException("Cannot set " + chunkType + " " + chunksInContainer + " because it doesn't exist.");
+            if ((chunkType.isWordChunk() || chunkType.isCharChunk()) && (chunksInContainer < chunkNumber || (chunkType.isRange() && chunksInContainer < endChunkNumber)))
+            {
+                throw new HtSemanticException("That chunk doesn't exist.");
             }
 
             // If necessary, add as many lines/items as are needed to assure the value can be mutated
@@ -80,6 +81,7 @@ public class ChunkUtils {
             mutableString = mutableStringBuilder.toString();
         }
 
+        // HyperCard disallows range chunk mutations; we're okay with 'em
         if (chunkType.isRange()) {
             return putChunkRange(chunkType, preposition, mutableString, chunkNumber, endChunkNumber, mutatorString);
         } else {
@@ -106,7 +108,7 @@ public class ChunkUtils {
             case BEFORE:
                 return insertBefore(mutableString, c.getMutatedChunkType(), s, mutatorString);
             case INTO:
-                return replace(mutableString, s, mutatorString);
+                return insertInto(mutableString, s, mutatorString);
             case AFTER:
                 return insertAfter(mutableString, c.getMutatedChunkType(), s, mutatorString);
             default:
@@ -239,9 +241,11 @@ public class ChunkUtils {
             case BEFORE:
                 return insertBefore(value, c, start, replacement);
             case INTO:
-                return replace(value, c, start, start, replacement);
+                return insertInto(value, c, start, start, replacement);
             case AFTER:
                 return insertAfter(value, c, start, replacement);
+            case REPLACING:
+                return replace(value, c, start, start, replacement);
             default:
                 throw new RuntimeException("Bug! Not implemented.");
         }
@@ -250,11 +254,13 @@ public class ChunkUtils {
     private static String putChunkRange(ChunkType c, Preposition p, String value, int start, int end, String replacement) {
         switch (p) {
             case BEFORE:
-                return replace(value, c, start - 1, end, replacement);
+                return insertInto(value, c, start - 1, end, replacement);
             case INTO:
-                return replace(value, c, start, end, replacement);
+                return insertInto(value, c, start, end, replacement);
             case AFTER:
-                return replace(value, c, start, end + 1, replacement);
+                return insertInto(value, c, start, end + 1, replacement);
+            case REPLACING:
+                return replace(value, c, start, end, replacement);
             default:
                 throw new RuntimeException("Bug! Not implemented.");
         }
@@ -278,12 +284,31 @@ public class ChunkUtils {
         return value.substring(0, range.end) + getSeparatorForChunkType(delimiter) + replacement + value.substring(range.end);
     }
 
-    private static String replace(String value, Range range, String replacement) {
+    private static String insertInto(String value, Range range, String replacement) {
+        return value.substring(0, range.start) + replacement + value.substring(range.end);
+    }
+
+    private static String insertInto(String value, ChunkType delimiter, int start, int end, String replacement) {
+        Range range = RangeUtils.getRange(value, delimiter, start, end);
         return value.substring(0, range.start) + replacement + value.substring(range.end);
     }
 
     private static String replace(String value, ChunkType delimiter, int start, int end, String replacement) {
         Range range = RangeUtils.getRange(value, delimiter, start, end);
-        return value.substring(0, range.start) + replacement + value.substring(range.end);
+
+        int startChar = range.start;
+        int endChar = range.end;
+
+        if (start > 1) {
+            startChar -= getSeparatorForChunkType(delimiter).length();
+        } else {
+            endChar += getSeparatorForChunkType(delimiter).length();
+
+            // Special case: When replacing all available chunks need to assure we don't write off the end of the value
+            endChar = Math.min(endChar, value.length());
+        }
+
+        return value.substring(0, startChar) + replacement + value.substring(endChar);
     }
+
 }
