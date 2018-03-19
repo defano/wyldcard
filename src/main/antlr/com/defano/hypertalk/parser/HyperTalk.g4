@@ -344,7 +344,7 @@ part
     ;
 
 stackPart
-    : 'this' stack                                                                                                      # thisStackPart
+    : 'this'? stack                                                                                                     # thisStackPart
     | stack factor                                                                                                      # anotherStackPart
     ;
 
@@ -369,7 +369,7 @@ fieldPart
     ;
 
 cardPart
-    : 'this' card                                                                                                       # thisCardPart
+    : 'this'? card                                                                                                      # thisCardPart
     | card 'id' factor                                                                                                  # cardIdPart
     | position card                                                                                                     # positionCardPart
     | ordinal card                                                                                                      # ordinalCardPart
@@ -378,7 +378,7 @@ cardPart
     ;
 
 bkgndPart
-    : 'this' background                                                                                                 # thisBkgndPart
+    : 'this'? background                                                                                                # thisBkgndPart
     | background 'id' factor                                                                                            # bkgndIdPart
     | background factor                                                                                                 # expressionBkgndPart
     | ordinal background                                                                                                # ordinalBkgndPart
