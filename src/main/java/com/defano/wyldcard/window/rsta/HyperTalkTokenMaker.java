@@ -18,11 +18,13 @@ import java.util.ArrayList;
  * Based on code published by Gary Ford, on GitHub:
  * https://github.com/fjenett/processing-rsyntaxtextarea-antlr4
  */
-public class HyperTalkTokenMaker extends AbstractTokenMaker implements TokenTypes {
+@SuppressWarnings("unused")
+public class HyperTalkTokenMaker extends AbstractTokenMaker {
 
     private final ArrayList<String> keywords = new ArrayList<>();
     private HyperTalkLexer antlr;
 
+    @SuppressWarnings("unused")
     public HyperTalkTokenMaker() {
         for (int index = 0; index < HyperTalkLexer.VOCABULARY.getMaxTokenType(); index++) {
             keywords.add(HyperTalkLexer.VOCABULARY.getLiteralName(index));
@@ -35,16 +37,16 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker implements TokenType
     @Override
     public int getLastTokenTypeOnLine(Segment pSegment, int initialTokenType) {
         antlr = new HyperTalkLexer(new CaseInsensitiveInputStream(pSegment.array, pSegment.offset, pSegment.count));
-        BufferedTokenStream tTokenStream = new BufferedTokenStream(antlr);
+        BufferedTokenStream tokenStream = new BufferedTokenStream(antlr);
 
         while (true) {
-            org.antlr.v4.runtime.Token tToken = tTokenStream.LT(1);
+            org.antlr.v4.runtime.Token token = tokenStream.LT(1);
 
-            if (tToken.getType() == org.antlr.v4.runtime.Token.EOF) {
-                return NULL;
+            if (token.getType() == org.antlr.v4.runtime.Token.EOF) {
+                return TokenTypes.NULL;
             }
 
-            tTokenStream.consume();
+            tokenStream.consume();
         }
     }
 
@@ -54,7 +56,7 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker implements TokenType
     @Override
     public Token getTokenList(Segment pSegment, int initialTokenType, int pSegmentOffset) {
         antlr = new HyperTalkLexer(new CaseInsensitiveInputStream(pSegment.array, pSegment.offset, pSegment.count));
-        BufferedTokenStream tTokenStream = new BufferedTokenStream(antlr);
+        BufferedTokenStream tokenStream = new BufferedTokenStream(antlr);
 
         resetTokenList(); // so we can create a fresh token list
         org.antlr.v4.runtime.Token lastToken = null;
@@ -62,29 +64,27 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker implements TokenType
         // retrieve and convert tokens one at a time; note that
         // the stream returns the EOF token as the last token
         while (true) {
-            org.antlr.v4.runtime.Token tToken = tTokenStream.LT(1);
+            org.antlr.v4.runtime.Token token = tokenStream.LT(1);
 
-            if (tToken.getType() == org.antlr.v4.runtime.Token.EOF) {
+            if (token.getType() == org.antlr.v4.runtime.Token.EOF) {
                 if (lastToken == null) {
                     addNullToken();
                 }
                 break;
             }
 
-            lastToken = tToken;
-            tTokenStream.consume();
+            lastToken = token;
+            tokenStream.consume();
 
             // convert the ANTLR token to a RSyntaxTextArea token and add it to the linked list
-            int tRSTATokenStart = tToken.getCharPositionInLine() + pSegment.offset;
-            int tRSTATokenEnd = tRSTATokenStart + tToken.getText().length() - 1;
-            int tRSTATokenOffset = pSegmentOffset + tToken.getCharPositionInLine();
+            int tokenStart = token.getCharPositionInLine() + pSegment.offset;
+            int tokenEnd = tokenStart + token.getText().length() - 1;
+            int tokenOffset = pSegmentOffset + token.getCharPositionInLine();
 
-            addToken(pSegment.array, tRSTATokenStart, tRSTATokenEnd,
-                    classifyToken(tToken),
-                    tRSTATokenOffset);
+            addToken(pSegment.array, tokenStart, tokenEnd, classifyToken(token), tokenOffset);
         }
 
-        return firstToken; // firstToken is declared in the superclass
+        return super.firstToken;
     }
 
     /**
@@ -107,26 +107,26 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker implements TokenType
         // Attempt to determine token by type
         switch (token.getType()) {
             case HyperTalkLexer.ID:
-                return IDENTIFIER;
+                return TokenTypes.IDENTIFIER;
             case HyperTalkLexer.WHITESPACE:
-                return WHITESPACE;
+                return TokenTypes.WHITESPACE;
             case HyperTalkLexer.NUMBER_LITERAL:
             case HyperTalkLexer.INTEGER_LITERAL:
-                return LITERAL_NUMBER_DECIMAL_INT;
+                return TokenTypes.LITERAL_NUMBER_DECIMAL_INT;
             case HyperTalkLexer.STRING_LITERAL:
-                return LITERAL_STRING_DOUBLE_QUOTE;
+                return TokenTypes.LITERAL_STRING_DOUBLE_QUOTE;
             case HyperTalkLexer.COMMENT:
-                return COMMENT_EOL;
+                return TokenTypes.COMMENT_EOL;
         }
 
         // If that fails, try to determine token by lexeme
         switch (token.getText().toLowerCase()) {
             case "true":
             case "false":
-                return LITERAL_BOOLEAN;
+                return TokenTypes.LITERAL_BOOLEAN;
 
             case ",":
-                return SEPARATOR;
+                return TokenTypes.SEPARATOR;
 
             case "-":
             case "not":
@@ -167,16 +167,16 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker implements TokenType
             case "or":
             case "(":
             case ")":
-                return OPERATOR;
+                return TokenTypes.OPERATOR;
         }
 
         // Does the token appear in the grammar's list of lexed symbols (keywords)?
         if (keywords.contains("'" + token.getText().toLowerCase() + "'")) {
-            return RESERVED_WORD;
+            return TokenTypes.RESERVED_WORD;
         }
 
         // Anything else we missed...
-        return PREPROCESSOR;
+        return TokenTypes.PREPROCESSOR;
     }
 
-} // end class ANTLRTokenMaker
+}

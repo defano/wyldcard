@@ -5,7 +5,6 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.CompileCompletionObserver;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.window.forms.ScriptEditor;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.parser.*;
 
@@ -14,16 +13,18 @@ import javax.swing.text.BadLocationException;
 
 public class HyperTalkSyntaxParser extends AbstractParser implements CompileCompletionObserver {
 
-    private final ScriptEditor scriptEditor;
+    private final SyntaxParserObserver observer;
     private final DefaultParseResult previousParseResult = new DefaultParseResult(this);
 
-    public HyperTalkSyntaxParser(ScriptEditor scriptEditor) {
-        this.scriptEditor = scriptEditor;
+    public HyperTalkSyntaxParser(SyntaxParserObserver observer) {
+        this.observer = observer;
     }
 
     @Override
     public ParseResult parse(RSyntaxDocument doc, String style) {
         try {
+            observer.onCompileStarted();
+
             String scriptText = doc.getText(0, doc.getLength());
             Interpreter.asyncCompile(CompilationUnit.SCRIPT, scriptText, this);
         } catch (BadLocationException e) {
@@ -48,15 +49,14 @@ public class HyperTalkSyntaxParser extends AbstractParser implements CompileComp
                 String errorMessage = generatedError.getMessage();
                 dirtiedResult = !hasError(errorMessage);
 
-                ParserNotice parserNotice = new DefaultParserNotice(
+                previousParseResult.clearNotices();
+                previousParseResult.addNotice(new DefaultParserNotice(
                         HyperTalkSyntaxParser.this,
                         errorMessage,
-                        generatedError.getBreadcrumb().getToken().getLine() - 1);
+                        generatedError.getBreadcrumb().getToken().getLine() - 1
+                ));
 
-                previousParseResult.clearNotices();
-                previousParseResult.addNotice(parserNotice);
-
-                scriptEditor.setSyntaxErrorText(errorMessage);
+                observer.onCompileCompleted(null, errorMessage);
             }
 
             // Script contains no syntax errors
@@ -64,13 +64,12 @@ public class HyperTalkSyntaxParser extends AbstractParser implements CompileComp
                 dirtiedResult = !previousParseResult.getNotices().isEmpty();
                 previousParseResult.clearNotices();
 
-                scriptEditor.setSyntaxErrorText("");
-                scriptEditor.setCompiledScript((Script) compiledScript);
+                observer.onCompileCompleted((Script) compiledScript, null);
             }
 
             // If previousParseResult was changed, tell RSyntaxTextArea to ask again
             if (dirtiedResult) {
-                scriptEditor.getScriptField().forceReparsing(HyperTalkSyntaxParser.this);
+                observer.onRequestParse(this);
             }
 
         });

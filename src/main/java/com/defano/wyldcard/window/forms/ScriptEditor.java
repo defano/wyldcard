@@ -3,8 +3,6 @@ package com.defano.wyldcard.window.forms;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.window.rsta.HyperTalkFoldParser;
-import com.defano.wyldcard.window.rsta.HyperTalkSyntaxParser;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
 import com.defano.wyldcard.fonts.FontUtils;
@@ -12,6 +10,9 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.window.HyperCardFrame;
+import com.defano.wyldcard.window.rsta.HyperTalkFoldParser;
+import com.defano.wyldcard.window.rsta.HyperTalkSyntaxParser;
+import com.defano.wyldcard.window.rsta.SyntaxParserObserver;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -20,11 +21,11 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Utilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate {
+public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
 
     private final static String LANGUAGE_KEY = "text/hypertalk";
     private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.window.rsta.HyperTalkTokenMaker";
@@ -71,8 +72,11 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         scriptField.setSyntaxEditingStyle(LANGUAGE_KEY);
         scriptField.setCodeFoldingEnabled(true);
         scriptField.addParser(new HyperTalkSyntaxParser(this));
-        scriptField.setParserDelay(100);
+        scriptField.setParserDelay(0);
         scriptField.setTabSize(2);
+        scriptField.setBracketMatchingEnabled(true);
+        scriptField.setAnimateBracketMatching(true);
+        scriptField.setShowMatchedBracketPopup(true);
 
         // Modify home/end behavior
         scriptField.addKeyListener(new KeyListenable() {
@@ -112,20 +116,6 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         textArea.add(sp);
 
         scriptField.requestFocus();
-    }
-
-    public void setCompiledScript(Script compiledScript) {
-        this.compiledScript = compiledScript;
-        handlersMenu.invalidateDataset();
-        functionsMenu.invalidateDataset();
-    }
-
-    public void setSyntaxErrorText(String error) {
-        syntaxErrorText.setText(error);
-    }
-
-    public RSyntaxTextArea getScriptField() {
-        return scriptField;
     }
 
     @RunOnDispatch
@@ -316,17 +306,38 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     @RunOnDispatch
     private int currentLine() {
-        int caretPos = scriptField.getCaretPosition();
-        int rowNum = (caretPos == 0) ? 1 : 0;
-        for (int offset = caretPos; offset > 0; ) {
-            try {
-                offset = Utilities.getRowStart(scriptField, offset) - 1;
-            } catch (BadLocationException e) {
-                e.printStackTrace();
-            }
-            rowNum++;
+        try {
+            return scriptField.getLineOfOffset(scriptField.getCaretPosition()) + 1;
+        } catch (BadLocationException e) {
+            return 0;
         }
-        return rowNum;
+    }
+
+    @Override
+    public void onRequestParse(Parser syntaxParser) {
+        scriptField.forceReparsing(syntaxParser);
+    }
+
+    @Override
+    public void onCompileStarted() {
+        syntaxErrorText.setIcon(new ImageIcon(ScriptEditor.class.getClassLoader().getResource("gifs/wait.gif")));
+    }
+
+    @Override
+    public void onCompileCompleted(Script compiledScript, String resultMessage) {
+        if (compiledScript != null) {
+            this.compiledScript = compiledScript;
+            handlersMenu.invalidateDataset();
+            functionsMenu.invalidateDataset();
+        }
+
+        if (resultMessage != null) {
+            syntaxErrorText.setText(resultMessage);
+        } else {
+            syntaxErrorText.setText("");
+        }
+
+        syntaxErrorText.setIcon(null);
     }
 
     {
