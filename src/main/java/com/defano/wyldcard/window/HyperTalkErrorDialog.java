@@ -1,11 +1,10 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.Breadcrumb;
-import com.defano.wyldcard.window.forms.ScriptEditor;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.exception.HtException;
 import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
@@ -62,7 +61,9 @@ public class HyperTalkErrorDialog {
                 options[0]);
 
         if (selection == 1) {
-            offendingPart.editScript(offendingToken.getStartIndex());
+            // Invoke later to allow the error dialog to go away first; otherwise, script editor may display behind
+            // stack window
+            SwingUtilities.invokeLater(() -> offendingPart.editScript(offendingToken.getStartIndex()));
         }
     }
 
