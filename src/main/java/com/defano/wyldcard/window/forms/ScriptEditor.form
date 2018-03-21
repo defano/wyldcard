@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.wyldcard.window.forms.ScriptEditor">
-  <grid id="27dc6" binding="scriptEditor" layout-manager="GridLayoutManager" row-count="4" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
+  <grid id="27dc6" binding="scriptEditor" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -10,76 +10,50 @@
     </properties>
     <border type="none"/>
     <children>
-      <scrollpane id="ae4fe" binding="scrollPane">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="9" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font name="Monaco"/>
-        </properties>
-        <border type="none"/>
-        <children>
-          <component id="958f4" class="javax.swing.JTextArea" binding="scriptField">
-            <constraints/>
-            <properties>
-              <font name="Monaco"/>
-              <margin top="0" left="10" bottom="0" right="0"/>
-              <tabSize value="4"/>
-            </properties>
-          </component>
-        </children>
-      </scrollpane>
-      <component id="9e798" class="com.defano.wyldcard.util.HandlerComboBox" binding="handlersMenu">
+      <component id="8bd53" class="com.defano.wyldcard.util.HandlerComboBox" binding="functionsMenu">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="5a8ef" class="javax.swing.JLabel" binding="charCount">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font/>
+          <text value="Line 0, column 0"/>
+        </properties>
+      </component>
+      <component id="f0958" class="javax.swing.JButton" binding="saveButton">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <hideActionText value="false"/>
+          <opaque value="true"/>
+          <text value="Save"/>
+        </properties>
+      </component>
+      <grid id="79314" binding="textArea" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+      <component id="9e798" class="com.defano.wyldcard.util.HandlerComboBox" binding="handlersMenu">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <name value="Handlers:"/>
         </properties>
       </component>
-      <component id="f5f44" class="javax.swing.JLabel">
+      <component id="427f7" class="javax.swing.JLabel" binding="syntaxErrorText">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Handlers: "/>
-        </properties>
-      </component>
-      <component id="92781" class="javax.swing.JLabel">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Functions: "/>
-        </properties>
-      </component>
-      <hspacer id="f5ccc">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
-      <component id="8bd53" class="com.defano.wyldcard.util.HandlerComboBox" binding="functionsMenu">
-        <constraints>
-          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-      </component>
-      <hspacer id="79604">
-        <constraints>
-          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
-      <component id="5a8ef" class="javax.swing.JLabel" binding="charCount">
-        <constraints>
-          <grid row="1" column="7" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Line 0, column 0"/>
-        </properties>
-      </component>
-      <component id="7895" class="javax.swing.JLabel" binding="syntaxErrorText">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <font style="1"/>
@@ -88,16 +62,11 @@
           <text value=""/>
         </properties>
       </component>
-      <component id="f0958" class="javax.swing.JButton" binding="saveButton">
+      <hspacer id="d9053">
         <constraints>
-          <grid row="3" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties>
-          <hideActionText value="false"/>
-          <opaque value="true"/>
-          <text value="Save"/>
-        </properties>
-      </component>
+      </hspacer>
     </children>
   </grid>
 </form>

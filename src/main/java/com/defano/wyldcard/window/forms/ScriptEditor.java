@@ -1,50 +1,54 @@
 package com.defano.wyldcard.window.forms;
 
-import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.fonts.FontUtils;
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.util.HandlerComboBox;
-import com.defano.wyldcard.util.SquigglePainter;
-import com.defano.wyldcard.util.TextLineNumber;
-import com.defano.wyldcard.window.HyperCardFrame;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.exception.HtSyntaxException;
-import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.window.rsta.HyperTalkFoldParser;
+import com.defano.wyldcard.window.rsta.HyperTalkSyntaxParser;
+import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.awt.KeyListenable;
+import com.defano.wyldcard.fonts.FontUtils;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.util.HandlerComboBox;
+import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.antlr.v4.runtime.Token;
+import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.Theme;
+import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
+import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Highlighter;
 import javax.swing.text.Utilities;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate {
 
-    private final static Highlighter.HighlightPainter ERROR_HIGHLIGHTER = new SquigglePainter(Color.RED);
+    private final static String LANGUAGE_KEY = "text/hypertalk";
+    private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.window.rsta.HyperTalkTokenMaker";
+    private final static String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
+
     private PartModel model;
     private Script compiledScript;
+    private RSyntaxTextArea scriptField = new RSyntaxTextArea();
 
     private JPanel scriptEditor;
     private JButton saveButton;
-    private JTextArea scriptField;
     private HandlerComboBox handlersMenu;
     private HandlerComboBox functionsMenu;
     private JLabel charCount;
     private JLabel syntaxErrorText;
-    private JScrollPane scrollPane;
+    private JPanel textArea;
 
     public ScriptEditor() {
 
@@ -56,22 +60,47 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             dispose();
         });
 
-        scriptField.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                checkSyntax();
-            }
+        scriptField.addCaretListener(e -> updateActiveHandler());
+        scriptField.addCaretListener(e -> updateCaretPositionLabel());
 
-            public void removeUpdate(DocumentEvent e) {
-                checkSyntax();
-            }
+        AbstractTokenMakerFactory tokenFactory = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+        tokenFactory.putMapping(LANGUAGE_KEY, LANGUAGE_TOKENIZER);
 
-            public void insertUpdate(DocumentEvent e) {
-                checkSyntax();
+        FoldParserManager.get().addFoldParserMapping(LANGUAGE_KEY, new HyperTalkFoldParser());
+
+        scriptField.setSyntaxEditingStyle(LANGUAGE_KEY);
+        scriptField.setCodeFoldingEnabled(true);
+        scriptField.addParser(new HyperTalkSyntaxParser(this));
+        scriptField.setParserDelay(100);
+        scriptField.setTabSize(2);
+
+        // Modify home/end behavior
+        scriptField.addKeyListener(new KeyListenable() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int currentIndex = scriptField.getCaretPosition();
+                if (e.getKeyCode() == KeyEvent.VK_HOME) {
+                    e.consume();
+                    scriptField.setCaretPosition(scriptField.getLineStartOffsetOfCurrentLine());
+                    if (e.isShiftDown()) {
+                        scriptField.select(scriptField.getCaretPosition(), currentIndex);
+                    }
+                } else if (e.getKeyCode() == KeyEvent.VK_END) {
+                    e.consume();
+                    scriptField.setCaretPosition(scriptField.getLineEndOffsetOfCurrentLine() - 1);
+                    if (e.isShiftDown()) {
+                        scriptField.select(currentIndex, scriptField.getCaretPosition());
+                    }
+                }
             }
         });
 
-        scriptField.addCaretListener(e -> updateActiveHandler());
-        scriptField.addCaretListener(e -> updateCaretPositionLabel());
+        try {
+            Theme theme = Theme.load(getClass().getResourceAsStream(EDITOR_THEME));
+            theme.apply(scriptField);
+        } catch (IOException e) {
+            // Nothing to do
+        }
 
         scriptField.setFont(FontUtils.getFontByNameStyleSize(
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
@@ -79,68 +108,24 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
-        TextLineNumber tln = new TextLineNumber(scriptField);
-        tln.setUpdateFont(true);
-        scrollPane.setRowHeaderView(tln);
+        RTextScrollPane sp = new RTextScrollPane(scriptField);
+        textArea.add(sp);
 
         scriptField.requestFocus();
     }
 
-    private void checkSyntax() {
-        Interpreter.asyncCompile(CompilationUnit.SCRIPT, scriptField.getText(), (scriptText, compiledScript, generatedError) -> {
-            SwingUtilities.invokeLater(() -> {
-                if (compiledScript != null) {
-                    ScriptEditor.this.compiledScript = (Script) compiledScript;
-                }
-                scriptField.getHighlighter().removeAllHighlights();
-                handlersMenu.invalidateDataset();
-                functionsMenu.invalidateDataset();
-
-                if (generatedError instanceof HtSyntaxException) {
-                    Range offendingRange = generatedError.getBreadcrumb().getCharRange();
-                    Token offendingToken = generatedError.getBreadcrumb().getToken();
-
-                    if (offendingRange != null) {
-                        setHighlightedSelection(offendingRange.start, offendingRange.end);
-                    } else {
-                        setHighlightedLine(offendingToken.getLine());
-                    }
-
-                    syntaxErrorText.setText(generatedError.getMessage());
-                } else if (generatedError != null) {
-                    setHighlightedLine();
-                } else {
-                    syntaxErrorText.setText("");
-                }
-            });
-        });
+    public void setCompiledScript(Script compiledScript) {
+        this.compiledScript = compiledScript;
+        handlersMenu.invalidateDataset();
+        functionsMenu.invalidateDataset();
     }
 
-    @RunOnDispatch
-    private void setHighlightedLine() {
-        try {
-            setHighlightedLine(scriptField.getLineOfOffset(scriptField.getCaretPosition()));
-        } catch (BadLocationException e) {
-            // Nothing to do
-        }
+    public void setSyntaxErrorText(String error) {
+        syntaxErrorText.setText(error);
     }
 
-    @RunOnDispatch
-    private void setHighlightedSelection(int start, int end) {
-        try {
-            scriptField.getHighlighter().addHighlight(start, end, ERROR_HIGHLIGHTER);
-        } catch (BadLocationException e) {
-            // Nothing to do
-        }
-    }
-
-    @RunOnDispatch
-    private void setHighlightedLine(int line) {
-        try {
-            setHighlightedSelection(scriptField.getLineStartOffset(line), scriptField.getLineEndOffset(line));
-        } catch (BadLocationException e) {
-            // Nothing to do
-        }
+    public RSyntaxTextArea getScriptField() {
+        return scriptField;
     }
 
     @RunOnDispatch
@@ -172,7 +157,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             scriptField.setText(script.trim());
             moveCaretToPosition(model.getScriptEditorCaretPosition());
             scriptField.addCaretListener(e -> saveCaretPosition());
-            checkSyntax();
+            scriptField.forceReparsing(0);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
         }
@@ -360,48 +345,35 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
      */
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
-        scriptEditor.setLayout(new GridLayoutManager(4, 9, new Insets(10, 10, 10, 10), 0, -1));
+        scriptEditor.setLayout(new GridLayoutManager(3, 4, new Insets(10, 10, 10, 10), 0, -1));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
-        scrollPane = new JScrollPane();
-        Font scrollPaneFont = this.$$$getFont$$$("Monaco", -1, -1, scrollPane.getFont());
-        if (scrollPaneFont != null) scrollPane.setFont(scrollPaneFont);
-        scriptEditor.add(scrollPane, new GridConstraints(2, 0, 1, 9, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        scriptField = new JTextArea();
-        Font scriptFieldFont = this.$$$getFont$$$("Monaco", -1, -1, scriptField.getFont());
-        if (scriptFieldFont != null) scriptField.setFont(scriptFieldFont);
-        scriptField.setMargin(new Insets(0, 10, 0, 0));
-        scriptField.setTabSize(4);
-        scrollPane.setViewportView(scriptField);
+        functionsMenu = new HandlerComboBox();
+        scriptEditor.add(functionsMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        charCount = new JLabel();
+        Font charCountFont = this.$$$getFont$$$(null, -1, -1, charCount.getFont());
+        if (charCountFont != null) charCount.setFont(charCountFont);
+        charCount.setText("Line 0, column 0");
+        scriptEditor.add(charCount, new GridConstraints(0, 2, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        saveButton = new JButton();
+        saveButton.setHideActionText(false);
+        saveButton.setOpaque(true);
+        saveButton.setText("Save");
+        scriptEditor.add(saveButton, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textArea = new JPanel();
+        textArea.setLayout(new BorderLayout(0, 0));
+        scriptEditor.add(textArea, new GridConstraints(1, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         handlersMenu = new HandlerComboBox();
         handlersMenu.setName("Handlers:");
-        scriptEditor.add(handlersMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label1 = new JLabel();
-        label1.setText("Handlers: ");
-        scriptEditor.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label2 = new JLabel();
-        label2.setText("Functions: ");
-        scriptEditor.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer1 = new Spacer();
-        scriptEditor.add(spacer1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        functionsMenu = new HandlerComboBox();
-        scriptEditor.add(functionsMenu, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer2 = new Spacer();
-        scriptEditor.add(spacer2, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        charCount = new JLabel();
-        charCount.setText("Line 0, column 0");
-        scriptEditor.add(charCount, new GridConstraints(1, 7, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptEditor.add(handlersMenu, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         syntaxErrorText = new JLabel();
         Font syntaxErrorTextFont = this.$$$getFont$$$(null, Font.BOLD, -1, syntaxErrorText.getFont());
         if (syntaxErrorTextFont != null) syntaxErrorText.setFont(syntaxErrorTextFont);
         syntaxErrorText.setForeground(new Color(-4516074));
         syntaxErrorText.setName("");
         syntaxErrorText.setText("");
-        scriptEditor.add(syntaxErrorText, new GridConstraints(3, 0, 1, 6, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        saveButton = new JButton();
-        saveButton.setHideActionText(false);
-        saveButton.setOpaque(true);
-        saveButton.setText("Save");
-        scriptEditor.add(saveButton, new GridConstraints(3, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        scriptEditor.add(syntaxErrorText, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        scriptEditor.add(spacer1, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**
