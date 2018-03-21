@@ -3,36 +3,36 @@ package com.defano.hypertalk.ast.expressions;
 import com.defano.hypertalk.ast.model.Value;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.List;
-
 public class LiteralExp extends Expression {
 
     public final String literal;
-
-    public LiteralExp(ParserRuleContext context, Object literal) {
-        super(context);
-        this.literal = String.valueOf(literal);
-    }
-
-    public LiteralExp(ParserRuleContext context, List<Value> literals) {
-        this(context, literals.toArray());
-    }
 
     public LiteralExp(ParserRuleContext context, Object... literals) {
         super(context);
 
         StringBuilder builder = new StringBuilder();
+
         for (int index = 0; index < literals.length - 1; index++) {
-            builder.append(literals[index]).append(",");
+            builder.append(stringValue(literals[index])).append(",");
         }
 
         if (literals.length > 0) {
-            builder.append(literals[literals.length - 1]);
+            builder.append(stringValue(literals[literals.length - 1]));
         }
 
         this.literal = builder.toString();
     }
-    
+
+    private String stringValue(Object object) {
+        if (object instanceof Value) {
+            return ((Value) object).stringValue();
+        } else if (object instanceof LiteralExp) {
+            return ((LiteralExp) object).literal;
+        } else {
+            return String.valueOf(object);
+        }
+    }
+
     public Value onEvaluate() {
         return new Value(literal);
     }
