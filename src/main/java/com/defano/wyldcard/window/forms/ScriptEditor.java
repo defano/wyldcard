@@ -10,12 +10,15 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.window.HyperCardFrame;
+import com.defano.wyldcard.window.rsta.HyperTalkCompletionProvider;
 import com.defano.wyldcard.window.rsta.HyperTalkFoldParser;
 import com.defano.wyldcard.window.rsta.HyperTalkSyntaxParser;
 import com.defano.wyldcard.window.rsta.SyntaxParserObserver;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.fife.ui.autocomplete.AutoCompletion;
+import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -27,6 +30,7 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
+
+    private final static CompletionProvider COMPLETION_PROVIDER = new HyperTalkCompletionProvider();
 
     private final static String LANGUAGE_KEY = "text/hypertalk";
     private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.window.rsta.HyperTalkTokenMaker";
@@ -64,9 +70,11 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         scriptField.addCaretListener(e -> updateActiveHandler());
         scriptField.addCaretListener(e -> updateCaretPositionLabel());
 
+        // Install the syntax highlighter token factory
         AbstractTokenMakerFactory tokenFactory = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
         tokenFactory.putMapping(LANGUAGE_KEY, LANGUAGE_TOKENIZER);
 
+        // Install the code folding provider
         FoldParserManager.get().addFoldParserMapping(LANGUAGE_KEY, new HyperTalkFoldParser());
 
         scriptField.setSyntaxEditingStyle(LANGUAGE_KEY);
@@ -112,6 +120,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
+        // Install the completion provider
+        AutoCompletion ac = new AutoCompletion(COMPLETION_PROVIDER);
+        ac.setTriggerKey(KeyStroke.getKeyStroke(' ', InputEvent.CTRL_MASK));
+        ac.install(scriptField);
+
+        // Embed the editor in a scroll pane
         RTextScrollPane sp = new RTextScrollPane(scriptField);
         textArea.add(sp);
 
