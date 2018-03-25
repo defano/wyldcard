@@ -84,6 +84,8 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         ac.setAutoCompleteSingleChoices(false);
         ac.setParameterAssistanceEnabled(true);
         ac.setShowDescWindow(true);
+        ac.setChoicesWindowSize(150, 250);
+        ac.setDescriptionWindowSize(600, 250);
         ac.install(scriptField);
     }
 
