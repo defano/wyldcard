@@ -1,4 +1,4 @@
-package com.defano.wyldcard.window.rsta;
+package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.parser.HyperTalkLexer;
 import com.defano.wyldcard.runtime.interpreter.CaseInsensitiveInputStream;

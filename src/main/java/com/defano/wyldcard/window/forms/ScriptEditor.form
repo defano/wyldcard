@@ -51,16 +51,10 @@
           <name value="Handlers:"/>
         </properties>
       </component>
-      <component id="427f7" class="javax.swing.JLabel" binding="syntaxErrorText">
+      <component id="263d7" class="com.defano.wyldcard.editor.EditorStatus" binding="status">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties>
-          <font style="1"/>
-          <foreground color="-4516074"/>
-          <name value=""/>
-          <text value=""/>
-        </properties>
       </component>
       <hspacer id="d9053">
         <constraints>

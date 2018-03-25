@@ -1,4 +1,4 @@
-package com.defano.wyldcard.window.rsta;
+package com.defano.wyldcard.editor;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;

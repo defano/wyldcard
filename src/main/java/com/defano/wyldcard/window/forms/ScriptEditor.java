@@ -4,14 +4,14 @@ import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.editor.EditorStatus;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.window.HyperCardFrame;
-import com.defano.wyldcard.window.rsta.HyperTalkTextEditor;
-import com.defano.wyldcard.window.rsta.SyntaxParserObserver;
+import com.defano.wyldcard.editor.HyperTalkTextEditor;
+import com.defano.wyldcard.editor.SyntaxParserObserver;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -35,19 +35,12 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
     private HandlerComboBox handlersMenu;
     private HandlerComboBox functionsMenu;
     private JLabel charCount;
-    private JLabel syntaxErrorText;
+    private EditorStatus status;
     private JPanel textArea;
-
-    private Timer spinnerTimer;
 
     public ScriptEditor() {
 
         editor = new HyperTalkTextEditor(this);
-
-        spinnerTimer = new Timer(200, e -> {
-            syntaxErrorText.setText("");
-            syntaxErrorText.setIcon(new ImageIcon(ScriptEditor.class.getClassLoader().getResource("gifs/wait.gif")));
-        });
 
         handlersMenu.setDelegate(this);
         functionsMenu.setDelegate(this);
@@ -274,30 +267,20 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
 
     @Override
     public void onCompileStarted() {
-        this.spinnerTimer.restart();
-        syntaxErrorText.setText("");
-        syntaxErrorText.setIcon(null);
+        status.setStatusPending();
     }
 
     @Override
     public void onCompileCompleted(Script compiledScript, String resultMessage) {
-        if (this.spinnerTimer != null) {
-            this.spinnerTimer.stop();
-        }
-
         if (compiledScript != null) {
             this.compiledScript = compiledScript;
             handlersMenu.invalidateDataset();
             functionsMenu.invalidateDataset();
-        }
 
-        if (resultMessage != null) {
-            syntaxErrorText.setText(resultMessage);
+            status.setStatusOkay();
         } else {
-            syntaxErrorText.setText("");
+            status.setStatusError(resultMessage);
         }
-
-        syntaxErrorText.setIcon(null);
     }
 
     {
@@ -336,13 +319,8 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
         handlersMenu = new HandlerComboBox();
         handlersMenu.setName("Handlers:");
         scriptEditor.add(handlersMenu, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        syntaxErrorText = new JLabel();
-        Font syntaxErrorTextFont = this.$$$getFont$$$(null, Font.BOLD, -1, syntaxErrorText.getFont());
-        if (syntaxErrorTextFont != null) syntaxErrorText.setFont(syntaxErrorTextFont);
-        syntaxErrorText.setForeground(new Color(-4516074));
-        syntaxErrorText.setName("");
-        syntaxErrorText.setText("");
-        scriptEditor.add(syntaxErrorText, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        status = new EditorStatus();
+        scriptEditor.add(status, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }

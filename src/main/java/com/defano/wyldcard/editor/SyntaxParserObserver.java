@@ -1,4 +1,4 @@
-package com.defano.wyldcard.window.rsta;
+package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.wyldcard.aspect.RunOnDispatch;

@@ -1,4 +1,4 @@
-package com.defano.wyldcard.window.rsta;
+package com.defano.wyldcard.editor;
 
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.folding.CurlyFoldParser;

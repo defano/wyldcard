@@ -1,4 +1,4 @@
-package com.defano.wyldcard.window.rsta;
+package com.defano.wyldcard.editor;
 
 import com.defano.wyldcard.awt.KeyListenable;
 import org.fife.ui.autocomplete.AutoCompletion;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class HyperTalkTextEditor extends RTextScrollPane {
 
     private final static String LANGUAGE_KEY = "text/hypertalk";
-    private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.window.rsta.HyperTalkTokenMaker";
+    private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.editor.HyperTalkTokenMaker";
     private final static String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
     private final static CompletionProvider COMPLETION_PROVIDER = new HyperTalkCompletionProvider();
 
