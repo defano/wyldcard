@@ -4,50 +4,30 @@ import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.KeyListenable;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.window.HyperCardFrame;
-import com.defano.wyldcard.window.rsta.HyperTalkCompletionProvider;
-import com.defano.wyldcard.window.rsta.HyperTalkFoldParser;
-import com.defano.wyldcard.window.rsta.HyperTalkSyntaxParser;
+import com.defano.wyldcard.window.rsta.HyperTalkTextEditor;
 import com.defano.wyldcard.window.rsta.SyntaxParserObserver;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import org.fife.ui.autocomplete.AutoCompletion;
-import org.fife.ui.autocomplete.CompletionProvider;
-import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.Theme;
-import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
-import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
-import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
 
-    private final static CompletionProvider COMPLETION_PROVIDER = new HyperTalkCompletionProvider();
-
-    private final static String LANGUAGE_KEY = "text/hypertalk";
-    private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.window.rsta.HyperTalkTokenMaker";
-    private final static String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
-
     private PartModel model;
     private Script compiledScript;
-    private RSyntaxTextArea scriptField = new RSyntaxTextArea();
+    private final HyperTalkTextEditor editor;
 
     private JPanel scriptEditor;
     private JButton saveButton;
@@ -57,7 +37,16 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private JLabel syntaxErrorText;
     private JPanel textArea;
 
+    private Timer spinnerTimer;
+
     public ScriptEditor() {
+
+        editor = new HyperTalkTextEditor(this);
+
+        spinnerTimer = new Timer(200, e -> {
+            syntaxErrorText.setText("");
+            syntaxErrorText.setIcon(new ImageIcon(ScriptEditor.class.getClassLoader().getResource("gifs/wait.gif")));
+        });
 
         handlersMenu.setDelegate(this);
         functionsMenu.setDelegate(this);
@@ -67,76 +56,24 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             dispose();
         });
 
-        scriptField.addCaretListener(e -> updateActiveHandler());
-        scriptField.addCaretListener(e -> updateCaretPositionLabel());
+        editor.getScriptField().addCaretListener(e -> updateActiveHandler());
+        editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
 
-        // Install the syntax highlighter token factory
-        AbstractTokenMakerFactory tokenFactory = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
-        tokenFactory.putMapping(LANGUAGE_KEY, LANGUAGE_TOKENIZER);
-
-        // Install the code folding provider
-        FoldParserManager.get().addFoldParserMapping(LANGUAGE_KEY, new HyperTalkFoldParser());
-
-        scriptField.setSyntaxEditingStyle(LANGUAGE_KEY);
-        scriptField.setCodeFoldingEnabled(true);
-        scriptField.addParser(new HyperTalkSyntaxParser(this));
-        scriptField.setParserDelay(0);
-        scriptField.setTabSize(2);
-        scriptField.setBracketMatchingEnabled(true);
-        scriptField.setAnimateBracketMatching(true);
-        scriptField.setShowMatchedBracketPopup(true);
-
-        // Modify home/end behavior
-        scriptField.addKeyListener(new KeyListenable() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int currentIndex = scriptField.getCaretPosition();
-                if (e.getKeyCode() == KeyEvent.VK_HOME) {
-                    e.consume();
-                    scriptField.setCaretPosition(scriptField.getLineStartOffsetOfCurrentLine());
-                    if (e.isShiftDown()) {
-                        scriptField.select(scriptField.getCaretPosition(), currentIndex);
-                    }
-                } else if (e.getKeyCode() == KeyEvent.VK_END) {
-                    e.consume();
-                    scriptField.setCaretPosition(scriptField.getLineEndOffsetOfCurrentLine() - 1);
-                    if (e.isShiftDown()) {
-                        scriptField.select(currentIndex, scriptField.getCaretPosition());
-                    }
-                }
-            }
-        });
-
-        try {
-            Theme theme = Theme.load(getClass().getResourceAsStream(EDITOR_THEME));
-            theme.apply(scriptField);
-        } catch (IOException e) {
-            // Nothing to do
-        }
-
-        scriptField.setFont(FontUtils.getFontByNameStyleSize(
+        editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
                 Font.PLAIN,
                 HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
-        // Install the completion provider
-        AutoCompletion ac = new AutoCompletion(COMPLETION_PROVIDER);
-        ac.setTriggerKey(KeyStroke.getKeyStroke(' ', InputEvent.CTRL_MASK));
-        ac.install(scriptField);
-
-        // Embed the editor in a scroll pane
-        RTextScrollPane sp = new RTextScrollPane(scriptField);
-        textArea.add(sp);
-
-        scriptField.requestFocus();
+        textArea.add(editor);
+        editor.requestFocus();
     }
 
     @RunOnDispatch
     public void moveCaretToPosition(int position) {
         try {
-            scriptField.setCaretPosition(position);
-            scriptField.requestFocus();
+            editor.getScriptField().setCaretPosition(position);
+            editor.requestFocus();
         } catch (Exception e) {
             // Ignore bogus caret positions
         }
@@ -158,17 +95,17 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
             String script = this.model.getKnownProperty("script").stringValue();
-            scriptField.setText(script.trim());
+            editor.getScriptField().setText(script.trim());
             moveCaretToPosition(model.getScriptEditorCaretPosition());
-            scriptField.addCaretListener(e -> saveCaretPosition());
-            scriptField.forceReparsing(0);
+            editor.getScriptField().addCaretListener(e -> saveCaretPosition());
+            editor.getScriptField().forceReparsing(0);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
         }
     }
 
     private void updateProperties() {
-        model.setKnownProperty("script", new Value(scriptField.getText()));
+        model.setKnownProperty("script", new Value(editor.getScriptField().getText()));
     }
 
     @Override
@@ -220,7 +157,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                     appendHandler(handler);
                 }
             } else {
-                scriptField.requestFocus();
+                editor.requestFocus();
                 jumpToLine(lineNumber);
             }
         }
@@ -228,15 +165,15 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     @RunOnDispatch
     private void saveCaretPosition() {
-        model.setScriptEditorCaretPosition(scriptField.getCaretPosition());
+        model.setScriptEditorCaretPosition(editor.getScriptField().getCaretPosition());
     }
 
     @RunOnDispatch
     private void updateCaretPositionLabel() {
         try {
-            int caretpos = scriptField.getCaretPosition();
-            int row = scriptField.getLineOfOffset(caretpos);
-            int column = caretpos - scriptField.getLineStartOffset(row);
+            int caretpos = editor.getScriptField().getCaretPosition();
+            int row = editor.getScriptField().getLineOfOffset(caretpos);
+            int column = caretpos - editor.getScriptField().getLineStartOffset(row);
 
             charCount.setText("Line " + (row + 1) + ", column " + column);
 
@@ -266,15 +203,17 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     @RunOnDispatch
     private void appendHandler(String handlerName) {
         SystemMessage message = SystemMessage.fromHandlerName(handlerName);
-        appendNamedBlock("on", message.description, message.messageName, message.arguments);
+        if (message != null) {
+            appendNamedBlock("on", message.description, message.messageName, message.arguments);
+        }
     }
 
     @RunOnDispatch
     private void appendNamedBlock(String blockOpener, String description, String blockName, String[] arguments) {
-        int lastIndex = scriptField.getDocument().getLength();
+        int lastIndex = editor.getScriptField().getDocument().getLength();
         StringBuilder builder = new StringBuilder();
 
-        if (scriptField.getText().length() > 0 && !scriptField.getText().endsWith("\n")) {
+        if (editor.getScriptField().getText().length() > 0 && !editor.getScriptField().getText().endsWith("\n")) {
             builder.append("\n\n");
         }
 
@@ -307,7 +246,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         builder.append(blockName);
 
         try {
-            scriptField.getDocument().insertString(lastIndex, builder.toString(), null);
+            editor.getScriptField().getDocument().insertString(lastIndex, builder.toString(), null);
         } catch (BadLocationException e) {
             // Nothing to do
         }
@@ -315,13 +254,13 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     @RunOnDispatch
     private void jumpToLine(int lineIndex) {
-        scriptField.setCaretPosition(scriptField.getDocument().getDefaultRootElement().getElement(lineIndex).getStartOffset());
+        editor.getScriptField().setCaretPosition(editor.getScriptField().getDocument().getDefaultRootElement().getElement(lineIndex).getStartOffset());
     }
 
     @RunOnDispatch
     private int currentLine() {
         try {
-            return scriptField.getLineOfOffset(scriptField.getCaretPosition()) + 1;
+            return editor.getScriptField().getLineOfOffset(editor.getScriptField().getCaretPosition()) + 1;
         } catch (BadLocationException e) {
             return 0;
         }
@@ -329,16 +268,22 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     @Override
     public void onRequestParse(Parser syntaxParser) {
-        scriptField.forceReparsing(syntaxParser);
+        editor.getScriptField().forceReparsing(syntaxParser);
     }
 
     @Override
     public void onCompileStarted() {
-        syntaxErrorText.setIcon(new ImageIcon(ScriptEditor.class.getClassLoader().getResource("gifs/wait.gif")));
+        this.spinnerTimer.restart();
+        syntaxErrorText.setText("");
+        syntaxErrorText.setIcon(null);
     }
 
     @Override
     public void onCompileCompleted(Script compiledScript, String resultMessage) {
+        if (this.spinnerTimer != null) {
+            this.spinnerTimer.stop();
+        }
+
         if (compiledScript != null) {
             this.compiledScript = compiledScript;
             handlersMenu.invalidateDataset();
