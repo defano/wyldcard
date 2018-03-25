@@ -18,6 +18,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private boolean resizable = false;
     private HyperCardFrame dock;
     private boolean isPalette = false;
+    private boolean isFocusable = true;
     private boolean quitOnClose = false;
 
     private WindowBuilder(T window) {
@@ -62,6 +63,14 @@ public class WindowBuilder<T extends HyperCardWindow> {
     @RunOnDispatch
     public WindowBuilder asPalette() {
         this.isPalette = true;
+        this.isFocusable = false;
+        this.window.getWindow().setType(Window.Type.UTILITY);
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder focusable(boolean focusable) {
+        this.isFocusable = focusable;
         return this;
     }
 
@@ -167,22 +176,27 @@ public class WindowBuilder<T extends HyperCardWindow> {
         // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
 
         this.window.setAllowResizing(resizable);
-        this.window.getWindow().setFocusableWindowState(!isPalette);
+        this.window.getWindow().setFocusableWindowState(isFocusable);
+        this.window.getWindow().setAlwaysOnTop(isPalette);
 
         if (dock != null) {
 
-            // When dock (main) window is focused, bring palette windows to front
-            dock.getWindow().addWindowFocusListener(new WindowFocusListener() {
+            dock.getWindow().addWindowListener(new WindowAdapter() {
+                boolean wasVisible = initiallyVisible;
+
                 @Override
-                public void windowGainedFocus(WindowEvent e) {
-                    if (!window.getWindow().isFocusableWindow()) {
-                        window.getWindow().toFront();
+                public void windowActivated(WindowEvent e) {
+                    if (e.getOppositeWindow() == null) {
+                        window.getWindow().setVisible(wasVisible);
                     }
                 }
 
                 @Override
-                public void windowLostFocus(WindowEvent e) {
-                    // Nothing to do
+                public void windowDeactivated(WindowEvent e) {
+                    if (e.getOppositeWindow() == null) {
+                        wasVisible = window.getWindow().isVisible();
+                        window.getWindow().setVisible(false);
+                    }
                 }
             });
 

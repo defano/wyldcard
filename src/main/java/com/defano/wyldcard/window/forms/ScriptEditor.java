@@ -8,6 +8,7 @@ import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.util.HandlerComboBox;
+import com.defano.wyldcard.window.HyperCardDialog;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.defano.wyldcard.window.rsta.HyperTalkTextEditor;
 import com.defano.wyldcard.window.rsta.SyntaxParserObserver;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
+public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
 
     private PartModel model;
     private Script compiledScript;

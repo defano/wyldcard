@@ -92,7 +92,7 @@ public class CompletionBuilder {
 
         for (String template : templates) {
             template = template.replace("$", "");
-            builder.append(makeCodeBlock(0, template)).append("<br>");
+            builder.append(makeCodeBlock(0, template));
         }
 
         builder.append("\n");

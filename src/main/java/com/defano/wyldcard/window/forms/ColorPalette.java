@@ -1,15 +1,15 @@
 package com.defano.wyldcard.window.forms;
 
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.defano.wyldcard.runtime.context.ToolsContext;
 
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 
-public class ColorPalette extends HyperCardDialog {
+public class ColorPalette extends HyperCardFrame {
 
     private JPanel panel;
     private JTabbedPane tabs;
