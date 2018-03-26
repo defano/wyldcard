@@ -1,5 +1,8 @@
 package com.defano.wyldcard.editor;
 
+import com.defano.wyldcard.editor.help.ExampleModel;
+import com.defano.wyldcard.editor.help.ParameterModel;
+import com.defano.wyldcard.editor.help.SyntaxHelpModel;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -21,6 +24,30 @@ public class CompletionBuilder {
     private ArrayList<String> examplesDescription = new ArrayList<>();
     private ArrayList<String> parameterNames = new ArrayList<>();
     private ArrayList<String> parameterDescriptions = new ArrayList<>();
+
+    private CompletionBuilder() {}
+
+    public static CompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model) {
+        CompletionBuilder builder = new CompletionBuilder();
+
+        builder.codePrefix = model.getCodePrefix();
+        builder.templateName = model.getTitle();
+        builder.templates.addAll(model.getTemplates());
+        builder.shortDescription = model.getSummary();
+        builder.longDescription = model.getDescription();
+
+        for (ExampleModel thisExample : model.getExamples()) {
+            builder.examplesCode.add(thisExample.getCode());
+            builder.examplesDescription.add(thisExample.getDescription());
+        }
+
+        for (ParameterModel thisParam : model.getParameters()) {
+            builder.parameterNames.add(thisParam.getParameter());
+            builder.parameterDescriptions.add(thisParam.getDescription());
+        }
+
+        return builder;
+    }
 
     public static CompletionBuilder autoComplete(String codePrefix, String named) {
         CompletionBuilder builder = new CompletionBuilder();
@@ -98,7 +125,7 @@ public class CompletionBuilder {
         builder.append("\n");
 
         if (!parameterNames.isEmpty()) {
-            builder.append("#### Where:").append("\n");
+            builder.append("**Where:**").append("\n");
             for (int index = 0; index < parameterNames.size(); index++) {
                 builder.append("* ").append("`{").append(parameterNames.get(index)).append("}`: ");
                 builder.append(parameterDescriptions.get(index)).append("\n");
@@ -118,7 +145,7 @@ public class CompletionBuilder {
                     builder.append("\n**Example:** ");
                 }
 
-                if (!examplesDescription.get(index).isEmpty()) {
+                if (examplesDescription.get(index) != null) {
                     builder.append(examplesDescription.get(index)).append("\n\n");
                 } else {
                     builder.append("\n\n");

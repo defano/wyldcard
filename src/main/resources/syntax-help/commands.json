@@ -1,0 +1,127 @@
+[
+  {
+    "title": "Add",
+    "summary": "Adds a numerical value to a container.",
+    "codePrefix": "add",
+    "templates": [
+      "add ${expression} to ${container}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A numerical expression to be added to the container."},
+      {"parameter": "container", "description": "A container to which the value should be added."}
+    ]
+  },
+
+  {
+    "title": "Ask",
+    "summary": "Displays a dialog box with an editable text field containing the provided value.",
+    "description": "When no `default-value` is provided, the `empty` string is assumed. The HyperTalk script stops executing until a user has made a choice. The text entered by the user will be put into the the `it` variable.",
+    "codePrefix": "ask",
+    "templates": [
+      "ask ${expression} with ${default-value}",
+      "ask ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A prompt string to display in the dialog."},
+      {"parameter": "default-value", "description": "The default text to be displayed in the edit field."}
+    ]
+  },
+
+  {
+    "title": "Answer",
+    "summary": "Displays a dialog box with up to three user-selectable buttons.",
+    "description": "When no button names are provided, `OK` and `Cancel` will be assumed by default.\n\nThe HyperTalk script stops executing until a user has made a choice. The name of the button chosen by the user will be put into the the `it` variable.",
+    "codePrefix": "answer",
+    "templates": [
+      "answer ${expression} with ${button-1} or ${button-2} or ${button-3}",
+      "answer ${expression} with ${button-1} or ${button-2}",
+      "answer ${expression} with ${button-1}",
+      "answer ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The prompt string to display in the dialog."},
+      {"parameter": "button-1", "description": "The name of the first (default) button."},
+      {"parameter": "button-2", "description": "The name of the second button."},
+      {"parameter": "button-3", "description": "The name of the third button."}
+    ]
+  },
+
+  {
+    "title": "Beep",
+    "summary": "Emits the system alert sound.",
+    "codePrefix": "beep",
+    "templates": [
+      "beep ${expression}",
+      "beep"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The number of times to beep."}
+    ],
+    "examples": [
+      {"description": "Beep once", "code": "beep"},
+      {"description": "Beep twice", "code": "beep 2"},
+      {"description": "Beep once for every button on the card layer.", "code": "beep the number of card buttons"}
+    ]
+  },
+
+  {
+    "title": "Choose Tool",
+    "summary": "Chooses the specified tool from the tool palette.",
+    "description": "Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).",
+    "codePrefix": "choose",
+    "templates": [
+      "choose tool ${tool-expression}",
+      "choose ${tool-expression} tool"
+    ],
+    "parameters": [
+      {"parameter": "tool-expression", "description": "An expression referring to a tool either by name or number."}
+    ],
+    "examples": [
+      {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
+    ]
+  },
+
+  {
+    "title": "Click",
+    "summary": "Clicks the mouse at the specified location using one or more optional modifier keys.",
+    "codePrefix": "click",
+    "templates": [
+      "click at ${location}",
+      "click at ${location} with ${key-expression}"
+    ],
+    "parameters": [
+      {"parameter": "location", "description": "A point expression (like `10,20`) where the mouse should be clicked."},
+      {"parameter": "key-expression", "description": "A list expression containing one or more modifier keys (`shiftKey`, `commandKey`, or `optionKey`)"}
+    ],
+    "examples": [
+      {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
+    ]
+  },
+
+  {
+    "title": "Close",
+    "summary": "Closes a previously opened file.",
+    "codePrefix": "close",
+    "templates": [
+      "close file ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The name of the file to be closed."}
+    ]
+  },
+
+  {
+    "title": "Convert",
+    "summary": "Converts a date and/or time from one format to another.",
+    "description": "When a value is specified (rather than a container), the conversion result is placed into it.",
+    "codePrefix": "convert",
+    "templates": [
+      "convert ${expression} from ${format} to ${format}",
+      "convert ${expression} to ${format}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A time or date expression or a container of a such an expression to be converted."},
+      {"parameter": "format", "description": "One of `seconds` (an integer value equal to the number of seconds since the epoch, Jan. 1, 1970), `dateItems` (a comma-separated list of integers in the form `year, month, day, hour, minute, second, dayNumber`), `[ adjective ] date`, or `[ adjective ] time` where `adjective` is one of `long`, `short`, `abbreviated`, `abbrev` or `english`."}
+    ]
+  }
+]
