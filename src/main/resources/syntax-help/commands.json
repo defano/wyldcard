@@ -2,6 +2,7 @@
   {
     "title": "Add",
     "summary": "Adds a numerical value to a container.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
     "codePrefix": "add",
     "templates": [
       "add ${expression} to ${container}"
@@ -123,5 +124,169 @@
       {"parameter": "expression", "description": "A time or date expression or a container of a such an expression to be converted."},
       {"parameter": "format", "description": "One of `seconds` (an integer value equal to the number of seconds since the epoch, Jan. 1, 1970), `dateItems` (a comma-separated list of integers in the form `year, month, day, hour, minute, second, dayNumber`), `[ adjective ] date`, or `[ adjective ] time` where `adjective` is one of `long`, `short`, `abbreviated`, `abbrev` or `english`."}
     ]
+  },
+
+  {
+    "title": "Create Menu",
+    "summary": "Creates a menu in the application menu bar.",
+    "description": "You cannot create a menu with the same name as a menu that already exists. Use `reset menubar` to reset the state of the menu bar to its default configuration.",
+    "codePrefix": "create",
+    "templates": [
+      "create menu ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The name of the menu to be created."}
+    ],
+    "examples": [
+      {"code": "create menu \"Customize\""}
+    ]
+  },
+
+  {
+    "title": "Delete",
+    "summary": "Deletes a menu, menu item, button or field part, or a chunk of text.",
+    "codePrefix": "delete",
+    "templates": [
+      "delete ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the menu, menu item, field, button or chunk to delete."}
+    ],
+    "examples": [
+      {"description": "Delete a menu from the menu bar.", "code": "delete menu \"Customize\""},
+      {"description": "Delete a menu item from a menu.", "code": "delete menu item \"My Menu Item\" from menu \"Customize\""},
+      {"description": "Delete a button or field.", "code": "delete card button \"Not Important Button\""},
+      {"description": "Delete a chunk of text.", "code": "delete the second line of card field 1"}
+    ]
+  },
+
+  {
+    "title": "Dial",
+    "summary": "Plays the sound of dial tones dialing a phone number.",
+    "codePrefix": "dial",
+    "templates": [
+      "dial ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression containing the number to be dialed."}
+    ],
+    "examples": [
+      {"code": "dial \"588-2300\""}
+    ]
+  },
+
+  {
+    "title": "Disable",
+    "summary": "Disables a menu, menu item, button or field.",
+    "codePrefix": "disable",
+    "templates": [
+      "disable ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the menu, menu item, field, or button to disable."}
+    ],
+    "examples": [
+      {"code": "disable the first menuItem of menu \"Objects\""}
+    ]
+  },
+
+  {
+    "title": "Divide",
+    "summary": "Divides a container by a numerical value.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "divide",
+    "templates": [
+      "divide ${container} by ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "container", "description": "A container whose value should be divided."},
+      {"parameter": "expression", "description": "A numerical value that the container should be divided by."}
+    ],
+    "examples": [
+      {"code": "divide item 2 of fld id 3 by 10.0"}
+    ]
+  },
+
+  {
+    "title": "Do",
+    "summary": "Executes an expression as a HyperTalk script.",
+    "codePrefix": "do",
+    "templates": [
+      "do ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A value to be executed as a HyperTalk script."}
+    ],
+    "examples": [
+      {"code": "do card field \"My Script\""}
+    ]
   }
+
 ]
+
+//| 'domenu' expression                                                                                               # doMenuCmdStmt
+//| 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
+//| 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
+//| 'enable' expression                                                                                               # enableExpStmnt
+//| 'exit' handlerName                                                                                                # exitCmdStmt
+//| 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
+//| 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
+//| find expression                                                                                                   # findAnywhere
+//| find expression of expression                                                                                     # findField
+//| find expression of 'marked' cards                                                                                 # findMarkedCards
+//| find expression of expression of 'marked' cards                                                                   # findFieldMarkedCards
+//| 'get' expression                                                                                                  # getCmdStmnt
+//| 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
+//| 'go' 'to'? expression                                                                                             # goCmdStmnt
+//| 'go' 'back'                                                                                                       # goBackCmdStmt
+//| 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
+//| 'hide' expression                                                                                                 # hideCmdStmnt
+//| 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
+//| 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
+//| 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
+//| 'open' 'file' expression                                                                                          # openFileCmdStmt
+//| 'pass' handlerName                                                                                                # passCmdStmt
+//| 'play' musicExpression                                                                                            # playCmdStmt
+//| 'pop' card                                                                                                        # popCardCmdStmt
+//| 'push' card                                                                                                       # pushCardCmdStmt
+//| 'push' expression                                                                                                 # pushDestCmdStmt
+//| 'put' expression                                                                                                  # putIntoCmd
+//| 'put' expression preposition expression                                                                           # putPrepositionCmd
+//| 'read' 'from' 'file' expression                                                                                   # readFileCmd
+//| 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
+//| 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
+//| 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
+//| 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
+//| 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
+//| 'select' 'empty'                                                                                                  # selectEmptyCmd
+//| 'select' 'text' of expression                                                                                     # selectTextCmd
+//| 'select' 'before' 'text' of expression                                                                            # selectBeforeCmd
+//| 'select' 'after' 'text' of expression                                                                             # selectAfterCmd
+//| 'select' expression                                                                                               # selectChunkCmd
+//| 'select' 'before' expression                                                                                      # selectBeforeChunkCmd
+//| 'select' 'after' expression                                                                                       # selectAfterChunkCmd
+//| 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
+//| 'send' expression 'to' expression                                                                                 # sendCmdStmnt
+//| 'show' expression                                                                                                 # showCmdStmnt
+//| 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
+//| 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
+//| 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
+//| 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
+//| 'sort' 'the'? cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                  # sortStackCmd
+//| 'sort' 'the'? 'marked' cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                         # sortMarkedCardsCmd
+//| 'sort' expression sortDirection sortStyle 'by' expression                                                         # sortBkgndCardsCmd
+//| 'sort' 'the'? cards of expression sortDirection sortStyle 'by' expression                                         # sortBkgndCardsCmd
+//| 'sort' 'the'? 'marked' cards of expression sortDirection sortStyle 'by' expression                                # sortMarkedBkgndCardsCmd
+//| 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
+//| 'type' expression                                                                                                 # typeCmdStmt
+//| 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
+//| 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
+//| 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmdStmt
+//| 'visual' expression                                                                                               # visualEffectCmdStmt
+//| 'wait' expression timeUnit                                                                                        # waitCountCmd
+//| 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
+//| 'wait' 'until' expression                                                                                         # waitUntilCmd
+//| 'wait' 'while' expression                                                                                         # waitWhileCmd
+//| 'write' expression 'to' 'file' expression                                                                         # writeFileCmd
+//| 'write' expression 'to' 'file' expression 'at' ('eof' | 'end')                                                    # writeEndFileCmd
+//| 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd

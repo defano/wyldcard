@@ -351,15 +351,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * command from the Objects menu.
      */
     public void editScript(int caretPosition) {
-        ThreadUtils.invokeAndWaitAsNeeded(() ->
-                ((ScriptEditor) WindowBuilder.make(new ScriptEditor())
-                        .withTitle("Script of " + getName())
-                        .withModel(this)
-                        .resizeable(true)
-                        .asModal()
-                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                        .build())
-                        .moveCaretToPosition(caretPosition));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            setScriptEditorCaretPosition(caretPosition);
+            WindowBuilder.make(new ScriptEditor())
+                    .withTitle("Script of " + getName())
+                    .withModel(this)
+                    .resizeable(true)
+                    .asModal()
+                    .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                    .build();
+        });
     }
 
     /**

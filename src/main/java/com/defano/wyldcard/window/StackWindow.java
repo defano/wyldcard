@@ -10,7 +10,6 @@ import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.util.FileDrop;
-import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.util.Throttle;
 
 import javax.swing.*;

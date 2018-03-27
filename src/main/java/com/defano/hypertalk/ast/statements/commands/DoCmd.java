@@ -1,5 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
@@ -16,6 +18,7 @@ public class DoCmd extends Command {
     }
     
     public void onExecute () throws HtException {
-        Interpreter.asyncExecuteString(null, script.evaluate().toString()).checkedGet();
+        PartSpecifier target = WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getPartSpecifier();
+        Interpreter.asyncExecuteString(target, script.evaluate().toString()).checkedGet();
     }
 }

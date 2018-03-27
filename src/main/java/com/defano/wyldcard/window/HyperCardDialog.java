@@ -1,6 +1,5 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.aspect.RunOnDispatch;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -17,6 +16,8 @@ public abstract class HyperCardDialog extends JDialog implements HyperCardWindow
     private boolean ownsMenubar;
 
     public HyperCardDialog() {
+        setAlwaysOnTop(true);
+
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {

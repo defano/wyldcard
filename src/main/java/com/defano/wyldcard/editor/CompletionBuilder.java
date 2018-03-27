@@ -18,8 +18,8 @@ public class CompletionBuilder {
     private String codePrefix;
     private String templateName;
     private ArrayList<String> templates = new ArrayList<>();
-    private String shortDescription;
-    private String longDescription;
+    private String summary;
+    private String description;
     private ArrayList<String> examplesCode = new ArrayList<>();
     private ArrayList<String> examplesDescription = new ArrayList<>();
     private ArrayList<String> parameterNames = new ArrayList<>();
@@ -33,8 +33,8 @@ public class CompletionBuilder {
         builder.codePrefix = model.getCodePrefix();
         builder.templateName = model.getTitle();
         builder.templates.addAll(model.getTemplates());
-        builder.shortDescription = model.getSummary();
-        builder.longDescription = model.getDescription();
+        builder.summary = model.getSummary();
+        builder.description = model.getDescription();
 
         for (ExampleModel thisExample : model.getExamples()) {
             builder.examplesCode.add(thisExample.getCode());
@@ -67,12 +67,12 @@ public class CompletionBuilder {
     }
 
     public CompletionBuilder withSummary(String summary) {
-        this.shortDescription = summary;
+        this.summary = summary;
         return this;
     }
 
     public CompletionBuilder withDescription(String description) {
-        this.longDescription = description;
+        this.description = description;
         return this;
     }
 
@@ -113,8 +113,8 @@ public class CompletionBuilder {
             builder.append("### ").append(templateName).append("\n\n");
         }
 
-        if (shortDescription != null) {
-            builder.append(shortDescription).append("\n\n");
+        if (summary != null) {
+            builder.append(summary).append("\n\n");
         }
 
         for (String template : templates) {
@@ -132,8 +132,8 @@ public class CompletionBuilder {
             }
         }
 
-        if (longDescription != null) {
-            builder.append("\n").append(longDescription).append("\n\n");
+        if (description != null) {
+            builder.append("\n").append(description).append("\n\n");
         }
 
         if (!examplesCode.isEmpty()) {

@@ -181,24 +181,9 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
         if (dock != null) {
 
-            dock.getWindow().addWindowListener(new WindowAdapter() {
-                boolean wasVisible = initiallyVisible;
-
-                @Override
-                public void windowActivated(WindowEvent e) {
-                    if (e.getOppositeWindow() == null) {
-                        window.getWindow().setVisible(wasVisible);
-                    }
-                }
-
-                @Override
-                public void windowDeactivated(WindowEvent e) {
-                    if (e.getOppositeWindow() == null) {
-                        wasVisible = window.getWindow().isVisible();
-                        window.getWindow().setVisible(false);
-                    }
-                }
-            });
+            if (isPalette) {
+                dock.getWindow().addWindowListener(new PaletteActivationManager(window));
+            }
 
             // When dock window moves, move docked windows too (keep relative window layout)
             dock.getWindow().addComponentListener(new ComponentAdapter() {

@@ -60,7 +60,6 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
         ));
 
         textArea.add(editor);
-        editor.requestFocus();
     }
 
     @RunOnDispatch
@@ -93,6 +92,8 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
             moveCaretToPosition(model.getScriptEditorCaretPosition());
             editor.getScriptField().addCaretListener(e -> saveCaretPosition());
             editor.getScriptField().forceReparsing(0);
+
+            SwingUtilities.invokeLater(() -> editor.getScriptField().requestFocus());
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
         }
