@@ -1,5 +1,6 @@
 package com.defano.wyldcard.search;
 
+import com.defano.hypertalk.ast.model.Owner;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -23,7 +24,10 @@ public interface SearchResultHilighter {
 
         // Box the found text
         try {
-            FieldModel foundFieldModel = (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(result.getLocalPartSpecifier());
+            FieldModel foundFieldModel = result.getLocalPartSpecifier().getOwner() == Owner.CARD ?
+                (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(result.getLocalPartSpecifier()) :
+                (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel().findPart(result.getLocalPartSpecifier());
+
             FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
 
             foundField.applySearchHilight(result.getRange());

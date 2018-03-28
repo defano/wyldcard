@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.defano.wyldcard.window.forms.CardPropertyEditor">
-  <grid id="27dc6" binding="propertiesPanel" layout-manager="GridLayoutManager" row-count="12" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="propertiesPanel" layout-manager="GridLayoutManager" row-count="13" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -10,7 +10,9 @@
     <children>
       <component id="c6991" class="javax.swing.JLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="16"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Card Name:"/>
@@ -18,7 +20,7 @@
       </component>
       <component id="784a2" class="javax.swing.JTextField" binding="cardName">
         <constraints>
-          <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -26,7 +28,9 @@
       </component>
       <component id="e4e57" class="javax.swing.JLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="16"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Card Number:"/>
@@ -34,7 +38,7 @@
       </component>
       <component id="5866d" class="javax.swing.JLabel" binding="cardNumberLabel">
         <constraints>
-          <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="1 out of 1"/>
@@ -42,7 +46,9 @@
       </component>
       <component id="601e5" class="javax.swing.JLabel">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="16"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Card ID:"/>
@@ -50,7 +56,7 @@
       </component>
       <component id="ef762" class="javax.swing.JLabel" binding="cardIdLabel">
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="0000"/>
@@ -58,7 +64,7 @@
       </component>
       <component id="b136" class="javax.swing.JLabel" binding="fieldCountLabel">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Contains 2 card fields."/>
@@ -66,7 +72,7 @@
       </component>
       <component id="f4f3b" class="javax.swing.JLabel" binding="buttonCountLabel">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Contains 2 card buttons."/>
@@ -74,7 +80,7 @@
       </component>
       <component id="3442" class="javax.swing.JCheckBox" binding="cardMarkedCheckBox" default-binding="true">
         <constraints>
-          <grid row="7" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Card Marked"/>
@@ -82,7 +88,7 @@
       </component>
       <component id="7467a" class="javax.swing.JCheckBox" binding="cantDeleteCardCheckBox">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Can't Delete Card"/>
@@ -90,7 +96,9 @@
       </component>
       <component id="8fac7" class="javax.swing.JLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="0"/>
+          </grid>
         </constraints>
         <properties>
           <text value=""/>
@@ -98,7 +106,9 @@
       </component>
       <component id="8cfa9" class="javax.swing.JLabel">
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="0"/>
+          </grid>
         </constraints>
         <properties>
           <text value=""/>
@@ -106,7 +116,9 @@
       </component>
       <component id="588d6" class="javax.swing.JLabel">
         <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="0"/>
+          </grid>
         </constraints>
         <properties>
           <text value=""/>
@@ -114,7 +126,9 @@
       </component>
       <component id="ca739" class="javax.swing.JButton" binding="scriptButton">
         <constraints>
-          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="32"/>
+          </grid>
         </constraints>
         <properties>
           <enabled value="true"/>
@@ -124,7 +138,9 @@
       </component>
       <component id="e9a96" class="javax.swing.JButton" binding="contentsButton">
         <constraints>
-          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="166" height="32"/>
+          </grid>
         </constraints>
         <properties>
           <enabled value="true"/>
@@ -134,7 +150,7 @@
       </component>
       <component id="358b8" class="javax.swing.JButton" binding="saveButton" default-binding="true">
         <constraints>
-          <grid row="11" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="OK"/>
@@ -142,9 +158,17 @@
       </component>
       <hspacer id="792">
         <constraints>
-          <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
+      <component id="5b599" class="javax.swing.JCheckBox" binding="dontSearchCheckBox">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Don't Search Card"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

@@ -125,7 +125,7 @@ public class CompletionBuilder {
         builder.append("\n");
 
         if (!parameterNames.isEmpty()) {
-            builder.append("**Where:**").append("\n");
+            builder.append("**Where**").append("\n");
             for (int index = 0; index < parameterNames.size(); index++) {
                 builder.append("* ").append("`{").append(parameterNames.get(index)).append("}`: ");
                 builder.append(parameterDescriptions.get(index)).append("\n");
@@ -172,7 +172,7 @@ public class CompletionBuilder {
     private String makeCodeBlock(int indent, String codeBlock) {
         StringBuilder builder = new StringBuilder();
 
-        // Padding before/after ` is important; two adjacent (``) is illegal
+        // Padding before/after backtick is important; two adjacent (``) is illegal
         codeBlock = codeBlock.replace("\t", " `&nbsp; &nbsp;` ");
 
         for (String thisLine : codeBlock.split("\n")) {
@@ -180,7 +180,7 @@ public class CompletionBuilder {
                 builder.append(">");
             }
 
-            builder.append("`").append(thisLine).append("`").append("<br>\n");
+            builder.append("`").append(thisLine).append(" `").append("<br>\n");
         }
 
         return builder.toString();

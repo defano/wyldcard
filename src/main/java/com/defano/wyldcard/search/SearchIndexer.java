@@ -29,18 +29,25 @@ public interface SearchIndexer {
             }
 
             FieldModel field = (FieldModel) part;
+            CardModel card = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardModel();
 
-            int cardIndex = ExecutionContext.getContext().getCurrentStack().getDisplayedCard().getCardModel().getCardIndexInStack();
+            int cardIndex = card.getCardIndexInStack();
             if (query.searchField instanceof CompositePartSpecifier) {
-                cardIndex = ExecutionContext.getContext().getCurrentStack().getStackModel().findOwningCard((CompositePartSpecifier) query.searchField).getCardIndexInStack();
+                card = ExecutionContext.getContext().getCurrentStack().getStackModel().findOwningCard((CompositePartSpecifier) query.searchField);
+                cardIndex = card.getCardIndexInStack();
             }
 
-            indexField(query, field, cardIndex, results);
+            if (isCardSearchable(query, card)) {
+                indexField(query, field, cardIndex, results);
+            }
         }
 
         // Indexing all fields on all cards
         else {
+            // Index this card to end of the stack...
             indexCards(query, thisStack.getCurrentCardIndex(), thisStack.getCardCount(), thisStack, results);
+
+            // ... then index first card up to this card
             indexCards(query, 0, thisStack.getCurrentCardIndex(), thisStack, results);
         }
 
@@ -52,8 +59,7 @@ public interface SearchIndexer {
             CardModel thisCard = thisStack.getCardModel(thisCardIndex);
             BackgroundModel thisBackground = thisStack.getBackground(thisCard.getBackgroundId());
 
-            // Skip unmarked cards if required per query
-            if (query.searchOnlyMarkedCards && !thisCard.isMarked()) {
+            if (!isCardSearchable(query, thisCard)) {
                 continue;
             }
 
@@ -83,5 +89,11 @@ public interface SearchIndexer {
             }
 
         } while (result != null);
+    }
+
+    default boolean isCardSearchable(SearchQuery query, CardModel cardModel) {
+        return (!query.searchOnlyMarkedCards || cardModel.isMarked()) &&
+                !cardModel.getKnownProperty(CardModel.PROP_DONTSEARCH).booleanValue()
+                && !cardModel.getBackgroundModel().getKnownProperty(BackgroundModel.PROP_DONTSEARCH).booleanValue();
     }
 }

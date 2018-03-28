@@ -743,6 +743,7 @@ Property     | Description
 -------------|----------------------
 `marked`     | A general use logical-valued "flag" indicating the card is somehow special useful to classify or limit search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
 `cantDelete` | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
+`dontSearch` | When true, indicates that fields appearing on this card (or any card sharing this background) will not be searched by the `find` command. 
 `showPict`   | A logical value specifying if the card or background picture is visible.
 
 ### HyperCard Properties

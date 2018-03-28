@@ -19,31 +19,31 @@
     "description": "When no `default-value` is provided, the `empty` string is assumed. The HyperTalk script stops executing until a user has made a choice. The text entered by the user will be put into the the `it` variable.",
     "codePrefix": "ask",
     "templates": [
-      "ask ${expression} with ${default-value}",
+      "ask ${expression} with ${defaultValue}",
       "ask ${expression}"
     ],
     "parameters": [
       {"parameter": "expression", "description": "A prompt string to display in the dialog."},
-      {"parameter": "default-value", "description": "The default text to be displayed in the edit field."}
+      {"parameter": "defaultValue", "description": "The default text to be displayed in the edit field."}
     ]
   },
 
   {
     "title": "Answer",
     "summary": "Displays a dialog box with up to three user-selectable buttons.",
-    "description": "When no button names are provided, `OK` and `Cancel` will be assumed by default.\n\nThe HyperTalk script stops executing until a user has made a choice. The name of the button chosen by the user will be put into the the `it` variable.",
+    "description": "When no button names are provided, a single button, `OK` will be assumed.\n\nThe HyperTalk script stops executing until a user has made a choice. The name of the button chosen by the user will be put into the the `it` variable.",
     "codePrefix": "answer",
     "templates": [
-      "answer ${expression} with ${button-1} or ${button-2} or ${button-3}",
-      "answer ${expression} with ${button-1} or ${button-2}",
-      "answer ${expression} with ${button-1}",
+      "answer ${expression} with ${button1} or ${button2} or ${button3}",
+      "answer ${expression} with ${button1} or ${button2}",
+      "answer ${expression} with ${button1}",
       "answer ${expression}"
     ],
     "parameters": [
       {"parameter": "expression", "description": "The prompt string to display in the dialog."},
-      {"parameter": "button-1", "description": "The name of the first (default) button."},
-      {"parameter": "button-2", "description": "The name of the second button."},
-      {"parameter": "button-3", "description": "The name of the third button."}
+      {"parameter": "button1", "description": "The name of the first (default) button."},
+      {"parameter": "button2", "description": "The name of the second button."},
+      {"parameter": "button3", "description": "The name of the third button."}
     ]
   },
 
@@ -71,11 +71,11 @@
     "description": "Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).",
     "codePrefix": "choose",
     "templates": [
-      "choose tool ${tool-expression}",
-      "choose ${tool-expression} tool"
+      "choose tool ${toolExpression}",
+      "choose ${toolExpression} tool"
     ],
     "parameters": [
-      {"parameter": "tool-expression", "description": "An expression referring to a tool either by name or number."}
+      {"parameter": "toolExpression", "description": "An expression referring to a tool either by name or number."}
     ],
     "examples": [
       {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
@@ -88,11 +88,11 @@
     "codePrefix": "click",
     "templates": [
       "click at ${location}",
-      "click at ${location} with ${key-expression}"
+      "click at ${location} with ${modifierKeys}"
     ],
     "parameters": [
       {"parameter": "location", "description": "A point expression (like `10,20`) where the mouse should be clicked."},
-      {"parameter": "key-expression", "description": "A list expression containing one or more modifier keys (`shiftKey`, `commandKey`, or `optionKey`)"}
+      {"parameter": "modifierKeys", "description": "A list expression containing one or more modifier keys (`shiftKey`, `commandKey`, or `optionKey`)"}
     ],
     "examples": [
       {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
@@ -220,26 +220,115 @@
     "examples": [
       {"code": "do card field \"My Script\""}
     ]
+  },
+
+  {
+    "title": "Do Menu",
+    "summary": "Selects a menu item from the menu bar.",
+    "description": "If two menus in the menu bar contain a menu item of the same name the first menu item will be assumed.",
+    "codePrefix": "domemu",
+    "templates": [
+      "do ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The name of a menu item to be selected."}
+    ],
+    "examples": [
+      {"code": "domenu \"Card Info...\""}
+    ]
+  },
+
+  {
+    "title": "Drag",
+    "summary": "Clicks and drags the mouse.",
+    "codePrefix": "drag",
+    "templates": [
+      "drag from ${source} to ${destination} with ${modifierKeys}",
+      "drag from ${source} to ${destination}"
+    ],
+    "parameters": [
+      {"parameter": "source", "description": "An expression that evaluates to a point relative to the top-left corner of the card where the mouse should begin being dragged from."},
+      {"parameter": "destination", "description": "An expression that evaluates to a point relative to the top-left corner of the card where the mouse should be dragged to."},
+      {"parameter": "modiferKeys", "description": "One or modifier keys to be held down while dragging, one or more of `shiftKey`, `commandKey` or `optionKey`."}
+    ],
+    "examples": [
+      {"description": "Draws a diagonal line on the the card", "code": "choose brush tool\ndrag from 10,10 to 100,150 with shiftKey"}
+    ]
+  },
+
+  {
+    "title": "Enable",
+    "summary": "Enables a menu, menu item, button or field.",
+    "codePrefix": "enable",
+    "templates": [
+      "enable ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the menu, menu item, field, or button to enable."}
+    ],
+    "examples": [
+      {"code": "enable card button 1"}
+    ]
+  },
+
+  {
+    "title": "Find",
+    "summary": "Finds text in a field in the stack.",
+    "description": "`word`: Finds whole words in the searchable text. Search term should not contain any whitespace (if it is expected to match any text). Only whole words will match; substrings contained within a word will not.\n\n`chars`: Finds a substring that occurs entirely within the bounds of a word (does not cross word boundaries). Search term should not include whitespace (if it is expected to match anything).\n\n`whole`: Finds a substring that starts at the beginning of a word. Search term may contain whitespace, and search results may cross word boundaries (but will always start at a word boundary).\n\n`string`: Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found-text may cross word boundaries.",
+    "codePrefix": "find",
+    "templates": [
+      "find ${text}",
+      "find ${strategy} ${text}",
+      "find ${strategy} ${text} of ${fieldExpression}",
+      "find ${strategy} ${text} of marked cards",
+      "find ${strategy} ${text} of ${fieldExpression} of marked cards"
+    ],
+    "parameters": [
+      {"parameter": "text", "description": "The text that should be searched for."},
+      {"parameter": "strategy", "description": "Optionally one of `word`, `chars`, `whole`, or `string`. When no `strategy` is specified, `whole` is assumed."},
+      {"parameter": "fieldExpression", "description": "An expression referring to a field."}
+    ],
+    "examples": [
+      {"description": "Finds words beginning with `Hyper` appearing in a background field named `Card`", "code": "find \"Hyper\" in background field \"Card\""}
+    ]
+  },
+
+  {
+    "title": "Get",
+    "summary": "Gets the value of a property (or evaluates an expression) and places the value into the implicit variable `it`.",
+    "codePrefix": "get",
+    "templates": [
+      "get ${property}"
+    ],
+    "parameters": [
+      {"parameter": "property", "description": "An expression, or property of a part, card, background, stack or HyperCard"}
+    ],
+    "examples": [
+      {"code": "get the name of this card\nput it  -- places the name of this card into the message box"}
+    ]
+  },
+
+  {
+    "title": "Go",
+    "summary": "Navigates to a card, optionally applying a transition animation.",
+    "codePrefix": "go",
+    "templates": [
+      "go to ${destination}",
+      "go to ${destination} with visual effect ${effect}",
+      "go back",
+      "go back with visual effect ${effect}"
+    ],
+    "parameters": [
+      {"parameter": "destination", "description": "An expression referring to a card or background."},
+      {"parameter": "effect", "description": "An expression referring to a visual effect (like `dissolve` or `iris open very slowly`)."}
+    ],
+    "examples": [
+      {"code": "go to the second card of the last background with visual effect barn door open"}
+    ]
   }
 
 ]
 
-//| 'domenu' expression                                                                                               # doMenuCmdStmt
-//| 'drag' 'from' expression 'to' expression                                                                          # dragCmdStmt
-//| 'drag' 'from' expression 'to' expression 'with' argumentList                                                      # dragWithKeyCmdStmt
-//| 'enable' expression                                                                                               # enableExpStmnt
-//| 'exit' handlerName                                                                                                # exitCmdStmt
-//| 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
-//| 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
-//| find expression                                                                                                   # findAnywhere
-//| find expression of expression                                                                                     # findField
-//| find expression of 'marked' cards                                                                                 # findMarkedCards
-//| find expression of expression of 'marked' cards                                                                   # findFieldMarkedCards
-//| 'get' expression                                                                                                  # getCmdStmnt
-//| 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
-//| 'go' 'to'? expression                                                                                             # goCmdStmnt
-//| 'go' 'back'                                                                                                       # goBackCmdStmt
-//| 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
 //| 'hide' expression                                                                                                 # hideCmdStmnt
 //| 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
 //| 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
