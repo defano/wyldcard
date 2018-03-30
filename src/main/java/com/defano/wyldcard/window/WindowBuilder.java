@@ -124,6 +124,10 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
     @RunOnDispatch
     public WindowBuilder ownsMenubar() {
+        if (window instanceof HyperCardDialog) {
+            throw new IllegalStateException("This type of window cannot own the menubar.");
+        }
+
         this.window.setOwnsMenubar(true);
         return this;
     }

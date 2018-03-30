@@ -126,6 +126,8 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker {
                 return TokenTypes.LITERAL_BOOLEAN;
 
             case ",":
+            case "(":
+            case ")":
                 return TokenTypes.SEPARATOR;
 
             case "-":
@@ -165,8 +167,6 @@ public class HyperTalkTokenMaker extends AbstractTokenMaker {
             case "≠":
             case "and":
             case "or":
-            case "(":
-            case ")":
                 return TokenTypes.OPERATOR;
         }
 

@@ -43,11 +43,11 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         scriptField.setSyntaxEditingStyle(LANGUAGE_KEY);
         scriptField.setCodeFoldingEnabled(true);
         scriptField.addParser(new HyperTalkSyntaxParser(parserObserver));
-        scriptField.setParserDelay(0);
+        scriptField.setParserDelay(50);
         scriptField.setTabSize(2);
         scriptField.setBracketMatchingEnabled(true);
         scriptField.setAnimateBracketMatching(true);
-        scriptField.setShowMatchedBracketPopup(true);
+        scriptField.setPaintTabLines(true);
 
         // Install custom home/end key behavior
         scriptField.addKeyListener(new KeyListenable() {

@@ -426,6 +426,117 @@
     "examples": [
       {"description": "play \"Mary Had a Little Lamb\" on the harpsichord", "code": "play harpsichord \"be a g a b b b r a a a r b d5 d r b4 a g a b b b b a a b a g\""}
     ]
+  },
+
+  {
+    "title": "Hide",
+    "summary": "Hides a button or field part",
+    "codePrefix": "hide",
+    "templates": [
+      "hide ${partFactor}"
+    ],
+    "parameters": [
+      {"parameter": "partFactor", "description": "An expression referring to the part to be hidden."}
+    ],
+    "examples": [
+      {"code": "hide any card button"}
+    ]
+  },
+
+  {
+    "title": "Lock Screen",
+    "summary": "Prevents any changes made to the card from being visible to the user until the screen is unlocked.",
+    "description": "Note that the screen automatically \"unlocks\" itself at idle time (as soon all scripts have completed executing).",
+    "codePrefix": "lock",
+    "templates": [
+      "lock screen"
+    ]
+  },
+
+  {
+    "title": "Multiply",
+    "summary": "Multiplies a container by a numerical value.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "multiply",
+    "templates": [
+      "multiply ${container} by ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "container", "description": "A container to which the value should be added."},
+      {"parameter": "expression", "description": "A numerical expression to be added to the container."}
+    ]
+  },
+
+  {
+    "title": "Next Repeat",
+    "summary": "Transfers program control to the top of the currently executing `repeat` statement.",
+    "description": "At any point in the loop, the `next repeat` command may be used to terminate the current iteration (that is, skip all subsequent statements) and continue looping. Similarly, the `exit repeat` command can be used to terminate the loop entirely, returning control to the next statement in the handler after `end repeat`.",
+    "codePrefix": "next",
+    "templates": [
+      "next repeat"
+    ]
+  },
+
+  {
+    "title": "Open File",
+    "summary": "Opens a text file for reading and/or writing by script.",
+    "codePrefix": "open",
+    "templates": [
+      "open file ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the name and/or path of the file to be opened."}
+    ],
+    "examples": [
+      {"description": "Opens a file in the current working directory", "code": "open file finances.txt"},
+      {"description": "Opens a file elsewhere on the file system", "code": "open file \"/Users/matt/desktop/report.txt\""}
+    ]
+  },
+
+  {
+    "title": "Pass",
+    "summary": "Terminates execution of the current handler and forwards the message being handled to the next part in the message passing order.",
+    "codePrefix": "pass",
+    "templates": [
+      "pass ${handlerName}"
+    ],
+    "parameters": [
+      {"parameter": "handlerName", "description": "The name of the current handler (i.e., `mouseUp`). Any other name results in an error."}
+    ],
+    "examples": [
+      {"description": "If the shift key is held down when clicking this part, then the next part in the message passing order will receive `mouseUp`", "code": "on mouseUp\n\tif the shiftKey is down then pass mouseUp\nend mouseUp"}
+    ]
+  },
+
+  {
+    "title": "Play",
+    "summary": "Plays a sound effect; optionally as a sequence of musical notes.",
+    "description": "Each musical note is written in the format `<name>[<octave>][<accidental>][<duration>]`, where:\n\n`<name>` is a single character representing the pitch; one of `c`, `d`, `e`, `f`, `g`, `a`, `b` or `r` (for a rest note).\n\n`<octave>` is a single-digit integer representing the note's octave; higher numbers are higher pitched. One of `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, or `8`.\n\n`<accidental>` is a half-note increase or decrease in pitch; of one `b` (flat, decreased pitch) or `#` (sharp, increased pitch).\n\n`<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).\n\nWhen not explicitly specified, each note \"inherits\" its duration and octave from the previous note played. The first note in the musical sequence is assumed to be a 4th-octave quarter note (if not explicitly noted). For example, in the musical sequence \"g ce5 d\", the first note (g) is played as a quarter note in the 4th octave, but the third note (d) is played as an eighth note in the 5th octave.",
+    "codePrefix": "play",
+    "templates": [
+      "play ${sound}",
+      "play ${sound} ${notes}",
+      "play ${sound} tempo ${tempo} ${notes}"
+
+    ],
+    "parameters": [
+      {"parameter": "sound", "description": "An expression evaluating to the name of a WyldCard sound effect. One of `harpsichord`, `flute` or `boing`."},
+      {"parameter": "tempo", "description": "An expression providing the rate at which notes are played, measured in quarter notes per minute. When not specified, a tempo of 120 is assumed."},
+      {"parameter": "notes", "description": "An expression in which each word is interpreted as a musical note."}
+    ],
+    "examples": [
+      {"description": "play \"Mary Had a Little Lamb\" on the harpsichord", "code": "play harpsichord \"be a g a b b b r a a a r b d5 d r b4 a g a b b b b a a b a g\""}
+    ]
+  },
+
+  {
+    "title": "Pop Card",
+    "summary": "Navigates to the last card pushed onto the backstack.",
+    "description": "",
+    "codePrefix": "pop",
+    "templates": [
+      "pop card"
+    ]
   }
 
 ]

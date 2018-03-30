@@ -5,17 +5,22 @@ import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.editor.EditorStatus;
+import com.defano.wyldcard.editor.HyperTalkTextEditor;
+import com.defano.wyldcard.editor.SyntaxParserObserver;
 import com.defano.wyldcard.fonts.FontUtils;
+import com.defano.wyldcard.menu.script.ScriptEditorMenuBar;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.util.HandlerComboBox;
-import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.editor.HyperTalkTextEditor;
-import com.defano.wyldcard.editor.SyntaxParserObserver;
+import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
+import org.fife.ui.rtextarea.SearchContext;
+import org.fife.ui.rtextarea.SearchEngine;
+import org.fife.ui.rtextarea.SearchResult;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -24,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
+public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
 
     private PartModel model;
     private Script compiledScript;
@@ -38,6 +43,8 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
     private EditorStatus status;
     private JPanel textArea;
 
+    private final SearchContext context = new SearchContext();
+
     public ScriptEditor() {
 
         editor = new HyperTalkTextEditor(this);
@@ -45,11 +52,7 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
         handlersMenu.setDelegate(this);
         functionsMenu.setDelegate(this);
 
-        saveButton.addActionListener(e -> {
-            updateProperties();
-            dispose();
-        });
-
+        saveButton.addActionListener(e -> save());
         editor.getScriptField().addCaretListener(e -> updateActiveHandler());
         editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
 
@@ -60,6 +63,13 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
         ));
 
         textArea.add(editor);
+
+        // Default search context
+        context.setMarkAll(false);
+        context.setWholeWord(false);
+        context.setMatchCase(false);
+        context.setRegularExpression(false);
+        context.setSearchForward(true);
     }
 
     @RunOnDispatch
@@ -83,6 +93,11 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
     }
 
     @Override
+    public JMenuBar getMenubar() {
+        return new ScriptEditorMenuBar(this);
+    }
+
+    @Override
     @RunOnDispatch
     public void bindModel(Object properties) {
         if (properties instanceof PartModel) {
@@ -99,8 +114,9 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
         }
     }
 
-    private void updateProperties() {
+    public void save() {
         model.setKnownProperty("script", new Value(editor.getScriptField().getText()));
+        dispose();
     }
 
     @Override
@@ -156,6 +172,76 @@ public class ScriptEditor extends HyperCardDialog implements HandlerComboBox.Han
                 jumpToLine(lineNumber);
             }
         }
+    }
+
+    public HyperTalkTextEditor getEditor() {
+        return editor;
+    }
+
+    public SearchContext getContext() {
+        return context;
+    }
+
+    public void find(String text, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
+        RSyntaxTextArea textEditor = editor.getScriptField();
+
+        provisionSearch(wholeWord, caseSensitive);
+        context.setSearchFor(text);
+
+        SearchResult result = SearchEngine.find(textEditor, context);
+        if (!result.wasFound() && wrap) {
+            textEditor.setCaretPosition(0);
+            SearchEngine.find(textEditor, context);
+        }
+    }
+
+    public void replaceAll(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive) {
+        provisionSearch(wholeWord, caseSensitive);
+        context.setSearchFor(findText);
+        context.setReplaceWith(replaceText);
+
+        SearchEngine.replaceAll(editor.getScriptField(), context);
+    }
+
+    public void replace(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
+        provisionSearch(wholeWord, caseSensitive);
+        context.setSearchFor(findText);
+        context.setReplaceWith(replaceText);
+
+        SearchEngine.replace(editor.getScriptField(), context);
+        find(findText, wholeWord, caseSensitive, wrap);
+    }
+
+    public void replace() {
+        replace(context.getSearchFor(), context.getReplaceWith(), null, null, true);
+    }
+
+    private void provisionSearch(Boolean wholeWord, Boolean caseSensitive) {
+        if (wholeWord != null) {
+            context.setWholeWord(wholeWord);
+        }
+
+        if (caseSensitive != null) {
+            context.setMatchCase(caseSensitive);
+        }
+
+        context.setMarkAll(false);
+        context.setRegularExpression(false);
+        context.setSearchForward(true);
+    }
+
+    public void makeSelectionFindText() {
+        if (editor.getScriptField().getSelectedText().length() > 0) {
+            context.setSearchFor(editor.getScriptField().getSelectedText());
+        }
+    }
+
+    public void find() {
+        find(context.getSearchFor(), null, null, true);
+    }
+
+    public void findSelection() {
+        find(editor.getScriptField().getSelectedText(), null, null, true);
     }
 
     @RunOnDispatch

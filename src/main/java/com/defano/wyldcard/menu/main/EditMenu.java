@@ -1,6 +1,8 @@
-package com.defano.wyldcard.menu;
+package com.defano.wyldcard.menu.main;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.menu.HyperCardMenu;
+import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.parts.clipboard.CardActionListener;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowBuilder;

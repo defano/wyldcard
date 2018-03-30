@@ -1,7 +1,7 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menu.HyperCardMenuBar;
+import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
 
@@ -42,6 +42,10 @@ public interface HyperCardWindow<WindowType extends Window> {
     boolean ownsMenubar();
 
     void setOwnsMenubar(boolean ownsMenubar);
+
+    default JMenuBar getMenubar() {
+        return HyperCardMenuBar.getInstance();
+    }
 
     Observable<Boolean> getWindowVisibleProvider();
 
@@ -86,6 +90,17 @@ public interface HyperCardWindow<WindowType extends Window> {
         });
     }
 
+    @RunOnDispatch
+    default String getTitle() {
+        if (getWindow() instanceof JDialog) {
+            return ((JDialog) getWindow()).getTitle();
+        } else if (getWindow() instanceof JFrame) {
+            return ((JFrame) getWindow()).getTitle();
+        }
+
+        throw new IllegalStateException("Bug! Unimplemented window type.");
+    }
+
     default void setAllowResizing(boolean resizable) {
         SwingUtilities.invokeLater(() -> {
             if (getWindow() instanceof JFrame) {
@@ -102,7 +117,7 @@ public interface HyperCardWindow<WindowType extends Window> {
             if (getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) getWindow();
                 if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
-                    frame.setJMenuBar(HyperCardMenuBar.getInstance());
+                    frame.setJMenuBar(getMenubar());
                 } else {
                     frame.setJMenuBar(null);
                 }

@@ -355,9 +355,9 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
             setScriptEditorCaretPosition(caretPosition);
             WindowBuilder.make(new ScriptEditor())
                     .withTitle("Script of " + getName())
+                    .ownsMenubar()
                     .withModel(this)
                     .resizeable(true)
-                    .asModal()
                     .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .build();
         });

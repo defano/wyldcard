@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.menu.HyperCardMenuBar;
+import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Countable;

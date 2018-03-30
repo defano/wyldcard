@@ -1,5 +1,7 @@
-package com.defano.wyldcard.menu;
+package com.defano.wyldcard.menu.main;
 
+import com.defano.wyldcard.menu.HyperCardMenu;
+import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ToolsContext;

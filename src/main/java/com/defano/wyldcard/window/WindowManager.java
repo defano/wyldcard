@@ -8,6 +8,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class WindowManager {
 
@@ -155,6 +156,14 @@ public class WindowManager {
                 getBrushesPalette(),
                 getColorPalette()
         };
+    }
+
+    public void getWindows() {
+        for (Window dis : Window.getWindows()) {
+            if (dis instanceof HyperCardWindow) {
+                System.err.println(((HyperCardWindow) dis).getTitle());
+            }
+        }
     }
 
     public void setLookAndFeel(String lafClassName) {
