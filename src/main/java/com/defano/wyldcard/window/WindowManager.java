@@ -56,6 +56,7 @@ public class WindowManager {
 
         WindowBuilder.make(paintToolsPalette)
                 .asPalette()
+                .withTitle("Tools")
                 .dockTo(stackWindow)
                 .withLocationLeftOf(stackFrame)
                 .build();
@@ -86,6 +87,7 @@ public class WindowManager {
 
         WindowBuilder.make(patternsPalette)
                 .asPalette()
+                .withTitle("Patterns")
                 .dockTo(stackWindow)
                 .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
