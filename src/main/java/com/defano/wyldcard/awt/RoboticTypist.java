@@ -1,8 +1,9 @@
 package com.defano.wyldcard.awt;
 
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -131,11 +132,9 @@ public class RoboticTypist {
                 robot.keyRelease(KeyEvent.VK_HOME);
             }
 
-            try {
-                robot.waitForIdle();
-            } catch (IllegalThreadStateException e) {
-                // Nothing to do; thrown if executing on dispatch thread
-            }
+            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                // Wait for queue to flush; more reliable then robot.waitForIdle()
+            });
         }
     }
 
