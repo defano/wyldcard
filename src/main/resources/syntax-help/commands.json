@@ -621,7 +621,9 @@
       {"parameter": "fieldExpression", "description": "An expression that refers to a field."}
     ],
     "examples": [
-      {"description": "Place the entire contents of a file into `it`.", "code": "open file \"report.txt\"\nread from file \"report.txt\""}
+      {"description": "Activates the button tool and highlights the first card button.", "code": "select card button 1"},
+      {"description": "Positions the cursor at the start of the third line.", "code": "select before text of fld 1"},
+      {"description": "Replaces the first word with 'Uno'.", "code": "select word of fld 1\ntype \"Uno\""}
     ]
   }
 

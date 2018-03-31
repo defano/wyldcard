@@ -16,25 +16,6 @@
         </constraints>
         <properties/>
       </component>
-      <component id="5a8ef" class="javax.swing.JLabel" binding="charCount">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <font/>
-          <text value="Line 0, column 0"/>
-        </properties>
-      </component>
-      <component id="f0958" class="javax.swing.JButton" binding="saveButton">
-        <constraints>
-          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <hideActionText value="false"/>
-          <opaque value="true"/>
-          <text value="Save"/>
-        </properties>
-      </component>
       <grid id="79314" binding="textArea" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -55,12 +36,31 @@
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
+        <properties/>
       </component>
       <hspacer id="d9053">
         <constraints>
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
+      <component id="5a8ef" class="javax.swing.JLabel" binding="charCount">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font/>
+          <text value="Line 0, column 0"/>
+        </properties>
+      </component>
+      <component id="d6d4c" class="javax.swing.JLabel" binding="helpIcon">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <icon value="icons/help.png"/>
+          <text value=""/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

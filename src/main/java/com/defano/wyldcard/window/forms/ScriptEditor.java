@@ -38,12 +38,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private final HyperTalkTextEditor editor;
 
     private JPanel scriptEditor;
-    private JButton saveButton;
     private HandlerComboBox handlersMenu;
     private HandlerComboBox functionsMenu;
     private JLabel charCount;
     private EditorStatus status;
     private JPanel textArea;
+    private JLabel helpIcon;
 
     private final SearchContext context = new SearchContext();
 
@@ -51,10 +51,10 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
         editor = new HyperTalkTextEditor(this);
 
+        $$$setupUI$$$();
         handlersMenu.setDelegate(this);
         functionsMenu.setDelegate(this);
 
-        saveButton.addActionListener(e -> save());
         editor.getScriptField().addCaretListener(e -> updateActiveHandler());
         editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
 
@@ -65,11 +65,20 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         ));
 
         textArea.add(editor);
-    }
+        helpIcon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                editor.showAutoComplete();
+            }
+        });
 
-    @Override
-    public JButton getDefaultButton() {
-        return saveButton;
+        // Prompt to save when closing window
+        getWindow().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                ScriptEditor.this.close();
+            }
+        });
     }
 
     @Override
@@ -95,27 +104,85 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             editor.getScriptField().forceReparsing(0);
 
             SwingUtilities.invokeLater(() -> editor.getScriptField().requestFocus());
+            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
         }
     }
 
     @RunOnDispatch
-    public void save() {
-        model.setKnownProperty(PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
-        dispose();
+    public boolean save() {
+
+        // Can't save if syntax error present
+        if (status.isShowingError()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "This script can't be saved because it has syntax errors.",
+                    "Close",
+                    JOptionPane.ERROR_MESSAGE);
+
+            return false;
+
+        }
+
+        // No syntax error; okay to save
+        else {
+            model.setKnownProperty(PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
+            return true;
+        }
+    }
+
+    @RunOnDispatch
+    public void close() {
+
+        // User modified script but syntax error is present
+        if (isDirty() && status.isShowingError()) {
+            int dialogResult = JOptionPane.showConfirmDialog(
+                    this,
+                    "This script can't be saved because it has syntax errors.\nClose without saving?",
+                    "Close",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                dispose();
+            }
+        }
+
+        // User modified script cleanly
+        else if (isDirty()) {
+            int dialogResult = JOptionPane.showConfirmDialog(
+                    this,
+                    "Save changes to this script?",
+                    "Close",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                if (save()) {
+                    dispose();
+                }
+            } else if (dialogResult == JOptionPane.NO_OPTION) {
+                dispose();
+            }
+        }
+
+        // User didn't make any changes
+        else {
+            dispose();
+        }
     }
 
     @RunOnDispatch
     public void revertToSaved() {
-        int dialogResult = JOptionPane.showConfirmDialog(
-                this,
-                "Discard changes to this script?",
-                "Save",
-                JOptionPane.YES_NO_OPTION);
+        if (isDirty()) {
+            int dialogResult = JOptionPane.showConfirmDialog(
+                    this,
+                    "Discard changes to this script?",
+                    "Revert",
+                    JOptionPane.YES_NO_OPTION);
 
-        if (dialogResult == JOptionPane.YES_OPTION) {
-            editor.getScriptField().setText(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                editor.getScriptField().setText(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+            }
         }
     }
 
@@ -283,6 +350,10 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         editor.getScriptField().forceReparsing(editor.getScriptParser());
     }
 
+    public boolean isDirty() {
+        return !editor.getScriptField().getText().equals(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+    }
+
     @RunOnDispatch
     private void moveCaretToPosition(int position) {
         try {
@@ -419,11 +490,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
-    {
-// GUI initializer generated by IntelliJ IDEA GUI Designer
-// >>> IMPORTANT!! <<<
-// DO NOT EDIT OR ADD ANY CODE HERE!
-        $$$setupUI$$$();
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 
     /**
@@ -439,16 +507,6 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         scriptEditor.setPreferredSize(new Dimension(640, 480));
         functionsMenu = new HandlerComboBox();
         scriptEditor.add(functionsMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        charCount = new JLabel();
-        Font charCountFont = this.$$$getFont$$$(null, -1, -1, charCount.getFont());
-        if (charCountFont != null) charCount.setFont(charCountFont);
-        charCount.setText("Line 0, column 0");
-        scriptEditor.add(charCount, new GridConstraints(0, 2, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        saveButton = new JButton();
-        saveButton.setHideActionText(false);
-        saveButton.setOpaque(true);
-        saveButton.setText("Save");
-        scriptEditor.add(saveButton, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         textArea = new JPanel();
         textArea.setLayout(new BorderLayout(0, 0));
         scriptEditor.add(textArea, new GridConstraints(1, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -459,6 +517,15 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         scriptEditor.add(status, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         scriptEditor.add(spacer1, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        charCount = new JLabel();
+        Font charCountFont = this.$$$getFont$$$(null, -1, -1, charCount.getFont());
+        if (charCountFont != null) charCount.setFont(charCountFont);
+        charCount.setText("Line 0, column 0");
+        scriptEditor.add(charCount, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        helpIcon = new JLabel();
+        helpIcon.setIcon(new ImageIcon(getClass().getResource("/icons/help.png")));
+        helpIcon.setText("");
+        scriptEditor.add(helpIcon, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

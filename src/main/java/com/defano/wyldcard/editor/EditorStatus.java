@@ -35,4 +35,8 @@ public class EditorStatus extends JLabel {
         setText(errorMessage);
         setIcon(null);
     }
+
+    public boolean isShowingError() {
+        return !getText().isEmpty();
+    }
 }

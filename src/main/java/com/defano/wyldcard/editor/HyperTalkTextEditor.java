@@ -25,6 +25,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     private final RSyntaxTextArea scriptField;
     private final HyperTalkSyntaxParser scriptParser;
+    private final AutoCompletion ac;
 
     public HyperTalkTextEditor(SyntaxParserObserver parserObserver) {
         super(new RSyntaxTextArea());
@@ -78,7 +79,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         }
 
         // Install the completion provider
-        AutoCompletion ac = new AutoCompletion(COMPLETION_PROVIDER);
+        ac = new AutoCompletion(COMPLETION_PROVIDER);
         ac.setTriggerKey(KeyStroke.getKeyStroke(' ', InputEvent.CTRL_MASK));
         ac.setAutoCompleteSingleChoices(false);
         ac.setParameterAssistanceEnabled(true);
@@ -94,5 +95,9 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     public Parser getScriptParser() {
         return scriptParser;
+    }
+
+    public void showAutoComplete() {
+        ac.doCompletion();
     }
 }

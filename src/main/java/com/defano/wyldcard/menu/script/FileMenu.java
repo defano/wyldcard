@@ -14,7 +14,7 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Close Script")
                 .withShortcut('W')
-                .withAction(e -> editor.dispose())
+                .withAction(e -> editor.close())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
