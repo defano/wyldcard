@@ -25,7 +25,7 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Revert to Saved")
-                .disabled()
+                .withAction(e -> editor.revertToSaved())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

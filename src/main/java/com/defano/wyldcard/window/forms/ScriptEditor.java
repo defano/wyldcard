@@ -78,7 +78,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     @Override
-    public JMenuBar getMenubar() {
+    public JMenuBar getWyldCardMenuBar() {
         return new ScriptEditorMenuBar(this);
     }
 
@@ -100,9 +100,23 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     public void save() {
-        model.setKnownProperty("script", new Value(editor.getScriptField().getText()));
+        model.setKnownProperty(PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
         dispose();
+    }
+
+    @RunOnDispatch
+    public void revertToSaved() {
+        int dialogResult = JOptionPane.showConfirmDialog(
+                this,
+                "Discard changes to this script?",
+                "Save",
+                JOptionPane.YES_NO_OPTION);
+
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            editor.getScriptField().setText(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+        }
     }
 
     @Override
