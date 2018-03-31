@@ -3,7 +3,6 @@ package com.defano.wyldcard.window;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.sun.deploy.uitoolkit.UIToolkit;
 import io.reactivex.Observable;
 
 import javax.swing.*;
@@ -40,11 +39,11 @@ public interface HyperCardWindow<WindowType extends Window> {
      */
     WindowType getWindow();
 
-    boolean ownsMenubar();
+    boolean ownsMenuBar();
 
-    void setOwnsMenubar(boolean ownsMenubar);
+    void setOwnsMenuBar(boolean ownsMenuBar);
 
-    default JMenuBar getMenubar() {
+    default JMenuBar getWyldCardMenuBar() {
         return HyperCardMenuBar.getInstance();
     }
 
@@ -129,8 +128,8 @@ public interface HyperCardWindow<WindowType extends Window> {
         SwingUtilities.invokeLater(() -> {
             if (getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) getWindow();
-                if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
-                    frame.setJMenuBar(getMenubar());
+                if (ownsMenuBar() || WindowManager.getInstance().isMacOs()) {
+                    frame.setJMenuBar(getWyldCardMenuBar());
                 } else {
                     frame.setJMenuBar(null);
                 }

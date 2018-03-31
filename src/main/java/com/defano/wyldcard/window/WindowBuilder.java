@@ -133,7 +133,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
             throw new IllegalStateException("This type of window cannot own the menubar.");
         }
 
-        this.window.setOwnsMenubar(true);
+        this.window.setOwnsMenuBar(true);
         return this;
     }
 
