@@ -70,13 +70,13 @@ public class ScriptMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Comment")
                 .withShortcut('-')
-                .disabled()
+                .withAction(e -> editor.comment())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Uncomment")
                 .withShortcut('=')
-                .disabled()
+                .withAction(e -> editor.uncomment())
                 .build(this);
 
         addSeparator();
@@ -84,7 +84,7 @@ public class ScriptMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Check Syntax")
                 .withShortcut('K')
-                .disabled()
+                .withAction(e -> editor.checkSyntax())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

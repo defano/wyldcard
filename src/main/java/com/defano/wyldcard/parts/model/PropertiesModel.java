@@ -303,7 +303,7 @@ public class PropertiesModel {
     }
 
     /**
-     * Gets the value of a known property; throws a RuntimeException if the property is not defined.
+     * Gets the value of a known property; returns a new value if the property doesn't exist.
      * @param property The name of the property to get (or one of its aliases)
      * @return The value of the property
      */
@@ -314,7 +314,8 @@ public class PropertiesModel {
         try {
             return getProperty(property);
         } catch (NoSuchPropertyException e) {
-            throw new RuntimeException("Bug! Can't get known property " + property + " because it isn't defined.", e);
+            e.printStackTrace();
+            return new Value();
         }
     }
 

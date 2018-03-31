@@ -532,33 +532,101 @@
   {
     "title": "Pop Card",
     "summary": "Navigates to the last card pushed onto the backstack.",
-    "description": "",
     "codePrefix": "pop",
     "templates": [
       "pop card"
+    ]
+  },
+
+  {
+    "title": "Push Card",
+    "summary": "Pushes a card onto the backstack.",
+    "codePrefix": "push",
+    "templates": [
+      "push card",
+      "push ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression describing a card to be pushed."}
+    ]
+  },
+
+  {
+    "title": "Put",
+    "summary": "Puts a value into a container; assigns a value to a variable, part or property.",
+    "description": "When no container is specified, the message box is assumed.",
+    "codePrefix": "put",
+    "templates": [
+      "put ${expression} ${preposition} ${container}",
+      "put ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The value to be placed into the container."},
+      {"parameter": "preposition", "description": "One of `into` (replaces the container's value), `before` (prepends the container with the expression), or `after` (suffixes the container with the value)."},
+      {"parameter": "container", "description": "A container expression, or a chunk of a container expression, that should be assigned the value."}
+    ],
+    "examples": [
+      {"description": "Puts a value into a variable.", "code": "put the first word of card field \"Name\" into firstName"},
+      {"description": "Puts a value into a chunk of a property (not legal in HyperCard).", "code": "put 10 into item 1 of the loc of me"},
+      {"description": "Displays a value in the message window.", "code": "put \"Hello World!\""}
+    ]
+  },
+
+  {
+    "title": "Read",
+    "summary": "Reads text from a file on disk.",
+    "description": "Reads text from a file that was previously opened with the open file command into the variable `it`.\n\n`read from file {filename}`: Reads the entire file identified by `{filename}` into memory).\n\n`read from file {filename} for {count}`: Reads `{count}` characters from the current file position\n\n`read from file {filename} at {position} for {count}`: Reads `{count}` characters from the file starting at `{position}`\n\n`read file {filename} until {pattern}`: Reads the file until the given case-insensitive <pattern> is reached.",
+    "codePrefix": "read",
+    "templates": [
+      "read from file ${file}",
+      "read from file ${file} for ${count}",
+      "read from file ${file} at ${position} for ${count}",
+      "read from file ${file} until ${pattern}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The value to be placed into the container."},
+      {"parameter": "preposition", "description": "One of `into` (replaces the container's value), `before` (prepends the container with the expression), or `after` (suffixes the container with the value)."},
+      {"parameter": "container", "description": "A container expression, or a chunk of a container expression, that should be assigned the value."}
+    ],
+    "examples": [
+      {"description": "Place the entire contents of a file into `it`.", "code": "open file \"report.txt\"\nread from file \"report.txt\""}
+    ]
+  },
+
+  {
+    "title": "Reset",
+    "summary": "Resets the state of a system to its default state.",
+    "description": "`reset menubar` resets the state of the menubar to its default state; `reset paint` resets painting attributes (like line size, pattern, draw multiple, etc.) to their default value.",
+    "codePrefix": "reset",
+    "templates": [
+      "reset menubar",
+      "reset paint"
+    ]
+  },
+
+  {
+    "title": "Select",
+    "summary": "Selects a part; selects text in a field; or positions the cursor in a field.",
+    "codePrefix": "select",
+    "templates": [
+      "select ${fieldExpression}",
+      "select empty",
+      "select text of ${fieldExpression}",
+      "select before text of ${fieldExpression}",
+      "select after text of ${fieldExpression}",
+      "select before ${fieldExpression}",
+      "select after ${fieldExpression}"
+    ],
+    "parameters": [
+      {"parameter": "fieldExpression", "description": "An expression that refers to a field."}
+    ],
+    "examples": [
+      {"description": "Place the entire contents of a file into `it`.", "code": "open file \"report.txt\"\nread from file \"report.txt\""}
     ]
   }
 
 ]
 
-//| 'pop' card                                                                                                        # popCardCmdStmt
-//| 'push' card                                                                                                       # pushCardCmdStmt
-//| 'push' expression                                                                                                 # pushDestCmdStmt
-//| 'put' expression                                                                                                  # putIntoCmd
-//| 'put' expression preposition expression                                                                           # putPrepositionCmd
-//| 'read' 'from' 'file' expression                                                                                   # readFileCmd
-//| 'read' 'from' 'file' expression 'for' expression                                                                  # readFileForCmd
-//| 'read' 'from' 'file' expression 'at' expression 'for' expression                                                  # readFileAtCmd
-//| 'read' 'from' 'file' expression 'until' expression                                                                # readFileUntil
-//| 'reset' 'the'? 'menubar'                                                                                          # resetMenuCmdStmt
-//| 'reset' 'paint'                                                                                                   # resetPaintCmdStmt
-//| 'select' 'empty'                                                                                                  # selectEmptyCmd
-//| 'select' 'text' of expression                                                                                     # selectTextCmd
-//| 'select' 'before' 'text' of expression                                                                            # selectBeforeCmd
-//| 'select' 'after' 'text' of expression                                                                             # selectAfterCmd
-//| 'select' expression                                                                                               # selectChunkCmd
-//| 'select' 'before' expression                                                                                      # selectBeforeChunkCmd
-//| 'select' 'after' expression                                                                                       # selectAfterChunkCmd
 //| 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
 //| 'send' expression 'to' expression                                                                                 # sendCmdStmnt
 //| 'show' expression                                                                                                 # showCmdStmnt

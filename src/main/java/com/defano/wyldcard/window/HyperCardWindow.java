@@ -3,6 +3,7 @@ package com.defano.wyldcard.window;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
+import com.sun.deploy.uitoolkit.UIToolkit;
 import io.reactivex.Observable;
 
 import javax.swing.*;
@@ -60,6 +61,18 @@ public interface HyperCardWindow<WindowType extends Window> {
         return null;
     }
 
+    @RunOnDispatch
+    default void positionWindow(int x, int y) {
+        DisplayMode mode = getWindow().getGraphicsConfiguration().getDevice().getDisplayMode();
+
+        int xPos = Math.min(x, mode.getWidth() - getWindow().getWidth());
+        int yPos = Math.min(y, mode.getHeight() - getWindow().getHeight());
+        xPos = Math.max(0, xPos);
+        yPos = Math.max(0, yPos);
+
+        getWindow().setLocation(xPos, yPos);
+    }
+
     default void setContentPane(Container contentPane) {
         SwingUtilities.invokeLater(() -> {
             if (getWindow() instanceof JDialog) {
@@ -80,16 +93,6 @@ public interface HyperCardWindow<WindowType extends Window> {
         });
     }
 
-    default void setTitle(String title) {
-        SwingUtilities.invokeLater(() -> {
-            if (getWindow() instanceof JDialog) {
-                ((JDialog) getWindow()).setTitle(title);
-            } else if (getWindow() instanceof JFrame) {
-                ((JFrame) getWindow()).setTitle(title);
-            }
-        });
-    }
-
     @RunOnDispatch
     default String getTitle() {
         if (getWindow() instanceof JDialog) {
@@ -99,6 +102,16 @@ public interface HyperCardWindow<WindowType extends Window> {
         }
 
         throw new IllegalStateException("Bug! Unimplemented window type.");
+    }
+
+    default void setTitle(String title) {
+        SwingUtilities.invokeLater(() -> {
+            if (getWindow() instanceof JDialog) {
+                ((JDialog) getWindow()).setTitle(title);
+            } else if (getWindow() instanceof JFrame) {
+                ((JFrame) getWindow()).setTitle(title);
+            }
+        });
     }
 
     default void setAllowResizing(boolean resizable) {

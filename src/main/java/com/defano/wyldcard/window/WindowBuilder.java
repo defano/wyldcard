@@ -80,6 +80,11 @@ public class WindowBuilder<T extends HyperCardWindow> {
         return this;
     }
 
+    public WindowBuilder withLocation(int x, int y) {
+        location = new Point(x, y);
+        return this;
+    }
+
     @RunOnDispatch
     public WindowBuilder withLocationUnderneath(Component component) {
         this.window.getWindow().pack();
@@ -149,7 +154,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.getWindow().pack();
 
         if (location != null) {
-            this.window.getWindow().setLocation(location);
+            this.window.positionWindow(location.x, location.y);
         } else {
             this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }

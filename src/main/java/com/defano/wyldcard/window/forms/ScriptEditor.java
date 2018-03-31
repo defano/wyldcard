@@ -17,6 +17,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.TokenTypes;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import org.fife.ui.rtextarea.SearchContext;
 import org.fife.ui.rtextarea.SearchEngine;
@@ -25,6 +26,7 @@ import org.fife.ui.rtextarea.SearchResult;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,23 +65,6 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         ));
 
         textArea.add(editor);
-
-        // Default search context
-        context.setMarkAll(false);
-        context.setWholeWord(false);
-        context.setMatchCase(false);
-        context.setRegularExpression(false);
-        context.setSearchForward(true);
-    }
-
-    @RunOnDispatch
-    public void moveCaretToPosition(int position) {
-        try {
-            editor.getScriptField().setCaretPosition(position);
-            editor.requestFocus();
-        } catch (Exception e) {
-            // Ignore bogus caret positions
-        }
     }
 
     @Override
@@ -103,7 +88,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
             String script = this.model.getKnownProperty("script").stringValue();
-            editor.getScriptField().setText(script.trim());
+            editor.getScriptField().setText(script);
+
             moveCaretToPosition(model.getScriptEditorCaretPosition());
             editor.getScriptField().addCaretListener(e -> saveCaretPosition());
             editor.getScriptField().forceReparsing(0);
@@ -216,6 +202,41 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         replace(context.getSearchFor(), context.getReplaceWith(), null, null, true);
     }
 
+    public void uncomment() {
+        RSyntaxTextArea textArea = editor.getScriptField();
+
+        try {
+            int startLine = textArea.getLineOfOffset(textArea.getSelectionStart());
+            int endLine = textArea.getLineOfOffset(textArea.getSelectionEnd());
+
+            for (int line = startLine; line <= endLine; line++) {
+                int lineStartPos = textArea.getLineStartOffset(line);
+
+                if (textArea.getTokenListForLine(line).getType() == TokenTypes.COMMENT_EOL) {
+                    editor.getScriptField().replaceRange("", lineStartPos, lineStartPos + 2);
+                }
+            }
+        } catch (BadLocationException e) {
+            throw new IllegalStateException("Bug! Bad location.");
+        }
+    }
+
+    public void comment() {
+        RSyntaxTextArea textArea = editor.getScriptField();
+
+        try {
+            int startLine = textArea.getLineOfOffset(textArea.getSelectionStart());
+            int endLine = textArea.getLineOfOffset(textArea.getSelectionEnd());
+
+            for (int line = startLine; line <= endLine; line++) {
+                int lineStartPos = textArea.getLineStartOffset(line);
+                editor.getScriptField().insert("--", lineStartPos);
+            }
+        } catch (BadLocationException e) {
+            throw new IllegalStateException("Bug! Bad location.");
+        }
+    }
+
     private void provisionSearch(Boolean wholeWord, Boolean caseSensitive) {
         if (wholeWord != null) {
             context.setWholeWord(wholeWord);
@@ -242,6 +263,20 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     public void findSelection() {
         find(editor.getScriptField().getSelectedText(), null, null, true);
+    }
+
+    public void checkSyntax() {
+        editor.getScriptField().forceReparsing(editor.getScriptParser());
+    }
+
+    @RunOnDispatch
+    private void moveCaretToPosition(int position) {
+        try {
+            editor.getScriptField().setCaretPosition(position);
+            editor.requestFocus();
+        } catch (Exception e) {
+            // Ignore bogus caret positions
+        }
     }
 
     @RunOnDispatch

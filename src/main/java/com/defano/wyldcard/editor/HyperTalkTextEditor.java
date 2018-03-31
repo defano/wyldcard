@@ -8,6 +8,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
@@ -23,15 +24,13 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     private final static CompletionProvider COMPLETION_PROVIDER = new HyperTalkCompletionProvider();
 
     private final RSyntaxTextArea scriptField;
+    private final HyperTalkSyntaxParser scriptParser;
 
     public HyperTalkTextEditor(SyntaxParserObserver parserObserver) {
         super(new RSyntaxTextArea());
+
         this.scriptField = (RSyntaxTextArea) super.getTextArea();
-
-        configure(this.scriptField, parserObserver);
-    }
-
-    private void configure(RSyntaxTextArea scriptField, SyntaxParserObserver parserObserver) {
+        this.scriptParser = new HyperTalkSyntaxParser(parserObserver);
 
         // Install the syntax highlighter token factory
         AbstractTokenMakerFactory tokenFactory = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
@@ -42,7 +41,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
         scriptField.setSyntaxEditingStyle(LANGUAGE_KEY);
         scriptField.setCodeFoldingEnabled(true);
-        scriptField.addParser(new HyperTalkSyntaxParser(parserObserver));
+        scriptField.addParser(scriptParser);
         scriptField.setParserDelay(50);
         scriptField.setTabSize(2);
         scriptField.setBracketMatchingEnabled(true);
@@ -91,5 +90,9 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     public RSyntaxTextArea getScriptField() {
         return scriptField;
+    }
+
+    public Parser getScriptParser() {
+        return scriptParser;
     }
 }

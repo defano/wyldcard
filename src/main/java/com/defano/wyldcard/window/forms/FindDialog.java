@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FindDialog extends HyperCardDialog {
+
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;
     private JRadioButton partialWordRadioButton;
