@@ -45,13 +45,10 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
             showContentsEditor();
         });
 
-        scriptButton.addActionListener(e ->
-                WindowBuilder.make(new ScriptEditor())
-                        .withTitle("Script of " + backgroundModel.getKnownProperty(BackgroundModel.PROP_NAME).stringValue())
-                        .withModel(backgroundModel)
-                        .resizeable(true)
-                        .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                        .buildReplacing(this));
+        scriptButton.addActionListener(e -> {
+            dispose();
+            backgroundModel.editScript();
+        });
     }
 
     @Override

@@ -52,13 +52,10 @@ public class FieldPropertyEditor extends HyperCardDialog implements ActionBindab
     private JCheckBox scrolling;
 
     public FieldPropertyEditor() {
-        editScriptButton.addActionListener(e ->
-            WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of field " + fieldName.getText())
-                    .withModel(model)
-                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .resizeable(true)
-                    .buildReplacing(this));
+        editScriptButton.addActionListener(e -> {
+            dispose();
+            model.editScript();
+        });
 
         saveButton.addActionListener(e -> {
             updateProperties();

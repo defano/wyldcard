@@ -36,13 +36,10 @@ public class StackPropertyEditor extends HyperCardDialog {
             dispose();
         });
 
-        editScriptButton.addActionListener(e ->
-            WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of stack " + model.getKnownProperty(StackModel.PROP_NAME).stringValue())
-                    .withModel(model)
-                    .resizeable(true)
-                    .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .buildReplacing(this));
+        editScriptButton.addActionListener(e -> {
+            dispose();
+            model.editScript();
+        });
 
         resizeButton.addActionListener(e -> {
             dispose();

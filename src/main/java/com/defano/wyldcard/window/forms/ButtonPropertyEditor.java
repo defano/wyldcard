@@ -47,12 +47,10 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
 
     @SuppressWarnings("unchecked")
     public ButtonPropertyEditor() {
-        editScriptButton.addActionListener(e -> WindowBuilder.make(new ScriptEditor())
-                .withTitle("Script of button " + model.getKnownProperty(ButtonModel.PROP_NAME).stringValue())
-                .withModel(model)
-                .resizeable(true)
-                .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                .buildReplacing(this));
+        editScriptButton.addActionListener(e -> {
+            dispose();
+            model.editScript();
+        });
 
         contents.addActionListener(e -> showContentsEditor());
 
