@@ -13,7 +13,7 @@ import org.fife.ui.autocomplete.TemplateCompletion;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class CompletionBuilder {
+public class AutoCompletionBuilder {
 
     private String codePrefix;
     private String templateName;
@@ -25,10 +25,10 @@ public class CompletionBuilder {
     private ArrayList<String> parameterNames = new ArrayList<>();
     private ArrayList<String> parameterDescriptions = new ArrayList<>();
 
-    private CompletionBuilder() {}
+    private AutoCompletionBuilder() {}
 
-    public static CompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model) {
-        CompletionBuilder builder = new CompletionBuilder();
+    public static AutoCompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model) {
+        AutoCompletionBuilder builder = new AutoCompletionBuilder();
 
         builder.codePrefix = model.getCodePrefix();
         builder.templateName = model.getTitle();
@@ -49,46 +49,46 @@ public class CompletionBuilder {
         return builder;
     }
 
-    public static CompletionBuilder autoComplete(String codePrefix, String named) {
-        CompletionBuilder builder = new CompletionBuilder();
+    public static AutoCompletionBuilder autoComplete(String codePrefix, String named) {
+        AutoCompletionBuilder builder = new AutoCompletionBuilder();
         builder.codePrefix = codePrefix;
         builder.templateName = named;
         return builder;
     }
 
-    public CompletionBuilder to(String template) {
+    public AutoCompletionBuilder to(String template) {
         this.templates.add(template);
         return this;
     }
 
-    public CompletionBuilder named(String name) {
+    public AutoCompletionBuilder named(String name) {
         this.templateName = name;
         return this;
     }
 
-    public CompletionBuilder withSummary(String summary) {
+    public AutoCompletionBuilder withSummary(String summary) {
         this.summary = summary;
         return this;
     }
 
-    public CompletionBuilder withDescription(String description) {
+    public AutoCompletionBuilder withDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public CompletionBuilder withParmeter(String parameter, String description) {
+    public AutoCompletionBuilder withParmeter(String parameter, String description) {
         this.parameterNames.add(parameter);
         this.parameterDescriptions.add(description);
         return this;
     }
 
-    public CompletionBuilder withExample(String exampleCode) {
+    public AutoCompletionBuilder withExample(String exampleCode) {
         this.examplesCode.add(exampleCode);
         this.examplesDescription.add("");
         return this;
     }
 
-    public CompletionBuilder withExample(String exampleDescription, String exampleCode) {
+    public AutoCompletionBuilder withExample(String exampleDescription, String exampleCode) {
         this.examplesCode.add(exampleCode);
         this.examplesDescription.add(exampleDescription);
         return this;

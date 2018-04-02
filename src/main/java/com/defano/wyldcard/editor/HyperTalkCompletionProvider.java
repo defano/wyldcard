@@ -26,7 +26,7 @@ public class HyperTalkCompletionProvider extends DefaultCompletionProvider {
             Collection<SyntaxHelpModel> models = SyntaxHelpModel.fromJson(jsonResource);
 
             for (SyntaxHelpModel thisModel : models) {
-                CompletionBuilder.fromSyntaxHelpModel(thisModel).buildInto(completionList, this);
+                AutoCompletionBuilder.fromSyntaxHelpModel(thisModel).buildInto(completionList, this);
             }
 
         } catch (IOException e) {

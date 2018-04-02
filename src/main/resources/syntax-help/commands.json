@@ -625,32 +625,174 @@
       {"description": "Positions the cursor at the start of the third line.", "code": "select before text of fld 1"},
       {"description": "Replaces the first word with 'Uno'.", "code": "select word of fld 1\ntype \"Uno\""}
     ]
+  },
+
+  {
+    "title": "Set",
+    "summary": "Sets the value of a property or variable.",
+    "codePrefix": "set",
+    "templates": [
+      "set ${property} to ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "property", "description": "The name of a WyldCard property, part property or variable."},
+      {"parameter": "expression", "description": "The value to set the property to."}
+    ]
+  },
+
+  {
+    "title": "Send",
+    "summary": "Sends a message to an object.",
+    "description": "Sending a message to an object has the effect of invoking the handler associated with the message in the script of the target object. If the target object does not contain a handler for the message, the message will passed along the message passing hierarchy.",
+    "codePrefix": "send",
+    "templates": [
+      "send ${message} to ${partFactor}"
+    ],
+    "parameters": [
+      {"parameter": "message", "description": "An expression representing the message (and any optional arguments) to be sent."},
+      {"parameter": "expression", "description": "The part that should receive the message."}
+    ],
+    "examples": [
+      {"description": "Send `mouseUp` to a part (to make it behave as though it were clicked by the mouse).", "code": "send \"mouseUp\" to bkgnd button 3"},
+      {"description": "Sends a message with arguments.", "code": "send \"addUser\" && theUserId to card id 3"}
+    ]
+  },
+
+  {
+    "title": "Show",
+    "summary": "Shows (un-hides) a button or field part. Has no effect if the part is not hidden.",
+    "codePrefix": "show",
+    "templates": [
+      "show ${partFactor}"
+    ],
+    "parameters": [
+      {"parameter": "partFactor", "description": "An expression referring to the part to be shown."}
+    ],
+    "examples": [
+      {"code": "show any card button"}
+    ]
+  },
+
+  {
+    "title": "Sort",
+    "summary": "Sorts cards in the stack or text within a container.",
+    "description": "When sorting text, ",
+    "codePrefix": "sort",
+    "templates": [
+      "sort the ${chunks} of ${container}",
+      "sort the ${chunks} of ${container} ${direction} ${style}",
+      "sort the ${chunks} of ${container} ${direction} ${style} by ${expression}",
+      "sort this stack ${direction} ${style} by ${expression}",
+      "sort the marked cards of this stack ${direction} ${style} by ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "chunks", "description": "The element of text to be sorted, one of `chars`, `words`, `lines`, or `items`."},
+      {"parameter": "container", "description": "The container of text to be sorted."},
+      {"parameter": "direction", "description": "An optional sort direction, either `ascending` or `descending` (`ascending` is assumed when no direction is specified)."},
+      {"parameter": "style", "description": "Specifies how elements should be compared, one of `text`, `numeric`, `datetime`, or `international`."},
+      {"parameter": "expression", "description": "An expression that is evaluated in the context of each element to determine sort order."}
+    ],
+    "examples": [
+      {"description": "Sort all the lines of a field by comparing the last word on each line to one another.", "code": "sort the lines of field \"Roster\" by the last word of each"},
+      {"description": "Randomize the order of words in a variable.", "code": "sort the words of myList by the random of 10"},
+      {"description": "Sorts all cards in the stack by the first card field.", "code": "sort this stack by the first card field"}
+    ]
+  },
+
+  {
+    "title": "Subtract",
+    "summary": "Subtracts a numerical value from a container.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "subtract",
+    "templates": [
+      "subtract ${expression} from ${container}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A numerical expression to be added to the container."},
+      {"parameter": "container", "description": "A container from which the value should be subtracted."}
+    ]
+  },
+
+  {
+    "title": "Type",
+    "summary": "Emulates the user typing keys on the keyboard.",
+    "description": "The `with commandKey` form of this command emulates the user pressing command/control plus each typed character.",
+    "codePrefix": "type",
+    "templates": [
+      "type ${expression}",
+      "type ${expression} with commandKey"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The string of characters to type on the keyboard."}
+    ],
+    "examples": [
+      {"description": "Type Command-Q to quit the application.", "code": "type \"q\" with commandKey"},
+      {"description": "Paint text on the cart.", "code": "on mouseUp\n\tchoose text tool\n\tclick at 100,100\n\ttype \"Look ma! No hands!\""}
+    ]
+  },
+
+  {
+    "title": "Unlock Screen",
+    "summary": "Unlocks the screen, making scripted changes to the card visible to the user.",
+    "description": "This command has no effect if the screen was not previously locked via the `lock screen` command. Note that the screen is automatically unlocked at idle time (as soon as all handlers have completed executing).",
+    "codePrefix": "unlock",
+    "templates": [
+      "unlock screen",
+      "unlock screen with visual effect ${effectExpression}"
+    ],
+    "parameters": [
+      {"parameter": "effectExpression", "description": "An expression specifying a visual effect, like `iris open slowly`."}
+    ]
+  },
+
+  {
+    "title": "Visual Effect",
+    "summary": "Specifies the visual effect to use when unlocking the screen.",
+    "description": "This command has no effect if the screen was not previously locked via the `lock screen` command.",
+    "codePrefix": "visual",
+    "templates": [
+      "visual effect ${effectExpression}"
+    ],
+    "parameters": [
+      {"parameter": "effectExpression", "description": "An expression specifying a visual effect, like `iris open slowly`."}
+    ]
+  },
+
+  {
+    "title": "Wait",
+    "summary": "Pauses script execution for a specified period of time or until a specified condition is met.",
+    "description": "This command pauses only the current thread of execution; it does not affect other running scripts nor does it prevent WyldCard from sending new messages to parts.",
+    "codePrefix": "wait",
+    "templates": [
+      "wait for ${count} ${timeUnit}",
+      "wait until ${condition}",
+      "wait while ${condition}"
+    ],
+    "parameters": [
+      {"parameter": "count", "description": "The number of {timeUnit}'s to delay."},
+      {"parameter": "timeUnit", "description": "Either `seconds` or `ticks` (a _tick_ is 1/60th of a second)."},
+      {"parameter": "condition", "description": "The condition which should must be met in order to continue waiting (`wait while`), or to stop waiting (`wait until`)."}
+    ],
+    "examples": [
+      {"description": "Delay for 10 seconds.", "code": "wait for 10 seconds"},
+      {"description": "Delay until the user clicks the mouse.", "code": "wait until the mouse is down"}
+    ]
+  },
+
+  {
+    "title": "Write",
+    "summary": "Writes text to a file on disk.",
+    "description": "Writes text into a file that was previously opened with open file.\n\n`write {expression} to file {file}`: Writes the expression to the file, overwriting the contents of the file\n\n`write {expression} to file {file} at end`: Appends data to the end of the given file; `at end` can also be specified as `at eof`\n\n`write {expression} to file {file} at {position}`: Writes data to the file starting at the given `{position}`.\n\nNote that data is not actually written to disk until the file is closed or WyldCard is quit.",
+    "codePrefix": "write",
+    "templates": [
+      "write ${expression} to file ${file}",
+      "write ${expression} to file ${file} at ${position}",
+      "write ${expression} to file ${file} at end"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The value to be written to the file."},
+      {"parameter": "file", "description": "An expression identifying the name of a file previously opened with the `open file` command."},
+      {"parameter": "position", "description": "An integer value representing the position in the file to write data."}
+    ]
   }
-
 ]
-
-//| 'set' property 'to' propertyValue                                                                                 # setCmdStmnt
-//| 'send' expression 'to' expression                                                                                 # sendCmdStmnt
-//| 'show' expression                                                                                                 # showCmdStmnt
-//| 'sort' sortChunkType expression sortDirection sortStyle                                                           # sortDirectionCmd
-//| 'sort' sortChunkType expression sortDirection sortStyle 'by' expression                                           # sortExpressionCmd
-//| 'sort' sortDirection sortStyle 'by' expression                                                                    # sortStackCmd
-//| 'sort' 'this'? 'stack' sortDirection sortStyle 'by' expression                                                    # sortStackCmd
-//| 'sort' 'the'? cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                                  # sortStackCmd
-//| 'sort' 'the'? 'marked' cards (of 'this' 'stack')? sortDirection sortStyle 'by' expression                         # sortMarkedCardsCmd
-//| 'sort' expression sortDirection sortStyle 'by' expression                                                         # sortBkgndCardsCmd
-//| 'sort' 'the'? cards of expression sortDirection sortStyle 'by' expression                                         # sortBkgndCardsCmd
-//| 'sort' 'the'? 'marked' cards of expression sortDirection sortStyle 'by' expression                                # sortMarkedBkgndCardsCmd
-//| 'subtract' expression 'from' expression                                                                           # subtractCmdStmnt
-//| 'type' expression                                                                                                 # typeCmdStmt
-//| 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
-//| 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
-//| 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmdStmt
-//| 'visual' expression                                                                                               # visualEffectCmdStmt
-//| 'wait' expression timeUnit                                                                                        # waitCountCmd
-//| 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd
-//| 'wait' 'until' expression                                                                                         # waitUntilCmd
-//| 'wait' 'while' expression                                                                                         # waitWhileCmd
-//| 'write' expression 'to' 'file' expression                                                                         # writeFileCmd
-//| 'write' expression 'to' 'file' expression 'at' ('eof' | 'end')                                                    # writeEndFileCmd
-//| 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd

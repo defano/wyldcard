@@ -165,8 +165,3 @@
   }
 
 ]
-
-
-//| 'exit' handlerName                                                                                                # exitCmdStmt
-//| 'exit' 'repeat'                                                                                                   # exitRepeatCmdStmt
-//| 'exit' 'to' 'hypercard'                                                                                           # exitToHyperCardCmdStmt
