@@ -30,6 +30,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     public final static String PROP_ID = "id";
     public final static String PROP_MARKED = "marked";
     public final static String PROP_CANTDELETE = "cantdelete";
+    public final static String PROP_DONTSEARCH = "dontsearch";
     public final static String PROP_NAME = "name";
     public final static String PROP_SHOWPICT = "showpict";
     public static final String PROP_SHORTNAME = "short name";
@@ -54,6 +55,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         defineProperty(PROP_ID, new Value(cardId), true);
         defineProperty(PROP_MARKED, new Value(false), false);
         defineProperty(PROP_CANTDELETE, new Value(false), false);
+        defineProperty(PROP_DONTSEARCH, new Value(false), false);
         defineProperty(PROP_NAME, new Value(""), false);
         defineProperty(PROP_CONTENTS, new Value(""), false);
         defineProperty(PROP_SHOWPICT, new Value(true), false);

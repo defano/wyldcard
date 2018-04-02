@@ -1,5 +1,7 @@
-package com.defano.wyldcard.menu;
+package com.defano.wyldcard.menu.main;
 
+import com.defano.wyldcard.menu.HyperCardMenu;
+import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.patterns.HyperCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ToolsContext;
@@ -130,7 +132,19 @@ public class PaintMenu extends HyperCardMenu {
                 .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
                 .build(this);
 
-        MenuItemBuilder.ofDefaultType()
+                MenuItemBuilder.ofDefaultType()
+                        .named("Make Translucent Opaque")
+                        .withAction(p -> ((TransformableImageSelection)ToolsContext.getInstance().getPaintTool()).removeTranslucency(false))
+                        .build(reduceColorMenu);
+
+                MenuItemBuilder.ofDefaultType()
+                        .named("Make Translucent Transparent")
+                        .withAction(p -> ((TransformableImageSelection)ToolsContext.getInstance().getPaintTool()).removeTranslucency(true))
+                        .build(reduceColorMenu);
+
+                reduceColorMenu.add(new JSeparator());
+
+                MenuItemBuilder.ofDefaultType()
                         .named("Black & White")
                         .withAction(p -> ((TransformableImageSelection)ToolsContext.getInstance().getPaintTool()).reduceGreyscale(0, ToolsContext.getInstance().getDitherer()))
                         .build(reduceColorMenu);

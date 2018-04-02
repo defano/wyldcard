@@ -1,0 +1,167 @@
+[
+  {
+    "title": "If-Then-Else",
+    "summary": "Conditionally executes a list of statements based on the logical evaluation of an expression.",
+    "codePrefix": "if",
+    "templates": [
+      "if ${expression} then\n\t${trueStatementList}\nelse\n\t${falseStatementList}\nend if"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A logical expression (evaluates to `true` or `false`)."},
+      {"parameter": "trueStatementList", "description": "Zero or more statements that should execute when the expression is true."},
+      {"parameter": "falseStatementList", "description": "Zero or more statements that should execute when the expression is true."}
+    ],
+    "examples": [
+      {"code": "if x < y then\n\tanswer \"X is less than Y!\"\nelse\n\tanswer \"X is greater than or equal to Y!\"\nend if"}
+    ]
+  },
+
+  {
+    "title": "If-Then",
+    "summary": "Conditionally executes a list of statements based on the logical evaluation of an expression.",
+    "codePrefix": "if",
+    "templates": [
+      "if ${expression} then\n\t${trueStatementList}\nend if"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A logical expression (evaluates to `true` or `false`)."},
+      {"parameter": "trueStatementList", "description": "Zero or more statements that should execute when the expression is true."}
+    ],
+    "examples": [
+      {"code": "if x < y then\n\tanswer \"X is less than Y!\"\nend if"}
+    ]
+  },
+
+  {
+    "title": "If",
+    "summary": "Conditionally executes a single statement based on the logical evaluation of an expression.",
+    "codePrefix": "if",
+    "templates": [
+      "if ${expression} then ${trueStatement}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A logical expression (evaluates to `true` or `false`)."},
+      {"parameter": "trueStatement", "description": "A single statement that should execute when the expression is true."}
+    ],
+    "examples": [
+      {"code": "if x < y then answer \"X is less than Y!\""}
+    ]
+  },
+
+  {
+    "title": "Repeat Forever",
+    "summary": "Conditionally executes a single statement based on the logical evaluation of an expressionRepeatedly executes the given list of statements forever (or until the script is terminated by pressing command-period).",
+    "codePrefix": "repeat",
+    "templates": [
+      "repeat forever\n\t${statements}\nend repeat"
+    ],
+    "parameters": [
+      {"parameter": "statements", "description": "The list of statements to be infinitely repeated."}
+    ],
+    "examples": [
+      {"description": "Count forever and ever and ever...",
+        "code": "repeat forever\n\tadd 1 to the message box\nend repeat"}
+    ]
+  },
+
+  {
+    "title": "Repeat Until",
+    "summary": "Repeats the given list of statements until a given expression evaluates to true.",
+    "codePrefix": "repeat",
+    "templates": [
+      "repeat until ${expression}\n\t${statements}\nend repeat"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A logical expression determining if the list of statements should continue repeating."},
+      {"parameter": "statements", "description": "The list of statements to be repeated."}
+    ],
+    "examples": [
+      {"description": "Drag a part around the card.",
+        "code": "repeat until the mouse is up\n\tset the location of me to the mouseLoc\nend repeat"}
+    ]
+  },
+
+  {
+    "title": "Repeat While",
+    "summary": "Repeats the given list of statements while the given expression evaluates to true.",
+    "codePrefix": "repeat",
+    "templates": [
+      "repeat while ${expression}\n\t${statements}\nend repeat"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A logical expression determining if the list of statements should continue repeating."},
+      {"parameter": "statements", "description": "The list of statements to be repeated."}
+    ],
+    "examples": [
+      {"description": "Drag a part around the card.",
+        "code": "repeat while the mouse is down\n\tset the location of me to the mouseLoc\nend repeat"}
+    ]
+  },
+
+  {
+    "title": "Repeat For",
+    "summary": "Repeats the given list of statements for the specified number of times.",
+    "codePrefix": "repeat",
+    "templates": [
+      "repeat for ${expression} times\n\t${statements}\nend repeat"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A logical expression determining if the list of statements should continue repeating."},
+      {"parameter": "statements", "description": "The list of statements to be repeated."}
+    ],
+    "examples": [
+      {"description": "Draw attention to this button by blinking it.",
+        "code": "repeat for 4\n\tset the hilite of me to not the hilite of me\n\twait for 10 ticks\nend repeat"}
+    ]
+  },
+
+  {
+    "title": "Repeat With",
+    "summary": "Repeats a list of statements while incrementing a value during each iteration.",
+    "codePrefix": "repeat",
+    "templates": [
+      "repeat with ${variable} = ${startExpression} to ${endExpression} \n\t${statements}\nend repeat"
+    ],
+    "parameters": [
+      {"parameter": "variable", "description": "An index variable that is incremented or decremented during each iteration."},
+      {"parameter": "startExpression", "description": "A numerical expression representing the beginning value of the loop."},
+      {"parameter": "endExpression", "description": "A numerical expression representing the ending value of the loop."},
+      {"parameter": "statements", "description": "The list of statements to be repeated."}
+    ],
+    "examples": [
+      {"description": "Speak the name of each available speking voice.",
+        "code": "repeat with v = 1 to the number of items in the voices\n\tput item v of the voices into theVoice\n\tspeak \"Hi, my name is \" & theVoice with voice theVoice\nend repeat\n"}
+    ]
+  },
+
+  {
+    "title": "Exit Handler",
+    "summary": "Terminates execution of the current handler.",
+    "codePrefix": "exit",
+    "templates": [
+      "if ${handlerName}"
+    ],
+    "parameters": [
+      {"parameter": "handlerName", "description": "The name of the current handler (i.e., `mouseUp`)"}
+    ],
+    "examples": [
+      {"code": "on mouseUp\n\trepeat forever\n\t\tanswer \"Done yet?\" with \"Yes\" or \"No\"\n\t\tif it is \"Yes\" then exit mouseUp\n\tend repeat\nend mouseUp"}
+    ]
+  },
+
+  {
+    "title": "Exit Repeat",
+    "summary": "Terminates execution of the current repeat loop.",
+    "codePrefix": "exit",
+    "templates": [
+      "if ${handlerName}"
+    ],
+    "parameters": [
+      {"parameter": "handlerName", "description": "The name of the current handler (i.e., `mouseUp`)"}
+    ],
+    "examples": [
+      {"code": "on mouseUp\n\trepeat forever\n\t\tanswer \"Done yet?\" with \"Yes\" or \"No\"\n\t\tif it is \"Yes\" then exit repeat\n\tend repeat\n\n\tanswer \"Thanks. That was getting annoying.\"\nend mouseUp"}
+    ]
+  }
+
+]

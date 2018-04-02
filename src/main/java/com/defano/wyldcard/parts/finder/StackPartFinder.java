@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.finder;
 
+import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -8,11 +9,8 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartPositionSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.window.WindowManager;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -40,7 +38,13 @@ public interface StackPartFinder extends PartFinder {
      */
     @Override
     default PartModel findPart(PartSpecifier ps) throws PartException {
-        if (ps instanceof StackPartSpecifier) {
+        if (ps == null) {
+            throw new PartException("No part specified.");
+        }
+
+        if (ps instanceof PartMessageSpecifier) {
+            return WindowManager.getInstance().getMessageWindow().getPartModel();
+        } else if (ps instanceof StackPartSpecifier) {
             return findStackPart((StackPartSpecifier) ps);
         } else if (ps instanceof CompositePartSpecifier) {
             return findCompositePart((CompositePartSpecifier) ps);

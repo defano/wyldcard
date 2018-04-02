@@ -1,11 +1,9 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class MessageCmd extends Statement {
@@ -20,15 +18,7 @@ public class MessageCmd extends Statement {
     }
 
     @Override
-    public void onExecute() throws HtSemanticException {
-        if (!ExecutionContext.getContext().hasMe()) {
-            throw new HtSemanticException("Cannot send messages from here.");
-        }
-
-        try {
-            ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs);
-        } catch (HtException e) {
-            WyldCard.getInstance().showErrorDialog(e);
-        }
+    public void onExecute() throws HtException {
+        ExecutionContext.getContext().sendMessage(ExecutionContext.getContext().getMe(), message, messageArgs);
     }
 }

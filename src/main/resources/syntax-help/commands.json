@@ -1,0 +1,697 @@
+[
+  {
+    "title": "Add",
+    "summary": "Adds a numerical value to a container.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "add",
+    "templates": [
+      "add ${expression} to ${container}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A numerical expression to be added to the container."},
+      {"parameter": "container", "description": "A container to which the value should be added."}
+    ]
+  },
+
+  {
+    "title": "Ask",
+    "summary": "Displays a dialog box with an editable text field containing the provided value.",
+    "description": "When no `default-value` is provided, the `empty` string is assumed. The HyperTalk script stops executing until a user has made a choice. The text entered by the user will be put into the the `it` variable.",
+    "codePrefix": "ask",
+    "templates": [
+      "ask ${expression} with ${defaultValue}",
+      "ask ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A prompt string to display in the dialog."},
+      {"parameter": "defaultValue", "description": "The default text to be displayed in the edit field."}
+    ]
+  },
+
+  {
+    "title": "Answer",
+    "summary": "Displays a dialog box with up to three user-selectable buttons.",
+    "description": "When no button names are provided, a single button, `OK` will be assumed.\n\nThe HyperTalk script stops executing until a user has made a choice. The name of the button chosen by the user will be put into the the `it` variable.",
+    "codePrefix": "answer",
+    "templates": [
+      "answer ${expression} with ${button1} or ${button2} or ${button3}",
+      "answer ${expression} with ${button1} or ${button2}",
+      "answer ${expression} with ${button1}",
+      "answer ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The prompt string to display in the dialog."},
+      {"parameter": "button1", "description": "The name of the first (default) button."},
+      {"parameter": "button2", "description": "The name of the second button."},
+      {"parameter": "button3", "description": "The name of the third button."}
+    ]
+  },
+
+  {
+    "title": "Beep",
+    "summary": "Emits the system alert sound.",
+    "codePrefix": "beep",
+    "templates": [
+      "beep ${expression}",
+      "beep"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The number of times to beep."}
+    ],
+    "examples": [
+      {"description": "Beep once", "code": "beep"},
+      {"description": "Beep twice", "code": "beep 2"},
+      {"description": "Beep once for every button on the card layer.", "code": "beep the number of card buttons"}
+    ]
+  },
+
+  {
+    "title": "Choose Tool",
+    "summary": "Chooses the specified tool from the tool palette.",
+    "description": "Acceptable tool names and their corresponding numbers are as follows: `browse` (1), `oval` (14), `brush` (7), `pencil` (6), `bucket` (13), `poly[gon]` (18), `button` (2), `rect[angle]` (11), `curve` (15), `reg[ular] poly[gon]` (17), `eraser` (8), `round rect[angle]` (12), `field` (3), `select` (4), `lasso` (5), `spray [can]` (10), `line` (9), or `text` (16).",
+    "codePrefix": "choose",
+    "templates": [
+      "choose tool ${toolExpression}",
+      "choose ${toolExpression} tool"
+    ],
+    "parameters": [
+      {"parameter": "toolExpression", "description": "An expression referring to a tool either by name or number."}
+    ],
+    "examples": [
+      {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
+    ]
+  },
+
+  {
+    "title": "Click",
+    "summary": "Clicks the mouse at the specified location using one or more optional modifier keys.",
+    "codePrefix": "click",
+    "templates": [
+      "click at ${location}",
+      "click at ${location} with ${modifierKeys}"
+    ],
+    "parameters": [
+      {"parameter": "location", "description": "A point expression (like `10,20`) where the mouse should be clicked."},
+      {"parameter": "modifierKeys", "description": "A list expression containing one or more modifier keys (`shiftKey`, `commandKey`, or `optionKey`)"}
+    ],
+    "examples": [
+      {"description": "Choose the paintbrush tool.", "code": "choose brush tool"}
+    ]
+  },
+
+  {
+    "title": "Close",
+    "summary": "Closes a previously opened file.",
+    "codePrefix": "close",
+    "templates": [
+      "close file ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The name of the file to be closed."}
+    ]
+  },
+
+  {
+    "title": "Convert",
+    "summary": "Converts a date and/or time from one format to another.",
+    "description": "When a value is specified (rather than a container), the conversion result is placed into it.",
+    "codePrefix": "convert",
+    "templates": [
+      "convert ${expression} from ${format} to ${format}",
+      "convert ${expression} to ${format}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A time or date expression or a container of a such an expression to be converted."},
+      {"parameter": "format", "description": "One of `seconds` (an integer value equal to the number of seconds since the epoch, Jan. 1, 1970), `dateItems` (a comma-separated list of integers in the form `year, month, day, hour, minute, second, dayNumber`), `[ adjective ] date`, or `[ adjective ] time` where `adjective` is one of `long`, `short`, `abbreviated`, `abbrev` or `english`."}
+    ]
+  },
+
+  {
+    "title": "Create Menu",
+    "summary": "Creates a menu in the application menu bar.",
+    "description": "You cannot create a menu with the same name as a menu that already exists. Use `reset menubar` to reset the state of the menu bar to its default configuration.",
+    "codePrefix": "create",
+    "templates": [
+      "create menu ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The name of the menu to be created."}
+    ],
+    "examples": [
+      {"code": "create menu \"Customize\""}
+    ]
+  },
+
+  {
+    "title": "Delete",
+    "summary": "Deletes a menu, menu item, button or field part, or a chunk of text.",
+    "codePrefix": "delete",
+    "templates": [
+      "delete ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the menu, menu item, field, button or chunk to delete."}
+    ],
+    "examples": [
+      {"description": "Delete a menu from the menu bar.", "code": "delete menu \"Customize\""},
+      {"description": "Delete a menu item from a menu.", "code": "delete menu item \"My Menu Item\" from menu \"Customize\""},
+      {"description": "Delete a button or field.", "code": "delete card button \"Not Important Button\""},
+      {"description": "Delete a chunk of text.", "code": "delete the second line of card field 1"}
+    ]
+  },
+
+  {
+    "title": "Dial",
+    "summary": "Plays the sound of dial tones dialing a phone number.",
+    "codePrefix": "dial",
+    "templates": [
+      "dial ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression containing the number to be dialed."}
+    ],
+    "examples": [
+      {"code": "dial \"588-2300\""}
+    ]
+  },
+
+  {
+    "title": "Disable",
+    "summary": "Disables a menu, menu item, button or field.",
+    "codePrefix": "disable",
+    "templates": [
+      "disable ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the menu, menu item, field, or button to disable."}
+    ],
+    "examples": [
+      {"code": "disable the first menuItem of menu \"Objects\""}
+    ]
+  },
+
+  {
+    "title": "Divide",
+    "summary": "Divides a container by a numerical value.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "divide",
+    "templates": [
+      "divide ${container} by ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "container", "description": "A container whose value should be divided."},
+      {"parameter": "expression", "description": "A numerical value that the container should be divided by."}
+    ],
+    "examples": [
+      {"code": "divide item 2 of fld id 3 by 10.0"}
+    ]
+  },
+
+  {
+    "title": "Do",
+    "summary": "Executes an expression as a HyperTalk script.",
+    "codePrefix": "do",
+    "templates": [
+      "do ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A value to be executed as a HyperTalk script."}
+    ],
+    "examples": [
+      {"code": "do card field \"My Script\""}
+    ]
+  },
+
+  {
+    "title": "Do Menu",
+    "summary": "Selects a menu item from the menu bar.",
+    "description": "If two menus in the menu bar contain a menu item of the same name the first menu item will be assumed.",
+    "codePrefix": "domemu",
+    "templates": [
+      "do ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The name of a menu item to be selected."}
+    ],
+    "examples": [
+      {"code": "domenu \"Card Info...\""}
+    ]
+  },
+
+  {
+    "title": "Drag",
+    "summary": "Clicks and drags the mouse.",
+    "codePrefix": "drag",
+    "templates": [
+      "drag from ${source} to ${destination} with ${modifierKeys}",
+      "drag from ${source} to ${destination}"
+    ],
+    "parameters": [
+      {"parameter": "source", "description": "An expression that evaluates to a point relative to the top-left corner of the card where the mouse should begin being dragged from."},
+      {"parameter": "destination", "description": "An expression that evaluates to a point relative to the top-left corner of the card where the mouse should be dragged to."},
+      {"parameter": "modiferKeys", "description": "One or modifier keys to be held down while dragging, one or more of `shiftKey`, `commandKey` or `optionKey`."}
+    ],
+    "examples": [
+      {"description": "Draws a diagonal line on the the card", "code": "choose brush tool\ndrag from 10,10 to 100,150 with shiftKey"}
+    ]
+  },
+
+  {
+    "title": "Enable",
+    "summary": "Enables a menu, menu item, button or field.",
+    "codePrefix": "enable",
+    "templates": [
+      "enable ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the menu, menu item, field, or button to enable."}
+    ],
+    "examples": [
+      {"code": "enable card button 1"}
+    ]
+  },
+
+  {
+    "title": "Find",
+    "summary": "Finds text in a field in the stack.",
+    "description": "`word`: Finds whole words in the searchable text. Search term should not contain any whitespace (if it is expected to match any text). Only whole words will match; substrings contained within a word will not.\n\n`chars`: Finds a substring that occurs entirely within the bounds of a word (does not cross word boundaries). Search term should not include whitespace (if it is expected to match anything).\n\n`whole`: Finds a substring that starts at the beginning of a word. Search term may contain whitespace, and search results may cross word boundaries (but will always start at a word boundary).\n\n`string`: Finds a substring occurring anywhere in the searchable text. Search term may including whitespace, and found-text may cross word boundaries.",
+    "codePrefix": "find",
+    "templates": [
+      "find ${text}",
+      "find ${strategy} ${text}",
+      "find ${strategy} ${text} of ${fieldExpression}",
+      "find ${strategy} ${text} of marked cards",
+      "find ${strategy} ${text} of ${fieldExpression} of marked cards"
+    ],
+    "parameters": [
+      {"parameter": "text", "description": "The text that should be searched for."},
+      {"parameter": "strategy", "description": "Optionally one of `word`, `chars`, `whole`, or `string`. When no `strategy` is specified, `whole` is assumed."},
+      {"parameter": "fieldExpression", "description": "An expression referring to a field."}
+    ],
+    "examples": [
+      {"description": "Finds words beginning with `Hyper` appearing in a background field named `Card`", "code": "find \"Hyper\" in background field \"Card\""}
+    ]
+  },
+
+  {
+    "title": "Get",
+    "summary": "Gets the value of a property (or evaluates an expression) and places the value into the implicit variable `it`.",
+    "codePrefix": "get",
+    "templates": [
+      "get ${property}"
+    ],
+    "parameters": [
+      {"parameter": "property", "description": "An expression, or property of a part, card, background, stack or HyperCard"}
+    ],
+    "examples": [
+      {"code": "get the name of this card\nput it  -- places the name of this card into the message box"}
+    ]
+  },
+
+  {
+    "title": "Go",
+    "summary": "Navigates to a card, optionally applying a transition animation.",
+    "codePrefix": "go",
+    "templates": [
+      "go to ${destination}",
+      "go to ${destination} with visual effect ${effect}",
+      "go back",
+      "go back with visual effect ${effect}"
+    ],
+    "parameters": [
+      {"parameter": "destination", "description": "An expression referring to a card or background."},
+      {"parameter": "effect", "description": "An expression referring to a visual effect (like `dissolve` or `iris open very slowly`)."}
+    ],
+    "examples": [
+      {"code": "go to the second card of the last background with visual effect barn door open"}
+    ]
+  },
+
+  {
+    "title": "Hide",
+    "summary": "Hides a button or field part",
+    "codePrefix": "hide",
+    "templates": [
+      "hide ${partFactor}"
+    ],
+    "parameters": [
+      {"parameter": "partFactor", "description": "An expression referring to the part to be hidden."}
+    ],
+    "examples": [
+      {"code": "hide any card button"}
+    ]
+  },
+  
+  {
+    "title": "Lock Screen",
+    "summary": "Prevents any changes made to the card from being visible to the user until the screen is unlocked.",
+    "description": "Note that the screen automatically \"unlocks\" itself at idle time (as soon all scripts have completed executing).",
+    "codePrefix": "lock",
+    "templates": [
+      "lock screen"
+    ]
+  },
+
+  {
+    "title": "Multiply",
+    "summary": "Multiplies a container by a numerical value.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "multiply",
+    "templates": [
+      "multiply ${container} by ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "container", "description": "A container to which the value should be added."},
+      {"parameter": "expression", "description": "A numerical expression to be added to the container."}
+    ]
+  },
+
+  {
+    "title": "Next Repeat",
+    "summary": "Transfers program control to the top of the currently executing `repeat` statement.",
+    "description": "At any point in the loop, the `next repeat` command may be used to terminate the current iteration (that is, skip all subsequent statements) and continue looping. Similarly, the `exit repeat` command can be used to terminate the loop entirely, returning control to the next statement in the handler after `end repeat`.",
+    "codePrefix": "next",
+    "templates": [
+      "next repeat"
+    ]
+  },
+
+  {
+    "title": "Open File",
+    "summary": "Opens a text file for reading and/or writing by script.",
+    "codePrefix": "open",
+    "templates": [
+      "open file ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression referring to the name and/or path of the file to be opened."}
+    ],
+    "examples": [
+      {"description": "Opens a file in the current working directory", "code": "open file finances.txt"},
+      {"description": "Opens a file elsewhere on the file system", "code": "open file \"/Users/matt/desktop/report.txt\""}
+    ]
+  },
+
+  {
+    "title": "Pass",
+    "summary": "Terminates execution of the current handler and forwards the message being handled to the next part in the message passing order.",
+    "codePrefix": "pass",
+    "templates": [
+      "pass ${handlerName}"
+    ],
+    "parameters": [
+      {"parameter": "handlerName", "description": "The name of the current handler (i.e., `mouseUp`). Any other name results in an error."}
+    ],
+    "examples": [
+      {"description": "If the shift key is held down when clicking this part, then the next part in the message passing order will receive `mouseUp`", "code": "on mouseUp\n\tif the shiftKey is down then pass mouseUp\nend mouseUp"}
+    ]
+  },
+
+  {
+    "title": "Play",
+    "summary": "Plays a sound effect; optionally as a sequence of musical notes.",
+    "description": "Each musical note is written in the format `<name>[<octave>][<accidental>][<duration>]`, where:\n\n`<name>` is a single character representing the pitch; one of `c`, `d`, `e`, `f`, `g`, `a`, `b` or `r` (for a rest note).\n\n`<octave>` is a single-digit integer representing the note's octave; higher numbers are higher pitched. One of `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, or `8`.\n\n`<accidental>` is a half-note increase or decrease in pitch; of one `b` (flat, decreased pitch) or `#` (sharp, increased pitch).\n\n`<duration>` is a single-character representation of the length of the note, plus an optional `.` to represented a dotted-note (played for one and a half times its un-dotted duration). Duration is one of `w` (whole note), `h` (half note), `q` (quarter note), `e` (eighth note), `s` (sixteenth note), `t` (thirty-second note), `x` (sixty-fourth note).\n\nWhen not explicitly specified, each note \"inherits\" its duration and octave from the previous note played. The first note in the musical sequence is assumed to be a 4th-octave quarter note (if not explicitly noted). For example, in the musical sequence \"g ce5 d\", the first note (g) is played as a quarter note in the 4th octave, but the third note (d) is played as an eighth note in the 5th octave.",
+    "codePrefix": "play",
+    "templates": [
+      "play ${sound}",
+      "play ${sound} ${notes}",
+      "play ${sound} tempo ${tempo} ${notes}"
+
+    ],
+    "parameters": [
+      {"parameter": "sound", "description": "An expression evaluating to the name of a WyldCard sound effect. One of `harpsichord`, `flute` or `boing`."},
+      {"parameter": "tempo", "description": "An expression providing the rate at which notes are played, measured in quarter notes per minute. When not specified, a tempo of 120 is assumed."},
+      {"parameter": "notes", "description": "An expression in which each word is interpreted as a musical note."}
+    ],
+    "examples": [
+      {"description": "play \"Mary Had a Little Lamb\" on the harpsichord", "code": "play harpsichord \"be a g a b b b r a a a r b d5 d r b4 a g a b b b b a a b a g\""}
+    ]
+  },
+
+  {
+    "title": "Pop Card",
+    "summary": "Navigates to the last card pushed onto the backstack.",
+    "codePrefix": "pop",
+    "templates": [
+      "pop card"
+    ]
+  },
+
+  {
+    "title": "Push Card",
+    "summary": "Pushes a card onto the backstack.",
+    "codePrefix": "push",
+    "templates": [
+      "push card",
+      "push ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression describing a card to be pushed."}
+    ]
+  },
+
+  {
+    "title": "Put",
+    "summary": "Puts a value into a container; assigns a value to a variable, part or property.",
+    "description": "When no container is specified, the message box is assumed.",
+    "codePrefix": "put",
+    "templates": [
+      "put ${expression} ${preposition} ${container}",
+      "put ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The value to be placed into the container."},
+      {"parameter": "preposition", "description": "One of `into` (replaces the container's value), `before` (prepends the container with the expression), or `after` (suffixes the container with the value)."},
+      {"parameter": "container", "description": "A container expression, or a chunk of a container expression, that should be assigned the value."}
+    ],
+    "examples": [
+      {"description": "Puts a value into a variable.", "code": "put the first word of card field \"Name\" into firstName"},
+      {"description": "Puts a value into a chunk of a property (not legal in HyperCard).", "code": "put 10 into item 1 of the loc of me"},
+      {"description": "Displays a value in the message window.", "code": "put \"Hello World!\""}
+    ]
+  },
+
+  {
+    "title": "Read",
+    "summary": "Reads text from a file on disk.",
+    "description": "Reads text from a file that was previously opened with the open file command into the variable `it`.\n\n`read from file {filename}`: Reads the entire file identified by `{filename}` into memory).\n\n`read from file {filename} for {count}`: Reads `{count}` characters from the current file position\n\n`read from file {filename} at {position} for {count}`: Reads `{count}` characters from the file starting at `{position}`\n\n`read file {filename} until {pattern}`: Reads the file until the given case-insensitive <pattern> is reached.",
+    "codePrefix": "read",
+    "templates": [
+      "read from file ${file}",
+      "read from file ${file} for ${count}",
+      "read from file ${file} at ${position} for ${count}",
+      "read from file ${file} until ${pattern}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The value to be placed into the container."},
+      {"parameter": "preposition", "description": "One of `into` (replaces the container's value), `before` (prepends the container with the expression), or `after` (suffixes the container with the value)."},
+      {"parameter": "container", "description": "A container expression, or a chunk of a container expression, that should be assigned the value."}
+    ],
+    "examples": [
+      {"description": "Place the entire contents of a file into `it`.", "code": "open file \"report.txt\"\nread from file \"report.txt\""}
+    ]
+  },
+
+  {
+    "title": "Reset",
+    "summary": "Resets the state of a system to its default state.",
+    "description": "`reset menubar` resets the state of the menubar to its default state; `reset paint` resets painting attributes (like line size, pattern, draw multiple, etc.) to their default value.",
+    "codePrefix": "reset",
+    "templates": [
+      "reset menubar",
+      "reset paint"
+    ]
+  },
+
+  {
+    "title": "Select",
+    "summary": "Selects a part; selects text in a field; or positions the cursor in a field.",
+    "codePrefix": "select",
+    "templates": [
+      "select ${fieldExpression}",
+      "select empty",
+      "select text of ${fieldExpression}",
+      "select before text of ${fieldExpression}",
+      "select after text of ${fieldExpression}",
+      "select before ${fieldExpression}",
+      "select after ${fieldExpression}"
+    ],
+    "parameters": [
+      {"parameter": "fieldExpression", "description": "An expression that refers to a field."}
+    ],
+    "examples": [
+      {"description": "Activates the button tool and highlights the first card button.", "code": "select card button 1"},
+      {"description": "Positions the cursor at the start of the third line.", "code": "select before text of fld 1"},
+      {"description": "Replaces the first word with 'Uno'.", "code": "select word of fld 1\ntype \"Uno\""}
+    ]
+  },
+
+  {
+    "title": "Set",
+    "summary": "Sets the value of a property or variable.",
+    "codePrefix": "set",
+    "templates": [
+      "set ${property} to ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "property", "description": "The name of a WyldCard property, part property or variable."},
+      {"parameter": "expression", "description": "The value to set the property to."}
+    ]
+  },
+
+  {
+    "title": "Send",
+    "summary": "Sends a message to an object.",
+    "description": "Sending a message to an object has the effect of invoking the handler associated with the message in the script of the target object. If the target object does not contain a handler for the message, the message will passed along the message passing hierarchy.",
+    "codePrefix": "send",
+    "templates": [
+      "send ${message} to ${partFactor}"
+    ],
+    "parameters": [
+      {"parameter": "message", "description": "An expression representing the message (and any optional arguments) to be sent."},
+      {"parameter": "expression", "description": "The part that should receive the message."}
+    ],
+    "examples": [
+      {"description": "Send `mouseUp` to a part (to make it behave as though it were clicked by the mouse).", "code": "send \"mouseUp\" to bkgnd button 3"},
+      {"description": "Sends a message with arguments.", "code": "send \"addUser\" && theUserId to card id 3"}
+    ]
+  },
+
+  {
+    "title": "Show",
+    "summary": "Shows (un-hides) a button or field part. Has no effect if the part is not hidden.",
+    "codePrefix": "show",
+    "templates": [
+      "show ${partFactor}"
+    ],
+    "parameters": [
+      {"parameter": "partFactor", "description": "An expression referring to the part to be shown."}
+    ],
+    "examples": [
+      {"code": "show any card button"}
+    ]
+  },
+
+  {
+    "title": "Sort",
+    "summary": "Sorts cards in the stack or text within a container.",
+    "description": "When sorting text, ",
+    "codePrefix": "sort",
+    "templates": [
+      "sort the ${chunks} of ${container}",
+      "sort the ${chunks} of ${container} ${direction} ${style}",
+      "sort the ${chunks} of ${container} ${direction} ${style} by ${expression}",
+      "sort this stack ${direction} ${style} by ${expression}",
+      "sort the marked cards of this stack ${direction} ${style} by ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "chunks", "description": "The element of text to be sorted, one of `chars`, `words`, `lines`, or `items`."},
+      {"parameter": "container", "description": "The container of text to be sorted."},
+      {"parameter": "direction", "description": "An optional sort direction, either `ascending` or `descending` (`ascending` is assumed when no direction is specified)."},
+      {"parameter": "style", "description": "Specifies how elements should be compared, one of `text`, `numeric`, `datetime`, or `international`."},
+      {"parameter": "expression", "description": "An expression that is evaluated in the context of each element to determine sort order."}
+    ],
+    "examples": [
+      {"description": "Sort all the lines of a field by comparing the last word on each line to one another.", "code": "sort the lines of field \"Roster\" by the last word of each"},
+      {"description": "Randomize the order of words in a variable.", "code": "sort the words of myList by the random of 10"},
+      {"description": "Sorts all cards in the stack by the first card field.", "code": "sort this stack by the first card field"}
+    ]
+  },
+
+  {
+    "title": "Subtract",
+    "summary": "Subtracts a numerical value from a container.",
+    "description": "Produces a syntax error if the specified container does not exist or contains a non-numeric value.",
+    "codePrefix": "subtract",
+    "templates": [
+      "subtract ${expression} from ${container}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A numerical expression to be added to the container."},
+      {"parameter": "container", "description": "A container from which the value should be subtracted."}
+    ]
+  },
+
+  {
+    "title": "Type",
+    "summary": "Emulates the user typing keys on the keyboard.",
+    "description": "The `with commandKey` form of this command emulates the user pressing command/control plus each typed character.",
+    "codePrefix": "type",
+    "templates": [
+      "type ${expression}",
+      "type ${expression} with commandKey"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The string of characters to type on the keyboard."}
+    ],
+    "examples": [
+      {"description": "Type Command-Q to quit the application.", "code": "type \"q\" with commandKey"},
+      {"description": "Paint text on the cart.", "code": "on mouseUp\n\tchoose text tool\n\tclick at 100,100\n\ttype \"Look ma! No hands!\""}
+    ]
+  },
+
+  {
+    "title": "Unlock Screen",
+    "summary": "Unlocks the screen, making scripted changes to the card visible to the user.",
+    "description": "This command has no effect if the screen was not previously locked via the `lock screen` command. Note that the screen is automatically unlocked at idle time (as soon as all handlers have completed executing).",
+    "codePrefix": "unlock",
+    "templates": [
+      "unlock screen",
+      "unlock screen with visual effect ${effectExpression}"
+    ],
+    "parameters": [
+      {"parameter": "effectExpression", "description": "An expression specifying a visual effect, like `iris open slowly`."}
+    ]
+  },
+
+  {
+    "title": "Visual Effect",
+    "summary": "Specifies the visual effect to use when unlocking the screen.",
+    "description": "This command has no effect if the screen was not previously locked via the `lock screen` command.",
+    "codePrefix": "visual",
+    "templates": [
+      "visual effect ${effectExpression}"
+    ],
+    "parameters": [
+      {"parameter": "effectExpression", "description": "An expression specifying a visual effect, like `iris open slowly`."}
+    ]
+  },
+
+  {
+    "title": "Wait",
+    "summary": "Pauses script execution for a specified period of time or until a specified condition is met.",
+    "description": "This command pauses only the current thread of execution; it does not affect other running scripts nor does it prevent WyldCard from sending new messages to parts.",
+    "codePrefix": "wait",
+    "templates": [
+      "wait for ${count} ${timeUnit}",
+      "wait until ${condition}",
+      "wait while ${condition}"
+    ],
+    "parameters": [
+      {"parameter": "count", "description": "The number of {timeUnit}'s to delay."},
+      {"parameter": "timeUnit", "description": "Either `seconds` or `ticks` (a _tick_ is 1/60th of a second)."},
+      {"parameter": "condition", "description": "The condition which should must be met in order to continue waiting (`wait while`), or to stop waiting (`wait until`)."}
+    ],
+    "examples": [
+      {"description": "Delay for 10 seconds.", "code": "wait for 10 seconds"},
+      {"description": "Delay until the user clicks the mouse.", "code": "wait until the mouse is down"}
+    ]
+  },
+
+  {
+    "title": "Write",
+    "summary": "Writes text to a file on disk.",
+    "description": "Writes text into a file that was previously opened with open file.\n\n`write {expression} to file {file}`: Writes the expression to the file, overwriting the contents of the file\n\n`write {expression} to file {file} at end`: Appends data to the end of the given file; `at end` can also be specified as `at eof`\n\n`write {expression} to file {file} at {position}`: Writes data to the file starting at the given `{position}`.\n\nNote that data is not actually written to disk until the file is closed or WyldCard is quit.",
+    "codePrefix": "write",
+    "templates": [
+      "write ${expression} to file ${file}",
+      "write ${expression} to file ${file} at ${position}",
+      "write ${expression} to file ${file} at end"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The value to be written to the file."},
+      {"parameter": "file", "description": "An expression identifying the name of a file previously opened with the `open file` command."},
+      {"parameter": "position", "description": "An integer value representing the position in the file to write data."}
+    ]
+  }
+]

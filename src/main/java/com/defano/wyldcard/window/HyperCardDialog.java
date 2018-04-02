@@ -1,15 +1,11 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.aspect.RunOnDispatch;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 
 public abstract class HyperCardDialog extends JDialog implements HyperCardWindow<JDialog> {
 
@@ -17,6 +13,8 @@ public abstract class HyperCardDialog extends JDialog implements HyperCardWindow
     private boolean ownsMenubar;
 
     public HyperCardDialog() {
+        setAlwaysOnTop(true);
+
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
@@ -35,6 +33,11 @@ public abstract class HyperCardDialog extends JDialog implements HyperCardWindow
                 windowVisibleProvider.onNext(false);
             }
         });
+
+        // Dispose dialog box if user presses escape
+        this.getRootPane().registerKeyboardAction(e -> {
+            this.dispose();
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     @Override
@@ -48,12 +51,12 @@ public abstract class HyperCardDialog extends JDialog implements HyperCardWindow
     }
 
     @Override
-    public boolean ownsMenubar() {
+    public boolean ownsMenuBar() {
         return this.ownsMenubar;
     }
 
     @Override
-    public void setOwnsMenubar(boolean ownsMenubar) {
-        this.ownsMenubar = ownsMenubar;
+    public void setOwnsMenuBar(boolean ownsMenuBar) {
+        this.ownsMenubar = ownsMenuBar;
     }
 }

@@ -16,7 +16,6 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 
 import java.util.List;
@@ -357,15 +356,6 @@ public class ExecutionContext {
     }
 
     /**
-     * Determines if "me" is bound in the current context.
-     *
-     * @return True if me is bound; false otherwise
-     */
-    public boolean hasMe () {
-        return me.get() != null;
-    }
-
-    /**
      * Sets the value of me in this context.
      *
      * @param me The part referred to as 'me'
@@ -382,11 +372,10 @@ public class ExecutionContext {
      * Gets a specifier referencing the part referred to as 'me'.
      *
      * @return The part referred to as me.
-     * @throws HtSemanticException Thrown if no part is bound to 'me' in this context
      */
-    public PartSpecifier getMe () throws HtSemanticException {
+    public PartSpecifier getMe () {
         if (getMeStack().size() == 0) {
-            throw new HtSemanticException("Can't refer to 'me' in this context.");
+            return getTarget();
         }
 
         return getMeStack().peek();

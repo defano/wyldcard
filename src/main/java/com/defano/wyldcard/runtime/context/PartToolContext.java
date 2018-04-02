@@ -1,7 +1,6 @@
 package com.defano.wyldcard.runtime.context;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -13,7 +12,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
-import javax.swing.*;
 import java.util.Optional;
 
 /**

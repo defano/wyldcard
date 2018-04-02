@@ -902,7 +902,7 @@ DIGIT
     ;
 
 COMMENT
-    : ('--' ~('\r' | '\n' | '|')*) -> skip
+    : ('--' ~('\r' | '\n' | '|')*) -> channel(HIDDEN)
     ;
 
 NEWLINE
@@ -910,7 +910,7 @@ NEWLINE
     ;
 
 WHITESPACE
-    : (' ' | '\t')+ -> skip
+    : (' ' | '\t')+ -> channel(HIDDEN)
     ;
 
 UNLEXED_CHAR

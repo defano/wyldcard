@@ -71,11 +71,11 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * {@link #getParentPartModel()} to the given part model and causes this model to invoke this method on all its
      * children.
      * <p>
-     * The relationship between a parent and it's child parts are persistent, but the reverse relationship (between
-     * child and parent) is transient. This is a side effect of the serialization engine being unable to deal with
-     * cycles in the model object graph (a child cannot depend on a parent that also depends on it.). Thus, as a
-     * workaround, we programmatically re-establish the child-to-parent relationship after the stack has completed
-     * deserializing from JSON.
+     * The relationship between a parent and it's child parts are persistent when serialized, but the reverse
+     * relationship (between child and parent) is transient. This is a side effect of the serialization engine being
+     * unable to deal with cycles in the model object graph (a child cannot depend on a parent that also depends on
+     * it.). Thus, as a workaround, we programmatically re-establish the child-to-parent relationship after the stack
+     * has completed deserializing from JSON.
      *
      * @param parentPartModel The {@link PartModel} of the parent of this part. Null for models that do not have a
      *                        parent part (i.e., stacks and the message box).
@@ -337,28 +337,37 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     /**
      * Show the script editor for this part.
      * <p>
-     * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
-     * command from the Objects menu.
+     * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
+     * command from the Objects menu, or invoked the 'edit script of' command.
      */
     public void editScript() {
-        editScript(0);
+        editScript(null);
     }
 
     /**
-     * Show the script editor for this part.
+     * Show the script editor for this part, positioning the caret in the editor field accordingly.
      * <p>
-     * Typically invoked when the user has selected and double-control-clicked the part, or chosen the appropriate
-     * command from the Objects menu.
+     * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
+     * command from the Objects menu, or invoked the 'edit script of' command.
+     *
+     * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
+     *                      position.
      */
-    public void editScript(int caretPosition) {
-        ThreadUtils.invokeAndWaitAsNeeded(() ->
-                ((ScriptEditor) WindowBuilder.make(new ScriptEditor())
-                        .withTitle("Script of " + getName())
-                        .withModel(this)
-                        .resizeable(true)
-                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                        .build())
-                        .moveCaretToPosition(caretPosition));
+    public void editScript(Integer caretPosition) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+
+            if (caretPosition != null) {
+                setScriptEditorCaretPosition(caretPosition);
+            }
+
+            WindowBuilder.make(new ScriptEditor())
+                    .withTitle("Script of " + getName())
+                    .ownsMenubar()
+                    .withModel(this)
+                    .resizeable(true)
+                    .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                    .build();
+        });
     }
 
     /**

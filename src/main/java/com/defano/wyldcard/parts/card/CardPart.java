@@ -797,7 +797,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     private class ForegroundScaleObserver implements Consumer<Double> {
         @Override
         public void accept(Double scale) {
-            SwingUtilities.invokeLater(() -> {
+            ThreadUtils.invokeAndWaitAsNeeded(() -> {
                 setPartsOnLayerVisible(Owner.CARD, scale == 1.0);
                 setPartsOnLayerVisible(Owner.BACKGROUND, scale == 1.0);
                 setBackgroundVisible(scale == 1.0);
@@ -808,11 +808,11 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     private class EditingBackgroundObserver implements Consumer<Boolean> {
         @Override
         public void accept(Boolean isEditingBackground) {
-            if (getForegroundCanvas() != null) {
+            if (getForegroundCanvas() != null && getForegroundCanvas().getScale() != 1.0) {
                 getForegroundCanvas().setScale(1.0);
             }
 
-            if (getBackgroundCanvas() != null) {
+            if (getBackgroundCanvas() != null && getBackgroundCanvas().getScale() != 1.0) {
                 getBackgroundCanvas().setScale(1.0);
             }
 

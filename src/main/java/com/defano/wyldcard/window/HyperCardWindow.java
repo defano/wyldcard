@@ -1,7 +1,7 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menu.HyperCardMenuBar;
+import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
 
@@ -39,9 +39,13 @@ public interface HyperCardWindow<WindowType extends Window> {
      */
     WindowType getWindow();
 
-    boolean ownsMenubar();
+    boolean ownsMenuBar();
 
-    void setOwnsMenubar(boolean ownsMenubar);
+    void setOwnsMenuBar(boolean ownsMenuBar);
+
+    default JMenuBar getWyldCardMenuBar() {
+        return HyperCardMenuBar.getInstance();
+    }
 
     Observable<Boolean> getWindowVisibleProvider();
 
@@ -54,6 +58,18 @@ public interface HyperCardWindow<WindowType extends Window> {
     @RunOnDispatch
     default JButton getDefaultButton() {
         return null;
+    }
+
+    @RunOnDispatch
+    default void positionWindow(int x, int y) {
+        DisplayMode mode = getWindow().getGraphicsConfiguration().getDevice().getDisplayMode();
+
+        int xPos = Math.min(x, mode.getWidth() - getWindow().getWidth());
+        int yPos = Math.min(y, mode.getHeight() - getWindow().getHeight());
+        xPos = Math.max(0, xPos);
+        yPos = Math.max(0, yPos);
+
+        getWindow().setLocation(xPos, yPos);
     }
 
     default void setContentPane(Container contentPane) {
@@ -74,6 +90,17 @@ public interface HyperCardWindow<WindowType extends Window> {
                 ((JFrame) getWindow()).setDefaultCloseOperation(operation);
             }
         });
+    }
+
+    @RunOnDispatch
+    default String getTitle() {
+        if (getWindow() instanceof JDialog) {
+            return ((JDialog) getWindow()).getTitle();
+        } else if (getWindow() instanceof JFrame) {
+            return ((JFrame) getWindow()).getTitle();
+        }
+
+        throw new IllegalStateException("Bug! Unimplemented window type.");
     }
 
     default void setTitle(String title) {
@@ -101,8 +128,8 @@ public interface HyperCardWindow<WindowType extends Window> {
         SwingUtilities.invokeLater(() -> {
             if (getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) getWindow();
-                if (ownsMenubar() || WindowManager.getInstance().isMacOs()) {
-                    frame.setJMenuBar(HyperCardMenuBar.getInstance());
+                if (ownsMenuBar() || WindowManager.getInstance().isMacOs()) {
+                    frame.setJMenuBar(getWyldCardMenuBar());
                 } else {
                     frame.setJMenuBar(null);
                 }

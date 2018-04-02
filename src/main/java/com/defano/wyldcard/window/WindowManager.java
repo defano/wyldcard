@@ -1,8 +1,6 @@
 package com.defano.wyldcard.window;
 
-import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menu.HyperCardMenuBar;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.window.forms.*;
 import io.reactivex.Observable;
@@ -10,6 +8,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class WindowManager {
 
@@ -48,6 +47,8 @@ public class WindowManager {
 
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
+                .asPalette()
+                .focusable(true)
                 .withLocationUnderneath(stackFrame)
                 .dockTo(stackWindow)
                 .notInitiallyVisible()
@@ -55,12 +56,14 @@ public class WindowManager {
 
         WindowBuilder.make(paintToolsPalette)
                 .asPalette()
+                .withTitle("Tools")
                 .dockTo(stackWindow)
                 .withLocationLeftOf(stackFrame)
                 .build();
 
         WindowBuilder.make(shapesPalette)
                 .asPalette()
+                .withTitle("Shapes")
                 .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
@@ -68,6 +71,7 @@ public class WindowManager {
 
         WindowBuilder.make(linesPalette)
                 .asPalette()
+                .withTitle("Lines")
                 .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
@@ -75,6 +79,7 @@ public class WindowManager {
 
         WindowBuilder.make(brushesPalette)
                 .asPalette()
+                .withTitle("Brushes")
                 .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
@@ -82,17 +87,22 @@ public class WindowManager {
 
         WindowBuilder.make(patternsPalette)
                 .asPalette()
+                .withTitle("Patterns")
                 .dockTo(stackWindow)
                 .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(intensityPalette)
+                .asPalette()
+                .withTitle("Intensity")
                 .notInitiallyVisible()
                 .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(colorPalette)
+                .asPalette()
+                .focusable(true)
                 .withTitle("Colors")
                 .notInitiallyVisible()
                 .dockTo(stackWindow)
@@ -148,6 +158,14 @@ public class WindowManager {
                 getBrushesPalette(),
                 getColorPalette()
         };
+    }
+
+    public void getWindows() {
+        for (Window dis : Window.getWindows()) {
+            if (dis instanceof HyperCardWindow) {
+                System.err.println(((HyperCardWindow) dis).getTitle());
+            }
+        }
     }
 
     public void setLookAndFeel(String lafClassName) {

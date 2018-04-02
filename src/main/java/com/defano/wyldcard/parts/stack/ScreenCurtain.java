@@ -2,7 +2,6 @@ package com.defano.wyldcard.parts.stack;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
 import java.awt.*;

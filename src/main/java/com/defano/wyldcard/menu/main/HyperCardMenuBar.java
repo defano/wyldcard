@@ -1,6 +1,8 @@
-package com.defano.wyldcard.menu;
+package com.defano.wyldcard.menu.main;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.menu.DeferredMenuAction;
+import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;

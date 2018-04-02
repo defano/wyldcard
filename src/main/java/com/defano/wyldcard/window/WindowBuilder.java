@@ -18,6 +18,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private boolean resizable = false;
     private HyperCardFrame dock;
     private boolean isPalette = false;
+    private boolean isFocusable = true;
     private boolean quitOnClose = false;
 
     private WindowBuilder(T window) {
@@ -62,12 +63,25 @@ public class WindowBuilder<T extends HyperCardWindow> {
     @RunOnDispatch
     public WindowBuilder asPalette() {
         this.isPalette = true;
+        this.isFocusable = false;
+        this.window.getWindow().setType(Window.Type.UTILITY);
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder focusable(boolean focusable) {
+        this.isFocusable = focusable;
         return this;
     }
 
     @RunOnDispatch
     public WindowBuilder dockTo(HyperCardFrame window) {
         this.dock = window;
+        return this;
+    }
+
+    public WindowBuilder withLocation(int x, int y) {
+        location = new Point(x, y);
         return this;
     }
 
@@ -115,7 +129,11 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
     @RunOnDispatch
     public WindowBuilder ownsMenubar() {
-        this.window.setOwnsMenubar(true);
+        if (window instanceof HyperCardDialog) {
+            throw new IllegalStateException("This type of window cannot own the menubar.");
+        }
+
+        this.window.setOwnsMenuBar(true);
         return this;
     }
 
@@ -136,7 +154,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.getWindow().pack();
 
         if (location != null) {
-            this.window.getWindow().setLocation(location);
+            this.window.positionWindow(location.x, location.y);
         } else {
             this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }
@@ -160,31 +178,19 @@ public class WindowBuilder<T extends HyperCardWindow> {
             });
         }
 
-        window.getWindow().setVisible(initiallyVisible);
-
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.
         // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
 
         this.window.setAllowResizing(resizable);
-        this.window.getWindow().setFocusableWindowState(!isPalette);
+        this.window.getWindow().setFocusableWindowState(isFocusable);
+        this.window.getWindow().setAlwaysOnTop(isPalette);
 
         if (dock != null) {
 
-            // When dock (main) window is focused, bring palette windows to front
-            dock.getWindow().addWindowFocusListener(new WindowFocusListener() {
-                @Override
-                public void windowGainedFocus(WindowEvent e) {
-                    if (!window.getWindow().isFocusableWindow()) {
-                        window.getWindow().toFront();
-                    }
-                }
-
-                @Override
-                public void windowLostFocus(WindowEvent e) {
-                    // Nothing to do
-                }
-            });
+            if (isPalette) {
+                dock.getWindow().addWindowListener(new PaletteActivationManager(window));
+            }
 
             // When dock window moves, move docked windows too (keep relative window layout)
             dock.getWindow().addComponentListener(new ComponentAdapter() {
@@ -206,6 +212,8 @@ public class WindowBuilder<T extends HyperCardWindow> {
                 }
             });
         }
+
+        this.window.getWindow().setVisible(initiallyVisible);
 
         return window;
     }

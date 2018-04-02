@@ -1,11 +1,13 @@
-package com.defano.wyldcard.menu;
+package com.defano.wyldcard.menu.main;
 
+import com.defano.wyldcard.menu.HyperCardMenu;
+import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.hypertalk.ast.model.Value;
-import com.l2fprod.common.swing.JFontChooser;
+import com.defano.wyldcard.window.forms.FontSizePicker;
 
 import java.awt.*;
 
@@ -39,7 +41,7 @@ public class StyleMenu extends HyperCardMenu {
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedItalicProvider())
                 .fontStyle(Font.ITALIC)
                 .build(this);
-        
+
         MenuItemBuilder.ofCheckType()
                 .named("Underline")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("underline")))
@@ -121,8 +123,12 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Other...")
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withAction(e ->
+                        WindowBuilder.make(new FontSizePicker())
+                                .withTitle("Font Size")
+                                .asModal()
+                                .withModel(null)
+                                .build())
                 .build(this);
     }
 
