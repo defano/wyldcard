@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -45,11 +46,12 @@ public interface CardLayerPart extends Part {
 
     /**
      * Sets the z-position of this part relative to other parts on the card.
+     * @param context
      * @param newPosition The z-order position of this part
      */
-    default void setDisplayOrder(int newPosition) {
+    default void setDisplayOrder(ExecutionContext context, int newPosition) {
         CardPart card = getCard();
-        ArrayList<PartModel> parts = new ArrayList<>(card.getCardModel().getPartsInDisplayOrder());
+        ArrayList<PartModel> parts = new ArrayList<>(card.getCardModel().getPartsInDisplayOrder(context));
 
         if (newPosition < 0) {
             newPosition = 0;
@@ -62,9 +64,9 @@ public interface CardLayerPart extends Part {
 
         for (int index = 0; index < parts.size(); index++) {
             PartModel thisPart = parts.get(index);
-            thisPart.setKnownProperty(CardLayerPartModel.PROP_ZORDER, new Value(index), true);
+            thisPart.setKnownProperty(context, CardLayerPartModel.PROP_ZORDER, new Value(index), true);
         }
 
-        card.onDisplayOrderChanged();
+        card.onDisplayOrderChanged(context);
     }
 }

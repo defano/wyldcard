@@ -7,6 +7,7 @@ import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.window.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
@@ -59,7 +60,7 @@ public class WyldCard extends StackManager {
             PatternManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
 
-            newStack();
+            newStack(new ExecutionContext());
         });
 
         // Close all open files before we die
@@ -86,7 +87,7 @@ public class WyldCard extends StackManager {
             if (dialogResult == JOptionPane.CLOSED_OPTION) {
                 return;
             } else if (dialogResult == JOptionPane.YES_OPTION) {
-                saveActiveStack();
+                saveActiveStack(new ExecutionContext());
             }
         }
 

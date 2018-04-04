@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
@@ -19,14 +20,14 @@ public class MenuItemExp extends ContainerExp {
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
-        putMenuItemValue(value, preposition);
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+        putMenuItemValue(context, value, preposition);
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        Value evaluated = getMenuItemValue(item.getSpecifiedMenu(), item.getSpecifiedItemIndex());
-        return chunkOf(evaluated, getChunk());
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        Value evaluated = getMenuItemValue(item.getSpecifiedMenu(context), item.getSpecifiedItemIndex(context));
+        return chunkOf(context, evaluated, getChunk());
     }
 
     /**
@@ -49,15 +50,17 @@ public class MenuItemExp extends ContainerExp {
     }
 
     /**
-     * Puts a Value into a menu relative to a given menu item. See {@link MenuExp#addValueToMenu(Value, JMenu, int)}
+     * Puts a Value into a menu relative to a given menu item. See {@link MenuExp#addValueToMenu(ExecutionContext, Value, JMenu, int)}
      *
+     *
+     * @param context
      * @param value the value representing new menu items.
      * @param preposition The preposition representing where items should be added relative to the given menu item.
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
-    private void putMenuItemValue(Value value, Preposition preposition) throws HtException {
-        JMenu menu = item.getSpecifiedMenu();
-        int itemIndex = item.getSpecifiedItemIndex();       // Location of specified item
+    private void putMenuItemValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+        JMenu menu = item.getSpecifiedMenu(context);
+        int itemIndex = item.getSpecifiedItemIndex(context);       // Location of specified item
 
         if (preposition == Preposition.AFTER) {
             itemIndex++;
@@ -71,6 +74,6 @@ public class MenuItemExp extends ContainerExp {
             menu.remove(itemIndex);
         }
 
-        MenuExp.addValueToMenu(value, menu, itemIndex);
+        MenuExp.addValueToMenu(context, value, menu, itemIndex);
     }
 }

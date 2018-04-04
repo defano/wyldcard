@@ -3,6 +3,7 @@ package com.defano.wyldcard.search;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
      * If the given query is the same as the last query, this method "continues" the previous search, finding and
      * highlighting the next matching string.
      *
+     *
+     * @param context
      * @param query The query to perform
      * @throws HtException Thrown if the query refers to a bogus field
      */
-    public void find(SearchQuery query) throws HtException {
+    public void find(ExecutionContext context, SearchQuery query) throws HtException {
 
         // Wrap search results
         if (nextResult >= results.size()) {
@@ -48,7 +51,7 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
         // Start new query
         else {
             lastQuery = query;
-            results = indexResults(query);
+            results = indexResults(context, query);
             nextResult = 0;
 
             if (results.isEmpty()) {
@@ -64,7 +67,7 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
      * properties to their default, empty state.
      */
     public void reset() {
-        clearSearchHighlights();
+        clearSearchHighlights(new ExecutionContext());
         results.clear();
 
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDTEXT, new Value(), true);
@@ -74,16 +77,17 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
     }
 
     private void processSearchResult(SearchResult result) {
+        ExecutionContext context = new ExecutionContext();
 
         if (result == null) {
             Toolkit.getDefaultToolkit().beep();
         } else {
-            highlightSearchResult(result);
-
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDTEXT, new Value(result.getFoundText()), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDFIELD, new Value(result.getFoundField()), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDLINE, new Value(result.getFoundLine()), true);
-            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDCHUNK, new Value(result.getFoundChunk()), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDFIELD, new Value(result.getFoundField(context)), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDLINE, new Value(result.getFoundLine(context)), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDCHUNK, new Value(result.getFoundChunk(context)), true);
+
+            highlightSearchResult(context, result);
         }
     }
 

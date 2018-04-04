@@ -9,6 +9,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
@@ -45,47 +46,55 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     /**
      * Creates a new button on the given card with default size and position.
      *
+     *
+     * @param context
      * @param parent The card that this button will belong to.
      * @return The new button.
      */
-    public static ButtonPart newButton(CardPart parent, Owner owner) {
-        return newButton(parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    public static ButtonPart newButton(ExecutionContext context, CardPart parent, Owner owner) {
+        return newButton(context, parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
     /**
      * Creates a new button on the given card with a given geometry.
      *
+     *
+     * @param context
      * @param parent The card that this button will belong to.
      * @return The new button.
      */
-    public static ButtonPart newButton(CardPart parent, Owner owner, Rectangle rectangle) {
-        return fromGeometry(parent, rectangle, owner);
+    public static ButtonPart newButton(ExecutionContext context, CardPart parent, Owner owner, Rectangle rectangle) {
+        return fromGeometry(context, parent, rectangle, owner);
     }
 
 
     /**
      * Creates a new button on the given card with the provided geometry.
      *
+     *
+     * @param context
      * @param parent The card that this button will belong to.
      * @param geometry The bounding rectangle of the new button.
      * @return The new button.
      */
-    public static ButtonPart fromGeometry(CardPart parent, Rectangle geometry, Owner owner) {
+    public static ButtonPart fromGeometry(ExecutionContext context, CardPart parent, Rectangle geometry, Owner owner) {
         ButtonPart button = new ButtonPart(ButtonStyle.ROUND_RECT, parent, owner);
-        button.initProperties(geometry, parent.getPartModel());
+        button.initProperties(context, geometry, parent.getPartModel());
         return button;
     }
 
     /**
      * Creates a new button view from an existing button data model.
      *
+     *
+     * @param context
      * @param parent The card that this button will belong to.
      * @param partModel The data model representing this button.
      * @return The new button.
      * @throws Exception Thrown if an error occurs instantiating the button.
      */
-    public static ButtonPart fromModel(CardPart parent, ButtonModel partModel) throws HtException {
-        ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(ButtonModel.PROP_STYLE).stringValue());
+    public static ButtonPart fromModel(ExecutionContext context, CardPart parent, ButtonModel partModel) throws HtException {
+        ButtonStyle style = ButtonStyle.fromName(partModel.getKnownProperty(context, ButtonModel.PROP_STYLE).stringValue());
         ButtonPart button = new ButtonPart(style, parent, partModel.getOwner());
 
         button.partModel = partModel;
@@ -94,15 +103,15 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
     @Override
     @RunOnDispatch
-    public void partOpened() {
-        super.partOpened();
+    public void partOpened(ExecutionContext context) {
+        super.partOpened(context);
         partModel.addPropertyChangedObserver(this);
     }
 
     @Override
     @RunOnDispatch
-    public void partClosed() {
-        super.partClosed();
+    public void partClosed(ExecutionContext context) {
+        super.partClosed(context);
         partModel.removePropertyChangedObserver(this);
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
@@ -124,10 +133,10 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
     @Override
     @RunOnDispatch
-    public void replaceViewComponent(Component oldButtonComponent, Component newButtonComponent) {
+    public void replaceViewComponent(ExecutionContext context, Component oldButtonComponent, Component newButtonComponent) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
-            cardPart.replaceViewComponent(this, oldButtonComponent, newButtonComponent);
+            cardPart.replaceViewComponent(context, this, oldButtonComponent, newButtonComponent);
         }
     }
 
@@ -152,8 +161,8 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mousePressed(e);
 
         if (SwingUtilities.isLeftMouseButton(e) && !isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
-            MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOWN.messageName);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 
@@ -165,7 +174,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         // Do not set mouseUp if cursor is not released while over the part
         if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_UP.messageName);
         }
     }
 
@@ -175,7 +184,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mouseEntered(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_ENTER.messageName);
             PeriodicMessageManager.getInstance().addWithin(getPartModel());
         }
     }
@@ -186,7 +195,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mouseExited(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_LEAVE.messageName);
             PeriodicMessageManager.getInstance().removeWithin(getPartModel());
         }
     }
@@ -196,16 +205,16 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
         if (e.getClickCount() == 2 && !isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_STYLE:
-                setStyle(ButtonStyle.fromName(newValue.stringValue()));
+                setStyle(context, ButtonStyle.fromName(newValue.stringValue()));
                 break;
             case ButtonModel.PROP_SCRIPT:
                 try {
@@ -218,27 +227,27 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
             case ButtonModel.PROP_LEFT:
             case ButtonModel.PROP_WIDTH:
             case ButtonModel.PROP_HEIGHT:
-                getButtonComponent().setBounds(partModel.getRect());
+                getButtonComponent().setBounds(partModel.getRect(context));
                 getButtonComponent().validate();
                 getButtonComponent().repaint();
                 break;
             case ButtonModel.PROP_ENABLED:
-                setEnabledOnCard(newValue.booleanValue());
+                setEnabledOnCard(context, newValue.booleanValue());
                 break;
             case ButtonModel.PROP_VISIBLE:
-                setVisibleWhenBrowsing(newValue.booleanValue());
+                setVisibleWhenBrowsing(context, newValue.booleanValue());
                 break;
             case ButtonModel.PROP_ZORDER:
-                getCard().onDisplayOrderChanged();
+                getCard().onDisplayOrderChanged(context);
                 break;
         }
     }
 
-    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
+    private void initProperties(ExecutionContext context, Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
         if (cardPart != null) {
             int id = cardPart.getCardModel().getStackModel().getNextButtonId();
-            partModel = ButtonModel.newButtonModel(id, geometry, owner, parentPartModel);
+            partModel = ButtonModel.newButtonModel(context, id, geometry, owner, parentPartModel);
         }
     }
 }

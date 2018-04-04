@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class EditScriptCmd extends Command {
@@ -17,7 +18,7 @@ public class EditScriptCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
-        partExpression.partFactor(PartModel.class, new HtSemanticException("No such part.")).editScript();
+    protected void onExecute(ExecutionContext context) throws HtException {
+        partExpression.partFactor(context, PartModel.class, new HtSemanticException("No such part.")).editScript(context);
     }
 }

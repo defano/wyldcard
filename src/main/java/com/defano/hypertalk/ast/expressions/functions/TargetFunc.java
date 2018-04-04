@@ -13,7 +13,7 @@ public class TargetFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        return new Value(ExecutionContext.getContext().getTarget().getHyperTalkIdentifier());
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        return new Value(context.getTarget().getHyperTalkIdentifier(context));
     }
 }

@@ -12,11 +12,13 @@ import java.util.Comparator;
 
 public class ExpressionValueComparator implements Comparator<Value> {
 
+    private final ExecutionContext context;
     private final Expression expression;
     private final SortStyle sortStyle;
     private final SortDirection sortDirection;
 
-    public ExpressionValueComparator(Expression expression, SortDirection sortDirection, SortStyle sortStyle) {
+    public ExpressionValueComparator(ExecutionContext context, Expression expression, SortDirection sortDirection, SortStyle sortStyle) {
+        this.context = context;
         this.expression = expression;
         this.sortStyle = sortStyle;
         this.sortDirection = sortDirection;
@@ -25,11 +27,11 @@ public class ExpressionValueComparator implements Comparator<Value> {
     @Override
     public int compare(Value o1, Value o2) {
         try {
-            ExecutionContext.getContext().setVariable("each", o1);
-            Value o1Evaluated = expression.evaluate();
+            context.setVariable("each", o1);
+            Value o1Evaluated = expression.evaluate(context);
 
-            ExecutionContext.getContext().setVariable("each", o2);
-            Value o2Evaluated = expression.evaluate();
+            context.setVariable("each", o2);
+            Value o2Evaluated = expression.evaluate(context);
 
             if (sortDirection == SortDirection.ASCENDING) {
                 return o1Evaluated.compareTo(o2Evaluated, sortStyle);

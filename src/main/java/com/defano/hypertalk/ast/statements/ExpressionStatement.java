@@ -19,15 +19,15 @@ public class ExpressionStatement extends Statement {
         this.expression = expression;
     }
     
-    public void onExecute() throws HtException, Breakpoint {
+    public void onExecute(ExecutionContext context) throws HtException, Breakpoint {
 
         // Special case: A variable name used as a statement should be interpreted as a message command
         if (expression instanceof VariableExp) {
-            MessageCmd messageCmd = new MessageCmd(super.getContext(), expression.evaluate().stringValue(), new ListExp(null));
-            messageCmd.execute();
+            MessageCmd messageCmd = new MessageCmd(super.getContext(), expression.evaluate(context).stringValue(), new ListExp(null));
+            messageCmd.execute(context);
         }
 
-        Value v = expression.evaluate();
-        ExecutionContext.getContext().setIt(v);
+        Value v = expression.evaluate(context);
+        context.setIt(v);
     }
 }

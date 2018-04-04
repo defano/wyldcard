@@ -24,8 +24,9 @@ public abstract class Expression extends ASTNode {
      *
      * @return The evaluated {@link Value} of this expression.
      * @throws HtException Thrown if an error occurs evaluating the expression.
+     * @param context The execution context
      */
-    protected abstract Value onEvaluate() throws HtException;
+    protected abstract Value onEvaluate(ExecutionContext context) throws HtException;
 
     /**
      * Evaluates this expression, returning a HyperTalk {@link Value} or throwing a "contextualized" exception if an
@@ -35,12 +36,13 @@ public abstract class Expression extends ASTNode {
      *
      * @return The value that this expression evaluated to.
      * @throws HtException Thrown to indicate a semantic error was encountered during evaluation.
+     * @param context The execution context
      */
-    public Value evaluate() throws HtException {
+    public Value evaluate(ExecutionContext context) throws HtException {
         try {
-            return onEvaluate();
+            return onEvaluate(context);
         } catch (HtException e) {
-            rethrowContextualizedException(e);
+            rethrowContextualizedException(context, e);
         }
 
         throw new IllegalStateException("Bug! Contextualized exception not thrown.");
@@ -55,9 +57,10 @@ public abstract class Expression extends ASTNode {
      *
      * @return A list of Value objects
      * @throws HtException Thrown to indicate a semantic error was encountered during evaluation.
+     * @param context The execution context
      */
-    public List<Value> evaluateAsList() throws HtException {
-        return onEvaluate().getListItems();
+    public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
+        return onEvaluate(context).getListItems();
     }
 
     /**
@@ -73,31 +76,32 @@ public abstract class Expression extends ASTNode {
      * If, in this example, card field 1 contained an expression like "cd fld 2", then this method would attempt to
      * evaluate the text of card field 2 looking for a valid card reference.
      *
-     * @param clazz The class of part model to coerce this expression to.
      * @param <T>   A subtype of PartModel
+     * @param context The execution context
+     * @param clazz The class of part model to coerce this expression to.
      * @return The part model referred to by this expression or null if the expression does not refer to a part of this
      * type.
      */
-    public <T extends PartModel> T partFactor(Class<T> clazz) {
-        PartExp partExp = factor(PartExp.class);
+    public <T extends PartModel> T partFactor(ExecutionContext context, Class<T> clazz) {
+        PartExp partExp = factor(context, PartExp.class);
 
         if (partExp == null) {
             return null;
         }
 
         try {
-            PartSpecifier partSpecifier = partExp.evaluateAsSpecifier();
+            PartSpecifier partSpecifier = partExp.evaluateAsSpecifier(context);
 
             if (partSpecifier == null) {
                 return null;
             }
 
-            PartModel model = ExecutionContext.getContext().getPart(partSpecifier);
+            PartModel model = context.getPart(partSpecifier);
             if (clazz.isAssignableFrom(model.getClass())) {
                 return (T) model;
             } else {
-                PartExp refExp = Interpreter.blockingEvaluate(partExp.evaluate(), PartExp.class);
-                return refExp == null ? null : refExp.partFactor(clazz);
+                PartExp refExp = Interpreter.blockingEvaluate(partExp.evaluate(context), PartExp.class);
+                return refExp == null ? null : refExp.partFactor(context, clazz);
             }
         } catch (HtException e) {
             return null;
@@ -105,18 +109,19 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * A convenience form of {@link #partFactor(Class)} that throws an exception rather than returning null if this
+     * A convenience form of {@link #partFactor(ExecutionContext, Class)} that throws an exception rather than returning null if this
      * expression cannot be evaluated as a {@link PartModel} of the requested type.
      *
-     * @param clazz   The class of part model to coerce this expression to.
      * @param <T>     A subtype of PartModel
+     * @param context The execution context
+     * @param clazz   The class of part model to coerce this expression to.
      * @param orError An exception to be thrown if the factor cannot be evaluated as requested.
      * @return The part model referred to by this expression or null if the expression does not refer to a part of this
      * type.
      * @throws HtException Thrown if the factor cannot be evaluated as requested.
      */
-    public <T extends PartModel> T partFactor(Class<T> clazz, HtException orError) throws HtException {
-        T factor = partFactor(clazz);
+    public <T extends PartModel> T partFactor(ExecutionContext context, Class<T> clazz, HtException orError) throws HtException {
+        T factor = partFactor(context, clazz);
         if (factor == null) {
             throw orError;
         } else {
@@ -133,20 +138,22 @@ public abstract class Expression extends ASTNode {
      * <p>
      * This method enables a recursive, context-sensitive evaluation of terms.
      *
+     *
+     * @param context The execution context
      * @param evaluations A prioritized order list of acceptable factor types, plus an action associated with each
      * @return True if this expression can be interpreted as an acceptable type (indicates that a {@link FactorAction}
      * was invoked); false otherwise.
      * @throws HtException Thrown if an invoked {@link FactorAction} produces an exception. Will not be thrown as part
      *                     of the process of evaluating the expression.
      */
-    public boolean factor(FactorAssociation... evaluations) throws HtException {
+    public boolean factor(ExecutionContext context, FactorAssociation... evaluations) throws HtException {
 
         // Special case: Expression is a group (has parens around it), try to factor the evaluated result first. If not,
         // continue attempting to factor as if the expression was not grouped.
         if (this instanceof GroupExp) {
             try {
-                LiteralExp exp = new LiteralExp(null, this.ungroup().evaluate());
-                if (exp.factor(evaluations)) {
+                LiteralExp exp = new LiteralExp(null, this.ungroup().evaluate(context));
+                if (exp.factor(context, evaluations)) {
                     return true;
                 }
             } catch (HtException e) {
@@ -164,7 +171,7 @@ public abstract class Expression extends ASTNode {
 
         // If not, try to interpret this expression as each of the allowable types
         for (FactorAssociation thisEvaluation : evaluations) {
-            Object coerced = this.evaluateAs(thisEvaluation.expressionType);
+            Object coerced = this.evaluateAs(context, thisEvaluation.expressionType);
             if (coerced != null) {
                 thisEvaluation.action.accept(coerced);
                 return true;
@@ -176,18 +183,19 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * A convenience form of {@link #factor(FactorAssociation[])} that accepts a single, acceptable expression type
+     * A convenience form of {@link #factor(ExecutionContext, FactorAssociation[])} that accepts a single, acceptable expression type
      * and attempts to interpret this expression as that type. Returns null if this expression cannot be interpreted
      * in the requested format.
      *
-     * @param clazz The requested type of expression to factor this expression into.
      * @param <T>   The requested factor subtype of {@link Expression}
+     * @param context The execution context
+     * @param clazz The requested type of expression to factor this expression into.
      * @return This expression interpreted as the requested type, or null if unable to interpret as requested.
      */
-    public <T extends Expression> T factor(Class<T> clazz) {
+    public <T extends Expression> T factor(ExecutionContext context, Class<T> clazz) {
         try {
             final Object[] expr = new Object[1];
-            factor(new FactorAssociation(clazz, object -> expr[0] = object));
+            factor(context, new FactorAssociation(clazz, object -> expr[0] = object));
             return (T) expr[0];
         } catch (HtException e) {
             // Thrown only if a factor action throws it; our action never throws it
@@ -196,17 +204,18 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * A convenience form of {@link #factor(FactorAssociation[])} that accepts a single, acceptable expression type and
+     * A convenience form of {@link #factor(ExecutionContext, FactorAssociation[])} that accepts a single, acceptable expression type and
      * an exception to throw if this expression cannot be interpreted as the requested type.
      *
+     * @param <T>     The requested factor subtype of {@link Expression}
+     * @param context The execution context
      * @param clazz   The requested type of expression to factor this expression into.
      * @param orError The exception to be throw if this expression cannot be factored.
-     * @param <T>     The requested factor subtype of {@link Expression}
      * @return A factored representation of this expression as T
      * @throws HtException Thrown if the factorization fails.
      */
-    public <T extends Expression> T factor(Class<T> clazz, HtException orError) throws HtException {
-        T result = factor(clazz);
+    public <T extends Expression> T factor(ExecutionContext context, Class<T> clazz, HtException orError) throws HtException {
+        T result = factor(context, clazz);
         if (result == null) {
             throw orError;
         } else {
@@ -220,17 +229,18 @@ public abstract class Expression extends ASTNode {
      * Evaluates this expression as a HyperTalk {@link Value}, then invokes the {@link Interpreter} to re-parse the
      * value. If the re-interpreted value matches the requested type then it is returned. Otherwise, null is returned.
      *
-     * @param klazz The requested class to evaluate this expression as.
      * @param <T>   The requested Expression subtype.
+     * @param context The execution context
+     * @param klazz The requested class to evaluate this expression as.
      * @return This expression evaluated as the requested type or null.
      */
-    private <T extends Expression> T evaluateAs(Class<T> klazz) {
+    private <T extends Expression> T evaluateAs(ExecutionContext context, Class<T> klazz) {
         if (this.ungroup().getClass().isAssignableFrom(klazz)) {
             return (T) this.ungroup();
         }
 
         try {
-            return Interpreter.blockingEvaluate(this.evaluate(), klazz);
+            return Interpreter.blockingEvaluate(this.evaluate(context), klazz);
         } catch (HtException e) {
             return null;
         }

@@ -11,7 +11,7 @@ public class TargetExp extends PartExp {
     }
 
     @Override
-    public PartSpecifier evaluateAsSpecifier() {
-        return ExecutionContext.getContext().getTarget();
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) {
+        return context.getTarget();
     }
 }

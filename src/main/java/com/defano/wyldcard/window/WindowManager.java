@@ -2,6 +2,7 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.forms.*;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -40,7 +41,7 @@ public class WindowManager {
         WindowBuilder.make(stackWindow)
                 .quitOnClose()
                 .ownsMenubar()
-                .withModel(StackPart.newStack())
+                .withModel(StackPart.newStack(new ExecutionContext()))
                 .build();
 
         JFrame stackFrame = stackWindow.getWindow();

@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.clipboard;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.awt.MouseManager;
@@ -49,10 +50,10 @@ public class CardPartTransferHandler extends TransferHandler {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
             CardLayer layer = CardLayerPart.getActivePartLayer();
-            ToolEditablePart importedPart = (ToolEditablePart) WyldCard.getInstance().getActiveStackDisplayedCard().importPart(part, layer);
+            ToolEditablePart importedPart = (ToolEditablePart) WyldCard.getInstance().getActiveStackDisplayedCard().importPart(new ExecutionContext(), part, layer);
 
             // Position pasted part over the mouse cursor
-            importedPart.getPartModel().setKnownProperty(PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc()));
+            importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc()));
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

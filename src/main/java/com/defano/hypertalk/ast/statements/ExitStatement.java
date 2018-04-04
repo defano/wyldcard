@@ -16,8 +16,8 @@ public class ExitStatement extends Statement {
     }
 
     @Override
-    public void onExecute() throws HtException, TerminateHandlerBreakpoint {
-        if (!ExecutionContext.getContext().getMessage().equalsIgnoreCase(blockName)) {
+    public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerBreakpoint {
+        if (!context.getMessage().equalsIgnoreCase(blockName)) {
             throw new HtSemanticException("Cannot exit '" + blockName + "' from here.");
         }
 

@@ -11,6 +11,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.IconAlignable;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,11 +40,11 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
     }
 
     @Override
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
-                boolean showName = toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue();
+                boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
                 button.setText(showName ? newValue.stringValue() : "");
                 break;
 
@@ -60,7 +61,7 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                button.setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), getFont().getSize()));
+                button.setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(context, newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:

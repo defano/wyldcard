@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Date;
@@ -19,7 +20,7 @@ public class TimeFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate(ExecutionContext context) throws HtSemanticException {
         switch (adjective) {
             case LONG:
                 return new Value(ConvertibleDateFormat.LONG_TIME.dateFormat.format(new Date()));

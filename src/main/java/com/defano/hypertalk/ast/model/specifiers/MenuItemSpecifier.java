@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.util.Random;
@@ -27,9 +28,9 @@ public class MenuItemSpecifier {
         this.expression = null;
     }
 
-    public JMenuItem getSpecifiedMenuItem() throws HtException {
-        JMenu menu = getSpecifiedMenu();
-        int itemIndex = getSpecifiedItemIndex();
+    public JMenuItem getSpecifiedMenuItem(ExecutionContext context) throws HtException {
+        JMenu menu = getSpecifiedMenu(context);
+        int itemIndex = getSpecifiedItemIndex(context);
 
         if (itemIndex >= 0 && itemIndex < menu.getItemCount()) {
             return menu.getItem(itemIndex);
@@ -38,15 +39,15 @@ public class MenuItemSpecifier {
         throw new HtSemanticException("No such menu item.");
     }
 
-    public JMenu getSpecifiedMenu() throws HtException {
-        return this.menu.getSpecifiedMenu();
+    public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
+        return this.menu.getSpecifiedMenu(context);
     }
 
-    public int getSpecifiedItemIndex() throws HtException {
-        JMenu menu = getSpecifiedMenu();
+    public int getSpecifiedItemIndex(ExecutionContext context) throws HtException {
+        JMenu menu = getSpecifiedMenu(context);
 
         if (expression != null) {
-            Value exprValue = expression.evaluate();
+            Value exprValue = expression.evaluate(context);
             if (exprValue.isInteger()) {
                 return exprValue.integerValue() - 1;
             } else {

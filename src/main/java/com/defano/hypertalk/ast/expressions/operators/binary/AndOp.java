@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperatorExp;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class AndOp extends BinaryOperatorExp {
@@ -13,7 +14,7 @@ public class AndOp extends BinaryOperatorExp {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        return lhs().and(rhs());
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        return lhs(context).and(rhs(context));
     }
 }

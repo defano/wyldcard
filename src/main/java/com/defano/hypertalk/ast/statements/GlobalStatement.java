@@ -13,9 +13,9 @@ public class GlobalStatement extends Statement {
         this.symbols = symbols;
     }
 
-    public void onExecute() {
+    public void onExecute(ExecutionContext context) {
         for (String symbol : symbols.list) {
-            ExecutionContext.getContext().defineGlobal(symbol);
+            context.defineGlobal(symbol);
         }
     }
 }

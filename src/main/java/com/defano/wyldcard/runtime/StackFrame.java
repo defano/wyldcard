@@ -8,15 +8,15 @@ import java.util.List;
 
 public class StackFrame {
 
-    private final SymbolTable symbols;
-    private final List<String> globalsInScope;
+    private final SymbolTable symbols;              // Local variables
+    private final List<String> globalsInScope;      // Global variables that are in scope in this frame
 
-    private long creationTime;
-    private List<Value> params = new ArrayList<>();
-    private String message = "";
-    private String passedMessage;
-    private VisualEffectSpecifier visualEffect;
-    private Value returnValue;
+    private long creationTime;                      // Time when this frame was created
+    private List<Value> params = new ArrayList<>(); // Arguments passed to this function/handler
+    private String message = "";                    // The name of this function/handler
+    private String passedMessage;                   // Name of the message passed (via 'pass' command)
+    private VisualEffectSpecifier visualEffect;     // Visual effect to use to unlock screen
+    private Value returnValue;                      // Value returned from this function
     
     public StackFrame() {
         this.creationTime = System.currentTimeMillis();

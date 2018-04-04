@@ -12,9 +12,9 @@ public class PartMeExp extends PartExp {
         super(context);
     }
 
-    public PartSpecifier evaluateAsSpecifier ()
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context)
     throws HtSemanticException
     {        
-        return ExecutionContext.getContext().getMe();
+        return context.getMe();
     }    
 }

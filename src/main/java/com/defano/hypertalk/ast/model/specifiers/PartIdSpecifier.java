@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * Specifies a button, field, card or background by its ID. For example, 'card id 13' or 'bg field id 11'
@@ -34,7 +35,7 @@ public class PartIdSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String getHyperTalkIdentifier () {
+    public String getHyperTalkIdentifier(ExecutionContext context) {
         if (getOwner() == null || getOwner() == Owner.STACK) {
             return type.toString().toLowerCase() + " id " + id;
         } else {

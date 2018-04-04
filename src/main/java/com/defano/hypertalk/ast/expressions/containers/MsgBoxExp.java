@@ -18,23 +18,23 @@ public class MsgBoxExp extends ContainerExp {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
+    public Value onEvaluate(ExecutionContext context) throws HtException {
         Value value = new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText());
-        return chunkOf(value, getChunk());
+        return chunkOf(context, value, getChunk());
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
         Value destValue = new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText());
 
         // Operating on a chunk of the existing value
         if (getChunk() != null)
-            destValue = Value.setChunk(destValue, preposition, getChunk(), value);
+            destValue = Value.setChunk(context, destValue, preposition, getChunk(), value);
         else
             destValue = Value.setValue(destValue, preposition, value);
 
         WindowManager.getInstance().getMessageWindow().setMsgBoxText(destValue.stringValue());
-        ExecutionContext.getContext().setIt(destValue);
+        context.setIt(destValue);
 
         // If message is hidden, show it but don't focus it
         if (!WindowManager.getInstance().getMessageWindow().isVisible()) {

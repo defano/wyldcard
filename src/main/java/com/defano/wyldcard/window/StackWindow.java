@@ -9,6 +9,7 @@ import com.defano.wyldcard.parts.stack.ScreenCurtain;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.FileDrop;
 import com.defano.wyldcard.util.Throttle;
 
@@ -50,7 +51,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
             return;
         }
 
-        String stackName = card.getCardModel().getStackModel().getStackName();
+        String stackName = card.getCardModel().getStackModel().getStackName(new ExecutionContext());
         int cardNumber = card.getCardModel().getCardIndexInStack() + 1;
         int cardCount = stack.getCardCountProvider().blockingFirst();
 
@@ -75,6 +76,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     @Override
     @RunOnDispatch
     public void bindModel(Object data) {
+        ExecutionContext context = new ExecutionContext();
+
         if (data instanceof StackPart) {
 
             if (this.stack != null) {
@@ -85,7 +88,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
             this.stack = (StackPart) data;
             this.card = stack.getDisplayedCard();
 
-            getWindowPanel().setPreferredSize(stack.getStackModel().getSize());
+            getWindowPanel().setPreferredSize(stack.getStackModel().getSize(context));
 
             stack.addObserver(this);
             stack.addNavigationObserver(this);
@@ -98,11 +101,13 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     @Override
     @RunOnDispatch
     public void onStackOpened(StackPart newStack) {
+        ExecutionContext context = new ExecutionContext();
+
         stack = newStack;
         card = stack.getDisplayedCard();
 
-        cardPanel.setPreferredSize(stack.getStackModel().getSize());
-        setAllowResizing(stack.getStackModel().isResizable());
+        cardPanel.setPreferredSize(stack.getStackModel().getSize(context));
+        setAllowResizing(stack.getStackModel().isResizable(context));
 
         cardPanel.addComponentListener(cardResizeObserver);
         getWindow().addComponentListener(frameResizeObserver);
@@ -183,8 +188,8 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
                 int newCardHeight = getWindow().getHeight() - windowInsets.top - windowInsets.bottom;
                 int newCardWidth = getWindow().getWidth() - windowInsets.left - windowInsets.right;
 
-                if (stack.getStackModel().isResizable()) {
-                    stack.getStackModel().setDimension(new Dimension(newCardWidth, newCardHeight));
+                if (stack.getStackModel().isResizable(new ExecutionContext())) {
+                    stack.getStackModel().setDimension(new ExecutionContext(), new Dimension(newCardWidth, newCardHeight));
                 }
             });
         }

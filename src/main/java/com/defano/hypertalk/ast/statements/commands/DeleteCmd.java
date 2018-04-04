@@ -32,12 +32,12 @@ public class DeleteCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
+    protected void onExecute(ExecutionContext context) throws HtException {
         boolean success = expression.factor(
-                new FactorAssociation<>(MenuItemExp.class, this::deleteMenuItem),
-                new FactorAssociation<>(MenuExp.class, this::deleteMenu),
-                new FactorAssociation<>(PartExp.class, this::deletePart),
-                new FactorAssociation<>(ContainerExp.class, this::deleteFromContainer)
+                context, new FactorAssociation<>(MenuItemExp.class, menuItemExp -> deleteMenuItem(context, menuItemExp)),
+                new FactorAssociation<>(MenuExp.class, menuExp -> deleteMenu(context, menuExp)),
+                new FactorAssociation<>(PartExp.class, part -> deletePart(context, part)),
+                new FactorAssociation<>(ContainerExp.class, container -> deleteFromContainer(context, container))
         );
 
         if (!success) {
@@ -45,43 +45,43 @@ public class DeleteCmd extends Command {
         }
     }
 
-    private void deletePart(PartExp part) throws HtException {
+    private void deletePart(ExecutionContext context, PartExp part) throws HtException {
         if (part.getChunk() != null) {
-            deleteFromContainer(part);
+            deleteFromContainer(context, part);
         } else {
 
             try {
-                PartSpecifier ps = part.evaluateAsSpecifier();
-                PartModel p = ExecutionContext.getContext().getPart(ps);
+                PartSpecifier ps = part.evaluateAsSpecifier(context);
+                PartModel p = context.getPart(ps);
 
                 CardModel owner;
                 if (ps instanceof CompositePartSpecifier) {
-                    owner = WyldCard.getInstance().getActiveStack().getStackModel().findOwningCard((CompositePartSpecifier) ps);
+                    owner = WyldCard.getInstance().getActiveStack().getStackModel().findOwningCard(context, (CompositePartSpecifier) ps);
                 } else {
-                    owner = ExecutionContext.getContext().getCurrentCard().getCardModel();
+                    owner = context.getCurrentCard().getCardModel();
                 }
 
-                owner.removePartModel(p);
+                owner.removePartModel(context, p);
             } catch (PartException e) {
                 throw new HtSemanticException("No such " + part.toString() + " to delete", e);
             }
         }
     }
 
-    private void deleteMenuItem(MenuItemExp menuItemExp) throws HtException {
+    private void deleteMenuItem(ExecutionContext context, MenuItemExp menuItemExp) throws HtException {
         MenuItemSpecifier specifier = menuItemExp.item;
-        specifier.getSpecifiedMenu().remove(specifier.getSpecifiedItemIndex());
+        specifier.getSpecifiedMenu(context).remove(specifier.getSpecifiedItemIndex(context));
     }
 
-    private void deleteMenu(MenuExp menuExp) throws HtException {
+    private void deleteMenu(ExecutionContext context, MenuExp menuExp) throws HtException {
         if (menuExp.getChunk() != null) {
             throw new HtSemanticException("Can't delete a chunk of a menu.");
         }
 
-        HyperCardMenuBar.getInstance().deleteMenu(menuExp.menu.getSpecifiedMenu());
+        HyperCardMenuBar.getInstance().deleteMenu(menuExp.menu.getSpecifiedMenu(context));
     }
 
-    private void deleteFromContainer(ContainerExp container) throws HtException {
-        container.putValue(new Value(), Preposition.REPLACING);
+    private void deleteFromContainer(ExecutionContext context, ContainerExp container) throws HtException {
+        container.putValue(context, new Value(), Preposition.REPLACING);
     }
 }

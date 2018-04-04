@@ -40,32 +40,32 @@ public class SelectCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
-        PartExp containerExp = this.expression.factor(PartExp.class, new HtSemanticException("Cannot select text from that."));
+    protected void onExecute(ExecutionContext context) throws HtException {
+        PartExp containerExp = this.expression.factor(context, PartExp.class, new HtSemanticException("Cannot select text from that."));
         Chunk chunk = containerExp.getChunk();
 
         if (preposition == null && chunk == null) {
-            selectPart();
+            selectPart(context);
         } else {
             preposition = preposition == null ? Preposition.INTO : preposition;
-            selectText(containerExp, preposition, chunk);
+            selectText(context, containerExp, preposition, chunk);
         }
     }
 
-    private void selectText(PartExp containerExp, Preposition preposition, Chunk chunk) throws HtException {
-        PartSpecifier specifier = containerExp.evaluateAsSpecifier();
+    private void selectText(ExecutionContext context, PartExp containerExp, Preposition preposition, Chunk chunk) throws HtException {
+        PartSpecifier specifier = containerExp.evaluateAsSpecifier(context);
 
         if (specifier.getType() != null && specifier.getType() == PartType.BUTTON) {
-            selectMenuButtonItem(specifier, chunk);
+            selectMenuButtonItem(context, specifier, chunk);
         } else if (specifier.getType() == null || (specifier.getType() != PartType.FIELD && specifier.getType() != PartType.MESSAGE_BOX)) {
             throw new HtSemanticException("Expected a field here.");
         } else {
-            selectManagedText(specifier, preposition, chunk);
+            selectManagedText(context, specifier, preposition, chunk);
         }
     }
 
-    private void selectManagedText(PartSpecifier specifier, Preposition preposition, Chunk chunk) throws HtException {
-        PartModel partModel = ExecutionContext.getContext().getPart(specifier);
+    private void selectManagedText(ExecutionContext context, PartSpecifier specifier, Preposition preposition, Chunk chunk) throws HtException {
+        PartModel partModel = context.getPart(specifier);
 
         if (!(partModel instanceof AddressableSelection)) {
             throw new IllegalStateException("Bug! Don't know how to select text in part: " + partModel);
@@ -74,49 +74,49 @@ public class SelectCmd extends Command {
         AddressableSelection field = (AddressableSelection) partModel;
 
         Range range = chunk == null ?
-                new Range(0, field.getSelectableText().length()) :                              // Entire contents
+                new Range(0, field.getSelectableText(context).length()) :                              // Entire contents
                 (chunk instanceof CompositeChunk) ?
-                        RangeUtils.getRange(field.getSelectableText(), (CompositeChunk) chunk) : // Chunk of a chunk of contents
-                        RangeUtils.getRange(field.getSelectableText(), chunk);                  // Chunk of contents
+                        RangeUtils.getRange(context, field.getSelectableText(context), (CompositeChunk) chunk) : // Chunk of a chunk of contents
+                        RangeUtils.getRange(context, field.getSelectableText(context), chunk);                  // Chunk of contents
 
         switch (preposition) {
             case BEFORE:
-                field.setSelection(range.start, range.start);
+                field.setSelection(context, range.start, range.start);
                 break;
             case AFTER:
-                field.setSelection(range.end, range.end);
+                field.setSelection(context, range.end, range.end);
                 break;
             default:
-                field.setSelection(range.start, range.end);
+                field.setSelection(context, range.start, range.end);
                 break;
         }
     }
 
-    private void selectMenuButtonItem(PartSpecifier specifier, Chunk chunk) throws HtException {
+    private void selectMenuButtonItem(ExecutionContext context, PartSpecifier specifier, Chunk chunk) throws HtException {
         if (chunk.type != ChunkType.LINE) {
             throw new HtSemanticException("Can't select the text of a button.");
         }
 
-        PartModel partModel = ExecutionContext.getContext().getPart(specifier);
-        ButtonPart part = (ButtonPart) WyldCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
+        PartModel partModel = context.getPart(specifier);
+        ButtonPart part = (ButtonPart) WyldCard.getInstance().getActiveStackDisplayedCard().getPart(context, partModel);
 
         HyperCardButton component = (HyperCardButton) part.getButtonComponent();
         if (component instanceof PopupButton) {
-            ((PopupButton) component).selectItem(chunk.start.evaluate().integerValue());
+            ((PopupButton) component).selectItem(chunk.start.evaluate(context).integerValue());
         } else {
             throw new HtSemanticException("Can't select lines of this type of button.");
         }
     }
 
-    private void selectPart() throws HtException {
-        PartSpecifier specifier = this.expression.factor(PartExp.class, new HtSemanticException("Cannot select that.")).evaluateAsSpecifier();
+    private void selectPart(ExecutionContext context) throws HtException {
+        PartSpecifier specifier = this.expression.factor(context, PartExp.class, new HtSemanticException("Cannot select that.")).evaluateAsSpecifier(context);
 
         if (specifier.getType() == null || !specifier.isButtonOrFieldSpecifier()) {
             throw new HtSemanticException("Expected a button or field here.");
         }
 
-        PartModel partModel = ExecutionContext.getContext().getPart(specifier);
-        CardLayerPart part = WyldCard.getInstance().getActiveStackDisplayedCard().getPart(partModel);
+        PartModel partModel = context.getPart(specifier);
+        CardLayerPart part = WyldCard.getInstance().getActiveStackDisplayedCard().getPart(context, partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             WindowManager.getInstance().getStackWindow().requestFocus();

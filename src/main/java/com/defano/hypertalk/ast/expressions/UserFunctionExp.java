@@ -18,11 +18,11 @@ public class UserFunctionExp extends Expression {
         this.arguments = arguments;
     }
 
-    public Value onEvaluate() throws HtException {
+    public Value onEvaluate(ExecutionContext context) throws HtException {
 
-        PartSpecifier ps = ExecutionContext.getContext().getMe();
-        PartModel part = ExecutionContext.getContext().getPart(ps);
+        PartSpecifier ps = context.getMe();
+        PartModel part = context.getPart(ps);
 
-        return part.invokeFunction(function, arguments);
+        return part.invokeFunction(context, function, arguments);
     }
 }

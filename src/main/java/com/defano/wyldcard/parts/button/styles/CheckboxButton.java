@@ -9,6 +9,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,12 +37,12 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCar
     }
 
     @Override
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
-                boolean showName = toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue();
-                CheckboxButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_NAME).stringValue() : "");
+                boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
+                CheckboxButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).stringValue() : "");
                 break;
 
             case ButtonModel.PROP_HILITE:
@@ -60,7 +61,7 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCar
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), getFont().getSize()));
+                setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(context, newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTALIGN:
@@ -74,14 +75,14 @@ public class CheckboxButton extends JCheckBox implements SharedHilight, HyperCar
 
         // Swing automatically changes the selection state of the component for us; we need to un-do this change when not in auto-hilite mode.
         if (isAutoHilited()) {
-            setSharedHilite((ButtonPart) toolEditablePart, isSelected());
+            setSharedHilite(new ExecutionContext(), (ButtonPart) toolEditablePart, isSelected());
         } else {
             setSelected(!isSelected());
         }
     }
 
     private boolean isAutoHilited() {
-        return toolEditablePart.getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
+        return toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
 }

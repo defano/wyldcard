@@ -5,6 +5,7 @@ import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,7 @@ public class PartResizer {
 
         @Override
         public void run () {
+            ExecutionContext context = new ExecutionContext();
             Part partInst = part.get();
             Component withinInst = within.get();
 
@@ -53,10 +55,10 @@ public class PartResizer {
 
                 try {
                     if (newWidth >= MIN_WIDTH)
-                        partInst.setProperty(PartModel.PROP_WIDTH, new Value(newWidth));
+                        partInst.setProperty(context, PartModel.PROP_WIDTH, new Value(newWidth));
 
                     if (newHeight >= MIN_HEIGHT)
-                        partInst.setProperty(PartModel.PROP_HEIGHT, new Value(newHeight));
+                        partInst.setProperty(context, PartModel.PROP_HEIGHT, new Value(newHeight));
 
                 } catch (Exception e) {
                     throw new RuntimeException(e.getMessage());
@@ -72,7 +74,7 @@ public class PartResizer {
     public PartResizer (Part part, Component within) {
         this.part = new WeakReference<>(part);
         this.within = new WeakReference<>(within);
-        this.originalBounds = new Rectangle(part.getRect());
+        this.originalBounds = new Rectangle(part.getRect(new ExecutionContext()));
 
         MouseManager.getInstance().notifyOnMouseReleased(() -> done = true);
         executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);

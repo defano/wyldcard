@@ -4,6 +4,7 @@ import com.defano.wyldcard.awt.RoboticTypist;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class TypeCmd extends Command {
@@ -19,8 +20,8 @@ public class TypeCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
-        String stringToType = expression.evaluate().stringValue();
+    public void onExecute(ExecutionContext context) throws HtException {
+        String stringToType = expression.evaluate(context).stringValue();
         RoboticTypist.getInstance().type(stringToType, withCommandKey);
     }
 }

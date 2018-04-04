@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.expressions;
 import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ChunkExp extends Expression {
@@ -16,7 +17,7 @@ public class ChunkExp extends Expression {
         this.expression = expression;
     }
     
-    public Value onEvaluate() throws HtException {
-        return expression.onEvaluate().getChunk(chunk);
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        return expression.onEvaluate(context).getChunk(context, chunk);
     }
 }

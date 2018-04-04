@@ -16,7 +16,7 @@ import java.util.concurrent.CountDownLatch;
  * then the command does not execute.
  *
  * This base class provides logic for sending the command's name to the current card hierarchy and invoking the
- * subclass's implementation of the command ({@link #onExecute()}) if and only if the command was not trapped by the
+ * subclass's implementation of the command ({@link Statement#onExecute(ExecutionContext)}) if and only if the command was not trapped by the
  * card.
  */
 public abstract class Command extends Statement implements MessageCompletionObserver {
@@ -31,11 +31,11 @@ public abstract class Command extends Statement implements MessageCompletionObse
     }
 
     @Override
-    public final void execute() throws HtException, Breakpoint {
+    public final void execute(ExecutionContext context) throws HtException, Breakpoint {
         cdl = new CountDownLatch(1);
 
         // Send command message to current card
-        ExecutionContext.getContext().getCurrentCard().getPartModel().receiveMessage(messageName, getEvaluatedMessageArguments(), this);
+        context.getCurrentCard().getPartModel().receiveMessage(context, messageName, getEvaluatedMessageArguments(context), this);
 
         // Wait for command handler to finish executing
         try {
@@ -47,9 +47,9 @@ public abstract class Command extends Statement implements MessageCompletionObse
         // Do not execute this command if handler trapped the message
         if (!trapped) {
             try {
-                onExecute();
+                onExecute(context);
             } catch (HtException e) {
-                rethrowContextualizedException(e);
+                rethrowContextualizedException(context, e);
             }
         }
     }
@@ -60,8 +60,9 @@ public abstract class Command extends Statement implements MessageCompletionObse
      *
      * @return The argument list
      * @throws HtSemanticException Thrown if an error occurs evaluating arguments
+     * @param context
      */
-    protected ListExp getEvaluatedMessageArguments() throws HtException {
+    protected ListExp getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
         return new ListExp(null);
     }
 

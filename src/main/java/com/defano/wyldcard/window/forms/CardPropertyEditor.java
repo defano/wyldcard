@@ -1,13 +1,12 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -47,15 +46,17 @@ public class CardPropertyEditor extends HyperCardDialog {
 
         scriptButton.addActionListener(e -> {
             dispose();
-            cardModel.editScript();
+            cardModel.editScript(new ExecutionContext());
         });
     }
 
     private void updateProperties() {
-        cardModel.setKnownProperty(CardModel.PROP_NAME, new Value(cardName.getText()));
-        cardModel.setKnownProperty(CardModel.PROP_MARKED, new Value(cardMarkedCheckBox.isSelected()));
-        cardModel.setKnownProperty(CardModel.PROP_CANTDELETE, new Value(cantDeleteCardCheckBox.isSelected()));
-        cardModel.setKnownProperty(CardModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
+        ExecutionContext context = new ExecutionContext();
+
+        cardModel.setKnownProperty(context, CardModel.PROP_NAME, new Value(cardName.getText()));
+        cardModel.setKnownProperty(context, CardModel.PROP_MARKED, new Value(cardMarkedCheckBox.isSelected()));
+        cardModel.setKnownProperty(context, CardModel.PROP_CANTDELETE, new Value(cantDeleteCardCheckBox.isSelected()));
+        cardModel.setKnownProperty(context, CardModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
     }
 
     @Override
@@ -70,22 +71,24 @@ public class CardPropertyEditor extends HyperCardDialog {
 
     @Override
     public void bindModel(Object data) {
+        ExecutionContext context = new ExecutionContext();
+
         CardPart card = (CardPart) data;
         cardModel = card.getCardModel();
 
         // Don't display "default" name ('card id xxx')
         Value cardNameValue = cardModel.getRawProperty(CardModel.PROP_NAME);
         if (cardNameValue != null && !cardNameValue.isEmpty()) {
-            cardName.setText(cardModel.getKnownProperty(CardModel.PROP_NAME).stringValue());
+            cardName.setText(cardModel.getKnownProperty(context, CardModel.PROP_NAME).stringValue());
         }
 
-        cardMarkedCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_MARKED).booleanValue());
-        cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_CANTDELETE).booleanValue());
-        dontSearchCheckBox.setSelected(cardModel.getKnownProperty(CardModel.PROP_DONTSEARCH).booleanValue());
-        cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(CardModel.PROP_ID).stringValue()));
+        cardMarkedCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue());
+        cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_CANTDELETE).booleanValue());
+        dontSearchCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue());
+        cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(context, CardModel.PROP_ID).stringValue()));
 
-        long fieldCount = card.getCardModel().getPartCount(PartType.FIELD, Owner.CARD);
-        long buttonCount = card.getCardModel().getPartCount(PartType.BUTTON, Owner.CARD);
+        long fieldCount = card.getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD);
+        long buttonCount = card.getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
 
         int cardNumber = WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getCardIndexInStack() + 1;
         int cardCount = WyldCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst();
@@ -96,9 +99,11 @@ public class CardPropertyEditor extends HyperCardDialog {
     }
 
     private void showContentsEditor() {
-        String contents = PartContentsEditor.editContents(cardModel.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        ExecutionContext context = new ExecutionContext();
+        String contents = PartContentsEditor.editContents(cardModel.getKnownProperty(context, PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+
         if (contents != null) {
-            cardModel.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));
+            cardModel.setKnownProperty(context, PartModel.PROP_CONTENTS, new Value(contents));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
@@ -18,17 +19,17 @@ public class ChooseCmd extends Command {
         this.toolExpression = toolExpression;
     }
 
-    public void onExecute() throws HtException {
-        ToolsContext.getInstance().forceToolSelection(getChosenTool(), false);
+    public void onExecute(ExecutionContext context) throws HtException {
+        ToolsContext.getInstance().forceToolSelection(getChosenTool(context), false);
     }
 
-    protected ListExp getEvaluatedMessageArguments() throws HtException {
-        ToolType theTool = getChosenTool();
+    protected ListExp getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
+        ToolType theTool = getChosenTool(context);
         return ListExp.fromValues(null, new Value(theTool.getPrimaryToolName()), new Value(theTool.getToolNumber()));
     }
 
-    private ToolType getChosenTool() throws HtException {
-        Value toolId = toolExpression.evaluate();
+    private ToolType getChosenTool(ExecutionContext context) throws HtException {
+        Value toolId = toolExpression.evaluate(context);
         return toolId.isInteger() ? ToolType.byNumber(toolId.integerValue()) : ToolType.byName(toolId.stringValue());
     }
 }

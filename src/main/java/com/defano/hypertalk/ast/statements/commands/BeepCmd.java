@@ -23,14 +23,14 @@ public class BeepCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
-        int beepCount = (beepCountExpression == null) ? 1 : beepCountExpression.evaluate().integerValue();
+    public void onExecute(ExecutionContext context) throws HtException {
+        int beepCount = (beepCountExpression == null) ? 1 : beepCountExpression.evaluate(context).integerValue();
 
         for (int count = 0; count < beepCount; count++) {
             Toolkit.getDefaultToolkit().beep();
             try {
                 Thread.sleep(250);
-                if (ExecutionContext.getContext().didAbort()) {
+                if (context.didAbort()) {
                     throw new HtSemanticException("Script aborted.");
                 }
             } catch (InterruptedException e) {

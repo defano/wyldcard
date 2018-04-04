@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.statements.Command;
@@ -18,7 +19,7 @@ public class TitleBarVisibleCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException, Breakpoint {
+    protected void onExecute(ExecutionContext context) throws HtException, Breakpoint {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = WindowManager.getInstance().getStackWindow().getWindow();
 

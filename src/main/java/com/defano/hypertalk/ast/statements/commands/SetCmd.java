@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.specifiers.PropertySpecifier;
@@ -23,35 +24,35 @@ public class SetCmd extends Command {
         this.expression = expression;
     }
     
-    public void onExecute () throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         try {
             
             // Setting the property of HyperCard
-            if (propertySpec.isGlobalPropertySpecifier()) {
-                ExecutionContext.getContext().getGlobalProperties().setProperty(propertySpec.getProperty(), expression.evaluate());
+            if (propertySpec.isGlobalPropertySpecifier(context)) {
+                HyperCardProperties.getInstance().setProperty(context, propertySpec.getProperty(), expression.evaluate(context));
             }
 
             // Setting the property of menu / menu item
-            else if (propertySpec.isMenuItemPropertySpecifier()) {
-                MenuPropertiesDelegate.setProperty(propertySpec.getProperty(), expression.evaluate(), propertySpec.getMenuItem());
+            else if (propertySpec.isMenuItemPropertySpecifier(context)) {
+                MenuPropertiesDelegate.setProperty(context, propertySpec.getProperty(), expression.evaluate(context), propertySpec.getMenuItem(context));
             }
 
             // Setting the property of a chunk of text
-            else if (propertySpec.isChunkPropertySpecifier()) {
-                ChunkPropertiesDelegate.setProperty(propertySpec.getProperty(), expression.evaluate(), propertySpec.getChunk(), propertySpec.getPartExp().evaluateAsSpecifier());
+            else if (propertySpec.isChunkPropertySpecifier(context)) {
+                ChunkPropertiesDelegate.setProperty(context, propertySpec.getProperty(), expression.evaluate(context), propertySpec.getChunk(context), propertySpec.getPartExp(context).evaluateAsSpecifier(context));
             }
 
             // Setting the property of a part
             else {
-                ExecutionContext.getContext().setProperty(propertySpec.getProperty(), propertySpec.getPartExp().evaluateAsSpecifier(), Preposition.INTO, null, expression.evaluate());
+                context.setProperty(propertySpec.getProperty(), propertySpec.getPartExp(context).evaluateAsSpecifier(context), Preposition.INTO, null, expression.evaluate(context));
             }
 
         } catch (HtSemanticException e) {
-            if (propertySpec.getPartExp() != null) {
+            if (propertySpec.getPartExp(context) != null) {
                 throw (e);
             } else {
                 // When all else fails, set the value of a variable container
-                ExecutionContext.getContext().setVariable(propertySpec.getProperty(), expression.evaluate());
+                context.setVariable(propertySpec.getProperty(), expression.evaluate(context));
             }
         }
     }

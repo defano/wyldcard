@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.MenuSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
@@ -23,14 +24,14 @@ public class MenuExp extends ContainerExp {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        Value evaluated = getMenuValue(menu.getSpecifiedMenu());
-        return chunkOf(evaluated, getChunk());
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        Value evaluated = getMenuValue(menu.getSpecifiedMenu(context));
+        return chunkOf(context, evaluated, getChunk());
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
-        putMenuValue(value, preposition);
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+        putMenuValue(context, value, preposition);
     }
 
     /**
@@ -54,25 +55,27 @@ public class MenuExp extends ContainerExp {
     }
 
     /**
-     * Puts a Value into a menu as a whole. See {@link #addValueToMenu(Value, JMenu, int)}
+     * Puts a Value into a menu as a whole. See {@link #addValueToMenu(ExecutionContext, Value, JMenu, int)}
      *
+     *
+     * @param context
      * @param value The value representing new menu items
      * @param preposition The preposition representing where items should be added
      * @throws HtSemanticException Thrown if an error occurs adding items.
      */
-    private void putMenuValue(Value value, Preposition preposition) throws HtException {
-        JMenu menu = this.menu.getSpecifiedMenu();
+    private void putMenuValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+        JMenu menu = this.menu.getSpecifiedMenu(context);
 
         switch (preposition) {
             case BEFORE:
-                addValueToMenu(value, menu, 0);
+                addValueToMenu(context, value, menu, 0);
                 break;
             case AFTER:
-                addValueToMenu(value, menu, menu.getItemCount());
+                addValueToMenu(context, value, menu, menu.getItemCount());
                 break;
             case INTO:
                 menu.removeAll();
-                addValueToMenu(value, menu, 0);
+                addValueToMenu(context, value, menu, 0);
                 break;
         }
     }
@@ -81,16 +84,17 @@ public class MenuExp extends ContainerExp {
      * Places a value into a menu at a given menu item index. Value is interpreted as a list of items or lines with each
      * element in the list being added as a new menu item.
      *
+     * @param context
      * @param v The value representing new menu items
      * @param menu The menu into which items should be added
      * @param index The index at which the menu items should be added.
      */
-    public static void addValueToMenu(Value v, JMenu menu, int index) {
-        List<Value> menuItems = v.getLines();
+    public static void addValueToMenu(ExecutionContext context, Value v, JMenu menu, int index) {
+        List<Value> menuItems = v.getLines(context);
 
         // If value contains a single line, then attempt to onEvaluate it as items
         if (menuItems.size() == 1) {
-            menuItems = menuItems.get(0).getItems();
+            menuItems = menuItems.get(0).getItems(context);
         }
 
         Collections.reverse(menuItems);

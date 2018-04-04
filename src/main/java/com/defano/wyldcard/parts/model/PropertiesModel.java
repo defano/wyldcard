@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.model;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -50,8 +51,8 @@ public class PropertiesModel {
      * @param property The name of the property; case insensitive; if a property with this name already exists, the old
      *                 property will be overwritten.
      * @param value The initial value associated with this property.
-     * @param readOnly True to indicate that the property cannot be set via {@link #setProperty(String, Value)} or
-     *                 {@link #setKnownProperty(String, Value)}
+     * @param readOnly True to indicate that the property cannot be set via {@link #setProperty(ExecutionContext, String, Value)} or
+     *                 {@link #setKnownProperty(ExecutionContext, String, Value)}
      */
     public void defineProperty (String property, Value value, boolean readOnly) {
         assertConstructed();
@@ -149,7 +150,7 @@ public class PropertiesModel {
     public void defineComputedReadOnlyProperty(String propertyName, ComputedGetter getter) {
         assertConstructed();
         computerGetters.put(propertyName.toLowerCase(), getter);
-        computerSetters.put(propertyName.toLowerCase(), (model, property, value) -> {
+        computerSetters.put(propertyName.toLowerCase(), (context, model, property, value) -> {
             throw new PropertyPermissionException("Cannot set the property " + property + " because it is immutable.");
         });
     }
@@ -157,6 +158,8 @@ public class PropertiesModel {
     /**
      * Sets the value of a property.
      *
+     *
+     * @param context The execution context
      * @param propertyName The name of the property or an alias of the property.
      * @param value The value that should be set
      *
@@ -164,18 +167,18 @@ public class PropertiesModel {
      * @throws PropertyPermissionException If an attempt to set a property marked "read only" is made
      * @throws HtSemanticException If the property cannot accept the value provided
      */
-    public void setProperty (String propertyName, Value value) throws HtSemanticException
+    public void setProperty(ExecutionContext context, String propertyName, Value value) throws HtSemanticException
     {
-        setProperty(propertyName, value, false);
+        setProperty(context, propertyName, value, false);
     }
 
-    private void setProperty (String propertyName, Value value, boolean quietly) throws HtSemanticException
+    private void setProperty(ExecutionContext context, String propertyName, Value value, boolean quietly) throws HtSemanticException
     {
         assertConstructed();
         propertyName = propertyName.toLowerCase();
 
         if (delegatedProperties.containsKey(propertyName)) {
-            delegatedProperties.get(propertyName).getDelegatedModel(propertyName).setProperty(propertyName, value, quietly);
+            delegatedProperties.get(propertyName).getDelegatedModel(propertyName).setProperty(context, propertyName, value, quietly);
             return;
         }
 
@@ -192,7 +195,7 @@ public class PropertiesModel {
             propertyName = propertyAliases.get(propertyName);
         }
 
-        Value oldValue = getProperty(propertyName);
+        Value oldValue = getProperty(context, propertyName);
 
         if (!quietly) {
             fireOnPropertyWillChange(propertyName, oldValue, value);
@@ -203,49 +206,51 @@ public class PropertiesModel {
             if (setter instanceof DispatchComputedSetter) {
                 String finalPropertyName = propertyName;
                 ThreadUtils.invokeAndWaitAsNeeded(() -> {
-                    ((DispatchComputedSetter) setter).setComputedValue(PropertiesModel.this, finalPropertyName, value);
+                    ((DispatchComputedSetter) setter).setComputedValue(context, PropertiesModel.this, finalPropertyName, value);
                 });
             } else {
-                setter.setComputedValue(this, propertyName, value);
+                setter.setComputedValue(context, this, propertyName, value);
             }
         } else {
             properties.put(propertyName, value);
         }
 
         if (!quietly) {
-            fireOnPropertyChanged(propertyName, oldValue, value);
+            fireOnPropertyChanged(context, propertyName, oldValue, value);
         }
     }
 
     /**
      * Sets the value of a known property; has no effect if property does not actually exist. This method exists for
      * programmatic modifications of properties; HyperTalk modification of properties should use
-     * {@link #setProperty(String, Value)} which produces an exception if a script attempts to write a non-existent
+     * {@link #setProperty(ExecutionContext, String, Value)} which produces an exception if a script attempts to write a non-existent
      * property.
      *
+     * @param context
      * @param property The name of the property to set (or one of its aliases)
      * @param value The value to set
      */
-    public void setKnownProperty (String property, Value value) {
+    public void setKnownProperty(ExecutionContext context, String property, Value value) {
         assertConstructed();
-        setKnownProperty(property, value, false);
+        setKnownProperty(context, property, value, false);
     }
 
     /**
      * Sets the value of a known property; has no effect if property does not actually exist. This method exists for
      * programmatic modifications of properties; HyperTalk modification of properties should use
-     * {@link #setProperty(String, Value)} which produces an exception if a script attempts to write a non-existent
+     * {@link #setProperty(ExecutionContext, String, Value)} which produces an exception if a script attempts to write a non-existent
      * property.
      *
+     * @param context
      * @param property The name of the property to set (or one of its aliases)
      * @param value The value to set
      * @param quietly When true, observers of this model will not be notified of the change.
      */
-    public void setKnownProperty(String property, Value value, boolean quietly) {
+    public void setKnownProperty(ExecutionContext context, String property, Value value, boolean quietly) {
         assertConstructed();
 
         try {
-            setProperty(property, value, quietly);
+            setProperty(context, property, value, quietly);
         } catch (HtSemanticException e) {
             // Nothing to do
         }
@@ -265,18 +270,20 @@ public class PropertiesModel {
     /**
      * Gets the value of a property.
      *
+     *
+     * @param context
      * @param property The name of the property to get (or one of its aliases)
      * @return The value of the property.
      *
      * @throws NoSuchPropertyException If no property exists with this name
      */
-    public Value getProperty (String property) throws NoSuchPropertyException {
+    public Value getProperty(ExecutionContext context, String property) throws NoSuchPropertyException {
         assertConstructed();
 
         property = property.toLowerCase();
 
         if (delegatedProperties.containsKey(property)) {
-            return delegatedProperties.get(property).getDelegatedModel(property).getProperty(property);
+            return delegatedProperties.get(property).getDelegatedModel(property).getProperty(context, property);
         }
 
         if (!hasProperty(property)) {
@@ -292,10 +299,10 @@ public class PropertiesModel {
             if (computerGetters.get(property) instanceof DispatchComputedGetter) {
                 final Value[] value = new Value[1];
                 String finalProperty = property;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(this, finalProperty));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
                 return value[0];
             } else {
-                return computerGetters.get(property).getComputedValue(this, property);
+                return computerGetters.get(property).getComputedValue(context, this, property);
             }
         } else {
             return properties.get(property.toLowerCase());
@@ -304,15 +311,17 @@ public class PropertiesModel {
 
     /**
      * Gets the value of a known property; returns a new value if the property doesn't exist.
+     *
+     * @param context
      * @param property The name of the property to get (or one of its aliases)
      * @return The value of the property
      */
-    public Value getKnownProperty (String property) {
+    public Value getKnownProperty(ExecutionContext context, String property) {
         assertConstructed();
         property = property.toLowerCase();
 
         try {
-            return getProperty(property);
+            return getProperty(context, property);
         } catch (NoSuchPropertyException e) {
             e.printStackTrace();
             return new Value();
@@ -350,17 +359,18 @@ public class PropertiesModel {
     }
 
     /**
-     * Invokes the {@link PropertyChangeObserver#onPropertyChanged(PropertiesModel, String, Value, Value)} method for
+     * Invokes the {@link PropertyChangeObserver#onPropertyChanged(ExecutionContext, PropertiesModel, String, Value, Value)} method for
      * all properties on the provided observer. Useful for listeners that wish to initialize themselves with the current
      * state of the model.
      *
+     * @param context
      * @param listener This listener to be notified; does not have to be an active listener of this model.
      */
-    public void notifyPropertyChangedObserver(PropertyChangeObserver listener) {
+    public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener) {
         assertConstructed();
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (String property : properties.keySet()) {
-                listener.onPropertyChanged(this, property, properties.get(property), properties.get(property));
+                listener.onPropertyChanged(context, this, property, properties.get(property), properties.get(property));
             }
         });
     }
@@ -376,10 +386,10 @@ public class PropertiesModel {
         }
     }
 
-    private void fireOnPropertyChanged(String property, Value oldValue, Value value) {
+    private void fireOnPropertyChanged(ExecutionContext context, String property, Value oldValue, Value value) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (Object listener : this.changeObservers.toArray()) {
-                ((PropertyChangeObserver) listener).onPropertyChanged(this, property, oldValue, value);
+                ((PropertyChangeObserver) listener).onPropertyChanged(context, this, property, oldValue, value);
             }
         });
     }

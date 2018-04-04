@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.operators.binary.*;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public abstract class BinaryOperatorExp extends Expression {
@@ -18,12 +19,12 @@ public abstract class BinaryOperatorExp extends Expression {
         this.rhs = rhs;
     }
 
-    public Value lhs() throws HtException {
-        return lhs.evaluate();
+    public Value lhs(ExecutionContext context) throws HtException {
+        return lhs.evaluate(context);
     }
 
-    public Value rhs() throws HtException {
-        return rhs.evaluate();
+    public Value rhs(ExecutionContext context) throws HtException {
+        return rhs.evaluate(context);
     }
 
     public static BinaryOperatorExp forOperator(ParserRuleContext ctx, BinaryOperator op, Expression lhs, Expression rhs) {

@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SubtractCmd extends Command {
@@ -20,8 +21,8 @@ public class SubtractCmd extends Command {
         this.container = container;
     }
 
-    public void onExecute() throws HtException {
-        ContainerExp factor = container.factor(ContainerExp.class, new HtSemanticException("Can't subtract from that."));
-        factor.putValue(factor.evaluate().subtract(expression.evaluate()), Preposition.INTO);
+    public void onExecute(ExecutionContext context) throws HtException {
+        ContainerExp factor = container.factor(context, ContainerExp.class, new HtSemanticException("Can't subtract from that."));
+        factor.putValue(context, factor.evaluate(context).subtract(expression.evaluate(context)), Preposition.INTO);
     }
 }

@@ -22,40 +22,45 @@ public interface PartFinder {
      * this is their z-order; for cards or backgrounds this is their order in the stack.
      *
      * @return The list of parts held by this container in their logical display order.
+     * @param context
      */
-    List<PartModel> getPartsInDisplayOrder();
+    List<PartModel> getPartsInDisplayOrder(ExecutionContext context);
 
     /**
-     * Finds any part returned by {@link #getPartsInDisplayOrder()} by ID, name, number, or ordinal. Can also find the
+     * Finds any part returned by {@link #getPartsInDisplayOrder(ExecutionContext)} by ID, name, number, or ordinal. Can also find the
      * message box.
      *
+     *
+     * @param context
      * @param ps A part specifier indicating the part to find.
      * @return The model of the found part.
      * @throws PartException Thrown if the requested part cannot be located.
      */
-    default PartModel findPart(PartSpecifier ps) throws PartException {
-        return findPart(ps, getPartsInDisplayOrder());
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
+        return findPart(context, ps, getPartsInDisplayOrder(context));
     }
 
     /**
      * Finds any part by ID, name, number, or ordinal within an ordered collection of parts.
      *
+     *
+     * @param context
      * @param ps The part specifier representing the part to fetch
      * @param parts The list of parts to search
      * @return The specified part
      * @throws PartException Thrown if no such part exists on this card.
      */
-    default PartModel findPart(PartSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps, List<PartModel> parts) throws PartException {
         PartModel foundPart;
 
         if (ps instanceof PartIdSpecifier) {
-            foundPart = findPartById((PartIdSpecifier) ps, parts);
+            foundPart = findPartById(context, (PartIdSpecifier) ps, parts);
         } else if (ps instanceof PartNameSpecifier) {
-            foundPart = findPartByName((PartNameSpecifier) ps, parts);
+            foundPart = findPartByName(context, (PartNameSpecifier) ps, parts);
         } else if (ps instanceof PartNumberSpecifier) {
-            foundPart = findPartByNumber((PartNumberSpecifier) ps, parts);
+            foundPart = findPartByNumber(context, (PartNumberSpecifier) ps, parts);
         } else if (ps instanceof PartOrdinalSpecifier) {
-            foundPart = findPartByOrdinal((PartOrdinalSpecifier) ps, parts);
+            foundPart = findPartByOrdinal(context, (PartOrdinalSpecifier) ps, parts);
         } else if (ps instanceof PartMessageSpecifier) {
             foundPart = WindowManager.getInstance().getMessageWindow().getPartModel();
         } else if (ps instanceof CompositePartSpecifier) {
@@ -66,37 +71,41 @@ public interface PartFinder {
 
         // Special case: Field needs to be evaluated in the context of the current card
         if (foundPart instanceof CardLayerPartModel) {
-            ((CardLayerPartModel) foundPart).setCurrentCardId(ExecutionContext.getContext().getCurrentCard().getId());
+            ((CardLayerPartModel) foundPart).setCurrentCardId(context.getCurrentCard().getId(context));
         }
 
         return foundPart;
     }
 
     /**
-     * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder()}.
+     * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder(ExecutionContext)}.
+     *
+     * @param context
      * @param part The model of the part whose number should be retrieved.
      * @return The number of the given part.
      */
-    default long getPartNumber(PartModel part) {
-        return getPartNumber(part, getPartsInDisplayOrder());
+    default long getPartNumber(ExecutionContext context, PartModel part) {
+        return getPartNumber(context, part, getPartsInDisplayOrder(context));
     }
 
     /**
-     * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder()} and
+     * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder(ExecutionContext)} and
      * which match the given part type.
      *
+     *
+     * @param context
      * @param part The model of the part whose number should be retrieved.
      * @param ofType The type of part being included in the count.
      * @return The number of the request part and type.
      */
-    default long getPartNumber(PartModel part, PartType ofType) {
+    default long getPartNumber(ExecutionContext context, PartModel part, PartType ofType) {
         int number = 0;
-        for (PartModel thisPart : getPartsInDisplayOrder()) {
+        for (PartModel thisPart : getPartsInDisplayOrder(context)) {
             if (thisPart.getType() == ofType) {
                 number++;
             }
 
-            if (thisPart.getId() == part.getId() && thisPart.getType() == ofType) {
+            if (thisPart.getId(context) == part.getId(context) && thisPart.getType() == ofType) {
                 return number;
             }
         }
@@ -112,15 +121,17 @@ public interface PartFinder {
      * A part number is, effectively, its z-order on the card. The number is a value between 1 and the value returned
      * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
      *
+     *
+     * @param context
      * @param part The part whose number should be returned.
      * @return The number of this part
      */
-    default long getPartNumber(PartModel part, List<PartModel> parts) {
+    default long getPartNumber(ExecutionContext context, PartModel part, List<PartModel> parts) {
         int number = 0;
 
         for (PartModel thisPart : parts) {
             number++;
-            if (thisPart.getId() == part.getId()) {
+            if (thisPart.getId(context) == part.getId(context)) {
                 return number;
             }
         }
@@ -131,53 +142,59 @@ public interface PartFinder {
     /**
      * Finds a part based on its ID within a given collection of parts.
      *
+     *
+     * @param context
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default PartModel findPartById(PartIdSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPartById(ExecutionContext context, PartIdSpecifier ps, List<PartModel> parts) throws PartException {
         Optional<PartModel> foundPart = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
-                .filter(p -> p.getId() == ps.getValue())
+                .filter(p -> p.getId(context) == ps.getValue())
                 .findFirst();
 
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
+            throw new PartException("No " + ps.getHyperTalkIdentifier(context) + " found.");
         }
     }
 
     /**
      * Finds a part based on its name within a given collection of parts.
      *
+     *
+     * @param context
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default PartModel findPartByName(PartNameSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPartByName(ExecutionContext context, PartNameSpecifier ps, List<PartModel> parts) throws PartException {
         Optional<PartModel> foundPart = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
-                .filter(p -> p.getName().equalsIgnoreCase(ps.getValue()))
+                .filter(p -> p.getName(context).equalsIgnoreCase(ps.getValue()))
                 .findFirst();
 
         if (foundPart.isPresent()) {
             return foundPart.get();
         } else {
-            throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
+            throw new PartException("No " + ps.getHyperTalkIdentifier(context) + " found.");
         }
     }
 
     /**
      * Finds a part based on its number within a given collection of parts.
      *
+     *
+     * @param context
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
      */
-    default PartModel findPartByNumber(PartNumberSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPartByNumber(ExecutionContext context, PartNumberSpecifier ps, List<PartModel> parts) throws PartException {
         List<PartModel> foundParts = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
@@ -186,7 +203,7 @@ public interface PartFinder {
         int partIndex = (int) ps.getValue() - 1;
 
         if (partIndex >= foundParts.size() || partIndex < 0) {
-            throw new PartException("No " + ps.getHyperTalkIdentifier() + " found.");
+            throw new PartException("No " + ps.getHyperTalkIdentifier(context) + " found.");
         } else {
             return foundParts.get(partIndex);
         }
@@ -195,11 +212,13 @@ public interface PartFinder {
     /**
      * Finds a part based on ordinal (first, second... middle, last) within a given collection of parts.
      *
+     *
+     * @param context
      * @param ps The specification of the part to find
      * @return The specified part
      * @throws PartException Thrown if no part can by found matching the specifier.
      */
-    default PartModel findPartByOrdinal(PartOrdinalSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPartByOrdinal(ExecutionContext context, PartOrdinalSpecifier ps, List<PartModel> parts) throws PartException {
         List<PartModel> foundParts = parts.stream()
                 .filter(p -> ps.getType() == null || p.getType() == ps.getType())
                 .filter(p -> ps.getOwner() == null || p.getOwner() == ps.getOwner())
@@ -216,7 +235,7 @@ public interface PartFinder {
         }
 
         if (index < 0 || index >= foundParts.size()) {
-            throw new PartException("No such " + ps.getHyperTalkIdentifier() + ".");
+            throw new PartException("No such " + ps.getHyperTalkIdentifier(context) + ".");
         } else {
             return foundParts.get(index);
         }

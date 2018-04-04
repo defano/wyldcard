@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperatorExp;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class NegateOp extends UnaryOperatorExp {
@@ -13,7 +14,7 @@ public class NegateOp extends UnaryOperatorExp {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        return rhs().negate();
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        return rhs(context).negate();
     }
 }

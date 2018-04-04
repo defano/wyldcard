@@ -6,6 +6,7 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 
 import java.awt.*;
@@ -29,58 +30,67 @@ public interface Part {
 
     /**
      * Invoked when the part is opened (added) to a card, background or stack.
+     * @param context
      */
-    void partOpened();
+    void partOpened(ExecutionContext context);
 
     /**
      * Invoked when the part is closed (removed) from a card, background or stack.
+     * @param context
      */
-    void partClosed();
+    void partClosed(ExecutionContext context);
 
     /**
      * Sets the property of the part.
+     *
+     * @param context
      * @param property The name of the property to set
      * @param value The value to which it should be set
      * @throws NoSuchPropertyException Thrown if no such property exists on this part
      * @throws PropertyPermissionException Thrown when attempting to write a read-only property (like ID)
      * @throws HtSemanticException Thrown if value provided is invalid for this property
      */
-    default void setProperty(String property, Value value) throws HtSemanticException {
-        getPartModel().setProperty(property, value);
+    default void setProperty(ExecutionContext context, String property, Value value) throws HtSemanticException {
+        getPartModel().setProperty(context, property, value);
     }
 
     /**
      * Gets the value of a property on this part.
+     *
+     * @param context
      * @param property The name of the property to get
      * @return The value of the property
      * @throws NoSuchPropertyException Thrown if no such property exists on the part.
      */
-    default Value getProperty(String property) throws NoSuchPropertyException {
-        return getPartModel().getProperty(property);
+    default Value getProperty(ExecutionContext context, String property) throws NoSuchPropertyException {
+        return getPartModel().getProperty(context, property);
     }
 
     /**
      * Gets the bounds of this part.
      * @return The bounds of the part.
+     * @param context
      */
-    default Rectangle getRect() {
-        return getPartModel().getRect();
+    default Rectangle getRect(ExecutionContext context) {
+        return getPartModel().getRect(context);
     }
 
     /**
      * Gets the ID of this part.
      * @return The part id.
+     * @param context
      */
-    default int getId() {
-        return getPartModel().getKnownProperty(PartModel.PROP_ID).integerValue();
+    default int getId(ExecutionContext context) {
+        return getPartModel().getKnownProperty(context, PartModel.PROP_ID).integerValue();
     }
 
     /**
      * Gets the name of this part.
      * @return The part name.
+     * @param context
      */
-    default String getName() {
-        return getPartModel().getKnownProperty(PartModel.PROP_NAME).stringValue();
+    default String getName(ExecutionContext context) {
+        return getPartModel().getKnownProperty(context, PartModel.PROP_NAME).stringValue();
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.defano.wyldcard.parts;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+
 import java.awt.*;
 
 /**
@@ -17,16 +19,18 @@ public interface Styleable<Style,StyledComponent> {
      * Because different styles are generally represented by different Swing components, this is the primary means by
      * which HyperCard can swap one button or field style for another.
      *
+     * @param context
      * @param oldComponent The former component associated with this part
      * @param newComponent The new component
      */
-    void replaceViewComponent(Component oldComponent, Component newComponent);
+    void replaceViewComponent(ExecutionContext context, Component oldComponent, Component newComponent);
 
     /**
      * Specifies the style of this part.
+     * @param context
      * @param style The desired style.
      */
-    void setStyle(Style style);
+    void setStyle(ExecutionContext context, Style style);
 
     /**
      * Gets the component associated with the specified style.

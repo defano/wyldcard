@@ -24,57 +24,57 @@ public class PropertyExp extends ContainerExp {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
+    public Value onEvaluate(ExecutionContext context) throws HtException {
         Value propertyValue;
 
         // Getting the chunk of a property
-        if (propertySpec.isChunkPropertySpecifier()) {
-            propertyValue = ChunkPropertiesDelegate.getProperty(propertySpec.getAdjectiveAppliedPropertyName(), propertySpec.getChunk(), getPartSpecifier());
+        if (propertySpec.isChunkPropertySpecifier(context)) {
+            propertyValue = ChunkPropertiesDelegate.getProperty(context, propertySpec.getAdjectiveAppliedPropertyName(context), propertySpec.getChunk(context), getPartSpecifier(context));
         }
 
         // Getting the property of a menu item
-        else if (propertySpec.isMenuItemPropertySpecifier()) {
-            propertyValue = MenuPropertiesDelegate.getProperty(propertySpec.getProperty(), propertySpec.getMenuItem());
+        else if (propertySpec.isMenuItemPropertySpecifier(context)) {
+            propertyValue = MenuPropertiesDelegate.getProperty(context, propertySpec.getProperty(), propertySpec.getMenuItem(context));
         }
 
         // Getting a HyperCard (global) property
-        else if (propertySpec.isGlobalPropertySpecifier()) {
-            propertyValue = HyperCardProperties.getInstance().getProperty(propertySpec.getProperty());
+        else if (propertySpec.isGlobalPropertySpecifier(context)) {
+            propertyValue = HyperCardProperties.getInstance().getProperty(context, propertySpec.getProperty());
         }
 
         // Getting a part property
         else {
-            PartSpecifier partSpecifier = getPartSpecifier();
-            propertyValue = ExecutionContext.getContext().getPart(partSpecifier).getProperty(propertySpec.getAdjectiveAppliedPropertyName());
+            PartSpecifier partSpecifier = getPartSpecifier(context);
+            propertyValue = context.getPart(partSpecifier).getProperty(context, propertySpec.getAdjectiveAppliedPropertyName(context));
         }
 
-        return chunkOf(propertyValue, getChunk());
+        return chunkOf(context, propertyValue, getChunk());
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
 
         // Cannot set the adjective-form of a property (i.e., set 'the name' not 'the long name')
         if (propertySpec.getAdjective() != Adjective.DEFAULT) {
             throw new HtSemanticException("Cannot set that property.");
         }
 
-        if (propertySpec.isChunkPropertySpecifier()) {
-            ChunkPropertiesDelegate.setProperty(propertySpec.getProperty(), value, propertySpec.getChunk(), getPartSpecifier());
-        } else if (propertySpec.isMenuItemPropertySpecifier()) {
+        if (propertySpec.isChunkPropertySpecifier(context)) {
+            ChunkPropertiesDelegate.setProperty(context, propertySpec.getProperty(), value, propertySpec.getChunk(context), getPartSpecifier(context));
+        } else if (propertySpec.isMenuItemPropertySpecifier(context)) {
             throw new HtSemanticException("Cannot put a value into this kind of property.");
         } else {
             try {
-                ExecutionContext.getContext().setProperty(propertySpec.getProperty(), getPartSpecifier(), preposition, getChunk(), value);
+                context.setProperty(propertySpec.getProperty(), getPartSpecifier(context), preposition, getChunk(), value);
             } catch (NoSuchPropertyException e) {
                 // Context sensitive: Unknown HC property references are assumed to be local variable references
-                ExecutionContext.getContext().setVariable(propertySpec.getProperty(), preposition, getChunk(), value);
+                context.setVariable(propertySpec.getProperty(), preposition, getChunk(), value);
             }
         }
     }
 
-    private PartSpecifier getPartSpecifier() throws HtException {
-        return propertySpec.getPartExp() == null ? null : propertySpec.getPartExp().evaluateAsSpecifier();
+    private PartSpecifier getPartSpecifier(ExecutionContext context) throws HtException {
+        return propertySpec.getPartExp(context) == null ? null : propertySpec.getPartExp(context).evaluateAsSpecifier(context);
     }
 
 }

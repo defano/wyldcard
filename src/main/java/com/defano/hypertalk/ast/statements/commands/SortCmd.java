@@ -12,6 +12,7 @@ import com.defano.hypertalk.comparator.ValueComparator;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.model.ChunkType;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -38,9 +39,9 @@ public class SortCmd extends Command {
         this(context, container, chunkType, null, direction, sortStyle);
     }
 
-    public void onExecute() throws HtException {
-        ContainerExp factor = container.factor(ContainerExp.class, new HtSemanticException("Can't sort that."));
-        List<Value> items = getItemsToSort(factor);
+    public void onExecute(ExecutionContext context) throws HtException {
+        ContainerExp factor = container.factor(context, ContainerExp.class, new HtSemanticException("Can't sort that."));
+        List<Value> items = getItemsToSort(context, factor);
 
         // Sort by direction
         if (expression == null) {
@@ -49,25 +50,25 @@ public class SortCmd extends Command {
 
         // Sort by expression
         else {
-            items.sort(new ExpressionValueComparator(expression, direction, sortStyle));
+            items.sort(new ExpressionValueComparator(context, expression, direction, sortStyle));
         }
 
-        putSortedItems(factor, items);
+        putSortedItems(context, factor, items);
     }
 
-    private void putSortedItems(ContainerExp container, List<Value> sortedItems) throws HtException {
+    private void putSortedItems(ExecutionContext context, ContainerExp container, List<Value> sortedItems) throws HtException {
         switch (chunkType) {
             case WORD:
-                container.putValue(Value.ofWords(sortedItems), Preposition.INTO);
+                container.putValue(context, Value.ofWords(sortedItems), Preposition.INTO);
                 break;
             case LINE:
-                container.putValue(Value.ofLines(sortedItems), Preposition.INTO);
+                container.putValue(context, Value.ofLines(sortedItems), Preposition.INTO);
                 break;
             case ITEM:
-                container.putValue(Value.ofItems(sortedItems), Preposition.INTO);
+                container.putValue(context, Value.ofItems(sortedItems), Preposition.INTO);
                 break;
             case CHAR:
-                container.putValue(Value.ofChars(sortedItems), Preposition.INTO);
+                container.putValue(context, Value.ofChars(sortedItems), Preposition.INTO);
                 break;
 
             default:
@@ -75,16 +76,16 @@ public class SortCmd extends Command {
         }
     }
 
-    private List<Value> getItemsToSort(ContainerExp container) throws HtException {
+    private List<Value> getItemsToSort(ExecutionContext context, ContainerExp container) throws HtException {
         switch (chunkType) {
             case WORD:
-                return container.evaluate().getWords();
+                return container.evaluate(context).getWords(context);
             case ITEM:
-                return container.evaluate().getItems();
+                return container.evaluate(context).getItems(context);
             case LINE:
-                return container.evaluate().getLines();
+                return container.evaluate(context).getLines(context);
             case CHAR:
-                return container.evaluate().getChars();
+                return container.evaluate(context).getChars(context);
 
             default:
                 throw new HtSemanticException("Can't sort by that.");

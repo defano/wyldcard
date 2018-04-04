@@ -19,9 +19,9 @@ public class GetCmd extends Command {
         part = null;
     }
     
-    public void onExecute () throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         if (expression != null) {
-            ExecutionContext.getContext().setIt(expression.evaluate());
+            context.setIt(expression.evaluate(context));
         }
     }
 }

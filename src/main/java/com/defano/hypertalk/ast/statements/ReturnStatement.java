@@ -21,8 +21,8 @@ public class ReturnStatement extends Statement {
         this.returnValue = returnValue;
     }
 
-    public void onExecute() throws HtException, TerminateHandlerBreakpoint {
-        ExecutionContext.getContext().setReturnValue(returnValue.evaluate());
+    public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerBreakpoint {
+        context.setReturnValue(returnValue.evaluate(context));
         throw new TerminateHandlerBreakpoint(null);
     }
 }

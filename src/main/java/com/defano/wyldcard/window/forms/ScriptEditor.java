@@ -11,6 +11,7 @@ import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.menu.script.ScriptEditorMenuBar;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -59,9 +60,9 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
+                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
                 Font.PLAIN,
-                HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
         textArea.add(editor);
@@ -96,7 +97,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     public void bindModel(Object properties) {
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
-            String script = this.model.getKnownProperty("script").stringValue();
+            String script = this.model.getKnownProperty(new ExecutionContext(), "script").stringValue();
             editor.getScriptField().setText(script);
 
             moveCaretToPosition(model.getScriptEditorCaretPosition());
@@ -127,7 +128,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
         // No syntax error; okay to save
         else {
-            model.setKnownProperty(PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
+            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
             return true;
         }
     }
@@ -181,7 +182,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                     JOptionPane.YES_NO_OPTION);
 
             if (dialogResult == JOptionPane.YES_OPTION) {
-                editor.getScriptField().setText(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
             }
         }
     }
@@ -351,7 +352,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     }
 
     public boolean isDirty() {
-        return !editor.getScriptField().getText().equals(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
     }
 
     @RunOnDispatch

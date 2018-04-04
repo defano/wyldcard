@@ -5,6 +5,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.Breadcrumb;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.Token;
 
 import javax.swing.*;
@@ -27,7 +28,7 @@ public class HyperTalkErrorDialog {
             errorDialogVisible = true;
 
             if (isEditable(e)) {
-                showEditableError(e.getMessage(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
+                showEditableError(e.getMessage(), e.getBreadcrumb().getPartModel(new ExecutionContext()), e.getBreadcrumb().getToken());
             } else {
                 showUneditableError(e.getMessage());
             }
@@ -63,7 +64,7 @@ public class HyperTalkErrorDialog {
         if (selection == 1) {
             // Invoke later to allow the error dialog to go away first; otherwise, script editor may display behind
             // stack window
-            SwingUtilities.invokeLater(() -> offendingPart.editScript(offendingToken.getStartIndex()));
+            SwingUtilities.invokeLater(() -> offendingPart.editScript(new ExecutionContext(), offendingToken.getStartIndex()));
         }
     }
 

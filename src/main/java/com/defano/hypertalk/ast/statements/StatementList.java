@@ -28,12 +28,12 @@ public class StatementList extends Statement {
         return this;
     }
 
-    public void onExecute() throws HtException, Breakpoint {
+    public void onExecute(ExecutionContext context) throws HtException, Breakpoint {
         for (Statement s : list) {
-            if (ExecutionContext.getContext().didAbort()) {
+            if (context.didAbort()) {
                 throw new HtSemanticException("Script aborted.");
             }
-            s.execute();
+            s.execute(context);
         }
     }
 }

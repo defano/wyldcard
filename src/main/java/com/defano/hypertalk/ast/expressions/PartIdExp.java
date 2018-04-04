@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartIdExp extends PartExp {
@@ -25,9 +26,9 @@ public class PartIdExp extends PartExp {
         this.id = id;
     }
     
-    public PartSpecifier evaluateAsSpecifier () throws HtException
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException
     {        
-        return new PartIdSpecifier(layer, type, id.evaluate().integerValue());
+        return new PartIdSpecifier(layer, type, id.evaluate(context).integerValue());
     }
     
 }

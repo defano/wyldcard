@@ -28,11 +28,11 @@ public class EnableDisableCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
+    protected void onExecute(ExecutionContext context) throws HtException {
         boolean success = expression.factor(
-                new FactorAssociation<>(MenuItemExp.class, this::disableMenuItem),
-                new FactorAssociation<>(MenuExp.class, this::disableMenu),
-                new FactorAssociation<>(PartExp.class, this::disablePart)
+                context, new FactorAssociation<>(MenuItemExp.class, menuItemExp -> disableMenuItem(context, menuItemExp)),
+                new FactorAssociation<>(MenuExp.class, menuExp -> disableMenu(context, menuExp)),
+                new FactorAssociation<>(PartExp.class, partExp -> disablePart(partExp, context))
         );
 
         if (!success) {
@@ -40,15 +40,15 @@ public class EnableDisableCmd extends Command {
         }
     }
 
-    private void disablePart(PartExp partExp) throws HtException {
-        PartModel model = ExecutionContext.getContext().getPart(partExp.evaluateAsSpecifier());
-        model.setProperty(CardLayerPartModel.PROP_ENABLED, new Value(enable));
+    private void disablePart(PartExp partExp, ExecutionContext context) throws HtException {
+        PartModel model = context.getPart(partExp.evaluateAsSpecifier(context));
+        model.setProperty(context, CardLayerPartModel.PROP_ENABLED, new Value(enable));
     }
 
-    private void disableMenuItem(MenuItemExp menuItemExp) throws HtException {
+    private void disableMenuItem(ExecutionContext context, MenuItemExp menuItemExp) throws HtException {
         MenuItemSpecifier specifier = menuItemExp.item;
-        JMenu theMenu = specifier.getSpecifiedMenu();
-        int menuItemIndex = specifier.getSpecifiedItemIndex();
+        JMenu theMenu = specifier.getSpecifiedMenu(context);
+        int menuItemIndex = specifier.getSpecifiedItemIndex(context);
 
         if (menuItemIndex < 0 || menuItemIndex > theMenu.getItemCount()) {
             throw new HtSemanticException("No such menu item in menu " + theMenu.getText());
@@ -57,8 +57,8 @@ public class EnableDisableCmd extends Command {
         theMenu.getItem(menuItemIndex).setEnabled(enable);
     }
 
-    private void disableMenu(MenuExp menuExp) throws HtException {
-        JMenu theMenu = menuExp.menu.getSpecifiedMenu();
+    private void disableMenu(ExecutionContext context, MenuExp menuExp) throws HtException {
+        JMenu theMenu = menuExp.menu.getSpecifiedMenu(context);
         theMenu.setEnabled(enable);
     }
 }

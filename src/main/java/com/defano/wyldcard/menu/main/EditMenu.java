@@ -7,6 +7,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.parts.clipboard.CardActionListener;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -83,20 +84,20 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().newCard())
+                .withAction(e -> WyldCard.getInstance().getActiveStack().newCard(new ExecutionContext()))
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
                 .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getActiveStack().deleteCard())
+                .withAction(e -> WyldCard.getInstance().getActiveStack().deleteCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
                 .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getActiveStack().cutCard())
+                .withAction(e -> WyldCard.getInstance().getActiveStack().cutCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -107,7 +108,7 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
                 .withEnabledProvider(WyldCard.getInstance().getActiveStackCardClipboardProvider().map(Optional::isPresent))
-                .withAction(e -> WyldCard.getInstance().getActiveStack().pasteCard())
+                .withAction(e -> WyldCard.getInstance().getActiveStack().pasteCard(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();

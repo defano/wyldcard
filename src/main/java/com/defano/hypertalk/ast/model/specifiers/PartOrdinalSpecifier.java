@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * Specifies a button, field, card or background part by ordinal number. For example, 'the second card' or 'the fifth
@@ -36,7 +37,7 @@ public class PartOrdinalSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String getHyperTalkIdentifier() {
+    public String getHyperTalkIdentifier(ExecutionContext context) {
         if (layer == null) {
             return ordinal.name().toLowerCase() + " " + type.toString().toLowerCase();
         } else if (type == null) {

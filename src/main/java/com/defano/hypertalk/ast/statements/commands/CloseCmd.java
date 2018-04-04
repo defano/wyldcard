@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
@@ -16,7 +17,7 @@ public class CloseCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
-        FileContext.getInstance().close(filename.evaluate().stringValue());
+    public void onExecute(ExecutionContext context) throws HtException {
+        FileContext.getInstance().close(filename.evaluate(context).stringValue());
     }
 }

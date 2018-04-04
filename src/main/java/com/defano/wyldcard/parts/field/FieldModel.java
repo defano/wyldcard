@@ -33,7 +33,7 @@ import java.util.*;
  * To support this, the model persists the RTF rich text, but exposes a computed property ('text') that scripts can
  * read or write. When a script sets the field's text property, the model attempts to intelligently replace the
  * contents of the field with the new contents, keeping the existing style intact as best as possible. See
- * {@link #replaceText(String)} for details.
+ * {@link #replaceText(ExecutionContext, String)} for details.
  * <p>
  * Second: Fields placed in the background layer can either share their contents across all cards in the background
  * or, each card may have its own text (while still sharing other properties like size, location and showLines). This
@@ -88,10 +88,10 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         super(PartType.FIELD, owner, parentPartModel);
     }
 
-    public static FieldModel newFieldModel(int id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
+    public static FieldModel newFieldModel(ExecutionContext context, int id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
         FieldModel partModel = new FieldModel(owner, parentPartModel);
 
-        partModel.setCurrentCardId(parentPartModel.getId());
+        partModel.setCurrentCardId(parentPartModel.getId(context));
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -126,21 +126,21 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     public void initialize() {
         super.initialize();
 
-        defineComputedGetterProperty(PROP_TEXT, (model, propertyName) -> new Value(getText()));
-        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (model, propertyName, value) -> replaceText(value.stringValue()));
+        defineComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
+        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.stringValue()));
 
-        defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(getTextFontFamily(0, getText().length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (model, propertyName, value) -> setTextFontFamily(0, getText().length() + 1, value));
+        defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
+        defineComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
 
-        defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(getTextFontSize(0, getText().length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (model, propertyName, value) -> setTextFontSize(0, getText().length() + 1, value));
+        defineComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(getTextFontSize(context, 0, getText(context).length() + 1)));
+        defineComputedSetterProperty(PROP_TEXTSIZE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontSize(context, 0, getText(context).length() + 1, value));
 
-        defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(getTextFontStyle(0, getText().length() + 1)));
-        defineComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (model, propertyName, value) -> setTextFontStyle(0, getText().length() + 1, value));
+        defineComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(getTextFontStyle(context, 0, getText(context).length() + 1)));
+        defineComputedSetterProperty(PROP_TEXTSTYLE, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontStyle(context, 0, getText(context).length() + 1, value));
 
-        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (model, propertyName) -> getSelectedText());
-        defineComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (model, propertyName) -> getSelectedChunkExpression());
-        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (model, propertyName) -> getSelectedLineExpression());
+        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> getSelectedText(context));
+        defineComputedReadOnlyProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> getSelectedChunkExpression(context));
+        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> getSelectedLineExpression(context));
 
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_DONTWRAP));
         addPropertyChangedObserver(LogicalLinkObserver.setOnSet(PROP_AUTOSELECT, PROP_LOCKTEXT));
@@ -164,17 +164,18 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Gets a Swing {@link StyledDocument} representing the rich text displayed in this field.
      *
      * @return A StyledDocument representation of the contents of this field.
+     * @param context
      */
-    public StyledDocument getStyledDocument() {
-        if (useSharedText()) {
+    public StyledDocument getStyledDocument(ExecutionContext context) {
+        if (useSharedText(context)) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
-            return getStyledDocument(getCurrentCardId());
+            return getStyledDocument(context, getCurrentCardId(context));
         }
     }
 
-    private StyledDocument getStyledDocument(int forCardId) {
-        if (useSharedText()) {
+    private StyledDocument getStyledDocument(ExecutionContext context, int forCardId) {
+        if (useSharedText(context)) {
             return sharedText == null ? new DefaultStyledDocument() : sharedText;
         } else {
             return unsharedText.getOrDefault(forCardId, new DefaultStyledDocument());
@@ -185,13 +186,14 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Persists the given StyledDocument data into this model. Affects either the shared document data, or the unshared
      * data depending on whether the field is in the background and has the sharedText property.
      *
+     * @param context
      * @param doc The styled document data to persist into the model.
      */
-    public void setStyledDocument(StyledDocument doc) {
-        if (useSharedText()) {
+    public void setStyledDocument(ExecutionContext context, StyledDocument doc) {
+        if (useSharedText(context)) {
             FieldModel.this.sharedText = doc;
         } else {
-            unsharedText.put(getCurrentCardId(), doc);
+            unsharedText.put(getCurrentCardId(context), doc);
         }
     }
 
@@ -199,23 +201,25 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Determine if the model should use the sharedText document data.
      *
      * @return True if the model should use sharedText data; false otherwise.
+     * @param context
      */
-    private boolean useSharedText() {
-        return getOwner() == Owner.CARD || getKnownProperty(PROP_SHAREDTEXT).booleanValue();
+    private boolean useSharedText(ExecutionContext context) {
+        return getOwner() == Owner.CARD || getKnownProperty(context, PROP_SHAREDTEXT).booleanValue();
     }
 
     /**
      * Gets a plaintext representation of the text held in this model.
      *
      * @return A plaintext representation of the contents of this field.
+     * @param context
      */
     @Override
-    public String getText() {
-        return getText(getCurrentCardId());
+    public String getText(ExecutionContext context) {
+        return getText(context, getCurrentCardId(context));
     }
 
-    public String getText(int forCardId) {
-        StyledDocument doc = getStyledDocument(forCardId);
+    public String getText(ExecutionContext context, int forCardId) {
+        StyledDocument doc = getStyledDocument(context, forCardId);
         try {
             return doc.getText(0, doc.getLength());
         } catch (BadLocationException e) {
@@ -234,10 +238,11 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * independently to let the {@link StyledDocument} model best preserve its formatting.
      * <p>
      *
+     * @param context
      * @param newText The text with which to replace the field's existing contents.
      */
-    private void replaceText(String newText) {
-        String existingText = getText();
+    private void replaceText(ExecutionContext context, String newText) {
+        String existingText = getText(context);
 
         // Don't waste our own time
         if (newText.equals(existingText)) {
@@ -245,7 +250,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         }
 
         int changePosition = 0;
-        StyledDocument document = getStyledDocument();
+        StyledDocument document = getStyledDocument(context);
 
         AttributeSet style = document.getLength() == 0 ?
                 FontContext.getInstance().getFocusedTextStyle().toAttributeSet() :
@@ -272,8 +277,8 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             throw new RuntimeException("An error occurred updating field text.", e);
         }
 
-        setStyledDocument(document);              // Save our changes
-        fireDocumentChangeObserver(document);     // ... and let the view know know about 'em
+        setStyledDocument(context, document);              // Save our changes
+        fireDocumentChangeObserver(context, document);     // ... and let the view know know about 'em
     }
 
     /**
@@ -294,30 +299,32 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     /** {@inheritDoc} */
     @Override
-    public void setTextStyle(TextStyleSpecifier tss) {
-        StyledDocument doc = getStyledDocument();
+    public void setTextStyle(ExecutionContext context, TextStyleSpecifier tss) {
+        StyledDocument doc = getStyledDocument(context);
         doc.setCharacterAttributes(0, doc.getLength() + 1, tss.toAttributeSet(), true);
 
-        setStyledDocument(doc);
-        fireDocumentChangeObserver(doc);
+        setStyledDocument(context, doc);
+        fireDocumentChangeObserver(context, doc);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param context*/
     @Override
-    public TextStyleSpecifier getTextStyle() {
-        return TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(0).getAttributes());
+    public TextStyleSpecifier getTextStyle(ExecutionContext context) {
+        return TextStyleSpecifier.fromAttributeSet(getStyledDocument(context).getCharacterElement(0).getAttributes());
     }
 
     /**
      * Sets the font family of the indicated range of characters in this field; has no effect if the font family
      * is not available on this system.
      *
+     * @param context
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @param fontFamily    The new font family to apply.
      */
-    public void setTextFontFamily(int startPosition, int length, Value fontFamily) {
-        StyledDocument doc = getStyledDocument();
+    public void setTextFontFamily(ExecutionContext context, int startPosition, int length, Value fontFamily) {
+        StyledDocument doc = getStyledDocument(context);
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
@@ -332,19 +339,20 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
         }
 
-        setStyledDocument(doc);
-        fireDocumentChangeObserver(doc);
+        setStyledDocument(context, doc);
+        fireDocumentChangeObserver(context, doc);
     }
 
     /**
      * Sets the font size (in points) of the indicated range of characters in this field.
      *
+     * @param context
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @param fontSize      The new font size to apply.
      */
-    public void setTextFontSize(int startPosition, int length, Value fontSize) {
-        StyledDocument doc = getStyledDocument();
+    public void setTextFontSize(ExecutionContext context, int startPosition, int length, Value fontSize) {
+        StyledDocument doc = getStyledDocument(context);
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
@@ -359,20 +367,21 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
         }
 
-        setStyledDocument(doc);
-        fireDocumentChangeObserver(doc);
+        setStyledDocument(context, doc);
+        fireDocumentChangeObserver(context, doc);
     }
 
     /**
      * Sets the font style of the indicated range of characters in this field; style should be 'italic', 'bold',
      * 'bold,italic' or 'plain'.
      *
+     * @param context
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @param fontStyle     The new font style to apply.
      */
-    public void setTextFontStyle(int startPosition, int length, Value fontStyle) {
-        StyledDocument doc = getStyledDocument();
+    public void setTextFontStyle(ExecutionContext context, int startPosition, int length, Value fontStyle) {
+        StyledDocument doc = getStyledDocument(context);
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
@@ -384,79 +393,85 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         // Apply style changes to each character
         else {
             for (int index = startPosition; index < startPosition + length; index++) {
-                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(index).getAttributes());
+                TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument(context).getCharacterElement(index).getAttributes());
                 tss.setFontStyle(fontStyle);
                 doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
             }
         }
 
-        setStyledDocument(doc);
-        fireDocumentChangeObserver(doc);
+        setStyledDocument(context, doc);
+        fireDocumentChangeObserver(context, doc);
     }
 
     /**
      * Gets the font family of the indicated range of characters in the field, or 'mixed' if multiple fonts are present
      * in the range.
      *
+     *
+     * @param context
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @return              The name of the font family present in the range of characters or 'mixed' if there are
      * multiple fonts
      */
-    public Value getTextFontFamily(int startPosition, int length) {
+    public Value getTextFontFamily(ExecutionContext context, int startPosition, int length) {
         for (int index = startPosition; index < startPosition + length - 1; index++) {
-            if (!getTextFontFamily(index).equals(getTextFontFamily(index + 1))) {
+            if (!getTextFontFamily(context, index).equals(getTextFontFamily(context, index + 1))) {
                 return new Value("mixed");
             }
         }
-        return new Value(getTextFontFamily(startPosition));
+        return new Value(getTextFontFamily(context, startPosition));
     }
 
-    private Value getTextFontFamily(int position) {
-        return new Value(getStyledDocument().getCharacterElement(position).getAttributes().getAttribute(StyleConstants.FontFamily));
+    private Value getTextFontFamily(ExecutionContext context, int position) {
+        return new Value(getStyledDocument(context).getCharacterElement(position).getAttributes().getAttribute(StyleConstants.FontFamily));
     }
 
     /**
      * Gets the font size of the indicated range of characters in the field, or 'mixed' if multiple sizes are present
      * in the range.
      *
+     *
+     * @param context
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @return              The size of the font present in the range of characters or 'mixed' if there are multiple
      * sizes.
      */
-    public Value getTextFontSize(int startPosition, int length) {
+    public Value getTextFontSize(ExecutionContext context, int startPosition, int length) {
         for (int index = startPosition; index < startPosition + length - 1; index++) {
-            if (!getTextFontSize(index).equals(getTextFontSize(index + 1))) {
+            if (!getTextFontSize(context, index).equals(getTextFontSize(context, index + 1))) {
                 return new Value("mixed");
             }
         }
-        return new Value(getTextFontSize(startPosition));
+        return new Value(getTextFontSize(context, startPosition));
     }
 
-    private Value getTextFontSize(int position) {
-        return new Value(getStyledDocument().getCharacterElement(position).getAttributes().getAttribute(StyleConstants.FontSize));
+    private Value getTextFontSize(ExecutionContext context, int position) {
+        return new Value(getStyledDocument(context).getCharacterElement(position).getAttributes().getAttribute(StyleConstants.FontSize));
     }
 
     /**
      * Gets the font style of the indicated range of characters in the field, or 'mixed' if multiple styles are present
      * in the range.
      *
+     *
+     * @param context
      * @param startPosition The index of the first character whose style should change
      * @param length        The number of characters after the start position to apply the style to.
      * @return              The font style present in the range of characters or 'mixed' if there are multiple styles
      */
-    public Value getTextFontStyle(int startPosition, int length) {
+    public Value getTextFontStyle(ExecutionContext context, int startPosition, int length) {
         for (int index = startPosition; index < startPosition + length - 1; index++) {
-            if (!getTextFontStyle(index).equals(getTextFontStyle(index + 1))) {
+            if (!getTextFontStyle(context, index).equals(getTextFontStyle(context, index + 1))) {
                 return new Value("mixed");
             }
         }
-        return new Value(getTextFontStyle(startPosition));
+        return new Value(getTextFontStyle(context, startPosition));
     }
 
-    private Value getTextFontStyle(int position) {
-        TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument().getCharacterElement(position).getAttributes());
+    private Value getTextFontStyle(ExecutionContext context, int position) {
+        TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(getStyledDocument(context).getCharacterElement(position).getAttributes());
         return tss.getHyperTalkStyle();
     }
 
@@ -464,35 +479,37 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * Auto-selects the given line number. Auto-selecting the line highlights the entire width of the line and places
      * the contents of the line into the selection, Has no effect if the field has no such line.
      *
+     * @param context
      * @param lineNumber The line number to auto-select
      */
-    public void autoSelectLine(int lineNumber, boolean appendSelection) {
-        if (lineNumber >= 1 && lineNumber <= new Value(getText()).getLines().size()) {
+    public void autoSelectLine(ExecutionContext context, int lineNumber, boolean appendSelection) {
+        if (lineNumber >= 1 && lineNumber <= new Value(getText(context)).getLines(context).size()) {
 
             if (!appendSelection) {
-                getAutoSelectedLines().clear();
+                getAutoSelectedLines(context).clear();
             }
 
-            getAutoSelectedLines().add(lineNumber);
-            fireAutoSelectChangeObserver(getAutoSelectedLines());
+            getAutoSelectedLines(context).add(lineNumber);
+            fireAutoSelectChangeObserver(context, getAutoSelectedLines(context));
         }
     }
 
     /**
      * Auto-selects the given range of lines.
      *
+     * @param context
      * @param startLine The first line in the auto-selection, counting from 1, inclusive.
      * @param endLine The last line in the auto-selection, counting from 1, inclusive.
      */
-    private void autoSelectLines(int startLine, int endLine) {
-        Set<Integer> autoSelection = getAutoSelectedLines();
+    private void autoSelectLines(ExecutionContext context, int startLine, int endLine) {
+        Set<Integer> autoSelection = getAutoSelectedLines(context);
 
         autoSelection.clear();
         for (int line = startLine; line <= endLine; line++) {
             autoSelection.add(line);
         }
 
-        fireAutoSelectChangeObserver(autoSelection);
+        fireAutoSelectChangeObserver(context, autoSelection);
     }
 
     /**
@@ -500,13 +517,14 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * disabled.
      *
      * @return The auto-selected lines.
+     * @param context
      */
-    public Set<Integer> getAutoSelectedLines() {
-        if (isAutoSelection()) {
-            if (useSharedText()) {
+    public Set<Integer> getAutoSelectedLines(ExecutionContext context) {
+        if (isAutoSelection(context)) {
+            if (useSharedText(context)) {
                 return sharedAutoSelection;
             } else {
-                return unsharedAutoSelection.computeIfAbsent(getCurrentCardId(), k -> new HashSet<>());
+                return unsharedAutoSelection.computeIfAbsent(getCurrentCardId(context), k -> new HashSet<>());
             }
         } else {
             return new HashSet<>();
@@ -518,11 +536,12 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
      * if auto-selection is disabled.
      *
      * @return The range of characters in the auto selection.
+     * @param context
      */
-    private Range getAutoSelectionRange() {
-        if (isAutoSelection()) {
-            int[] lines = getAutoSelectedLines().stream().mapToInt(Number::intValue).toArray();
-            return FieldUtilities.getLinesRange(getText(), lines);
+    private Range getAutoSelectionRange(ExecutionContext context) {
+        if (isAutoSelection(context)) {
+            int[] lines = getAutoSelectedLines(context).stream().mapToInt(Number::intValue).toArray();
+            return FieldUtilities.getLinesRange(getText(context), lines);
         } else {
             return new Range();
         }
@@ -531,31 +550,33 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
     /**
      * Determines if the auto-selection property is enabled on this field.
      * @return True if auto-selection is enabled; false otherwise
+     * @param context
      */
-    public boolean isAutoSelection() {
-        return getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue();
+    public boolean isAutoSelection(ExecutionContext context) {
+        return getKnownProperty(context, FieldModel.PROP_AUTOSELECT).booleanValue();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setSelection(Range selection) {
-        if (isAutoSelection()) {
-            autoSelectLines(FieldUtilities.getLineOfChar(selection.start, getText()), FieldUtilities.getLineOfChar(selection.end, getText()));
+    public void setSelection(ExecutionContext context, Range selection) {
+        if (isAutoSelection(context)) {
+            autoSelectLines(context, FieldUtilities.getLineOfChar(selection.start, getText(context)), FieldUtilities.getLineOfChar(selection.end, getText(context)));
         } else {
             this.selection = selection;
-            fireSelectionChange(selection);
+            fireSelectionChange(context, selection);
         }
     }
 
     /**
      * {@inheritDoc}
+     * @param context
      */
     @Override
-    public Range getSelection() {
-        if (isAutoSelection()) {
-            return getAutoSelectionRange();
+    public Range getSelection(ExecutionContext context) {
+        if (isAutoSelection(context)) {
+            return getAutoSelectionRange(context);
         } else {
             return this.selection == null ? new Range() : this.selection;
         }
@@ -584,18 +605,20 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     /**
      * {@inheritDoc}
+     * @param context
      */
     @Override
-    public String getHyperTalkAddress() {
-        return getOwner().hyperTalkName.toLowerCase() + " field id " + getId();
+    public String getHyperTalkAddress(ExecutionContext context) {
+        return getOwner().hyperTalkName.toLowerCase() + " field id " + getId(context);
     }
 
     /**
      * {@inheritDoc}
+     * @param context
      */
     @Override
-    public PartSpecifier getPartSpecifier() {
-        return new PartIdSpecifier(getOwner(), PartType.FIELD, getId());
+    public PartSpecifier getPartSpecifier(ExecutionContext context) {
+        return new PartIdSpecifier(getOwner(), PartType.FIELD, getId(context));
     }
 
     /**
@@ -606,31 +629,31 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         return this;
     }
 
-    public long getFieldNumber() {
-        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this, PartType.FIELD);
+    public long getFieldNumber(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this, PartType.FIELD);
     }
 
-    public long getFieldCount() {
-        return ((LayeredPartFinder) getParentPartModel()).getPartCount(PartType.FIELD, getOwner());
+    public long getFieldCount(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, PartType.FIELD, getOwner());
     }
 
-    private void fireAutoSelectChangeObserver(Set<Integer> selectedLines) {
-        if (observer != null && getCurrentCardIdOrNull() == ExecutionContext.getContext().getCurrentCard().getId()) {
+    private void fireAutoSelectChangeObserver(ExecutionContext context, Set<Integer> selectedLines) {
+        if (observer != null && getCurrentCardIdOrNull() == context.getCurrentCard().getId(context)) {
             SwingUtilities.invokeLater(() -> observer.onAutoSelectionChanged(selectedLines));
         }
     }
 
-    private void fireDocumentChangeObserver(StyledDocument document) {
-        if (observer != null && getCurrentCardIdOrNull() == ExecutionContext.getContext().getCurrentCard().getId()) {
+    private void fireDocumentChangeObserver(ExecutionContext context, StyledDocument document) {
+        if (observer != null && getCurrentCardIdOrNull() == context.getCurrentCard().getId(context)) {
             SwingUtilities.invokeLater(() -> observer.onStyledDocumentChanged(document));
         }
     }
 
-    private void fireSelectionChange(Range selection) {
+    private void fireSelectionChange(ExecutionContext context, Range selection) {
         // Update 'the selection' HyperCard property
-        SelectionContext.getInstance().setSelection(getPartSpecifier(), selection);
+        SelectionContext.getInstance().setSelection(getPartSpecifier(context), selection);
 
-        if (observer != null && getCurrentCardIdOrNull() == ExecutionContext.getContext().getCurrentCard().getId()) {
+        if (observer != null && getCurrentCardIdOrNull() == context.getCurrentCard().getId(context)) {
             SwingUtilities.invokeLater(() -> observer.onSelectionChange(selection));
         }
     }

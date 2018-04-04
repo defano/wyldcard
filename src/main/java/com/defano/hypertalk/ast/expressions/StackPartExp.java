@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class StackPartExp extends PartExp {
@@ -20,11 +21,11 @@ public class StackPartExp extends PartExp {
     }
 
     @Override
-    public PartSpecifier evaluateAsSpecifier() throws HtException {
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
         if (stackName == null) {
             return new StackPartSpecifier();
         } else {
-            return new StackPartSpecifier(stackName.evaluate().stringValue());
+            return new StackPartSpecifier(stackName.evaluate(context).stringValue());
         }
     }
 }

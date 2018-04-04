@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.*;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.jmonet.tools.util.MarchingAnts;
@@ -43,14 +44,14 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     }
 
     @Override
-    public void setSelectedForEditing(boolean beingEdited) {
+    public void setSelectedForEditing(ExecutionContext context, boolean beingEdited) {
         isBeingEdited = beingEdited;
 
         if (isSelectedForEditing()) {
             MarchingAnts.getInstance().addObserver(this);
 
             // TODO: Focus style only reflects first char; should reflect entire field
-            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle()));
+            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }
@@ -59,10 +60,10 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     }
 
     @Override
-    public void setStyle(FieldStyle style) {
+    public void setStyle(ExecutionContext context, FieldStyle style) {
         Component oldComponent = getFieldComponent();
         fieldComponent = getComponentForStyle(style);
-        replaceViewComponent(oldComponent, fieldComponent);
+        replaceViewComponent(context, oldComponent, fieldComponent);
     }
 
     @Override
@@ -103,8 +104,8 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     }
 
     @Override
-    public void partOpened() {
-        fieldComponent.partOpened();
+    public void partOpened(ExecutionContext context) {
+        fieldComponent.partOpened(context);
 
         getPartModel().addPropertyChangedObserver(fieldComponent);
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
@@ -112,8 +113,8 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     }
 
     @Override
-    public void partClosed() {
-        fieldComponent.partClosed();
+    public void partClosed(ExecutionContext context) {
+        fieldComponent.partClosedE(context);
 
         getPartModel().removePropertyChangedObserver(fieldComponent);
         KeyboardManager.getInstance().removeGlobalKeyListener(this);
@@ -128,7 +129,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
     private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
         public void accept(ToolMode toolMode) {
-            onToolModeChanged();
+            onToolModeChanged(new ExecutionContext());
         }
     }
 }

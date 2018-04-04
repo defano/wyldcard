@@ -4,6 +4,7 @@ import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class CreateMenuCmd extends Command {
@@ -16,7 +17,7 @@ public class CreateMenuCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
-        HyperCardMenuBar.getInstance().createMenu(menuName.evaluate().stringValue());
+    public void onExecute(ExecutionContext context) throws HtException {
+        HyperCardMenuBar.getInstance().createMenu(menuName.evaluate(context).stringValue());
     }
 }

@@ -25,24 +25,27 @@ public interface Messagable {
      * Gets the script associated with this part.
      *
      * @return The script
+     * @param context
      */
-    Script getScript();
+    Script getScript(ExecutionContext context);
 
     /**
      * Gets a part specifier that uniquely identifies this part in the stack. This part will be bound to the 'me'
      * keyword in the script that receives messages.
      *
      * @return The part specifier for the 'me' keyword.
+     * @param context
      */
-    PartSpecifier getMe();
+    PartSpecifier getMe(ExecutionContext context);
 
     /**
      * Sends a message (i.e., 'mouseUp') to this part's message passing hierarchy.
      *
+     * @param context The execution context
      * @param message The message to be passed.
      */
-    default void receiveMessage(String message) {
-        receiveMessage(message, new ListExp(null), (command, trapped, err) -> {
+    default void receiveMessage(ExecutionContext context, String message) {
+        receiveMessage(context, message, new ListExp(null), (command, trapped, err) -> {
             if (err != null) {
                 WyldCard.getInstance().showErrorDialog(err);
             }
@@ -52,11 +55,12 @@ public interface Messagable {
     /**
      * Sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
      *
+     * @param context The execution context
      * @param message   The message to be passed
      * @param arguments The arguments to the message
      */
-    default void receiveMessage(String message, ListExp arguments) {
-        receiveMessage(message, arguments, (command, trapped, err) -> {
+    default void receiveMessage(ExecutionContext context, String message, ListExp arguments) {
+        receiveMessage(context, message, arguments, (command, trapped, err) -> {
             if (err != null) {
                 WyldCard.getInstance().showErrorDialog(err);
             }
@@ -66,34 +70,34 @@ public interface Messagable {
     /**
      * Sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing hierarchy.
      *
+     * @param context The execution context
      * @param message      The name of the command; cannot be null.
      * @param arguments    The arguments to pass to this command; cannot be null.
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
-     *                     Note that this callback will not fire if the script terminates as a result of an error or
-     *                     breakpoint.
+*                     Note that this callback will not fire if the script terminates as a result of an error or
      */
-    default void receiveMessage(String message, ListExp arguments, MessageCompletionObserver onCompletion) {
+    default void receiveMessage(ExecutionContext context, String message, ListExp arguments, MessageCompletionObserver onCompletion) {
 
         // No messages are sent cmd-option is down; some messages not sent when 'lockMessages' is true
         if (KeyboardManager.getInstance().isCommandOptionDown() ||
-                (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_LOCKMESSAGES).booleanValue())
+                (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_LOCKMESSAGES).booleanValue())
         {
             onCompletion.onMessagePassed(message, false, null);
             return;
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Interpreter.asyncExecuteHandler(getMe(), getScript(), message, arguments, (me, script, handler, trappedMessage) -> {
+        Interpreter.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage) -> {
             // Did this part trap this command?
             if (trappedMessage) {
                 onCompletion.onMessagePassed(message, true, null);
             } else {
                 // Get next recipient in message passing order; null if no other parts receive message
-                Messagable nextRecipient = getNextMessageRecipient(getMe().getType());
+                Messagable nextRecipient = getNextMessageRecipient(context, getMe(context).getType());
                 if (nextRecipient == null) {
                     onCompletion.onMessagePassed(message, false, null);
                 } else {
-                    nextRecipient.receiveMessage(message, arguments, onCompletion);
+                    nextRecipient.receiveMessage(context, message, arguments, onCompletion);
                 }
             }
         });
@@ -110,17 +114,17 @@ public interface Messagable {
      * {@link DeferredKeyEventComponent#setPendingRedispatch(boolean)} is invoked with 'true' initially, then invoked
      * with 'false' after the message has been completely received.
      *
+     * @param context   The execution context
      * @param command   The name of the command
      * @param arguments The arguments to pass to this command
      * @param e         The input event to consume if the command is trapped by the part (or fails to invoke 'pass') within
-     *                  a short period of time).
      */
-    default void receiveAndDeferKeyEvent(String command, ListExp arguments, KeyEvent e, DeferredKeyEventComponent c) {
+    default void receiveAndDeferKeyEvent(ExecutionContext context, String command, ListExp arguments, KeyEvent e, DeferredKeyEventComponent c) {
         InputEvent eventCopy = new KeyEvent(e.getComponent(), e.getID(), e.getWhen(), e.getModifiers(), e.getKeyCode(), e.getKeyChar(), e.getKeyLocation());
         e.consume();
 
         c.setPendingRedispatch(true);
-        receiveMessage(command, arguments, (command1, wasTrapped, error) -> {
+        receiveMessage(context, command, arguments, (command1, wasTrapped, error) -> {
             if (!wasTrapped) {
                 c.dispatchEvent(eventCopy);
             }
@@ -132,18 +136,20 @@ public interface Messagable {
     /**
      * Invokes a function defined in the part's script, blocking until the function completes.
      *
+     *
+     * @param context The execution context
      * @param functionName The name of the function to execute.
      * @param arguments    The arguments to the function.
      * @return The value returned by the function upon completion.
      * @throws HtSemanticException Thrown if a syntax or semantic error occurs attempting to execute the function.
      */
-    default Value invokeFunction(String functionName, Expression arguments) throws HtException {
-        UserFunction function = getScript().getFunction(functionName);
+    default Value invokeFunction(ExecutionContext context, String functionName, Expression arguments) throws HtException {
+        UserFunction function = getScript(context).getFunction(functionName);
         Messagable target = this;
 
         while (function == null) {
             // Get next part is message passing hierarchy
-            target = getNextMessageRecipient(target.getMe().getType());
+            target = getNextMessageRecipient(context, target.getMe(context).getType());
 
             // No more scripts to search; error!
             if (target == null) {
@@ -151,39 +157,40 @@ public interface Messagable {
             }
 
             // Look for function in this script
-            function = target.getScript().getFunction(functionName);
+            function = target.getScript(context).getFunction(functionName);
         }
 
-        return Interpreter.blockingExecuteFunction(target.getMe(), function, arguments);
+        return Interpreter.blockingExecuteFunction(context, target.getMe(context), function, arguments);
     }
 
     /**
      * Gets the next part in the message passing order.
      *
+     * @param context The execution context
      * @return The next messagable part in the message passing order, or null, if we've reached the last object in the
      * hierarchy.
      */
-    default Messagable getNextMessageRecipient(PartType type) {
+    default Messagable getNextMessageRecipient(ExecutionContext context, PartType type) {
 
         switch (type) {
             case BACKGROUND:
                 return WyldCard.getInstance().getActiveStack().getStackModel();
             case MESSAGE_BOX:
-                return ExecutionContext.getContext().getCurrentCard().getCardModel();
+                return context.getCurrentCard().getCardModel();
             case CARD:
-                return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel();
+                return context.getCurrentCard().getCardModel().getBackgroundModel();
             case STACK:
                 return null;
             case FIELD:
             case BUTTON:
-                if (getMe().getOwner() == Owner.BACKGROUND) {
-                    return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel();
+                if (getMe(context).getOwner() == Owner.BACKGROUND) {
+                    return context.getCurrentCard().getCardModel().getBackgroundModel();
                 } else {
-                    return ExecutionContext.getContext().getCurrentCard().getCardModel();
+                    return context.getCurrentCard().getCardModel();
                 }
         }
 
-        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe().getOwner());
+        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe(context).getOwner());
     }
 
 }

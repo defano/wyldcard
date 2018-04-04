@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.statements.Command;
@@ -13,7 +14,7 @@ public class SelectEmptyCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         ThreadUtils.invokeAndWaitAsNeeded(() -> PartToolContext.getInstance().deselectAllParts());
     }
 }

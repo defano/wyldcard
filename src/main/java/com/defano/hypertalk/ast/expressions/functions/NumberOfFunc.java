@@ -33,40 +33,40 @@ public class NumberOfFunc extends Expression {
         this.expression = expression;
     }
 
-    public Value onEvaluate() throws HtException {
+    public Value onEvaluate(ExecutionContext context) throws HtException {
         switch (itemType) {
             case CHAR:
-                return new Value(expression.evaluate().charCount());
+                return new Value(expression.evaluate(context).charCount(context));
             case WORD:
-                return new Value(expression.evaluate().wordCount());
+                return new Value(expression.evaluate(context).wordCount(context));
             case LINE:
             case MENU_ITEMS:
-                return new Value(expression.evaluate().lineCount());
+                return new Value(expression.evaluate(context).lineCount(context));
             case ITEM:
-                return new Value(expression.evaluate().itemCount());
+                return new Value(expression.evaluate(context).itemCount(context));
             case CARD_PARTS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(null, Owner.CARD));
+                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, null, Owner.CARD));
             case BKGND_PARTS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(null, Owner.BACKGROUND));
+                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, null, Owner.BACKGROUND));
             case CARD_BUTTONS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.BUTTON, Owner.CARD));
+                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD));
             case BKGND_BUTTONS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.BUTTON, Owner.BACKGROUND));
+                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND));
             case CARD_FIELDS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.FIELD, Owner.CARD));
+                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
-                return new Value(ExecutionContext.getContext().getCurrentCard().getCardModel().getPartCount(PartType.FIELD, Owner.BACKGROUND));
+                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
                 return new Value(HyperCardMenuBar.getInstance().getMenuCount());
             case CARDS:
                 return new Value(WyldCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:
-                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getMarkedCards().size());
+                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getMarkedCards(context).size());
             case BKGNDS:
                 return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
-                BackgroundModel model = expression.partFactor(BackgroundModel.class, new HtSemanticException("No such background."));
-                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getCardsInBackground(model.getId()).size());
+                BackgroundModel model = expression.partFactor(context, BackgroundModel.class, new HtSemanticException("No such background."));
+                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getCardsInBackground(model.getId(context)).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }

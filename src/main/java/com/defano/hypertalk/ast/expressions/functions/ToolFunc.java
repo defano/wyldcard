@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -12,7 +13,7 @@ public class ToolFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() {
+    public Value onEvaluate(ExecutionContext context) {
         return new Value(ToolsContext.getInstance().getSelectedTool().getPrimaryToolName().toLowerCase() + " tool");
     }
 }

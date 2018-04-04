@@ -5,6 +5,7 @@ import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.paint.ArtVandelay;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.print.PrintCardAction;
 import com.defano.wyldcard.runtime.print.PrintStackAction;
@@ -24,12 +25,12 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> WyldCard.getInstance().newStack())
+                .withAction(e -> WyldCard.getInstance().newStack(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
-                .withAction(e -> WyldCard.getInstance().open())
+                .withAction(e -> WyldCard.getInstance().open(new ExecutionContext()))
                 .withShortcut('O')
                 .build(this);
 
@@ -41,14 +42,14 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack")
-                .withAction(e -> WyldCard.getInstance().saveActiveStack())
+                .withAction(e -> WyldCard.getInstance().saveActiveStack(new ExecutionContext()))
                 .withEnabledProvider(WyldCard.getInstance().getSavedStackFileProvider().map(Optional::isPresent))
                 .withShortcut('S')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Stack As...")
-                .withAction(e -> WyldCard.getInstance().saveActiveStackAs())
+                .withAction(e -> WyldCard.getInstance().saveActiveStackAs(new ExecutionContext()))
                 .withShiftShortcut('S')
                 .build(this);
 

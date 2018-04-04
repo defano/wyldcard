@@ -16,8 +16,8 @@ public class PassCmd extends Statement {
     }
 
     @Override
-    public void onExecute() throws HtException, TerminateHandlerBreakpoint {
-        ExecutionContext.getContext().setPassedMessage(passedMessage);
+    public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerBreakpoint {
+        context.setPassedMessage(passedMessage);
         throw new TerminateHandlerBreakpoint(passedMessage);
     }
 }

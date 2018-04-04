@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.sound.SoundPlayer;
 import com.defano.hypertalk.ast.model.MusicalScore;
 import com.defano.hypertalk.ast.model.Value;
@@ -17,10 +18,10 @@ public class PlayCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
-        Value instrument = music.instrument.evaluate();
-        Value notes = music.notes == null ? new Value() : music.notes.evaluate();
-        Value tempo = music.tempo == null ? new Value() : music.tempo.evaluate();
+    public void onExecute(ExecutionContext context) throws HtException {
+        Value instrument = music.instrument.evaluate(context);
+        Value notes = music.notes == null ? new Value() : music.notes.evaluate(context);
+        Value tempo = music.tempo == null ? new Value() : music.tempo.evaluate(context);
 
         SoundPlayer.play(instrument, notes, tempo);
     }

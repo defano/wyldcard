@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartOrdinalSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartNumberExp extends PartExp {
@@ -44,11 +45,11 @@ public class PartNumberExp extends PartExp {
         this.ordinal = ordinal;
     }
 
-    public PartSpecifier evaluateAsSpecifier() throws HtException {
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
         if (ordinal != null) {
             return new PartOrdinalSpecifier(layer, type, ordinal);
         } else {
-            return new PartNumberSpecifier(layer, type, number.evaluate().integerValue());
+            return new PartNumberSpecifier(layer, type, number.evaluate(context).integerValue());
         }
     }
 }

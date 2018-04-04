@@ -50,18 +50,18 @@ public class Breadcrumb {
         }
 
         if (part != null) {
-            breadcrumb += " of " + part.getHyperTalkIdentifier();
+            breadcrumb += " of " + part.getHyperTalkIdentifier(new ExecutionContext());
         }
 
         return breadcrumb;
     }
 
-    public PartModel getPartModel() {
+    public PartModel getPartModel(ExecutionContext context) {
         PartModel partModel = null;
 
         if (getPart() != null) {
             try {
-                partModel = ExecutionContext.getContext().getPart(getPart());
+                partModel = context.getPart(getPart());
             } catch (PartException e) {
                 // Nothing to do
             }

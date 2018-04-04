@@ -3,6 +3,7 @@ package com.defano.wyldcard.window.forms;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconFactory;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.WrapLayout;
 import com.defano.wyldcard.window.HyperCardDialog;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -33,12 +34,12 @@ public class IconPicker extends HyperCardDialog {
     public IconPicker() {
 
         okButton.addActionListener(e -> {
-            model.setKnownProperty(ButtonModel.PROP_ICON, selectedIconValue);
+            model.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON, selectedIconValue);
             dispose();
         });
 
         noneButton.addActionListener(e -> {
-            model.setKnownProperty(ButtonModel.PROP_ICON, new Value());
+            model.setKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON, new Value());
             dispose();
         });
     }
@@ -57,7 +58,7 @@ public class IconPicker extends HyperCardDialog {
     @RunOnDispatch
     public void bindModel(Object data) {
         this.model = (ButtonModel) data;
-        selectedIconValue = this.model.getKnownProperty(ButtonModel.PROP_ICON);
+        selectedIconValue = this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICON);
 
         buttons = getButtons();
 

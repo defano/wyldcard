@@ -38,9 +38,9 @@ public class WriteCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         try {
-            String filename = file.evaluate().stringValue();
+            String filename = file.evaluate(context).stringValue();
             FileContext.FileHandle handle = FileContext.getInstance().getFileHandle(filename);
 
             if (handle == null) {
@@ -49,23 +49,23 @@ public class WriteCmd extends Command {
 
             // 'write x to file y at end'
             if (append) {
-                handle.writeAtTail(data.evaluate().stringValue(), true);
+                handle.writeAtTail(data.evaluate(context).stringValue(), true);
             }
 
             // 'write x to file y'
             else if (at == null) {
-                handle.write(data.evaluate().stringValue(), true);
+                handle.write(data.evaluate(context).stringValue(), true);
             }
 
             // 'write x to file y at z'
             else {
-                handle.writeAt(data.evaluate().stringValue(), at.evaluate().integerValue(), true);
+                handle.writeAt(data.evaluate(context).stringValue(), at.evaluate(context).integerValue(), true);
             }
 
-            ExecutionContext.getContext().setResult(new Value());
+            context.setResult(new Value());
 
         } catch (HtSemanticException e) {
-            ExecutionContext.getContext().setResult(new Value(e.getMessage()));
+            context.setResult(new Value(e.getMessage()));
         }
     }
 }

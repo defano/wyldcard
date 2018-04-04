@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.expressions.containers;
 
 import com.defano.wyldcard.parts.field.AddressableSelection;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.SelectionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.model.Preposition;
@@ -17,31 +18,31 @@ public class SelectionExp extends ContainerExp {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        return chunkOf(SelectionContext.getInstance().getSelection(), getChunk());
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        return chunkOf(context, SelectionContext.getInstance().getSelection(context), getChunk());
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
 
-        Value oldSelection = SelectionContext.getInstance().getSelection();
+        Value oldSelection = SelectionContext.getInstance().getSelection(context);
         Range range = SelectionContext.getInstance().getSelectionRange();
-        AddressableSelection field = SelectionContext.getInstance().getManagedSelection();
-        PartModel partModel = SelectionContext.getInstance().getSelectedPart();
+        AddressableSelection field = SelectionContext.getInstance().getManagedSelection(context);
+        PartModel partModel = SelectionContext.getInstance().getSelectedPart(context);
 
         // Create the new selectedText
         Value newSelection;
         if (getChunk() != null)
-            newSelection = Value.setChunk(oldSelection, preposition, getChunk(), value);
+            newSelection = Value.setChunk(context, oldSelection, preposition, getChunk(), value);
         else
             newSelection = Value.setValue(oldSelection, preposition, value);
 
         // Replace the current selection with the new selection
-        partModel.setValue(Value.setChunk(partModel.getValue(), Preposition.INTO, range.asChunk(), newSelection));
+        partModel.setValue(Value.setChunk(context, partModel.getValue(context), Preposition.INTO, range.asChunk(), newSelection), context);
 
         // Select the new range of text in the destination
         int newSelectionLength = newSelection.toString().length();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> field.setSelection(range.start, range.start + newSelectionLength));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> field.setSelection(context, range.start, range.start + newSelectionLength));
     }
 
 }

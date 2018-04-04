@@ -13,6 +13,7 @@ import java.util.concurrent.Callable;
 
 public class MessageEvaluationTask implements Callable<String> {
 
+    private final static ExecutionContext context = new ExecutionContext();
     private final String messageText;
 
     public MessageEvaluationTask(String messageText) {
@@ -24,25 +25,25 @@ public class MessageEvaluationTask implements Callable<String> {
         StatementList statements = Interpreter.blockingCompileScriptlet(messageText).getStatements();
 
         // All message evaluations share the same context (stack frame); create one only once
-        if (ExecutionContext.getContext().getFrame() == null) {
-            ExecutionContext.getContext().pushContext();
-            ExecutionContext.getContext().pushMe(new PartMessageSpecifier());
+        if (context.getStackFrame() == null) {
+            context.pushStackFrame();
+            context.pushMe(new PartMessageSpecifier());
         } else {
             // Set the creation time to allow script abort to work correctly
-            ExecutionContext.getContext().getFrame().setCreationTime(System.currentTimeMillis());
+            context.getStackFrame().setCreationTime(System.currentTimeMillis());
         }
 
-        ExecutionContext.getContext().setTarget(WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getPartSpecifier());
+        context.setTarget(WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getPartSpecifier(context));
 
         try {
-            statements.execute();
+            statements.execute(context);
         } catch (Breakpoint e) {
             WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
         }
 
         // When the evaluated message is an expression, the result should be displayed in the message box
         if (statements.list.get(0) instanceof ExpressionStatement) {
-            return ExecutionContext.getContext().getIt().stringValue();
+            return context.getIt().stringValue();
         } else {
             return null;
         }

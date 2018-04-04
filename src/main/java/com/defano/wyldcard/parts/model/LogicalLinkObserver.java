@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * Logically links two logical (boolean-valued) properties together. That is, when one property changes state, the other
@@ -37,9 +38,9 @@ public class LogicalLinkObserver implements PropertyChangeObserver {
     }
 
     @Override
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         if (property.equalsIgnoreCase(whenProperty) && newValue.booleanValue() == whenState) {
-            model.setKnownProperty(thenProperty, new Value(thenState));
+            model.setKnownProperty(context, thenProperty, new Value(thenState));
         }
     }
 }

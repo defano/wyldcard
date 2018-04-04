@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.interpreter;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
@@ -95,13 +96,14 @@ public class Interpreter {
      *
      * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
      *                   evaluated or is not a legal expression evaluates to itself.
+     * @param context The execution context
      * @return The Value of the evaluated expression.
      */
-    public static Value blockingEvaluate(String expression) {
+    public static Value blockingEvaluate(String expression, ExecutionContext context) {
         try {
             Statement statement = blockingCompileScriptlet(expression).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
-                return ((ExpressionStatement) statement).expression.evaluate();
+                return ((ExpressionStatement) statement).expression.evaluate(context);
             }
         } catch (Exception e) {
             // Nothing to do; okay to evaluate bogus text
@@ -154,15 +156,17 @@ public class Interpreter {
      * Executes a user-defined function on the current thread and returns the result; may not be invoked on the Swing
      * dispatch thread.
      *
+     *
+     * @param context
      * @param me        The part that the 'me' keyword refers to.
      * @param function  The compiled UserFunction
      * @param arguments The arguments to be passed to the function
      * @return The value returned by the function (an empty string if the function does not invoke 'return')
      * @throws HtSemanticException Thrown if an error occurs executing the function.
      */
-    public static Value blockingExecuteFunction(PartSpecifier me, UserFunction function, Expression arguments) throws HtException {
+    public static Value blockingExecuteFunction(ExecutionContext context, PartSpecifier me, UserFunction function, Expression arguments) throws HtException {
         ThreadUtils.assertWorkerThread();
-        return new FunctionExecutionTask(me, function, arguments).call();
+        return new FunctionExecutionTask(context, me, function, arguments).call();
     }
 
     /**
@@ -174,15 +178,15 @@ public class Interpreter {
      * Any handler that does not 'pass' the command traps its behavior and prevents other scripts (or HyperCard) from
      * acting upon it. A script that does not implement the handler is assumed to 'pass' it.
      *
+     * @param context
      * @param me                 The part whose script is being executed (for the purposes of the 'me' keyword).
      * @param script             The script of the part
      * @param command            The command handler name.
      * @param arguments          A list of expressions representing arguments passed with the message
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
-     *                           Note that this observer will not fire if the script terminates as a result of an
-     *                           exception or breakpoint.
+*                           Note that this observer will not fire if the script terminates as a result of an
      */
-    public static void asyncExecuteHandler(PartSpecifier me, Script script, String command, ListExp arguments, HandlerCompletionObserver completionObserver) {
+    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String command, ListExp arguments, HandlerCompletionObserver completionObserver) {
         NamedBlock handler = script == null ? null : script.getHandler(command);
 
         // Script does not have a handler for this message; create a "default" handler to pass it
@@ -190,7 +194,7 @@ public class Interpreter {
             handler = NamedBlock.emptyPassBlock(command);
         }
 
-        Futures.addCallback(asyncExecuteBlock(me, handler, arguments), new FutureCallback<String>() {
+        Futures.addCallback(asyncExecuteBlock(context, me, handler, arguments), new FutureCallback<String>() {
             @Override
             public void onSuccess(String passedMessage) {
 
@@ -270,14 +274,16 @@ public class Interpreter {
      * thread. Produces a CheckFuture providing the name of the message passed by the script, or null, if no message
      * is passed.
      *
+     *
+     * @param context
      * @param me            The part that the 'me' keyword refers to.
      * @param statementList The list of statements.
      * @return A CheckedFuture to the name passed from the script or null if no name was passed, throwing an
      * HtException if an error occurs while executing the script.
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
-    public static CheckedFuture<String, HtException> asyncExecuteString(PartSpecifier me, String statementList) throws HtException {
-        return asyncExecuteBlock(me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ListExp(null));
+    public static CheckedFuture<String, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
+        return asyncExecuteBlock(context, me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ListExp(null));
     }
 
     /**
@@ -297,13 +303,15 @@ public class Interpreter {
      * Executes on the current thread if the current thread is not the dispatch thread. If the current thread is the
      * dispatch thread, then submits execution to the scriptExecutor.
      *
+     *
+     * @param context
      * @param me        The part that the 'me' keyword refers to.
      * @param handler   The block to execute
      * @param arguments The arguments to be passed to the block
      * @return A future to the name of the message passed from the block or null if no message was passed.
      */
-    private static CheckedFuture<String, HtException> asyncExecuteBlock(PartSpecifier me, NamedBlock handler, ListExp arguments) {
-        HandlerExecutionTask handlerTask = new HandlerExecutionTask(me, SwingUtilities.isEventDispatchThread(), handler, arguments);
+    private static CheckedFuture<String, HtException> asyncExecuteBlock(ExecutionContext context, PartSpecifier me, NamedBlock handler, ListExp arguments) {
+        HandlerExecutionTask handlerTask = new HandlerExecutionTask(context, me, SwingUtilities.isEventDispatchThread(), handler, arguments);
 
         if (SwingUtilities.isEventDispatchThread()) {
             return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());

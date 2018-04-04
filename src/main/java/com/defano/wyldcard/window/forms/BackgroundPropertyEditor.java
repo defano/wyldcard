@@ -1,13 +1,12 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -47,7 +46,7 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
 
         scriptButton.addActionListener(e -> {
             dispose();
-            backgroundModel.editScript();
+            backgroundModel.editScript(new ExecutionContext());
         });
     }
 
@@ -64,23 +63,24 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
     @Override
     @RunOnDispatch
     public void bindModel(Object data) {
+        ExecutionContext context = new ExecutionContext();
         cardPart = (CardPart) data;
         backgroundModel = cardPart.getCardModel().getBackgroundModel();
 
         int backgroundId = cardPart.getCardModel().getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
-        cantDeleteBkgndCheckBox.setSelected(backgroundModel.getKnownProperty(BackgroundModel.PROP_CANTDELETE).booleanValue());
-        dontSearchCheckBox.setSelected(backgroundModel.getKnownProperty(BackgroundModel.PROP_DONTSEARCH).booleanValue());
+        cantDeleteBkgndCheckBox.setSelected(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
+        dontSearchCheckBox.setSelected(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_DONTSEARCH).booleanValue());
 
         // Don't display "default" name ('background id xxx')
         Value bkgndNameValue = backgroundModel.getRawProperty(BackgroundModel.PROP_NAME);
         if (bkgndNameValue != null && !bkgndNameValue.isEmpty()) {
-            backgroundName.setText(backgroundModel.getKnownProperty(BackgroundModel.PROP_NAME).stringValue());
+            backgroundName.setText(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_NAME).stringValue());
         }
 
         long cardCount = cardPart.getCardModel().getStackModel().getCardsInBackground(backgroundId).size();
-        long fieldCount = cardPart.getCardModel().getPartCount(PartType.FIELD, Owner.BACKGROUND);
-        long buttonCount = cardPart.getCardModel().getPartCount(PartType.BUTTON, Owner.BACKGROUND);
+        long fieldCount = cardPart.getCardModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = cardPart.getCardModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
 
         cardCountLabel.setText(StringUtils.pluralize(cardCount, "Background shared by %d card.", "Background shared by %d cards."));
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d background button.", "Contains %d background buttons."));
@@ -88,15 +88,17 @@ public class BackgroundPropertyEditor extends HyperCardDialog {
     }
 
     private void updateProperties() {
-        cardPart.getCardModel().getBackgroundModel().setKnownProperty(BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
-        cardPart.getCardModel().getBackgroundModel().setKnownProperty(BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
-        cardPart.getCardModel().getBackgroundModel().setKnownProperty(BackgroundModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
+        ExecutionContext context = new ExecutionContext();
+        cardPart.getCardModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_NAME, new Value(backgroundName.getText()));
+        cardPart.getCardModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_CANTDELETE, new Value(cantDeleteBkgndCheckBox.isSelected()));
+        cardPart.getCardModel().getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_DONTSEARCH, new Value(dontSearchCheckBox.isSelected()));
     }
 
     private void showContentsEditor() {
-        String contents = PartContentsEditor.editContents(backgroundModel.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        ExecutionContext context = new ExecutionContext();
+        String contents = PartContentsEditor.editContents(backgroundModel.getKnownProperty(context, PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
         if (contents != null) {
-            backgroundModel.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));
+            backgroundModel.setKnownProperty(context, PartModel.PROP_CONTENTS, new Value(contents));
         }
     }
 

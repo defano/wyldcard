@@ -5,6 +5,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.runtime.interpreter.MessageEvaluationObserver;
 import com.defano.wyldcard.util.SquigglePainter;
@@ -77,7 +78,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
         });
 
         // Update selection
-        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel(), true));
+        messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel(), true));
 
         SwingUtilities.invokeLater(() -> {
             partModel = new MsgBoxModel();
@@ -135,7 +136,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
 
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case MsgBoxModel.PROP_CONTENTS:
                 getTextComponent().setText(newValue.stringValue());
@@ -144,7 +145,7 @@ public class MessageWindow extends HyperCardFrame implements PropertyChangeObser
     }
 
     public void setMsgBoxText(String text) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> partModel.setKnownProperty(MsgBoxModel.PROP_CONTENTS, new Value(text)));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> partModel.setKnownProperty(new ExecutionContext(), MsgBoxModel.PROP_CONTENTS, new Value(text)));
     }
 
     public String getMsgBoxText() {

@@ -8,6 +8,7 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,11 +56,11 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
     }
 
     @Override
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case PartModel.PROP_CONTENTS:
-                int lastSelection = model.getKnownProperty(ButtonModel.PROP_SELECTEDITEM).integerValue();
-                putValueInMenu(newValue);
+                int lastSelection = model.getKnownProperty(context, ButtonModel.PROP_SELECTEDITEM).integerValue();
+                putValueInMenu(context, newValue);
                 selectItem(lastSelection);
                 break;
 
@@ -72,7 +73,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
-                setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(newValue), getFont().getSize()));
+                setFont(FontUtils.getFontByNameStyleSize(getFont().getFamily(), FontUtils.getFontStyleForValue(context, newValue), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_SELECTEDITEM:
@@ -81,14 +82,14 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
         }
     }
 
-    private void putValueInMenu(Value v) {
+    private void putValueInMenu(ExecutionContext context, Value v) {
         menuItems.removeAllElements();
         List<Value> items;
 
-        if (v.lineCount() > 1) {
-            items = v.getLines();
+        if (v.lineCount(context) > 1) {
+            items = v.getLines(context);
         } else {
-            items = v.getItems();
+            items = v.getItems(context);
         }
 
         for (Value thisItem : items) {
@@ -96,7 +97,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
         }
 
         // Convert item list to line list
-        toolEditablePart.getPartModel().setKnownProperty(PartModel.PROP_CONTENTS, Value.ofLines(items), true);
+        toolEditablePart.getPartModel().setKnownProperty(context, PartModel.PROP_CONTENTS, Value.ofLines(items), true);
     }
 
     private boolean isDividerElement(Object element) {
@@ -110,7 +111,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
             if (isDividerElement(getSelectedItem())) {
                 setSelectedIndex(0);
             } else {
-                toolEditablePart.getPartModel().setKnownProperty(ButtonModel.PROP_SELECTEDITEM, new Value(getSelectedIndex() + 1), true);
+                toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_SELECTEDITEM, new Value(getSelectedIndex() + 1), true);
             }
         }
     }

@@ -13,9 +13,9 @@ public class ParamCountFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate(ExecutionContext context) throws HtSemanticException {
         try {
-            return new Value(ExecutionContext.getContext().getParams().size());
+            return new Value(context.getParams().size());
 
         } catch (Throwable t) {
             t.printStackTrace();

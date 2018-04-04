@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartNameSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartNumberSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartNameExp extends PartExp {
@@ -27,8 +28,8 @@ public class PartNameExp extends PartExp {
         this.name = name;
     }
 
-    public PartSpecifier evaluateAsSpecifier() throws HtException {
-        Value evaluatedName = name.evaluate();
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
+        Value evaluatedName = name.evaluate(context);
 
         if (evaluatedName.isInteger()) {
             return new PartNumberSpecifier(layer, type, evaluatedName.integerValue());

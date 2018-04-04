@@ -15,8 +15,8 @@ public class ParamsFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
-        List<Value> params = ExecutionContext.getContext().getParams();
+    public Value onEvaluate(ExecutionContext context) throws HtSemanticException {
+        List<Value> params = context.getParams();
         StringBuilder paramList = new StringBuilder();
 
         for (int index = 0; index < params.size(); index++) {

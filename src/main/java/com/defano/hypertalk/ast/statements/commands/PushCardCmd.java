@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PushCardCmd extends Command {
@@ -24,19 +25,19 @@ public class PushCardCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
+    protected void onExecute(ExecutionContext context) throws HtException {
         if (destinationExp == null) {
-            push(WyldCard.getInstance().getActiveStackDisplayedCard().getId());
+            push(WyldCard.getInstance().getActiveStackDisplayedCard().getId(context));
         } else {
 
             Integer pushCardId = null;
-            PartModel destinationModel = destinationExp.partFactor(CardModel.class);
+            PartModel destinationModel = destinationExp.partFactor(context, CardModel.class);
             if (destinationModel == null) {
-                destinationExp.partFactor(BackgroundModel.class);
+                destinationExp.partFactor(context, BackgroundModel.class);
             }
 
             if (destinationModel != null) {
-                pushCardId = evaluateAsCardId(destinationModel);
+                pushCardId = evaluateAsCardId(context, destinationModel);
             }
 
             if (pushCardId != null) {
@@ -47,12 +48,12 @@ public class PushCardCmd extends Command {
         }
     }
 
-    private Integer evaluateAsCardId(PartModel model) throws HtException {
+    private Integer evaluateAsCardId(ExecutionContext context, PartModel model) throws HtException {
         if (model instanceof CardModel) {
-            return model.getId();
+            return model.getId(context);
         } else if (model instanceof BackgroundModel) {
-            int cardIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
-            return WyldCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId();
+            int cardIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
+            return WyldCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId(context);
         } else {
             return null;
         }

@@ -50,9 +50,9 @@ public abstract class ASTNode {
      * @param e The exception to contextualize and re-throw.
      * @throws HtException The contextualized exception
      */
-    protected void rethrowContextualizedException(HtException e) throws HtException {
+    protected void rethrowContextualizedException(ExecutionContext context, HtException e) throws HtException {
         if (e.getBreadcrumb() == null) {
-            e.setBreadcrumb(new Breadcrumb(getToken(), ExecutionContext.getContext().getMe()));
+            e.setBreadcrumb(new Breadcrumb(getToken(), context.getMe()));
         }
 
         throw e;

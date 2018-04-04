@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public class OffsetFunc extends ArgListFunction {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        List<Value> evaluatedArgs = evaluateArgumentList();
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        List<Value> evaluatedArgs = evaluateArgumentList(context);
 
         if (evaluatedArgs.size() != 2) {
             throw new HtSemanticException("Offset function expects two arguments, but got " + evaluatedArgs.size());

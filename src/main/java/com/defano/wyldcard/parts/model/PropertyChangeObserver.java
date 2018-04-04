@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * An observer of changes to attributes in a {@link PropertiesModel}.
@@ -13,9 +14,10 @@ public interface PropertyChangeObserver {
      *
      * Use {@link PropertyWillChangeObserver} for a synchronous notification of a property change.
      *
+     * @param context
      * @param property The name of the property (attribute) that changed.
      * @param oldValue The attribute's previous value
      * @param newValue The attribute's new value
      */
-    void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue);
+    void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue);
 }

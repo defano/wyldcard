@@ -55,11 +55,11 @@ public abstract class CardLayerPartModel extends PartModel {
         super.initialize();
 
         this.currentCardId = new ThreadLocal<>();
-        this.currentCardId.set(ExecutionContext.getContext().getCurrentCard().getId());
+        this.currentCardId.set(new ExecutionContext().getCurrentCard().getId(new ExecutionContext()));
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (model, propertyName) -> new Value(getLongName()));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (model, propertyName) -> new Value(getAbbrevName()));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (model, propertyName) -> new Value(getShortName()));
+        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
     }
 
     /** {@inheritDoc} */
@@ -77,21 +77,21 @@ public abstract class CardLayerPartModel extends PartModel {
         return propertyName.equalsIgnoreCase(PROP_NAME);
     }
 
-    public TextStyleSpecifier getTextStyle() {
-        return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(PROP_TEXTFONT), getKnownProperty(PROP_TEXTSTYLE), getKnownProperty(PROP_TEXTSIZE));
+    public TextStyleSpecifier getTextStyle(ExecutionContext context) {
+        return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(context, PROP_TEXTFONT), getKnownProperty(context, PROP_TEXTSTYLE), getKnownProperty(context, PROP_TEXTSIZE));
     }
 
-    public void setTextStyle(TextStyleSpecifier style) {
+    public void setTextStyle(ExecutionContext context, TextStyleSpecifier style) {
         if (style != null) {
             if (style.getFontSize() > 0) {
-                setKnownProperty(PROP_TEXTSIZE, new Value(style.getFontSize()));
+                setKnownProperty(context, PROP_TEXTSIZE, new Value(style.getFontSize()));
             }
 
             if (style.getFontFamily() != null) {
-                setKnownProperty(PROP_TEXTFONT, new Value(style.getFontFamily()));
+                setKnownProperty(context, PROP_TEXTFONT, new Value(style.getFontFamily()));
             }
 
-            setKnownProperty(PROP_TEXTSTYLE, style.getHyperTalkStyle());
+            setKnownProperty(context, PROP_TEXTSTYLE, style.getHyperTalkStyle());
         }
     }
 
@@ -101,10 +101,11 @@ public abstract class CardLayerPartModel extends PartModel {
      * set.
      *
      * @return The ID of the card to which this part is currently bound.
+     * @param context
      */
-    public int getCurrentCardId() {
+    public int getCurrentCardId(ExecutionContext context) {
         if (this.currentCardId.get() == null) {
-            return ExecutionContext.getContext().getCurrentCard().getId();
+            return context.getCurrentCard().getId(context);
         }
 
         return this.currentCardId.get();
@@ -132,7 +133,7 @@ public abstract class CardLayerPartModel extends PartModel {
 
     /**
      * Gets the ID of the card to which this part is currently bound, or null, if the part is not currently bound to a
-     * card. See {@link #getCurrentCardId()}.
+     * card. See {@link #getCurrentCardId(ExecutionContext)}.
      *
      * @return The bound card id.
      */
@@ -144,31 +145,33 @@ public abstract class CardLayerPartModel extends PartModel {
      * Gets the "number" of this part (equivalent to its z-order within its layer).
      *
      * @return The part number.
+     * @param context
      */
-    public long getPartNumber() {
-        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this);
+    public long getPartNumber(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this);
     }
 
     /**
      * Gets the number of parts existing on the same layer (cd or bkgnd) as this part.
      *
      * @return The number of parts.
+     * @param context
      */
-    public long getPartCount() {
-        return ((LayeredPartFinder) getParentPartModel()).getPartCount(null, getOwner());
+    public long getPartCount(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, null, getOwner());
     }
 
-    public String getShortName() {
-        return getKnownProperty(PROP_NAME).stringValue();
+    public String getShortName(ExecutionContext context) {
+        return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public String getAbbrevName() {
-        return getOwner().hyperTalkName.toLowerCase() + " " + getType().hypertalkName + " \"" + getShortName() + "\"";
+    public String getAbbrevName(ExecutionContext context) {
+        return getOwner().hyperTalkName.toLowerCase() + " " + getType().hypertalkName + " \"" + getShortName(context) + "\"";
     }
 
-    public String getLongName() {
+    public String getLongName(ExecutionContext context) {
         // TODO: Add 'of stack ...' portion of long name (after supporting that HyperTalk syntax)
-        return getAbbrevName() + " of card id " + getCurrentCardId();
+        return getAbbrevName(context) + " of card id " + getCurrentCardId(context);
     }
 
 }

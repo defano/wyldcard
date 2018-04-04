@@ -4,6 +4,7 @@ import com.defano.wyldcard.paint.ArtVandelay;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.io.File;
@@ -18,7 +19,7 @@ public class ImportPaintCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
-        ArtVandelay.importPaint(new File(fileExpression.evaluate().stringValue()));
+    protected void onExecute(ExecutionContext context) throws HtException {
+        ArtVandelay.importPaint(new File(fileExpression.evaluate(context).stringValue()));
     }
 }

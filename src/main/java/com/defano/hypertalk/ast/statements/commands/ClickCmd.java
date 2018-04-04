@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
@@ -30,24 +31,24 @@ public class ClickCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;
 
         if (modifierKeys != null) {
-            for (Value thisModifier : modifierKeys.evaluate().getItems()) {
+            for (Value thisModifier : modifierKeys.evaluate(context).getItems(context)) {
                 withShift = thisModifier.equals(new Value("shiftKey")) || withShift;
                 withOption = thisModifier.equals(new Value("optionKey")) || withOption;
                 withCommand = (thisModifier.equals(new Value("commandKey")) || thisModifier.contains(new Value("cmdKey"))) || withCommand;
             }
         }
 
-        Value clickLoc = this.clickLoc.evaluate();
+        Value clickLoc = this.clickLoc.evaluate(context);
 
-        if (clickLoc.isPoint()) {
-            int xLoc = clickLoc.getItems().get(0).integerValue();
-            int yLoc = clickLoc.getItems().get(1).integerValue();
+        if (clickLoc.isPoint(context)) {
+            int xLoc = clickLoc.getItems(context).get(0).integerValue();
+            int yLoc = clickLoc.getItems(context).get(1).integerValue();
 
             MouseManager.getInstance().clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
         } else {

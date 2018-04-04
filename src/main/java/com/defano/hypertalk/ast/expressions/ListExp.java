@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -59,36 +60,36 @@ public class ListExp extends Expression {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
         if (cdr != null) {
-            return new Value(car.evaluate().stringValue() + "," + cdr.evaluate().stringValue());
+            return new Value(car.evaluate(context).stringValue() + "," + cdr.evaluate(context).stringValue());
         } else {
-            return car.evaluate();
+            return car.evaluate(context);
         }
     }
 
     @Override
-    public List<Value> evaluateAsList() throws HtException {
+    public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
         ArrayList<Value> values = new ArrayList<>();
 
-        values.add(car.evaluate());
+        values.add(car.evaluate(context));
 
         if (cdr != null) {
-            values.addAll(cdr.evaluateAsList());
+            values.addAll(cdr.evaluateAsList(context));
         }
 
         return values;
     }
 
-    public Value car() throws HtException {
-        return car.evaluate();
+    public Value car(ExecutionContext context) throws HtException {
+        return car.evaluate(context);
     }
 
-    public List<Value> cdr() throws HtException {
+    public List<Value> cdr(ExecutionContext context) throws HtException {
         if (cdr == null) {
             return new ArrayList<>();
         } else {
-            return cdr.evaluateAsList();
+            return cdr.evaluateAsList(context);
         }
     }
 }

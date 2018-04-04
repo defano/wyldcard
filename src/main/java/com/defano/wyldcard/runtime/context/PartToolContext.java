@@ -45,7 +45,7 @@ public class PartToolContext {
         if (ToolsContext.getInstance().getToolMode().isPartTool()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> {
                 deselectAllParts();
-                part.setSelectedForEditing(true);
+                part.setSelectedForEditing(new ExecutionContext(), true);
                 selectedPart.onNext(Optional.of(part));
             });
         }
@@ -54,11 +54,11 @@ public class PartToolContext {
     public void deselectAllParts() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (ButtonPart thisButton : WyldCard.getInstance().getActiveStackDisplayedCard().getButtons()) {
-                thisButton.setSelectedForEditing(false);
+                thisButton.setSelectedForEditing(new ExecutionContext(), false);
             }
 
             for (FieldPart thisField : WyldCard.getInstance().getActiveStackDisplayedCard().getFields()) {
-                thisField.setSelectedForEditing(false);
+                thisField.setSelectedForEditing(new ExecutionContext(), false);
             }
 
             selectedPart.onNext(Optional.empty());
@@ -66,17 +66,17 @@ public class PartToolContext {
     }
 
     public void bringSelectedPartCloser() {
-        selectedPart.blockingFirst().ifPresent(ToolEditablePart::bringCloser);
+        selectedPart.blockingFirst().ifPresent(toolEditablePart -> toolEditablePart.bringCloser(new ExecutionContext()));
     }
 
     public void sendSelectedPartFurther() {
-        selectedPart.blockingFirst().ifPresent(ToolEditablePart::sendFurther);
+        selectedPart.blockingFirst().ifPresent(toolEditablePart -> toolEditablePart.sendFurther(new ExecutionContext()));
     }
 
     public void deleteSelectedPart() {
         Optional<ToolEditablePart> selectedPart = this.selectedPart.blockingFirst();
         selectedPart.ifPresent(part -> {
-            WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().removePartModel(part.getPartModel());
+            WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().removePartModel(new ExecutionContext(), part.getPartModel());
             this.selectedPart.onNext(Optional.empty());
         });
     }
@@ -93,7 +93,7 @@ public class PartToolContext {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = PartToolContext.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(part -> part.getPartModel().setKnownProperty(CardLayerPartModel.PROP_TEXTSTYLE, value));
+            selectedPart.ifPresent(part -> part.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSTYLE, value));
         }
     }
 
@@ -101,7 +101,7 @@ public class PartToolContext {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = PartToolContext.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(CardLayerPartModel.PROP_TEXTSIZE, value));
+            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTSIZE, value));
         }
     }
 
@@ -109,7 +109,7 @@ public class PartToolContext {
         @Override
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = PartToolContext.this.selectedPart.blockingFirst();
-            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(CardLayerPartModel.PROP_TEXTFONT, value));
+            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
         }
     }
 
