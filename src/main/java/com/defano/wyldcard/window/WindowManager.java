@@ -24,6 +24,7 @@ public class WindowManager {
     private final BrushesPalette brushesPalette = new BrushesPalette();
     private final ColorPalette colorPalette = new ColorPalette();
     private final IntensityPalette intensityPalette = new IntensityPalette();
+    private final MessageWatcher messageWatcher = new MessageWatcher();
 
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
@@ -109,6 +110,15 @@ public class WindowManager {
                 .dockTo(stackWindow)
                 .build();
 
+        WindowBuilder.make(messageWatcher)
+                .asPalette()
+                .focusable(false)
+                .withTitle("Message Watcher")
+                .notInitiallyVisible()
+                .dockTo(stackWindow)
+                .resizeable(true)
+                .build();
+
         stackFrame.requestFocus();
     }
 
@@ -148,6 +158,10 @@ public class WindowManager {
         return intensityPalette;
     }
 
+    public MessageWatcher getMessageWatcher() {
+        return messageWatcher;
+    }
+
     public HyperCardWindow[] allWindows() {
         return new HyperCardWindow[] {
                 getStackWindow(),
@@ -157,16 +171,9 @@ public class WindowManager {
                 getLinesPalette(),
                 getPatternsPalette(),
                 getBrushesPalette(),
-                getColorPalette()
+                getColorPalette(),
+                getMessageWindow()
         };
-    }
-
-    public void getWindows() {
-        for (Window dis : Window.getWindows()) {
-            if (dis instanceof HyperCardWindow) {
-                System.err.println(((HyperCardWindow) dis).getTitle());
-            }
-        }
     }
 
     public void setLookAndFeel(String lafClassName) {

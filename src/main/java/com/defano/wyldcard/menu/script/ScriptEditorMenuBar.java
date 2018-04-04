@@ -12,6 +12,7 @@ public class ScriptEditorMenuBar extends JMenuBar {
         add(new FileMenu(editor));
         add(new EditMenu(editor));
         add(new ScriptMenu(editor));
+        add(new DebugMenu());
     }
 
 }
