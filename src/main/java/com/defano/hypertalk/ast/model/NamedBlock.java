@@ -9,6 +9,8 @@ public class NamedBlock {
     public final StatementList statements;
     public final ParameterList parameters;
 
+    private boolean isEmptyPassBlock;
+
     /**
      * Creates a NamedBlock instance that simply passes the name of the block back to HyperCard. Useful as a "default"
      * handler for objects that do not implement a handler for this message themselves.
@@ -17,7 +19,9 @@ public class NamedBlock {
      * @return An empty NamedBlock that passes the command back to HyperCard.
      */
     public static NamedBlock emptyPassBlock(String name) {
-        return new NamedBlock(name, name, new StatementList(null, new PassCmd(null, name)));
+        NamedBlock block = new NamedBlock(name, name, new StatementList(null, new PassCmd(null, name)));
+        block.isEmptyPassBlock = true;
+        return block;
     }
 
     /**
@@ -42,5 +46,9 @@ public class NamedBlock {
         this.name = onName;
         this.statements = body;
         this.parameters = parameters;
+    }
+
+    public boolean isEmptyPassBlock() {
+        return isEmptyPassBlock;
     }
 }

@@ -72,6 +72,10 @@ public class ExecutionContext {
         return stack.peek();
     }
 
+    public int getStackDepth() {
+        return stack.size();
+    }
+
     /**
      * Gets the value returned from this frame.
      *

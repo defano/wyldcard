@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.interpreter;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
@@ -32,6 +33,8 @@ public class HandlerExecutionTask implements Callable<String> {
 
     @Override
     public String call() throws HtException {
+
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(Thread.currentThread(), handler.name, me, context.getStackDepth(), !handler.isEmptyPassBlock());
 
         // Arguments passed to handler must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList(context);

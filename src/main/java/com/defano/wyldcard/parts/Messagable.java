@@ -1,31 +1,25 @@
 package com.defano.wyldcard.parts;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.KeyboardManager;
-import com.defano.wyldcard.debug.MessageObserver;
-import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
 
-import javax.swing.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents an object that can receive HyperTalk messages.
  */
 public interface Messagable {
-
-    List<MessageObserver> messageObservers = new ArrayList<>();
 
     /**
      * Gets the script associated with this part.
@@ -91,8 +85,6 @@ public interface Messagable {
             onCompletion.onMessagePassed(message, false, null);
             return;
         }
-
-        fireMessageReceived(message, getMe(context), getScript(context).getHandler(message) != null);
 
         // Attempt to invoke command handler in this part and listen for completion
         Interpreter.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage) -> {
@@ -200,17 +192,4 @@ public interface Messagable {
 
         throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe(context).getOwner());
     }
-
-    static void addObserver(MessageObserver observer) {
-        messageObservers.add(observer);
-    }
-
-    static void fireMessageReceived(String message, PartSpecifier target, boolean trapped) {
-        SwingUtilities.invokeLater(() -> {
-            for (MessageObserver observer : messageObservers) {
-                observer.onMessageReceived(message, target, trapped);
-            }
-        });
-    }
-
 }

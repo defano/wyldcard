@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.interpreter;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -29,6 +30,8 @@ public class FunctionExecutionTask implements Callable<Value> {
 
     @Override
     public Value call() throws HtException {
+
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(Thread.currentThread(), function.name, me, context.getStackDepth(), true);
 
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList(context);

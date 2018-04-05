@@ -1,53 +1,98 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.hypertalk.ast.model.SystemMessage;
-import com.defano.wyldcard.parts.Messagable;
+import com.defano.wyldcard.awt.MarkdownComboBox;
+import com.defano.wyldcard.debug.watch.message.HandlerInvocation;
+import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 public class MessageWatcher extends HyperCardFrame {
 
-    private final static int MAX_ROWS = 100;
-
-    private JCheckBox supressIdleCheckBox;
     private JPanel windowPanel;
+    private JCheckBox suppressIdleCheckBox;
     private JTable messagesTable;
     private JScrollPane scrollPane;
-    private JCheckBox supressUnusedCheckBox;
+    private JCheckBox suppressUnusedCheckBox;
+    private MarkdownComboBox threadDropDown;
+
+    private DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+    private DefaultTableModel model = new DefaultTableModel();
 
     public MessageWatcher() {
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnCount(2);
-        model.setColumnIdentifiers(new Object[]{"Message", "Recipient"});
-        messagesTable.setAutoscrolls(true);
 
-        Messagable.addObserver((message, target, trapped) -> {
+        suppressIdleCheckBox.addActionListener(a -> invalidateData());
+        suppressUnusedCheckBox.addActionListener(a -> invalidateData());
+        threadDropDown.addActionListener(a -> invalidateData());
 
-            if ((!isPeriodicMessage(message) || !supressIdleCheckBox.isSelected()) &&
-                    (trapped || !supressUnusedCheckBox.isSelected())) {
+        model.setColumnCount(3);
+        model.setColumnIdentifiers(new Object[]{"Thread", "Message", "Recipient"});
 
-                model.addRow(new Object[]{message, target.getHyperTalkIdentifier(new ExecutionContext())});
+        comboBoxModel.addElement("All threads");
+        comboBoxModel.addElement("---");
+        threadDropDown.setModel(comboBoxModel);
 
-                if (model.getRowCount() > MAX_ROWS) {
-                    model.removeRow(0);
-                }
+        HandlerInvocationBridge.getInstance().addObserver((thread, message, recipient, stackDepth, trapped) -> {
+            if (!hasThread(thread)) {
+                comboBoxModel.addElement(thread);
+            }
 
-                SwingUtilities.invokeLater(() -> messagesTable.scrollRectToVisible(messagesTable.getCellRect(messagesTable.getRowCount() - 1, 0, true)));
+            if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(thread)) {
+                invalidateData();
+                smartScroll();
             }
         });
 
+        messagesTable.setDefaultRenderer(Object.class, new HandlerInvocationCellRenderer());
         messagesTable.setModel(model);
     }
 
     private boolean isPeriodicMessage(String message) {
         return SystemMessage.IDLE.messageName.equalsIgnoreCase(message) ||
                 SystemMessage.MOUSE_WITHIN.messageName.equalsIgnoreCase(message);
+    }
+
+    private void smartScroll() {
+        JScrollBar scrollBar = scrollPane.getVerticalScrollBar();
+        int extent = scrollBar.getModel().getExtent();
+        int maximum = scrollBar.getModel().getMaximum();
+
+        if (maximum - (extent + scrollBar.getValue()) < 50) {
+            messagesTable.scrollRectToVisible(messagesTable.getCellRect(messagesTable.getRowCount() - 1, 0, true));
+        }
+    }
+
+    private void invalidateData() {
+        model.setNumRows(0);
+
+        if (threadDropDown.getSelectedIndex() == 0) {
+            HandlerInvocationBridge.getInstance().getInvocationHistory().stream()
+                    .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessage()))
+                    .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
+        } else {
+            HandlerInvocationBridge.getInstance().getInvocationHistory(String.valueOf(threadDropDown.getSelectedItem())).stream()
+                    .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
+                    .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessage()))
+                    .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
+        }
+    }
+
+    private boolean hasThread(String threadName) {
+        for (int index = 0; index < comboBoxModel.getSize(); index++) {
+            if (comboBoxModel.getElementAt(index).equalsIgnoreCase(threadName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -76,23 +121,29 @@ public class MessageWatcher extends HyperCardFrame {
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(2, 2, new Insets(10, 10, 10, 10), -1, -1));
-        supressIdleCheckBox = new JCheckBox();
-        supressIdleCheckBox.setSelected(true);
-        supressIdleCheckBox.setText("Supress repetitive messages");
-        supressIdleCheckBox.setToolTipText("When checked, messages that are sent periodically (like 'idle') will be supressed.");
-        windowPanel.add(supressIdleCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        windowPanel.setLayout(new GridLayoutManager(3, 3, new Insets(10, 10, 10, 10), -1, -1));
         scrollPane = new JScrollPane();
-        windowPanel.add(scrollPane, new GridConstraints(1, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        windowPanel.add(scrollPane, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         messagesTable = new JTable();
+        messagesTable.setEnabled(false);
         messagesTable.setFillsViewportHeight(false);
         Font messagesTableFont = this.$$$getFont$$$("Monaco", Font.PLAIN, 12, messagesTable.getFont());
         if (messagesTableFont != null) messagesTable.setFont(messagesTableFont);
         scrollPane.setViewportView(messagesTable);
-        supressUnusedCheckBox = new JCheckBox();
-        supressUnusedCheckBox.setText("Show only handeled messages");
-        supressUnusedCheckBox.setToolTipText("When checked, only messages for which a handler exist will be shown.");
-        windowPanel.add(supressUnusedCheckBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        threadDropDown = new MarkdownComboBox();
+        windowPanel.add(threadDropDown, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        suppressIdleCheckBox = new JCheckBox();
+        suppressIdleCheckBox.setSelected(true);
+        suppressIdleCheckBox.setText("Hide repetitive messages");
+        suppressIdleCheckBox.setToolTipText("When checked, messages that are sent periodically (like 'idle') will be supressed.");
+        windowPanel.add(suppressIdleCheckBox, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        suppressUnusedCheckBox = new JCheckBox();
+        suppressUnusedCheckBox.setText("Show only handeled messages");
+        suppressUnusedCheckBox.setToolTipText("When checked, only messages for which a handler exist will be shown.");
+        windowPanel.add(suppressUnusedCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("Show:");
+        windowPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -120,4 +171,27 @@ public class MessageWatcher extends HyperCardFrame {
     public JComponent $$$getRootComponent$$$() {
         return windowPanel;
     }
+
+    private class HandlerInvocationCellRenderer extends DefaultTableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            if (value instanceof HandlerInvocation) {
+                HandlerInvocation invocation = (HandlerInvocation) value;
+
+                String message = invocation.getMessage();
+                for (int index = 0; index < invocation.getStackDepth() - 1; index++) {
+                    message = "  " + message;
+                }
+                setText(message);
+                if (invocation.isMessageHandled()) {
+                    setFont(getFont().deriveFont(Font.ITALIC));
+                }
+            }
+
+            return this;
+        }
+    }
+
+
 }

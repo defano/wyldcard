@@ -1,8 +1,5 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
@@ -15,10 +12,12 @@ import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -31,11 +30,9 @@ public class Interpreter {
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 8;         // Simultaneous scripts executing
 
-    private static final ExecutorService messageExecutor = Executors.newSingleThreadExecutor();
     private static final ThreadPoolExecutor backgroundCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("compiler-%d").build());
     private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
     private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
-    private static final ListeningExecutorService listeningMessageExecutor = MoreExecutors.listeningDecorator(messageExecutor);
 
     /**
      * Preemptively compiles the given script text on a background thread and invokes the CompileCompletionObserver
@@ -157,7 +154,7 @@ public class Interpreter {
      * dispatch thread.
      *
      *
-     * @param context
+     * @param context   The execution context
      * @param me        The part that the 'me' keyword refers to.
      * @param function  The compiled UserFunction
      * @param arguments The arguments to be passed to the function
@@ -178,7 +175,7 @@ public class Interpreter {
      * Any handler that does not 'pass' the command traps its behavior and prevents other scripts (or HyperCard) from
      * acting upon it. A script that does not implement the handler is assumed to 'pass' it.
      *
-     * @param context
+     * @param context            The execution context
      * @param me                 The part whose script is being executed (for the purposes of the 'me' keyword).
      * @param script             The script of the part
      * @param command            The command handler name.
@@ -256,7 +253,7 @@ public class Interpreter {
      */
     public static void asyncEvaluateMessage(String message, MessageEvaluationObserver evaluationObserver) {
 
-        Futures.addCallback(Futures.makeChecked(listeningMessageExecutor.submit(new MessageEvaluationTask(message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
+        Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new MessageEvaluationTask(message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 SwingUtilities.invokeLater(() -> evaluationObserver.onMessageEvaluated(result));
@@ -275,7 +272,7 @@ public class Interpreter {
      * is passed.
      *
      *
-     * @param context
+     * @param context       The execution context
      * @param me            The part that the 'me' keyword refers to.
      * @param statementList The list of statements.
      * @return A CheckedFuture to the name passed from the script or null if no name was passed, throwing an
@@ -304,7 +301,7 @@ public class Interpreter {
      * dispatch thread, then submits execution to the scriptExecutor.
      *
      *
-     * @param context
+     * @param context   The execution context
      * @param me        The part that the 'me' keyword refers to.
      * @param handler   The block to execute
      * @param arguments The arguments to be passed to the block
@@ -313,14 +310,18 @@ public class Interpreter {
     private static CheckedFuture<String, HtException> asyncExecuteBlock(ExecutionContext context, PartSpecifier me, NamedBlock handler, ListExp arguments) {
         HandlerExecutionTask handlerTask = new HandlerExecutionTask(context, me, SwingUtilities.isEventDispatchThread(), handler, arguments);
 
-        if (SwingUtilities.isEventDispatchThread()) {
-            return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
-        } else {
+        if (isScriptExecutorThread()) {
             try {
                 return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());
             } catch (HtException e) {
                 return Futures.makeChecked(Futures.immediateFailedCheckedFuture(e), new CheckedFutureExceptionMapper());
             }
+        } else {
+            return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
         }
+    }
+
+    public static boolean isScriptExecutorThread() {
+        return Thread.currentThread().getName().startsWith("script-executor-");
     }
 }
