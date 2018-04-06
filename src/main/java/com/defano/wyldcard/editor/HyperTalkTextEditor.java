@@ -9,9 +9,12 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
+import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.plaf.IconUIResource;
+import javax.swing.text.BadLocationException;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -87,6 +90,22 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         ac.setChoicesWindowSize(150, 250);
         ac.setDescriptionWindowSize(600, 250);
         ac.install(scriptField);
+
+        getGutter().setBookmarkIcon(new ImageIcon(getClass().getResource("/icons/breakpoint.png")));
+        getGutter().setBookmarkingEnabled(true);
+
+    }
+
+    public void clearBreakpoints() {
+        getGutter().removeAllTrackingIcons();
+    }
+
+    public void toggleBreakpoint() {
+        try {
+            getGutter().toggleBookmark(scriptField.getCaretLineNumber());
+        } catch (BadLocationException e) {
+            // Impossible
+        }
     }
 
     public RSyntaxTextArea getScriptField() {

@@ -3,10 +3,15 @@ package com.defano.wyldcard.menu.script;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.forms.ScriptEditor;
 
 public class DebugMenu extends HyperCardMenu {
-    public DebugMenu() {
+
+    private final ScriptEditor editor;
+
+    public DebugMenu(ScriptEditor editor) {
         super("Debug");
+        this.editor = editor;
 
         MenuItemBuilder.ofCheckType()
                 .named("Evaluate Expression...")
@@ -15,14 +20,14 @@ public class DebugMenu extends HyperCardMenu {
 
         addSeparator();
 
-        MenuItemBuilder.ofCheckType()
+        MenuItemBuilder.ofDefaultType()
                 .named("Toggle Breakpoint")
-                .disabled()
+                .withAction(a -> editor.addBreakpoint())
                 .build(this);
 
-        MenuItemBuilder.ofCheckType()
+        MenuItemBuilder.ofDefaultType()
                 .named("Remove All Breakpoints")
-                .disabled()
+                .withAction(a -> editor.clearBreakpoints())
                 .build(this);
 
         addSeparator();

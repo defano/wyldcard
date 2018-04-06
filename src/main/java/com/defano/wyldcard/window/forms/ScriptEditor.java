@@ -333,6 +333,14 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         context.setSearchForward(true);
     }
 
+    public void clearBreakpoints() {
+        editor.clearBreakpoints();
+    }
+
+    public void addBreakpoint() {
+        editor.toggleBreakpoint();
+    }
+
     public void makeSelectionFindText() {
         if (editor.getScriptField().getSelectedText().length() > 0) {
             context.setSearchFor(editor.getScriptField().getSelectedText());

@@ -53,10 +53,10 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
     public void setVisible(boolean visible) {
         super.setVisible(visible);
 
-        if (visible && this.variables != null) {
+        if (visible && variables != null) {
             this.variables.addObserver(this);
             invalidateTable();
-        } else {
+        } else if (variables != null) {
             this.variables.removeObserver(this);
         }
     }

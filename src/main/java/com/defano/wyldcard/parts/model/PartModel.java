@@ -46,6 +46,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     public static final String PROP_LOCATION = "location";
     public static final String PROP_CONTENTS = "contents";
     public static final String PROP_SCRIPTTEXT = "scripttext";
+    public static final String PROP_BREAKPOINTS = "breakpoints";
 
     private final PartType type;
     private Owner owner;
@@ -62,7 +63,8 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         this.parentPartModel = parentPartModel;
 
         defineProperty(PROP_VISIBLE, new Value(true), false);
-        defineProperty(PROP_SCRIPTTEXT, new Value(""), false);
+        defineProperty(PROP_SCRIPTTEXT, new Value(), false);
+        defineProperty(PROP_BREAKPOINTS, new Value(), false);
 
         initialize();
     }
@@ -172,6 +174,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         });
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
+
 
         defineComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
         defineComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {

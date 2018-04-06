@@ -270,7 +270,6 @@ public class PropertiesModel {
     /**
      * Gets the value of a property.
      *
-     *
      * @param context
      * @param property The name of the property to get (or one of its aliases)
      * @return The value of the property.
