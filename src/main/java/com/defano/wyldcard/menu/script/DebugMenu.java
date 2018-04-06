@@ -60,7 +60,8 @@ public class DebugMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Variable Watcher")
-                .disabled()
+                .withCheckmarkProvider(WindowManager.getInstance().getVariableWatcher().getWindowVisibleProvider())
+                .withAction(a -> WindowManager.getInstance().getVariableWatcher().toggleVisible())
                 .build(this);
     }
 }

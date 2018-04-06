@@ -14,9 +14,10 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
-import com.defano.wyldcard.runtime.SymbolTable;
+import com.defano.wyldcard.runtime.symbol.SymbolTable;
 
 import java.util.List;
 import java.util.Stack;
@@ -35,7 +36,7 @@ import java.util.Stack;
 public class ExecutionContext {
 
     // Globals are shared across contexts; SymbolTable is thread safe.
-    private final SymbolTable globals = new SymbolTable();
+    private final static SymbolTable globals = new BasicSymbolTable();
 
     private Stack<StackFrame> stack;        // Call stack
     private Stack<PartSpecifier> meStack;   // Part that the 'me' keyword refers
@@ -51,14 +52,27 @@ public class ExecutionContext {
     }
 
     /**
-     * Pushes a new frame onto the stack.
+     * Gets the global variable symbol table.
+     *
+     * Note that HyperTalk only treats a symbol as a global variable if it explicity declared global with the 'global'
+     * keyword. This method returns a table of all global variables, not just those currently in scope. The table
+     * returned by this method should typically be filtered with {@link StackFrame#getGlobalsInScope()}.
+     *
+     * @return A symbol table of all global variables.
+     */
+    public static SymbolTable getGlobals() {
+        return globals;
+    }
+
+    /**
+     * Pushes a new frame onto the call stack.
      */
     public void pushStackFrame() {
         stack.push(new StackFrame());
     }
 
     /**
-     * Pops the current frame from the stack.
+     * Pops the current frame from the call stack.
      */
     public void popStackFrame() {
         stack.pop();
@@ -140,9 +154,9 @@ public class ExecutionContext {
      */
     public void defineGlobal(String id) {
         if (!globals.exists(id))
-            globals.put(id, new Value());
+            globals.set(id, new Value());
 
-        getStackFrame().globalInScope(id);
+        getStackFrame().setGlobalInScope(id);
     }
 
     /**
@@ -153,9 +167,9 @@ public class ExecutionContext {
      */
     public void setVariable(String symbol, Value v) {
         if (globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol))
-            globals.put(symbol, v);
+            globals.set(symbol, v);
         else
-            getStackFrame().getSymbols().put(symbol, v);
+            getStackFrame().getLocalVariables().set(symbol, v);
     }
 
     /**
@@ -198,8 +212,8 @@ public class ExecutionContext {
 
         if (globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol))
             value = globals.get(symbol);
-        else if (getStackFrame().getSymbols().exists(symbol))
-            value = getStackFrame().getSymbols().get(symbol);
+        else if (getStackFrame().getLocalVariables().exists(symbol))
+            value = getStackFrame().getLocalVariables().get(symbol);
 
             // Allow the user to refer to literals without quotation marks
         else
@@ -215,7 +229,7 @@ public class ExecutionContext {
      * @return True if the symbol is an in-scope variable, false otherwise
      */
     private boolean isVariableInScope(String symbol) {
-        return globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol) || getStackFrame().getSymbols().exists(symbol);
+        return globals.exists(symbol) && getStackFrame().isGlobalInScope(symbol) || getStackFrame().getLocalVariables().exists(symbol);
     }
 
     /**

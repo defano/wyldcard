@@ -1,23 +1,32 @@
 package com.defano.wyldcard.debug.watch.message;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class HandlerInvocation implements Comparable<HandlerInvocation> {
 
     private final String thread;
     private final String message;
+    private final List<Value> arguments;
     private final PartSpecifier recipient;
     private final int stackDepth;
     private final boolean messageHandled;
+    private final long sequence;
 
-    private final long sequence = System.currentTimeMillis();
+    private static AtomicLong globalSequence = new AtomicLong(0);
 
-    public HandlerInvocation(String thread, String message, PartSpecifier recipient, int stackDepth, boolean msgHandled) {
+    public HandlerInvocation(String thread, String message, List<Value> arguments, PartSpecifier recipient, int stackDepth, boolean msgHandled) {
         this.thread = thread;
         this.message = message;
+        this.arguments = arguments;
         this.recipient = recipient;
         this.stackDepth = stackDepth;
         this.messageHandled = msgHandled;
+
+        sequence = globalSequence.incrementAndGet();
     }
 
     public String getThread() {
@@ -26,6 +35,10 @@ public class HandlerInvocation implements Comparable<HandlerInvocation> {
 
     public String getMessage() {
         return message;
+    }
+
+    public List<Value> getArguments() {
+        return arguments;
     }
 
     public PartSpecifier getRecipient() {

@@ -23,7 +23,7 @@ public class MessageWatcher extends HyperCardFrame {
     private JCheckBox suppressUnusedCheckBox;
     private MarkdownComboBox threadDropDown;
 
-    private DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
+    private DefaultComboBoxModel<String> threadDropDownModel = new DefaultComboBoxModel<>();
     private DefaultTableModel model = new DefaultTableModel();
 
     public MessageWatcher() {
@@ -35,16 +35,16 @@ public class MessageWatcher extends HyperCardFrame {
         model.setColumnCount(3);
         model.setColumnIdentifiers(new Object[]{"Thread", "Message", "Recipient"});
 
-        comboBoxModel.addElement("All threads");
-        comboBoxModel.addElement("---");
-        threadDropDown.setModel(comboBoxModel);
+        threadDropDownModel.addElement("All threads");
+        threadDropDownModel.addElement("---");
+        threadDropDown.setModel(threadDropDownModel);
 
-        HandlerInvocationBridge.getInstance().addObserver((thread, message, recipient, stackDepth, trapped) -> {
-            if (!hasThread(thread)) {
-                comboBoxModel.addElement(thread);
+        HandlerInvocationBridge.getInstance().addObserver((invocation) -> {
+            if (!hasThread(invocation.getThread())) {
+                threadDropDownModel.addElement(invocation.getThread());
             }
 
-            if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(thread)) {
+            if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(invocation.getThread())) {
                 invalidateData();
                 smartScroll();
             }
@@ -86,8 +86,8 @@ public class MessageWatcher extends HyperCardFrame {
     }
 
     private boolean hasThread(String threadName) {
-        for (int index = 0; index < comboBoxModel.getSize(); index++) {
-            if (comboBoxModel.getElementAt(index).equalsIgnoreCase(threadName)) {
+        for (int index = 0; index < threadDropDownModel.getSize(); index++) {
+            if (threadDropDownModel.getElementAt(index).equalsIgnoreCase(threadName)) {
                 return true;
             }
         }
@@ -179,11 +179,25 @@ public class MessageWatcher extends HyperCardFrame {
             if (value instanceof HandlerInvocation) {
                 HandlerInvocation invocation = (HandlerInvocation) value;
 
-                String message = invocation.getMessage();
+                StringBuilder message = new StringBuilder(invocation.getMessage());
+
+                // Indent message depth of call stack
                 for (int index = 0; index < invocation.getStackDepth() - 1; index++) {
-                    message = "  " + message;
+                    message.insert(0, "  ");
                 }
-                setText(message);
+
+                // Append message and arguments
+                for (int index = 0; index < invocation.getArguments().size(); index++) {
+                    message.append(" ");
+                    message.append(invocation.getArguments().get(index));
+
+                    if (index < invocation.getArguments().size() - 1) {
+                        message.append(",");
+                    }
+                }
+                setText(message.toString());
+
+                // Highlight handled messages in italics
                 if (invocation.isMessageHandled()) {
                     setFont(getFont().deriveFont(Font.ITALIC));
                 }
@@ -192,6 +206,4 @@ public class MessageWatcher extends HyperCardFrame {
             return this;
         }
     }
-
-
 }

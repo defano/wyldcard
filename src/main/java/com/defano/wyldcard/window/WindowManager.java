@@ -9,7 +9,6 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class WindowManager {
 
@@ -25,6 +24,7 @@ public class WindowManager {
     private final ColorPalette colorPalette = new ColorPalette();
     private final IntensityPalette intensityPalette = new IntensityPalette();
     private final MessageWatcher messageWatcher = new MessageWatcher();
+    private final VariableWatcher variableWatcher = new VariableWatcher();
 
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
@@ -119,6 +119,16 @@ public class WindowManager {
                 .resizeable(true)
                 .build();
 
+        WindowBuilder.make(variableWatcher)
+                .asPalette()
+                .withTitle("Variable Watcher")
+                .focusable(true)
+                .notInitiallyVisible()
+                .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .dockTo(stackWindow)
+                .resizeable(true)
+                .build();
+
         stackFrame.requestFocus();
     }
 
@@ -162,6 +172,10 @@ public class WindowManager {
         return messageWatcher;
     }
 
+    public VariableWatcher getVariableWatcher() {
+        return variableWatcher;
+    }
+
     public HyperCardWindow[] allWindows() {
         return new HyperCardWindow[] {
                 getStackWindow(),
@@ -172,7 +186,8 @@ public class WindowManager {
                 getPatternsPalette(),
                 getBrushesPalette(),
                 getColorPalette(),
-                getMessageWindow()
+                getMessageWatcher(),
+                getVariableWatcher()
         };
     }
 

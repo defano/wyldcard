@@ -1,7 +1,5 @@
 package com.defano.wyldcard.debug.watch.message;
 
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-
 import javax.swing.*;
 import java.util.*;
 
@@ -19,12 +17,11 @@ public class HandlerInvocationBridge {
         return instance;
     }
 
-    public void notifyMessageHandled(Thread thread, String message, PartSpecifier target, int stackDepth, boolean msgHandled) {
+    public void notifyMessageHandled(HandlerInvocation invocation) {
         SwingUtilities.invokeLater(() -> {
-            addInvocation(new HandlerInvocation(thread.getName(), message, target, stackDepth, msgHandled));
-
+            addInvocation(invocation);
             for (HandlerInvocationObserver observer : handlerInvocationObservers) {
-                observer.onHandlerInvoked(thread.getName(), message, target, stackDepth, msgHandled);
+                observer.onHandlerInvoked(invocation);
             }
         });
     }

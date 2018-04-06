@@ -512,6 +512,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
         scriptEditor.setLayout(new GridLayoutManager(3, 4, new Insets(10, 10, 10, 10), 0, -1));
+        scriptEditor.setMinimumSize(new Dimension(600, 100));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
         functionsMenu = new HandlerComboBox();
         scriptEditor.add(functionsMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));

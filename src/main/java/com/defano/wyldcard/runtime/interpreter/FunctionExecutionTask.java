@@ -1,8 +1,5 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.NamedBlock;
@@ -10,6 +7,10 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.debug.watch.message.HandlerInvocation;
+import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -31,10 +32,10 @@ public class FunctionExecutionTask implements Callable<Value> {
     @Override
     public Value call() throws HtException {
 
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(Thread.currentThread(), function.name, me, context.getStackDepth(), true);
-
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList(context);
+
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, context.getStackDepth(), true));
 
         context.pushStackFrame();
         context.pushMe(me);
