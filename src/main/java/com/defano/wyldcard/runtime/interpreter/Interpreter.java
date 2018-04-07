@@ -178,17 +178,16 @@ public class Interpreter {
      * @param context            The execution context
      * @param me                 The part whose script is being executed (for the purposes of the 'me' keyword).
      * @param script             The script of the part
-     * @param command            The command handler name.
+     * @param message            The command handler name.
      * @param arguments          A list of expressions representing arguments passed with the message
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
-*                           Note that this observer will not fire if the script terminates as a result of an
      */
-    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String command, ListExp arguments, HandlerCompletionObserver completionObserver) {
-        NamedBlock handler = script == null ? null : script.getHandler(command);
+    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
+        NamedBlock handler = script == null ? null : script.getHandler(message);
 
         // Script does not have a handler for this message; create a "default" handler to pass it
         if (handler == null) {
-            handler = NamedBlock.emptyPassBlock(command);
+            handler = NamedBlock.emptyPassBlock(message);
         }
 
         Futures.addCallback(asyncExecuteBlock(context, me, handler, arguments), new FutureCallback<String>() {
@@ -197,12 +196,12 @@ public class Interpreter {
 
                 // Handler did not invoke pass: message was trapped
                 if (completionObserver != null && passedMessage == null || passedMessage.isEmpty()) {
-                    completionObserver.onHandlerRan(me, script, command, true);
+                    completionObserver.onHandlerRan(me, script, message, true);
                 }
 
                 // Handler invoked pass; message not trapped
-                else if (completionObserver != null && passedMessage.equalsIgnoreCase(command)) {
-                    completionObserver.onHandlerRan(me, script, command, false);
+                else if (completionObserver != null && passedMessage.equalsIgnoreCase(message)) {
+                    completionObserver.onHandlerRan(me, script, message, false);
                 }
 
                 // Semantic error: Handler passed a message other than the one being handled.

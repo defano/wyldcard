@@ -284,13 +284,6 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
             case FieldModel.PROP_STYLE:
                 setStyle(context, FieldStyle.fromName(newValue.stringValue()));
                 break;
-            case FieldModel.PROP_SCRIPT:
-                try {
-                    Interpreter.blockingCompileScript(newValue.stringValue());
-                } catch (HtException e) {
-                    WyldCard.getInstance().showErrorDialog(e);
-                }
-                break;
             case FieldModel.PROP_TOP:
             case FieldModel.PROP_LEFT:
             case FieldModel.PROP_WIDTH:

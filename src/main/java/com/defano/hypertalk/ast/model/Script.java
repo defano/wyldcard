@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.model;
 
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.*;
 
@@ -16,35 +17,29 @@ public class Script {
     public Script () {
     }
 
-    public Script(Statement statement) {
-        insertStatement(statement);
+    public Script(ParserRuleContext context, Statement statement) {
+        insertStatement(context, statement);
     }
 
-    public Script(NamedBlock handler, int startingLine, int endingLine) {
-        defineHandler(handler, startingLine, endingLine);
-    }
-
-    public Script defineHandler (NamedBlock handler, int startingLine, int endingLine) {
+    public void defineHandler (NamedBlock handler, int startingLine, int endingLine) {
         BlockName name = new BlockName(handler.name);
 
         handlers.put(name, handler);
         handlerStartingLine.put(name, startingLine);
         handlerEndingLine.put(name, endingLine);
-        return this;
     }
     
-    public Script defineUserFunction (UserFunction function, int startingLine, int endingLine) {
+    public void defineUserFunction (UserFunction function, int startingLine, int endingLine) {
         BlockName name = new BlockName(function.name);
 
         functions.put(name, function);
         handlerStartingLine.put(name, startingLine);
         handlerEndingLine.put(name, endingLine);
-        return this;
     }
 
-    public Script insertStatement(Statement statement) {
+    public Script insertStatement(ParserRuleContext context, Statement statement) {
         if (this.statements == null) {
-            this.statements = new StatementList(null);
+            this.statements = new StatementList(context);
         }
 
         this.statements.list.add(0, statement);
@@ -98,6 +93,28 @@ public class Script {
 
     public StatementList getStatements() {
         return statements;
+    }
+
+    public void applyBreakpoints(Collection<Integer> breakpointLines) {
+        for (int line : breakpointLines) {
+            for (Statement found : findStatementsOnLine(line + 1)) {
+                found.setBreakpoint(true);
+            }
+        }
+    }
+
+    public Collection<Statement> findStatementsOnLine(int line) {
+        ArrayList<Statement> foundStatements = new ArrayList<>();
+
+        for (NamedBlock block : handlers.values()) {
+            foundStatements.addAll(block.findStatementsOnLine(line));
+        }
+
+        for (UserFunction function : functions.values()) {
+            foundStatements.addAll(function.findStatementsOnLine(line));
+        }
+
+        return foundStatements;
     }
 
     private class BlockName {

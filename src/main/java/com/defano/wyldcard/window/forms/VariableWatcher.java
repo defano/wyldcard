@@ -1,6 +1,8 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.symbol.SymbolObserver;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
@@ -50,6 +52,7 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
     }
 
     @Override
+    @RunOnDispatch
     public void setVisible(boolean visible) {
         super.setVisible(visible);
 
@@ -61,6 +64,10 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         }
     }
 
+    public void setWatchedVariables(StackFrame frame) {
+        setWatchedVariables(frame.getVariables(), frame.getGlobalsInScope());
+    }
+
     /**
      * Sets the set of variables to be viewed in the variable watcher.
      *
@@ -68,7 +75,10 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
      * @param globalsInScope A collection of variable names that should be highlighted in italics to indicate they
      *                       represent in-scope globals. When null, all variables are assumed global.
      */
+    @RunOnDispatch
     public void setWatchedVariables(SymbolTable variables, Collection<String> globalsInScope) {
+        tableModel.setNumRows(0);
+
         if (variables == null) {
             variables = ExecutionContext.getGlobals();
         }
@@ -100,6 +110,7 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         // Nothing to do
     }
 
+    @RunOnDispatch
     private void invalidateTable() {
         tableModel.setRowCount(0);
         for (String variableName : variables.getSymbols()) {
@@ -107,6 +118,7 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         }
     }
 
+    @RunOnDispatch
     private void invalidateRow(String variable, Value oldValue, Value newValue) {
         if (oldValue == null) {
             tableModel.addRow(new Object[]{variable, newValue.stringValue()});
@@ -119,12 +131,22 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         }
     }
 
+    @RunOnDispatch
     private String getSelectedVariableName() {
-        return variablesTable.getModel().getValueAt(variablesTable.getSelectedRow(), 0).toString();
+        if (variablesTable.getSelectedRow() < variablesTable.getModel().getRowCount()) {
+            return variablesTable.getModel().getValueAt(variablesTable.getSelectedRow(), 0).toString();
+        } else {
+            return "";
+        }
     }
 
+    @RunOnDispatch
     private String getSelectedVariableValue() {
-        return variablesTable.getModel().getValueAt(variablesTable.getSelectedRow(), 1).toString();
+        if (variablesTable.getSelectedRow() < variablesTable.getModel().getRowCount()) {
+            return variablesTable.getModel().getValueAt(variablesTable.getSelectedRow(), 1).toString();
+        } else {
+            return "";
+        }
     }
 
     private boolean isGlobalInScope(String id) {

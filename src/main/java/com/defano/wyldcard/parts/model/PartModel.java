@@ -5,6 +5,7 @@ import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
+import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
@@ -21,6 +22,8 @@ import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
@@ -53,7 +56,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     private int scriptEditorCaretPosition;
 
     private transient PartModel parentPartModel;
-    private transient Script script = new Script();
+    private transient Script script;
 
     public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
@@ -225,6 +228,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
             Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
                 if (generatedError == null) {
                     script = (Script) compiledScript;
+                    script.applyBreakpoints(getBreakpoints());
                 }
             });
         }
@@ -234,6 +238,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         if (script == null) {
             try {
                 script = Interpreter.blockingCompileScript(getKnownProperty(context, PROP_SCRIPTTEXT).stringValue());
+                script.applyBreakpoints(getBreakpoints());
             } catch (HtException e) {
                 e.printStackTrace();
             }
@@ -341,6 +346,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         this.scriptEditorCaretPosition = scriptEditorCaretPosition;
     }
 
+    public List<Integer> getBreakpoints() {
+        ExecutionContext context = new ExecutionContext();
+        ArrayList<Integer> breakpoints = new ArrayList<>();
+        List<Value> breakpointValues = getKnownProperty(context, PROP_BREAKPOINTS).getItems(context);
+        for (Value thisBreakpoint : breakpointValues) {
+            breakpoints.add(thisBreakpoint.integerValue());
+        }
+        return breakpoints;
+    }
+
     /**
      * Show the script editor for this part.
      * <p>
@@ -348,8 +363,8 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * command from the Objects menu, or invoked the 'edit script of' command.
      * @param context
      */
-    public void editScript(ExecutionContext context) {
-        editScript(context, null);
+    public ScriptEditor editScript(ExecutionContext context) {
+        return editScript(context, null);
     }
 
     /**
@@ -361,14 +376,14 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * @param context
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
-    public void editScript(ExecutionContext context, Integer caretPosition) {
+    public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
+        ScriptEditor editor = new ScriptEditor();
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-
             if (caretPosition != null) {
                 setScriptEditorCaretPosition(caretPosition);
             }
 
-            WindowBuilder.make(new ScriptEditor())
+            WindowBuilder.make(editor)
                     .withTitle("Script of " + getName(context))
                     .ownsMenubar()
                     .withModel(this)
@@ -376,6 +391,8 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                     .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                     .build();
         });
+
+        return editor;
     }
 
     /**
@@ -403,5 +420,19 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 (hasProperty(PROP_ID) ? " id=" + getKnownProperty(new ExecutionContext(), PROP_ID) : "") +
                 ", parent=" + String.valueOf(getParentPartModel()) +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!PartModel.class.isAssignableFrom(obj.getClass())) {
+            return false;
+        }
+        final PartModel other = (PartModel) obj;
+        return other.getId(new ExecutionContext()) == getId(new ExecutionContext()) &&
+                other.getType() == getType() &&
+                other.getOwner() == getOwner();
     }
 }

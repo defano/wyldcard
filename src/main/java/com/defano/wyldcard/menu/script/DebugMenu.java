@@ -1,5 +1,6 @@
 package com.defano.wyldcard.menu.script;
 
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.window.WindowManager;
@@ -7,11 +8,8 @@ import com.defano.wyldcard.window.forms.ScriptEditor;
 
 public class DebugMenu extends HyperCardMenu {
 
-    private final ScriptEditor editor;
-
     public DebugMenu(ScriptEditor editor) {
         super("Debug");
-        this.editor = editor;
 
         MenuItemBuilder.ofCheckType()
                 .named("Evaluate Expression...")
@@ -23,6 +21,7 @@ public class DebugMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Toggle Breakpoint")
                 .withAction(a -> editor.addBreakpoint())
+                .withShortcut('B')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -32,27 +31,31 @@ public class DebugMenu extends HyperCardMenu {
 
         addSeparator();
 
-        MenuItemBuilder.ofCheckType()
+        MenuItemBuilder.ofDefaultType()
                 .named("Run")
                 .withShortcut('R')
-                .disabled()
+                .withAction(a -> DebugContext.getInstance().resume())
                 .build(this);
 
-        MenuItemBuilder.ofCheckType()
+        MenuItemBuilder.ofDefaultType()
                 .named("Step Over")
-                .withShortcut('S')
-                .disabled()
+                .withShortcut('O')
+                .withAction(a -> DebugContext.getInstance().stepOver())
+                .withEnabledProvider(DebugContext.getInstance().getBlockedProvider())
                 .build(this);
 
-        MenuItemBuilder.ofCheckType()
+        MenuItemBuilder.ofDefaultType()
+                .named("Step Out Of")
+                .withShiftShortcut('O')
+                .withAction(a -> DebugContext.getInstance().stepOut())
+                .withEnabledProvider(DebugContext.getInstance().getBlockedProvider())
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
                 .named("Step Into")
                 .withShortcut('I')
-                .disabled()
-                .build(this);
-
-        MenuItemBuilder.ofCheckType()
-                .named("Step Out Of")
-                .disabled()
+                .withAction(a -> DebugContext.getInstance().stepInto())
+                .withEnabledProvider(DebugContext.getInstance().getBlockedProvider())
                 .build(this);
 
         addSeparator();

@@ -50,7 +50,6 @@ public class ScriptMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Replace...")
-                .withShortcut('R')
                 .withAction(e -> WindowBuilder.make(new ReplaceDialog())
                         .withTitle("Replace")
                         .withModel(editor)

@@ -47,8 +47,6 @@ public class ExecutionContext {
     public ExecutionContext() {
         this.stack = new Stack<>();
         this.meStack = new Stack<>();
-
-        pushStackFrame();
     }
 
     /**
@@ -84,6 +82,14 @@ public class ExecutionContext {
      */
     public StackFrame getStackFrame() {
         return stack.peek();
+    }
+
+    public StackFrame peekStackFrame(int index) {
+        if (stack.size() - index - 1 < 0) {
+            return null;
+        } else {
+            return stack.get(stack.size() - index - 1);
+        }
     }
 
     public int getStackDepth() {

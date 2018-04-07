@@ -7,17 +7,18 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class StatementList extends Statement {
 
     public final ArrayList<Statement> list;
 
-    public StatementList (ParserRuleContext context) {
+    public StatementList(ParserRuleContext context) {
         super(context);
         list = new ArrayList<>();
     }
-    
-    public StatementList (ParserRuleContext context, Statement s) {
+
+    public StatementList(ParserRuleContext context, Statement s) {
         super(context);
         list = new ArrayList<>();
         prepend(s);
@@ -36,4 +37,14 @@ public class StatementList extends Statement {
             s.execute(context);
         }
     }
+
+    @Override
+    public Collection<Statement> findStatementsOnLine(int line) {
+        ArrayList<Statement> statements = new ArrayList<>();
+        for (Statement thisStatement : list) {
+            statements.addAll(thisStatement.findStatementsOnLine(line));
+        }
+        return statements;
+    }
+
 }

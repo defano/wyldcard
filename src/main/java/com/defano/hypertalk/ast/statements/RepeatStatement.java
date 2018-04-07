@@ -12,6 +12,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class RepeatStatement extends Statement {
 
@@ -24,6 +26,7 @@ public class RepeatStatement extends Statement {
         this.statements = statements;
     }
 
+    @Override
     @SuppressWarnings("InfiniteLoopStatement")
     public void onExecute(ExecutionContext context) throws HtException, Breakpoint {
         try {
@@ -42,6 +45,15 @@ public class RepeatStatement extends Statement {
             // Nothing to do except stop repeating
         }
     }
+
+    @Override
+    public Collection<Statement> findStatementsOnLine(int line) {
+        ArrayList<Statement> foundStatements = new ArrayList<>();
+        foundStatements.addAll(super.findStatementsOnLine(line));
+        foundStatements.addAll(statements.findStatementsOnLine(line));
+        return foundStatements;
+    }
+
 
     private void executeRepeatWith(ExecutionContext context) throws HtException, Breakpoint {
         RepeatWith with = (RepeatWith) range;

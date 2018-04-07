@@ -24,7 +24,7 @@ public abstract class ASTNode {
      *
      * @return The beginning token of this node, or null if it cannot be determined.
      */
-    protected Token getToken() {
+    public Token getToken() {
         return context == null ? null : context.getStart();
     }
 
@@ -34,7 +34,7 @@ public abstract class ASTNode {
      *
      * @return The ParserRuleContext associated with this node.
      */
-    protected ParserRuleContext getContext() {
+    protected ParserRuleContext getParserContext() {
         return context;
     }
 

@@ -17,7 +17,7 @@ public class VisualEffectExp extends Expression {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return new Value(getContext().getText());
+        return new Value(getParserContext().getText());
     }
 
 }

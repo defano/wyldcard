@@ -216,13 +216,6 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
             case ButtonModel.PROP_STYLE:
                 setStyle(context, ButtonStyle.fromName(newValue.stringValue()));
                 break;
-            case ButtonModel.PROP_SCRIPT:
-                try {
-                    Interpreter.blockingCompileScript(newValue.stringValue());
-                } catch (HtException e) {
-                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("Didn't understand that.", e));
-                }
-                break;
             case ButtonModel.PROP_TOP:
             case ButtonModel.PROP_LEFT:
             case ButtonModel.PROP_WIDTH:

@@ -1,6 +1,8 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.forms.*;
@@ -9,6 +11,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class WindowManager {
 
@@ -189,6 +192,23 @@ public class WindowManager {
                 getMessageWatcher(),
                 getVariableWatcher()
         };
+    }
+
+    public ScriptEditor findScriptEditorForPart(PartModel model) {
+        if (model == null) {
+            return null;
+        }
+
+        for (Frame frame : JFrame.getFrames()) {
+            if (frame instanceof ScriptEditor) {
+                ScriptEditor editor = (ScriptEditor) frame;
+                if (model.equals(editor.getModel())) {
+                    return editor;
+                }
+            }
+        }
+
+        return null;
     }
 
     public void setLookAndFeel(String lafClassName) {

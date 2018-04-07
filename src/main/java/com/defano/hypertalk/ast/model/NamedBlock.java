@@ -1,7 +1,12 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.ast.statements.commands.PassCmd;
+import com.google.common.collect.Lists;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class NamedBlock {
 
@@ -51,4 +56,9 @@ public class NamedBlock {
     public boolean isEmptyPassBlock() {
         return isEmptyPassBlock;
     }
+
+    public Collection<Statement> findStatementsOnLine(int line) {
+        return statements.findStatementsOnLine(line);
+    }
+
 }

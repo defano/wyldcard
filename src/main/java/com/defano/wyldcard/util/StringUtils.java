@@ -1,6 +1,10 @@
 package com.defano.wyldcard.util;
 
+import com.defano.hypertalk.ast.model.Value;
+
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StringUtils {
 
@@ -22,5 +26,13 @@ public class StringUtils {
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int magnitude = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, magnitude)) + " " + units[magnitude];
+    }
+
+    public static List<Value> getValueList(List objects) {
+        ArrayList<Value> values = new ArrayList<>();
+        for (Object thisObject : objects) {
+            values.add(new Value(String.valueOf(thisObject)));
+        }
+        return values;
     }
 }

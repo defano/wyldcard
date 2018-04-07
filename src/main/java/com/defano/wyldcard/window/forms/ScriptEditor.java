@@ -3,7 +3,9 @@ package com.defano.wyldcard.window.forms;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.editor.EditorStatus;
 import com.defano.wyldcard.editor.HyperTalkTextEditor;
 import com.defano.wyldcard.editor.SyntaxParserObserver;
@@ -13,7 +15,9 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
+import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardFrame;
+import com.defano.wyldcard.window.WindowManager;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -92,6 +96,10 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         return menuBar;
     }
 
+    public PartModel getModel() {
+        return model;
+    }
+
     @Override
     @RunOnDispatch
     public void bindModel(Object properties) {
@@ -103,6 +111,14 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
             moveCaretToPosition(model.getScriptEditorCaretPosition());
             editor.getScriptField().addCaretListener(e -> saveCaretPosition());
             editor.getScriptField().forceReparsing(0);
+
+            for (int thisBreakpoint : model.getBreakpoints()) {
+                try {
+                    editor.getGutter().toggleBookmark(thisBreakpoint);
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
 
             SwingUtilities.invokeLater(() -> editor.getScriptField().requestFocus());
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -128,6 +144,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
         // No syntax error; okay to save
         else {
+            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
             model.setKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
             return true;
         }
@@ -135,6 +152,20 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
     @RunOnDispatch
     public void close() {
+
+        if (DebugContext.getInstance().isDebugging(this)) {
+            int dialogResult = JOptionPane.showConfirmDialog(
+                    this,
+                    "Stop debugging and resume execution of this script?",
+                    "Resume",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (dialogResult != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
+        DebugContext.getInstance().resume();
 
         // User modified script but syntax error is present
         if (isDirty() && status.isShowingError()) {

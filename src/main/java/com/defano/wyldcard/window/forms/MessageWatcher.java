@@ -186,15 +186,28 @@ public class MessageWatcher extends HyperCardFrame {
                     message.insert(0, "  ");
                 }
 
-                // Append message and arguments
+                // Append arguments
                 for (int index = 0; index < invocation.getArguments().size(); index++) {
+                    String argument = invocation.getArguments().get(index).stringValue();
+
                     message.append(" ");
-                    message.append(invocation.getArguments().get(index));
+
+                    // Quote non-empty arguments
+                    if (!argument.isEmpty()) {
+                        message.append("\"");
+                    }
+
+                    message.append(argument);
+
+                    if (!argument.isEmpty()) {
+                        message.append("\"");
+                    }
 
                     if (index < invocation.getArguments().size() - 1) {
                         message.append(",");
                     }
                 }
+
                 setText(message.toString());
 
                 // Highlight handled messages in italics

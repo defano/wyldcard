@@ -49,7 +49,7 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
             dispose();
-            model.editScript(new ExecutionContext());
+            SwingUtilities.invokeLater(() -> model.editScript(new ExecutionContext()));
         });
 
         contents.addActionListener(e -> showContentsEditor());

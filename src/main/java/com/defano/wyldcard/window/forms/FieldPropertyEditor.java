@@ -53,7 +53,7 @@ public class FieldPropertyEditor extends HyperCardDialog implements ActionBindab
     public FieldPropertyEditor() {
         editScriptButton.addActionListener(e -> {
             dispose();
-            model.editScript(new ExecutionContext());
+            SwingUtilities.invokeLater(() -> model.editScript(new ExecutionContext()));
         });
 
         saveButton.addActionListener(e -> {

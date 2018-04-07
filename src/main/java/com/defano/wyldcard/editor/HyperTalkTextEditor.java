@@ -1,5 +1,6 @@
 package com.defano.wyldcard.editor;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.autocomplete.CompletionProvider;
@@ -13,11 +14,13 @@ import org.fife.ui.rtextarea.GutterIconInfo;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
-import javax.swing.plaf.IconUIResource;
 import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HyperTalkTextEditor extends RTextScrollPane {
 
@@ -29,10 +32,14 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     private final RSyntaxTextArea scriptField;
     private final HyperTalkSyntaxParser scriptParser;
     private final AutoCompletion ac;
+    private final Color traceHighlightColor;
+
+    private Object traceHighlightTag;
 
     public HyperTalkTextEditor(SyntaxParserObserver parserObserver) {
         super(new RSyntaxTextArea());
 
+        this.traceHighlightColor = new Color(0xff, 0x00, 0x00, 0x40);
         this.scriptField = (RSyntaxTextArea) super.getTextArea();
         this.scriptParser = new HyperTalkSyntaxParser(parserObserver);
 
@@ -96,10 +103,25 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     }
 
+    @RunOnDispatch
+    public List<Integer> getBreakpoints() {
+        ArrayList<Integer> breakpoints = new ArrayList<>();
+        for (GutterIconInfo thisMark : getGutter().getBookmarks()) {
+            try {
+                breakpoints.add(scriptField.getLineOfOffset(thisMark.getMarkedOffset()));
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+        return breakpoints;
+    }
+
+    @RunOnDispatch
     public void clearBreakpoints() {
         getGutter().removeAllTrackingIcons();
     }
 
+    @RunOnDispatch
     public void toggleBreakpoint() {
         try {
             getGutter().toggleBookmark(scriptField.getCaretLineNumber());
@@ -107,6 +129,36 @@ public class HyperTalkTextEditor extends RTextScrollPane {
             // Impossible
         }
     }
+
+    @RunOnDispatch
+    public void startDebugging() {
+        scriptField.setEnabled(false);
+        scriptField.setHighlightCurrentLine(false);
+    }
+
+    @RunOnDispatch
+    public void finishDebugging() {
+        scriptField.setEnabled(true);
+        scriptField.setHighlightCurrentLine(true);
+        clearTraceHighlights();
+    }
+
+    @RunOnDispatch
+    public void showTraceHighlight(int line) {
+        startDebugging();
+
+        try {
+            traceHighlightTag = scriptField.addLineHighlight(line, traceHighlightColor);
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RunOnDispatch
+    public void clearTraceHighlights() {
+        scriptField.removeLineHighlight(traceHighlightTag);
+    }
+
 
     public RSyntaxTextArea getScriptField() {
         return scriptField;
@@ -116,6 +168,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         return scriptParser;
     }
 
+    @RunOnDispatch
     public void showAutoComplete() {
         ac.doCompletion();
     }

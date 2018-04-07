@@ -47,6 +47,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
         // Do not execute this command if handler trapped the message
         if (!trapped) {
             try {
+                handleBreakpoints(context);
                 onExecute(context);
             } catch (HtException e) {
                 rethrowContextualizedException(context, e);

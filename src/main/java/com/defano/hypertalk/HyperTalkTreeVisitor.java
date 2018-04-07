@@ -597,7 +597,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSingleScriptlet(HyperTalkParser.SingleScriptletContext ctx) {
-        return new Script((Statement) visit(ctx.statement()));
+        return new Script(ctx, (Statement) visit(ctx.statement()));
     }
 
     @Override
@@ -607,12 +607,12 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitStmntMultiScriptlet(HyperTalkParser.StmntMultiScriptletContext ctx) {
-        return ((Script) visit(ctx.multilineScriptlet())).insertStatement((Statement) visit(ctx.statement()));
+        return ((Script) visit(ctx.multilineScriptlet())).insertStatement(ctx, (Statement) visit(ctx.statement()));
     }
 
     @Override
     public Object visitStmntScriptlet(HyperTalkParser.StmntScriptletContext ctx) {
-        return new Script((Statement) visit(ctx.statement()));
+        return new Script(ctx, (Statement) visit(ctx.statement()));
     }
 
     @Override
