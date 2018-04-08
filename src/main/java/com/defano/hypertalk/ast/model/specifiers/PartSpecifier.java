@@ -57,7 +57,7 @@ public interface PartSpecifier {
     /**
      * Gets a syntactically valid HyperTalk expression that identifies the specified part (i.e., "card field id 13").
      * @return A valid HyperTalk expression referring to the specified part.
-     * @param context
+     * @param context The execution context.
      */
     String getHyperTalkIdentifier(ExecutionContext context);
 }

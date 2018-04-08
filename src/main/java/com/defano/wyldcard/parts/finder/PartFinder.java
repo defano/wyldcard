@@ -22,7 +22,7 @@ public interface PartFinder {
      * this is their z-order; for cards or backgrounds this is their order in the stack.
      *
      * @return The list of parts held by this container in their logical display order.
-     * @param context
+     * @param context The execution context.
      */
     List<PartModel> getPartsInDisplayOrder(ExecutionContext context);
 
@@ -31,7 +31,7 @@ public interface PartFinder {
      * message box.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps A part specifier indicating the part to find.
      * @return The model of the found part.
      * @throws PartException Thrown if the requested part cannot be located.
@@ -44,7 +44,7 @@ public interface PartFinder {
      * Finds any part by ID, name, number, or ordinal within an ordered collection of parts.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The part specifier representing the part to fetch
      * @param parts The list of parts to search
      * @return The specified part
@@ -80,7 +80,7 @@ public interface PartFinder {
     /**
      * Calculates the number of a part relative to all other parts returned by {@link #getPartsInDisplayOrder(ExecutionContext)}.
      *
-     * @param context
+     * @param context The execution context.
      * @param part The model of the part whose number should be retrieved.
      * @return The number of the given part.
      */
@@ -93,7 +93,7 @@ public interface PartFinder {
      * which match the given part type.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param part The model of the part whose number should be retrieved.
      * @param ofType The type of part being included in the count.
      * @return The number of the request part and type.
@@ -122,7 +122,7 @@ public interface PartFinder {
      * by {@link ##getPartCount(PartType, CardLayer)}, inclusively.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param part The part whose number should be returned.
      * @return The number of this part
      */
@@ -143,7 +143,7 @@ public interface PartFinder {
      * Finds a part based on its ID within a given collection of parts.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
@@ -166,7 +166,7 @@ public interface PartFinder {
      * Finds a part based on its name within a given collection of parts.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
@@ -189,7 +189,7 @@ public interface PartFinder {
      * Finds a part based on its number within a given collection of parts.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The specification of the part to find.
      * @return The specified part.
      * @throws PartException Thrown if no part can be found matching the specifier.
@@ -213,7 +213,7 @@ public interface PartFinder {
      * Finds a part based on ordinal (first, second... middle, last) within a given collection of parts.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The specification of the part to find
      * @return The specified part
      * @throws PartException Thrown if no part can by found matching the specifier.

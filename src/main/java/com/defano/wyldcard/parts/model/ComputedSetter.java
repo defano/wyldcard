@@ -15,7 +15,7 @@ public interface ComputedSetter {
      * rectangle value might result in setting non-computed top-left and bottom-right point attributes.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param model        The {@link PropertiesModel} whose property is being set.
      * @param propertyName The name of the property which is to be set.
      * @param value        The requested value to be set; this method is responsible for transforming this value as

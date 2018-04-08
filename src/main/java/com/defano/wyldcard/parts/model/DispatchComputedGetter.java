@@ -17,7 +17,7 @@ public interface DispatchComputedGetter extends ComputedGetter {
      * to retrieve the property is not.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param model        The {@link PropertiesModel} whose property is being retrieved.
      * @param propertyName The name of the property which is to be calculated.
      * @return The value of the property to be returned to the requester.

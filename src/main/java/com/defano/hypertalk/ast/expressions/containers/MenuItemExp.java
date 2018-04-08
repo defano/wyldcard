@@ -53,7 +53,7 @@ public class MenuItemExp extends ContainerExp {
      * Puts a Value into a menu relative to a given menu item. See {@link MenuExp#addValueToMenu(ExecutionContext, Value, JMenu, int)}
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param value the value representing new menu items.
      * @param preposition The preposition representing where items should be added relative to the given menu item.
      * @throws HtSemanticException Thrown if an error occurs adding items.

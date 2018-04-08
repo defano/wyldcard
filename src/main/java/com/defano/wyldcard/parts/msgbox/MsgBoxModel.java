@@ -60,7 +60,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
     /**
      * {@inheritDoc}
-     * @param context
+     * @param context The execution context.
      */
     @Override
     public Range getSelection(ExecutionContext context) {
@@ -70,7 +70,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
     /**
      * {@inheritDoc}
-     * @param context
+     * @param context The execution context.
      */
     @Override
     @RunOnDispatch
@@ -89,7 +89,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
     /**
      * {@inheritDoc}
-     * @param context
+     * @param context The execution context.
      */
     @Override
     public String getHyperTalkAddress(ExecutionContext context) {
@@ -98,7 +98,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
     /**
      * {@inheritDoc}
-     * @param context
+     * @param context The execution context.
      */
     @Override
     public PartSpecifier getPartSpecifier(ExecutionContext context) {

@@ -30,20 +30,20 @@ public interface Part {
 
     /**
      * Invoked when the part is opened (added) to a card, background or stack.
-     * @param context
+     * @param context The execution context.
      */
     void partOpened(ExecutionContext context);
 
     /**
      * Invoked when the part is closed (removed) from a card, background or stack.
-     * @param context
+     * @param context The execution context.
      */
     void partClosed(ExecutionContext context);
 
     /**
      * Sets the property of the part.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property to set
      * @param value The value to which it should be set
      * @throws NoSuchPropertyException Thrown if no such property exists on this part
@@ -57,7 +57,7 @@ public interface Part {
     /**
      * Gets the value of a property on this part.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property to get
      * @return The value of the property
      * @throws NoSuchPropertyException Thrown if no such property exists on the part.
@@ -69,7 +69,7 @@ public interface Part {
     /**
      * Gets the bounds of this part.
      * @return The bounds of the part.
-     * @param context
+     * @param context The execution context.
      */
     default Rectangle getRect(ExecutionContext context) {
         return getPartModel().getRect(context);
@@ -78,7 +78,7 @@ public interface Part {
     /**
      * Gets the ID of this part.
      * @return The part id.
-     * @param context
+     * @param context The execution context.
      */
     default int getId(ExecutionContext context) {
         return getPartModel().getKnownProperty(context, PartModel.PROP_ID).integerValue();
@@ -87,7 +87,7 @@ public interface Part {
     /**
      * Gets the name of this part.
      * @return The part name.
-     * @param context
+     * @param context The execution context.
      */
     default String getName(ExecutionContext context) {
         return getPartModel().getKnownProperty(context, PartModel.PROP_NAME).stringValue();

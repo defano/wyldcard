@@ -90,7 +90,7 @@ public class StackPart implements PropertyChangeObserver {
      * Note that card index is zero-based, but card's are numbered starting from one from a user's perspective.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param cardIndex The zero-based index of the card to navigate to.
      * @param visualEffect The visual effect to apply to the transition
      * @return The destination card (now visible in the stack window).
@@ -159,7 +159,7 @@ public class StackPart implements PropertyChangeObserver {
      * Navigates to the current card; useful only to apply a visual effect to the current card
      * image.
      * @param visualEffectSpecifier The visual effect to apply
-     * @param context
+     * @param context The execution context.
      * @return The current card
      */
     @RunOnDispatch
@@ -188,7 +188,7 @@ public class StackPart implements PropertyChangeObserver {
     /**
      * Deletes the current card provided there are more than one card in the stack.
      * @return The card now visible in the stack window, or null if the current card could not be deleted.
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public CardPart deleteCard(ExecutionContext context) {
@@ -212,7 +212,7 @@ public class StackPart implements PropertyChangeObserver {
      * new card with the same background as the current card.
      *
      * @return The newly created card.
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public CardPart newBackground(ExecutionContext context) {
@@ -230,7 +230,7 @@ public class StackPart implements PropertyChangeObserver {
      * card with a new background.
      *
      * @return The newly created card.
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public CardPart newCard(ExecutionContext context) {
@@ -246,7 +246,7 @@ public class StackPart implements PropertyChangeObserver {
     /**
      * Removes the current card from the stack and places it into the card clipboard (for pasting elsewhere in the
      * stack).
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public void cutCard(ExecutionContext context) {
@@ -267,7 +267,7 @@ public class StackPart implements PropertyChangeObserver {
     /**
      * Adds the card presently held in the card clipboard to the stack in the current card's position. Has no affect
      * if the clipboard is empty.
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public void pasteCard(ExecutionContext context) {
@@ -306,7 +306,7 @@ public class StackPart implements PropertyChangeObserver {
      * Invalidates the card cache; useful only if modifying this stack's underlying stack model (i.e., as a
      * result of card sorting or re-ordering).
      *
-     * @param context
+     * @param context The execution context.
      * @param cardIndex - The index of the card in the stack to transition to after invalidating the cache.
      */
     @RunOnDispatch

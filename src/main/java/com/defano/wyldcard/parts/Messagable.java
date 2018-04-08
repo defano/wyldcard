@@ -25,7 +25,7 @@ public interface Messagable {
      * Gets the script associated with this part.
      *
      * @return The script
-     * @param context
+     * @param context The execution context.
      */
     Script getScript(ExecutionContext context);
 
@@ -34,7 +34,7 @@ public interface Messagable {
      * keyword in the script that receives messages.
      *
      * @return The part specifier for the 'me' keyword.
-     * @param context
+     * @param context The execution context.
      */
     PartSpecifier getMe(ExecutionContext context);
 

@@ -33,7 +33,7 @@ public interface StackPartFinder extends PartFinder {
      * backgrounds.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps A {@link PartSpecifier} object describing the part to find.
      * @return The model of the requested part.
      * @throws PartException Thrown if the part cannot be located.
@@ -66,7 +66,7 @@ public interface StackPartFinder extends PartFinder {
      * ignored when providing a {@link CompositePartSpecifier} or a {@link PartPositionSpecifier}.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The part specifier representing the part to fetch
      * @param parts The list of parts to search
      * @return The model of the requested part.
@@ -87,7 +87,7 @@ public interface StackPartFinder extends PartFinder {
      * 4 of background 2').
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps The composite part specifier.
      * @return The found part.
      * @throws PartException Thrown if the requested part cannot be found.
@@ -235,7 +235,7 @@ public interface StackPartFinder extends PartFinder {
      * is a background (for example, "button 1 of background 3"), then the first card of that background is returned.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param ps A composite part specifier, the owning card of which should be returned.
      * @return The owning card
      * @throws PartException Thrown if no such part can be found.

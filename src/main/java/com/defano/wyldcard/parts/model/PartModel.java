@@ -288,7 +288,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * Gets the value of this part; thus, reads the value of the property returned by {@link #getValueProperty()}.
      *
      * @return The value of this property
-     * @param context
+     * @param context The execution context.
      */
     public Value getValue(ExecutionContext context) {
         return getKnownProperty(context, getValueProperty());
@@ -298,7 +298,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * Sets the value of this part; thus, sets the value of the property returned by {@link #getValueProperty()}.
      *
      * @param value The value of this part.
-     * @param context
+     * @param context The execution context.
      */
     public void setValue(Value value, ExecutionContext context) {
         try {
@@ -324,7 +324,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * specifier is a {@link CompositePartSpecifier} referring to the button or field on a specific card or background.
      *
      * @return A part specifier referring to this part.
-     * @param context
+     * @param context The execution context.
      */
     public PartSpecifier getMe(ExecutionContext context) {
         PartModel parent = getParentPartModel();
@@ -423,7 +423,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * <p>
      * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
      * the Objects menu.
-     * @param context
+     * @param context The execution context.
      */
     public void editProperties(ExecutionContext context) {
         ThreadUtils.invokeAndWaitAsNeeded(() ->

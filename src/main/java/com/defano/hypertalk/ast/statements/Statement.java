@@ -53,7 +53,7 @@ public abstract class Statement extends ASTNode {
 
     /**
      * Checks to see if the flow of execution should be stopped and the debugger invoked
-     * @param context
+     * @param context The execution context.
      */
     protected void handleBreakpoints(ExecutionContext context) {
         if (DebugContext.getInstance().isBreakpoint(context, this)) {

@@ -48,7 +48,7 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Creates and activates a new, empty stack with default dimensions.
-     * @param context
+     * @param context The execution context.
      */
     public void newStack(ExecutionContext context) {
         activateStack(context, StackPart.newStack(context));
@@ -57,7 +57,7 @@ public class StackManager implements StackNavigationObserver {
     /**
      * Prompts the user to choose a stack file to open. If a valid stack file is chosen, the stack is opened and made
      * the active stack.
-     * @param context
+     * @param context The execution context.
      */
     public void open(ExecutionContext context) {
         FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
@@ -74,7 +74,7 @@ public class StackManager implements StackNavigationObserver {
     /**
      * Makes the given stack the "active" stack--that is, the stack in focus which the menu bar and message box are
      * associated with. The active stack represents the stack with application focus.
-     * @param context
+     * @param context The execution context.
      * @param stackPart The stack to activate
      */
     private void activateStack(ExecutionContext context, StackPart stackPart) {
@@ -115,7 +115,7 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Saves the active stack to its associated file (acts like "Save as" if no file is associated).
-     * @param context
+     * @param context The execution context.
      */
     public void saveActiveStack(ExecutionContext context) {
         save(context, activeStack.getStackModel());
@@ -123,7 +123,7 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Prompts the user to select a file, then saves the active stack to this file.
-     * @param context
+     * @param context The execution context.
      */
     public void saveActiveStackAs(ExecutionContext context) {
         save(context, activeStack.getStackModel(), null);
@@ -131,7 +131,7 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Saves the given stack model to its associated file (acts like "Save as" if no file is associated).
-     * @param context
+     * @param context The execution context.
      * @param stackModel The StackModel to save.
      */
     private void save(ExecutionContext context, StackModel stackModel) {
@@ -141,7 +141,7 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
-     * @param context
+     * @param context The execution context.
      * @param file The file where the stack should be saved
      */
     private void save(ExecutionContext context, StackModel stackModel, File file) {

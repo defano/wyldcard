@@ -17,7 +17,7 @@ public interface DispatchComputedSetter extends ComputedSetter {
      * Differs from {@link ComputedSetter} only in that this method will be run on the dispatch thread even if the
      * call to set the property is not.
      *
-     * @param context
+     * @param context The execution context.
      * @param model        The {@link PropertiesModel} whose property is being set.
      * @param propertyName The name of the property which is to be set.
      * @param value        The requested value to be set; this method is responsible for transforming this value as

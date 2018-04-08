@@ -14,7 +14,7 @@ public interface PropertyChangeObserver {
      *
      * Use {@link PropertyWillChangeObserver} for a synchronous notification of a property change.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property (attribute) that changed.
      * @param oldValue The attribute's previous value
      * @param newValue The attribute's new value

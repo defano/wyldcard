@@ -46,7 +46,7 @@ public interface CardLayerPart extends Part {
 
     /**
      * Sets the z-position of this part relative to other parts on the card.
-     * @param context
+     * @param context The execution context.
      * @param newPosition The z-order position of this part
      */
     default void setDisplayOrder(ExecutionContext context, int newPosition) {

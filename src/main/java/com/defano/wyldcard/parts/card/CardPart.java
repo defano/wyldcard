@@ -76,7 +76,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Instantiates the CardPart occurring at a specified position in a the stack.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param cardIndex The location in the stack where the card should be created.
      * @param stack The stack data model containing the card to return
      * @return The CardPart.
@@ -90,7 +90,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Instantiates a CardPart given a {@link CardModel} and {@link StackModel}.
      *
      * @param model The model of the card to instantiate.
-     * @param context
+     * @param context The execution context.
      * @return The fully instantiated CardPart.
      * @throws HtException Thrown if an error occurs instantiating the card.
      */
@@ -138,7 +138,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * part components (button and field views) are not updated to reflect the values in their model.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param model The model of the card to instantiate.
      * @return A partially constructed CardPart useful for programmatic inspection
      * @throws HtException Thrown if an error occurs constructing the CardPart.
@@ -169,7 +169,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * "paste" a copied part from another card onto this card.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param part The part to be imported.
      * @return The newly imported part (identical to the given part, but with a new ID)
      * @throws HtException Thrown if an error occurs importing the part.
@@ -189,7 +189,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Adds a new button (with default attributes) to this card. Represents the behavior of the user choosing
      * "New Button" from the Objects menu.
      * // TODO: Should probably be moved to CardModel
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public void newButton(ExecutionContext context) {
@@ -222,7 +222,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Adds a new field (with default attributes) to this card. Represents the behavior of the user choosing
      * "New Field" from the Objects menu.
      * // TODO: Should probably be moved to CardModel
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     public void newField(ExecutionContext context) {
@@ -297,7 +297,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Hides or shows the card foreground, including the canvas and all parts. When made visible, only those parts
      * whose visible property is true will actually become visible.
      *
-     * @param context
+     * @param context The execution context.
      * @param visible Shows the foreground when true; hides it otherwise.
      */
     @RunOnDispatch
@@ -316,7 +316,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Hides or shows all parts on the card's foreground. When made visible, only those parts whose visible property is
      * true will actually become visible.
      *
-     * @param context
+     * @param context The execution context.
      * @param visible True to show card parts; false to hide them
      */
     @RunOnDispatch
@@ -340,7 +340,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /**
      * Hides or shows the background layer for this card.
-     * @param context
+     * @param context The execution context.
      * @param isVisible True to show the background; false to hide it.
      */
     @RunOnDispatch
@@ -354,7 +354,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /**
      * Removes a part (button or field) from this card. Has no effect if the part is not on this card.
-     * @param context
+     * @param context The execution context.
      * @param part The part to be removed.
      */
     @RunOnDispatch
@@ -372,7 +372,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Removes a button from this card view. Does not affect the {@link CardModel}. Has no effect if the button does
      * not exist on the card.
      *
-     * @param context
+     * @param context The execution context.
      * @param buttonModel The button to be removed.
      */
     @RunOnDispatch
@@ -390,7 +390,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Removes a field from this card view. Does not affect the {@link CardModel}. Has no effect if the field does not
      * exist on the card.
      *
-     * @param context
+     * @param context The execution context.
      * @param fieldModel The field to be removed.
      */
     @RunOnDispatch
@@ -408,7 +408,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Swap the Swing component associated with a given part (button or field) for a new component. This is useful
      * when changing button or field styles.
      *
-     * @param context
+     * @param context The execution context.
      * @param forPart The part whose Swing component should be replaced.
      * @param oldButtonComponent The old Swing component associated with this part.
      * @param newButtonComponent The new Swing component to be used.
@@ -425,7 +425,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /**
      * Indicates that the z-order of a part changed (and that components should be reordered on the pane according to
      * their new position).
-     * @param context
+     * @param context The execution context.
      */
     public void onDisplayOrderChanged(ExecutionContext context) {
         SwingUtilities.invokeLater(() -> {
@@ -508,7 +508,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /**
      * Notify all parts in this container that they are closing (ostensibly because the container itself is closing).
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     private void notifyPartsClosing(ExecutionContext context) {
@@ -527,7 +527,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * copied button from another card onto this card.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param part The button to be imported.
      * @param layer The card layer (card or background) on which to import this part
      * @return The newly imported button (identical to the given part, but with a new ID)
@@ -552,7 +552,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * copied field from another card onto this card.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param part The field to be imported.
      * @param layer The card layer (card or background) on which to import this part
      * @return The newly imported field (identical to the given part, but with a new ID)
@@ -572,7 +572,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /**
      * Adds a field to this card in the layer indicated by the model. Assumes that the field has a unique ID.
-     * @param context
+     * @param context The execution context.
      * @param field The field to add to this card.
      */
     @RunOnDispatch
@@ -590,7 +590,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /**
      * Adds a button to this card. Assumes the button has a unique ID.
-     * @param context
+     * @param context The execution context.
      * @param button The button to be added.
      */
     @RunOnDispatch
@@ -610,7 +610,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Adds a part view to the layer of this card specified in its model. Does not affect the {@link CardModel}.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param thisPart The data model of the part to be added.
      * @throws HtException Thrown if an error occurs adding the part.
      */
@@ -724,7 +724,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Returns the CardLayerPart represented by the given PartModel.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param partModel The PartModel associated with the desired Part.
      * @throws IllegalArgumentException Thrown if no such part exists on this card
      * @return The matching CardLayerPart

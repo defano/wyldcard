@@ -226,7 +226,7 @@ public class PropertiesModel {
      * {@link #setProperty(ExecutionContext, String, Value)} which produces an exception if a script attempts to write a non-existent
      * property.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property to set (or one of its aliases)
      * @param value The value to set
      */
@@ -241,7 +241,7 @@ public class PropertiesModel {
      * {@link #setProperty(ExecutionContext, String, Value)} which produces an exception if a script attempts to write a non-existent
      * property.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property to set (or one of its aliases)
      * @param value The value to set
      * @param quietly When true, observers of this model will not be notified of the change.
@@ -270,7 +270,7 @@ public class PropertiesModel {
     /**
      * Gets the value of a property.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property to get (or one of its aliases)
      * @return The value of the property.
      *
@@ -311,7 +311,7 @@ public class PropertiesModel {
     /**
      * Gets the value of a known property; returns a new value if the property doesn't exist.
      *
-     * @param context
+     * @param context The execution context.
      * @param property The name of the property to get (or one of its aliases)
      * @return The value of the property
      */
@@ -363,7 +363,7 @@ public class PropertiesModel {
      * all properties on the provided observer. Useful for listeners that wish to initialize themselves with the current
      * state of the model.
      *
-     * @param context
+     * @param context The execution context.
      * @param listener This listener to be notified; does not have to be an active listener of this model.
      */
     public void notifyPropertyChangedObserver(ExecutionContext context, PropertyChangeObserver listener) {

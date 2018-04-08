@@ -51,7 +51,7 @@ public class SelectionContext {
      * Gets the part currently holding the active selection.
      * @return The model associated with the part holding the active selection.
      * @throws HtSemanticException Thrown if there is no selection.
-     * @param context
+     * @param context The execution context.
      */
     public PartModel getSelectedPart(ExecutionContext context) throws HtSemanticException {
 
@@ -68,7 +68,7 @@ public class SelectionContext {
      * Gets the AddressableSelection object associated with the active selection.
      * @return The AddressableSelection
      * @throws HtSemanticException Thrown if there is no selection.
-     * @param context
+     * @param context The execution context.
      */
     public AddressableSelection getManagedSelection(ExecutionContext context) throws HtSemanticException {
         PartModel partModel = getSelectedPart(context);
@@ -84,7 +84,7 @@ public class SelectionContext {
      * Gets the currently selected text.
      * @return The current selection.
      * @throws HtSemanticException Thrown if there is no selection.
-     * @param context
+     * @param context The execution context.
      */
     public Value getSelection(ExecutionContext context) throws HtSemanticException {
         return getManagedSelection(context).getSelectedText(context);

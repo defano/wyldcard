@@ -110,7 +110,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     /**
      * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
      *
-     * @param context
+     * @param context The execution context.
      * @param partModel The part to remove from this card.
      */
     public void removePartModel(ExecutionContext context, PartModel partModel) {

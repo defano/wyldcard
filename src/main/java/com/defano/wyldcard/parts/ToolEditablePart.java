@@ -33,7 +33,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
      * should be highlighted with marching ants).
      *
-     * @param context
+     * @param context The execution context.
      * @param beingEdited True if selected; false otherwise.
      */
     void setSelectedForEditing(ExecutionContext context, boolean beingEdited);
@@ -93,7 +93,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     /**
      * Invoke to indicate that the selected tool has been changed by the user.
-     * @param context
+     * @param context The execution context.
      */
     default void onToolModeChanged(ExecutionContext context) {
         SwingUtilities.invokeLater(() -> {
@@ -105,7 +105,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     /**
      * Determines if this part is presently visible on the card (as determined by its "visible" property).
      * @return True if visible; false otherwise.
-     * @param context
+     * @param context The execution context.
      */
     default boolean isHidden(ExecutionContext context) {
         return !getPartModel().getKnownProperty(context, PartModel.PROP_VISIBLE).booleanValue();
@@ -115,7 +115,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Determines if this part is presently enabled on the card (as determined by its "enabled" property) and
      * not currently disabled as a result of the part's edit tool being active.
      * @return True if enabled; false if disabled.
-     * @param context
+     * @param context The execution context.
      */
     default boolean isEnabled(ExecutionContext context) {
         return getPartModel().getKnownProperty(context, CardLayerPartModel.PROP_ENABLED).booleanValue();
@@ -127,7 +127,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * hidden parts will be visible when the part tool is active; foreground parts visible when browsing may be hidden
      * when editing the background).
      *
-     * @param context
+     * @param context The execution context.
      * @param visibleOnCard True to make it visible; false otherwise
      */
     @RunOnDispatch
@@ -148,7 +148,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * enable of this Swing component may be overridden by tool context (i.e., all parts will be disabled while they
      * are being edited by the part tool).
      *
-     * @param context
+     * @param context The execution context.
      * @param enabledOnCard True to make the part enabled; false to disable.
      */
     @RunOnDispatch
@@ -162,7 +162,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     /**
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     default void bringCloser(ExecutionContext context) {
@@ -171,7 +171,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     /**
      * Adjust the z-order of this part, moving it one part further from the front of the part stack.
-     * @param context
+     * @param context The execution context.
      */
     @RunOnDispatch
     default void sendFurther(ExecutionContext context) {
@@ -181,7 +181,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     /**
      * Determines the z-order of this part.
      * @return The relative front-to-back position of this part to others drawn on the card.
-     * @param context
+     * @param context The execution context.
      */
     default int getZOrder(ExecutionContext context) {
         return getPartModel().getKnownProperty(context, CardLayerPartModel.PROP_ZORDER).integerValue();

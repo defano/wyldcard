@@ -32,7 +32,7 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
      * highlighting the next matching string.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param query The query to perform
      * @throws HtException Thrown if the query refers to a bogus field
      */

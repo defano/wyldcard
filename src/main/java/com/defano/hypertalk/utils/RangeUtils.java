@@ -15,7 +15,7 @@ public class RangeUtils {
      * Gets the range of characters identified by the given CompositeChunk.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param value The value whose CompositeChunk should be ranged
      * @param c     The chunk specifier whose character range should be calculated
      * @return The range of characters in value identified by c.
@@ -29,7 +29,7 @@ public class RangeUtils {
      * Gets the range of characters identified by a set of chunks.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param value     The value whose chunk should be ranged.
      * @param chunkType The type of chunk; character, item, word, line or range thereof.
      * @param start     The first requested chunk, inclusive, counting from 1.
@@ -46,7 +46,7 @@ public class RangeUtils {
      * Gets the range of characters identified by the given chunk.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param value     The value whose chunk should be ranged.
      * @param chunkType The type of chunk; character, item, word, line or range thereof.
      * @param count     The first requested chunk, inclusive, counting from 1.
@@ -78,7 +78,7 @@ public class RangeUtils {
      * Gets the range of characters identified by a given chunk.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param value The string whose characters should be ranged
      * @param c The chunk identifying a substring (i.e., 'second word of', 'third item of')
      * @return The range of identified characters.

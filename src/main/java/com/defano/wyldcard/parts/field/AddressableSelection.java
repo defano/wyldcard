@@ -13,14 +13,14 @@ public interface AddressableSelection {
     /**
      * Gets a HyperTalk expression that refers to this component, like 'card field id 1' or 'the message box'.
      * @return A HyperTalk expression referring to this component
-     * @param context
+     * @param context The execution context.
      */
     String getHyperTalkAddress(ExecutionContext context);
 
     /**
      * Gets a part specifier that refers to this component.
      * @return The part specifier.
-     * @param context
+     * @param context The execution context.
      */
     PartSpecifier getPartSpecifier(ExecutionContext context);
 
@@ -34,7 +34,7 @@ public interface AddressableSelection {
      * Requests focus and sets a range of selected text in this field. If the start and end positions are equal, no
      * text is selected but the caret is moved to the given position.
      *
-     * @param context
+     * @param context The execution context.
      * @param start The selection start, inclusive, counting from 0.
      * @param end The selection end, exclusive, counting from 0.
      */
@@ -51,7 +51,7 @@ public interface AddressableSelection {
      * 'empty' if no selection exists.
      *
      * @return An expression representing the current line selection
-     * @param context
+     * @param context The execution context.
      */
     default Value getSelectedLineExpression(ExecutionContext context) {
         int lineStart = getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).start);
@@ -74,7 +74,7 @@ public interface AddressableSelection {
      * 'empty' if no selection exists.
      *
      * @return An expression representing the current field selection.
-     * @param context
+     * @param context The execution context.
      */
     default Value getSelectedFieldExpression(ExecutionContext context) {
         int selectionStart = getSelectableTextModel().getSelection(context).start;
@@ -93,7 +93,7 @@ public interface AddressableSelection {
      * 'empty' if no selection exists.
      *
      * @return An expression representing the current chunk selection.
-     * @param context
+     * @param context The execution context.
      */
     default Value getSelectedChunkExpression(ExecutionContext context) {
         int selectionStart = getSelectableTextModel().getSelection(context).start;
@@ -118,7 +118,7 @@ public interface AddressableSelection {
     /**
      * Gets the text of the current selection or 'empty' if no selection exists.
      * @return The currently selected text.
-     * @param context
+     * @param context The execution context.
      */
     default Value getSelectedText(ExecutionContext context) {
         Range selection = getSelectableTextModel().getSelection(context);
@@ -136,7 +136,7 @@ public interface AddressableSelection {
     /**
      * Gets the entire selectable contents of this component (that is, all of the text, not just the selected text).
      * @return The entire text of this component.
-     * @param context
+     * @param context The execution context.
      */
     default String getSelectableText(ExecutionContext context) {
         return getSelectableTextModel().getText(context);
@@ -146,7 +146,7 @@ public interface AddressableSelection {
      * Gets the line number at which the given position falls.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param position The position of character whose line should be determined.
      * @return The line (counting from 1) where the character is found.
      */
@@ -165,7 +165,7 @@ public interface AddressableSelection {
     /**
      * Updates the HyperCard properties and selection context with the active selection.
      *
-     * @param context
+     * @param context The execution context.
      * @param selection         The range of characters in the current selection; a zero-length range indicates no selection.
      * @param model             The model of the component that owns the selection.
      * @param isSystemSelection True if this selection qualifies as the global, "system" selection. That is, when

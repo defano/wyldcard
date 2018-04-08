@@ -19,7 +19,7 @@ public interface Styleable<Style,StyledComponent> {
      * Because different styles are generally represented by different Swing components, this is the primary means by
      * which HyperCard can swap one button or field style for another.
      *
-     * @param context
+     * @param context The execution context.
      * @param oldComponent The former component associated with this part
      * @param newComponent The new component
      */
@@ -27,7 +27,7 @@ public interface Styleable<Style,StyledComponent> {
 
     /**
      * Specifies the style of this part.
-     * @param context
+     * @param context The execution context.
      * @param style The desired style.
      */
     void setStyle(ExecutionContext context, Style style);

@@ -24,7 +24,7 @@ public class ChunkUtils {
      * Gets a chunk of a value. For example, 'the last line of x'
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param c              The type of chunk; character, item, word, line or range thereof.
      * @param value          The value whose chunk is being queried
      * @param chunkNumber    For single-chunk queries, the number of the requested chunk (i.e., word 1, item 3, etc.)
@@ -50,7 +50,7 @@ public class ChunkUtils {
      * Puts a value into a chunk of another value. For example, 'put x into the first char of y'
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param chunkType      The type of chunk; character, item, word, line or range thereof.
      * @param preposition    One of into, before or after indicating the chunk-relative position where the value should be
      *                       inserted.
@@ -98,7 +98,7 @@ public class ChunkUtils {
      * of the third line of y'
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param c             The composite chunk to be modified
      * @param p             One of into, before or after indicating the chunk-relative position where the value should be
      *                      inserted.
@@ -126,7 +126,7 @@ public class ChunkUtils {
      * Gets the number of chunks of the specified type that exist in value.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param chunkType The type of chunk to count; characters, words, lines or items.
      * @param value     The value whose chunks are to be counted.
      * @return The number of found chunks
@@ -141,7 +141,7 @@ public class ChunkUtils {
      * Gets a regular expression useful in matching tokens of the given ChunkType.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param chunkType The ChunkType whose regular expression should be returned.
      * @return The regex for the given chunk type.
      */
@@ -186,7 +186,7 @@ public class ChunkUtils {
      * by pre-pending special characters with an escape '\'.
      *
      * @return A valid regular expression matching strings that are equal to item delimiter string literal.
-     * @param context
+     * @param context The execution context.
      */
     private static String getItemDelimiterRegex(ExecutionContext context) {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
@@ -210,7 +210,7 @@ public class ChunkUtils {
      * example, a single space between words.
      *
      *
-     * @param context
+     * @param context The execution context.
      * @param chunkType
      * @return
      */

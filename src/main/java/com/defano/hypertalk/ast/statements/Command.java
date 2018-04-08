@@ -61,7 +61,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
      *
      * @return The argument list
      * @throws HtSemanticException Thrown if an error occurs evaluating arguments
-     * @param context
+     * @param context The execution context.
      */
     protected ListExp getEvaluatedMessageArguments(ExecutionContext context) throws HtException {
         return new ListExp(null);

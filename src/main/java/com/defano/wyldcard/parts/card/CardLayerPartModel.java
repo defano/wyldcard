@@ -101,7 +101,7 @@ public abstract class CardLayerPartModel extends PartModel {
      * set.
      *
      * @return The ID of the card to which this part is currently bound.
-     * @param context
+     * @param context The execution context.
      */
     public int getCurrentCardId(ExecutionContext context) {
         if (this.currentCardId.get() == null) {
@@ -145,7 +145,7 @@ public abstract class CardLayerPartModel extends PartModel {
      * Gets the "number" of this part (equivalent to its z-order within its layer).
      *
      * @return The part number.
-     * @param context
+     * @param context The execution context.
      */
     public long getPartNumber(ExecutionContext context) {
         return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this);
@@ -155,7 +155,7 @@ public abstract class CardLayerPartModel extends PartModel {
      * Gets the number of parts existing on the same layer (cd or bkgnd) as this part.
      *
      * @return The number of parts.
-     * @param context
+     * @param context The execution context.
      */
     public long getPartCount(ExecutionContext context) {
         return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, null, getOwner());

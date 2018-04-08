@@ -62,7 +62,7 @@ public class PropertySpecifier {
      * or field, 'the abbrev name' is actually returned.
      *
      * @return The adjective-applied name of the specified property.
-     * @param context
+     * @param context The execution context.
      */
     public String getAdjectiveAppliedPropertyName(ExecutionContext context) {
         PartModel model = getPartModel(context);
@@ -96,7 +96,7 @@ public class PropertySpecifier {
      * doesn't specify a part type at all.
      *
      * @return The model of the part specified by this object, or null
-     * @param context
+     * @param context The execution context.
      */
     public PartModel getPartModel(ExecutionContext context) {
         if (partExp == null) {
