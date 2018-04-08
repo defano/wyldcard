@@ -429,27 +429,4 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .resizeable(false)
                         .build());
     }
-
-    @Override
-    public String toString() {
-        return "PartModel{" +
-                owner + " " + type +
-                (hasProperty(PROP_ID) ? " id=" + getKnownProperty(new ExecutionContext(), PROP_ID) : "") +
-                ", parent=" + String.valueOf(getParentPartModel()) +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (!PartModel.class.isAssignableFrom(obj.getClass())) {
-            return false;
-        }
-        final PartModel other = (PartModel) obj;
-        return other.getId(new ExecutionContext()) == getId(new ExecutionContext()) &&
-                other.getType() == getType() &&
-                other.getOwner() == getOwner();
-    }
 }
