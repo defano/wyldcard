@@ -322,6 +322,7 @@ public class PropertiesModel {
         try {
             return getProperty(context, property);
         } catch (NoSuchPropertyException e) {
+            defineProperty(property, new Value(), false);
             e.printStackTrace();
             return new Value();
         }

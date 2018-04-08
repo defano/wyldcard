@@ -3,8 +3,10 @@ package com.defano.wyldcard.menu.script;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
+import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.forms.ScriptEditor;
+import com.defano.wyldcard.window.forms.TraceDelay;
 
 public class DebugMenu extends HyperCardMenu {
 
@@ -31,9 +33,25 @@ public class DebugMenu extends HyperCardMenu {
 
         addSeparator();
 
+        MenuItemBuilder.ofCheckType()
+                .named("Trace")
+                .withAction(a -> DebugContext.getInstance().toggleTrace())
+                .withCheckmarkProvider(DebugContext.getInstance().getIsTracingProvider())
+                .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Set Trace Delay...")
+                .withEnabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
+                .withAction(a -> WindowBuilder.make(new TraceDelay()).asModal().withTitle("Trace Delay").build())
+                .build(this);
+
+        addSeparator();
+
         MenuItemBuilder.ofDefaultType()
                 .named("Run")
                 .withShortcut('R')
+                .withEnabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(a -> DebugContext.getInstance().resume())
                 .build(this);
 

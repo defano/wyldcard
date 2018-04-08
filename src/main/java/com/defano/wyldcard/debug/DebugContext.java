@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.forms.ScriptEditor;
 import io.reactivex.Observable;
@@ -31,8 +32,8 @@ public class DebugContext {
 
     private final static DebugContext instance = new DebugContext();
 
-    private boolean stepOver, stepInto, stepOut;    // Trace modes
-    private boolean isDebugging;                    // Debugger is active somewhere in app
+    private int traceDelayMs = 500;                 // Trace delay, in milliseconds
+    private boolean stepOver, stepInto, stepOut;    // Step modes
     private int debugStackDepth;                    // Last captured stack depth
     private ScriptEditor editor;                    // Editor being used as debugger UI
     private Statement debugStatement;               // Statement that caused the breakpoint
@@ -41,6 +42,8 @@ public class DebugContext {
 
     // When true, a script has paused execution due to a breakpoint
     private BehaviorSubject<Boolean> isExecutionPaused = BehaviorSubject.createDefault(false);
+    private BehaviorSubject<Boolean> isTracing = BehaviorSubject.createDefault(false);
+    private BehaviorSubject<Boolean> isDebugging = BehaviorSubject.createDefault(false);
 
     private DebugContext() {
     }
@@ -50,7 +53,7 @@ public class DebugContext {
     }
 
     /**
-     * Invoke to stop execution of the current script and begin debugging at the given statement.
+     * Stop execution of the current script and begin debugging at the given statement.
      * <p>
      * Note that WyldCard supports multi-threaded script execution, but only one thread can be debugged at a time. Any
      * breakpoint reached on a different thread will be ignored while the current thread is being debugged.
@@ -65,26 +68,42 @@ public class DebugContext {
             throw new IllegalStateException("Already debugging thread " + debugThread.getName());
         }
 
+        // Reset step mode flags
         stepOver = false;
         stepInto = false;
         stepOut = false;
 
+        // Capture execution state
         debugContext = context;
         debugThread = Thread.currentThread();
         debugStackDepth = context.getStackDepth();
         editor = showDebugEditor(context, context.getMe());
         debugStatement = statement;
 
-        isDebugging = true;
+        // Notify observers
+        isDebugging.onNext(true);
         isExecutionPaused.onNext(true);
 
-        SwingUtilities.invokeLater(() -> {
+        // Focus the debugger window and update the context of the variable watcher
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
             WindowManager.getInstance().getVariableWatcher().setWatchedVariables(debugContext.getStackFrame());
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
         });
 
-        // Blocks the current thread; must be last thing we do
-        statement.hold();
+        // Special case: When tracing, delay the configured amount, remove the trace highlight and keep going.
+        if (isTracing.blockingFirst()) {
+            try {
+                Thread.sleep(traceDelayMs);
+                editor.getEditor().clearTraceHighlights();
+            } catch (InterruptedException e) {
+                // Nothing to do
+            }
+        }
+
+        // Not tracing: Block the current thread; must be last thing we do
+        else {
+            statement.hold();
+        }
     }
 
     /**
@@ -108,7 +127,8 @@ public class DebugContext {
             debugStatement.release();
 
             if (releaseDebugger) {
-                isDebugging = false;
+                isDebugging.onNext(false);
+                isTracing.onNext(false);
 
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
@@ -120,16 +140,39 @@ public class DebugContext {
     }
 
     /**
+     * Toggles the state of trace mode.
+     * <p>
+     * When enabled, the debugged script begins executing normally, but with each statement delayed by the amount of
+     * {@link #getTraceDelayMs()} and with the line of each executed statement highlighted in the debugger. This
+     * feature lets a user "see" how the program is executing.
+     * <p>
+     * When toggled off, the debugger is released and the program executes normally.
+     */
+    public void toggleTrace() {
+        if (isDebugging()) {
+            isTracing.onNext(!isTracing.blockingFirst());
+
+            if (isTracing.blockingFirst()) {
+                resume(false);
+            } else {
+                resume(true);
+            }
+        }
+    }
+
+    /**
      * Steps out of the current handler. That is, execution is resumed until a statement in the previous stack frame
      * is reached. If there is no previous stack frame then execution is resumed normally.
      */
     public void stepOut() {
-        StackFrame callingFrame = debugContext.peekStackFrame(1);
-        if (callingFrame != null && isDebugging()) {
-            stepOut = true;
-        }
+        if (isDebugging()) {
+            StackFrame callingFrame = debugContext.peekStackFrame(1);
+            if (callingFrame != null && isDebugging()) {
+                stepOut = true;
+            }
 
-        resume(false);
+            resume(false);
+        }
     }
 
     /**
@@ -176,7 +219,7 @@ public class DebugContext {
      * @return True if a script is being debugging somewhere.
      */
     public boolean isDebugging() {
-        return isDebugging;
+        return isDebugging.blockingFirst();
     }
 
     /**
@@ -187,6 +230,24 @@ public class DebugContext {
      */
     public Observable<Boolean> getExecutionIsPausedProvider() {
         return isExecutionPaused;
+    }
+
+    /**
+     * Gets an observable of {@link #isDebugging()}.
+     *
+     * @return An observable indication of whether a script is currently being debugged.
+     */
+    public Observable<Boolean> getIsDebuggingProvider() {
+        return isDebugging;
+    }
+
+    /**
+     * Gets an observable indication of whether the debugger is currently tracing a script.
+     *
+     * @return An observable indication of tracing status.
+     */
+    public Observable<Boolean> getIsTracingProvider() {
+        return isTracing;
     }
 
     /**
@@ -216,6 +277,11 @@ public class DebugContext {
             return true;
         }
 
+        // In trace mode, every statement is a breakpoint
+        if (isTracing.blockingFirst()) {
+            return true;
+        }
+
         // Stepping over; break as long as stack depth hasn't increased
         if (stepOver && context.getStackDepth() <= debugStackDepth) {
             return true;
@@ -230,10 +296,17 @@ public class DebugContext {
         return stepInto;
     }
 
+    public int getTraceDelayMs() {
+        return traceDelayMs;
+    }
+
+    public void setTraceDelayMs(int traceDelayMs) {
+        this.traceDelayMs = traceDelayMs;
+    }
+
     private void clearDebugContext() {
         debugContext = null;
         debugThread = null;
-        editor = null;
         debugStatement = null;
         stepOut = false;
         stepInto = false;

@@ -151,8 +151,10 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     @RunOnDispatch
     public void showTraceHighlight(int line) {
         startDebugging();
+        clearTraceHighlights();
         try {
             traceHighlightTag = scriptField.addLineHighlight(line, traceHighlightColor);
+            scriptField.setCaretPosition(scriptField.getLineStartOffset(line));
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
@@ -160,7 +162,9 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     @RunOnDispatch
     public void clearTraceHighlights() {
-        scriptField.removeLineHighlight(traceHighlightTag);
+        if (traceHighlightTag != null) {
+            scriptField.removeLineHighlight(traceHighlightTag);
+        }
     }
 
     public RSyntaxTextArea getScriptField() {
