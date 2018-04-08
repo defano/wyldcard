@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
@@ -55,7 +55,7 @@ public class FunctionExecutionTask implements Callable<Value> {
 
             try {
                 function.statements.execute(context);
-            } catch (Breakpoint breakpoint) {
+            } catch (Preemption preemption) {
                 // Nothing to do
             }
         

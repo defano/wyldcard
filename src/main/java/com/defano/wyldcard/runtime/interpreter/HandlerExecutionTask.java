@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
-import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
+import com.defano.hypertalk.ast.breakpoints.Preemption;
+import com.defano.hypertalk.ast.breakpoints.TerminateHandlerPreemption;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;
@@ -62,11 +62,11 @@ public class HandlerExecutionTask implements Callable<String> {
         // Execute handler
         try {
             handler.statements.execute(context);
-        } catch (TerminateHandlerBreakpoint e) {
+        } catch (TerminateHandlerPreemption e) {
             if (e.getHandlerName() != null && !e.getHandlerName().equalsIgnoreCase(handler.name)) {
                 WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit '" + e.getHandlerName() + "' from inside '" + handler.name + "'."));
             }
-        } catch (Breakpoint e) {
+        } catch (Preemption e) {
             WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
         }
 

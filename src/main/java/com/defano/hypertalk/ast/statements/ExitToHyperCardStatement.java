@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -13,7 +13,7 @@ public class ExitToHyperCardStatement extends Statement {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Breakpoint {
+    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
         throw new ExitToHyperCardException();
     }
 }

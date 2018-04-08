@@ -4,7 +4,7 @@ import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
@@ -17,7 +17,7 @@ public class ResetPaintCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Breakpoint {
+    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
         ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_12X12);
         HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_CENTERED, new Value(false));
         HyperCardProperties.getInstance().setKnownProperty(context, HyperCardProperties.PROP_FILLED, new Value(false));

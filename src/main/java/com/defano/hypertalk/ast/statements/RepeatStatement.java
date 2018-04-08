@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
-import com.defano.hypertalk.ast.breakpoints.TerminateIterationBreakpoint;
-import com.defano.hypertalk.ast.breakpoints.TerminateLoopBreakpoint;
+import com.defano.hypertalk.ast.breakpoints.TerminateIterationPreemption;
+import com.defano.hypertalk.ast.breakpoints.TerminateLoopPreemption;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.loop.*;
 import com.defano.hypertalk.exception.HtException;
@@ -28,7 +28,7 @@ public class RepeatStatement extends Statement {
 
     @Override
     @SuppressWarnings("InfiniteLoopStatement")
-    public void onExecute(ExecutionContext context) throws HtException, Breakpoint {
+    public void onExecute(ExecutionContext context) throws HtException, Preemption {
         try {
             if (range instanceof RepeatForever) {
                 executeRepeatForever(context);
@@ -41,7 +41,7 @@ public class RepeatStatement extends Statement {
             } else {
                 throw new IllegalStateException("Bug! Unknown repeat type.");
             }
-        } catch (TerminateLoopBreakpoint breakpoint) {
+        } catch (TerminateLoopPreemption breakpoint) {
             // Nothing to do except stop repeating
         }
     }
@@ -55,7 +55,7 @@ public class RepeatStatement extends Statement {
     }
 
 
-    private void executeRepeatWith(ExecutionContext context) throws HtException, Breakpoint {
+    private void executeRepeatWith(ExecutionContext context) throws HtException, Preemption {
         RepeatWith with = (RepeatWith) range;
         String symbol = with.symbol;
         RepeatRange range = with.range;
@@ -93,7 +93,7 @@ public class RepeatStatement extends Statement {
         }
     }
 
-    private void executeRepeatDuration(ExecutionContext context) throws HtException, Breakpoint {
+    private void executeRepeatDuration(ExecutionContext context) throws HtException, Preemption {
         RepeatDuration duration = (RepeatDuration) range;
 
         // While loop
@@ -111,7 +111,7 @@ public class RepeatStatement extends Statement {
         }
     }
 
-    private void executeRepeatCount(ExecutionContext context) throws HtException, Breakpoint {
+    private void executeRepeatCount(ExecutionContext context) throws HtException, Preemption {
         RepeatCount count = (RepeatCount) range;
         Value countValue = count.count.evaluate(context);
 
@@ -125,18 +125,18 @@ public class RepeatStatement extends Statement {
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
-    private void executeRepeatForever(ExecutionContext context) throws HtException, Breakpoint {
+    private void executeRepeatForever(ExecutionContext context) throws HtException, Preemption {
         while (true) {
             iterate(context);
         }
     }
 
-    private void iterate(ExecutionContext context) throws HtException, Breakpoint {
+    private void iterate(ExecutionContext context) throws HtException, Preemption {
 
         try {
             statements.execute(context);
             rest(context);
-        } catch (TerminateIterationBreakpoint e) {
+        } catch (TerminateIterationPreemption e) {
             // Nothing to do; keep repeating
         }
     }

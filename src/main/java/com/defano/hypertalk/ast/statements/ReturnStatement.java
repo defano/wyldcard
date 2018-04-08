@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.breakpoints.TerminateHandlerPreemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.breakpoints.TerminateHandlerBreakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.exception.HtException;
@@ -21,8 +21,8 @@ public class ReturnStatement extends Statement {
         this.returnValue = returnValue;
     }
 
-    public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerBreakpoint {
+    public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerPreemption {
         context.setReturnValue(returnValue.evaluate(context));
-        throw new TerminateHandlerBreakpoint(null);
+        throw new TerminateHandlerPreemption(null);
     }
 }

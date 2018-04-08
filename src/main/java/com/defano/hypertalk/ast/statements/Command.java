@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -31,7 +31,7 @@ public abstract class Command extends Statement implements MessageCompletionObse
     }
 
     @Override
-    public final void execute(ExecutionContext context) throws HtException, Breakpoint {
+    public final void execute(ExecutionContext context) throws HtException, Preemption {
         cdl = new CountDownLatch(1);
 
         // Send command message to current card

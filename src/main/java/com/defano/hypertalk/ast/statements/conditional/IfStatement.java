@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements.conditional;
 
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
@@ -22,7 +22,7 @@ public class IfStatement extends Statement {
     }
 
     @Override
-    public void onExecute(ExecutionContext context) throws HtException, Breakpoint {
+    public void onExecute(ExecutionContext context) throws HtException, Preemption {
         if (condition.evaluate(context).checkedBooleanValue()) {
             then.thenBranch.execute(context);
         } else if (then.elseBranch != null) {

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -14,7 +14,7 @@ public class PopCardCmd extends Command {
     }
 
     @Override
-    protected void onExecute(ExecutionContext context) throws HtException, Breakpoint {
+    protected void onExecute(ExecutionContext context) throws HtException, Preemption {
         WyldCard.getInstance().getActiveStack().popCard(context, null);
     }
 }

@@ -5,5 +5,5 @@ package com.defano.hypertalk.ast.breakpoints;
  * interrupts the current StatementList returning control to the top of the loop but does not exit the current handler
  * or function.
  */
-public class TerminateIterationBreakpoint extends Breakpoint {
+public class TerminateIterationPreemption extends Preemption {
 }

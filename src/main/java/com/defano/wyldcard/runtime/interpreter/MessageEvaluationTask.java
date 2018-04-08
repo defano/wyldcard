@@ -1,8 +1,8 @@
 package com.defano.wyldcard.runtime.interpreter;
 
+import com.defano.hypertalk.ast.breakpoints.Preemption;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.StatementList;
@@ -37,7 +37,7 @@ public class MessageEvaluationTask implements Callable<String> {
 
         try {
             statements.execute(context);
-        } catch (Breakpoint e) {
+        } catch (Preemption e) {
             WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
         }
 
