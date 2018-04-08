@@ -13,6 +13,7 @@ public class Script {
     private final Map<BlockName, Integer> handlerEndingLine = new HashMap<>();
     private final Map<BlockName, UserFunction> functions = new HashMap<>();
     private StatementList statements = null;
+    private Collection<Integer> appliedBreakpoints = new ArrayList<>();
     
     public Script () {
     }
@@ -96,11 +97,22 @@ public class Script {
     }
 
     public void applyBreakpoints(Collection<Integer> breakpointLines) {
+
+        // Clear previously-applied breakpoints
+        for (int oldBreakpoint : appliedBreakpoints) {
+            for (Statement found : findStatementsOnLine(oldBreakpoint + 1)) {
+                found.setBreakpoint(false);
+            }
+        }
+
+        // Apply the new set
         for (int line : breakpointLines) {
             for (Statement found : findStatementsOnLine(line + 1)) {
                 found.setBreakpoint(true);
             }
         }
+
+        this.appliedBreakpoints = breakpointLines;
     }
 
     public Collection<Statement> findStatementsOnLine(int line) {

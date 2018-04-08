@@ -3,7 +3,6 @@ package com.defano.wyldcard.window.forms;
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.editor.EditorStatus;
@@ -17,7 +16,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardFrame;
-import com.defano.wyldcard.window.WindowManager;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -32,9 +30,7 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
 
@@ -76,6 +72,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                 editor.showAutoComplete();
             }
         });
+
+        editor.setBreakpointToggleObserver(breakpoints -> model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(breakpoints))));
 
         // Prompt to save when closing window
         getWindow().addWindowListener(new WindowAdapter() {

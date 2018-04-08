@@ -11,6 +11,7 @@ import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import org.fife.ui.rtextarea.GutterIconInfo;
+import org.fife.ui.rtextarea.IconRowHeader;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
@@ -18,6 +19,8 @@ import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +36,10 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     private final HyperTalkSyntaxParser scriptParser;
     private final AutoCompletion ac;
     private final Color traceHighlightColor;
-
     private Object traceHighlightTag;
+
+    private GutterIconInfo[] bookmarks;
+    private BreakpointToggleObserver breakpointToggleObserver;
 
     public HyperTalkTextEditor(SyntaxParserObserver parserObserver) {
         super(new RSyntaxTextArea());
@@ -100,7 +105,6 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
         getGutter().setBookmarkIcon(new ImageIcon(getClass().getResource("/icons/breakpoint.png")));
         getGutter().setBookmarkingEnabled(true);
-
     }
 
     @RunOnDispatch
@@ -125,6 +129,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     public void toggleBreakpoint() {
         try {
             getGutter().toggleBookmark(scriptField.getCaretLineNumber());
+            fireBookmarkToggleListener();
         } catch (BadLocationException e) {
             // Impossible
         }
@@ -158,7 +163,6 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         scriptField.removeLineHighlight(traceHighlightTag);
     }
 
-
     public RSyntaxTextArea getScriptField() {
         return scriptField;
     }
@@ -170,5 +174,38 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     @RunOnDispatch
     public void showAutoComplete() {
         ac.doCompletion();
+    }
+
+    @RunOnDispatch
+    public void setBreakpointToggleObserver(BreakpointToggleObserver observer) {
+        installBreakpointToggleObserver();
+        this.breakpointToggleObserver = observer;
+    }
+
+    @RunOnDispatch
+    private void installBreakpointToggleObserver() {
+        for (Component c : getGutter().getComponents()) {
+            if (c instanceof IconRowHeader) {
+                IconRowHeader irh = (IconRowHeader) c;
+                irh.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        SwingUtilities.invokeLater(() -> {
+                            if (breakpointToggleObserver != null && (bookmarks == null || bookmarks.length != irh.getBookmarks().length)) {
+                                fireBookmarkToggleListener();
+                            }
+                            bookmarks = irh.getBookmarks();
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    @RunOnDispatch
+    private void fireBookmarkToggleListener() {
+        if (breakpointToggleObserver != null) {
+            breakpointToggleObserver.onBookmarkToggle(getBreakpoints());
+        }
     }
 }

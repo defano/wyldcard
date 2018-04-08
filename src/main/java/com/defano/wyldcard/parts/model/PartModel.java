@@ -179,11 +179,17 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
 
-
         defineComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
         defineComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
             model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
             precompile(context);
+        });
+
+        // When breakpoints change, automatically apply them to the script
+        addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
+            if (property == PROP_BREAKPOINTS) {
+                getScript(context).applyBreakpoints(getBreakpoints());
+            }
         });
 
         precompile(new ExecutionContext());
