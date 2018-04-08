@@ -41,21 +41,21 @@ public class DebugMenu extends HyperCardMenu {
                 .named("Step Over")
                 .withShortcut('O')
                 .withAction(a -> DebugContext.getInstance().stepOver())
-                .withEnabledProvider(DebugContext.getInstance().getBlockedProvider())
+                .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Step Out Of")
                 .withShiftShortcut('O')
                 .withAction(a -> DebugContext.getInstance().stepOut())
-                .withEnabledProvider(DebugContext.getInstance().getBlockedProvider())
+                .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Step Into")
                 .withShortcut('I')
                 .withAction(a -> DebugContext.getInstance().stepInto())
-                .withEnabledProvider(DebugContext.getInstance().getBlockedProvider())
+                .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
                 .build(this);
 
         addSeparator();

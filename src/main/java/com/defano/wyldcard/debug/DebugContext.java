@@ -3,7 +3,6 @@ package com.defano.wyldcard.debug;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
@@ -13,22 +12,35 @@ import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
 
+/**
+ * Represents the state of the WyldCard debugger.
+ * <p>
+ * Note that WyldCard is multi-threaded, but this debugger only support debugging a single script execution thread at
+ * any given time. If the debugger is active (i.e., {@link #isDebugging()}) and a breakpoint is reached on a thread
+ * other than the one currently being debugged, that breakpoint is simply ignored.
+ * <p>
+ * Prior to executing any statement, the HyperTalk AST is responsible for checking if the statement represents a
+ * breakpoint (via {@link #isBreakpoint(ExecutionContext, Statement)}. If this check returns true, the statement
+ * should call {@link #debug(ExecutionContext, Statement)} to activate the debugger. A call to this method will pause
+ * execution of the calling thread via {@link Statement#hold()} then display the script editor (in debug mode) for
+ * part whose script is being executed.
+ * <p>
+ * Piece of cake!
+ */
 public class DebugContext {
 
     private final static DebugContext instance = new DebugContext();
 
-    private boolean stepOver;
-    private boolean stepInto;
-    private boolean stepOut;
+    private boolean stepOver, stepInto, stepOut;    // Trace modes
+    private boolean isDebugging;                    // Debugger is active somewhere in app
+    private int debugStackDepth;                    // Last captured stack depth
+    private ScriptEditor editor;                    // Editor being used as debugger UI
+    private Statement debugStatement;               // Statement that caused the breakpoint
+    private Thread debugThread;                     // Script execution thread we're debugging
+    private ExecutionContext debugContext;          // Last captured script execution context
 
-    private String debugMessage;
-    private ScriptEditor editor;
-    private Statement breakStatement;
-    private Thread debugThread;
-    private ExecutionContext debugContext;
-
-    private BehaviorSubject<Boolean> blocked = BehaviorSubject.createDefault(false);
-    private BehaviorSubject<Boolean> debuggerBusyProvider = BehaviorSubject.createDefault(false);
+    // When true, a script has paused execution due to a breakpoint
+    private BehaviorSubject<Boolean> isExecutionPaused = BehaviorSubject.createDefault(false);
 
     private DebugContext() {
     }
@@ -59,15 +71,14 @@ public class DebugContext {
 
         debugContext = context;
         debugThread = Thread.currentThread();
-        editor = getDebugScriptEditor(context, context.getMe());
-        breakStatement = statement;
-        debugMessage = context.getMessage();
+        debugStackDepth = context.getStackDepth();
+        editor = showDebugEditor(context, context.getMe());
+        debugStatement = statement;
 
-        debuggerBusyProvider.onNext(true);
-        blocked.onNext(true);
+        isDebugging = true;
+        isExecutionPaused.onNext(true);
 
         SwingUtilities.invokeLater(() -> {
-            // Update variable watcher
             WindowManager.getInstance().getVariableWatcher().setWatchedVariables(debugContext.getStackFrame());
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
         });
@@ -83,15 +94,21 @@ public class DebugContext {
         resume(true);
     }
 
+    /**
+     * Resumes execution of the debugged thread, optionally releasing the active script editor from debug mode.
+     *
+     * @param releaseDebugger True to release the editor from debug mode (and clear trace highlights); false to leave
+     *                        the editor in debug mode.
+     */
     private void resume(boolean releaseDebugger) {
         if (isDebugging()) {
             SwingUtilities.invokeLater(() -> editor.getEditor().clearTraceHighlights());
 
-            blocked.onNext(false);
-            breakStatement.release();
+            isExecutionPaused.onNext(false);
+            debugStatement.release();
 
             if (releaseDebugger) {
-                debuggerBusyProvider.onNext(false);
+                isDebugging = false;
 
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
@@ -108,7 +125,6 @@ public class DebugContext {
     public void stepOut() {
         StackFrame callingFrame = debugContext.peekStackFrame(1);
         if (callingFrame != null && isDebugging()) {
-            debugMessage = callingFrame.getMessage();
             stepOut = true;
         }
 
@@ -154,20 +170,22 @@ public class DebugContext {
     }
 
     /**
-     * Determines if a script is currently being debugged (that is, script execution has been paused at a breakpoint).
+     * Determines if a script is currently being debugged.
      *
      * @return True if a script is being debugging somewhere.
      */
     public boolean isDebugging() {
-        return debuggerBusyProvider.blockingFirst();
+        return isDebugging;
     }
 
-    public Observable<Boolean> getBlockedProvider() {
-        return blocked;
-    }
-
-    public Observable<Boolean> getDebuggerBusyProvider() {
-        return debuggerBusyProvider;
+    /**
+     * Gets an observable indicating when the debugger has paused execution of a script (i.e., a breakpoint has been
+     * reached and we're waiting for user input to step or resume execution).
+     *
+     * @return
+     */
+    public Observable<Boolean> getExecutionIsPausedProvider() {
+        return isExecutionPaused;
     }
 
     /**
@@ -197,13 +215,17 @@ public class DebugContext {
             return true;
         }
 
-        // Step over: Break on every statement in the current handler; when step-out is set, the debug message is
-        // set to the last message on the call stack
-        if ((stepOver || stepOut) && debugMessage.equalsIgnoreCase(context.getMessage())) {
+        // Stepping over; break as long as stack depth hasn't increased
+        if (stepOver && context.getStackDepth() <= debugStackDepth) {
             return true;
         }
 
-        // Finally, always break if step into
+        // Stepping out of; break as soon as current frame has popped
+        if (stepOut && context.getStackDepth() < debugStackDepth) {
+            return true;
+        }
+
+        // Step into; always break when in this mode
         return stepInto;
     }
 
@@ -211,8 +233,7 @@ public class DebugContext {
         debugContext = null;
         debugThread = null;
         editor = null;
-        breakStatement = null;
-        debugMessage = null;
+        debugStatement = null;
         stepOut = false;
         stepInto = false;
         stepOver = false;
@@ -222,23 +243,11 @@ public class DebugContext {
         return Thread.currentThread().equals(debugThread);
     }
 
-    private ScriptEditor getDebugScriptEditor(ExecutionContext context, PartSpecifier partSpecifier) {
-        PartModel model = null;
+    private ScriptEditor showDebugEditor(ExecutionContext context, PartSpecifier partSpecifier) {
         try {
-            model = context.getPart(partSpecifier);
+            return context.getPart(partSpecifier).editScript(context);
         } catch (PartException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Bug! Attempt to debug a bogus part.");
         }
-
-        ScriptEditor editor = WindowManager.getInstance().findScriptEditorForPart(model);
-        if (editor != null) {
-            SwingUtilities.invokeLater(() -> {
-                editor.setVisible(true);
-                editor.requestFocus();
-            });
-            return editor;
-        }
-
-        return model.editScript(context);
     }
 }

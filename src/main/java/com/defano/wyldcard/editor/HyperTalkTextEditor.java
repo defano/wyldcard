@@ -146,7 +146,6 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     @RunOnDispatch
     public void showTraceHighlight(int line) {
         startDebugging();
-
         try {
             traceHighlightTag = scriptField.addLineHighlight(line, traceHighlightColor);
         } catch (BadLocationException e) {

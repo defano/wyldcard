@@ -154,18 +154,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     public void close() {
 
         if (DebugContext.getInstance().isDebugging(this)) {
-            int dialogResult = JOptionPane.showConfirmDialog(
-                    this,
-                    "Stop debugging and resume execution of this script?",
-                    "Resume",
-                    JOptionPane.YES_NO_OPTION);
-
-            if (dialogResult != JOptionPane.YES_OPTION) {
-                return;
-            }
+            DebugContext.getInstance().resume();
         }
-
-        DebugContext.getInstance().resume();
 
         // User modified script but syntax error is present
         if (isDirty() && status.isShowingError()) {

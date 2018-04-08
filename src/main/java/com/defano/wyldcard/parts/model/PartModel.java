@@ -21,6 +21,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -361,7 +362,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * <p>
      * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
      * command from the Objects menu, or invoked the 'edit script of' command.
-     * @param context
+     * @param context The execution context
      */
     public ScriptEditor editScript(ExecutionContext context) {
         return editScript(context, null);
@@ -373,26 +374,42 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
      * command from the Objects menu, or invoked the 'edit script of' command.
      *
-     * @param context
+     * @param context The execution context
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
     public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
-        ScriptEditor editor = new ScriptEditor();
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            if (caretPosition != null) {
-                setScriptEditorCaretPosition(caretPosition);
-            }
+        ScriptEditor editor = WindowManager.getInstance().findScriptEditorForPart(this);
 
-            WindowBuilder.make(editor)
-                    .withTitle("Script of " + getName(context))
-                    .ownsMenubar()
-                    .withModel(this)
-                    .resizeable(true)
-                    .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .build();
-        });
+        // Existing script editor for this part; show it
+        if (editor != null) {
+            SwingUtilities.invokeLater(() -> {
+                editor.setVisible(true);
+                editor.requestFocus();
+            });
 
-        return editor;
+            return editor;
+        }
+
+        // Create new editor
+        else {
+            ScriptEditor newEditor = new ScriptEditor();
+
+            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                if (caretPosition != null) {
+                    setScriptEditorCaretPosition(caretPosition);
+                }
+
+                WindowBuilder.make(newEditor)
+                        .withTitle("Script of " + getName(context))
+                        .ownsMenubar()
+                        .withModel(this)
+                        .resizeable(true)
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                        .build();
+            });
+
+            return newEditor;
+        }
     }
 
     /**
