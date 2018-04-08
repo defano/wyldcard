@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypertalk.ast.breakpoints.Preemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.MessageCompletionObserver;
 import com.defano.hypertalk.ast.expressions.ListExp;

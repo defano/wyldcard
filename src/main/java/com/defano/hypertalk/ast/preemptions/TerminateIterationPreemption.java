@@ -1,4 +1,4 @@
-package com.defano.hypertalk.ast.breakpoints;
+package com.defano.hypertalk.ast.preemptions;
 
 /**
  * Represents an interruption in the flow of execution in the current block (StatementList). For example, 'next repeat'

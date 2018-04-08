@@ -1,9 +1,9 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypertalk.ast.breakpoints.Preemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.breakpoints.TerminateIterationPreemption;
-import com.defano.hypertalk.ast.breakpoints.TerminateLoopPreemption;
+import com.defano.hypertalk.ast.preemptions.TerminateIterationPreemption;
+import com.defano.hypertalk.ast.preemptions.TerminateLoopPreemption;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.loop.*;
 import com.defano.hypertalk.exception.HtException;

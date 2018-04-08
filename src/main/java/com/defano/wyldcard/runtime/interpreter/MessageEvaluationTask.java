@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.hypertalk.ast.breakpoints.Preemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;

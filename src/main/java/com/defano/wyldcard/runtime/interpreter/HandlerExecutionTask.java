@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.hypertalk.ast.breakpoints.Preemption;
-import com.defano.hypertalk.ast.breakpoints.TerminateHandlerPreemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.NamedBlock;
 import com.defano.hypertalk.ast.model.Value;

@@ -64,6 +64,10 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         }
     }
 
+    public void setWatchGlobalVariables() {
+        setWatchedVariables(null, null);
+    }
+
     public void setWatchedVariables(StackFrame frame) {
         setWatchedVariables(frame.getVariables(), frame.getGlobalsInScope());
     }
@@ -93,6 +97,8 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         if (isVisible()) {
             this.variables.addObserver(this);
         }
+
+        invalidateTable();
     }
 
     @Override
@@ -133,8 +139,10 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
 
     @RunOnDispatch
     private String getSelectedVariableName() {
-        if (variablesTable.getSelectedRow() < variablesTable.getModel().getRowCount()) {
-            return variablesTable.getModel().getValueAt(variablesTable.getSelectedRow(), 0).toString();
+        int selectedRow = variablesTable.getSelectedRow();
+
+        if (selectedRow >= 0 && selectedRow < variablesTable.getModel().getRowCount()) {
+            return variablesTable.getModel().getValueAt(selectedRow, 0).toString();
         } else {
             return "";
         }
@@ -142,8 +150,10 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
 
     @RunOnDispatch
     private String getSelectedVariableValue() {
-        if (variablesTable.getSelectedRow() < variablesTable.getModel().getRowCount()) {
-            return variablesTable.getModel().getValueAt(variablesTable.getSelectedRow(), 1).toString();
+        int selectedRow = variablesTable.getSelectedRow();
+
+        if (selectedRow >= 0 && selectedRow < variablesTable.getModel().getRowCount()) {
+            return variablesTable.getModel().getValueAt(selectedRow, 1).toString();
         } else {
             return "";
         }

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.ASTNode;
-import com.defano.hypertalk.ast.breakpoints.Preemption;
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.runtime.context.ExecutionContext;

@@ -112,6 +112,7 @@ public class DebugContext {
 
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
+                    WindowManager.getInstance().getVariableWatcher().setWatchGlobalVariables();
                     clearDebugContext();
                 });
             }

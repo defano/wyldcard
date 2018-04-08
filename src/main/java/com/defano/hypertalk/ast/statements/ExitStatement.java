@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.breakpoints.TerminateHandlerPreemption;
+import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;
