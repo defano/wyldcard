@@ -269,6 +269,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         return context;
     }
 
+    @RunOnDispatch
     public void find(String text, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
         RSyntaxTextArea textEditor = editor.getScriptField();
 
@@ -282,6 +283,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     public void replaceAll(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive) {
         provisionSearch(wholeWord, caseSensitive);
         context.setSearchFor(findText);
@@ -290,6 +292,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         SearchEngine.replaceAll(editor.getScriptField(), context);
     }
 
+    @RunOnDispatch
     public void replace(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
         provisionSearch(wholeWord, caseSensitive);
         context.setSearchFor(findText);
@@ -299,10 +302,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         find(findText, wholeWord, caseSensitive, wrap);
     }
 
+    @RunOnDispatch
     public void replace() {
         replace(context.getSearchFor(), context.getReplaceWith(), null, null, true);
     }
 
+    @RunOnDispatch
     public void uncomment() {
         RSyntaxTextArea textArea = editor.getScriptField();
 
@@ -322,6 +327,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     public void comment() {
         RSyntaxTextArea textArea = editor.getScriptField();
 
@@ -338,6 +344,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void provisionSearch(Boolean wholeWord, Boolean caseSensitive) {
         if (wholeWord != null) {
             context.setWholeWord(wholeWord);
@@ -352,32 +359,39 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         context.setSearchForward(true);
     }
 
+    @RunOnDispatch
     public void clearBreakpoints() {
         editor.clearBreakpoints();
     }
 
+    @RunOnDispatch
     public void addBreakpoint() {
         editor.toggleBreakpoint();
     }
 
+    @RunOnDispatch
     public void makeSelectionFindText() {
         if (editor.getScriptField().getSelectedText().length() > 0) {
             context.setSearchFor(editor.getScriptField().getSelectedText());
         }
     }
 
+    @RunOnDispatch
     public void find() {
         find(context.getSearchFor(), null, null, true);
     }
 
+    @RunOnDispatch
     public void findSelection() {
         find(editor.getScriptField().getSelectedText(), null, null, true);
     }
 
+    @RunOnDispatch
     public void checkSyntax() {
         editor.getScriptField().forceReparsing(editor.getScriptParser());
     }
 
+    @RunOnDispatch
     public boolean isDirty() {
         return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
     }
@@ -509,10 +523,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     public void onCompileCompleted(Script compiledScript, String resultMessage) {
         if (compiledScript != null) {
             this.compiledScript = compiledScript;
-            handlersMenu.invalidateDataset();
-            functionsMenu.invalidateDataset();
 
-            status.setStatusOkay();
+            SwingUtilities.invokeLater(() -> {
+                handlersMenu.invalidateDataset();
+                functionsMenu.invalidateDataset();
+                status.setStatusOkay();
+            });
         } else {
             status.setStatusError(resultMessage);
         }

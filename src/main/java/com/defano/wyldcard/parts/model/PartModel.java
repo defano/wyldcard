@@ -5,7 +5,6 @@ import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
@@ -25,6 +24,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
@@ -398,14 +398,15 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         // Create new editor
         else {
-            ScriptEditor newEditor = new ScriptEditor();
-
+            AtomicReference<ScriptEditor> newEditor = new AtomicReference<>();
             ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                newEditor.set(new ScriptEditor());
+
                 if (caretPosition != null) {
                     setScriptEditorCaretPosition(caretPosition);
                 }
 
-                WindowBuilder.make(newEditor)
+                WindowBuilder.make(newEditor.get())
                         .withTitle("Script of " + getName(context))
                         .ownsMenubar()
                         .withModel(this)
@@ -414,7 +415,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .build();
             });
 
-            return newEditor;
+            return newEditor.get();
         }
     }
 

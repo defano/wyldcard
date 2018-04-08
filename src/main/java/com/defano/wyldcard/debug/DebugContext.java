@@ -94,7 +94,7 @@ public class DebugContext {
         if (isTracing.blockingFirst()) {
             try {
                 Thread.sleep(traceDelayMs);
-                editor.getEditor().clearTraceHighlights();
+                SwingUtilities.invokeLater(() -> editor.getEditor().clearTraceHighlights());
             } catch (InterruptedException e) {
                 // Nothing to do
             }
