@@ -35,6 +35,7 @@ public class DebugMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Trace")
+                .withShortcut('T')
                 .withAction(a -> DebugContext.getInstance().toggleTrace())
                 .withCheckmarkProvider(DebugContext.getInstance().getIsTracingProvider())
                 .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
