@@ -9,6 +9,7 @@ import com.defano.wyldcard.runtime.symbol.SymbolTable;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -23,6 +24,7 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
     private JPanel windowPanel;
     private JTable variablesTable;
     private JTextArea variableEditor;
+    private JLabel contextLabel;
 
     private DefaultTableModel tableModel = new DefaultTableModel();
     private SymbolTable variables;
@@ -65,17 +67,19 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
     }
 
     public void setWatchGlobalVariables() {
+        contextLabel.setText("Globals");
         setWatchedVariables(null, null);
     }
 
     public void setWatchedVariables(StackFrame frame) {
+        contextLabel.setText(frame.getMessage());
         setWatchedVariables(frame.getVariables(), frame.getGlobalsInScope());
     }
 
     /**
      * Sets the set of variables to be viewed in the variable watcher.
      *
-     * @param variables A symbol table of variables to be shown. When null, all global variables will be shown.
+     * @param variables      A symbol table of variables to be shown. When null, all global variables will be shown.
      * @param globalsInScope A collection of variable names that should be highlighted in italics to indicate they
      *                       represent in-scope globals. When null, all variables are assumed global.
      */
@@ -189,20 +193,49 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
+        windowPanel.setLayout(new GridLayoutManager(3, 1, new Insets(10, 10, 10, 10), -1, -1));
         final JScrollPane scrollPane1 = new JScrollPane();
-        windowPanel.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        windowPanel.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
         variablesTable = new JTable();
         variablesTable.setEnabled(true);
         variablesTable.setPreferredScrollableViewportSize(new Dimension(300, 150));
         scrollPane1.setViewportView(variablesTable);
         final JScrollPane scrollPane2 = new JScrollPane();
-        windowPanel.add(scrollPane2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        windowPanel.add(scrollPane2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane2.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null));
         variableEditor = new JTextArea();
         variableEditor.setWrapStyleWord(false);
         scrollPane2.setViewportView(variableEditor);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        windowPanel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        contextLabel = new JLabel();
+        Font contextLabelFont = this.$$$getFont$$$(null, -1, -1, contextLabel.getFont());
+        if (contextLabelFont != null) contextLabel.setFont(contextLabelFont);
+        contextLabel.setText("Globals");
+        panel1.add(contextLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel1.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    private Font $$$getFont$$$(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
     }
 
     /**
