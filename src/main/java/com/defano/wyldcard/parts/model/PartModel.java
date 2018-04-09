@@ -415,6 +415,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .build();
             });
 
+            SwingUtilities.invokeLater(() -> newEditor.get().requestFocus());
             return newEditor.get();
         }
     }

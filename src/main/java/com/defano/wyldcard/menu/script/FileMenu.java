@@ -1,6 +1,7 @@
 package com.defano.wyldcard.menu.script;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.window.WindowManager;
@@ -19,12 +20,14 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Save Script")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.save())
                 .withShortcut('S')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Revert to Saved")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.revertToSaved())
                 .build(this);
 
