@@ -40,7 +40,7 @@ public class Script {
 
     public Script insertStatement(ParserRuleContext context, Statement statement) {
         if (this.statements == null) {
-            this.statements = new StatementList(context);
+            this.statements = new StatementList();
         }
 
         this.statements.list.add(0, statement);

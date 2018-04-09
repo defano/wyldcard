@@ -3,9 +3,7 @@ package com.defano.hypertalk.ast.model;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.ast.statements.commands.PassCmd;
-import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class NamedBlock {
@@ -24,7 +22,7 @@ public class NamedBlock {
      * @return An empty NamedBlock that passes the command back to HyperCard.
      */
     public static NamedBlock emptyPassBlock(String name) {
-        NamedBlock block = new NamedBlock(name, name, new StatementList(null, new PassCmd(null, name)));
+        NamedBlock block = new NamedBlock(name, name, new StatementList(new PassCmd(null, name)));
         block.isEmptyPassBlock = true;
         return block;
     }

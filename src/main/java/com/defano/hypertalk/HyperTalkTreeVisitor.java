@@ -627,25 +627,25 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitNoArgHandler(HyperTalkParser.NoArgHandlerContext ctx) {
-        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
         return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), statements);
     }
 
     @Override
     public Object visitArgHandler(HyperTalkParser.ArgHandlerContext ctx) {
-        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
         return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), statements);
     }
 
     @Override
     public Object visitNoArgFunction(HyperTalkParser.NoArgFunctionContext ctx) {
-        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
         return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new ParameterList(), statements);
     }
 
     @Override
     public Object visitArgFunction(HyperTalkParser.ArgFunctionContext ctx) {
-        StatementList statements = ctx.statementList() == null ? new StatementList(ctx) : (StatementList) visit(ctx.statementList());
+        StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
         return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), statements);
     }
 
@@ -668,7 +668,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitSingleStmntList(HyperTalkParser.SingleStmntListContext ctx) {
-        return new StatementList(ctx, (Statement) visit(ctx.statement()));
+        return new StatementList((Statement) visit(ctx.statement()));
     }
 
     @Override
@@ -1094,7 +1094,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitThenStmntList(HyperTalkParser.ThenStmntListContext ctx) {
-        return new ThenElseBlock(ctx.statementList() == null ? new StatementList(ctx) : (Statement) visit(ctx.statementList()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
+        return new ThenElseBlock(ctx.statementList() == null ? new StatementList() : (Statement) visit(ctx.statementList()), ctx.elseStatement() == null ? null : (Statement) visit(ctx.elseStatement()));
     }
 
     @Override
@@ -1104,7 +1104,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitElseStmntList(HyperTalkParser.ElseStmntListContext ctx) {
-        return ctx.statementList() == null ? new StatementList(ctx) : visit(ctx.statementList());
+        return ctx.statementList() == null ? new StatementList() : visit(ctx.statementList());
     }
 
     @Override
@@ -1114,7 +1114,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitRepeatEmpty(HyperTalkParser.RepeatEmptyContext ctx) {
-        return new RepeatStatement(ctx, (RepeatSpecifier) visit(ctx.repeatRange()), new StatementList(ctx));
+        return new RepeatStatement(ctx, (RepeatSpecifier) visit(ctx.repeatRange()), new StatementList());
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,13 +12,13 @@ public class StatementList extends Statement {
 
     public final ArrayList<Statement> list;
 
-    public StatementList(ParserRuleContext context) {
-        super(context);
+    public StatementList() {
+        super(null);
         list = new ArrayList<>();
     }
 
-    public StatementList(ParserRuleContext context, Statement s) {
-        super(context);
+    public StatementList(Statement s) {
+        super(null);
         list = new ArrayList<>();
         prepend(s);
     }
