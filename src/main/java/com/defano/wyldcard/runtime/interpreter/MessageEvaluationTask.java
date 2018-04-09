@@ -13,25 +13,17 @@ import java.util.concurrent.Callable;
 
 public class MessageEvaluationTask implements Callable<String> {
 
-    private final static ExecutionContext context = new ExecutionContext();
+    private final ExecutionContext context;
     private final String messageText;
 
-    public MessageEvaluationTask(String messageText) {
+    public MessageEvaluationTask(ExecutionContext staticContext, String messageText) {
+        this.context = staticContext;
         this.messageText = messageText;
     }
 
     @Override
     public String call() throws HtException {
         StatementList statements = Interpreter.blockingCompileScriptlet(messageText).getStatements();
-
-        // All message evaluations share the same context (stack frame); create one only once
-        if (context.getStackFrame() == null) {
-            context.pushStackFrame();
-            context.pushMe(new PartMessageSpecifier());
-        } else {
-            // Set the creation time to allow script abort to work correctly
-            context.getStackFrame().setCreationTime(System.currentTimeMillis());
-        }
 
         context.setTarget(WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getPartSpecifier(context));
 

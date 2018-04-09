@@ -15,7 +15,9 @@ public class DebugMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Evaluate Expression...")
-                .disabled()
+                .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
+                .withCheckmarkProvider(WindowManager.getInstance().getExpressionEvaluator().getWindowVisibleProvider())
+                .withAction(a -> WindowManager.getInstance().getExpressionEvaluator().toggleVisible())
                 .build(this);
 
         addSeparator();

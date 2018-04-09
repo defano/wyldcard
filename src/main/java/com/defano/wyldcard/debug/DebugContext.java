@@ -87,6 +87,7 @@ public class DebugContext {
         // Focus the debugger window and update the context of the variable watcher
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             WindowManager.getInstance().getVariableWatcher().setWatchedVariables(debugContext.getStackFrame());
+            WindowManager.getInstance().getExpressionEvaluator().setContext(debugContext);
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
         });
 
@@ -133,6 +134,7 @@ public class DebugContext {
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
                     WindowManager.getInstance().getVariableWatcher().setWatchGlobalVariables();
+                    WindowManager.getInstance().getExpressionEvaluator().setVisible(false);
                     clearDebugContext();
                 });
             }

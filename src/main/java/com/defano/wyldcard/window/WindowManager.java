@@ -28,6 +28,7 @@ public class WindowManager {
     private final IntensityPalette intensityPalette = new IntensityPalette();
     private final MessageWatcher messageWatcher = new MessageWatcher();
     private final VariableWatcher variableWatcher = new VariableWatcher();
+    private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
@@ -132,6 +133,16 @@ public class WindowManager {
                 .resizeable(true)
                 .build();
 
+        WindowBuilder.make(expressionEvaluator)
+                .asPalette()
+                .withTitle("Expression Evaluator")
+                .focusable(true)
+                .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .notInitiallyVisible()
+                .dockTo(stackWindow)
+                .resizeable(true)
+                .build();
+
         stackFrame.requestFocus();
     }
 
@@ -179,6 +190,10 @@ public class WindowManager {
         return variableWatcher;
     }
 
+    public ExpressionEvaluator getExpressionEvaluator() {
+        return expressionEvaluator;
+    }
+
     public HyperCardWindow[] allWindows() {
         return new HyperCardWindow[] {
                 getStackWindow(),
@@ -190,7 +205,8 @@ public class WindowManager {
                 getBrushesPalette(),
                 getColorPalette(),
                 getMessageWatcher(),
-                getVariableWatcher()
+                getVariableWatcher(),
+                getExpressionEvaluator()
         };
     }
 

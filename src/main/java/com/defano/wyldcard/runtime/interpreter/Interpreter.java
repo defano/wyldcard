@@ -93,7 +93,7 @@ public class Interpreter {
      *
      * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
      *                   evaluated or is not a legal expression evaluates to itself.
-     * @param context The execution context
+     * @param context    The execution context
      * @return The Value of the evaluated expression.
      */
     public static Value blockingEvaluate(String expression, ExecutionContext context) {
@@ -152,7 +152,6 @@ public class Interpreter {
     /**
      * Executes a user-defined function on the current thread and returns the result; may not be invoked on the Swing
      * dispatch thread.
-     *
      *
      * @param context   The execution context
      * @param me        The part that the 'me' keyword refers to.
@@ -233,26 +232,28 @@ public class Interpreter {
     }
 
     /**
-     * Evaluates text entered into the message box on a background thread and notifies an observer of the result when
-     * complete.
+     * Evaluates text using a static context on a background thread and notifies an observer of the result when
+     * complete. This is primarily useful for message window text evaluation (also used in the "Evaluate Expression"
+     * feature of the debugger).
      * <p>
      * Message evaluation is a special case of script execution:
      * <p>
      * 1. All messages entered into the message window share a single stack frame so that symbols created in one message
      * are available to the next. For example, 'put 10 into x' followed by 'put x' should result in 10. To achieve this,
-     * all message evaluations must occur on the same thread, and a special execution task is required to prevent
-     * producing a new stack frame during each evaluation.
+     * all message evaluations must occur in the same execution context and a special execution task is required to
+     * prevent pushing a new stack frame during each evaluation.
      * <p>
      * 2. When evaluating from the message window, 'the target' returns the current card, not the message box (for
      * whatever reason). This results in a special case where the target is not the base of the 'me' stack.
      *
+     * @param staticContext The execution context under which the
      * @param message            The message text to evaluate.
      * @param evaluationObserver A set of observer callbacks that fire (on the Swing dispatch thread) when evaluation is
      *                           complete.
      */
-    public static void asyncEvaluateMessage(String message, MessageEvaluationObserver evaluationObserver) {
+    public static void asyncEvaluateMessage(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
 
-        Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new MessageEvaluationTask(message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
+        Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new MessageEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 SwingUtilities.invokeLater(() -> evaluationObserver.onMessageEvaluated(result));
@@ -269,7 +270,6 @@ public class Interpreter {
      * Compiles a list of HyperTalk statements on the current thread, then executes the compiled script om a background
      * thread. Produces a CheckFuture providing the name of the message passed by the script, or null, if no message
      * is passed.
-     *
      *
      * @param context       The execution context
      * @param me            The part that the 'me' keyword refers to.
@@ -298,7 +298,6 @@ public class Interpreter {
      * <p>
      * Executes on the current thread if the current thread is not the dispatch thread. If the current thread is the
      * dispatch thread, then submits execution to the scriptExecutor.
-     *
      *
      * @param context   The execution context
      * @param me        The part that the 'me' keyword refers to.
