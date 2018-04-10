@@ -25,7 +25,6 @@ public class SendCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException {
         PartExp factor = part.factor(context, PartExp.class, new HtSemanticException("Cannot send a message to that."));
-        context.pushMe(factor.evaluateAsSpecifier(context));
 
         MessageCmd messageCmd = interpretMessage(message.evaluate(context).stringValue());
         if (messageCmd == null) {
@@ -33,8 +32,6 @@ public class SendCmd extends Command {
         } else {
             messageCmd.onExecute(context);
         }
-
-        context.popMe();
     }
 
     private MessageCmd interpretMessage(String message) {

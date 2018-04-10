@@ -67,7 +67,7 @@ public class Interpreter {
     }
 
     /**
-     * Compiles the given "scriptlet" on the current thread.
+     * Compiles the given {@link CompilationUnit#SCRIPTLET} on the current thread.
      *
      * @param scriptText The script text to parse.
      * @return The compiled Script object (the root of the abstract syntax tree)
@@ -78,7 +78,7 @@ public class Interpreter {
     }
 
     /**
-     * Compiles the given script on the current thread.
+     * Compiles the given {@link CompilationUnit#SCRIPT} on the current thread.
      *
      * @param scriptText The script text to parse.
      * @return The compiled Script object (the root of the abstract syntax tree)
@@ -143,14 +143,14 @@ public class Interpreter {
             }
 
         } catch (Exception e) {
-            // Nothing to do
+            // Nothing to do; value was either not valid HyperTalk or not coercible to requested type
         }
 
         return null;
     }
 
     /**
-     * Executes a user-defined function on the current thread and returns the result; may not be invoked on the Swing
+     * Executes a user-defined function on the current thread and returns the result; may not be invoked from the Swing
      * dispatch thread.
      *
      * @param context   The execution context
@@ -168,11 +168,11 @@ public class Interpreter {
     /**
      * Executes a script handler on a background thread and notifies an observer when complete.
      * <p>
-     * If the current thread is already a background thread (not the dispatch thread), the handler executes
+     * If the current thread is already a background thread (not the Swing dispatch thread), the handler executes
      * synchronously on the current thread.
      * <p>
-     * Any handler that does not 'pass' the command traps its behavior and prevents other scripts (or HyperCard) from
-     * acting upon it. A script that does not implement the handler is assumed to 'pass' it.
+     * Any handler that does not 'pass' the handler name, traps its behavior and prevents other scripts (or WyldCard)
+     * from acting upon it. A script that does not implement the handler is assumed to 'pass' it.
      *
      * @param context            The execution context
      * @param me                 The part whose script is being executed (for the purposes of the 'me' keyword).
@@ -225,14 +225,14 @@ public class Interpreter {
                 // So other error occurred that we're ill-equipped to deal with
                 else {
                     t.printStackTrace();
-                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("An unexpected error occurred."));
+                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("Bug! An unexpected error occurred."));
                 }
             }
         });
     }
 
     /**
-     * Evaluates text using a static context on a background thread and notifies an observer of the result when
+     * Evaluates text using a specified context on a background thread and notifies an observer of the result when
      * complete. This is primarily useful for message window text evaluation (also used in the "Evaluate Expression"
      * feature of the debugger).
      * <p>
@@ -245,8 +245,16 @@ public class Interpreter {
      * <p>
      * 2. When evaluating from the message window, 'the target' returns the current card, not the message box (for
      * whatever reason). This results in a special case where the target is not the base of the 'me' stack.
+     * <p>
+     * 3. When multiple statements are evaluated using this method, the last statement is interpreted as an expression
+     * and the evaluation of that expression is returned as the result. This has the otherwise unusual behavior of
+     * treating a literal symbol value as the last statement as a request to evaluate the symbol as a variable. For
+     * example, if the last statement evaluated is "doSomething", HyperTalk will typically interpret that as a message
+     * to be sent; but in this case, it will be sent as a message, and then evalauted as a variable returning to the
+     * observer whatever symbolic value "doSomething" has been assigned, or the literal "doSomething" if no value is
+     * bound to it.
      *
-     * @param staticContext The execution context under which the
+     * @param staticContext      The execution context under which the text should be evaluated
      * @param message            The message text to evaluate.
      * @param evaluationObserver A set of observer callbacks that fire (on the Swing dispatch thread) when evaluation is
      *                           complete.
@@ -293,6 +301,16 @@ public class Interpreter {
     }
 
     /**
+     * Determines if the current thread is a known script execution thread. That is, one of the eight threads used for
+     * normal script execution.
+     *
+     * @return True if the current thread is a script-executor thread.
+     */
+    private static boolean isScriptExecutorThread() {
+        return Thread.currentThread().getName().startsWith("script-executor-");
+    }
+
+    /**
      * Executes a named block on a background thread and returns a future to the name of the message passed from the
      * block (if any).
      * <p>
@@ -317,9 +335,5 @@ public class Interpreter {
         } else {
             return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
         }
-    }
-
-    public static boolean isScriptExecutorThread() {
-        return Thread.currentThread().getName().startsWith("script-executor-");
     }
 }

@@ -1,13 +1,13 @@
 package com.defano.wyldcard.runtime.interpreter;
 
 import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.hypertalk.ast.statements.ExpressionStatement;
+import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.ast.statements.StatementList;
+import com.defano.hypertalk.ast.statements.commands.MessageCmd;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
-import com.defano.hypertalk.ast.statements.ExpressionStatement;
-import com.defano.hypertalk.ast.statements.StatementList;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import java.util.concurrent.Callable;
 
@@ -25,18 +25,33 @@ public class MessageEvaluationTask implements Callable<String> {
     public String call() throws HtException {
         StatementList statements = Interpreter.blockingCompileScriptlet(messageText).getStatements();
 
+        if (context.getStackDepth() == 0) {
+            context.pushStackFrame();
+        }
+
         context.setTarget(WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getPartSpecifier(context));
 
         try {
             statements.execute(context);
         } catch (Preemption e) {
-            WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
+            return null;            // Can't really exit from here; just return null
         }
 
-        // When the evaluated message is an expression, the result should be displayed in the message box
-        if (statements.list.get(0) instanceof ExpressionStatement) {
+        Statement lastStatement = statements.list.get(statements.list.size() - 1);
+
+        // Special case: If last statement was an unknown literal (interpreted as a message), then return the variable-
+        // evaluation of that literal
+        if (lastStatement instanceof MessageCmd) {
+            return context.getVariable(lastStatement.getToken().getText()).stringValue();
+        }
+
+        // When the last statement is an expression, return the result of evaluating the expression
+        else if (lastStatement instanceof ExpressionStatement) {
             return context.getIt().stringValue();
-        } else {
+        }
+
+        // No guesses.
+        else {
             return null;
         }
     }

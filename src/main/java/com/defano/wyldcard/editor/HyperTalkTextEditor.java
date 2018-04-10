@@ -27,6 +27,7 @@ import java.util.List;
 
 public class HyperTalkTextEditor extends RTextScrollPane {
 
+    private final static Color TRACE_HILITE_COLOR = new Color(0xff, 0x00, 0x00, 0x40);
     private final static String LANGUAGE_KEY = "text/hypertalk";
     private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.editor.HyperTalkTokenMaker";
     private final static String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
@@ -35,16 +36,14 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     private final RSyntaxTextArea scriptField;
     private final HyperTalkSyntaxParser scriptParser;
     private final AutoCompletion ac;
-    private final Color traceHighlightColor;
     private Object traceHighlightTag;
 
     private GutterIconInfo[] bookmarks;
     private BreakpointToggleObserver breakpointToggleObserver;
 
-    public HyperTalkTextEditor(SyntaxParserObserver parserObserver) {
+    public HyperTalkTextEditor(SyntaxParserDelegate parserObserver) {
         super(new RSyntaxTextArea());
 
-        this.traceHighlightColor = new Color(0xff, 0x00, 0x00, 0x40);
         this.scriptField = (RSyntaxTextArea) super.getTextArea();
         this.scriptParser = new HyperTalkSyntaxParser(parserObserver);
 
@@ -153,7 +152,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         startDebugging();
         clearTraceHighlights();
         try {
-            traceHighlightTag = scriptField.addLineHighlight(line, traceHighlightColor);
+            traceHighlightTag = scriptField.addLineHighlight(line, TRACE_HILITE_COLOR);
             scriptField.setCaretPosition(scriptField.getLineStartOffset(line));
         } catch (BadLocationException e) {
             e.printStackTrace();

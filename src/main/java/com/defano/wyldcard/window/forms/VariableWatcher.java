@@ -71,9 +71,14 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         setWatchedVariables(null, null);
     }
 
-    public void setWatchedVariables(StackFrame frame) {
-        contextLabel.setText(frame.getMessage());
-        setWatchedVariables(frame.getVariables(), frame.getGlobalsInScope());
+    public void setWatchedVariables(ExecutionContext context) {
+        if (context.getStackDepth() == 0) {
+            setWatchGlobalVariables();
+        } else {
+            StackFrame frame = context.getStackFrame();
+            setWatchedVariables(frame.getVariables(), frame.getGlobalsInScope());
+            contextLabel.setText(context.toString());
+        }
     }
 
     /**
@@ -211,6 +216,7 @@ public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
         panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         windowPanel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         contextLabel = new JLabel();
+        contextLabel.setEnabled(false);
         Font contextLabelFont = this.$$$getFont$$$(null, -1, -1, contextLabel.getFont());
         if (contextLabelFont != null) contextLabel.setFont(contextLabelFont);
         contextLabel.setText("Globals");

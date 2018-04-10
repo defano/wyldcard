@@ -14,7 +14,7 @@ public class PartMeExp extends PartExp {
 
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context)
     throws HtSemanticException
-    {        
-        return context.getMe();
-    }    
+    {
+        return context.getStackFrame().getMe();
+    }
 }

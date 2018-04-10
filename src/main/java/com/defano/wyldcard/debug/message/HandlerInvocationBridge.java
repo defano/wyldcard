@@ -1,4 +1,4 @@
-package com.defano.wyldcard.debug.watch.message;
+package com.defano.wyldcard.debug.message;
 
 import javax.swing.*;
 import java.util.*;

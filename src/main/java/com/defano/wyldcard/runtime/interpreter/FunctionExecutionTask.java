@@ -8,8 +8,8 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocation;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocation;
+import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -37,10 +37,7 @@ public class FunctionExecutionTask implements Callable<Value> {
 
         HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, context.getStackDepth(), true));
 
-        context.pushStackFrame();
-        context.pushMe(me);
-        context.setParams(evaluatedArguments);
-        context.setMessage(function.name);
+        context.pushStackFrame(function.name, me, evaluatedArguments);
 
         try {
             // Bind argument values to parameter variables in this context
@@ -63,10 +60,9 @@ public class FunctionExecutionTask implements Callable<Value> {
             WyldCard.getInstance().showErrorDialog(e);
         }
 
-        Value returnValue = context.getReturnValue();
+        Value returnValue = context.getStackFrame().getReturnValue();
 
         context.popStackFrame();
-        context.popMe();
 
         return returnValue;
     }

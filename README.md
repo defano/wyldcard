@@ -20,7 +20,7 @@ WyldCard attempts to maintain high-fidelity to Apple's original software rather 
 
 * Organize information in stacks of cards: Cards support a foreground and background layer; buttons and fields come in a variety of styles similar to HyperCard's; text fields hold richly-styled text.
 * Paint and draw using all the original paint tools, patterns and image transforms (via the [JMonet library](https://www.github.com/defano/jmonet)). Supports full-color graphics and alpha transparency.
-* Attach scripts to buttons, fields, cards, backgrounds and stacks; most aspects of the HyperTalk 2.4.1 language have been implemented, including chunk expressions, message passing and context-sensitive evaluation of _factors_.
+* Attach scripts to buttons, fields, cards, backgrounds and stacks; most aspects of the HyperTalk 2.4.1 language have been implemented, including chunk expressions, message passing and context-sensitive evaluation of _factors_. Debug problems with a built-in debugger.
 * Compose music using HyperCard's original sound effects (`flute`, `harpsichord` and `boing`); `dial` telephone numbers; and `speak` text.
 * Animate cards and objects with one of 23 visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
 
@@ -99,6 +99,12 @@ answer "This is totally acceptable!" |
   with "Love it" ¬
   or "Hate it"
 ```
+
+#### Multithreading in WyldCard
+
+Script execution in HyperCard was effectively single-threaded, but in WyldCard, up to eight scripts can execute simultaneously. This threading behavior is implicitly managed by WyldCard as there are no language constructs in HyperTalk to manage threads of execution.
+
+Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to execute that message's handler on one of the eight available threads. If all threads are currently busy executing other scripts, then execution of the handler will be enqueued for processing when one of the other scripts completes. Any messages generated in the execution of the handler will execute on the same thread as that handler. In other words, only messages produced by WyldCard are multi-threaded; once a script starts executing, all messages and functions it sends/invokes are single-threaded.
 
 ## Stacks of Cards
 
@@ -743,7 +749,7 @@ Property     | Description
 -------------|----------------------
 `marked`     | A general use logical-valued "flag" indicating the card is somehow special useful to classify or limit search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
 `cantDelete` | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
-`dontSearch` | When true, indicates that fields appearing on this card (or any card sharing this background) will not be searched by the `find` command. 
+`dontSearch` | When true, indicates that fields appearing on this card (or any card sharing this background) will not be searched by the `find` command.
 `showPict`   | A logical value specifying if the card or background picture is visible.
 
 ### HyperCard Properties

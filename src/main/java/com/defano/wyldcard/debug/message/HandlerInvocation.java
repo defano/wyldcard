@@ -1,4 +1,4 @@
-package com.defano.wyldcard.debug.watch.message;
+package com.defano.wyldcard.debug.message;
 
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;

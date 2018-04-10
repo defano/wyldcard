@@ -51,6 +51,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     public static final String PROP_CONTENTS = "contents";
     public static final String PROP_SCRIPTTEXT = "scripttext";
     public static final String PROP_BREAKPOINTS = "breakpoints";
+    public static final String PROP_CHECKPOINTS = "checkpoints";
 
     private final PartType type;
     private Owner owner;
@@ -187,10 +188,11 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         // When breakpoints change, automatically apply them to the script
         addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
-            if (property == PROP_BREAKPOINTS) {
+            if (property.equalsIgnoreCase(PROP_BREAKPOINTS)) {
                 getScript(context).applyBreakpoints(getBreakpoints());
             }
         });
+        definePropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
 
         precompile(new ExecutionContext());
     }

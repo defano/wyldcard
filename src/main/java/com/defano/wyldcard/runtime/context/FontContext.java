@@ -1,8 +1,8 @@
 package com.defano.wyldcard.runtime.context;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
-import com.defano.hypertalk.ast.model.Value;
 import com.google.common.collect.Sets;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -14,28 +14,28 @@ import java.util.Set;
 
 /**
  * Manages the text style selection context. This is notably more complicated than one would initially assume.
- *
+ * <p>
  * Several HyperCard entities get text styling from this context: Buttons (when selected with the button tool), fields
  * (when selected by the field tool), text inside of a field (applies to the selected range of text), and the text
  * painted by the text tool.
- *
+ * <p>
  * Some Java APIs deal with {@link Font} objects that support only plain, bold and italic styles; other APIs deal
  * in terms of {@link javax.swing.text.AttributeSet} and support a wider range of styles and formats. Some APIs
  * improperly implement certain styles (for example, {@link javax.swing.text.rtf.RTFEditorKit} does not correctly persist
  * sub/superscript styles).
- *
+ * <p>
  * The Font and Style menus are used to change the current font selection, but they also indicate the font and style of
  * whatever text-containing entity was last focused. This produces a complicated observational pattern--text entities
  * observe selections from the menus, and the menus observe the style of focused text entities.
- *
+ * <p>
  * Choosing a size, font family or style from a menu should change only the property selected. For example,
  * making a selection bold should not also change the font to whatever font is shown selected in the Font menu, nor
  * should choosing bold affect any other styles--like italic or underline--that may also be applied to the selection
  * at large, or to a subset of the selection.
- *
+ * <p>
  * Note that the "plain" style is an unusual case: Typically, it represents the absence of any other style. But, when
  * focusing text with multiple styles the "Plain" menu item can appear checked alongside other styles.
- *
+ * <p>
  * To solve these problems, this object maintains two collections of state: The state of the focused font style
  * (representing what should be check-marked in the menus), and the state of the last active user selection
  * (representing a choice made from a menu or font chooser dialog). Changes to the "selected" font styling update the
@@ -69,10 +69,6 @@ public class FontContext {
     // For JMonet use only; components should listen for and react to font, style and size changes individually.
     private final Subject<Font> paintFontProvider = BehaviorSubject.createDefault(FontUtils.getFontByNameStyleSize(DEFAULT_FONT_FAMILY, DEFAULT_FONT_STYLE_CONST, DEFAULT_FONT_SIZE));
 
-    public static FontContext getInstance() {
-        return instance;
-    }
-
     private FontContext() {
 
         // Change in selected font should always change focused font
@@ -86,8 +82,13 @@ public class FontContext {
         selectedFontSizeProvider.subscribe(value -> paintFontProvider.onNext(FontUtils.getFontByNameStyleSize(getFocusedTextStyle().getFontFamily(), getFocusedTextStyle().getAwtFontStyle(), value.integerValue())));
     }
 
+    public static FontContext getInstance() {
+        return instance;
+    }
+
     /**
      * Convenience method to set the selected font context given an AWT font object.
+     *
      * @param font The selected font.
      */
     public void setSelectedFont(Font font) {
@@ -101,35 +102,9 @@ public class FontContext {
     }
 
     /**
-     * Set the focused font context given a {@link TextStyleSpecifier} object.
-     * @param tss The text style specifier.
-     */
-    public void setFocusedTextStyle(TextStyleSpecifier tss) {
-        if (tss != null) {
-            focusedFontFamilyProvider.onNext(Sets.newHashSet(new Value(tss.getFontFamily())));
-            focusedFontSizeProvider.onNext(Sets.newHashSet(new Value(tss.getFontSize())));
-
-            focusedPlainProvider.onNext(tss.isPlain());
-            focusedBoldProvider.onNext(tss.isBold());
-            focusedItalicProvider.onNext(tss.isItalic());
-            focusedUnderlineProvider.onNext(tss.isUnderline());
-            focusedStrikethroughProvider.onNext(tss.isItalic());
-            focusedSubscriptProvider.onNext(tss.isSubscript());
-            focusedSuperscriptProvider.onNext(tss.isSubscript());
-        }
-    }
-
-    /**
-     * Sets the selected font size.
-     * @param size The font size.
-     */
-    public void setSelectedFontSize(int size) {
-        selectedFontSizeProvider.onNext(new Value(size));
-    }
-
-    /**
      * Toggle the given style from the current style selection, that is, add the style if it's not already part of the
      * selection or remove it, if it is.
+     *
      * @param style The (single) style to toggle.
      */
     public void toggleSelectedFontStyle(Value style) {
@@ -138,16 +113,12 @@ public class FontContext {
         selectedFontStyleProvider.onNext(tss.getHyperTalkStyle());
     }
 
-    public void setSelectedFontStyle(Value style) {
-        selectedFontStyleProvider.onNext(style);
+    public Value getSelectedFontFamily() {
+        return selectedFontFamilyProvider.blockingFirst();
     }
 
     public void setSelectedFontFamily(String fontName) {
         selectedFontFamilyProvider.onNext(new Value(fontName));
-    }
-
-    public Value getSelectedFontFamily() {
-        return selectedFontFamilyProvider.blockingFirst();
     }
 
     public Subject<Value> getSelectedFontFamilyProvider() {
@@ -162,12 +133,25 @@ public class FontContext {
         return selectedFontSizeProvider.blockingFirst();
     }
 
+    /**
+     * Sets the selected font size.
+     *
+     * @param size The font size.
+     */
+    public void setSelectedFontSize(int size) {
+        selectedFontSizeProvider.onNext(new Value(size));
+    }
+
     public Subject<Value> getSelectedFontStyleProvider() {
         return selectedFontStyleProvider;
     }
 
     public Value getSelectedFontStyle() {
         return selectedFontStyleProvider.blockingFirst();
+    }
+
+    public void setSelectedFontStyle(Value style) {
+        selectedFontStyleProvider.onNext(style);
     }
 
     public Subject<Font> getPaintFontProvider() {
@@ -214,7 +198,7 @@ public class FontContext {
      * Gets a "single" text style representing the current focus. Careful: This method is inherently lossy. The current
      * focused text may contain a mixture of fonts, sizes, and styles. The method reduces that selection to a single
      * font family, size, and set of styles.
-     *
+     * <p>
      * Useful for methods that need to reduce a composite style selection to a single value (for example, to be
      * displayed as default selections in a font-picker).
      *
@@ -226,6 +210,26 @@ public class FontContext {
                 getFocusedHyperTalkFontStyle(),
                 (Value) focusedFontSizeProvider.blockingFirst().toArray()[0]
         );
+    }
+
+    /**
+     * Set the focused font context given a {@link TextStyleSpecifier} object.
+     *
+     * @param tss The text style specifier.
+     */
+    public void setFocusedTextStyle(TextStyleSpecifier tss) {
+        if (tss != null) {
+            focusedFontFamilyProvider.onNext(Sets.newHashSet(new Value(tss.getFontFamily())));
+            focusedFontSizeProvider.onNext(Sets.newHashSet(new Value(tss.getFontSize())));
+
+            focusedPlainProvider.onNext(tss.isPlain());
+            focusedBoldProvider.onNext(tss.isBold());
+            focusedItalicProvider.onNext(tss.isItalic());
+            focusedUnderlineProvider.onNext(tss.isUnderline());
+            focusedStrikethroughProvider.onNext(tss.isItalic());
+            focusedSubscriptProvider.onNext(tss.isSubscript());
+            focusedSuperscriptProvider.onNext(tss.isSubscript());
+        }
     }
 
     /**

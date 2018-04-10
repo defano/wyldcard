@@ -3,6 +3,7 @@ package com.defano.hypertalk.comparator;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -35,20 +36,21 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     @Override
     public int compare(CardModel o1, CardModel o2) {
         try {
+            PartSpecifier originalMe = context.getStackFrame().getMe();
+
             // Evaluate expression in the context of card o1
             context.setCurrentCard(acquire(o1));
-            context.pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId(context)));
+            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId(context)));
             Value o1Value = evaluate(o1);
-            context.popMe();
 
             // Evaluate expression in the context of card o2
             context.setCurrentCard(acquire(o2));
-            context.pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId(context)));
+            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId(context)));
             Value o2Value = evaluate(o2);
-            context.popMe();
 
             // Stop overriding card context in this thread
             context.setCurrentCard(null);
+            context.getStackFrame().setMe(originalMe);
 
             if (direction == SortDirection.ASCENDING) {
                 return o1Value.compareTo(o2Value, sortStyle);

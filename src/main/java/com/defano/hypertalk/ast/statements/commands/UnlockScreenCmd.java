@@ -31,7 +31,7 @@ public class UnlockScreenCmd extends Command {
             return;
         }
 
-        VisualEffectSpecifier ves = context.getVisualEffect();
+        VisualEffectSpecifier ves = context.getStackFrame().getVisualEffect();
         CurtainManager.getInstance().unlockScreenWithEffect(ves);
         CurtainManager.getInstance().waitForEffectToFinish();
     }

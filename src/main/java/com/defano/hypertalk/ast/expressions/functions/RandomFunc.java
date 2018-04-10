@@ -18,12 +18,14 @@ public class RandomFunc extends ArgListFunction {
     @Override
     public Value onEvaluate(ExecutionContext context) throws HtException {
 
-        Value boundValue = evaluateSingleArgumentList(context);
+        // Get the single argument passed to the function
+        Value evaluatedArgument = super.evaluateSingleArgumentList(context);
 
-        if (boundValue.isNatural()) {
-            return new Value(new Random().nextInt(boundValue.integerValue()));
+        // Argument must be a natural (whole, non-negative, non-zero) number
+        if (evaluatedArgument.isNatural()) {
+            return new Value(new Random().nextInt(evaluatedArgument.integerValue()));
         } else {
-            throw new HtSemanticException("Random expects a non-negative integer, but got '" + boundValue.stringValue() + "'");
+            throw new HtSemanticException("Random expects a non-negative integer, but got '" + evaluatedArgument.stringValue() + "'");
         }
     }
 }

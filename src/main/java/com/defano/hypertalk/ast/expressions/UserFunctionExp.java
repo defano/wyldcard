@@ -20,7 +20,7 @@ public class UserFunctionExp extends Expression {
 
     public Value onEvaluate(ExecutionContext context) throws HtException {
 
-        PartSpecifier ps = context.getMe();
+        PartSpecifier ps = context.getStackFrame().getMe();
         PartModel part = context.getPart(ps);
 
         return part.invokeFunction(context, function, arguments);

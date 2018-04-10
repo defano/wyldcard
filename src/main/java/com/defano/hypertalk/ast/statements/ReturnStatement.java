@@ -22,7 +22,7 @@ public class ReturnStatement extends Statement {
     }
 
     public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerPreemption {
-        context.setReturnValue(returnValue.evaluate(context));
+        context.getStackFrame().setReturnValue(returnValue.evaluate(context));
         throw new TerminateHandlerPreemption(null);
     }
 }

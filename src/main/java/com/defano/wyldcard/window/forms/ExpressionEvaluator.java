@@ -1,29 +1,53 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.editor.HyperTalkTextEditor;
+import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
+import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.runtime.interpreter.MessageEvaluationObserver;
-import com.defano.wyldcard.window.HyperCardFrame;
-import com.defano.wyldcard.window.MessageBoxTextField;
+import com.defano.wyldcard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
+import org.fife.ui.rsyntaxtextarea.parser.Parser;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ExpressionEvaluator extends HyperCardFrame implements MessageEvaluationObserver {
-    private MessageBoxTextField expressionField;
+public class ExpressionEvaluator extends HyperCardDialog implements SyntaxParserDelegate {
     private JButton evaluateButton;
-    private JTextField resultField;
+    private JTextArea resultField;
     private JPanel windowPanel;
     private JLabel contextField;
+    private JButton closeButton;
+    private JPanel editorArea;
 
-    private ExecutionContext context;
+    private ExecutionContext context = new ExecutionContext();
+    private HyperTalkTextEditor editor;
 
     public ExpressionEvaluator() {
-        expressionField.setMessageEvaluationObserver(this);
-        evaluateButton.addActionListener(a -> expressionField.evaluate());
+        editor = new HyperTalkTextEditor(this);
+        editorArea.setLayout(new BorderLayout());
+        editorArea.add(editor);
+
+        closeButton.addActionListener(a -> setVisible(false));
+
+        evaluateButton.addActionListener(a -> {
+            Interpreter.asyncEvaluateMessage(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
+                @Override
+                public void onMessageEvaluated(String result) {
+                    SwingUtilities.invokeLater(() -> resultField.setText(result));
+                }
+
+                @Override
+                public void onEvaluationError(HtException exception) {
+                    SwingUtilities.invokeLater(() -> resultField.setText("Error: " + exception.getMessage()));
+                }
+            });
+        });
     }
 
     @Override
@@ -36,25 +60,38 @@ public class ExpressionEvaluator extends HyperCardFrame implements MessageEvalua
         // Nothing to do
     }
 
-    @Override
-    public void onMessageEvaluated(String result) {
-        SwingUtilities.invokeLater(() -> resultField.setText(result));
-    }
-
-    @Override
-    public void onEvaluationError(HtException exception) {
-        WyldCard.getInstance().showErrorDialog(exception);
-    }
-
     public ExecutionContext getContext() {
         return context;
     }
 
     public void setContext(ExecutionContext context) {
         this.context = context;
+        contextField.setText(context.toString());
+    }
 
-        expressionField.setStaticContext(context);
-        contextField.setText(context.getMessage());
+    @Override
+    public JButton getDefaultButton() {
+        return evaluateButton;
+    }
+
+    @Override
+    public CompilationUnit getParseCompilationUnit() {
+        return CompilationUnit.SCRIPTLET;
+    }
+
+    @Override
+    public void onRequestParse(Parser syntaxParser) {
+        editor.getScriptField().forceReparsing(syntaxParser);
+    }
+
+    @Override
+    public void onCompileStarted() {
+        // Nothing to do
+    }
+
+    @Override
+    public void onCompileCompleted(Script compiledScript, String resultMessage) {
+        // Nothing to do
     }
 
     {
@@ -73,20 +110,28 @@ public class ExpressionEvaluator extends HyperCardFrame implements MessageEvalua
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(3, 2, new Insets(10, 10, 10, 10), -1, -1));
-        expressionField = new MessageBoxTextField();
-        windowPanel.add(expressionField, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        evaluateButton = new JButton();
-        evaluateButton.setText("Evaluate");
-        windowPanel.add(evaluateButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        resultField = new JTextField();
-        resultField.setEditable(true);
-        resultField.setEnabled(false);
-        windowPanel.add(resultField, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 60), null, 0, false));
+        windowPanel.setLayout(new GridLayoutManager(4, 3, new Insets(10, 10, 10, 10), -1, -1));
         contextField = new JLabel();
         contextField.setEnabled(false);
         contextField.setText("Context");
         windowPanel.add(contextField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        evaluateButton = new JButton();
+        evaluateButton.setText("Evaluate");
+        windowPanel.add(evaluateButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        closeButton = new JButton();
+        closeButton.setText("Close");
+        windowPanel.add(closeButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        editorArea = new JPanel();
+        editorArea.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        windowPanel.add(editorArea, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(400, 200), null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        windowPanel.add(spacer1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final JScrollPane scrollPane1 = new JScrollPane();
+        windowPanel.add(scrollPane1, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 60), null, 0, false));
+        resultField = new JTextArea();
+        resultField.setEditable(false);
+        resultField.setEnabled(true);
+        scrollPane1.setViewportView(resultField);
     }
 
     /**

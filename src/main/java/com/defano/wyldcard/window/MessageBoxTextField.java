@@ -30,7 +30,6 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     private MessageEvaluationObserver messageEvaluationObserver = this;
 
     public MessageBoxTextField() {
-        staticContext.pushStackFrame();
 
         // Handle syntax checking and message execution key typed events
         addKeyListener(new KeyAdapter() {
@@ -113,7 +112,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
         try {
             getHighlighter().addHighlight(squiggleStart, squiggleEnd, ERROR_HIGHLIGHTER);
         } catch (BadLocationException e1) {
-            throw new RuntimeException("Bug! Miscalculated text range.", e1);
+            // Impossible!
         }
     }
 

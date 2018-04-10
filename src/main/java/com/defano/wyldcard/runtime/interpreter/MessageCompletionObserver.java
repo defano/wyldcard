@@ -12,8 +12,7 @@ public interface MessageCompletionObserver {
      * a handler for the message).
      *
      * @param message The command that was passed.
-     * @param wasTrapped True if the part or another part in the message passing hierarchy trapped the command,
-     *                        false otherwise.
+     * @param wasTrapped True if any part in the message passing hierarchy trapped the command, false otherwise.
      * @param error Non-null if an error occurred while handling the message
      */
     void onMessagePassed(String message, boolean wasTrapped, HtException error);

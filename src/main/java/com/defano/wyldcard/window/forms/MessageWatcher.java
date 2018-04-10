@@ -2,8 +2,8 @@ package com.defano.wyldcard.window.forms;
 
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.wyldcard.awt.MarkdownComboBox;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocation;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocation;
+import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;

@@ -19,6 +19,6 @@ public class VisualEffectCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        context.setVisualEffect(visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
+        context.getStackFrame().setVisualEffect(visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
     }
 }

@@ -63,7 +63,7 @@ public class DebugContext {
      */
     public void debug(ExecutionContext context, Statement statement) {
 
-        // If we're already debugging another thread, ignore the breakpoint
+        // Already busy debugging another thread. 
         if (isDebugging() && !isActiveDebugThread()) {
             throw new IllegalStateException("Already debugging thread " + debugThread.getName());
         }
@@ -77,7 +77,7 @@ public class DebugContext {
         debugContext = context;
         debugThread = Thread.currentThread();
         debugStackDepth = context.getStackDepth();
-        editor = showDebugEditor(context, context.getMe());
+        editor = showDebugEditor(context, context.getStackFrame().getMe());
         debugStatement = statement;
 
         // Notify observers
@@ -86,7 +86,7 @@ public class DebugContext {
 
         // Focus the debugger window and update the context of the variable watcher
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getInstance().getVariableWatcher().setWatchedVariables(debugContext.getStackFrame());
+            WindowManager.getInstance().getVariableWatcher().setWatchedVariables(debugContext);
             WindowManager.getInstance().getExpressionEvaluator().setContext(debugContext);
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
         });

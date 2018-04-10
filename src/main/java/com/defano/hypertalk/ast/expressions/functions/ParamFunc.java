@@ -19,11 +19,11 @@ public class ParamFunc extends Expression {
 
     @Override
     public Value onEvaluate(ExecutionContext context) throws HtException {
-        List<Value> params = context.getParams();
+        List<Value> params = context.getStackFrame().getParams();
         int evalParamNumber = theParamNumber.evaluate(context).integerValue();
 
         if (evalParamNumber == 0) {
-            return new Value(context.getMessage());
+            return new Value(context.getStackFrame().getMessage());
         } else if (params.size() < evalParamNumber) {
             return new Value();
         } else {

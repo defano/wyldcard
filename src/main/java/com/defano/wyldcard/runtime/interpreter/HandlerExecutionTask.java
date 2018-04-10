@@ -9,8 +9,8 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocation;
-import com.defano.wyldcard.debug.watch.message.HandlerInvocationBridge;
+import com.defano.wyldcard.debug.message.HandlerInvocation;
+import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.List;
@@ -41,10 +41,7 @@ public class HandlerExecutionTask implements Callable<String> {
         HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, evaluatedArguments, me, context.getStackDepth(), !handler.isEmptyPassBlock()));
 
         // Push a new context
-        context.pushStackFrame();
-        context.pushMe(me);
-        context.setMessage(handler.name);
-        context.setParams(evaluatedArguments);
+        context.pushStackFrame(handler.name, me, evaluatedArguments);
 
         if (isTheTarget) {
             context.setTarget(me);
@@ -70,11 +67,10 @@ public class HandlerExecutionTask implements Callable<String> {
             WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
         }
 
-        String passedMessage = context.getPassedMessage();
+        String passedMessage = context.getStackFrame().getPassedMessage();
 
         // Pop context
         context.popStackFrame();
-        context.popMe();
 
         return passedMessage;
     }

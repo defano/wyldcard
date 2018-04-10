@@ -20,17 +20,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MessageWindow extends HyperCardFrame implements PropertyChangeObserver {
 
-    private final ExecutionContext staticContext;
+    private final ExecutionContext staticContext = new ExecutionContext();
 
     private MsgBoxModel partModel;
     private MessageBoxTextField messageBox;
     private JPanel messageWindow;
 
     public MessageWindow() {
-
-        staticContext = new ExecutionContext();
-        staticContext.pushStackFrame();
-
         // Update selection
         messageBox.addCaretListener(e -> getPartModel().updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), getPartModel(), true));
         messageBox.setStaticContext(staticContext);

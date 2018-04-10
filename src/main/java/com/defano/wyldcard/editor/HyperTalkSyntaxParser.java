@@ -2,7 +2,6 @@ package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.CompileCompletionObserver;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -13,20 +12,20 @@ import javax.swing.text.BadLocationException;
 
 public class HyperTalkSyntaxParser extends AbstractParser implements CompileCompletionObserver {
 
-    private final SyntaxParserObserver observer;
+    private final SyntaxParserDelegate delegate;
     private final DefaultParseResult previousParseResult = new DefaultParseResult(this);
 
-    public HyperTalkSyntaxParser(SyntaxParserObserver observer) {
-        this.observer = observer;
+    public HyperTalkSyntaxParser(SyntaxParserDelegate delegate) {
+        this.delegate = delegate;
     }
 
     @Override
     public ParseResult parse(RSyntaxDocument doc, String style) {
         try {
-            observer.onCompileStarted();
+            delegate.onCompileStarted();
 
             String scriptText = doc.getText(0, doc.getLength());
-            Interpreter.asyncCompile(CompilationUnit.SCRIPT, scriptText, this);
+            Interpreter.asyncCompile(delegate.getParseCompilationUnit(), scriptText, this);
         } catch (BadLocationException e) {
             // Impossible
         }
@@ -56,7 +55,7 @@ public class HyperTalkSyntaxParser extends AbstractParser implements CompileComp
                         generatedError.getBreadcrumb().getToken().getLine() - 1
                 ));
 
-                observer.onCompileCompleted(null, errorMessage);
+                delegate.onCompileCompleted(null, errorMessage);
             }
 
             // Script contains no syntax errors
@@ -64,12 +63,12 @@ public class HyperTalkSyntaxParser extends AbstractParser implements CompileComp
                 dirtiedResult = !previousParseResult.getNotices().isEmpty();
                 previousParseResult.clearNotices();
 
-                observer.onCompileCompleted((Script) compiledScript, null);
+                delegate.onCompileCompleted((Script) compiledScript, null);
             }
 
             // If previousParseResult was changed, tell RSyntaxTextArea to ask again
             if (dirtiedResult) {
-                observer.onRequestParse(this);
+                delegate.onRequestParse(this);
             }
 
         });

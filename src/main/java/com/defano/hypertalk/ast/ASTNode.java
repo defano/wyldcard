@@ -52,7 +52,7 @@ public abstract class ASTNode {
      */
     protected void rethrowContextualizedException(ExecutionContext context, HtException e) throws HtException {
         if (e.getBreadcrumb() == null) {
-            e.setBreadcrumb(new Breadcrumb(getToken(), context.getMe()));
+            e.setBreadcrumb(new Breadcrumb(getToken(), context.getStackFrame().getMe()));
         }
 
         throw e;

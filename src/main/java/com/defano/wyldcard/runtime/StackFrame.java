@@ -1,6 +1,8 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartMessageSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
@@ -14,26 +16,43 @@ import java.util.List;
 
 public class StackFrame {
 
-    private final SymbolTable localVariables;       // Local variables
-    private final List<String> globalsInScope;      // Global variables that are in scope in this frame
+    private final SymbolTable localVariables = new BasicSymbolTable();  // Local variables
+    private final List<String> globalsInScope = new ArrayList<>();      // Global variables that are in scope in this frame
 
-    private long creationTime;                      // Time when this frame was created
-    private List<Value> params = new ArrayList<>(); // Arguments passed to this function/handler
-    private String message = "";                    // The name of this function/handler
-    private String passedMessage;                   // Name of the message passed (via 'pass' command)
-    private VisualEffectSpecifier visualEffect;     // Visual effect to use to unlock screen
-    private Value returnValue;                      // Value returned from this function
-    
+    private long creationTime = System.currentTimeMillis();             // Time when this frame was created
+    private List<Value> params = new ArrayList<>();                     // Arguments passed to this function/handler
+    private String message = "";                                        // The name of this function/handler
+    private String passedMessage;                                       // Name of the message passed (via 'pass' command)
+    private VisualEffectSpecifier visualEffect;                         // Visual effect to use to unlock screen
+    private Value returnValue = new Value();                            // Value returned from this function
+    private PartSpecifier me;                                           // The part that 'me' refers to
+
+
+    /**
+     * Create a stack frame representing the invocation of unbound script text (i.e., text entered into the message
+     * window).
+     */
     public StackFrame() {
-        this.creationTime = System.currentTimeMillis();
-        this.localVariables = new BasicSymbolTable();
-        this.globalsInScope = new ArrayList<>();
-        this.returnValue = new Value();
+        this.me = new PartMessageSpecifier();
+    }
+
+    /**
+     * Create a stack frame representing the invocation of a handler or user-defined function.
+     *
+     * @param me        The part to which the 'me' keyword is bound in this context (i.e., the part owning this script)
+     * @param message   The message being handled (i.e., the name of the handler or function)
+     * @param arguments A list of evaluated arguments to be bound the handler's parameter list. May not be null; provide
+     *                  an empty list for invocations not passing arguments.
+     */
+    public StackFrame(PartSpecifier me, String message, List<Value> arguments) {
+        this.message = message;
+        this.me = me;
+        this.params = arguments;
     }
 
     /**
      * Gets the time when this stack frame was created (used for determining if certain events occurred while this
-     * handler was executing.
+     * handler was executing).
      *
      * @return The value of {@link System#currentTimeMillis()} at the moment this frame was created.
      */
@@ -41,12 +60,9 @@ public class StackFrame {
         return creationTime;
     }
 
-    public void setCreationTime(long creationTime) {
-        this.creationTime = creationTime;
-    }
-
     /**
-     * Gets the local variables in scope for this call stack frame.
+     * Gets the local variables that are in scope for this call stack frame.
+     *
      * @return In-scope local variables
      */
     public SymbolTable getLocalVariables() {
@@ -54,15 +70,18 @@ public class StackFrame {
     }
 
     /**
+     * Gets the global variables that are in-scope in this stack frame (global variables are placed into scope via the
+     * 'global' keyword).
      *
-     * @return
+     * @return In-scope global variables
      */
     public SymbolTable getScopedGlobalVariables() {
         return new FilteredSymbolTable(ExecutionContext.getGlobals(), globalsInScope);
     }
 
     /**
-     * Gets a read-only SymbolTable (variables cannot be modified) containing all local and in-scope global variables.
+     * Gets a symbol table containing all in-scope variables (local and global).
+     *
      * @return A read-only table of all visible variables.
      */
     public SymbolTable getVariables() {
@@ -71,57 +90,146 @@ public class StackFrame {
 
     /**
      * Gets the message (i.e., the handler or function) being processed by this frame.
+     *
      * @return The name of the message being handled by this frame.
      */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Sets the message (i.e., the name of the handler or function) that was invoked to cause this script to execute.
+     *
+     * @param message The message name invoked.
+     */
     public void setMessage(String message) {
         this.message = message;
     }
 
-    public void setParams(List<Value> params) {
-        this.params = params;
-    }
-
+    /**
+     * Gets the arguments passed to this handler or function. Does not return the parameter names, but is named this
+     * way to correspond with HyperTalk's 'the params' function (which also ought to be called 'the args', but alas...).
+     *
+     * @return A list of arguments passed to this handler in the order they were passed.
+     */
     public List<Value> getParams() {
         return this.params;
     }
 
+    /**
+     * Sets the arguments passed to this handler or function.
+     *
+     * @param params The list of arguments.
+     */
+    public void setParams(List<Value> params) {
+        this.params = params;
+    }
+
+    /**
+     * Specifies that the given symbol refers to a global variable that is in-scope in this frame.
+     *
+     * @param symbol The symbol to designate as being in scope.
+     */
     public void setGlobalInScope(String symbol) {
         globalsInScope.add(symbol);
     }
 
+    /**
+     * Returns a collection of case-insensitive symbols that are in-scope global variables in this frame.
+     *
+     * @return The set of in-scope global variables.
+     */
     public Collection<String> getGlobalsInScope() {
         return globalsInScope;
     }
 
-    public boolean isGlobalInScope (String symbol) {
+    /**
+     * Determines if the specified symbol refers to an in-scope global variable.
+     *
+     * @param symbol The case-insensitive name of the symbol
+     * @return True if the symbol is an in-scope global variable, false otherwise.
+     */
+    public boolean isGlobalInScope(String symbol) {
         return globalsInScope.contains(symbol);
     }
 
-    public void setReturnValue (Value returnValue) {
-        this.returnValue = returnValue;
-    }
-    
-    public Value getReturnValue () {
+    /**
+     * Gets the value returned from this frame. That is, the value specified in the script's 'return' statement.
+     *
+     * @return The returned value.
+     */
+    public Value getReturnValue() {
         return returnValue;
     }
 
+    /**
+     * Specifies the value returned from this frame / function / handler. Typically set in response to a 'return xxx'
+     * statement in script.
+     *
+     * @param returnValue The returned value
+     */
+    public void setReturnValue(Value returnValue) {
+        this.returnValue = returnValue;
+    }
+
+    /**
+     * The name of the (last) message passed from this frame. Typically set in response to 'pass xxx'. Used to tell
+     * the execution environment that parts down the message passing hierarchy should continue to process the message
+     * (i.e., the script did not trap the message).
+     * <p>
+     * Note that a semantically correct script must pass the name of its handler (you cannot pass the name of a handler
+     * other than the handler presently executing). However, a semantically incorrect script may pass any arbitrary
+     * value. Thus, callers should not necessarily expect the value returned by this method to equal
+     * {@link StackFrame#getMessage()}.
+     *
+     * @return The name of the passed message or null if no message was passed.
+     */
     public String getPassedMessage() {
         return passedMessage;
     }
 
+    /**
+     * Sets the name of the passed message. See {@link #getPassedMessage()}.
+     *
+     * @param passedMessage The name of the passed message or null if no message passed.
+     */
     public void setPassedMessage(String passedMessage) {
         this.passedMessage = passedMessage;
     }
 
+    /**
+     * Gets the visual effect to use when next unlocking the screen within the current execution frame.
+     *
+     * @return The visual effect.
+     */
     public VisualEffectSpecifier getVisualEffect() {
         return visualEffect;
     }
 
+    /**
+     * Sets the visual effect to use when next unlocking the screen within the current execution frame.
+     *
+     * @param visualEffect The visual effect specification
+     */
     public void setVisualEffect(VisualEffectSpecifier visualEffect) {
         this.visualEffect = visualEffect;
+    }
+
+    /**
+     * Gets a specifier referencing the part referred to as 'me'.
+     *
+     * @return The part referred to as me.
+     */
+    public PartSpecifier getMe() {
+        return me;
+    }
+
+    /**
+     * Sets the part referred to as 'me' in this context.
+     *
+     * @param me The part referred to as 'me'.
+     */
+    public void setMe(PartSpecifier me) {
+        this.me = me;
     }
 }

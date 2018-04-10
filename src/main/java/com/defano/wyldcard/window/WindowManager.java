@@ -1,6 +1,5 @@
 package com.defano.wyldcard.window;
 
-import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
@@ -134,12 +133,10 @@ public class WindowManager {
                 .build();
 
         WindowBuilder.make(expressionEvaluator)
-                .asPalette()
-                .withTitle("Expression Evaluator")
-                .focusable(true)
+                .withTitle("Evaluate Expression")
+                .asModal()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .resizeable(true)
                 .build();
 

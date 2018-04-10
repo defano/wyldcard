@@ -14,13 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BasicSymbolTable implements SymbolTable {
 
-    private final Map<String, Value> table;
+    private final Map<String, Value> table = new ConcurrentHashMap<>();
     private final List<SymbolObserver> observers = new ArrayList<>();
     
-    public BasicSymbolTable() {
-        table = new ConcurrentHashMap<>();
-    }
-
     @Override
     public Value get (String id) {
         Value v = table.get(id.toLowerCase());

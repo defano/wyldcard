@@ -35,7 +35,7 @@ public class GoCmd extends Command {
         VisualEffectSpecifier visualEffect;
 
         if (visualEffectExp == null) {
-            visualEffect = context.getVisualEffect();
+            visualEffect = context.getStackFrame().getVisualEffect();
         } else {
             visualEffect = visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
         }

@@ -19,6 +19,6 @@ public class MessageCmd extends Statement {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        context.sendMessage(context.getMe(), message, messageArgs);
+        context.sendMessage(context.getStackFrame().getMe(), message, messageArgs);
     }
 }

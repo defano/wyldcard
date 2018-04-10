@@ -17,7 +17,7 @@ public class PassCmd extends Statement {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerPreemption {
-        context.setPassedMessage(passedMessage);
+        context.getStackFrame().setPassedMessage(passedMessage);
         throw new TerminateHandlerPreemption(passedMessage);
     }
 }
