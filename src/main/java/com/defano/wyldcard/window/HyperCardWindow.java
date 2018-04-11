@@ -134,9 +134,6 @@ public interface HyperCardWindow<WindowType extends Window> {
                     frame.setJMenuBar(null);
                 }
             }
-
-            getWindow().pack();
-            getWindow().invalidate();
         });
     }
 
