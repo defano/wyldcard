@@ -1,7 +1,9 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.forms.*;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -23,6 +25,9 @@ public class WindowManager {
     private final BrushesPalette brushesPalette = new BrushesPalette();
     private final ColorPalette colorPalette = new ColorPalette();
     private final IntensityPalette intensityPalette = new IntensityPalette();
+    private final MessageWatcher messageWatcher = new MessageWatcher();
+    private final VariableWatcher variableWatcher = new VariableWatcher();
+    private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
@@ -40,7 +45,7 @@ public class WindowManager {
         WindowBuilder.make(stackWindow)
                 .quitOnClose()
                 .ownsMenubar()
-                .withModel(StackPart.newStack())
+                .withModel(StackPart.newStack(new ExecutionContext()))
                 .build();
 
         JFrame stackFrame = stackWindow.getWindow();
@@ -49,7 +54,7 @@ public class WindowManager {
                 .withTitle("Message")
                 .asPalette()
                 .focusable(true)
-                .withLocationUnderneath(stackFrame)
+                .withLocationUnderneath(stackWindow)
                 .dockTo(stackWindow)
                 .notInitiallyVisible()
                 .build();
@@ -58,7 +63,7 @@ public class WindowManager {
                 .asPalette()
                 .withTitle("Tools")
                 .dockTo(stackWindow)
-                .withLocationLeftOf(stackFrame)
+                .withLocationLeftOf(stackWindow)
                 .build();
 
         WindowBuilder.make(shapesPalette)
@@ -108,6 +113,34 @@ public class WindowManager {
                 .dockTo(stackWindow)
                 .build();
 
+        WindowBuilder.make(messageWatcher)
+                .asPalette()
+                .focusable(false)
+                .withTitle("Message Watcher")
+                .notInitiallyVisible()
+                .dockTo(stackWindow)
+                .resizeable(true)
+                .build();
+
+        WindowBuilder.make(variableWatcher)
+                .asPalette()
+                .withTitle("Variable Watcher")
+                .focusable(true)
+                .notInitiallyVisible()
+                .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .dockTo(stackWindow)
+                .resizeable(true)
+                .build();
+
+        WindowBuilder.make(expressionEvaluator)
+                .withTitle("Evaluate Expression")
+                .asModal()
+                .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .notInitiallyVisible()
+                .resizeable(true)
+                .build();
+
+        stackWindow.applyMenuBar();
         stackFrame.requestFocus();
     }
 
@@ -147,6 +180,18 @@ public class WindowManager {
         return intensityPalette;
     }
 
+    public MessageWatcher getMessageWatcher() {
+        return messageWatcher;
+    }
+
+    public VariableWatcher getVariableWatcher() {
+        return variableWatcher;
+    }
+
+    public ExpressionEvaluator getExpressionEvaluator() {
+        return expressionEvaluator;
+    }
+
     public HyperCardWindow[] allWindows() {
         return new HyperCardWindow[] {
                 getStackWindow(),
@@ -156,16 +201,28 @@ public class WindowManager {
                 getLinesPalette(),
                 getPatternsPalette(),
                 getBrushesPalette(),
-                getColorPalette()
+                getColorPalette(),
+                getMessageWatcher(),
+                getVariableWatcher(),
+                getExpressionEvaluator()
         };
     }
 
-    public void getWindows() {
-        for (Window dis : Window.getWindows()) {
-            if (dis instanceof HyperCardWindow) {
-                System.err.println(((HyperCardWindow) dis).getTitle());
+    public ScriptEditor findScriptEditorForPart(PartModel model) {
+        if (model == null) {
+            return null;
+        }
+
+        for (Frame frame : JFrame.getFrames()) {
+            if (frame instanceof ScriptEditor) {
+                ScriptEditor editor = (ScriptEditor) frame;
+                if (model.equals(editor.getModel())) {
+                    return editor;
+                }
             }
         }
+
+        return null;
     }
 
     public void setLookAndFeel(String lafClassName) {

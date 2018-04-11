@@ -1,5 +1,6 @@
 package com.defano.wyldcard.editor;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
 import org.fife.ui.autocomplete.AutoCompletion;
 import org.fife.ui.autocomplete.CompletionProvider;
@@ -9,15 +10,24 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
+import org.fife.ui.rtextarea.GutterIconInfo;
+import org.fife.ui.rtextarea.IconRowHeader;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HyperTalkTextEditor extends RTextScrollPane {
 
+    private final static Color TRACE_HILITE_COLOR = new Color(0xff, 0x00, 0x00, 0x40);
     private final static String LANGUAGE_KEY = "text/hypertalk";
     private final static String LANGUAGE_TOKENIZER = "com.defano.wyldcard.editor.HyperTalkTokenMaker";
     private final static String EDITOR_THEME = "/org/fife/ui/rsyntaxtextarea/themes/eclipse.xml";
@@ -26,8 +36,12 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     private final RSyntaxTextArea scriptField;
     private final HyperTalkSyntaxParser scriptParser;
     private final AutoCompletion ac;
+    private Object traceHighlightTag;
 
-    public HyperTalkTextEditor(SyntaxParserObserver parserObserver) {
+    private GutterIconInfo[] bookmarks;
+    private BreakpointToggleObserver breakpointToggleObserver;
+
+    public HyperTalkTextEditor(SyntaxParserDelegate parserObserver) {
         super(new RSyntaxTextArea());
 
         this.scriptField = (RSyntaxTextArea) super.getTextArea();
@@ -87,6 +101,69 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         ac.setChoicesWindowSize(150, 250);
         ac.setDescriptionWindowSize(600, 250);
         ac.install(scriptField);
+
+        getGutter().setBookmarkIcon(new ImageIcon(getClass().getResource("/icons/breakpoint.png")));
+        getGutter().setBookmarkingEnabled(true);
+    }
+
+    @RunOnDispatch
+    public List<Integer> getBreakpoints() {
+        ArrayList<Integer> breakpoints = new ArrayList<>();
+        for (GutterIconInfo thisMark : getGutter().getBookmarks()) {
+            try {
+                breakpoints.add(scriptField.getLineOfOffset(thisMark.getMarkedOffset()));
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+        return breakpoints;
+    }
+
+    @RunOnDispatch
+    public void clearBreakpoints() {
+        getGutter().removeAllTrackingIcons();
+    }
+
+    @RunOnDispatch
+    public void toggleBreakpoint() {
+        try {
+            getGutter().toggleBookmark(scriptField.getCaretLineNumber());
+            fireBookmarkToggleListener();
+        } catch (BadLocationException e) {
+            // Impossible
+        }
+    }
+
+    @RunOnDispatch
+    public void startDebugging() {
+        scriptField.setEnabled(false);
+        scriptField.setHighlightCurrentLine(false);
+    }
+
+    @RunOnDispatch
+    public void finishDebugging() {
+        scriptField.setEnabled(true);
+        scriptField.setHighlightCurrentLine(true);
+        clearTraceHighlights();
+    }
+
+    @RunOnDispatch
+    public void showTraceHighlight(int line) {
+        startDebugging();
+        clearTraceHighlights();
+        try {
+            traceHighlightTag = scriptField.addLineHighlight(line, TRACE_HILITE_COLOR);
+            scriptField.setCaretPosition(scriptField.getLineStartOffset(line));
+        } catch (BadLocationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RunOnDispatch
+    public void clearTraceHighlights() {
+        if (traceHighlightTag != null) {
+            scriptField.removeLineHighlight(traceHighlightTag);
+        }
     }
 
     public RSyntaxTextArea getScriptField() {
@@ -97,7 +174,41 @@ public class HyperTalkTextEditor extends RTextScrollPane {
         return scriptParser;
     }
 
+    @RunOnDispatch
     public void showAutoComplete() {
         ac.doCompletion();
+    }
+
+    @RunOnDispatch
+    public void setBreakpointToggleObserver(BreakpointToggleObserver observer) {
+        installBreakpointToggleObserver();
+        this.breakpointToggleObserver = observer;
+    }
+
+    @RunOnDispatch
+    private void installBreakpointToggleObserver() {
+        for (Component c : getGutter().getComponents()) {
+            if (c instanceof IconRowHeader) {
+                IconRowHeader irh = (IconRowHeader) c;
+                irh.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        SwingUtilities.invokeLater(() -> {
+                            if (breakpointToggleObserver != null && (bookmarks == null || bookmarks.length != irh.getBookmarks().length)) {
+                                fireBookmarkToggleListener();
+                            }
+                            bookmarks = irh.getBookmarks();
+                        });
+                    }
+                });
+            }
+        }
+    }
+
+    @RunOnDispatch
+    private void fireBookmarkToggleListener() {
+        if (breakpointToggleObserver != null) {
+            breakpointToggleObserver.onBookmarkToggle(getBreakpoints());
+        }
     }
 }

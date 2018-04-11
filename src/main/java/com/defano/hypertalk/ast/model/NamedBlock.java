@@ -1,13 +1,18 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.ast.statements.commands.PassCmd;
+
+import java.util.Collection;
 
 public class NamedBlock {
 
     public final String name;
     public final StatementList statements;
     public final ParameterList parameters;
+
+    private boolean isEmptyPassBlock;
 
     /**
      * Creates a NamedBlock instance that simply passes the name of the block back to HyperCard. Useful as a "default"
@@ -17,7 +22,9 @@ public class NamedBlock {
      * @return An empty NamedBlock that passes the command back to HyperCard.
      */
     public static NamedBlock emptyPassBlock(String name) {
-        return new NamedBlock(name, name, new StatementList(null, new PassCmd(null, name)));
+        NamedBlock block = new NamedBlock(name, name, new StatementList(new PassCmd(null, name)));
+        block.isEmptyPassBlock = true;
+        return block;
     }
 
     /**
@@ -43,4 +50,13 @@ public class NamedBlock {
         this.statements = body;
         this.parameters = parameters;
     }
+
+    public boolean isEmptyPassBlock() {
+        return isEmptyPassBlock;
+    }
+
+    public Collection<Statement> findStatementsOnLine(int line) {
+        return statements.findStatementsOnLine(line);
+    }
+
 }

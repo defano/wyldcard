@@ -16,14 +16,14 @@ public class VariableExp extends ContainerExp {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        Value value = ExecutionContext.getContext().getVariable(symbol);
-        return chunkOf(value, getChunk());
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        Value value = context.getVariable(symbol);
+        return chunkOf(context, value, getChunk());
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
-        ExecutionContext.getContext().setVariable(symbol, preposition, getChunk(), value);
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+        context.setVariable(symbol, preposition, getChunk(), value);
     }
 
 }

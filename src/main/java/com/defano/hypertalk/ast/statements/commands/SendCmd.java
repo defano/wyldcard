@@ -23,18 +23,15 @@ public class SendCmd extends Command {
         this.message = message;
     }
 
-    public void onExecute() throws HtException {
-        PartExp factor = part.factor(PartExp.class, new HtSemanticException("Cannot send a message to that."));
-        ExecutionContext.getContext().pushMe(factor.evaluateAsSpecifier());
+    public void onExecute(ExecutionContext context) throws HtException {
+        PartExp factor = part.factor(context, PartExp.class, new HtSemanticException("Cannot send a message to that."));
 
-        MessageCmd messageCmd = interpretMessage(message.evaluate().stringValue());
+        MessageCmd messageCmd = interpretMessage(message.evaluate(context).stringValue());
         if (messageCmd == null) {
-            ExecutionContext.getContext().sendMessage(factor.evaluateAsSpecifier(), message.evaluate().stringValue(), new ListExp(null));
+            context.sendMessage(factor.evaluateAsSpecifier(context), message.evaluate(context).stringValue(), new ListExp(null));
         } else {
-            messageCmd.onExecute();
+            messageCmd.onExecute(context);
         }
-
-        ExecutionContext.getContext().popMe();
     }
 
     private MessageCmd interpretMessage(String message) {

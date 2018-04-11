@@ -10,29 +10,29 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public abstract class PartExp extends ContainerExp {
 
-    public abstract PartSpecifier evaluateAsSpecifier() throws HtException;
+    public abstract PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException;
 
     public PartExp(ParserRuleContext context) {
         super(context);
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        Value value = ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
-        return chunkOf(value, getChunk());
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        Value value = context.getPart(evaluateAsSpecifier(context)).getValue(context);
+        return chunkOf(context, value, getChunk());
     }
 
     @Override
-    public void putValue(Value value, Preposition preposition) throws HtException {
-        Value destValue = ExecutionContext.getContext().getPart(evaluateAsSpecifier()).getValue();
+    public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
+        Value destValue = context.getPart(evaluateAsSpecifier(context)).getValue(context);
 
         // Operating on a chunk of the existing value
         if (getChunk() != null)
-            destValue = Value.setChunk(destValue, preposition, getChunk(), value);
+            destValue = Value.setChunk(context, destValue, preposition, getChunk(), value);
         else
             destValue = Value.setValue(destValue, preposition, value);
 
-        ExecutionContext.getContext().getPart(evaluateAsSpecifier()).setValue(destValue);
-        ExecutionContext.getContext().setIt(destValue);
+        context.getPart(evaluateAsSpecifier(context)).setValue(destValue, context);
+        context.setIt(destValue);
     }
 }

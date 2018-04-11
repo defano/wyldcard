@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts.model;
 
 import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -19,7 +20,11 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.annotation.PostConstruct;
+import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A base model object for all HyperCard "parts" that Defines properties common to all part objects.
@@ -45,13 +50,15 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     public static final String PROP_LOCATION = "location";
     public static final String PROP_CONTENTS = "contents";
     public static final String PROP_SCRIPTTEXT = "scripttext";
+    public static final String PROP_BREAKPOINTS = "breakpoints";
+    public static final String PROP_CHECKPOINTS = "checkpoints";
 
     private final PartType type;
     private Owner owner;
     private int scriptEditorCaretPosition;
 
     private transient PartModel parentPartModel;
-    private transient Script script = new Script();
+    private transient Script script;
 
     public PartModel(PartType type, Owner owner, PartModel parentPartModel) {
         super();
@@ -61,7 +68,8 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         this.parentPartModel = parentPartModel;
 
         defineProperty(PROP_VISIBLE, new Value(true), false);
-        defineProperty(PROP_SCRIPTTEXT, new Value(""), false);
+        defineProperty(PROP_SCRIPTTEXT, new Value(), false);
+        defineProperty(PROP_BREAKPOINTS, new Value(), false);
 
         initialize();
     }
@@ -88,83 +96,83 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         super.initialize();
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
-        defineComputedSetterProperty(PROP_RECT, (model, propertyName, value) -> {
-            if (value.isRect()) {
-                model.setKnownProperty(PROP_LEFT, value.getItemAt(0));
-                model.setKnownProperty(PROP_TOP, value.getItemAt(1));
-                model.setKnownProperty(PROP_HEIGHT, new Value(value.getItemAt(3).longValue() - value.getItemAt(1).longValue()));
-                model.setKnownProperty(PROP_WIDTH, new Value(value.getItemAt(2).longValue() - value.getItemAt(0).longValue()));
+        defineComputedSetterProperty(PROP_RECT, (context, model, propertyName, value) -> {
+            if (value.isRectE(context)) {
+                model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
+                model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
+                model.setKnownProperty(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
+                model.setKnownProperty(context, PROP_WIDTH, new Value(value.getItemAt(context, 2).longValue() - value.getItemAt(context, 0).longValue()));
             } else {
                 throw new HtSemanticException("Expected a rectangle, but got " + value.stringValue());
             }
         });
 
-        defineComputedGetterProperty(PROP_RECT, (model, propertyName) -> {
-            Value left = model.getKnownProperty(PROP_LEFT);
-            Value top = model.getKnownProperty(PROP_TOP);
-            Value height = model.getKnownProperty(PROP_HEIGHT);
-            Value width = model.getKnownProperty(PROP_WIDTH);
+        defineComputedGetterProperty(PROP_RECT, (context, model, propertyName) -> {
+            Value left = model.getKnownProperty(context, PROP_LEFT);
+            Value top = model.getKnownProperty(context, PROP_TOP);
+            Value height = model.getKnownProperty(context, PROP_HEIGHT);
+            Value width = model.getKnownProperty(context, PROP_WIDTH);
 
             return new Value(left.integerValue(), top.integerValue(), left.integerValue() + width.integerValue(), top.integerValue() + height.integerValue());
         });
 
-        defineComputedGetterProperty(PROP_RIGHT, (model, propertyName) ->
-                new Value(model.getKnownProperty(PROP_LEFT).integerValue() + model.getKnownProperty(PROP_WIDTH).integerValue())
+        defineComputedGetterProperty(PROP_RIGHT, (context, model, propertyName) ->
+                new Value(model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue())
         );
 
-        defineComputedSetterProperty(PROP_RIGHT, (model, propertyName, value) ->
-                model.setKnownProperty(PROP_LEFT, new Value(value.integerValue() - model.getKnownProperty(PROP_WIDTH).integerValue()))
+        defineComputedSetterProperty(PROP_RIGHT, (context, model, propertyName, value) ->
+                model.setKnownProperty(context, PROP_LEFT, new Value(value.integerValue() - model.getKnownProperty(context, PROP_WIDTH).integerValue()))
         );
 
-        defineComputedGetterProperty(PROP_BOTTOM, (model, propertyName) ->
-                new Value(model.getKnownProperty(PROP_TOP).integerValue() + model.getKnownProperty(PROP_HEIGHT).integerValue())
+        defineComputedGetterProperty(PROP_BOTTOM, (context, model, propertyName) ->
+                new Value(model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue())
         );
 
-        defineComputedSetterProperty(PROP_BOTTOM, (model, propertyName, value) ->
-                model.setKnownProperty(PROP_TOP, new Value(value.integerValue() - model.getKnownProperty(PROP_HEIGHT).integerValue()))
+        defineComputedSetterProperty(PROP_BOTTOM, (context, model, propertyName, value) ->
+                model.setKnownProperty(context, PROP_TOP, new Value(value.integerValue() - model.getKnownProperty(context, PROP_HEIGHT).integerValue()))
         );
 
-        defineComputedSetterProperty(PROP_TOPLEFT, (model, propertyName, value) -> {
-            if (value.isPoint()) {
-                model.setKnownProperty(PROP_LEFT, value.getItemAt(0));
-                model.setKnownProperty(PROP_TOP, value.getItemAt(1));
+        defineComputedSetterProperty(PROP_TOPLEFT, (context, model, propertyName, value) -> {
+            if (value.isPoint(context)) {
+                model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
+                model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
             } else {
                 throw new HtSemanticException("Expected a point, but got " + value.stringValue());
             }
         });
 
-        defineComputedGetterProperty(PROP_TOPLEFT, (model, propertyName) ->
-                new Value(model.getKnownProperty(PROP_LEFT).integerValue(), model.getKnownProperty(PROP_TOP).integerValue())
+        defineComputedGetterProperty(PROP_TOPLEFT, (context, model, propertyName) ->
+                new Value(model.getKnownProperty(context, PROP_LEFT).integerValue(), model.getKnownProperty(context, PROP_TOP).integerValue())
         );
 
-        defineComputedSetterProperty(PROP_BOTTOMRIGHT, (model, propertyName, value) -> {
-            if (value.isPoint()) {
-                model.setKnownProperty(PROP_LEFT, new Value(value.getItemAt(0).longValue() - model.getKnownProperty(PROP_WIDTH).longValue()));
-                model.setKnownProperty(PROP_TOP, new Value(value.getItemAt(1).longValue() - model.getKnownProperty(PROP_HEIGHT).longValue()));
+        defineComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName, value) -> {
+            if (value.isPoint(context)) {
+                model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
+                model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
             } else {
                 throw new HtSemanticException("Expected a point, but got " + value.stringValue());
             }
         });
         definePropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
 
-        defineComputedGetterProperty(PROP_BOTTOMRIGHT, (model, propertyName) ->
+        defineComputedGetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName) ->
                 new Value(
-                        model.getKnownProperty(PROP_LEFT).integerValue() + model.getKnownProperty(PROP_WIDTH).integerValue(),
-                        model.getKnownProperty(PROP_TOP).integerValue() + model.getKnownProperty(PROP_HEIGHT).integerValue()
+                        model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue(),
+                        model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue()
                 )
         );
 
         definePropertyAlias(PROP_LOCATION, PROP_LOC);
-        defineComputedGetterProperty(PROP_LOCATION, (model, propertyName) ->
+        defineComputedGetterProperty(PROP_LOCATION, (context, model, propertyName) ->
                 new Value(
-                        model.getKnownProperty(PROP_LEFT).integerValue() + model.getKnownProperty(PROP_WIDTH).integerValue() / 2,
-                        model.getKnownProperty(PROP_TOP).integerValue() + model.getKnownProperty(PROP_HEIGHT).integerValue() / 2
+                        model.getKnownProperty(context, PROP_LEFT).integerValue() + model.getKnownProperty(context, PROP_WIDTH).integerValue() / 2,
+                        model.getKnownProperty(context, PROP_TOP).integerValue() + model.getKnownProperty(context, PROP_HEIGHT).integerValue() / 2
                 )
         );
-        defineComputedSetterProperty(PROP_LOCATION, (model, propertyName, value) -> {
-            if (value.isPoint()) {
-                model.setKnownProperty(PROP_LEFT, new Value(value.getItemAt(0).longValue() - model.getKnownProperty(PROP_WIDTH).longValue() / 2));
-                model.setKnownProperty(PROP_TOP, new Value(value.getItemAt(1).longValue() - model.getKnownProperty(PROP_HEIGHT).longValue() / 2));
+        defineComputedSetterProperty(PROP_LOCATION, (context, model, propertyName, value) -> {
+            if (value.isPoint(context)) {
+                model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
+                model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
             } else {
                 throw new HtSemanticException("Expected a point, but got " + value.stringValue());
             }
@@ -172,13 +180,21 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
 
-        defineComputedGetterProperty(PROP_SCRIPT, (model, propertyName) -> model.getKnownProperty(PROP_SCRIPTTEXT));
-        defineComputedSetterProperty(PROP_SCRIPT, (model, propertyName, value) -> {
-            model.setKnownProperty(PROP_SCRIPTTEXT, value);
-            precompile();
+        defineComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
+        defineComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
+            model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
+            precompile(context);
         });
 
-        precompile();
+        // When breakpoints change, automatically apply them to the script
+        addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
+            if (property.equalsIgnoreCase(PROP_BREAKPOINTS)) {
+                getScript(context).applyBreakpoints(getBreakpoints());
+            }
+        });
+        definePropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
+
+        precompile(new ExecutionContext());
     }
 
     /**
@@ -198,13 +214,13 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         return false;
     }
 
-    public Rectangle getRect() {
+    public Rectangle getRect(ExecutionContext context) {
         try {
             Rectangle rect = new Rectangle();
-            rect.x = getProperty(PROP_LEFT).integerValue();
-            rect.y = getProperty(PROP_TOP).integerValue();
-            rect.height = getProperty(PROP_HEIGHT).integerValue();
-            rect.width = getProperty(PROP_WIDTH).integerValue();
+            rect.x = getProperty(context, PROP_LEFT).integerValue();
+            rect.y = getProperty(context, PROP_TOP).integerValue();
+            rect.height = getProperty(context, PROP_HEIGHT).integerValue();
+            rect.width = getProperty(context, PROP_WIDTH).integerValue();
 
             return rect;
         } catch (Exception e) {
@@ -216,20 +232,22 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         return type;
     }
 
-    private void precompile() {
+    private void precompile(ExecutionContext context) {
         if (hasProperty(PROP_SCRIPTTEXT)) {
-            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
+            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
                 if (generatedError == null) {
                     script = (Script) compiledScript;
+                    script.applyBreakpoints(getBreakpoints());
                 }
             });
         }
     }
 
-    public Script getScript() {
+    public Script getScript(ExecutionContext context) {
         if (script == null) {
             try {
-                script = Interpreter.blockingCompileScript(getKnownProperty(PROP_SCRIPTTEXT).stringValue());
+                script = Interpreter.blockingCompileScript(getKnownProperty(context, PROP_SCRIPTTEXT).stringValue());
+                script.applyBreakpoints(getBreakpoints());
             } catch (HtException e) {
                 e.printStackTrace();
             }
@@ -256,35 +274,37 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         }
     }
 
-    public int getId() {
-        return getKnownProperty(PROP_ID).integerValue();
+    public int getId(ExecutionContext context) {
+        return getKnownProperty(context, PROP_ID).integerValue();
     }
 
-    public String getName() {
-        return getKnownProperty(PROP_NAME).stringValue();
+    public String getName(ExecutionContext context) {
+        return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public PartSpecifier getPartSpecifier() {
-        return new PartIdSpecifier(getOwner(), getType(), getId());
+    public PartSpecifier getPartSpecifier(ExecutionContext context) {
+        return new PartIdSpecifier(getOwner(), getType(), getId(context));
     }
 
     /**
      * Gets the value of this part; thus, reads the value of the property returned by {@link #getValueProperty()}.
      *
      * @return The value of this property
+     * @param context The execution context.
      */
-    public Value getValue() {
-        return getKnownProperty(getValueProperty());
+    public Value getValue(ExecutionContext context) {
+        return getKnownProperty(context, getValueProperty());
     }
 
     /**
      * Sets the value of this part; thus, sets the value of the property returned by {@link #getValueProperty()}.
      *
      * @param value The value of this part.
+     * @param context The execution context.
      */
-    public void setValue(Value value) {
+    public void setValue(Value value, ExecutionContext context) {
         try {
-            setProperty(getValueProperty(), value);
+            setProperty(context, getValueProperty(), value);
         } catch (Exception e) {
             throw new RuntimeException("Bug! Part's value cannot be set.");
         }
@@ -306,13 +326,14 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * specifier is a {@link CompositePartSpecifier} referring to the button or field on a specific card or background.
      *
      * @return A part specifier referring to this part.
+     * @param context The execution context.
      */
-    public PartSpecifier getMe() {
+    public PartSpecifier getMe(ExecutionContext context) {
         PartModel parent = getParentPartModel();
-        PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId());
+        PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId(context));
 
         if (getType() == PartType.BUTTON || getType() == PartType.FIELD) {
-            return new CompositePartSpecifier(localPart, new LiteralPartExp(null, parent.getMe()));
+            return new CompositePartSpecifier(localPart, new LiteralPartExp(null, parent.getMe(context)));
         } else {
             return localPart;
         }
@@ -334,14 +355,25 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         this.scriptEditorCaretPosition = scriptEditorCaretPosition;
     }
 
+    public List<Integer> getBreakpoints() {
+        ExecutionContext context = new ExecutionContext();
+        ArrayList<Integer> breakpoints = new ArrayList<>();
+        List<Value> breakpointValues = getKnownProperty(context, PROP_BREAKPOINTS).getItems(context);
+        for (Value thisBreakpoint : breakpointValues) {
+            breakpoints.add(thisBreakpoint.integerValue());
+        }
+        return breakpoints;
+    }
+
     /**
      * Show the script editor for this part.
      * <p>
      * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
      * command from the Objects menu, or invoked the 'edit script of' command.
+     * @param context The execution context
      */
-    public void editScript() {
-        editScript(null);
+    public ScriptEditor editScript(ExecutionContext context) {
+        return editScript(context, null);
     }
 
     /**
@@ -350,24 +382,44 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
      * command from the Objects menu, or invoked the 'edit script of' command.
      *
+     * @param context The execution context
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
-     *                      position.
      */
-    public void editScript(Integer caretPosition) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+    public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
+        ScriptEditor editor = WindowManager.getInstance().findScriptEditorForPart(this);
 
-            if (caretPosition != null) {
-                setScriptEditorCaretPosition(caretPosition);
-            }
+        // Existing script editor for this part; show it
+        if (editor != null) {
+            SwingUtilities.invokeLater(() -> {
+                editor.setVisible(true);
+                editor.requestFocus();
+            });
 
-            WindowBuilder.make(new ScriptEditor())
-                    .withTitle("Script of " + getName())
-                    .ownsMenubar()
-                    .withModel(this)
-                    .resizeable(true)
-                    .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
-                    .build();
-        });
+            return editor;
+        }
+
+        // Create new editor
+        else {
+            AtomicReference<ScriptEditor> newEditor = new AtomicReference<>();
+            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                newEditor.set(new ScriptEditor());
+
+                if (caretPosition != null) {
+                    setScriptEditorCaretPosition(caretPosition);
+                }
+
+                WindowBuilder.make(newEditor.get())
+                        .withTitle("Script of " + getName(context))
+                        .ownsMenubar()
+                        .withModel(this)
+                        .resizeable(true)
+                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                        .build();
+            });
+
+            SwingUtilities.invokeLater(() -> newEditor.get().requestFocus());
+            return newEditor.get();
+        }
     }
 
     /**
@@ -375,24 +427,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * <p>
      * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
      * the Objects menu.
+     * @param context The execution context.
      */
-    public void editProperties() {
+    public void editProperties(ExecutionContext context) {
         ThreadUtils.invokeAndWaitAsNeeded(() ->
                 WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
                         .asModal()
-                        .withTitle(getName())
+                        .withTitle(getName(context))
                         .withModel(this)
                         .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
                         .resizeable(false)
                         .build());
-    }
-
-    @Override
-    public String toString() {
-        return "PartModel{" +
-                owner + " " + type +
-                (hasProperty(PROP_ID) ? " id=" + getKnownProperty(PROP_ID) : "") +
-                ", parent=" + String.valueOf(getParentPartModel()) +
-                '}';
     }
 }

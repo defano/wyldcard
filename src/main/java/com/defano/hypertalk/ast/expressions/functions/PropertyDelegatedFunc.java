@@ -4,6 +4,7 @@ import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PropertyDelegatedFunc extends Expression {
@@ -16,7 +17,7 @@ public class PropertyDelegatedFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        return HyperCardProperties.getInstance().getProperty(propertyName);
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        return HyperCardProperties.getInstance().getProperty(context, propertyName);
     }
 }

@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -14,9 +15,10 @@ public class AverageFunc extends ArgListFunction {
         super(context, expression);
     }
 
-    public Value onEvaluate() throws HtException {
+    @Override
+    public Value onEvaluate(ExecutionContext context) throws HtException {
         float sum = 0;
-        List<Value> list = evaluateArgumentList();
+        List<Value> list = evaluateArgumentList(context);
 
         if (list.size() == 0) {
             return new Value(0);

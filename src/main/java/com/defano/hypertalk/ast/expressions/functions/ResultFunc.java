@@ -11,7 +11,7 @@ public class ResultFunc extends Expression {
         super(context);
     }
     
-    public Value onEvaluate() {
-        return ExecutionContext.getContext().getResult();
+    public Value onEvaluate(ExecutionContext context) {
+        return context.getResult();
     }
 }

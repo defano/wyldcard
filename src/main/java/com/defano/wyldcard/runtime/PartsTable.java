@@ -3,6 +3,7 @@ package com.defano.wyldcard.runtime;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,19 +16,19 @@ public class PartsTable<T extends Part> {
         idhash = new ConcurrentHashMap<>();
     }
     
-    public void removePart (T p) {
+    public void removePart(ExecutionContext context, T p) {
         
         try {
-            int partId = p.getProperty(PartModel.PROP_ID).integerValue();
+            int partId = p.getProperty(context, PartModel.PROP_ID).integerValue();
             idhash.remove(partId);
         } catch (NoSuchPropertyException e) {
             throw new RuntimeException("Bug! All parts must have an id.", e);
         }
     }
     
-    public void addPart(T p) {
+    public void addPart(ExecutionContext context, T p) {
         try {
-            int partId = p.getProperty(PartModel.PROP_ID).integerValue();
+            int partId = p.getProperty(context, PartModel.PROP_ID).integerValue();
 
             // Check for duplicate id or name
             if (idhash.containsKey(partId)) {
@@ -45,7 +46,7 @@ public class PartsTable<T extends Part> {
         return idhash.values();
     }
 
-    public T getPart(PartModel model) {
-        return idhash.get(model.getId());
+    public T getPart(ExecutionContext context, PartModel model) {
+        return idhash.get(model.getId(context));
     }
 }

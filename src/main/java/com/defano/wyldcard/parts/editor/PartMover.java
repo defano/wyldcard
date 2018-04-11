@@ -5,6 +5,7 @@ import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.NumberUtils;
 import com.defano.hypertalk.ast.model.Value;
 
@@ -32,6 +33,7 @@ public class PartMover {
 
     private class MoverTask implements Runnable {
         public void run () {
+            ExecutionContext context = new ExecutionContext();
             Part partInst = part.get();
             Component withinInst = within.get();
 
@@ -49,8 +51,8 @@ public class PartMover {
                 int newLeft = KeyboardManager.getInstance().isShiftDown() ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
 
                 try {
-                    partInst.setProperty(PartModel.PROP_TOP, new Value(newTop));
-                    partInst.setProperty(PartModel.PROP_LEFT, new Value(newLeft));
+                    partInst.setProperty(context, PartModel.PROP_TOP, new Value(newTop));
+                    partInst.setProperty(context, PartModel.PROP_LEFT, new Value(newLeft));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

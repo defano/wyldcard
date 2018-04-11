@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -23,7 +24,7 @@ public class CompositePartExp extends PartExp {
     }
 
     @Override
-    public PartSpecifier evaluateAsSpecifier() throws HtException {
-        return new CompositePartSpecifier(partExp.evaluateAsSpecifier(), ofPartExp);
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
+        return new CompositePartSpecifier(partExp.evaluateAsSpecifier(context), ofPartExp);
     }
 }

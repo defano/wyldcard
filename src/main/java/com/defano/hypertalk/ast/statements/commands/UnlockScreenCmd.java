@@ -24,14 +24,14 @@ public class UnlockScreenCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         if (effectExp != null) {
-            CurtainManager.getInstance().unlockScreenWithEffect(effectExp.factor(VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
+            CurtainManager.getInstance().unlockScreenWithEffect(effectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
             CurtainManager.getInstance().waitForEffectToFinish();
             return;
         }
 
-        VisualEffectSpecifier ves = ExecutionContext.getContext().getVisualEffect();
+        VisualEffectSpecifier ves = context.getStackFrame().getVisualEffect();
         CurtainManager.getInstance().unlockScreenWithEffect(ves);
         CurtainManager.getInstance().waitForEffectToFinish();
     }

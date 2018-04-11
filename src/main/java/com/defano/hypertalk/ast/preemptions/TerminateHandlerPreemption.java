@@ -1,17 +1,17 @@
-package com.defano.hypertalk.ast.breakpoints;
+package com.defano.hypertalk.ast.preemptions;
 
 /**
  * Represents an interruption to the flow of control in the current handler of function; causes control to exit the
  * current handler or function.
  */
-public class TerminateHandlerBreakpoint extends Breakpoint {
+public class TerminateHandlerPreemption extends Preemption {
 
     /**
      * The name of the handler or function requested to break from
      */
     private final String handlerName;
 
-    public TerminateHandlerBreakpoint(String handlerName) {
+    public TerminateHandlerPreemption(String handlerName) {
         this.handlerName = handlerName;
     }
 

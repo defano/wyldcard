@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class MathFunc extends Expression {
@@ -19,8 +20,8 @@ public class MathFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        Value operand = expression.evaluate();
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        Value operand = expression.evaluate(context);
 
         if (!operand.isNumber()) {
             throw new HtSemanticException("Function " + function + " expects a numerical operand, but got " + operand.stringValue() + " instead.");

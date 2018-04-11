@@ -29,15 +29,15 @@ public class PictureVisibleCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
+    protected void onExecute(ExecutionContext context) throws HtException {
 
         // Hide/show picture of current card/bkgnd
         if (layerExpression == null) {
-            CardModel currentCard = ExecutionContext.getContext().getCurrentCard().getCardModel();
+            CardModel currentCard = context.getCurrentCard().getCardModel();
             if (owningLayer == Owner.CARD) {
-                currentCard.setKnownProperty(CardModel.PROP_SHOWPICT, visibility);
+                currentCard.setKnownProperty(context, CardModel.PROP_SHOWPICT, visibility);
             } else if (owningLayer == Owner.BACKGROUND) {
-                currentCard.getBackgroundModel().setKnownProperty(BackgroundModel.PROP_SHOWPICT, visibility);
+                currentCard.getBackgroundModel().setKnownProperty(context, BackgroundModel.PROP_SHOWPICT, visibility);
             } else {
                 throw new IllegalArgumentException("Bug! Invalid picture layer.");
             }
@@ -45,15 +45,15 @@ public class PictureVisibleCmd extends Command {
 
         // Hide/show picture of specified card/bkgnd
         else {
-            CardModel cardModel = layerExpression.partFactor(CardModel.class);
+            CardModel cardModel = layerExpression.partFactor(context, CardModel.class);
             if (cardModel != null) {
-                cardModel.setKnownProperty(CardModel.PROP_SHOWPICT, visibility);
+                cardModel.setKnownProperty(context, CardModel.PROP_SHOWPICT, visibility);
                 return;
             }
 
-            BackgroundModel backgroundModel = layerExpression.partFactor(BackgroundModel.class);
+            BackgroundModel backgroundModel = layerExpression.partFactor(context, BackgroundModel.class);
             if (backgroundModel != null) {
-                backgroundModel.setKnownProperty(BackgroundModel.PROP_SHOWPICT, visibility);
+                backgroundModel.setKnownProperty(context, BackgroundModel.PROP_SHOWPICT, visibility);
                 return;
             }
 

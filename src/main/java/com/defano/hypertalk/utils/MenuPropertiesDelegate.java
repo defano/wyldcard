@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.specifiers.MenuItemSpecifier;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,40 +26,40 @@ public class MenuPropertiesDelegate {
     private static final String PROP_COMMANDCHAR = "commandchar";
     private static final String PROP_NAME = "name";
 
-    public static Value getProperty(String name, MenuItemSpecifier menuItem) throws HtException {
+    public static Value getProperty(ExecutionContext context, String name, MenuItemSpecifier menuItem) throws HtException {
         switch (name.toLowerCase()) {
             case PROP_ENABLED:
-                return new Value(menuItem.getSpecifiedMenuItem().isEnabled());
+                return new Value(menuItem.getSpecifiedMenuItem(context).isEnabled());
             case PROP_CHECKMARK:
-                return new Value(menuItem.getSpecifiedMenuItem().isSelected());
+                return new Value(menuItem.getSpecifiedMenuItem(context).isSelected());
             case PROP_COMMANDCHAR:
-                return new Value(menuItem.getSpecifiedMenuItem().getAccelerator().getKeyChar());
+                return new Value(menuItem.getSpecifiedMenuItem(context).getAccelerator().getKeyChar());
             case PROP_NAME:
-                return new Value(menuItem.getSpecifiedMenuItem().getText());
+                return new Value(menuItem.getSpecifiedMenuItem(context).getText());
             default:
                 throw new HtSemanticException(name + " is not a menu item property.");
         }
     }
 
-    public static void setProperty(String name, Value value, MenuItemSpecifier menuItem) throws HtException {
+    public static void setProperty(ExecutionContext context, String name, Value value, MenuItemSpecifier menuItem) throws HtException {
         switch (name.toLowerCase()) {
             case PROP_ENABLED:
-                menuItem.getSpecifiedMenuItem().setEnabled(value.booleanValue());
+                menuItem.getSpecifiedMenuItem(context).setEnabled(value.booleanValue());
                 break;
             case PROP_CHECKMARK:
-                makeCheckable(value.booleanValue(), menuItem.getSpecifiedItemIndex(), menuItem.getSpecifiedMenu());
-                menuItem.getSpecifiedMenuItem().setSelected(value.booleanValue());
+                makeCheckable(value.booleanValue(), menuItem.getSpecifiedItemIndex(context), menuItem.getSpecifiedMenu(context));
+                menuItem.getSpecifiedMenuItem(context).setSelected(value.booleanValue());
                 break;
             case PROP_COMMANDCHAR:
                 if (value.stringValue().length() == 0) {
-                    menuItem.getSpecifiedMenuItem().setAccelerator(null);
+                    menuItem.getSpecifiedMenuItem(context).setAccelerator(null);
                 } else {
                     char accelerator = value.stringValue().toUpperCase().charAt(0);
-                    menuItem.getSpecifiedMenuItem().setAccelerator(KeyStroke.getKeyStroke(accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                    menuItem.getSpecifiedMenuItem(context).setAccelerator(KeyStroke.getKeyStroke(accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
                 }
                 break;
             case PROP_NAME:
-                menuItem.getSpecifiedMenuItem().setText(value.stringValue());
+                menuItem.getSpecifiedMenuItem(context).setText(value.stringValue());
             default:
                 throw new HtSemanticException(name + " is not a menu item property.");
         }

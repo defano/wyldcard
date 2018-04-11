@@ -1,21 +1,24 @@
 package com.defano.hypertalk.comparator;
 
+import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import com.defano.wyldcard.util.ThreadUtils;
 
 import java.util.Comparator;
 import java.util.HashMap;
 
 public class CardExpressionComparator implements Comparator<CardModel> {
 
+    private final ExecutionContext context;
     private final Expression expression;
     private final SortStyle sortStyle;
     private final SortDirection direction;
@@ -23,7 +26,8 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     private HashMap<CardModel, CardPart> cache = new HashMap<>();
     private HashMap<CardModel, Value> sanityCache = new HashMap<>();
 
-    public CardExpressionComparator(Expression expression, SortStyle sortStyle, SortDirection direction) {
+    public CardExpressionComparator(ExecutionContext context, Expression expression, SortStyle sortStyle, SortDirection direction) {
+        this.context = context;
         this.expression = expression;
         this.sortStyle = sortStyle;
         this.direction = direction;
@@ -32,20 +36,21 @@ public class CardExpressionComparator implements Comparator<CardModel> {
     @Override
     public int compare(CardModel o1, CardModel o2) {
         try {
+            PartSpecifier originalMe = context.getStackFrame().getMe();
+
             // Evaluate expression in the context of card o1
-            ExecutionContext.getContext().setCurrentCard(acquire(o1));
-            ExecutionContext.getContext().pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId()));
+            context.setCurrentCard(acquire(o1));
+            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o1.getId(context)));
             Value o1Value = evaluate(o1);
-            ExecutionContext.getContext().popMe();
 
             // Evaluate expression in the context of card o2
-            ExecutionContext.getContext().setCurrentCard(acquire(o2));
-            ExecutionContext.getContext().pushMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId()));
+            context.setCurrentCard(acquire(o2));
+            context.getStackFrame().setMe(new PartIdSpecifier(Owner.STACK, PartType.CARD, o2.getId(context)));
             Value o2Value = evaluate(o2);
-            ExecutionContext.getContext().popMe();
 
             // Stop overriding card context in this thread
-            ExecutionContext.getContext().setCurrentCard(null);
+            context.setCurrentCard(null);
+            context.getStackFrame().setMe(originalMe);
 
             if (direction == SortDirection.ASCENDING) {
                 return o1Value.compareTo(o2Value, sortStyle);
@@ -62,22 +67,29 @@ public class CardExpressionComparator implements Comparator<CardModel> {
         if (sanityCache.containsKey(model)) {
             return sanityCache.get(model);
         } else {
-            Value evaluated = expression.evaluate();
+            Value evaluated = expression.evaluate(context);
             sanityCache.put(model, evaluated);
             return evaluated;
         }
     }
 
-    private CardPart acquire(CardModel model) throws HtException {
+    private CardPart acquire(CardModel model) {
+
         if (!cache.containsKey(model)) {
-            cache.put(model, CardPart.skeletonFromModel(model));
+            ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                try {
+                    cache.put(model, CardPart.skeletonFromModel(context, model));
+                } catch (HtException e) {
+                    // Bug!
+                }
+            });
         }
 
         CardPart card = cache.get(model);
 
         // Shared background fields in cached cards maintain original text; update the shared text context
         for (CardLayerPart thisPart : card.getCardParts()) {
-            ((CardLayerPartModel) thisPart.getPartModel()).setCurrentCardId(model.getId());
+            ((CardLayerPartModel) thisPart.getPartModel()).setCurrentCardId(model.getId(context));
         }
 
         return card;

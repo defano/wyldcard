@@ -14,9 +14,9 @@ public class MouseClickFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
         Long lastClickTime = MouseManager.getInstance().getClickTimeMs();
-        boolean mouseClicked = lastClickTime != null && (lastClickTime > ExecutionContext.getContext().getFrame().getCreationTimeMs());
+        boolean mouseClicked = lastClickTime != null && (lastClickTime > context.getStackFrame().getCreationTimeMs());
         return new Value(mouseClicked);
     }
 }

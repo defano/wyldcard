@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.expressions;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class VisualEffectExp extends Expression {
@@ -15,8 +16,8 @@ public class VisualEffectExp extends Expression {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        return new Value(getContext().getText());
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        return new Value(getParserContext().getText());
     }
 
 }

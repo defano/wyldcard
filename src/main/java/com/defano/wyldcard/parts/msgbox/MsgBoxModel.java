@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.field.SelectableTextModel;
 import com.defano.wyldcard.parts.model.DispatchComputedGetter;
 import com.defano.wyldcard.parts.model.DispatchComputedSetter;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -23,20 +24,20 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
         defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_CONTENTS, new Value(), false);
-        defineComputedGetterProperty(PROP_CONTENTS, (DispatchComputedGetter) (model, propertyName) -> new Value(getText()));
+        defineComputedGetterProperty(PROP_CONTENTS, (DispatchComputedGetter) (context, model, propertyName) -> new Value(getText(context)));
 
         defineProperty(PROP_WIDTH, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getWidth()), true);
         defineProperty(PROP_HEIGHT, new Value(WindowManager.getInstance().getMessageWindow().getWindow().getHeight()), true);
         defineProperty(PROP_NAME, new Value("Message"), true);
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (DispatchComputedGetter) (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (DispatchComputedSetter) (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getMessageWindow().getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (DispatchComputedGetter) (context, model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (DispatchComputedSetter) (context, model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getMessageWindow().getWindow().getY()));
 
-        defineComputedGetterProperty(PartModel.PROP_TOP, (DispatchComputedGetter) (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (DispatchComputedSetter) (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(WindowManager.getInstance().getMessageWindow().getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (DispatchComputedGetter) (context, model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (DispatchComputedSetter) (context, model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().getWindow().setLocation(WindowManager.getInstance().getMessageWindow().getWindow().getX(), value.integerValue()));
 
-        defineComputedGetterProperty(PROP_VISIBLE, (DispatchComputedGetter) (model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().isVisible()));
-        defineComputedSetterProperty(PROP_VISIBLE, (DispatchComputedSetter) (model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().setVisible(value.booleanValue()));
+        defineComputedGetterProperty(PROP_VISIBLE, (DispatchComputedGetter) (context, model, propertyName) -> new Value(WindowManager.getInstance().getMessageWindow().isVisible()));
+        defineComputedSetterProperty(PROP_VISIBLE, (DispatchComputedSetter) (context, model, propertyName, value) -> WindowManager.getInstance().getMessageWindow().setVisible(value.booleanValue()));
     }
 
     /**
@@ -51,7 +52,7 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
      * {@inheritDoc}
      */
     @Override
-    public void setSelection(Range selection) {
+    public void setSelection(ExecutionContext context, Range selection) {
         JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         messageBox.setSelectionStart(selection.start);
         messageBox.setSelectionEnd(selection.end);
@@ -59,19 +60,21 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
     /**
      * {@inheritDoc}
+     * @param context The execution context.
      */
     @Override
-    public Range getSelection() {
+    public Range getSelection(ExecutionContext context) {
         JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         return Range.ofMarkAndDot(messageBox.getSelectionStart(), messageBox.getSelectionEnd());
     }
 
     /**
      * {@inheritDoc}
+     * @param context The execution context.
      */
     @Override
     @RunOnDispatch
-    public String getText() {
+    public String getText(ExecutionContext context) {
         JTextComponent messageBox = WindowManager.getInstance().getMessageWindow().getTextComponent();
         return messageBox.getText();
     }
@@ -86,17 +89,19 @@ public class MsgBoxModel extends PartModel implements AddressableSelection, Sele
 
     /**
      * {@inheritDoc}
+     * @param context The execution context.
      */
     @Override
-    public String getHyperTalkAddress() {
+    public String getHyperTalkAddress(ExecutionContext context) {
         return "the message";
     }
 
     /**
      * {@inheritDoc}
+     * @param context The execution context.
      */
     @Override
-    public PartSpecifier getPartSpecifier() {
+    public PartSpecifier getPartSpecifier(ExecutionContext context) {
         return new PartMessageSpecifier();
     }
 

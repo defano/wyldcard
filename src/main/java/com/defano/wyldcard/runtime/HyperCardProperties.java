@@ -6,6 +6,7 @@ import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.SelectionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
@@ -87,83 +88,83 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_FOUNDTEXT, new Value(), true);
         defineProperty(PROP_LOCKMESSAGES, new Value(true), false);
 
-        defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (model, propertyName) -> new Value(System.getProperty("java.version")));
+        defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 
-        defineComputedSetterProperty(PROP_TEXTFONT, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
-        defineComputedGetterProperty(PROP_TEXTFONT, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamily()));
+        defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
+        defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamily()));
 
-        defineComputedSetterProperty(PROP_TEXTSTYLE, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontStyle(value));
-        defineComputedGetterProperty(PROP_TEXTSTYLE, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontStyle()));
+        defineComputedSetterProperty(PROP_TEXTSTYLE, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontStyle(value));
+        defineComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontStyle()));
 
-        defineComputedSetterProperty(PROP_TEXTSIZE, (model, propertyName, value) -> FontContext.getInstance().setSelectedFontSize(value.integerValue()));
-        defineComputedGetterProperty(PROP_TEXTSIZE, (model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontSize()));
+        defineComputedSetterProperty(PROP_TEXTSIZE, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontSize(value.integerValue()));
+        defineComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontSize()));
 
-        defineComputedGetterProperty(PROP_BRUSH, (model, propertyName) -> BasicBrushResolver.valueOfBasicBrush(ToolsContext.getInstance().getSelectedBrush()));
-        defineComputedSetterProperty(PROP_BRUSH, (model, propertyName, value) -> ToolsContext.getInstance().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));
+        defineComputedGetterProperty(PROP_BRUSH, (context, model, propertyName) -> BasicBrushResolver.valueOfBasicBrush(ToolsContext.getInstance().getSelectedBrush()));
+        defineComputedSetterProperty(PROP_BRUSH, (context, model, propertyName, value) -> ToolsContext.getInstance().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));
 
-        defineComputedSetterProperty(PROP_LINESIZE, (model, propertyName, value) -> ToolsContext.getInstance().setLineWidth(value.integerValue()));
-        defineComputedGetterProperty(PROP_LINESIZE, (model, propertyName) -> new Value(ToolsContext.getInstance().getLineWidth()));
+        defineComputedSetterProperty(PROP_LINESIZE, (context, model, propertyName, value) -> ToolsContext.getInstance().setLineWidth(value.integerValue()));
+        defineComputedGetterProperty(PROP_LINESIZE, (context, model, propertyName) -> new Value(ToolsContext.getInstance().getLineWidth()));
 
-        defineComputedSetterProperty(PROP_FILLED, (model, propertyName, value) -> ToolsContext.getInstance().setShapesFilled(value.booleanValue()));
-        defineComputedGetterProperty(PROP_FILLED, (model, propertyName) -> new Value(ToolsContext.getInstance().isShapesFilled()));
+        defineComputedSetterProperty(PROP_FILLED, (context, model, propertyName, value) -> ToolsContext.getInstance().setShapesFilled(value.booleanValue()));
+        defineComputedGetterProperty(PROP_FILLED, (context, model, propertyName) -> new Value(ToolsContext.getInstance().isShapesFilled()));
 
-        defineComputedSetterProperty(PROP_CENTERED, (model, propertyName, value) -> ToolsContext.getInstance().setDrawCentered(value.booleanValue()));
-        defineComputedGetterProperty(PROP_CENTERED, (model, propertyName) -> new Value(ToolsContext.getInstance().isDrawCentered()));
+        defineComputedSetterProperty(PROP_CENTERED, (context, model, propertyName, value) -> ToolsContext.getInstance().setDrawCentered(value.booleanValue()));
+        defineComputedGetterProperty(PROP_CENTERED, (context, model, propertyName) -> new Value(ToolsContext.getInstance().isDrawCentered()));
 
-        defineComputedSetterProperty(PROP_MULTIPLE, (model, propertyName, value) -> ToolsContext.getInstance().setDrawMultiple(value.booleanValue()));
-        defineComputedGetterProperty(PROP_MULTIPLE, (model, propertyName) -> new Value(ToolsContext.getInstance().isDrawMultiple()));
+        defineComputedSetterProperty(PROP_MULTIPLE, (context, model, propertyName, value) -> ToolsContext.getInstance().setDrawMultiple(value.booleanValue()));
+        defineComputedGetterProperty(PROP_MULTIPLE, (context, model, propertyName) -> new Value(ToolsContext.getInstance().isDrawMultiple()));
 
-        defineComputedSetterProperty(PROP_CURSOR, (model, propertyName, value) -> CursorManager.getInstance().setActiveCursor(value));
-        defineComputedGetterProperty(PROP_CURSOR, (model, propertyName) -> new Value (CursorManager.getInstance().getActiveCursor().hyperTalkName));
+        defineComputedSetterProperty(PROP_CURSOR, (context, model, propertyName, value) -> CursorManager.getInstance().setActiveCursor(value));
+        defineComputedGetterProperty(PROP_CURSOR, (context, model, propertyName) -> new Value (CursorManager.getInstance().getActiveCursor().hyperTalkName));
 
-        defineComputedSetterProperty(PROP_GRID, (model, propertyName, value) -> ToolsContext.getInstance().setGridSpacing(value.booleanValue() ? 8 : 1));
-        defineComputedGetterProperty(PROP_GRID, (model, propertyName) -> new Value (ToolsContext.getInstance().getGridSpacing() > 1));
+        defineComputedSetterProperty(PROP_GRID, (context, model, propertyName, value) -> ToolsContext.getInstance().setGridSpacing(value.booleanValue() ? 8 : 1));
+        defineComputedGetterProperty(PROP_GRID, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getGridSpacing() > 1));
 
-        defineComputedSetterProperty(PROP_POLYSIDES, (model, propertyName, value) -> ToolsContext.getInstance().setShapeSides(value.integerValue()));
-        defineComputedGetterProperty(PROP_POLYSIDES, (model, propertyName) -> new Value (ToolsContext.getInstance().getShapeSides()));
+        defineComputedSetterProperty(PROP_POLYSIDES, (context, model, propertyName, value) -> ToolsContext.getInstance().setShapeSides(value.integerValue()));
+        defineComputedGetterProperty(PROP_POLYSIDES, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getShapeSides()));
 
-        defineComputedSetterProperty(PROP_PATTERN, (model, propertyName, value) -> {
+        defineComputedSetterProperty(PROP_PATTERN, (context, model, propertyName, value) -> {
             if (value.integerValue() >= 0 && value.integerValue() < 40) {
                 ToolsContext.getInstance().setFillPattern(value.integerValue());
             }
         });
-        defineComputedGetterProperty(PROP_PATTERN, (model, propertyName) -> new Value (ToolsContext.getInstance().getFillPattern()));
+        defineComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getFillPattern()));
 
-        defineComputedGetterProperty(PROP_MOUSEH, (model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().x));
-        defineComputedGetterProperty(PROP_MOUSEV, (model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().y));
-        defineComputedGetterProperty(PROP_SCREENRECT, (model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getGraphicsConfiguration().getBounds()));
-        defineComputedGetterProperty(PROP_CLICKLOC, (model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
-        defineComputedGetterProperty(PROP_CLICKH, (model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));
-        defineComputedGetterProperty(PROP_CLICKV, (model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().y));
-        defineComputedGetterProperty(PROP_SOUND, (model, propertyName) -> new Value(SoundPlayer.getSound()));
+        defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().x));
+        defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().y));
+        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getGraphicsConfiguration().getBounds()));
+        defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
+        defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));
+        defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().y));
+        defineComputedGetterProperty(PROP_SOUND, (context, model, propertyName) -> new Value(SoundPlayer.getSound()));
 
-        defineComputedGetterProperty(PROP_SELECTEDLINE, (model, propertyName) -> {
+        defineComputedGetterProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getManagedSelection().getSelectedLineExpression();
+                return SelectionContext.getInstance().getManagedSelection(context).getSelectedLineExpression(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
         });
 
-        defineComputedGetterProperty(PROP_SELECTEDFIELD, (model, propertyName) -> {
+        defineComputedGetterProperty(PROP_SELECTEDFIELD, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getManagedSelection().getSelectedFieldExpression();
+                return SelectionContext.getInstance().getManagedSelection(context).getSelectedFieldExpression(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
         });
 
-        defineComputedGetterProperty(PROP_SELECTEDCHUNK, (model, propertyName) -> {
+        defineComputedGetterProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getManagedSelection().getSelectedChunkExpression();
+                return SelectionContext.getInstance().getManagedSelection(context).getSelectedChunkExpression(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
         });
 
-        defineComputedGetterProperty(PROP_SELECTEDTEXT, (model, propertyName) -> {
+        defineComputedGetterProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getSelection();
+                return SelectionContext.getInstance().getSelection(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
@@ -179,9 +180,9 @@ public class HyperCardProperties extends PropertiesModel {
     }
 
     public void resetProperties() {
-        setKnownProperty(PROP_ITEMDELIMITER, new Value(","));
-        setKnownProperty(PROP_LOCKSCREEN, new Value(false));
-        setKnownProperty(PROP_LOCKMESSAGES, new Value(false));
+        setKnownProperty(new ExecutionContext(), PROP_ITEMDELIMITER, new Value(","));
+        setKnownProperty(new ExecutionContext(), PROP_LOCKSCREEN, new Value(false));
+        setKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES, new Value(false));
 
         CursorManager.getInstance().setActiveCursor(HyperCardCursor.HAND);
     }

@@ -34,14 +34,10 @@ public abstract class HyperCardFrame extends JFrame implements HyperCardWindow<J
 
         // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
         // menubar each time the window comes into focus.
-        this.addWindowFocusListener(new WindowFocusListener() {
+        this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
                 HyperCardFrame.this.applyMenuBar();
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent e) {
             }
         });
 

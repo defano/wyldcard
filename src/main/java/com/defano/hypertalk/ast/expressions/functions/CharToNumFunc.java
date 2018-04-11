@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class CharToNumFunc extends Expression {
@@ -16,8 +17,8 @@ public class CharToNumFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        Value evaluated = expression.evaluate();
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        Value evaluated = expression.evaluate(context);
 
         if (evaluated.stringValue().length() == 0) {
             throw new HtSemanticException("charToNum expects a string value, but got empty.");

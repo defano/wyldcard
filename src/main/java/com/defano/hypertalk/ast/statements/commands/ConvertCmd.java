@@ -47,19 +47,19 @@ public class ConvertCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         Date timestamp = container == null ?
-                DateUtils.dateOf(expression.evaluate(), from) :
-                DateUtils.dateOf(container.evaluate(), from);
+                DateUtils.dateOf(expression.evaluate(context), from) :
+                DateUtils.dateOf(container.evaluate(context), from);
 
         if (timestamp == null) {
             throw new HtSemanticException("Invalid date.");
         }
 
         if (container == null) {
-            ExecutionContext.getContext().setIt(DateUtils.valueOf(timestamp, to));
+            context.setIt(DateUtils.valueOf(timestamp, to));
         } else {
-            container.putValue(DateUtils.valueOf(timestamp, to), Preposition.INTO);
+            container.putValue(context, DateUtils.valueOf(timestamp, to), Preposition.INTO);
         }
     }
 }

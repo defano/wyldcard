@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -64,8 +65,9 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
         try {
             // Send 'idle' message to card if no other scripts are pending
             if (Interpreter.getPendingScriptCount() == 0) {
-                ExecutionContext.getContext().getGlobalProperties().resetProperties();
-                send(SystemMessage.IDLE, ExecutionContext.getContext().getCurrentCard().getCardModel());
+                HyperCardProperties.getInstance().resetProperties();
+                DebugContext.getInstance().resume();
+                send(SystemMessage.IDLE, new ExecutionContext().getCurrentCard().getCardModel());
             }
 
             // Send 'within' message to any parts whose bounds the mouse is within
@@ -88,7 +90,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
             if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
-                model.receiveMessage(message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
+                model.receiveMessage(new ExecutionContext(), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.printStackTrace();
                         deferCycles = IDLE_DEFERRAL_CYCLES;

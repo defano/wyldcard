@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -16,8 +17,8 @@ public class ValueFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtException {
-        String toEvaluate = expression.evaluate().stringValue();
-        return Interpreter.blockingEvaluate(toEvaluate);
+    public Value onEvaluate(ExecutionContext context) throws HtException {
+        String toEvaluate = expression.evaluate(context).stringValue();
+        return Interpreter.blockingEvaluate(toEvaluate, context);
     }
 }

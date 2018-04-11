@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.util.Random;
@@ -25,11 +26,11 @@ public class MenuSpecifier {
         this.menuExpr = null;
     }
 
-    public JMenu getSpecifiedMenu() throws HtException {
+    public JMenu getSpecifiedMenu(ExecutionContext context) throws HtException {
 
         if (menuExpr != null) {
             JMenu foundMenu;
-            Value menuExprValue = menuExpr.evaluate();
+            Value menuExprValue = menuExpr.evaluate(context);
 
             foundMenu = HyperCardMenuBar.getInstance().findMenuByName(menuExprValue.stringValue());
 

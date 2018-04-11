@@ -1,6 +1,7 @@
 package com.defano.wyldcard.fonts;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import javax.swing.text.StyleConstants;
@@ -37,10 +38,10 @@ public class FontUtils {
         }
     }
 
-    public static int getFontStyleForValue(Value v) {
+    public static int getFontStyleForValue(ExecutionContext context, Value v) {
         int style = Font.PLAIN;
 
-        for (Value thisValue : v.getItems()) {
+        for (Value thisValue : v.getItems(context)) {
             switch (thisValue.stringValue().trim().toLowerCase()) {
                 case "plain":
                     style = Font.PLAIN;

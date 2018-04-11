@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class LiteralPartExp extends PartExp {
@@ -14,7 +15,7 @@ public class LiteralPartExp extends PartExp {
     }
 
     @Override
-    public PartSpecifier evaluateAsSpecifier() {
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) {
         return specifier;
     }
 }

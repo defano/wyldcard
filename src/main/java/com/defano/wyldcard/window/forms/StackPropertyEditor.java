@@ -1,11 +1,10 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -38,15 +37,15 @@ public class StackPropertyEditor extends HyperCardDialog {
 
         editScriptButton.addActionListener(e -> {
             dispose();
-            model.editScript();
+            model.editScript(new ExecutionContext());
         });
 
         resizeButton.addActionListener(e -> {
             dispose();
-            model.setDimension(StackSizeEditor.editStackSize(this.model.getDimension(), getWindowPanel()));
+            model.setDimension(new ExecutionContext(), StackSizeEditor.editStackSize(this.model.getDimension(new ExecutionContext()), getWindowPanel()));
         });
 
-        resizableCheckBox.addActionListener(e -> model.setKnownProperty(StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
+        resizableCheckBox.addActionListener(e -> model.setKnownProperty(new ExecutionContext(), StackModel.PROP_RESIZABLE, new Value(resizableCheckBox.isSelected())));
     }
 
     @Override
@@ -64,16 +63,16 @@ public class StackPropertyEditor extends HyperCardDialog {
         model = (StackModel) data;
         Optional<File> stackFile = model.getSavedStackFileProvider().blockingFirst();
 
-        stackName.setText(model.getStackName());
+        stackName.setText(model.getStackName(new ExecutionContext()));
         cardCountLabel.setText(StringUtils.pluralize(model.getCardCount(), "Stack contains %d card.", "Stack contains %d cards."));
         backgroundCountLabel.setText(StringUtils.pluralize(model.getBackgroundCount(), "Stack contains %d background.", "Stack contains %d backgrounds."));
         locationLabel.setText(stackFile.map(File::getAbsolutePath).orElse("(Not saved)"));
         sizeLabel.setText(StringUtils.humanReadableFileSize(Serializer.serialize(model).length()));
-        resizableCheckBox.setSelected(model.getKnownProperty(StackModel.PROP_RESIZABLE).booleanValue());
+        resizableCheckBox.setSelected(model.getKnownProperty(new ExecutionContext(), StackModel.PROP_RESIZABLE).booleanValue());
     }
 
     private void updateProperties() {
-        model.setStackName(stackName.getText());
+        model.setStackName(new ExecutionContext(), stackName.getText());
     }
 
     {

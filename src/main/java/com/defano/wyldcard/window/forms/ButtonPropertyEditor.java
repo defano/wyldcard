@@ -5,10 +5,10 @@ import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonStyle;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.ActionBindable;
 import com.defano.wyldcard.window.HyperCardDialog;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -49,7 +49,7 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
     public ButtonPropertyEditor() {
         editScriptButton.addActionListener(e -> {
             dispose();
-            model.editScript();
+            SwingUtilities.invokeLater(() -> model.editScript(new ExecutionContext()));
         });
 
         contents.addActionListener(e -> showContentsEditor());
@@ -68,9 +68,9 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
 
         textStyle.addActionListener(e -> {
             dispose();
-            Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getTextStyle().toFont());
+            Font selection = JFontChooser.showDialog(getWindowPanel(), "Choose Font", model.getTextStyle(new ExecutionContext()).toFont());
             if (selection != null) {
-                model.setTextStyle(TextStyleSpecifier.fromFont(selection));
+                model.setTextStyle(new ExecutionContext(), TextStyleSpecifier.fromFont(selection));
             }
         });
 
@@ -96,11 +96,12 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
     @RunOnDispatch
     public void bindModel(Object data) {
         this.model = (ButtonModel) data;
+        ExecutionContext context = new ExecutionContext();
 
-        long partNumber = model.getPartNumber();
-        long buttonNumber = model.getButtonNumber();
-        long buttonCount = model.getButtonCount();
-        long partCount = model.getPartCount();
+        long partNumber = model.getPartNumber(context);
+        long buttonNumber = model.getButtonNumber(context);
+        long buttonCount = model.getButtonCount(context);
+        long partCount = model.getPartCount(context);
         String layer = model.getOwner().hyperTalkName;
 
         buttonLabel.setText(layer + " Button:");
@@ -108,19 +109,19 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
 
         partLabel.setText(layer + " Part:");
         partLabelValue.setText(partNumber + " of " + partCount);
-        idLabelValue.setText(String.valueOf(model.getId()));
+        idLabelValue.setText(String.valueOf(model.getId(context)));
 
-        buttonName.setText(model.getKnownProperty(ButtonModel.PROP_NAME).stringValue());
-        buttonTop.setValue(model.getKnownProperty(ButtonModel.PROP_TOP).integerValue());
-        buttonLeft.setValue(model.getKnownProperty(ButtonModel.PROP_LEFT).integerValue());
-        buttonHeight.setValue(model.getKnownProperty(ButtonModel.PROP_HEIGHT).integerValue());
-        buttonWidth.setValue(model.getKnownProperty(ButtonModel.PROP_WIDTH).integerValue());
-        isEnabled.setSelected(model.getKnownProperty(ButtonModel.PROP_ENABLED).booleanValue());
-        isShowTitle.setSelected(model.getKnownProperty(ButtonModel.PROP_SHOWNAME).booleanValue());
-        isVisible.setSelected(model.getKnownProperty(ButtonModel.PROP_VISIBLE).booleanValue());
-        style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(ButtonModel.PROP_STYLE).stringValue()));
-        family.setSelectedItem(model.getKnownProperty(ButtonModel.PROP_FAMILY).stringValue());
-        autoHilite.setSelected(model.getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue());
+        buttonName.setText(model.getKnownProperty(context, ButtonModel.PROP_NAME).stringValue());
+        buttonTop.setValue(model.getKnownProperty(context, ButtonModel.PROP_TOP).integerValue());
+        buttonLeft.setValue(model.getKnownProperty(context, ButtonModel.PROP_LEFT).integerValue());
+        buttonHeight.setValue(model.getKnownProperty(context, ButtonModel.PROP_HEIGHT).integerValue());
+        buttonWidth.setValue(model.getKnownProperty(context, ButtonModel.PROP_WIDTH).integerValue());
+        isEnabled.setSelected(model.getKnownProperty(context, ButtonModel.PROP_ENABLED).booleanValue());
+        isShowTitle.setSelected(model.getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue());
+        isVisible.setSelected(model.getKnownProperty(context, ButtonModel.PROP_VISIBLE).booleanValue());
+        style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(context, ButtonModel.PROP_STYLE).stringValue()));
+        family.setSelectedItem(model.getKnownProperty(context, ButtonModel.PROP_FAMILY).stringValue());
+        autoHilite.setSelected(model.getKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT).booleanValue());
 
         bindActions(a -> updateProperties(),
                 isEnabled,
@@ -135,25 +136,27 @@ public class ButtonPropertyEditor extends HyperCardDialog implements ActionBinda
     }
 
     private void updateProperties() {
-        model.setKnownProperty(ButtonModel.PROP_NAME, new Value(buttonName.getText()));
-        model.setKnownProperty(ButtonModel.PROP_TOP, new Value(buttonTop.getValue()));
-        model.setKnownProperty(ButtonModel.PROP_LEFT, new Value(buttonLeft.getValue()));
-        model.setKnownProperty(ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getValue()));
-        model.setKnownProperty(ButtonModel.PROP_WIDTH, new Value(buttonWidth.getValue()));
-        model.setKnownProperty(ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
-        model.setKnownProperty(ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
-        model.setKnownProperty(ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
-        model.setKnownProperty(ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
-        model.setKnownProperty(ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
-        model.setKnownProperty(ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
+        ExecutionContext context = new ExecutionContext();
+
+        model.setKnownProperty(context, ButtonModel.PROP_NAME, new Value(buttonName.getText()));
+        model.setKnownProperty(context, ButtonModel.PROP_TOP, new Value(buttonTop.getValue()));
+        model.setKnownProperty(context, ButtonModel.PROP_LEFT, new Value(buttonLeft.getValue()));
+        model.setKnownProperty(context, ButtonModel.PROP_HEIGHT, new Value(buttonHeight.getValue()));
+        model.setKnownProperty(context, ButtonModel.PROP_WIDTH, new Value(buttonWidth.getValue()));
+        model.setKnownProperty(context, ButtonModel.PROP_ENABLED, new Value(isEnabled.isSelected()));
+        model.setKnownProperty(context, ButtonModel.PROP_SHOWNAME, new Value(isShowTitle.isSelected()));
+        model.setKnownProperty(context, ButtonModel.PROP_VISIBLE, new Value(isVisible.isSelected()));
+        model.setKnownProperty(context, ButtonModel.PROP_STYLE, new Value(String.valueOf(style.getSelectedItem())));
+        model.setKnownProperty(context, ButtonModel.PROP_FAMILY, new Value(String.valueOf(family.getSelectedItem())));
+        model.setKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT, new Value(autoHilite.isSelected()));
     }
 
     @RunOnDispatch
     private void showContentsEditor() {
         dispose();
-        String contents = PartContentsEditor.editContents(model.getKnownProperty(PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
         if (contents != null) {
-            model.setKnownProperty(PartModel.PROP_CONTENTS, new Value(contents));
+            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS, new Value(contents));
         }
     }
 

@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class AskCmd extends Command {
 
-    public final Expression question;
-    public final Expression suggestion;
+    private final Expression question;
+    private final Expression suggestion;
     
     public AskCmd(ParserRuleContext context, Expression question, Expression suggestion) {
         super(context, "ask");
@@ -33,14 +33,14 @@ public class AskCmd extends Command {
         this.suggestion = new LiteralExp(context, "");
     }
     
-    public void onExecute () throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         if (suggestion != null)
-            ask(question.evaluate(), suggestion.evaluate());
+            ask(context, question.evaluate(context), suggestion.evaluate(context));
         else
-            ask(question.evaluate());
+            ask(context, question.evaluate(context));
     }
     
-    private void ask (Value question, Value suggestion) {
+    private void ask(ExecutionContext context, Value question, Value suggestion) {
 
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<String> result = new AtomicReference<>();
@@ -69,10 +69,10 @@ public class AskCmd extends Command {
             Thread.currentThread().interrupt();
         }
 
-        ExecutionContext.getContext().setIt(new Value(result.get()));
+        context.setIt(new Value(result.get()));
     }
     
-    private void ask (Value question) {
-        ask(question, new Value());
+    private void ask(ExecutionContext context, Value question) {
+        ask(context, question, new Value());
     }
 }

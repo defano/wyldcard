@@ -1,5 +1,6 @@
 package com.defano.wyldcard.menu.script;
 
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.window.forms.ScriptEditor;
@@ -12,12 +13,14 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().undoLastAction())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
                 .withShiftShortcut('Z')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().redoLastAction())
                 .build(this);
 
@@ -26,23 +29,27 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Cut")
                 .withShortcut('X')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().cut())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy")
                 .withShortcut('C')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().copy())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste")
                 .withShortcut('V')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().paste())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().replaceSelection(""))
                 .build(this);
 
@@ -51,6 +58,7 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Select All")
                 .withShortcut('A')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.getEditor().getScriptField().selectAll())
                 .build(this);
     }

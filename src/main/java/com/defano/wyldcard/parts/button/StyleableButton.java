@@ -8,6 +8,7 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.styles.*;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.hypertalk.ast.model.Value;
@@ -54,12 +55,12 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
     @Override
     @RunOnDispatch
-    public void setSelectedForEditing(boolean beingEdited) {
+    public void setSelectedForEditing(ExecutionContext context, boolean beingEdited) {
         isBeingEdited = beingEdited;
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle()));
+            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }
@@ -69,10 +70,10 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
     @Override
     @RunOnDispatch
-    public void setStyle(ButtonStyle style) {
+    public void setStyle(ExecutionContext context, ButtonStyle style) {
         Component oldComponent = getButtonComponent();
         buttonComponent = getComponentForStyle(style);
-        replaceViewComponent(oldComponent, (JComponent) buttonComponent);
+        replaceViewComponent(context, oldComponent, (JComponent) buttonComponent);
 
         getPartModel().addPropertyChangedObserver(buttonComponent);
     }
@@ -124,7 +125,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilight)) {
-                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
+                getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
             }
         }
     }
@@ -140,7 +141,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (isAutoHilited() && isFocused) {
             if (!(buttonComponent instanceof SharedHilight)) {
-                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(true));
+                getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(true));
             }
         }
     }
@@ -152,7 +153,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilight)) {
-                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
+                getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(false));
             }
         }
     }
@@ -165,23 +166,23 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (!isSelectedForEditing() && isAutoHilited()) {
             if (!(buttonComponent instanceof SharedHilight)) {
-                getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
+                getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_HILITE, new Value(false));
             }
         }
     }
 
     @Override
     @RunOnDispatch
-    public void partOpened() {
+    public void partOpened(ExecutionContext context) {
         getPartModel().addPropertyChangedObserver(buttonComponent);
-        getPartModel().notifyPropertyChangedObserver(buttonComponent);
+        getPartModel().notifyPropertyChangedObserver(context, buttonComponent);
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
         KeyboardManager.getInstance().addGlobalKeyListener(this);
     }
 
     @Override
     @RunOnDispatch
-    public void partClosed() {
+    public void partClosed(ExecutionContext context) {
         getPartModel().removePropertyChangedObserver(buttonComponent);
         KeyboardManager.getInstance().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
@@ -193,13 +194,13 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     private boolean isAutoHilited() {
-        return getPartModel().getKnownProperty(ButtonModel.PROP_AUTOHILIGHT).booleanValue();
+        return getPartModel().getKnownProperty(new ExecutionContext(), ButtonModel.PROP_AUTOHILIGHT).booleanValue();
     }
 
     private class ToolModeObserver implements Consumer<ToolMode> {
         @Override
         public void accept(ToolMode toolMode) {
-            onToolModeChanged();
+            onToolModeChanged(new ExecutionContext());
         }
     }
 }

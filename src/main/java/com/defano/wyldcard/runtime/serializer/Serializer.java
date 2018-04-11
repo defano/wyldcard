@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
- * A utility for serializing/de-serializing HyperTalk Java objects.
+ * A utility for serializing/de-serializing WyldCard objects.
  */
 public class Serializer {
 

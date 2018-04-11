@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PutCmd extends Command {
@@ -22,8 +23,8 @@ public class PutCmd extends Command {
         container = d;
     }
     
-    public void onExecute () throws HtException {
-        ContainerExp factor = container.factor(ContainerExp.class, new HtSemanticException("Can't put things into that."));
-        factor.putValue(expression.evaluate(), preposition);
+    public void onExecute(ExecutionContext context) throws HtException {
+        ContainerExp factor = container.factor(context, ContainerExp.class, new HtSemanticException("Can't put things into that."));
+        factor.putValue(context, expression.evaluate(context), preposition);
     }
 }

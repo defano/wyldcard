@@ -1,6 +1,7 @@
 package com.defano.wyldcard.menu;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
@@ -52,7 +53,7 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
+            WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });

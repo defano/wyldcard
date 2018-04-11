@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
@@ -39,10 +40,10 @@ public class ButtonModel extends CardLayerPartModel {
         initialize();
     }
 
-    public static ButtonModel newButtonModel(Integer id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
+    public static ButtonModel newButtonModel(ExecutionContext context, Integer id, Rectangle geometry, Owner owner, PartModel parentPartModel) {
         ButtonModel partModel = new ButtonModel(owner, parentPartModel);
 
-        partModel.setCurrentCardId(parentPartModel.getId());
+        partModel.setCurrentCardId(parentPartModel.getId(context));
 
         partModel.defineProperty(PROP_SCRIPT, new Value(), false);
         partModel.defineProperty(PROP_ID, new Value(id), true);
@@ -69,10 +70,10 @@ public class ButtonModel extends CardLayerPartModel {
     public void initialize() {
         super.initialize();
 
-        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (model, propertyName) -> new Value(getSelectedLineExpression()));
-        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (model, propertyName) -> {
-            List<Value> lines = getKnownProperty(PROP_CONTENTS).getLines();
-            int selectedLineIdx = getKnownProperty(PROP_SELECTEDITEM).integerValue() - 1;
+        defineComputedReadOnlyProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> new Value(getSelectedLineExpression(context)));
+        defineComputedReadOnlyProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
+            List<Value> lines = getKnownProperty(context, PROP_CONTENTS).getLines(context);
+            int selectedLineIdx = getKnownProperty(context, PROP_SELECTEDITEM).integerValue() - 1;
 
             // Invalid state... shouldn't be possible
             if (selectedLineIdx < 0 || selectedLineIdx >= lines.size()) {
@@ -91,16 +92,16 @@ public class ButtonModel extends CardLayerPartModel {
         setParentPartModel(parentPartModel);
     }
 
-    public long getButtonNumber() {
-        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(this, PartType.BUTTON);
+    public long getButtonNumber(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartNumber(context, this, PartType.BUTTON);
     }
 
-    public long getButtonCount() {
-        return ((LayeredPartFinder) getParentPartModel()).getPartCount(PartType.BUTTON, getOwner());
+    public long getButtonCount(ExecutionContext context) {
+        return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, PartType.BUTTON, getOwner());
     }
 
-    private String getSelectedLineExpression() {
-        Value selectedItem = getKnownProperty(PROP_SELECTEDITEM);
+    private String getSelectedLineExpression(ExecutionContext context) {
+        Value selectedItem = getKnownProperty(context, PROP_SELECTEDITEM);
         if (selectedItem.isEmpty()) {
             return "";
         } else {
@@ -109,7 +110,7 @@ public class ButtonModel extends CardLayerPartModel {
                     " of " +
                     getOwner().hyperTalkName.toLowerCase() +
                     " button id " +
-                    getId();
+                    getId(context);
         }
     }
 

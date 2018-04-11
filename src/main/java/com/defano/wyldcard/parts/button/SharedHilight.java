@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts.button;
 
 import com.defano.wyldcard.parts.button.styles.RadioButton;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * A mixin providing reusable functionality for enabling shared highlight features (i.e., selecting radio buttons by
@@ -9,35 +10,35 @@ import com.defano.hypertalk.ast.model.Value;
  */
 public interface SharedHilight {
 
-    default void setSharedHilite(ButtonPart button, boolean hilite) {
+    default void setSharedHilite(ExecutionContext context, ButtonPart button, boolean hilite) {
 
         // Cannot unselect a radio button by pressing it; can only be unselected by family
         if (button.getComponent() instanceof RadioButton) {
             hilite = true;
         }
 
-        button.getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(hilite));
+        button.getPartModel().setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(hilite));
 
-        if (isSharingHilite(button)) {
+        if (isSharingHilite(context, button)) {
 
             for (ButtonPart thisButton : button.getCard().getButtons()) {
 
-                if (thisButton.getId() == button.getId()) {
+                if (thisButton.getId(context) == button.getId(context)) {
                     continue;
                 }
 
-                if (isSharingHilite(thisButton) && sharedHiliteFamily(thisButton) == sharedHiliteFamily(button)) {
-                    thisButton.getPartModel().setKnownProperty(ButtonModel.PROP_HILITE, new Value(false));
+                if (isSharingHilite(context, thisButton) && sharedHiliteFamily(context, thisButton) == sharedHiliteFamily(context, button)) {
+                    thisButton.getPartModel().setKnownProperty(context, ButtonModel.PROP_HILITE, new Value(false));
                 }
             }
         }
     }
 
-    default boolean isSharingHilite(ButtonPart buttonPart) {
-        return buttonPart.getPartModel().getKnownProperty(ButtonModel.PROP_FAMILY).isInteger();
+    default boolean isSharingHilite(ExecutionContext context, ButtonPart buttonPart) {
+        return buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).isInteger();
     }
 
-    default int sharedHiliteFamily(ButtonPart buttonPart) {
-        return buttonPart.getPartModel().getKnownProperty(ButtonModel.PROP_FAMILY).integerValue();
+    default int sharedHiliteFamily(ExecutionContext context, ButtonPart buttonPart) {
+        return buttonPart.getPartModel().getKnownProperty(context, ButtonModel.PROP_FAMILY).integerValue();
     }
 }

@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.statements;
 
-import com.defano.hypertalk.ast.breakpoints.TerminateIterationBreakpoint;
+import com.defano.hypertalk.ast.preemptions.TerminateIterationPreemption;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class NextRepeatStatement extends Statement {
@@ -11,7 +12,7 @@ public class NextRepeatStatement extends Statement {
     }
 
     @Override
-    public void onExecute() throws HtException, TerminateIterationBreakpoint {
-        throw new TerminateIterationBreakpoint();
+    public void onExecute(ExecutionContext context) throws HtException, TerminateIterationPreemption {
+        throw new TerminateIterationPreemption();
     }
 }

@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * Specifies a button, field, card or background by name. For example, 'card "Nifty Card"' or 'card button 'Press me!"'
@@ -36,7 +37,7 @@ public class PartNameSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String getHyperTalkIdentifier() {
+    public String getHyperTalkIdentifier(ExecutionContext context) {
         StringBuilder builder = new StringBuilder();
         if (getOwner() != null) {
             builder.append(getOwner().name().toLowerCase());

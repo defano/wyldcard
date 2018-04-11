@@ -24,7 +24,7 @@ public abstract class ASTNode {
      *
      * @return The beginning token of this node, or null if it cannot be determined.
      */
-    protected Token getToken() {
+    public Token getToken() {
         return context == null ? null : context.getStart();
     }
 
@@ -34,7 +34,7 @@ public abstract class ASTNode {
      *
      * @return The ParserRuleContext associated with this node.
      */
-    protected ParserRuleContext getContext() {
+    protected ParserRuleContext getParserContext() {
         return context;
     }
 
@@ -50,9 +50,9 @@ public abstract class ASTNode {
      * @param e The exception to contextualize and re-throw.
      * @throws HtException The contextualized exception
      */
-    protected void rethrowContextualizedException(HtException e) throws HtException {
+    protected void rethrowContextualizedException(ExecutionContext context, HtException e) throws HtException {
         if (e.getBreadcrumb() == null) {
-            e.setBreadcrumb(new Breadcrumb(getToken(), ExecutionContext.getContext().getMe()));
+            e.setBreadcrumb(new Breadcrumb(getToken(), context.getStackFrame().getMe()));
         }
 
         throw e;

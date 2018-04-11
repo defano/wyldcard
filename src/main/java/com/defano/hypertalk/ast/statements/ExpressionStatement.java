@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements;
 
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.containers.VariableExp;
@@ -19,15 +19,15 @@ public class ExpressionStatement extends Statement {
         this.expression = expression;
     }
     
-    public void onExecute() throws HtException, Breakpoint {
+    public void onExecute(ExecutionContext context) throws HtException, Preemption {
 
         // Special case: A variable name used as a statement should be interpreted as a message command
         if (expression instanceof VariableExp) {
-            MessageCmd messageCmd = new MessageCmd(super.getContext(), expression.evaluate().stringValue(), new ListExp(null));
-            messageCmd.execute();
+            MessageCmd messageCmd = new MessageCmd(super.getParserContext(), expression.evaluate(context).stringValue(), new ListExp(null));
+            messageCmd.execute(context);
         }
 
-        Value v = expression.evaluate();
-        ExecutionContext.getContext().setIt(v);
+        Value v = expression.evaluate(context);
+        context.setIt(v);
     }
 }

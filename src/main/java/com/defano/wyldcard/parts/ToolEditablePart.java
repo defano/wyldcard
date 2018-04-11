@@ -14,6 +14,7 @@ import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 
@@ -32,9 +33,10 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * Indicates whether or not the part is currently selected for being edited (i.e., user clicked the part and
      * should be highlighted with marching ants).
      *
+     * @param context The execution context.
      * @param beingEdited True if selected; false otherwise.
      */
-    void setSelectedForEditing(boolean beingEdited);
+    void setSelectedForEditing(ExecutionContext context, boolean beingEdited);
 
     /**
      * Determines if the part is currently selected for editing.
@@ -91,29 +93,32 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     /**
      * Invoke to indicate that the selected tool has been changed by the user.
+     * @param context The execution context.
      */
-    default void onToolModeChanged() {
+    default void onToolModeChanged(ExecutionContext context) {
         SwingUtilities.invokeLater(() -> {
-            setVisibleWhenBrowsing(!isHidden());
-            setEnabledOnCard(isEnabled());
+            setVisibleWhenBrowsing(context, !isHidden(context));
+            setEnabledOnCard(context, isEnabled(context));
         });
     }
 
     /**
      * Determines if this part is presently visible on the card (as determined by its "visible" property).
      * @return True if visible; false otherwise.
+     * @param context The execution context.
      */
-    default boolean isHidden() {
-        return !getPartModel().getKnownProperty(PartModel.PROP_VISIBLE).booleanValue();
+    default boolean isHidden(ExecutionContext context) {
+        return !getPartModel().getKnownProperty(context, PartModel.PROP_VISIBLE).booleanValue();
     }
 
     /**
      * Determines if this part is presently enabled on the card (as determined by its "enabled" property) and
      * not currently disabled as a result of the part's edit tool being active.
      * @return True if enabled; false if disabled.
+     * @param context The execution context.
      */
-    default boolean isEnabled() {
-        return getPartModel().getKnownProperty(CardLayerPartModel.PROP_ENABLED).booleanValue();
+    default boolean isEnabled(ExecutionContext context) {
+        return getPartModel().getKnownProperty(context, CardLayerPartModel.PROP_ENABLED).booleanValue();
     }
 
     /**
@@ -122,11 +127,12 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * hidden parts will be visible when the part tool is active; foreground parts visible when browsing may be hidden
      * when editing the background).
      *
+     * @param context The execution context.
      * @param visibleOnCard True to make it visible; false otherwise
      */
     @RunOnDispatch
-    default void setVisibleWhenBrowsing(boolean visibleOnCard) {
-        getPartModel().setKnownProperty(PartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
+    default void setVisibleWhenBrowsing(ExecutionContext context, boolean visibleOnCard) {
+        getPartModel().setKnownProperty(context, PartModel.PROP_VISIBLE, new Value(visibleOnCard), true);
 
         // Force hide when part is in foreground and foreground is hidden
         boolean forceHidden = getCardLayer() == CardLayer.CARD_PARTS && getCard().isForegroundHidden();
@@ -142,11 +148,12 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
      * enable of this Swing component may be overridden by tool context (i.e., all parts will be disabled while they
      * are being edited by the part tool).
      *
+     * @param context The execution context.
      * @param enabledOnCard True to make the part enabled; false to disable.
      */
     @RunOnDispatch
-    default void setEnabledOnCard(boolean enabledOnCard) {
-        getPartModel().setKnownProperty(CardLayerPartModel.PROP_ENABLED, new Value(enabledOnCard), true);
+    default void setEnabledOnCard(ExecutionContext context, boolean enabledOnCard) {
+        getPartModel().setKnownProperty(context, CardLayerPartModel.PROP_ENABLED, new Value(enabledOnCard), true);
 
         // Force disabled when part tool is active
         boolean forceDisabled = isPartToolActive();
@@ -155,26 +162,29 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
     /**
      * Adjust the z-order of this part, moving it one part closer to the front of the part stack.
+     * @param context The execution context.
      */
     @RunOnDispatch
-    default void bringCloser() {
-        getPart().setDisplayOrder(getZOrder() + 1);
+    default void bringCloser(ExecutionContext context) {
+        getPart().setDisplayOrder(context, getZOrder(context) + 1);
     }
 
     /**
      * Adjust the z-order of this part, moving it one part further from the front of the part stack.
+     * @param context The execution context.
      */
     @RunOnDispatch
-    default void sendFurther() {
-        getPart().setDisplayOrder(getZOrder() - 1);
+    default void sendFurther(ExecutionContext context) {
+        getPart().setDisplayOrder(context, getZOrder(context) - 1);
     }
 
     /**
      * Determines the z-order of this part.
      * @return The relative front-to-back position of this part to others drawn on the card.
+     * @param context The execution context.
      */
-    default int getZOrder() {
-        return getPartModel().getKnownProperty(CardLayerPartModel.PROP_ZORDER).integerValue();
+    default int getZOrder(ExecutionContext context) {
+        return getPartModel().getKnownProperty(context, CardLayerPartModel.PROP_ZORDER).integerValue();
     }
 
     @Override
@@ -194,12 +204,12 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
 
         // Command-option click to edit script
         if (KeyboardManager.getInstance().isCommandOptionDown()) {
-            getPartModel().editScript();
+            getPartModel().editScript(new ExecutionContext());
         }
 
         // Double-click to edit properties
         else if (wasDoubleClicked) {
-            getPartModel().editProperties();
+            getPartModel().editProperties(new ExecutionContext());
         }
 
         // Single click to select part
@@ -214,8 +224,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     @RunOnDispatch
     default void keyPressed(KeyEvent e) {
         if (isSelectedForEditing()) {
-            int top = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(1).integerValue();
-            int left = getPartModel().getKnownProperty(PartModel.PROP_TOPLEFT).getItems().get(0).integerValue();
+            int top = getPartModel().getKnownProperty(new ExecutionContext(), PartModel.PROP_TOPLEFT).getItems(new ExecutionContext()).get(1).integerValue();
+            int left = getPartModel().getKnownProperty(new ExecutionContext(), PartModel.PROP_TOPLEFT).getItems(new ExecutionContext()).get(0).integerValue();
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
@@ -224,19 +234,19 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
                     break;
 
                 case KeyEvent.VK_LEFT:
-                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
+                    getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_TOPLEFT, new Value(new Point(--left, top)));
                     break;
 
                 case KeyEvent.VK_RIGHT:
-                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(++left, top)));
+                    getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_TOPLEFT, new Value(new Point(++left, top)));
                     break;
 
                 case KeyEvent.VK_UP:
-                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(left, --top)));
+                    getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_TOPLEFT, new Value(new Point(left, --top)));
                     break;
 
                 case KeyEvent.VK_DOWN:
-                    getPartModel().setKnownProperty(PartModel.PROP_TOPLEFT, new Value(new Point(left, ++top)));
+                    getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_TOPLEFT, new Value(new Point(left, ++top)));
                     break;
             }
         }

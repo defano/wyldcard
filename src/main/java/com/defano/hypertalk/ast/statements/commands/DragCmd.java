@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
@@ -33,34 +34,34 @@ public class DragCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         boolean withShift = false;
         boolean withOption = false;
         boolean withCommand = false;
 
         if (modifierKeys != null) {
-            for (Value thisModifier : modifierKeys.evaluate().getItems()) {
+            for (Value thisModifier : modifierKeys.evaluate(context).getItems(context)) {
                 withShift = thisModifier.equals(new Value("shiftKey")) || withShift;
                 withOption = thisModifier.equals(new Value("optionKey")) || withOption;
                 withCommand = (thisModifier.equals(new Value("commandKey")) || thisModifier.contains(new Value("cmdKey"))) || withCommand;
             }
         }
 
-        Value from = this.from.evaluate();
-        Value to = this.to.evaluate();
+        Value from = this.from.evaluate(context);
+        Value to = this.to.evaluate(context);
 
-        if (!from.isPoint()) {
+        if (!from.isPoint(context)) {
             throw new HtSemanticException(from.stringValue() + " is not a valid location.");
         }
 
-        if (!to.isPoint()) {
+        if (!to.isPoint(context)) {
             throw new HtSemanticException(to.stringValue() + " is not a valid location.");
         }
 
-        int x1 = from.getItems().get(0).integerValue();
-        int y1 = from.getItems().get(1).integerValue();
-        int x2 = to.getItems().get(0).integerValue();
-        int y2 = to.getItems().get(1).integerValue();
+        int x1 = from.getItems(context).get(0).integerValue();
+        int y1 = from.getItems(context).get(1).integerValue();
+        int x2 = to.getItems(context).get(0).integerValue();
+        int y2 = to.getItems(context).get(1).integerValue();
 
         MouseManager.getInstance().dragFrom(new Point(x1, y1), new Point(x2, y2), withShift, withOption, withCommand);
     }

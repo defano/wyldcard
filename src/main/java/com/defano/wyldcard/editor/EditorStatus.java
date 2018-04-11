@@ -1,5 +1,7 @@
 package com.defano.wyldcard.editor;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
+
 import javax.swing.*;
 
 public class EditorStatus extends JLabel {
@@ -18,24 +20,28 @@ public class EditorStatus extends JLabel {
         });
     }
 
+    @RunOnDispatch
     public void setStatusPending() {
         spinnerTimer.restart();
         setText("");
         setIcon(null);
     }
 
+    @RunOnDispatch
     public void setStatusOkay() {
         spinnerTimer.stop();
         setText("");
         setIcon(null);
     }
 
+    @RunOnDispatch
     public void setStatusError(String errorMessage) {
         spinnerTimer.stop();
         setText(errorMessage);
         setIcon(null);
     }
 
+    @RunOnDispatch
     public boolean isShowingError() {
         return !getText().isEmpty();
     }

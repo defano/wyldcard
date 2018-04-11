@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.search.SearchContext;
 import com.defano.wyldcard.search.SearchQuery;
 import com.defano.hypertalk.ast.model.SearchType;
@@ -32,19 +33,19 @@ public class FindCmd extends Command {
     }
 
     @Override
-    protected void onExecute() throws HtException {
+    protected void onExecute(ExecutionContext context) throws HtException {
         PartSpecifier fieldSpecifier = field == null ?
                 null :
-                field.factor(PartExp.class, new HtSemanticException("Can't search that.")).evaluateAsSpecifier();
+                field.factor(context, PartExp.class, new HtSemanticException("Can't search that.")).evaluateAsSpecifier(context);
 
         SearchType searchType = type == null ?
                 SearchType.WHOLE :
-                SearchType.fromHyperTalk(type.evaluate().stringValue());
+                SearchType.fromHyperTalk(type.evaluate(context).stringValue());
 
         SearchQuery query = fieldSpecifier == null ?
-                new SearchQuery(searchType, term.evaluate().stringValue(), onlyMarkedCards) :
-                new SearchQuery(searchType, term.evaluate().stringValue(), fieldSpecifier);
+                new SearchQuery(searchType, term.evaluate(context).stringValue(), onlyMarkedCards) :
+                new SearchQuery(searchType, term.evaluate(context).stringValue(), fieldSpecifier);
 
-        SearchContext.getInstance().find(query);
+        SearchContext.getInstance().find(context, query);
     }
 }

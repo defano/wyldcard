@@ -30,37 +30,37 @@ public class GoCmd extends Command {
         this.visualEffectExp = visualEffectExp;
     }
 
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
 
         VisualEffectSpecifier visualEffect;
 
         if (visualEffectExp == null) {
-            visualEffect = ExecutionContext.getContext().getVisualEffect();
+            visualEffect = context.getStackFrame().getVisualEffect();
         } else {
-            visualEffect = visualEffectExp.factor(VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
+            visualEffect = visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
         }
 
         // Special case: No destination means 'Go back'
         if (destinationExp == null) {
-            WyldCard.getInstance().getActiveStack().popCard(visualEffect);
+            WyldCard.getInstance().getActiveStack().popCard(context, visualEffect);
         }
 
         else {
-            Integer cardIndex = evaluateAsCardIndex(destinationExp.partFactor(CardModel.class));
+            Integer cardIndex = evaluateAsCardIndex(context, destinationExp.partFactor(context, CardModel.class));
             if (cardIndex == null) {
-                cardIndex = evaluateAsCardIndex(destinationExp.partFactor(BackgroundModel.class));
+                cardIndex = evaluateAsCardIndex(context, destinationExp.partFactor(context, BackgroundModel.class));
             }
 
             if (cardIndex == null) {
                 throw new HtSemanticException("No such card.");
             } else {
                 Integer finalCardIndex = cardIndex;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> WyldCard.getInstance().getActiveStack().goCard(finalCardIndex, visualEffect, true));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> WyldCard.getInstance().getActiveStack().goCard(context, finalCardIndex, visualEffect, true));
             }
         }
     }
 
-    private Integer evaluateAsCardIndex(PartModel model) {
+    private Integer evaluateAsCardIndex(ExecutionContext context, PartModel model) {
 
         if (model == null) {
             return null;
@@ -70,7 +70,7 @@ public class GoCmd extends Command {
         if (model instanceof CardModel) {
             destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
         } else if (model instanceof BackgroundModel) {
-            destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId());
+            destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
         } else {
             return null;
         }

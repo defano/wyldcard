@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 public interface PartSpecifier {
 
@@ -56,6 +57,7 @@ public interface PartSpecifier {
     /**
      * Gets a syntactically valid HyperTalk expression that identifies the specified part (i.e., "card field id 13").
      * @return A valid HyperTalk expression referring to the specified part.
+     * @param context The execution context.
      */
-    String getHyperTalkIdentifier();
+    String getHyperTalkIdentifier(ExecutionContext context);
 }

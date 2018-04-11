@@ -1,5 +1,10 @@
 package com.defano.wyldcard.parts.field;
 
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.expressions.LiteralExp;
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.utils.Range;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.paint.ToolMode;
@@ -17,11 +22,6 @@ import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.hypertalk.ast.expressions.LiteralExp;
-import com.defano.hypertalk.ast.model.*;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.utils.Range;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -59,26 +59,30 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
     /**
      * Creates a new field with default attributes on the given card.
+     *
+     * @param context The execution context.
      * @param parent The card in which the field should be generated.
      * @return The newly created FieldPart
      */
-    public static FieldPart newField(CardPart parent, Owner owner) {
-        return newField(parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
+    public static FieldPart newField(ExecutionContext context, CardPart parent, Owner owner) {
+        return newField(context, parent, owner, new Rectangle(parent.getWidth() / 2 - (DEFAULT_WIDTH / 2), parent.getHeight() / 2 - (DEFAULT_HEIGHT / 2), DEFAULT_WIDTH, DEFAULT_HEIGHT));
     }
 
     /**
      * Creates a new field with default attributes on the given card.
+     *
+     * @param context The execution context.
      * @param parent The card in which the field should be generated.
      * @return The newly created FieldPart
      */
-    public static FieldPart newField(CardPart parent, Owner owner, Rectangle rectangle) {
+    public static FieldPart newField(ExecutionContext context, CardPart parent, Owner owner, Rectangle rectangle) {
         FieldPart newField = new FieldPart(FieldStyle.TRANSPARENT, parent, owner);
 
         // Place the field in the center of the card
-        newField.initProperties(rectangle, parent.getPartModel());
-        newField.partModel.setKnownProperty(FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
-        newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
-        newField.partModel.setKnownProperty(FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
+        newField.initProperties(context, rectangle, parent.getPartModel());
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
 
         return newField;
     }
@@ -86,14 +90,16 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     /**
      * Creates a new field from an existing field data model.
      *
+     *
+     * @param context The execution context.
      * @param parent The card in which the field should be created.
      * @param model The data model of the field to be created.
      * @return The newly created field.
      */
-    public static FieldPart fromModel(CardPart parent, FieldModel model) {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(FieldModel.PROP_STYLE).stringValue()), parent, model.getOwner());
+    public static FieldPart fromModel(ExecutionContext context, CardPart parent, FieldModel model) {
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(context, FieldModel.PROP_STYLE).stringValue()), parent, model.getOwner());
 
-        model.setCurrentCardId(parent.getId());
+        model.setCurrentCardId(parent.getId(context));
         field.partModel = model;
 
         return field;
@@ -112,14 +118,15 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     }
 
     @Override
-    public String getText() {
-        return ((FieldModel) getPartModel()).getText();
+    public String getText(ExecutionContext context) {
+        return ((FieldModel) getPartModel()).getText(context);
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param context*/
     @Override
-    public void partClosed() {
-        super.partClosed();
+    public void partClosed(ExecutionContext context) {
+        super.partClosed(context);
 
         partModel.removePropertyChangedObserver(this);
         getHyperCardTextPane().removeFocusListener(this);
@@ -127,10 +134,11 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         PeriodicMessageManager.getInstance().removeWithin(getPartModel());
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param context*/
     @Override
-    public void partOpened() {
-        super.partOpened();
+    public void partOpened(ExecutionContext context) {
+        super.partOpened(context);
         partModel.addPropertyChangedObserver(this);
         getHyperCardTextPane().addFocusListener(this);
     }
@@ -143,10 +151,10 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
     /** {@inheritDoc} */
     @Override
-    public void replaceViewComponent(Component oldComponent, Component newComponent) {
+    public void replaceViewComponent(ExecutionContext context, Component oldComponent, Component newComponent) {
         CardPart part = parent.get();
         if (part != null) {
-            part.replaceViewComponent(this, oldComponent, newComponent);
+            part.replaceViewComponent(context, this, oldComponent, newComponent);
         }
     }
 
@@ -195,8 +203,8 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
             // Update the clickText property
             setClickText(e);
 
-            getPartModel().receiveMessage(SystemMessage.MOUSE_DOWN.messageName);
-            MouseStillDown.then(() -> getPartModel().receiveMessage(SystemMessage.MOUSE_STILL_DOWN.messageName));
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOWN.messageName);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 
@@ -208,7 +216,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         // Do not set mouseUp if cursor is not released while over the part
         if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_UP.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_UP.messageName);
         }
     }
 
@@ -218,7 +226,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         super.mouseEntered(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_ENTER.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_ENTER.messageName);
             PeriodicMessageManager.getInstance().addWithin(getPartModel());
         }
     }
@@ -229,7 +237,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         super.mouseExited(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_LEAVE.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_LEAVE.messageName);
             PeriodicMessageManager.getInstance().removeWithin(getPartModel());
         }
     }
@@ -240,7 +248,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         super.mouseClicked(e);
 
         if (e.getClickCount() == 2 && !isPartToolActive()) {
-            getPartModel().receiveMessage(SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 
@@ -252,7 +260,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         super.keyTyped(e);
 
         if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
-            getPartModel().receiveAndDeferKeyEvent(SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))), e, this);
+            getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(), SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))), e, this);
         }
     }
 
@@ -264,38 +272,31 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         if (getHyperCardTextPane().hasFocus() && !redispatchInProgress.get() && !isPartToolActive()) {
             BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, true);
             if (bsm != null) {
-                getPartModel().receiveAndDeferKeyEvent(bsm.message.messageName, bsm.boundArguments, e, this);
+                getPartModel().receiveAndDeferKeyEvent(new ExecutionContext(), bsm.message.messageName, bsm.boundArguments, e, this);
             }
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
-                setStyle(FieldStyle.fromName(newValue.stringValue()));
-                break;
-            case FieldModel.PROP_SCRIPT:
-                try {
-                    Interpreter.blockingCompileScript(newValue.stringValue());
-                } catch (HtException e) {
-                    WyldCard.getInstance().showErrorDialog(e);
-                }
+                setStyle(context, FieldStyle.fromName(newValue.stringValue()));
                 break;
             case FieldModel.PROP_TOP:
             case FieldModel.PROP_LEFT:
             case FieldModel.PROP_WIDTH:
             case FieldModel.PROP_HEIGHT:
-                getComponent().setBounds(partModel.getRect());
+                getComponent().setBounds(partModel.getRect(context));
                 getComponent().validate();
                 getComponent().repaint();
                 break;
             case FieldModel.PROP_VISIBLE:
-                setVisibleWhenBrowsing(newValue.booleanValue());
+                setVisibleWhenBrowsing(context, newValue.booleanValue());
                 break;
             case CardLayerPartModel.PROP_ZORDER:
-                getCard().onDisplayOrderChanged();
+                getCard().onDisplayOrderChanged(context);
                 break;
         }
     }
@@ -307,19 +308,19 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
             int endWordIndex = Utilities.getWordEnd(getHyperCardTextPane(), clickIndex);
 
             String clickText = getHyperCardTextPane().getStyledDocument().getText(startWordIndex, endWordIndex - startWordIndex);
-            ExecutionContext.getContext().getGlobalProperties().defineProperty(HyperCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
+            HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_CLICKTEXT, new Value(clickText), true);
 
         } catch (BadLocationException e) {
             // Nothing to do
         }
     }
 
-    private void initProperties(Rectangle geometry, PartModel parentPartModel) {
+    private void initProperties(ExecutionContext context, Rectangle geometry, PartModel parentPartModel) {
         CardPart cardPart = parent.get();
 
         if (cardPart != null) {
             int id = cardPart.getCardModel().getStackModel().getNextFieldId();
-            partModel = FieldModel.newFieldModel(id, geometry, owner, parentPartModel);
+            partModel = FieldModel.newFieldModel(context, id, geometry, owner, parentPartModel);
             partModel.addPropertyChangedObserver(this);
         }
     }
@@ -343,14 +344,14 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     @Override
     public void focusGained(FocusEvent e) {
         if (getHyperCardTextPane().isEditable()) {
-            getPartModel().receiveMessage(SystemMessage.OPEN_FIELD.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.OPEN_FIELD.messageName);
         }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
         if (getHyperCardTextPane().isEditable()) {
-            getPartModel().receiveMessage(SystemMessage.EXIT_FIELD.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.EXIT_FIELD.messageName);
         }
     }
 }

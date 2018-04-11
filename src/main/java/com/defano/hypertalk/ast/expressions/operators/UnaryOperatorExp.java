@@ -7,6 +7,7 @@ import com.defano.hypertalk.ast.expressions.operators.unary.ThereIsAOp;
 import com.defano.hypertalk.ast.expressions.operators.unary.ThereIsNoOp;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public abstract class UnaryOperatorExp extends Expression {
@@ -18,8 +19,8 @@ public abstract class UnaryOperatorExp extends Expression {
         this.rhs = rhs;
     }
 
-    public Value rhs() throws HtException {
-        return rhs.evaluate();
+    public Value rhs(ExecutionContext context) throws HtException {
+        return rhs.evaluate(context);
     }
 
     public static UnaryOperatorExp forOperator(ParserRuleContext ctx, UnaryOperator op, Expression rhs) {

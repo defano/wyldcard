@@ -4,14 +4,17 @@ import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.editor.EditorStatus;
 import com.defano.wyldcard.editor.HyperTalkTextEditor;
-import com.defano.wyldcard.editor.SyntaxParserObserver;
+import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.menu.script.ScriptEditorMenuBar;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
+import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -27,11 +30,9 @@ import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
-public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserObserver {
+public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate {
 
     private PartModel model;
     private Script compiledScript;
@@ -59,9 +60,9 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
+                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
                 Font.PLAIN,
-                HyperCardProperties.getInstance().getKnownProperty(HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
+                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
 
         textArea.add(editor);
@@ -71,6 +72,8 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                 editor.showAutoComplete();
             }
         });
+
+        editor.setBreakpointToggleObserver(breakpoints -> model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(breakpoints))));
 
         // Prompt to save when closing window
         getWindow().addWindowListener(new WindowAdapter() {
@@ -91,17 +94,29 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         return menuBar;
     }
 
+    public PartModel getModel() {
+        return model;
+    }
+
     @Override
     @RunOnDispatch
     public void bindModel(Object properties) {
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
-            String script = this.model.getKnownProperty("script").stringValue();
+            String script = this.model.getKnownProperty(new ExecutionContext(), "script").stringValue();
             editor.getScriptField().setText(script);
 
             moveCaretToPosition(model.getScriptEditorCaretPosition());
             editor.getScriptField().addCaretListener(e -> saveCaretPosition());
             editor.getScriptField().forceReparsing(0);
+
+            for (int thisBreakpoint : model.getBreakpoints()) {
+                try {
+                    editor.getGutter().toggleBookmark(thisBreakpoint);
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
 
             SwingUtilities.invokeLater(() -> editor.getScriptField().requestFocus());
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -127,13 +142,18 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
 
         // No syntax error; okay to save
         else {
-            model.setKnownProperty(PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
+            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
+            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
             return true;
         }
     }
 
     @RunOnDispatch
     public void close() {
+
+        if (DebugContext.getInstance().isDebugging(this)) {
+            DebugContext.getInstance().resume();
+        }
 
         // User modified script but syntax error is present
         if (isDirty() && status.isShowingError()) {
@@ -181,7 +201,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
                     JOptionPane.YES_NO_OPTION);
 
             if (dialogResult == JOptionPane.YES_OPTION) {
-                editor.getScriptField().setText(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
             }
         }
     }
@@ -249,6 +269,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         return context;
     }
 
+    @RunOnDispatch
     public void find(String text, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
         RSyntaxTextArea textEditor = editor.getScriptField();
 
@@ -262,6 +283,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     public void replaceAll(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive) {
         provisionSearch(wholeWord, caseSensitive);
         context.setSearchFor(findText);
@@ -270,6 +292,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         SearchEngine.replaceAll(editor.getScriptField(), context);
     }
 
+    @RunOnDispatch
     public void replace(String findText, String replaceText, Boolean wholeWord, Boolean caseSensitive, boolean wrap) {
         provisionSearch(wholeWord, caseSensitive);
         context.setSearchFor(findText);
@@ -279,10 +302,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         find(findText, wholeWord, caseSensitive, wrap);
     }
 
+    @RunOnDispatch
     public void replace() {
         replace(context.getSearchFor(), context.getReplaceWith(), null, null, true);
     }
 
+    @RunOnDispatch
     public void uncomment() {
         RSyntaxTextArea textArea = editor.getScriptField();
 
@@ -302,6 +327,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     public void comment() {
         RSyntaxTextArea textArea = editor.getScriptField();
 
@@ -318,6 +344,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         }
     }
 
+    @RunOnDispatch
     private void provisionSearch(Boolean wholeWord, Boolean caseSensitive) {
         if (wholeWord != null) {
             context.setWholeWord(wholeWord);
@@ -332,26 +359,41 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
         context.setSearchForward(true);
     }
 
+    @RunOnDispatch
+    public void clearBreakpoints() {
+        editor.clearBreakpoints();
+    }
+
+    @RunOnDispatch
+    public void addBreakpoint() {
+        editor.toggleBreakpoint();
+    }
+
+    @RunOnDispatch
     public void makeSelectionFindText() {
         if (editor.getScriptField().getSelectedText().length() > 0) {
             context.setSearchFor(editor.getScriptField().getSelectedText());
         }
     }
 
+    @RunOnDispatch
     public void find() {
         find(context.getSearchFor(), null, null, true);
     }
 
+    @RunOnDispatch
     public void findSelection() {
         find(editor.getScriptField().getSelectedText(), null, null, true);
     }
 
+    @RunOnDispatch
     public void checkSyntax() {
         editor.getScriptField().forceReparsing(editor.getScriptParser());
     }
 
+    @RunOnDispatch
     public boolean isDirty() {
-        return !editor.getScriptField().getText().equals(model.getKnownProperty(PartModel.PROP_SCRIPT).stringValue());
+        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
     }
 
     @RunOnDispatch
@@ -481,10 +523,12 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     public void onCompileCompleted(Script compiledScript, String resultMessage) {
         if (compiledScript != null) {
             this.compiledScript = compiledScript;
-            handlersMenu.invalidateDataset();
-            functionsMenu.invalidateDataset();
 
-            status.setStatusOkay();
+            SwingUtilities.invokeLater(() -> {
+                handlersMenu.invalidateDataset();
+                functionsMenu.invalidateDataset();
+                status.setStatusOkay();
+            });
         } else {
             status.setStatusError(resultMessage);
         }
@@ -511,6 +555,7 @@ public class ScriptEditor extends HyperCardFrame implements HandlerComboBox.Hand
     private void $$$setupUI$$$() {
         scriptEditor = new JPanel();
         scriptEditor.setLayout(new GridLayoutManager(3, 4, new Insets(10, 10, 10, 10), 0, -1));
+        scriptEditor.setMinimumSize(new Dimension(600, 100));
         scriptEditor.setPreferredSize(new Dimension(640, 480));
         functionsMenu = new HandlerComboBox();
         scriptEditor.add(functionsMenu, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));

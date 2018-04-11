@@ -1,9 +1,8 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -15,8 +14,8 @@ public class ParamsFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
-        List<Value> params = ExecutionContext.getContext().getParams();
+    public Value onEvaluate(ExecutionContext context) {
+        List<Value> params = context.getStackFrame().getParams();
         StringBuilder paramList = new StringBuilder();
 
         for (int index = 0; index < params.size(); index++) {

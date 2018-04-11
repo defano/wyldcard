@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * Specifies a button, field, card or background part by cardinal number. For example, 'card 14' or 'button 2'
@@ -34,7 +35,7 @@ public class PartNumberSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String getHyperTalkIdentifier() {
+    public String getHyperTalkIdentifier(ExecutionContext context) {
         if (layer == null) {
             return type.toString().toLowerCase() + " " + number;
         } else if (type == null) {

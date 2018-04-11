@@ -41,18 +41,18 @@ public class AnswerCmd extends Command {
         this(context, message, null, null, null);
     }
     
-    public void onExecute () throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         if (ch1 != null && ch2 != null && ch3 != null)
-            answer(message.evaluate(), ch1.evaluate(), ch2.evaluate(), ch3.evaluate());
+            answer(context, message.evaluate(context), ch1.evaluate(context), ch2.evaluate(context), ch3.evaluate(context));
         else if (ch1 != null && ch2 != null)
-            answer(message.evaluate(), ch1.evaluate(), ch2.evaluate());
+            answer(context, message.evaluate(context), ch1.evaluate(context), ch2.evaluate(context));
         else if (ch1 != null)
-            answer(message.evaluate(), ch1.evaluate());
+            answer(context, message.evaluate(context), ch1.evaluate(context));
         else
-            answer(message.evaluate());
+            answer(context, message.evaluate(context));
     }
     
-    private void answer (Value msg, Value choice1, Value choice2, Value choice3) {
+    private void answer(ExecutionContext context, Value msg, Value choice1, Value choice2, Value choice3) {
 
         CountDownLatch latch = new CountDownLatch(1);
         AtomicInteger choice = new AtomicInteger();
@@ -84,22 +84,22 @@ public class AnswerCmd extends Command {
         }
 
         switch (choice.get()) {
-            case 0:     ExecutionContext.getContext().setIt(choice1); break;
-            case 1:     ExecutionContext.getContext().setIt(choice2); break;
-            case 2:     ExecutionContext.getContext().setIt(choice3); break;
-            default:    ExecutionContext.getContext().setIt(new Value()); break;
+            case 0:     context.setIt(choice1); break;
+            case 1:     context.setIt(choice2); break;
+            case 2:     context.setIt(choice3); break;
+            default:    context.setIt(new Value()); break;
         }
     }
 
-    private void answer (Value msg, Value choice1, Value choice2) {
-        answer(msg, choice1, choice2, null);
+    private void answer(ExecutionContext context, Value msg, Value choice1, Value choice2) {
+        answer(context, msg, choice1, choice2, null);
     }
     
-    private void answer (Value msg, Value choice1) {
-        answer(msg, choice1, null, null);
+    private void answer(ExecutionContext context, Value msg, Value choice1) {
+        answer(context, msg, choice1, null, null);
     }
     
-    private void answer (Value msg) {
-        answer(msg, new Value("OK"), null, null);
+    private void answer(ExecutionContext context, Value msg) {
+        answer(context, msg, new Value("OK"), null, null);
     }
 }

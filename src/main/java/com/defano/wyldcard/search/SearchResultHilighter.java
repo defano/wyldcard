@@ -4,36 +4,45 @@ import com.defano.hypertalk.ast.model.Owner;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
+
+import javax.swing.*;
 
 public interface SearchResultHilighter {
 
-    default void clearSearchHighlights() {
-        for (FieldPart parts : ExecutionContext.getContext().getCurrentCard().getFields()) {
-            parts.getHyperCardTextPane().clearSearchHilights();
-        }
+    default void clearSearchHighlights(ExecutionContext context) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            for (FieldPart parts : context.getCurrentCard().getFields()) {
+                parts.getHyperCardTextPane().clearSearchHilights();
+            }
+        });
     }
 
-    default void highlightSearchResult(SearchResult result) {
+    default void highlightSearchResult(ExecutionContext context, SearchResult result) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            // Clear existing highlights
+            clearSearchHighlights(context);
 
-        clearSearchHighlights();
+            // Search result is on a different card; go there
+            if (result.getCardIndex() != context.getCurrentCard().getCardModel().getCardIndexInStack()) {
+                context.getCurrentStack().goCard(context, result.getCardIndex(), null, false);
+            }
 
-        // Search result is on a different card; go there
-        if (result.getCardIndex() != ExecutionContext.getContext().getCurrentCard().getCardModel().getCardIndexInStack()) {
-            ExecutionContext.getContext().getCurrentStack().goCard(result.getCardIndex(), null, true);
-        }
+            // Box the found text
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    FieldModel foundFieldModel = result.getLocalPartSpecifier().getOwner() == Owner.CARD ?
+                            (FieldModel) context.getCurrentCard().getCardModel().findPart(context, result.getLocalPartSpecifier()) :
+                            (FieldModel) context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, result.getLocalPartSpecifier());
 
-        // Box the found text
-        try {
-            FieldModel foundFieldModel = result.getLocalPartSpecifier().getOwner() == Owner.CARD ?
-                (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(result.getLocalPartSpecifier()) :
-                (FieldModel) ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel().findPart(result.getLocalPartSpecifier());
+                    FieldPart foundField = (FieldPart) context.getCurrentCard().getPart(context, foundFieldModel);
 
-            FieldPart foundField = (FieldPart) ExecutionContext.getContext().getCurrentCard().getPart(foundFieldModel);
-
-            foundField.applySearchHilight(result.getRange());
-            foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
-        } catch (Exception e) {
-            throw new IllegalStateException("Bug! Search result refers to a bogus part.", e);
-        }
+                    foundField.applySearchHilight(result.getRange());
+                    foundField.getHyperCardTextPane().setCaretPosition(result.getRange().start);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Bug! Search result refers to a bogus part.", e);
+                }
+            });
+        });
     }
 }

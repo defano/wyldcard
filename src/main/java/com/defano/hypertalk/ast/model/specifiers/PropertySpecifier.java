@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 public class PropertySpecifier {
 
@@ -29,16 +30,16 @@ public class PropertySpecifier {
         this.adjective = adjective;
     }
 
-    public boolean isGlobalPropertySpecifier() {
-        return partExp == null && getMenuItem() == null;
+    public boolean isGlobalPropertySpecifier(ExecutionContext context) {
+        return partExp == null && getMenuItem(context) == null;
     }
 
-    public boolean isMenuItemPropertySpecifier() {
-        return getMenuItem() != null;
+    public boolean isMenuItemPropertySpecifier(ExecutionContext context) {
+        return getMenuItem(context) != null;
     }
 
-    public boolean isChunkPropertySpecifier() {
-        return getChunk() != null;
+    public boolean isChunkPropertySpecifier(ExecutionContext context) {
+        return getChunk(context) != null;
     }
 
     public Adjective getAdjective() {
@@ -61,9 +62,10 @@ public class PropertySpecifier {
      * or field, 'the abbrev name' is actually returned.
      *
      * @return The adjective-applied name of the specified property.
+     * @param context The execution context.
      */
-    public String getAdjectiveAppliedPropertyName() {
-        PartModel model = getPartModel();
+    public String getAdjectiveAppliedPropertyName(ExecutionContext context) {
+        PartModel model = getPartModel(context);
 
         // Apply adjective only to properties that support it
         if (model != null && model.isAdjectiveSupportedProperty(property)) {
@@ -80,11 +82,11 @@ public class PropertySpecifier {
         }
     }
 
-    public Chunk getChunk() {
+    public Chunk getChunk(ExecutionContext context) {
         if (partExp == null) {
             return null;
         } else {
-            PartExp factor = partExp.factor(PartExp.class);
+            PartExp factor = partExp.factor(context, PartExp.class);
             return factor == null ? null : factor.getChunk();
         }
     }
@@ -94,28 +96,29 @@ public class PropertySpecifier {
      * doesn't specify a part type at all.
      *
      * @return The model of the part specified by this object, or null
+     * @param context The execution context.
      */
-    public PartModel getPartModel() {
+    public PartModel getPartModel(ExecutionContext context) {
         if (partExp == null) {
             return null;
         } else {
-            return partExp.partFactor(PartModel.class);
+            return partExp.partFactor(context, PartModel.class);
         }
     }
 
-    public PartExp getPartExp() throws HtException {
+    public PartExp getPartExp(ExecutionContext context) throws HtException {
         if (partExp == null) {
             return null;
         } else {
-            return partExp.factor(PartExp.class, new HtSemanticException("Expected a part here."));
+            return partExp.factor(context, PartExp.class, new HtSemanticException("Expected a part here."));
         }
     }
 
-    public MenuItemSpecifier getMenuItem() {
+    public MenuItemSpecifier getMenuItem(ExecutionContext context) {
         if (partExp == null) {
             return null;
         } else {
-            MenuItemExp factor = partExp.factor(MenuItemExp.class);
+            MenuItemExp factor = partExp.factor(context, MenuItemExp.class);
             return factor == null ? null : factor.item;
         }
     }

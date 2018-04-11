@@ -2,6 +2,7 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,6 +52,12 @@ public class WindowBuilder<T extends HyperCardWindow> {
     @RunOnDispatch
     public WindowBuilder quitOnClose() {
         this.quitOnClose = true;
+        return this;
+    }
+
+    @RunOnDispatch
+    public WindowBuilder setDefaultCloseOperation(int operation) {
+        window.setDefaultCloseOperation(operation);
         return this;
     }
 
@@ -159,8 +166,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }
 
-        this.window.applyMenuBar();
-
         if (window instanceof HyperCardDialog) {
             this.window.setAllowResizing(resizable);
         }
@@ -185,6 +190,17 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.setAllowResizing(resizable);
         this.window.getWindow().setFocusableWindowState(isFocusable);
         this.window.getWindow().setAlwaysOnTop(isPalette);
+        this.window.applyMenuBar();
+
+        // Calculate and set minimum allowable frame size
+        int minWidth = window.getWindowPanel().getMinimumSize().width;
+        int minHeight = window.getWindowPanel().getMinimumSize().height;
+        if (window.getWindowPanel().getLayout() instanceof GridLayoutManager) {
+            GridLayoutManager glm = (GridLayoutManager) window.getWindowPanel().getLayout();
+            minWidth += glm.getMargin().left + glm.getMargin().right;
+            minHeight += glm.getMargin().top + glm.getMargin().bottom;
+        }
+        this.window.getWindow().setMinimumSize(new Dimension(minWidth, minHeight));
 
         if (dock != null) {
 

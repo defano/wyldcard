@@ -40,7 +40,7 @@ public class SelectionContext {
     }
 
     /**
-     * Gets the range of characters (in {@link #getSelectedPart()} that is currently selected.
+     * Gets the range of characters (in {@link #getSelectedPart(ExecutionContext)} that is currently selected.
      * @return The range of selected characters.
      */
     public Range getSelectionRange() {
@@ -51,8 +51,9 @@ public class SelectionContext {
      * Gets the part currently holding the active selection.
      * @return The model associated with the part holding the active selection.
      * @throws HtSemanticException Thrown if there is no selection.
+     * @param context The execution context.
      */
-    public PartModel getSelectedPart() throws HtSemanticException {
+    public PartModel getSelectedPart(ExecutionContext context) throws HtSemanticException {
 
         // No selection exists
         if (theSelectionPart == null || getSelectionRange() == null || getSelectionRange().length() == 0) {
@@ -60,16 +61,17 @@ public class SelectionContext {
         }
 
         // Find the part holding the selection
-        return ExecutionContext.getContext().getPart(theSelectionPart);
+        return context.getPart(theSelectionPart);
     }
 
     /**
      * Gets the AddressableSelection object associated with the active selection.
      * @return The AddressableSelection
      * @throws HtSemanticException Thrown if there is no selection.
+     * @param context The execution context.
      */
-    public AddressableSelection getManagedSelection() throws HtSemanticException {
-        PartModel partModel = getSelectedPart();
+    public AddressableSelection getManagedSelection(ExecutionContext context) throws HtSemanticException {
+        PartModel partModel = getSelectedPart(context);
 
         if (partModel instanceof AddressableSelection) {
             return (AddressableSelection) partModel;
@@ -82,9 +84,10 @@ public class SelectionContext {
      * Gets the currently selected text.
      * @return The current selection.
      * @throws HtSemanticException Thrown if there is no selection.
+     * @param context The execution context.
      */
-    public Value getSelection() throws HtSemanticException {
-        return getManagedSelection().getSelectedText();
+    public Value getSelection(ExecutionContext context) throws HtSemanticException {
+        return getManagedSelection(context).getSelectedText(context);
     }
 
     private boolean hasFieldSelection() {

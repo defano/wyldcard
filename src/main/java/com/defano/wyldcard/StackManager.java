@@ -35,7 +35,7 @@ public class StackManager implements StackNavigationObserver {
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
 
     public StackManager() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> StackManager.this.activeStack = StackPart.newStack());
+        ThreadUtils.invokeAndWaitAsNeeded(() -> StackManager.this.activeStack = StackPart.newStack(new ExecutionContext()));
     }
 
     /**
@@ -48,53 +48,56 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Creates and activates a new, empty stack with default dimensions.
+     * @param context The execution context.
      */
-    public void newStack() {
-        activateStack(StackPart.newStack());
+    public void newStack(ExecutionContext context) {
+        activateStack(context, StackPart.newStack(context));
     }
 
     /**
      * Prompts the user to choose a stack file to open. If a valid stack file is chosen, the stack is opened and made
      * the active stack.
+     * @param context The execution context.
      */
-    public void open() {
+    public void open(ExecutionContext context) {
         FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
             StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
-            model.setSavedStackFile(fd.getFiles()[0]);
-            activateStack(StackPart.fromStackModel(model));
+            model.setSavedStackFile(context, fd.getFiles()[0]);
+            activateStack(context, StackPart.fromStackModel(context, model));
         }
     }
 
     /**
      * Makes the given stack the "active" stack--that is, the stack in focus which the menu bar and message box are
      * associated with. The active stack represents the stack with application focus.
+     * @param context The execution context.
      * @param stackPart The stack to activate
      */
-    private void activateStack(StackPart stackPart) {
+    private void activateStack(ExecutionContext context, StackPart stackPart) {
         activeStack = stackPart;
 
         cardCount.setSource(activeStack.getCardCountProvider());
         cardClipboard.setSource(activeStack.getCardClipboardProvider());
         savedStackFile.setSource(activeStack.getStackModel().getSavedStackFileProvider());
         activeStack.addNavigationObserver(this);
-        activeStack.bindToWindow(WindowManager.getInstance().getStackWindow());
+        activeStack.bindToWindow(context, WindowManager.getInstance().getStackWindow());
     }
 
     /**
      * Prompts the user to choose a file in which to save the current stack; provided user chooses a file (doesn't
      * cancel), the stack is saved to this file.
      */
-    private void saveAs(StackModel stackModel) {
+    private void saveAs(ExecutionContext context, StackModel stackModel) {
         String defaultName = "Untitled";
 
         if (WyldCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
             defaultName = WyldCard.getInstance().getSavedStackFileProvider().blockingFirst().get().getName();
-        } else if (stackModel.getStackName() != null && !stackModel.getStackName().isEmpty()) {
-            defaultName = stackModel.getStackName();
+        } else if (stackModel.getStackName(context) != null && !stackModel.getStackName(context).isEmpty()) {
+            defaultName = stackModel.getStackName(context);
         }
 
         FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
@@ -106,47 +109,51 @@ public class StackManager implements StackNavigationObserver {
                     f.getAbsolutePath() :
                     f.getAbsolutePath() + StackModel.FILE_EXTENSION;
 
-            save(stackModel, new File(path));
+            save(context, stackModel, new File(path));
         }
     }
 
     /**
      * Saves the active stack to its associated file (acts like "Save as" if no file is associated).
+     * @param context The execution context.
      */
-    public void saveActiveStack() {
-        save(activeStack.getStackModel());
+    public void saveActiveStack(ExecutionContext context) {
+        save(context, activeStack.getStackModel());
     }
 
     /**
      * Prompts the user to select a file, then saves the active stack to this file.
+     * @param context The execution context.
      */
-    public void saveActiveStackAs() {
-        save(activeStack.getStackModel(), null);
+    public void saveActiveStackAs(ExecutionContext context) {
+        save(context, activeStack.getStackModel(), null);
     }
 
     /**
      * Saves the given stack model to its associated file (acts like "Save as" if no file is associated).
+     * @param context The execution context.
      * @param stackModel The StackModel to save.
      */
-    private void save(StackModel stackModel) {
+    private void save(ExecutionContext context, StackModel stackModel) {
         Optional<File> saveFile = savedStackFile.getObservable().blockingFirst();
-        save(stackModel, saveFile.orElse(null));
+        save(context, stackModel, saveFile.orElse(null));
     }
 
     /**
      * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
+     * @param context The execution context.
      * @param file The file where the stack should be saved
      */
-    private void save(StackModel stackModel, File file) {
+    private void save(ExecutionContext context, StackModel stackModel, File file) {
         if (file != null) {
             try {
                 Serializer.serialize(file, stackModel);
-                stackModel.setSavedStackFile(file);
+                stackModel.setSavedStackFile(context, file);
             } catch (IOException e) {
                 WyldCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
             }
         } else {
-            saveAs(stackModel);
+            saveAs(context, stackModel);
         }
     }
 

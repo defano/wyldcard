@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowManager;
@@ -64,7 +65,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
 
     private void doNewField() {
         CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
-        FieldPart theField = theCard.newField(new Rectangle(clickLoc, NEW_PART_DIM));
+        FieldPart theField = theCard.newField(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
         PartToolContext.getInstance().setSelectedPart(theField);
 
         new PartResizer(theField, theCard);
@@ -72,7 +73,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
 
     private void doNewButton() {
         CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
-        ButtonPart theButton = theCard.newButton(new Rectangle(clickLoc, NEW_PART_DIM));
+        ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
         PartToolContext.getInstance().setSelectedPart(theButton);
 
         new PartResizer(theButton, theCard);

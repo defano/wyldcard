@@ -1,5 +1,6 @@
 package com.defano.wyldcard.menu.script;
 
+import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -15,6 +16,7 @@ public class ScriptMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Find...")
                 .withShortcut('F')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> WindowBuilder.make(new FindDialog())
                         .withTitle("Find")
                         .withModel(editor)
@@ -26,18 +28,21 @@ public class ScriptMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Find Again")
                 .withShortcut('G')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.find())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Enter 'Find' String")
                 .withShortcut('E')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.makeSelectionFindText())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Find Selection")
                 .withShortcut('H')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.findSelection())
                 .build(this);
 
@@ -50,7 +55,7 @@ public class ScriptMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Replace...")
-                .withShortcut('R')
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> WindowBuilder.make(new ReplaceDialog())
                         .withTitle("Replace")
                         .withModel(editor)
@@ -61,6 +66,7 @@ public class ScriptMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Replace Again")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withAction(e -> editor.replace())
                 .withShortcut('T')
                 .build(this);
@@ -69,12 +75,14 @@ public class ScriptMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Comment")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withShortcut('-')
                 .withAction(e -> editor.comment())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Uncomment")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withShortcut('=')
                 .withAction(e -> editor.uncomment())
                 .build(this);
@@ -83,14 +91,9 @@ public class ScriptMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Check Syntax")
+                .withDisabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
                 .withShortcut('K')
                 .withAction(e -> editor.checkSyntax())
-                .build(this);
-
-        MenuItemBuilder.ofDefaultType()
-                .named("Set Checkpoint")
-                .withShortcut('D')
-                .disabled()
                 .build(this);
     }
 

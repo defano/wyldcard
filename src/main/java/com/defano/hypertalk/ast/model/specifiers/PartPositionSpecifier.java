@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Position;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
  * Specifies a card or background in positional relationship to the current card (next, previous or this). For example,
@@ -40,7 +41,7 @@ public class PartPositionSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String getHyperTalkIdentifier() {
+    public String getHyperTalkIdentifier(ExecutionContext context) {
         if (layer == null) {
             return position.name().toLowerCase() + " " + type.toString().toLowerCase();
         } else if (type == null) {

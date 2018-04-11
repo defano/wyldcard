@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.print;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -12,7 +13,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     public void onPrintRequested() {
-        this.jobName = "Stack " + WyldCard.getInstance().getActiveStack().getStackModel().getStackName();
+        this.jobName = "Stack " + WyldCard.getInstance().getActiveStack().getStackModel().getStackName(new ExecutionContext());
     }
 
     @Override
@@ -22,7 +23,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     protected void onPrintCompleted(boolean successfully) {
-        WyldCard.getInstance().getActiveStack().goCard(currentCard, null, false);
+        WyldCard.getInstance().getActiveStack().goCard(new ExecutionContext(), currentCard, null, false);
     }
 
     @Override
@@ -34,7 +35,7 @@ public class PrintStackAction extends PrintActionDelegate {
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
             // Need to transition to card in order to print it
-            WyldCard.getInstance().getActiveStack().goCard(pageIndex, null, false).printAll(g);
+            WyldCard.getInstance().getActiveStack().goCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
 
             return PAGE_EXISTS;
         } else {

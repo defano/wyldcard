@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.expressions.functions;
 import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -15,7 +16,7 @@ public class MenusFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() {
+    public Value onEvaluate(ExecutionContext context) {
         StringBuilder builder = new StringBuilder();
         for (int menuIndex = 0; menuIndex < HyperCardMenuBar.getInstance().getMenuCount(); menuIndex++) {
             builder.append(HyperCardMenuBar.getInstance().getMenu(menuIndex).getText());

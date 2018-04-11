@@ -7,6 +7,7 @@ import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
 import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
@@ -65,27 +66,27 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         super.initialize();
 
         // When no name of card is provided, returns 'background id xxx'
-        defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
+        defineComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
             Value raw = model.getRawProperty(propertyName);
             if (raw == null || raw.isEmpty()) {
-                return new Value("bkgnd id " + model.getKnownProperty(PROP_ID));
+                return new Value("bkgnd id " + model.getKnownProperty(context, PROP_ID));
             } else {
                 return raw;
             }
         });
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (model, propertyName) -> new Value(getLongName()));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (model, propertyName) -> new Value(getAbbrevName()));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (model, propertyName) -> new Value(getShortName()));
+        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
     }
 
     @Override
-    public Collection<PartModel> getPartModels() {
+    public Collection<PartModel> getPartModels(ExecutionContext context) {
         Collection<PartModel> models = new ArrayList<>();
 
         models.addAll(buttonModels);
         models.addAll(fieldModels);
-        models.addAll(getCardModels());
+        models.addAll(getCardModels(context));
 
         return models;
     }
@@ -113,8 +114,8 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         return fieldModels;
     }
 
-    public List<CardModel> getCardModels() {
-        return ((StackModel) getParentPartModel()).getCardsInBackground(getId());
+    public List<CardModel> getCardModels(ExecutionContext context) {
+        return ((StackModel) getParentPartModel()).getCardsInBackground(getId(context));
     }
 
     public void addFieldModel(FieldModel model) {
@@ -158,21 +159,21 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         return raw != null && !raw.isEmpty();
     }
 
-    public String getShortName() {
-        return getKnownProperty(PROP_NAME).stringValue();
+    public String getShortName(ExecutionContext context) {
+        return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public String getAbbrevName() {
+    public String getAbbrevName(ExecutionContext context) {
         if (hasName()) {
-            return "bkgnd \"" + getShortName() + "\"";
+            return "bkgnd \"" + getShortName(context) + "\"";
         } else {
-            return getShortName();
+            return getShortName(context);
         }
     }
 
-    public String getLongName() {
+    public String getLongName(ExecutionContext context) {
         // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbrevName();
+        return getAbbrevName(context);
     }
 
     @Override

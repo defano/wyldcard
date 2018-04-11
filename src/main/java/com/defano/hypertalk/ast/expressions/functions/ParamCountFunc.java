@@ -1,9 +1,8 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ParamCountFunc extends Expression {
@@ -13,9 +12,9 @@ public class ParamCountFunc extends Expression {
     }
 
     @Override
-    public Value onEvaluate() throws HtSemanticException {
+    public Value onEvaluate(ExecutionContext context) {
         try {
-            return new Value(ExecutionContext.getContext().getParams().size());
+            return new Value(context.getStackFrame().getParams().size());
 
         } catch (Throwable t) {
             t.printStackTrace();

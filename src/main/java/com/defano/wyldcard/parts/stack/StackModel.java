@@ -6,6 +6,7 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
@@ -72,14 +73,14 @@ public class StackModel extends PartModel implements StackPartFinder {
 
         this.savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow().getWindow().getY()));
-        defineComputedGetterProperty(PartModel.PROP_TOP, (model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(WindowManager.getInstance().getStackWindow().getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow().getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(WindowManager.getInstance().getStackWindow().getWindow().getX(), value.integerValue()));
     }
 
     @Override
-    public Value getValue() {
+    public Value getValue(ExecutionContext context) {
         return new Value();
     }
 
@@ -101,7 +102,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         return savedStackFileProvider;
     }
 
-    public void setSavedStackFile(File file) {
+    public void setSavedStackFile(ExecutionContext context, File file) {
         this.savedStackFileProvider.onNext(Optional.of(file));
 
         String filename = file.getName();
@@ -109,7 +110,7 @@ public class StackModel extends PartModel implements StackPartFinder {
             filename = filename.substring(0, filename.length() - FILE_EXTENSION.length());
         }
 
-        setKnownProperty(PROP_NAME, new Value(filename));
+        setKnownProperty(context, PROP_NAME, new Value(filename));
     }
 
     public static StackModel newStackModel(String stackName) {
@@ -120,7 +121,7 @@ public class StackModel extends PartModel implements StackPartFinder {
 
     public int insertCard(CardModel cardModel) {
         cardModels.add(currentCardIndex + 1, cardModel);
-        receiveMessage(SystemMessage.NEW_CARD.messageName);
+        receiveMessage(new ExecutionContext(), SystemMessage.NEW_CARD.messageName);
         return currentCardIndex + 1;
     }
 
@@ -140,15 +141,15 @@ public class StackModel extends PartModel implements StackPartFinder {
 
     public void deleteCardModel() {
         cardModels.remove(currentCardIndex);
-        receiveMessage(SystemMessage.DELETE_CARD.messageName);
+        receiveMessage(new ExecutionContext(), SystemMessage.DELETE_CARD.messageName);
     }
 
-    public String getStackName() {
-        return getKnownProperty(PROP_NAME).stringValue();
+    public String getStackName(ExecutionContext context) {
+        return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public void setStackName(String name) {
-        setKnownProperty(PROP_NAME, new Value(name));
+    public void setStackName(ExecutionContext context, String name) {
+        setKnownProperty(context, PROP_NAME, new Value(name));
     }
 
     public List<CardModel> getCardModels() {
@@ -195,33 +196,33 @@ public class StackModel extends PartModel implements StackPartFinder {
         }
     }
 
-    public boolean isResizable() {
-        return getKnownProperty(PROP_RESIZABLE).booleanValue();
+    public boolean isResizable(ExecutionContext context) {
+        return getKnownProperty(context, PROP_RESIZABLE).booleanValue();
     }
 
-    public void setResizable(boolean resizable) {
-        setKnownProperty(PROP_RESIZABLE, new Value(resizable));
+    public void setResizable(ExecutionContext context, boolean resizable) {
+        setKnownProperty(context, PROP_RESIZABLE, new Value(resizable));
     }
 
-    public Dimension getSize() {
-        return new Dimension(getWidth(), getHeight());
+    public Dimension getSize(ExecutionContext context) {
+        return new Dimension(getWidth(context), getHeight(context));
     }
 
-    public int getWidth() {
-        return getKnownProperty(PROP_WIDTH).integerValue();
+    public int getWidth(ExecutionContext context) {
+        return getKnownProperty(context, PROP_WIDTH).integerValue();
     }
 
-    public int getHeight() {
-        return getKnownProperty(PROP_HEIGHT).integerValue();
+    public int getHeight(ExecutionContext context) {
+        return getKnownProperty(context, PROP_HEIGHT).integerValue();
     }
 
-    public Dimension getDimension() {
-        return new Dimension(getWidth(), getHeight());
+    public Dimension getDimension(ExecutionContext context) {
+        return new Dimension(getWidth(context), getHeight(context));
     }
 
-    public void setDimension(Dimension dimension) {
-        setKnownProperty(PROP_WIDTH, new Value(dimension.width));
-        setKnownProperty(PROP_HEIGHT, new Value(dimension.height));
+    public void setDimension(ExecutionContext context, Dimension dimension) {
+        setKnownProperty(context, PROP_WIDTH, new Value(dimension.width));
+        setKnownProperty(context, PROP_HEIGHT, new Value(dimension.height));
     }
 
     public BackgroundModel getBackground(int backgroundId) {
@@ -252,9 +253,9 @@ public class StackModel extends PartModel implements StackPartFinder {
         return backgroundModels.size();
     }
 
-    public List<CardModel> getMarkedCards() {
+    public List<CardModel> getMarkedCards(ExecutionContext context) {
         return getCardModels().stream()
-                .filter(c -> c.getKnownProperty(CardModel.PROP_MARKED).booleanValue())
+                .filter(c -> c.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue())
                 .collect(Collectors.toList());
     }
 
@@ -282,9 +283,10 @@ public class StackModel extends PartModel implements StackPartFinder {
         return icons;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param context*/
     @Override
-    public List<PartModel> getPartsInDisplayOrder() {
+    public List<PartModel> getPartsInDisplayOrder(ExecutionContext context) {
         ArrayList<PartModel> parts = new ArrayList<>();
 
         for (CardModel thisCard : getCardModels()) {

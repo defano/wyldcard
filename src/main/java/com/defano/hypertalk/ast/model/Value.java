@@ -5,6 +5,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.ChunkUtils;
 import com.defano.hypertalk.utils.DateUtils;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -164,16 +165,16 @@ public class Value implements StyledComparable<Value> {
         return booleanValue;
     }
 
-    public boolean isPoint () {
-        List<Value> listValue = getItems();
+    public boolean isPoint(ExecutionContext context) {
+        List<Value> listValue = getItems(context);
 
         return listValue.size() == 2 &&
                 new Value(listValue.get(0)).isInteger() &&
                 new Value(listValue.get(1)).isInteger();
     }
 
-    public boolean isRect () {
-        List<Value> listValue = getItems();
+    public boolean isRectE(ExecutionContext context) {
+        List<Value> listValue = getItems(context);
 
         return listValue.size() == 4 &&
                 new Value(listValue.get(0)).isInteger() &&
@@ -223,12 +224,12 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    public Rectangle rectangleValue() {
-        if (isRect()) {
-            int left = getItemAt(0).integerValue();
-            int top = getItemAt(1).integerValue();
-            int height = getItemAt(3).integerValue() - getItemAt(1).integerValue();
-            int width = getItemAt(2).integerValue() - getItemAt(0).integerValue();
+    public Rectangle rectangleValue(ExecutionContext context) {
+        if (isRectE(context)) {
+            int left = getItemAt(context, 0).integerValue();
+            int top = getItemAt(context, 1).integerValue();
+            int height = getItemAt(context, 3).integerValue() - getItemAt(context, 1).integerValue();
+            int width = getItemAt(context, 2).integerValue() - getItemAt(context, 0).integerValue();
 
             return new Rectangle(left, top, width, height);
         }
@@ -236,10 +237,10 @@ public class Value implements StyledComparable<Value> {
         return new Rectangle();
     }
 
-    public Point pointValue() {
-        if (isPoint()) {
-            int left = getItemAt(0).integerValue();
-            int top = getItemAt(1).integerValue();
+    public Point pointValue(ExecutionContext context) {
+        if (isPoint(context)) {
+            int left = getItemAt(context, 0).integerValue();
+            int top = getItemAt(context, 1).integerValue();
 
             return new Point(left, top);
         }
@@ -249,7 +250,7 @@ public class Value implements StyledComparable<Value> {
 
     /**
      * Gets a list of comma-separated items contained in this value. This function ignores the itemDelimiter HyperCard
-     * property when splitting the value into items. Useful for parsing argument lists. See {@link #getItems()} for a
+     * property when splitting the value into items. Useful for parsing argument lists. See {@link #getItems(ExecutionContext)} for a
      * method whose behavior respects the itemDelimiter.
      *
      * @return A list of zero or
@@ -262,12 +263,12 @@ public class Value implements StyledComparable<Value> {
         return items;
     }
 
-    public List<Value> getItems() {
-        return getChunks(ChunkType.ITEM);
+    public List<Value> getItems(ExecutionContext context) {
+        return getChunks(context, ChunkType.ITEM);
     }
 
-    public Value getItemAt(int index) {
-        List<Value> items = getItems();
+    public Value getItemAt(ExecutionContext context, int index) {
+        List<Value> items = getItems(context);
         if (items.size() > index) {
             return new Value(items.get(index));
         } else {
@@ -275,20 +276,20 @@ public class Value implements StyledComparable<Value> {
         }
     }
 
-    public List<Value> getLines() {
-        return getChunks(ChunkType.LINE);
+    public List<Value> getLines(ExecutionContext context) {
+        return getChunks(context, ChunkType.LINE);
     }
 
-    public List<Value> getWords() {
-        return getChunks(ChunkType.WORD);
+    public List<Value> getWords(ExecutionContext context) {
+        return getChunks(context, ChunkType.WORD);
     }
     
-    public List<Value> getChars() {
-        return getChunks(ChunkType.CHAR);
+    public List<Value> getChars(ExecutionContext context) {
+        return getChunks(context, ChunkType.CHAR);
     }
 
-    public List<Value> getChunks(ChunkType type) {
-        Matcher matcher = ChunkUtils.getRegexForChunkType(type).matcher(value);
+    public List<Value> getChunks(ExecutionContext context, ChunkType type) {
+        Matcher matcher = ChunkUtils.getRegexForChunkType(context, type).matcher(value);
         ArrayList<Value> chunks = new ArrayList<>();
 
         while (matcher.find()) {
@@ -298,23 +299,23 @@ public class Value implements StyledComparable<Value> {
         return chunks;
     }
 
-    public int itemCount () {
-        return ChunkUtils.getCount(ChunkType.ITEM, value);
+    public int itemCount(ExecutionContext context) {
+        return ChunkUtils.getCount(context, ChunkType.ITEM, value);
     }
     
-    public int wordCount () {
-        return ChunkUtils.getCount(ChunkType.WORD, value);
+    public int wordCount(ExecutionContext context) {
+        return ChunkUtils.getCount(context, ChunkType.WORD, value);
     }
     
-    public int charCount () {
-        return ChunkUtils.getCount(ChunkType.CHAR, value);
+    public int charCount(ExecutionContext context) {
+        return ChunkUtils.getCount(context, ChunkType.CHAR, value);
     }
     
-    public int lineCount () {
-        return ChunkUtils.getCount(ChunkType.LINE, value);
+    public int lineCount(ExecutionContext context) {
+        return ChunkUtils.getCount(context, ChunkType.LINE, value);
     }
     
-    public Value getChunk (Chunk c) throws HtException {
+    public Value getChunk(ExecutionContext context, Chunk c) throws HtException {
 
         Value startVal = null;
         Value endVal = null;
@@ -323,9 +324,9 @@ public class Value implements StyledComparable<Value> {
         int endIdx = 0;
         
         if (c.start != null)
-            startVal = c.start.evaluate();
+            startVal = c.start.evaluate(context);
         if (c.end != null)
-            endVal = c.end.evaluate();
+            endVal = c.end.evaluate(context);
 
         if (startVal == null || !startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
@@ -336,20 +337,20 @@ public class Value implements StyledComparable<Value> {
         if (endVal != null)
             endIdx = endVal.integerValue();
 
-        Value chunkValue = new Value(ChunkUtils.getChunk(c.type, value, startIdx, endIdx));
+        Value chunkValue = new Value(ChunkUtils.getChunk(context, c.type, value, startIdx, endIdx));
 
         // If a composite chunk; evaluate right hand of the expression first
         if (c instanceof CompositeChunk) {
-            return chunkValue.getChunk(((CompositeChunk) c).chunkOf);
+            return chunkValue.getChunk(context, ((CompositeChunk) c).chunkOf);
         } else {
             return chunkValue;
         }
     }
 
-    public static Value setChunk (Value mutable, Preposition p, Chunk c, Object mutator) throws HtException {
+    public static Value setChunk(ExecutionContext context, Value mutable, Preposition p, Chunk c, Object mutator) throws HtException {
 
         if (c instanceof CompositeChunk) {
-            return new Value(ChunkUtils.putCompositeChunk((CompositeChunk) c, p, mutable.stringValue(), String.valueOf(mutator)));
+            return new Value(ChunkUtils.putCompositeChunk(context, (CompositeChunk) c, p, mutable.stringValue(), String.valueOf(mutator)));
         }
 
         String mutatorString = mutator.toString();
@@ -362,9 +363,9 @@ public class Value implements StyledComparable<Value> {
         int endIdx = 0;
         
         if (c.start != null)
-            startVal = c.start.evaluate();
+            startVal = c.start.evaluate(context);
         if (c.end != null)
-            endVal = c.end.evaluate();
+            endVal = c.end.evaluate(context);
 
         if (startVal == null || !startVal.isNatural() && !Ordinal.reservedValue(startVal.integerValue()))
             throw new HtSemanticException("Chunk specifier requires natural integer value, but got '" + startVal + "' instead.");
@@ -375,7 +376,7 @@ public class Value implements StyledComparable<Value> {
         if (endVal != null)
             endIdx = endVal.integerValue();
 
-        return new Value(ChunkUtils.putChunk(c.type, p, mutableString, startIdx, endIdx, mutatorString));
+        return new Value(ChunkUtils.putChunk(context, c.type, p, mutableString, startIdx, endIdx, mutatorString));
     }
     
     public static Value setValue (Value mutable, Preposition p, Value mutator) {
@@ -552,12 +553,12 @@ public class Value implements StyledComparable<Value> {
         return new Value(value + v.toString());
     }
 
-    public Value within(Value v) throws HtSemanticException {
-        if (!isPoint() || !v.isRect()) {
+    public Value within(ExecutionContext context, Value v) throws HtSemanticException {
+        if (!isPoint(context) || !v.isRectE(context)) {
             throw new HtSemanticException("Cannot determine if '" + value + "' is within the bounds of '" + v.stringValue() + "'.");
         }
 
-        return new Value(v.rectangleValue().contains(pointValue()));
+        return new Value(v.rectangleValue(context).contains(pointValue(context)));
     }
 
     public Value trunc() throws HtSemanticException {
@@ -570,13 +571,13 @@ public class Value implements StyledComparable<Value> {
         throw new HtSemanticException("Cannot trunc the value '" + stringValue() + "' because it is not a number.");
     }
 
-    public Value isA(Value val) throws HtSemanticException {
+    public Value isA(ExecutionContext context, Value val) throws HtSemanticException {
         KnownType type = KnownType.getTypeByName(val.toString());
         switch (type) {
             case NUMBER: return new Value(this.isNumber());
             case INTEGER: return new Value(this.isInteger());
-            case POINT: return new Value(this.isPoint());
-            case RECT: return new Value(this.isRect());
+            case POINT: return new Value(this.isPoint(context));
+            case RECT: return new Value(this.isRectE(context));
             case DATE: return new Value(DateUtils.dateOf(this) != null);
             case LOGICAL: return new Value(this.isBoolean());
 

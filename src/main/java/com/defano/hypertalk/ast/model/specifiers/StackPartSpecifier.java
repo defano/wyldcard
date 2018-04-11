@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 public class StackPartSpecifier implements PartSpecifier {
 
@@ -35,7 +36,7 @@ public class StackPartSpecifier implements PartSpecifier {
     }
 
     @Override
-    public String getHyperTalkIdentifier() {
+    public String getHyperTalkIdentifier(ExecutionContext context) {
         if (stackName == null) {
             return "this stack";
         } else {

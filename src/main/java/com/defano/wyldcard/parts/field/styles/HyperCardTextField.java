@@ -13,6 +13,7 @@ import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -86,7 +87,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void insertUpdate(DocumentEvent e) {
-        syncModelToView();
+        syncModelToView(new ExecutionContext());
         textPane.invalidateViewport(getViewport());
     }
 
@@ -96,7 +97,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void removeUpdate(DocumentEvent e) {
-        syncModelToView();
+        syncModelToView(new ExecutionContext());
         textPane.invalidateViewport(getViewport());
     }
 
@@ -106,7 +107,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     @Override
     @RunOnDispatch
     public void changedUpdate(DocumentEvent e) {
-        syncModelToView();
+        syncModelToView(new ExecutionContext());
         textPane.invalidateViewport(getViewport());
     }
 
@@ -132,7 +133,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
      */
     @Override
     @RunOnDispatch
-    public void onPropertyChanged(PropertiesModel model, String property, Value oldValue, Value newValue) {
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_DONTWRAP:
                 textPane.setWrapText(!newValue.booleanValue());
@@ -147,11 +148,11 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
                 break;
 
             case FieldModel.PROP_TEXTALIGN:
-                setActiveTextAlign(newValue);
+                setActiveTextAlign(context, newValue);
                 break;
 
             case FieldModel.PROP_ENABLED:
-                toolEditablePart.setEnabledOnCard(newValue.booleanValue());
+                toolEditablePart.setEnabledOnCard(context, newValue.booleanValue());
                 break;
 
             case FieldModel.PROP_WIDEMARGINS:
@@ -180,7 +181,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     }
 
     @RunOnDispatch
-    public void partOpened() {
+    public void partOpened(ExecutionContext context) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
 
         // Get notified when field tool is selected
@@ -204,8 +205,8 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         getVerticalScrollBar().addAdjustmentListener(scrollObserver);
 
         // Update view with model data
-        displayStyledDocument(model.getStyledDocument());
-        toolEditablePart.getPartModel().notifyPropertyChangedObserver(this);
+        displayStyledDocument(model.getStyledDocument(context));
+        toolEditablePart.getPartModel().notifyPropertyChangedObserver(context, this);
 
         // Initialize font to system font selection if document is empty
         if (textPane.getText().length() == 0) {
@@ -213,12 +214,12 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         }
 
         // And auto-select any
-        SwingUtilities.invokeLater(() -> textPane.autoSelectLines(model.getAutoSelectedLines()));
+        SwingUtilities.invokeLater(() -> textPane.autoSelectLines(model.getAutoSelectedLines(context)));
     }
 
     @RunOnDispatch
-    public void partClosed() {
-        syncModelToView();
+    public void partClosedE(ExecutionContext context) {
+        syncModelToView(context);
         textPane.getStyledDocument().removeDocumentListener(this);
 
         textPane.removeMouseListener(toolEditablePart);
@@ -246,10 +247,10 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     public void caretUpdate(CaretEvent e) {
         // Update selectedText
         FieldModel fieldModel = (FieldModel) toolEditablePart.getPartModel();
-        if (fieldModel.isAutoSelection()) {
-            fieldModel.updateSelectionContext(getSelectedTextRange(), fieldModel, false);
+        if (fieldModel.isAutoSelection(new ExecutionContext())) {
+            fieldModel.updateSelectionContext(new ExecutionContext(), getSelectedTextRange(), fieldModel, false);
         } else {
-            fieldModel.updateSelectionContext(Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel, true);
+            fieldModel.updateSelectionContext(new ExecutionContext(), Range.ofMarkAndDot(e.getDot(), e.getMark()), fieldModel, true);
         }
 
         // Update font style selection in menus
@@ -332,16 +333,16 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     }
 
     @RunOnDispatch
-    private void setActiveTextAlign(Value v) {
+    private void setActiveTextAlign(ExecutionContext context, Value v) {
         SimpleAttributeSet alignment = new SimpleAttributeSet();
         StyleConstants.setAlignment(alignment, FontUtils.getAlignmentStyleForValue(v));
         textPane.getStyledDocument().setParagraphAttributes(0, textPane.getStyledDocument().getLength(), alignment, false);
 
-        syncModelToView();
+        syncModelToView(context);
     }
 
     @RunOnDispatch
-    private void setTextFontFamily(Value fontFamily) {
+    private void setTextFontFamily(ExecutionContext context, Value fontFamily) {
         Range selection = getSelectedTextRange();
         StyledDocument doc = textPane.getStyledDocument();
 
@@ -361,12 +362,12 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             }
         }
 
-        syncModelToView();
+        syncModelToView(context);
         updateFocusedFontSelection();
     }
 
     @RunOnDispatch
-    private void setTextFontSize(Value fontSize) {
+    private void setTextFontSize(ExecutionContext context, Value fontSize) {
         Range selection = getSelectedTextRange();
         StyledDocument doc = textPane.getStyledDocument();
 
@@ -386,12 +387,12 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             }
         }
 
-        syncModelToView();
+        syncModelToView(context);
         updateFocusedFontSelection();
     }
 
     @RunOnDispatch
-    private void setTextFontStyle(Value fontStyle) {
+    private void setTextFontStyle(ExecutionContext context, Value fontStyle) {
         Range selection = getSelectedTextRange();
         StyledDocument doc = textPane.getStyledDocument();
 
@@ -411,7 +412,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             }
         }
 
-        syncModelToView();
+        syncModelToView(context);
         updateFocusedFontSelection();
     }
 
@@ -428,9 +429,9 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     }
 
     @RunOnDispatch
-    private void syncModelToView() {
+    private void syncModelToView(ExecutionContext context) {
         FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-        model.setStyledDocument(textPane.getStyledDocument());
+        model.setStyledDocument(context, textPane.getStyledDocument());
     }
 
     /**
@@ -478,7 +479,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value style) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle(style));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle(new ExecutionContext(), style));
             }
         }
     }
@@ -487,7 +488,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value size) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize(size));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontSize(new ExecutionContext(), size));
             }
         }
     }
@@ -496,7 +497,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void accept(Value family) {
             if (hasFocus()) {
-                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily(family));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontFamily(new ExecutionContext(), family));
             }
         }
     }
@@ -509,7 +510,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
                 setHorizontalScrollBarPolicy(ToolMode.FIELD == toolMode ? ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER : ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 setVerticalScrollBarPolicy(ToolMode.FIELD == toolMode ? ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER : ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-                setEditable(ToolMode.FIELD != toolMode && !toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_LOCKTEXT).booleanValue());
+                setEditable(ToolMode.FIELD != toolMode && !toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), FieldModel.PROP_LOCKTEXT).booleanValue());
             });
         }
     }
@@ -518,7 +519,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_TAB &&
-                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOTAB).booleanValue())
+                    toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), FieldModel.PROP_AUTOTAB).booleanValue())
             {
                 e.consume();
                 KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
@@ -530,20 +531,20 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         @RunOnDispatch
         public void mousePressed(MouseEvent e) {
-            if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue()) {
+            if (toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), FieldModel.PROP_AUTOSELECT).booleanValue()) {
                 FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-                model.autoSelectLine(textPane.getClickedLine(e), false);
+                model.autoSelectLine(new ExecutionContext(), textPane.getClickedLine(e), false);
             }
         }
 
         @Override
         @RunOnDispatch
         public void mouseDragged(MouseEvent e) {
-            if (toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_AUTOSELECT).booleanValue() &&
-                    toolEditablePart.getPartModel().getKnownProperty(FieldModel.PROP_MULTIPLELINES).booleanValue())
+            if (toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), FieldModel.PROP_AUTOSELECT).booleanValue() &&
+                    toolEditablePart.getPartModel().getKnownProperty(new ExecutionContext(), FieldModel.PROP_MULTIPLELINES).booleanValue())
             {
                 FieldModel model = (FieldModel) toolEditablePart.getPartModel();
-                model.autoSelectLine(textPane.getClickedLine(e), true);
+                model.autoSelectLine(new ExecutionContext(), textPane.getClickedLine(e), true);
             }
         }
     }
@@ -552,7 +553,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         @RunOnDispatch
         public void adjustmentValueChanged(AdjustmentEvent e) {
-            toolEditablePart.getPartModel().setKnownProperty(FieldModel.PROP_SCROLL, new Value(e.getValue()), true);
+            toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), FieldModel.PROP_SCROLL, new Value(e.getValue()), true);
         }
     }
 

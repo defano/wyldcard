@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -19,7 +20,7 @@ public abstract class ContainerExp extends Expression {
         super(context);
     }
 
-    public abstract void putValue(Value value, Preposition preposition) throws HtException;
+    public abstract void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException;
 
     public void setChunk(Chunk chunk) {
         this.chunk = chunk;
@@ -29,11 +30,11 @@ public abstract class ContainerExp extends Expression {
         return chunk;
     }
 
-    protected Value chunkOf (Value v, Chunk chunk) throws HtException {
+    protected Value chunkOf(ExecutionContext context, Value v, Chunk chunk) throws HtException {
         if (chunk == null) {
             return v;
         } else {
-            return v.getChunk(chunk);
+            return v.getChunk(context, chunk);
         }
     }
 }

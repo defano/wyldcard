@@ -45,10 +45,10 @@ public class ReadCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         try {
             String contents;
-            String filename = file.evaluate().stringValue();
+            String filename = file.evaluate(context).stringValue();
             FileContext.FileHandle file = FileContext.getInstance().getFileHandle(filename);
 
             if (file == null) {
@@ -57,17 +57,17 @@ public class ReadCmd extends Command {
 
             // 'read file x until y'
             if (until != null) {
-                contents = file.readUntil(until.evaluate().stringValue(), true);
+                contents = file.readUntil(until.evaluate(context).stringValue(), true);
             }
 
             // 'read file x at y for z
             else if (at != null && count != null) {
-                contents = file.readAt(at.evaluate().integerValue(), at.evaluate().integerValue(), true);
+                contents = file.readAt(at.evaluate(context).integerValue(), at.evaluate(context).integerValue(), true);
             }
 
             // 'read file x for y
             else if (count != null) {
-                contents = file.readFor(count.evaluate().integerValue(), true);
+                contents = file.readFor(count.evaluate(context).integerValue(), true);
             }
 
             // 'read file x'
@@ -75,11 +75,11 @@ public class ReadCmd extends Command {
                 contents = file.readAll(true);
             }
 
-            ExecutionContext.getContext().setResult(new Value());
-            ExecutionContext.getContext().setIt(contents);
+            context.setResult(new Value());
+            context.setIt(contents);
 
         } catch (HtSemanticException e) {
-            ExecutionContext.getContext().setResult(new Value(e.getMessage()));
+            context.setResult(new Value(e.getMessage()));
         }
     }
 }

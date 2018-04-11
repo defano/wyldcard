@@ -11,6 +11,7 @@ import com.defano.hypertalk.ast.model.SortStyle;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -40,22 +41,22 @@ public class SortCardsCmd extends Command {
     }
 
     @Override
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
         // Remember which card we're currently viewing
-        int thisCardId = WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getId();
+        int thisCardId = WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getId(context);
 
         // Get a copy of the list of cards in the stack
         List<CardModel> allCards = WyldCard.getInstance().getActiveStack().getStackModel().getCardModels();
 
         // Filter list for cards indicated for sorting (i.e., marked cards; cards of a given background)
-        List<CardModel> sortCards = filterCards(allCards);
+        List<CardModel> sortCards = filterCards(context, allCards);
 
         // Sort the indicated cards
         try {
-            sortCards.sort(new CardExpressionComparator(expression, style, direction));
+            sortCards.sort(new CardExpressionComparator(context, expression, style, direction));
 
             // Insert the sorted cards back into the full stack
-            List<CardModel> orderedCards = mergeCards(allCards, sortCards);
+            List<CardModel> orderedCards = mergeCards(context, allCards, sortCards);
 
             // Update the stack with the modified card order and invalidate the card cache
             WyldCard.getInstance().getActiveStack().getStackModel().setCardModels(orderedCards);
@@ -66,16 +67,16 @@ public class SortCardsCmd extends Command {
             WyldCard.getInstance().showErrorDialog(e.getHtCause());
         } finally {
             // Because card order may have changed, lets navigate back to where we started
-            int thisCardIdx = indexOfCardId(WyldCard.getInstance().getActiveStack().getStackModel().getCardModels(), thisCardId);
-            WyldCard.getInstance().getActiveStack().invalidateCache(thisCardIdx);
+            int thisCardIdx = indexOfCardId(context, WyldCard.getInstance().getActiveStack().getStackModel().getCardModels(), thisCardId);
+            WyldCard.getInstance().getActiveStack().invalidateCache(context, thisCardIdx);
         }
     }
 
-    private List<CardModel> filterCards(List<CardModel> cards) throws HtException {
+    private List<CardModel> filterCards(ExecutionContext context, List<CardModel> cards) throws HtException {
         ArrayList<CardModel> filteredCards = new ArrayList<>();
 
         for (CardModel thisCard : cards) {
-            if (cardMatchesSortCriteria(thisCard)) {
+            if (cardMatchesSortCriteria(context, thisCard)) {
                 filteredCards.add(thisCard);
             }
         }
@@ -83,12 +84,12 @@ public class SortCardsCmd extends Command {
         return filteredCards;
     }
 
-    private List<CardModel> mergeCards(List<CardModel> allCards, List<CardModel> filteredCards) throws HtException {
+    private List<CardModel> mergeCards(ExecutionContext context, List<CardModel> allCards, List<CardModel> filteredCards) throws HtException {
         List<CardModel> merged = new ArrayList<>(allCards);
         int matched = 0;
 
         for (int index = 0; index < allCards.size(); index++) {
-            if (cardMatchesSortCriteria(allCards.get(index))) {
+            if (cardMatchesSortCriteria(context, allCards.get(index))) {
                 merged.set(index, filteredCards.get(matched++));
             }
         }
@@ -100,22 +101,22 @@ public class SortCardsCmd extends Command {
         return merged;
     }
 
-    private boolean cardMatchesSortCriteria(CardModel cardModel) throws HtException {
-        return cardMatchesBackground(cardModel) && cardMatchesMarked(cardModel);
+    private boolean cardMatchesSortCriteria(ExecutionContext context, CardModel cardModel) throws HtException {
+        return cardMatchesBackground(context, cardModel) && cardMatchesMarked(context, cardModel);
     }
 
-    private boolean cardMatchesMarked(CardModel cardModel) {
-        return !markedCards || cardModel.getKnownProperty(CardModel.PROP_MARKED).booleanValue();
+    private boolean cardMatchesMarked(ExecutionContext context, CardModel cardModel) {
+        return !markedCards || cardModel.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue();
     }
 
-    private boolean cardMatchesBackground(CardModel cardModel) throws HtException {
+    private boolean cardMatchesBackground(ExecutionContext context, CardModel cardModel) throws HtException {
         if (background == null) {
             return true;
         }
 
-        BackgroundModel backgroundModel = background.partFactor(BackgroundModel.class, new HtSemanticException("Can't sort that."));
-        for (CardModel thisCard : backgroundModel.getCardModels()) {
-            if (thisCard.getId() == cardModel.getId()) {
+        BackgroundModel backgroundModel = background.partFactor(context, BackgroundModel.class, new HtSemanticException("Can't sort that."));
+        for (CardModel thisCard : backgroundModel.getCardModels(context)) {
+            if (thisCard.getId(context) == cardModel.getId(context)) {
                 return true;
             }
         }
@@ -123,9 +124,9 @@ public class SortCardsCmd extends Command {
         return false;
     }
 
-    private int indexOfCardId(List<CardModel> cardModels, int id) {
+    private int indexOfCardId(ExecutionContext context, List<CardModel> cardModels, int id) {
         for (int index = 0; index < cardModels.size(); index++) {
-            if (cardModels.get(index).getId() == id) {
+            if (cardModels.get(index).getId(context) == id) {
                 return index;
             }
         }

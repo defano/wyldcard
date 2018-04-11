@@ -6,6 +6,7 @@ import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.field.FieldPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowBuilder;
@@ -33,13 +34,13 @@ public class ObjectsMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")
                 .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties())
+                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Field Info...")
                 .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties())
+                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -92,17 +93,17 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Button")
-                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().newButton())
+                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().newButton(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Field")
-                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().newField())
+                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().newField(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Background")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().newBackground())
+                .withAction(e -> WyldCard.getInstance().getActiveStack().newBackground(new ExecutionContext()))
                 .build(this);
     }
 

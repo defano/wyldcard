@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.model.TimeUnit;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class WaitCmd extends Command {
@@ -30,14 +31,14 @@ public class WaitCmd extends Command {
         this.polarity = polarity;
     }
 
-    public void onExecute() throws HtException {
+    public void onExecute(ExecutionContext context) throws HtException {
 
         if (units != null) {
             try {
-                Value count = expression.evaluate();
+                Value count = expression.evaluate(context);
 
                 if (count.isInteger()) {
-                    Thread.sleep(units.toMilliseconds(expression.evaluate().integerValue()));
+                    Thread.sleep(units.toMilliseconds(expression.evaluate(context).integerValue()));
                 } else {
                     throw new HtSemanticException("Expected an integer here.");
                 }
@@ -48,7 +49,7 @@ public class WaitCmd extends Command {
         }
 
         else {
-            while (expression.evaluate().booleanValue() != polarity) {
+            while (expression.evaluate(context).booleanValue() != polarity) {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {

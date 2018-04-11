@@ -32,12 +32,14 @@ public interface StackPartFinder extends PartFinder {
      * Finds any kind of part contained in this stack: Buttons and fields (card or background layer), cards and
      * backgrounds.
      *
+     *
+     * @param context The execution context.
      * @param ps A {@link PartSpecifier} object describing the part to find.
      * @return The model of the requested part.
      * @throws PartException Thrown if the part cannot be located.
      */
     @Override
-    default PartModel findPart(PartSpecifier ps) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
         if (ps == null) {
             throw new PartException("No part specified.");
         }
@@ -47,15 +49,15 @@ public interface StackPartFinder extends PartFinder {
         } else if (ps instanceof StackPartSpecifier) {
             return findStackPart((StackPartSpecifier) ps);
         } else if (ps instanceof CompositePartSpecifier) {
-            return findCompositePart((CompositePartSpecifier) ps);
+            return findCompositePart(context, (CompositePartSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
         } else if (ps.isCardPartSpecifier()) {
-            return ExecutionContext.getContext().getCurrentCard().getCardModel().findPart(ps);
+            return context.getCurrentCard().getCardModel().findPart(context, ps);
         } else if (ps.isBackgroundPartSpecifier()) {
-            return ExecutionContext.getContext().getCurrentCard().getCardModel().getBackgroundModel().findPart(ps);
+            return context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, ps);
         } else {
-            return PartFinder.super.findPart(ps);
+            return PartFinder.super.findPart(context, ps);
         }
     }
 
@@ -63,18 +65,20 @@ public interface StackPartFinder extends PartFinder {
      * Finds any kind of part contained in this stack within a given list of parts. Note that the list of parts is
      * ignored when providing a {@link CompositePartSpecifier} or a {@link PartPositionSpecifier}.
      *
+     *
+     * @param context The execution context.
      * @param ps The part specifier representing the part to fetch
      * @param parts The list of parts to search
      * @return The model of the requested part.
      * @throws PartException Thrown if the part cannot be located.
      */
-    default PartModel findPart(PartSpecifier ps, List<PartModel> parts) throws PartException {
+    default PartModel findPart(ExecutionContext context, PartSpecifier ps, List<PartModel> parts) throws PartException {
         if (ps instanceof CompositePartSpecifier) {
-            return findCompositePart((CompositePartSpecifier) ps);
+            return findCompositePart(context, (CompositePartSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
         } else {
-            return PartFinder.super.findPart(ps, parts);
+            return PartFinder.super.findPart(context, ps, parts);
         }
     }
 
@@ -82,39 +86,41 @@ public interface StackPartFinder extends PartFinder {
      * Finds a part that's part of another part (for example, 'the second card of the first bg', 'card button 3 of card
      * 4 of background 2').
      *
+     *
+     * @param context The execution context.
      * @param ps The composite part specifier.
      * @return The found part.
      * @throws PartException Thrown if the requested part cannot be found.
      */
-    default PartModel findCompositePart(CompositePartSpecifier ps) throws PartException {
+    default PartModel findCompositePart(ExecutionContext context, CompositePartSpecifier ps) throws PartException {
         try {
             PartModel foundPart;
 
             // Recursively find the card or background containing the requested part
-            PartModel owningPart = findPart(ps.getOwningPartExp().evaluateAsSpecifier());
+            PartModel owningPart = findPart(context, ps.getOwningPartExp().evaluateAsSpecifier(context));
 
             // Looking for a background button or field on a remote card or background
             if (ps.isBackgroundPartSpecifier()) {
                 if (owningPart instanceof CardModel) {
-                    foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(ps.getOwner()));
+                    foundPart = findPart(context, ps.getPart(), ((CardModel) owningPart).getBackgroundModel().getPartsInDisplayOrder(context, ps.getOwner()));
                 } else {
-                    foundPart = findPart(ps.getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(ps.getOwner()));
+                    foundPart = findPart(context, ps.getPart(), ((BackgroundModel) owningPart).getPartsInDisplayOrder(context, ps.getOwner()));
                 }
             }
 
             // Looking for button or field on a remote card
             else if (ps.isCardPartSpecifier()) {
-                foundPart = findPart(ps.getPart(), ((CardModel) owningPart).getPartsInDisplayOrder());
+                foundPart = findPart(context, ps.getPart(), ((CardModel) owningPart).getPartsInDisplayOrder(context));
             }
 
             // Looking for a card in a remote background
             else {
-                foundPart = findPart(ps.getPart(), ((LayeredPartFinder) owningPart).getPartsInDisplayOrder());
+                foundPart = findPart(context, ps.getPart(), ((LayeredPartFinder) owningPart).getPartsInDisplayOrder(context));
             }
 
             // Special case: Field needs to be evaluated in the context of the requested card
             if (foundPart instanceof CardLayerPartModel) {
-                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId());
+                ((CardLayerPartModel) foundPart).setCurrentCardId(owningPart.getId(context));
             }
 
             return foundPart;
@@ -228,17 +234,19 @@ public interface StackPartFinder extends PartFinder {
      * Finds the card on which a part identified by a given {@link CompositePartSpecifier} lives. When the "owning part"
      * is a background (for example, "button 1 of background 3"), then the first card of that background is returned.
      *
+     *
+     * @param context The execution context.
      * @param ps A composite part specifier, the owning card of which should be returned.
      * @return The owning card
      * @throws PartException Thrown if no such part can be found.
      */
-    default CardModel findOwningCard(CompositePartSpecifier ps) throws PartException {
-        BackgroundModel bkgndModel = ps.getOwningPartExp().partFactor(BackgroundModel.class);
+    default CardModel findOwningCard(ExecutionContext context, CompositePartSpecifier ps) throws PartException {
+        BackgroundModel bkgndModel = ps.getOwningPartExp().partFactor(context, BackgroundModel.class);
         if (bkgndModel != null) {
-            return bkgndModel.getCardModels().get(0);
+            return bkgndModel.getCardModels(context).get(0);
         }
 
-        CardModel cardModel = ps.getOwningPartExp().partFactor(CardModel.class);
+        CardModel cardModel = ps.getOwningPartExp().partFactor(context, CardModel.class);
         if (cardModel != null) {
             return cardModel;
         }

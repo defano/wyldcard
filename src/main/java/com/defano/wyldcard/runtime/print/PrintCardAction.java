@@ -1,6 +1,7 @@
 package com.defano.wyldcard.runtime.print;
 
 import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -15,7 +16,7 @@ public class PrintCardAction extends PrintActionDelegate {
         jobNameBuilder.append("Card ");
         jobNameBuilder.append(WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getCardIndexInStack() + 1);
         jobNameBuilder.append(" in ");
-        jobNameBuilder.append(WyldCard.getInstance().getActiveStack().getStackModel().getStackName());
+        jobNameBuilder.append(WyldCard.getInstance().getActiveStack().getStackModel().getStackName(new ExecutionContext()));
 
         super.jobName = jobNameBuilder.toString();
     }

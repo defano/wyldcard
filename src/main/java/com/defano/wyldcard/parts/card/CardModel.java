@@ -7,6 +7,7 @@ import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -68,19 +69,19 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     public void initialize() {
         super.initialize();
 
-        defineComputedReadOnlyProperty(PROP_LONGNAME, (model, propertyName) -> new Value(getLongName()));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (model, propertyName) -> new Value(getAbbrevName()));
-        defineComputedReadOnlyProperty(PROP_SHORTNAME, (model, propertyName) -> new Value(getShortName()));
+        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
-        defineComputedReadOnlyProperty(PROP_LONGID, (model, propertyName) -> new Value(getLongId()));
-        defineComputedReadOnlyProperty(PROP_ABBREVID, (model, propertyName) -> new Value(getAbbrevId()));
-        defineComputedReadOnlyProperty(PROP_SHORTID, (model, propertyName) -> new Value(getShortId()));
+        defineComputedReadOnlyProperty(PROP_LONGID, (context, model, propertyName) -> new Value(getLongId(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVID, (context, model, propertyName) -> new Value(getAbbrevId(context)));
+        defineComputedReadOnlyProperty(PROP_SHORTID, (context, model, propertyName) -> new Value(getShortId(context)));
 
         // When no name of card is provided, returns 'card id xxx'
-        defineComputedGetterProperty(PROP_NAME, (model, propertyName) -> {
+        defineComputedGetterProperty(PROP_NAME, (context, model, propertyName) -> {
             Value raw = model.getRawProperty(propertyName);
             if (raw == null || raw.isEmpty()) {
-                return new Value("card id " + model.getKnownProperty(PROP_ID));
+                return new Value("card id " + model.getKnownProperty(context, PROP_ID));
             } else {
                 return raw;
             }
@@ -109,9 +110,10 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     /**
      * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
      *
+     * @param context The execution context.
      * @param partModel The part to remove from this card.
      */
-    public void removePartModel(PartModel partModel) {
+    public void removePartModel(ExecutionContext context, PartModel partModel) {
         if (partModel instanceof FieldModel) {
             if (partModel.getOwner() == Owner.BACKGROUND)  {
                 getBackgroundModel().removePartModel(partModel);
@@ -128,7 +130,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
             throw new IllegalArgumentException("Bug! Can't delete this kind of part from a card: " + partModel.getType());
         }
 
-        firePartRemoved(partModel);
+        firePartRemoved(context, partModel);
     }
 
     /**
@@ -217,8 +219,8 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         }
     }
 
-    public boolean isMarked() {
-        return getKnownProperty(PROP_MARKED).booleanValue();
+    public boolean isMarked(ExecutionContext context) {
+        return getKnownProperty(context, PROP_MARKED).booleanValue();
     }
 
     /** {@inheritDoc} */
@@ -239,7 +241,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     }
 
     @Override
-    public Collection<PartModel> getPartModels() {
+    public Collection<PartModel> getPartModels(ExecutionContext context) {
         Collection<PartModel> models = new ArrayList<>();
         models.addAll(buttons);
         models.addAll(fields);
@@ -262,17 +264,17 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         this.observer = observer;
     }
 
-    public String getShortId() {
-        return String.valueOf(getId());
+    public String getShortId(ExecutionContext context) {
+        return String.valueOf(getId(context));
     }
 
-    public String getAbbrevId() {
-        return "card id " + getShortId();
+    public String getAbbrevId(ExecutionContext context) {
+        return "card id " + getShortId(context);
     }
 
-    public String getLongId() {
+    public String getLongId(ExecutionContext context) {
         // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbrevId();
+        return getAbbrevId(context);
     }
 
     public boolean hasName() {
@@ -280,26 +282,26 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         return raw != null && !raw.isEmpty();
     }
 
-    public String getShortName() {
-        return getKnownProperty(PROP_NAME).stringValue();
+    public String getShortName(ExecutionContext context) {
+        return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public String getAbbrevName() {
+    public String getAbbrevName(ExecutionContext context) {
         if (hasName()) {
-            return "card \"" + getShortName() + "\"";
+            return "card \"" + getShortName(context) + "\"";
         } else {
-            return getShortName();
+            return getShortName(context);
         }
     }
 
-    public String getLongName() {
+    public String getLongName(ExecutionContext context) {
         // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbrevName();
+        return getAbbrevName(context);
     }
 
-    private void firePartRemoved(PartModel part) {
+    private void firePartRemoved(ExecutionContext context, PartModel part) {
         if (observer != null) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onPartRemoved(part));
+            ThreadUtils.invokeAndWaitAsNeeded(() -> observer.onPartRemoved(context, part));
         }
     }
 

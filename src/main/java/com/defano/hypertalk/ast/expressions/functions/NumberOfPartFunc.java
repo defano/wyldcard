@@ -26,25 +26,25 @@ public class NumberOfPartFunc extends Expression {
     }
 
     @Override
-    protected Value onEvaluate() throws HtException {
-        PartExp partFactor = partExpression.factor(PartExp.class, new HtSemanticException("Don't know how to get the number of that."));
+    protected Value onEvaluate(ExecutionContext context) throws HtException {
+        PartExp partFactor = partExpression.factor(context, PartExp.class, new HtSemanticException("Don't know how to get the number of that."));
 
-        PartModel part = ExecutionContext.getContext().getPart(partFactor.evaluateAsSpecifier());
+        PartModel part = context.getPart(partFactor.evaluateAsSpecifier(context));
 
         if (part instanceof ButtonModel) {
-            return new Value(((LayeredPartFinder) part.getParentPartModel()).getPartNumber(part, PartType.BUTTON));
+            return new Value(((LayeredPartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BUTTON));
         }
 
         if (part instanceof FieldModel) {
-            return new Value(((LayeredPartFinder) part.getParentPartModel()).getPartNumber(part, PartType.FIELD));
+            return new Value(((LayeredPartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.FIELD));
         }
 
         if (part instanceof CardModel) {
-            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(part, PartType.CARD));
+            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.CARD));
         }
 
         if (part instanceof BackgroundModel) {
-            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(part, PartType.BACKGROUND));
+            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BACKGROUND));
         }
 
         throw new HtSemanticException("Don't know how to get the number of that.");

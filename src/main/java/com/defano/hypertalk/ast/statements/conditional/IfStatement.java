@@ -1,10 +1,14 @@
 package com.defano.hypertalk.ast.statements.conditional;
 
-import com.defano.hypertalk.ast.breakpoints.Breakpoint;
+import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class IfStatement extends Statement {
 
@@ -16,12 +20,27 @@ public class IfStatement extends Statement {
         this.condition = condition;
         this.then = then;
     }
-    
-    public void onExecute() throws HtException, Breakpoint {
-        if (condition.evaluate().checkedBooleanValue()) {
-            then.thenBranch.execute();
+
+    @Override
+    public void onExecute(ExecutionContext context) throws HtException, Preemption {
+        if (condition.evaluate(context).checkedBooleanValue()) {
+            then.thenBranch.execute(context);
         } else if (then.elseBranch != null) {
-            then.elseBranch.execute();
+            then.elseBranch.execute(context);
         }
+    }
+
+    @Override
+    public Collection<Statement> findStatementsOnLine(int line) {
+        ArrayList<Statement> foundStatements = new ArrayList<>();
+
+        foundStatements.addAll(super.findStatementsOnLine(line));
+        foundStatements.addAll(then.thenBranch.findStatementsOnLine(line));
+
+        if (then.elseBranch != null) {
+            foundStatements.addAll(then.elseBranch.findStatementsOnLine(line));
+        }
+
+        return foundStatements;
     }
 }
