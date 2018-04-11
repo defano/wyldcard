@@ -166,8 +166,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }
 
-        this.window.applyMenuBar();
-
         if (window instanceof HyperCardDialog) {
             this.window.setAllowResizing(resizable);
         }
@@ -192,6 +190,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.setAllowResizing(resizable);
         this.window.getWindow().setFocusableWindowState(isFocusable);
         this.window.getWindow().setAlwaysOnTop(isPalette);
+        this.window.applyMenuBar();
 
         // Calculate and set minimum allowable frame size
         int minWidth = window.getWindowPanel().getMinimumSize().width;

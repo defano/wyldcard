@@ -54,7 +54,7 @@ public class WindowManager {
                 .withTitle("Message")
                 .asPalette()
                 .focusable(true)
-                .withLocationUnderneath(stackFrame)
+                .withLocationUnderneath(stackWindow)
                 .dockTo(stackWindow)
                 .notInitiallyVisible()
                 .build();
@@ -63,7 +63,7 @@ public class WindowManager {
                 .asPalette()
                 .withTitle("Tools")
                 .dockTo(stackWindow)
-                .withLocationLeftOf(stackFrame)
+                .withLocationLeftOf(stackWindow)
                 .build();
 
         WindowBuilder.make(shapesPalette)
@@ -140,6 +140,7 @@ public class WindowManager {
                 .resizeable(true)
                 .build();
 
+        stackWindow.applyMenuBar();
         stackFrame.requestFocus();
     }
 
