@@ -51,7 +51,7 @@ public abstract class HyperCardDialog extends JDialog implements HyperCardWindow
     }
 
     @Override
-    public boolean ownsMenuBar() {
+    public boolean hasMenuBar() {
         return this.ownsMenubar;
     }
 

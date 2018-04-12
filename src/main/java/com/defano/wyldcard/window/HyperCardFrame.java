@@ -54,7 +54,7 @@ public abstract class HyperCardFrame extends JFrame implements HyperCardWindow<J
     }
 
     @Override
-    public boolean ownsMenuBar() {
+    public boolean hasMenuBar() {
         return this.ownsMenubar;
     }
 

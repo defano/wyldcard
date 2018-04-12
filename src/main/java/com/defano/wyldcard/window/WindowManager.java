@@ -140,7 +140,6 @@ public class WindowManager {
                 .resizeable(true)
                 .build();
 
-        stackWindow.applyMenuBar();
         stackFrame.requestFocus();
     }
 

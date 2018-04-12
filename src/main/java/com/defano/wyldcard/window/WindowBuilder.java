@@ -190,7 +190,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.setAllowResizing(resizable);
         this.window.getWindow().setFocusableWindowState(isFocusable);
         this.window.getWindow().setAlwaysOnTop(isPalette);
-        this.window.applyMenuBar();
 
         // Calculate and set minimum allowable frame size
         int minWidth = window.getWindowPanel().getMinimumSize().width;
@@ -229,6 +228,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
             });
         }
 
+        this.window.applyMenuBar();
         this.window.getWindow().setVisible(initiallyVisible);
 
         return window;
