@@ -176,8 +176,8 @@ WyldCard automatically sends the following messages to parts as the user interac
  Event Message      | Description
 --------------------|-----------------------------------------------------------------------------
  `arrowKey`         | Sent when an arrow key is pressed; sends the arrow key's direction as an argument to the message (`arrowKey direction`, where `direction` is one of `up`, `down`, `left` or `right`)
- `commandKeyDown`   | Sent when the command key (or the _meta_ key, on non-macOS systems) is pressed
- `controlKey`       | Sent when the control key is pressed
+ `commandKeyDown`   | Sent when the command key (or the _meta_ key, on non-macOS systems) is pressed in conjunction with another key (for example, `cmd-x`); passes the character typed as the argument to the message.
+ `controlKey`       | Sent when the control key is pressed in conjunction with another key; passes the character typed as the argument to the
  `choose`           | Sent to the current card when the tool selection changes; passes the tool name and number as arguments, for example, `choose "Brush", 7`
  `closeCard`        | Sent to the current card when navigating away from it
  `deleteCard`       | Sent to the current card just before it is removed from the stack
@@ -766,6 +766,7 @@ WyldCard supports these HyperCard properties:
 Global Property | Description
 ----------------|---------------
 `brush`         | An integer value between `0` and `23` indicating the active paintbrush.
+`cantPeek`      | When true, holding `command`-`option` will not highlight the outline of buttons and fields, and clicking a highlighted part will not open its script editor. 
 `centered`      | A boolean value indicating whether shapes from center out, or corner-to-corner (equivalent to "Draw Centered" in the "Options" menu).
 `cursor`        | The name of the cursor to be displayed in place of the default, `hand` cursor; one of `ibeam`, `cross`, `plus` (same as `busy`), `watch`, `hand`, `arrow`, `busy` or `none`. Does not effect paint tool, button tool or field tool cursors. Resets to `hand` on idle. Some cursors may not be supported on all operating systems.
 `filled`        | A boolean value indicating whether shapes are being drawn filled (equivalent to "Draw Filled" in the "Options" menu).

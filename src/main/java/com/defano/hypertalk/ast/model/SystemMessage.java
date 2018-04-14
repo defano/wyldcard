@@ -36,8 +36,10 @@ public enum SystemMessage {
             new String[] {"direction"},
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     COMMAND_KEY("commandKeyDown", "Sent when the user presses the command key.",
+            new String[] {"whichKey"},
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     CONTROL_KEY("controlKey", "Sent when the user presses the control key.",
+            new String[] {"whichKey"},
             new PartType[] {PartType.FIELD, PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
     ENTER_KEY("enterKey", "Sent when the user presses the enter key.",
             new PartType[] {PartType.CARD, PartType.BACKGROUND, PartType.STACK}),
@@ -123,12 +125,13 @@ public enum SystemMessage {
     }
 
     public static BoundSystemMessage fromKeyEvent(KeyEvent e, boolean inField) {
-        if (e.isControlDown()) {
-            return new BoundSystemMessage(CONTROL_KEY);
+
+        if (e.isControlDown() && e.getKeyCode() != KeyEvent.VK_CONTROL) {
+            return new BoundSystemMessage(CONTROL_KEY, new Value((char) e.getKeyCode()));
         }
 
-        if (e.isMetaDown()) {
-            return new BoundSystemMessage(COMMAND_KEY);
+        if (e.isMetaDown() && e.getKeyCode() != KeyEvent.VK_META) {
+            return new BoundSystemMessage(COMMAND_KEY, new Value((char) e.getKeyCode()));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_TAB) {

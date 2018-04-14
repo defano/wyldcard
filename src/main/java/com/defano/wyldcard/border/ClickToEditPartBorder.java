@@ -13,7 +13,7 @@ public class ClickToEditPartBorder extends CompoundBorder implements Border {
         super(new ClickToEditScriptBorder(), innerBorder);
     }
 
-    private static class ClickToEditScriptBorder implements Border {
+    private static class ClickToEditScriptBorder implements Border, ColorStateBorder {
 
         private int getClickToEditScriptBorderWidth() {
             return 4;
@@ -25,9 +25,9 @@ public class ClickToEditPartBorder extends CompoundBorder implements Border {
 
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            if (KeyboardManager.getInstance().isCommandOptionDown()) {
+            if (KeyboardManager.getInstance().isPeeking()) {
                 int frameWidth = getClickToEditScriptBorderWidth();
-                Color frameColor = getClickToEditScriptBorderColor();
+                Color frameColor = getBorderColor(c);
 
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(frameColor);

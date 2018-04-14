@@ -56,6 +56,7 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_FOUNDLINE = "foundline";
     public final static String PROP_FOUNDTEXT = "foundtext";
     public final static String PROP_LOCKMESSAGES = "lockmessages";
+    public final static String PROP_CANTPEEK = "cantpeek";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -87,6 +88,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_FOUNDLINE, new Value(), true);
         defineProperty(PROP_FOUNDTEXT, new Value(), true);
         defineProperty(PROP_LOCKMESSAGES, new Value(true), false);
+        defineProperty(PROP_CANTPEEK, new Value(false), false);
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 

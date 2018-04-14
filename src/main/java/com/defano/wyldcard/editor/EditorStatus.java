@@ -43,6 +43,6 @@ public class EditorStatus extends JLabel {
 
     @RunOnDispatch
     public boolean isShowingError() {
-        return !getText().isEmpty();
+        return getText() != null && !getText().isEmpty();
     }
 }

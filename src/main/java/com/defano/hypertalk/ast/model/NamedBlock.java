@@ -3,6 +3,10 @@ package com.defano.hypertalk.ast.model;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.ast.statements.commands.PassCmd;
+import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.hypertalk.exception.HtSyntaxException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Collection;
 
@@ -22,7 +26,7 @@ public class NamedBlock {
      * @return An empty NamedBlock that passes the command back to HyperCard.
      */
     public static NamedBlock emptyPassBlock(String name) {
-        NamedBlock block = new NamedBlock(name, name, new StatementList(new PassCmd(null, name)));
+        NamedBlock block = new NamedBlock(null, name, name, new StatementList(new PassCmd(null, name)));
         block.isEmptyPassBlock = true;
         return block;
     }
@@ -34,16 +38,24 @@ public class NamedBlock {
      * @return A NamedBlock representing the
      */
     public static NamedBlock anonymousBlock(StatementList statementList) {
-        return new NamedBlock("", "", new ParameterList(), statementList);
+        return new NamedBlock(null, "", "", new ParameterList(), statementList);
     }
 
-    public NamedBlock (String onName, String endName, StatementList body) {
-        this(onName, endName, new ParameterList(), body);
+    public NamedBlock (ParserRuleContext context, String onName, String endName, StatementList body) {
+        this(context, onName, endName, new ParameterList(), body);
     }
 
-    public NamedBlock (String onName, String endName, ParameterList parameters, StatementList body) {
+    public NamedBlock (ParserRuleContext context, String onName, String endName, ParameterList parameters, StatementList body) {
+        if (onName == null) {
+            throw new HtUncheckedSemanticException(new HtSyntaxException("Missing 'on' clause in handler definition.", context.getStart()));
+        }
+
+        if (endName == null) {
+            throw new HtUncheckedSemanticException(new HtSyntaxException("Missing 'end' clause in handler definition.", context.getStart()));
+        }
+
         if (!onName.equalsIgnoreCase(endName)) {
-            throw new IllegalArgumentException("Handler on ID " + onName + " does not match end ID " + endName);
+            throw new HtUncheckedSemanticException(new HtSyntaxException("Found 'end " + endName + "' but expected 'end " + onName + "'.", context.getStart()));
         }
 
         this.name = onName;

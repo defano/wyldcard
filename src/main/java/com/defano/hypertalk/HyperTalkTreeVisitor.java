@@ -628,25 +628,33 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNoArgHandler(HyperTalkParser.NoArgHandlerContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), statements);
+        String onId = ctx.handlerName().size() > 0 ? (String) visit(ctx.handlerName(0)) : null;
+        String endId = ctx.handlerName().size() > 1 ? (String) visit(ctx.handlerName(1)) : null;
+        return new NamedBlock(ctx, onId, endId, statements);
     }
 
     @Override
     public Object visitArgHandler(HyperTalkParser.ArgHandlerContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        return new NamedBlock((String) visit(ctx.handlerName(0)), (String) visit(ctx.handlerName(1)), (ParameterList) visit(ctx.parameterList()), statements);
+        String onId = ctx.handlerName().size() > 0 ? (String) visit(ctx.handlerName(0)) : null;
+        String endId = ctx.handlerName().size() > 1 ? (String) visit(ctx.handlerName(1)) : null;
+        return new NamedBlock(ctx, onId, endId, (ParameterList) visit(ctx.parameterList()), statements);
     }
 
     @Override
     public Object visitNoArgFunction(HyperTalkParser.NoArgFunctionContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), new ParameterList(), statements);
+        String onId = ctx.ID().size() > 0 ? (String) visit(ctx.ID(0)) : null;
+        String endId = ctx.ID().size() > 1 ? (String) visit(ctx.ID(1)) : null;
+        return new UserFunction(ctx, onId, endId, new ParameterList(), statements);
     }
 
     @Override
     public Object visitArgFunction(HyperTalkParser.ArgFunctionContext ctx) {
         StatementList statements = ctx.statementList() == null ? new StatementList() : (StatementList) visit(ctx.statementList());
-        return new UserFunction((String) visit(ctx.ID(0)), (String) visit(ctx.ID(1)), (ParameterList) visit(ctx.parameterList()), statements);
+        String onId = ctx.ID().size() > 0 ? (String) visit(ctx.ID(0)) : null;
+        String endId = ctx.ID().size() > 1 ? (String) visit(ctx.ID(1)) : null;
+        return new UserFunction(ctx, onId, endId, (ParameterList) visit(ctx.parameterList()), statements);
     }
 
     @Override

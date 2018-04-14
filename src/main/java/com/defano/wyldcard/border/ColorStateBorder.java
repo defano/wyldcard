@@ -7,7 +7,7 @@ import java.awt.*;
 public interface ColorStateBorder {
 
     default Color getBorderColor(Component c) {
-        if (KeyboardManager.getInstance().isCommandOptionDown()) {
+        if (KeyboardManager.getInstance().isPeeking()) {
             return SystemColor.textHighlight;
         } else {
             return c.isEnabled() ? Color.BLACK : Color.GRAY;

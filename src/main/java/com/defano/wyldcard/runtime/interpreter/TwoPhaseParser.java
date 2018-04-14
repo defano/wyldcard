@@ -3,7 +3,9 @@ package com.defano.wyldcard.runtime.interpreter;
 import com.defano.hypertalk.HyperTalkErrorListener;
 import com.defano.hypertalk.HyperTalkTreeVisitor;
 import com.defano.hypertalk.ast.model.Script;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSyntaxException;
+import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import com.defano.hypertalk.parser.HyperTalkLexer;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import org.antlr.v4.runtime.BailErrorStrategy;
@@ -19,29 +21,34 @@ public class TwoPhaseParser {
     /**
      * Performs a two-phase parse of the given HyperTalk script text. First attempts to parse the script using the SLL
      * prediction mode; if that fails, attempts to re-parse the input using the LL prediction mode.
-     *
+     * <p>
      * See: http://www.antlr.org/api/Java/org/antlr/v4/runtime/atn/PredictionMode.html
      *
      * @param compilationUnit The unit of work to compile/parse. Represents the grammar's start symbol that should be
      *                        used.
-     * @param scriptText A plaintext representation of the HyperTalk script to parse
+     * @param scriptText      A plaintext representation of the HyperTalk script to parse
      * @return The root of the abstract syntax tree associated with the given compilation unit (i.e., {@link Script}).
      * @throws HtSyntaxException Thrown if an error occurs while parsing the script.
      */
-    public static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtSyntaxException {
+    public static Object parseScript(CompilationUnit compilationUnit, String scriptText) throws HtException {
 
         // Nothing to do for empty scripts
         if (scriptText == null || scriptText.length() == 0) {
             return new Script();
         }
 
-        Object parseTree = parseSLL(compilationUnit, scriptText);
+        try {
+            Object parseTree = parseSLL(compilationUnit, scriptText);
 
-        if (parseTree == null) {
-            parseTree = parseLL(compilationUnit, scriptText);
+            if (parseTree == null) {
+                parseTree = parseLL(compilationUnit, scriptText);
+            }
+
+            return parseTree;
+
+        } catch (HtUncheckedSemanticException e) {
+            throw e.getHtCause();
         }
-
-        return parseTree;
     }
 
     /**
@@ -50,7 +57,7 @@ public class TwoPhaseParser {
      *
      * @param compilationUnit The unit of work to compile/parse. Represents the grammar's start symbol that should be
      *                        used.
-     * @param scriptText A plaintext representation of the HyperTalk script to parse
+     * @param scriptText      A plaintext representation of the HyperTalk script to parse
      * @return The root of the abstract syntax tree associated with the given compilation unit (i.e., {@link Script}).
      * @throws HtSyntaxException Thrown if an error occurs while parsing the script.
      */
@@ -85,7 +92,7 @@ public class TwoPhaseParser {
      *
      * @param compilationUnit The unit of work to compile/parse. Represents the grammar's start symbol that should be
      *                        used.
-     * @param scriptText A plaintext representation of the HyperTalk script to parse
+     * @param scriptText      A plaintext representation of the HyperTalk script to parse
      * @return The root of the abstract syntax tree associated with the given compilation unit (i.e., {@link Script}),
      * or null if parsing fails.
      */

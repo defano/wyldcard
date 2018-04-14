@@ -1,5 +1,8 @@
 package com.defano.wyldcard.awt;
 
+import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -67,8 +70,11 @@ public class KeyboardManager {
         return isCtrlCommandDown;
     }
 
-    public boolean isCommandOptionDown() {
-        return isAltOptionDown() && isCtrlCommandDown();
+    public boolean isPeeking() {
+        return isAltOptionDown() && isCtrlCommandDown() &&
+                !HyperCardProperties.getInstance().getKnownProperty(
+                        new ExecutionContext(),
+                        HyperCardProperties.PROP_CANTPEEK).booleanValue();
     }
 
     private static void fireGlobalKeyListeners(KeyEvent e) {
