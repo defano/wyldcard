@@ -1,0 +1,226 @@
+[
+  {
+    "title": "Brush",
+    "summary": "An integer value between 0 and 23 indicating the active paintbrush.",
+    "codePrefix": "brush",
+    "templates": [
+      "set the brush to ${integerExpression}",
+      "get the brush"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "A numerical value representing the selected brush."}
+    ]
+  },
+
+  {
+    "title": "Centered",
+    "summary": "A boolean value indicating whether shapes from center out, or corner-to-corner (equivalent to \"Draw Centered\" in the \"Options\" menu).",
+    "codePrefix": "centered",
+    "templates": [
+      "set the centered to ${logicalExpression}",
+      "get the centered"
+    ],
+    "parameters": [
+      {"parameter": "logicalExpression", "description": "A logical value representing whether draw-centered is enabled or disabled."}
+    ]
+  },
+
+  {
+    "title": "Cursor",
+    "summary": "The name of the cursor to be displayed in place of the default, hand cursor; one of `ibeam`, `cross`, `plus` (same as `busy`), `watch`, `hand`, `arrow`, `busy` or `none`. Does not effect paint tool, button tool or field tool cursors. Resets to `hand` on idle. Some cursors may not be supported on all operating systems.",
+    "codePrefix": "cursor",
+    "templates": [
+      "set the cursor to ${expression}",
+      "get the cursor"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A expression representing the name of the cursor."}
+    ]
+  },
+
+  {
+    "title": "Filled",
+    "summary": "A boolean value indicating whether shapes are being drawn filled (equivalent to \"Draw Filled\" in the \"Options\" menu).",
+    "codePrefix": "filled",
+    "templates": [
+      "set the filled to ${logicalExpression}",
+      "get the filled"
+    ],
+    "parameters": [
+      {"parameter": "logicalExpression", "description": "A logical value representing whether draw-filled is enabled or disabled."}
+    ]
+  },
+
+  {
+    "title": "Grid",
+    "summary": "A boolean value indicating whether the paint tool grid is enabled. When true, paint tools 'snap' to an 8-pixel grid.",
+    "codePrefix": "grid",
+    "templates": [
+      "set the grid to ${logicalExpression}",
+      "get the grid"
+    ],
+    "parameters": [
+      {"parameter": "logicalExpression", "description": "A logical value representing whether the paint grid is enabled or disabled."}
+    ]
+  },
+
+  {
+    "title": "Lock Messages",
+    "summary": "When true, the `openCard`, `closeCard` and `openStack` messages will not be sent. Reset to false at idle time.",
+    "codePrefix": "lockmessages",
+    "templates": [
+      "set the lockMessages to ${logicalExpression}",
+      "get the lockMessages"
+    ],
+    "parameters": [
+      {"parameter": "logicalExpression", "description": "A logical value representing whether `lockMessages` is enabled or disabled."}
+    ]
+  },
+
+  {
+    "title": "Item Delimiter",
+    "summary": "A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list.",
+    "description": "Note that this value has no effect on point or rectangle list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).",
+    "codePrefix": "itemdelimiter",
+    "templates": [
+      "set the itemDelimiter to ${expression}",
+      "get the itemDelimiter"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A value representing a string of one or more characters acting as a delimiter between items."}
+    ],
+    "examples": [
+      {"code": "set the itemDelimiter to \"***\"\nget the second item of \"item 1***item 2***item 3\" -- yields 'item 2'"}
+    ]
+  },
+
+  {
+    "title": "Line Size",
+    "summary": "The width, in pixels, of the line/outline drawn by paint tools.",
+    "codePrefix": "linesize",
+    "templates": [
+      "set the lineSize to ${integerExpression}",
+      "get the lineSize"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An integer value representing the width of lines drawn by the paint tools (in pixels)."}
+    ]
+  },
+
+  {
+    "title": "Multiple",
+    "summary": "A boolean value indicating whether shapes are being drawn multiple (equivalent to \"Draw Multiple\" in the \"Options\" menu).",
+    "codePrefix": "multiple",
+    "templates": [
+      "set the multiple to ${logicalExpression}",
+      "get the multiple"
+    ],
+    "parameters": [
+      {"parameter": "logicalExpression", "description": "A logical value representing whether draw-multiple is enabled or disabled."}
+    ]
+  },
+
+  {
+    "title": "Pattern",
+    "summary": "Gets or sets the number of selected paint pattern. Patterns are numbered 0 to 39. Setting to a value outside this range has no effect.",
+    "codePrefix": "pattern",
+    "templates": [
+      "set the pattern to ${integerExpression}",
+      "get the pattern"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An integer value representing the number of the pattern to select."}
+    ]
+  },
+
+  {
+    "title": "Polygon Sides",
+    "summary": "An integer representing the number of sides drawn using the polygon tool.",
+    "codePrefix": "polysides",
+    "templates": [
+      "set the polySides to ${integerExpression}",
+      "get the polySides"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An integer value representing the number of sides drawn by the polygon paint tool."}
+    ]
+  },
+
+  {
+    "title": "Script Text Font",
+    "summary": "The name of the font family used in the script editor; default is `Monaco`.",
+    "codePrefix": "scripttextfont",
+    "templates": [
+      "set the scriptTextFont to ${expression}",
+      "get the scriptTextFont"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A value representing the name of the font to use to render scripts in the script editor."}
+    ]
+  },
+
+  {
+    "title": "Script Text Size",
+    "summary": "The size, in points, of the text of the script editor; default is 12.",
+    "codePrefix": "scripttextsize",
+    "templates": [
+      "set the scriptTextSize to ${integerExpression}",
+      "get the scriptTextSize"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "A value representing the size (in points) of the font to render scripts in the script editor."}
+    ]
+  },
+
+  {
+    "title": "System Version",
+    "summary": "The read-only version number of the Java Virtual Machine executing WyldCard, for example, `1.8.0_131`.",
+    "codePrefix": "systemversion",
+    "templates": [
+      "get the systemVersion"
+    ]
+  },
+
+  {
+    "title": "Text Font",
+    "summary": "The currently active font family, as indicated by the selection in the \"Font\" menu.",
+    "codePrefix": "textfont",
+    "templates": [
+      "set the textFont to ${expression}",
+      "get the textFont"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A value representing the name of the selected font."}
+    ]
+  },
+
+  {
+    "title": "Text Size",
+    "summary": "The currently active font size, as indicated by the selection in the \"Style\" menu.",
+    "codePrefix": "textsize",
+    "templates": [
+      "set the textSize to ${integerExpression}",
+      "get the textSize"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "A value representing the size of the selected font."}
+    ]
+  },
+
+  {
+    "title": "Text Style",
+    "summary": "The currently active font style, as indicated by the selection in the \"Style\" menu.",
+    "codePrefix": "textstyle",
+    "templates": [
+      "set the textStyle to ${listExpression}",
+      "get the textStyle"
+    ],
+    "parameters": [
+      {"parameter": "listExpression", "description": "A list of zero or more styles to apply to the current text style."}
+    ],
+    "examples": [
+      {"code": "set the textStyle to \"bold, italic\""}
+    ]
+  }
+
+]

@@ -15,18 +15,19 @@ public class HyperTalkCompletionProvider extends DefaultCompletionProvider {
 
     public HyperTalkCompletionProvider() {
 
-        unpack("syntax-help/constructs.json");
-        unpack("syntax-help/commands.json");
+        unpack("syntax-help/constructs.json", "Language Construct");
+        unpack("syntax-help/commands.json", "Command");
+        unpack("syntax-help/global-properties.json", "WyldCard Property");
 
         addCompletions(completionList);
     }
 
-    private void unpack(String jsonResource) {
+    private void unpack(String jsonResource, String categoryName) {
         try {
             Collection<SyntaxHelpModel> models = SyntaxHelpModel.fromJson(jsonResource);
 
             for (SyntaxHelpModel thisModel : models) {
-                AutoCompletionBuilder.fromSyntaxHelpModel(thisModel).buildInto(completionList, this);
+                AutoCompletionBuilder.fromSyntaxHelpModel(thisModel, categoryName).buildInto(completionList, this);
             }
 
         } catch (IOException e) {

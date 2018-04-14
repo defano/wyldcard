@@ -79,6 +79,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
     }
 
     @Override
+    @RunOnDispatch
     public HyperCardButton getComponentForStyle(ButtonStyle style) {
         switch (style) {
             case CHECKBOX:

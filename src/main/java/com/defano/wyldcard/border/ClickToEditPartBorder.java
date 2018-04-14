@@ -19,10 +19,6 @@ public class ClickToEditPartBorder extends CompoundBorder implements Border {
             return 4;
         }
 
-        private Color getClickToEditScriptBorderColor() {
-            return SystemColor.textHighlight;
-        }
-
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
             if (KeyboardManager.getInstance().isPeeking()) {

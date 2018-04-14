@@ -20,6 +20,7 @@ public class AutoCompletionBuilder {
     private ArrayList<String> templates = new ArrayList<>();
     private String summary;
     private String description;
+    private String categoryName;
     private ArrayList<String> examplesCode = new ArrayList<>();
     private ArrayList<String> examplesDescription = new ArrayList<>();
     private ArrayList<String> parameterNames = new ArrayList<>();
@@ -27,9 +28,10 @@ public class AutoCompletionBuilder {
 
     private AutoCompletionBuilder() {}
 
-    public static AutoCompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model) {
+    public static AutoCompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model, String categoryName) {
         AutoCompletionBuilder builder = new AutoCompletionBuilder();
 
+        builder.categoryName = categoryName;
         builder.codePrefix = model.getCodePrefix();
         builder.templateName = model.getTitle();
         builder.templates.addAll(model.getTemplates());
@@ -49,51 +51,6 @@ public class AutoCompletionBuilder {
         return builder;
     }
 
-    public static AutoCompletionBuilder autoComplete(String codePrefix, String named) {
-        AutoCompletionBuilder builder = new AutoCompletionBuilder();
-        builder.codePrefix = codePrefix;
-        builder.templateName = named;
-        return builder;
-    }
-
-    public AutoCompletionBuilder to(String template) {
-        this.templates.add(template);
-        return this;
-    }
-
-    public AutoCompletionBuilder named(String name) {
-        this.templateName = name;
-        return this;
-    }
-
-    public AutoCompletionBuilder withSummary(String summary) {
-        this.summary = summary;
-        return this;
-    }
-
-    public AutoCompletionBuilder withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public AutoCompletionBuilder withParmeter(String parameter, String description) {
-        this.parameterNames.add(parameter);
-        this.parameterDescriptions.add(description);
-        return this;
-    }
-
-    public AutoCompletionBuilder withExample(String exampleCode) {
-        this.examplesCode.add(exampleCode);
-        this.examplesDescription.add("");
-        return this;
-    }
-
-    public AutoCompletionBuilder withExample(String exampleDescription, String exampleCode) {
-        this.examplesCode.add(exampleCode);
-        this.examplesDescription.add(exampleDescription);
-        return this;
-    }
-
     public void buildInto(Collection<Completion> completions, CompletionProvider provider) {
         completions.add(build(provider));
     }
@@ -110,7 +67,12 @@ public class AutoCompletionBuilder {
         StringBuilder builder = new StringBuilder();
 
         if (templateName != null) {
-            builder.append("### ").append(templateName).append("\n\n");
+            builder.append("### ")
+                    .append(templateName)
+                    .append(" (")
+                    .append(categoryName)
+                    .append(")")
+                    .append("\n\n");
         }
 
         if (summary != null) {
