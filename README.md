@@ -4,7 +4,7 @@
 
 An effort to reproduce Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
-![Hero](doc/images/hero.gif)
+![Hero](doc/images/hero.png)
 
 #### What's HyperCard?
 
