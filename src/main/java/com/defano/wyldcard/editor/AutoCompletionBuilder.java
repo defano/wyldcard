@@ -10,6 +10,7 @@ import org.fife.ui.autocomplete.Completion;
 import org.fife.ui.autocomplete.CompletionProvider;
 import org.fife.ui.autocomplete.TemplateCompletion;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,6 +22,7 @@ public class AutoCompletionBuilder {
     private String summary;
     private String description;
     private String categoryName;
+    private Icon icon;
     private ArrayList<String> examplesCode = new ArrayList<>();
     private ArrayList<String> examplesDescription = new ArrayList<>();
     private ArrayList<String> parameterNames = new ArrayList<>();
@@ -28,7 +30,7 @@ public class AutoCompletionBuilder {
 
     private AutoCompletionBuilder() {}
 
-    public static AutoCompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model, String categoryName) {
+    public static AutoCompletionBuilder fromSyntaxHelpModel(SyntaxHelpModel model, String categoryName, Icon icon) {
         AutoCompletionBuilder builder = new AutoCompletionBuilder();
 
         builder.categoryName = categoryName;
@@ -37,6 +39,7 @@ public class AutoCompletionBuilder {
         builder.templates.addAll(model.getTemplates());
         builder.summary = model.getSummary();
         builder.description = model.getDescription();
+        builder.icon = icon;
 
         for (ExampleModel thisExample : model.getExamples()) {
             builder.examplesCode.add(thisExample.getCode());
@@ -60,7 +63,9 @@ public class AutoCompletionBuilder {
         Node document = parser.parse(getSummaryMarkdown());
         String summary = HtmlRenderer.builder().build().render(document);
 
-        return new TemplateCompletion(provider, codePrefix, templateName, templates.get(0), null, summary);
+        TemplateCompletion tc = new TemplateCompletion(provider, codePrefix, templateName, templates.get(0), null, summary);
+        tc.setIcon(icon);
+        return tc;
     }
 
     private String getSummaryMarkdown() {

@@ -2,6 +2,7 @@ package com.defano.wyldcard.editor;
 
 import com.defano.wyldcard.editor.help.SyntaxHelpModel;
 import org.fife.ui.autocomplete.Completion;
+import org.fife.ui.autocomplete.CompletionCellRenderer;
 import org.fife.ui.autocomplete.DefaultCompletionProvider;
 
 import java.io.IOException;
@@ -12,22 +13,28 @@ import java.util.List;
 public class HyperTalkCompletionProvider extends DefaultCompletionProvider {
 
     private final List<Completion> completionList = new ArrayList<>();
+    private final CompletionCellRenderer completionCellRenderer = new CompletionCellRenderer();
 
     public HyperTalkCompletionProvider() {
 
-        unpack("syntax-help/constructs.json", "Language Construct");
-        unpack("syntax-help/commands.json", "Command");
-        unpack("syntax-help/global-properties.json", "WyldCard Property");
+        for (CompletionLibrary category : CompletionLibrary.values()) {
+            unpack(category);
+        }
+
+        completionCellRenderer.setShowTypes(true);
+        setListCellRenderer(completionCellRenderer);
 
         addCompletions(completionList);
     }
 
-    private void unpack(String jsonResource, String categoryName) {
+    private void unpack(CompletionLibrary category) {
         try {
-            Collection<SyntaxHelpModel> models = SyntaxHelpModel.fromJson(jsonResource);
+            Collection<SyntaxHelpModel> models = SyntaxHelpModel.fromJson(category.getJson());
 
             for (SyntaxHelpModel thisModel : models) {
-                AutoCompletionBuilder.fromSyntaxHelpModel(thisModel, categoryName).buildInto(completionList, this);
+                AutoCompletionBuilder
+                        .fromSyntaxHelpModel(thisModel, category.getName(), category.getIcon())
+                        .buildInto(completionList, this);
             }
 
         } catch (IOException e) {
