@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Auto Hilite",
+    "summary": "Returns or sets whether the button's hilite property is managed by WyldCard. When `autoHilite` is true, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.",
+    "codePrefix": "autohilite",
+    "templates": [
+      "set the autoHilite of ${buttonExpression} to ${logicalExpression}",
+      "get the autoHilite of ${buttonExpression}"
+    ],
+    "parameters": [
+      {"parameter": "buttonExpression", "description": "An expression identifying a button, like `bkgnd button \"El Button\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
+    ]
+  },
+
+  {
+    "title": "Hilite",
+    "summary": "Returns or sets whether the button is drawn \"highlighted\"; for `checkbox` and `radio` styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, hilite describes a \"pressed\" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on `native` or `popup` style buttons.",
+    "codePrefix": "hilite",
+    "templates": [
+      "set the hilite of ${buttonExpression} to ${logicalExpression}",
+      "get the hilite of ${buttonExpression}"
+    ],
+    "parameters": [
+      {"parameter": "buttonExpression", "description": "An expression identifying a button, like `bkgnd button \"El Button\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
+    ]
+  },
+
+  {
+    "title": "Icon Align",
+    "summary": "Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property does not exist in HyperCard.",
+    "codePrefix": "iconalign",
+    "templates": [
+      "set the iconAlign of ${buttonExpression} to ${expression}",
+      "get the iconAlign of ${buttonExpression}"
+    ],
+    "parameters": [
+      {"parameter": "buttonExpression", "description": "An expression identifying a button, like `bkgnd button \"El Button\"`."},
+      {"parameter": "expression", "description": "An expression that evaluates to the icon alignment value (one of `left`, `right`, `top` or `bottom`)."}
+    ]
+  },
+
+  {
+    "title": "Show Name",
+    "summary": "Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.",
+    "codePrefix": "showname",
+    "templates": [
+      "set the showName of ${buttonExpression} to ${logicalExpression}",
+      "get the showName of ${buttonExpression}"
+    ],
+    "parameters": [
+      {"parameter": "buttonExpression", "description": "An expression identifying a button, like `bkgnd button \"El Button\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
+    ]
+  }
+
+]

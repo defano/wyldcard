@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Name",
+    "summary": "A string value representing the name (text) of the menu item.",
+    "codePrefix": "name",
+    "templates": [
+      "set the name of ${menuItemExpression} to ${expression}",
+      "get the name of ${menuItemExpression}"
+    ],
+    "parameters": [
+      {"parameter": "menuItemExpression", "description": "An expression that identifies a menu item in a menu, for example `menuItem \"Undo\" of menu \"Edit\"`."},
+      {"parameter": "expression", "description": "An expression that evaluates to the name of menu item."}
+    ]
+  },
+
+  {
+    "title": "Command Character",
+    "summary": "A single character representing the accelerator key (the `command` or `control`-key sequence that can be typed to execute the command). Note that only command/control-key accelerators are supported; you cannot combine with shift or other keys. If more than one character is specified, the first character in the value will be used.",
+    "codePrefix": "commandchar",
+    "templates": [
+      "set the commandChar of ${menuItemExpression} to ${expression}",
+      "get the commandChar of ${menuItemExpression}"
+    ],
+    "parameters": [
+      {"parameter": "menuItemExpression", "description": "An expression that identifies a menu item in a menu, for example `menuItem \"Undo\" of menu \"Edit\"`."},
+      {"parameter": "expression", "description": "An expression that evaluates to the command character."}
+    ]
+  },
+
+  {
+    "title": "Enabled",
+    "summary": "A boolean value representing whether the menu item is enabled (selectable).",
+    "codePrefix": "enabled",
+    "templates": [
+      "set the enabled of ${menuItemExpression} to ${logicalExpression}",
+      "get the enabled of ${menuItemExpression}"
+    ],
+    "parameters": [
+      {"parameter": "menuItemExpression", "description": "An expression that identifies a menu item in a menu, for example `menuItem \"Undo\" of menu \"Edit\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either true or false."}
+    ]
+  },
+
+  {
+    "title": "Checkmark",
+    "summary": "A boolean value indicating whether the menu has a checkmark next to it.",
+    "codePrefix": "checkmark",
+    "templates": [
+      "set the checkmark of ${menuItemExpression} to ${logicalExpression}",
+      "get the checkmark of ${menuItemExpression}"
+    ],
+    "parameters": [
+      {"parameter": "menuItemExpression", "description": "An expression that identifies a menu item in a menu, for example `menuItem \"Undo\" of menu \"Edit\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either true or false."}
+    ]
+  }
+
+]

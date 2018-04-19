@@ -70,15 +70,23 @@ public class HyperTalkTextEditor extends RTextScrollPane {
                 int currentIndex = scriptField.getCaretPosition();
                 if (e.getKeyCode() == KeyEvent.VK_HOME) {
                     e.consume();
-                    scriptField.setCaretPosition(scriptField.getLineStartOffsetOfCurrentLine());
                     if (e.isShiftDown()) {
-                        scriptField.select(scriptField.getCaretPosition(), currentIndex);
+                        scriptField.setCaretPosition(currentIndex);
+                        scriptField.moveCaretPosition(scriptField.getLineStartOffsetOfCurrentLine());
+                    } else {
+                        scriptField.setCaretPosition(scriptField.getLineStartOffsetOfCurrentLine());
                     }
                 } else if (e.getKeyCode() == KeyEvent.VK_END) {
                     e.consume();
-                    scriptField.setCaretPosition(scriptField.getLineEndOffsetOfCurrentLine() - 1);
+
+                    int endIndex = scriptField.getText().length() > scriptField.getLineEndOffsetOfCurrentLine() && scriptField.getText().charAt(scriptField.getLineEndOffsetOfCurrentLine()) == '\n' ?
+                            scriptField.getLineEndOffsetOfCurrentLine() - 1 :
+                            scriptField.getLineEndOffsetOfCurrentLine();
+
                     if (e.isShiftDown()) {
-                        scriptField.select(currentIndex, scriptField.getCaretPosition());
+                        scriptField.moveCaretPosition(endIndex);
+                    } else {
+                        scriptField.setCaretPosition(endIndex);
                     }
                 }
             }

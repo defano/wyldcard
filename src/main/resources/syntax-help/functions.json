@@ -1,0 +1,709 @@
+[
+  {
+    "title": "Abs",
+    "summary": "Returns the absolute value of the given numerical argument.",
+    "codePrefix": "abs",
+    "templates": [
+      "the abs of ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression whose absolute value should be taken."}
+    ]
+  },
+
+  {
+    "title": "Atan",
+    "summary": "Returns the trigonometric arc-tangent of the given argument, represented in radians.",
+    "codePrefix": "atan",
+    "templates": [
+      "the atan of ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression whose arc-tangent should be calculated."}
+    ]
+  },
+
+  {
+    "title": "Annuity",
+    "summary": "Given two arguments; an interest rate, and a number of periods, annuity returns the total value of an annuity that makes one payment per period at the given interest rate. Equivalent to `(1 - (1 + rate) ^ -periods) / rate`.",
+    "codePrefix": "annuity",
+    "templates": [
+      "annuity(${interestRateExpression}, ${periodExpression})"
+    ],
+    "parameters": [
+      {"parameter": "interestRateExpression", "description": "An expression evaluating to the interest rate applied each period."},
+      {"parameter": "periodExpression", "description": "An expression evaluating to the number of periods."}
+    ],
+    "examples": [
+      {"description": "Calculate the monthly payment on a 30-year mortgage loan of a $100,000 at 3% interest", "code": "100000 / annuity(.03 / 12, 30 * 12) -- yields approximately 421.60"}
+    ]
+  },
+
+  {
+    "title": "Average",
+    "summary": "Returns the statistical mean of a list of numerical items.",
+    "codePrefix": "average",
+    "templates": [
+      "average(${numericExpression}, ${numericExpression}, ...)",
+      "the average of ${numericListExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."},
+      {"parameter": "numericListExpression", "description": "An expression that evaluates to a list of numeric values, for example `\"1, 2, 3\"`"}
+    ],
+    "examples": [
+      {"code": "the average of \"1, 2, 3\""},
+      {"code": "average(1, 2, 3)"}
+    ]
+  },
+
+  {
+    "title": "CharToNum",
+    "summary": "Return the numerical codepoint associated with the given character. The actual mapping between characters and numbers will depend on the character encoding used by the system, but `charToNum` is always assured to be the inverse of `numToChar`.",
+    "codePrefix": "chartonum",
+    "templates": [
+      "the charToNum of ${characterExpression}"
+    ],
+    "parameters": [
+      {"parameter": "characterExpression", "description": "An expression that evaluates to a single character."}
+    ]
+  },
+
+  {
+    "title": "Click H",
+    "summary": "Returns the x-coordinate of the last location the user clicked the mouse.",
+    "codePrefix": "clickh",
+    "templates": [
+      "the clickH"
+    ]
+  },
+
+  {
+    "title": "Click Loc",
+    "summary": "Returns the coordinate of the last location the user clicked the mouse.",
+    "codePrefix": "clickloc",
+    "templates": [
+      "the clickLoc"
+    ]
+  },
+
+  {
+    "title": "Click Text",
+    "summary": "The last word that was clicked in a text field, or the empty string if no text has been clicked.",
+    "codePrefix": "clicktext",
+    "templates": [
+      "the clickText"
+    ]
+  },
+
+  {
+    "title": "Click V",
+    "summary": "Returns the y-coordinate of the last location the user clicked the mouse.",
+    "codePrefix": "clickv",
+    "templates": [
+      "the clickV"
+    ]
+  },
+
+  {
+    "title": "Command Key",
+    "summary": "Returns the current state of the command key (and/or 'ctrl' key on PC hardware), either up or down. Also available as `the cmdKey`",
+    "codePrefix": "commandkey",
+    "templates": [
+      "the commandKey"
+    ]
+  },
+
+  {
+    "title": "Compound",
+    "summary": "Given two arguments, an interest rate, and a number of periods, compound returns the value of one unit of principal invested at the given interest rate compounded over the given number of periods. Equivalent to `(1 + rate) ^ periods`.",
+    "codePrefix": "compound",
+    "templates": [
+      "compound(${interestRateExpression}, ${periodExpression})"
+    ],
+    "parameters": [
+      {"parameter": "interestRateExpression", "description": "An expression that evaluates to an interest rate."},
+      {"parameter": "periodExpression", "description": "An expression that evaluates a number of periods."}
+    ],
+    "examples": [
+      {"description": "For example, to calculate how much a $1,000 initial investment will be worth assuming a 3% annual rate of return compounded annually and invested over 6 years.", "code": "1000 * compound(.03, 6) -- yields approximately 1194.05"}
+    ]
+  },
+
+  {
+    "title": "Cos",
+    "summary": "Returns the trigonometric cosine of the given argument, represented in radians.",
+    "codePrefix": "cos",
+    "templates": [
+      "the cos of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Date",
+    "summary": "Returns the current date in a variety of formats.",
+    "description": "Use `the date` or `the short date` to yield a date in the format `07/04/16`; use `the long date` or `the English date` for `Sunday, July 4, 2016`; use `the abbrev date` or `the abbreviated date` for `Sun, Jul 4, 2016`.",
+    "codePrefix": "date",
+    "templates": [
+      "the date",
+      "the long date",
+      "the short date",
+      "the abbreviated date",
+      "the English date"
+    ]
+  },
+
+  {
+    "title": "Disk Space",
+    "summary": "Returns the number of free bytes on the filesystem containing WyldCard, or any specified filesystem. Accepts the path of any disk, folder or file",
+    "codePrefix": "diskspace",
+    "templates": [
+      "the diskspace",
+      "the diskspace of ${pathExpression}"
+    ],
+    "parameters": [
+      {"parameter": "pathExpression", "description": "An expression that evaluates a file, folder or volume on the filesystem."}
+    ],
+    "examples": [
+      {"code": "the diskSpace of \"/Volumes/Macintosh HD\""}
+    ]
+  },
+
+  {
+    "title": "Exp",
+    "summary": "Returns the value of `e` raised to the power of the given argument.",
+    "codePrefix": "exp",
+    "templates": [
+      "the exp of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Exp1",
+    "summary": "Returns the value of `1-e` raised to the number of the given argument.",
+    "codePrefix": "exp1",
+    "templates": [
+      "the exp1 of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Exp2",
+    "summary": "Returns the value of `2` raised to the given argument; for example `the exp2 of 3` is equivalent to `2^3`.",
+    "codePrefix": "exp2",
+    "templates": [
+      "the exp2 of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Found Chunk",
+    "summary": "Returns a HyperTalk chunk identifying the currently highlighted search result text (the result of executing the find command) or empty if there is not highlighted search result.",
+    "codePrefix": "foundchunk",
+    "templates": [
+      "the foundChunk"
+    ]
+  },
+
+  {
+    "title": "Found Field",
+    "summary": "Returns a HyperTalk expression representing the field containing the highlighted search result text.",
+    "codePrefix": "foundfield",
+    "templates": [
+      "the foundField"
+    ]
+  },
+
+  {
+    "title": "Found Line",
+    "summary": "Returns a HyperTalk line chunk expression representing the line and field containing the highlighted search result.",
+    "codePrefix": "foundline",
+    "templates": [
+      "the foundLine"
+    ]
+  },
+
+  {
+    "title": "Found Text",
+    "summary": "Returns the highlighted search result, that is, the text string that is presently box-highlighted on the card.",
+    "codePrefix": "foundtext",
+    "templates": [
+      "the foundText"
+    ]
+  },
+
+  {
+    "title": "Length",
+    "summary": "Returns the number of characters in the given expression.",
+    "codePrefix": "length",
+    "templates": [
+      "the length of ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression whose length should be calculated."}
+    ]
+  },
+
+  {
+    "title": "Ln",
+    "summary": "Returns the natural logarithm of the given argument.",
+    "codePrefix": "ln",
+    "templates": [
+      "the ln of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Ln1",
+    "summary": "Returns the natural logarithm of the given argument plus one.",
+    "codePrefix": "ln1",
+    "templates": [
+      "the ln1 of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Log2",
+    "summary": "Returns the base-2 logarithm of the given argument.",
+    "codePrefix": "log2",
+    "templates": [
+      "the log2 of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Max",
+    "summary": "Returns the maximum value in a list of numerical items.",
+    "codePrefix": "max",
+    "templates": [
+      "max(${numericExpression}, ${numericExpression}, ...)",
+      "the max of ${numericListExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."},
+      {"parameter": "numericListExpression", "description": "An expression that evaluates to a list of numeric values, for example `\"1, 2, 3\"`"}
+    ],
+    "examples": [
+      {"code": "the max of \"1, 2, 3\" -- yeilds '3'"},
+      {"code": "max(1, 2, 3)"}
+    ]
+  },
+
+  {
+    "title": "Menus",
+    "summary": "Returns a `return`-delimited list of menus appearing in the menu bar.",
+    "codePrefix": "menus",
+    "templates": [
+      "the menus"
+    ]
+  },
+
+  {
+    "title": "Message",
+    "summary": "Returns the contents of the message box. Also available as `the message box` or `the message window`.",
+    "codePrefix": "message",
+    "templates": [
+      "the message"
+    ]
+  },
+
+  {
+    "title": "Min",
+    "summary": "Returns the minimum value in a list of numerical items.",
+    "codePrefix": "min",
+    "templates": [
+      "min(${numericExpression}, ${numericExpression}, ...)",
+      "the min of ${numericListExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."},
+      {"parameter": "numericListExpression", "description": "An expression that evaluates to a list of numeric values, for example `\"1, 2, 3\"`"}
+    ],
+    "examples": [
+      {"code": "the min of \"1, 2, 3\" -- yeilds '1'"},
+      {"code": "min(1, 2, 3)"}
+    ]
+  },
+
+  {
+    "title": "Mouse",
+    "summary": "Returns the current state of the left mouse button; either `up` or `down`.",
+    "codePrefix": "mouse",
+    "templates": [
+      "the mouse"
+    ]
+  },
+
+  {
+    "title": "Mouse Click",
+    "summary": "Returns whether the mouse was pressed at any point since the current handler began executing.",
+    "codePrefix": "mouseclick",
+    "templates": [
+      "the mouseClick"
+    ]
+  },
+
+  {
+    "title": "Mouse H",
+    "summary": "Returns the x-coordinate of the mouseLoc; the number of pixels the mouse cursor is from the left border of the card.",
+    "codePrefix": "mouseh",
+    "templates": [
+      "the mouseH"
+    ]
+  },
+
+  {
+    "title": "Mouse Location",
+    "summary": "Returns the current location of the cursor (in coordinates relative the top-left corner of the card panel).",
+    "codePrefix": "mouseloc",
+    "templates": [
+      "the mouseLoc"
+    ]
+  },
+
+  {
+    "title": "Mouse V",
+    "summary": "Returns the y-coordinate of the mouseLoc; the number of pixels the mouse cursor is from the top border of the card.",
+    "codePrefix": "mousev",
+    "templates": [
+      "the mouseV"
+    ]
+  },
+
+  {
+    "title": "Number",
+    "summary": "Returns the count of something within a given container.",
+    "codePrefix": "number",
+    "templates": [
+      "number of words in ${expression}",
+      "number of chars in ${expression}",
+      "number of lines in ${expression}",
+      "number of items in ${expression}",
+      "number of card buttons",
+      "number of card fields",
+      "number of card parts",
+      "number of background buttons",
+      "number of background fields",
+      "number of background parts",
+      "number of menuItems in menu ${menuExpression}",
+      "number of menus",
+      "number of cards",
+      "number of marked cards",
+      "number of backgrounds",
+      "number of cards in background ${backgroundExpression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "An expression whose words, lines, items or characters should be counted."},
+      {"parameter": "menuExpression", "description": "An expression that refers to a menu."},
+      {"parameter": "backgroundExpression", "description": "An expression identifying a background."}
+    ]
+  },
+
+  {
+    "title": "NumToChar",
+    "summary": "Returns the character value associated with the given character codepoint. The actual mapping between numbers and characters will depend on the character encoding used by the system, but `numToChar` is always assured to be the inverse of `charToNum`.",
+    "codePrefix": "numtochar",
+    "templates": [
+      "the numToChar of ${integerExpression}"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Offset",
+    "summary": "Accepts two values as arguments, `text1` and `text2`. Returns 0 if `text1` does not appear in `text2`, otherwise, returns the number of characters in `text2` where `text1` first appears, counting from 1.",
+    "codePrefix": "offset",
+    "templates": [
+      "offset(${expression}, ${expression})"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "Any expression."}
+    ],
+    "examples": [
+      {"code": "offset(\"world\", \"Hello world\") -- yields 7."}
+    ]
+  },
+
+  {
+    "title": "Option Key",
+    "summary": "Returns the current state of the option key (and/or 'meta' key on Unix hardware), either `up` or `down`.",
+    "codePrefix": "optionkey",
+    "templates": [
+      "the optionKey"
+    ]
+  },
+
+  {
+    "title": "Param",
+    "summary": "Returns the value of the given numbered parameter (or, more accurately, it returns the parameter's argument). Use 0 to retrieve the name of the handler or function.",
+    "codePrefix": "offset",
+    "templates": [
+      "offset(${expression}, ${expression})"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "Any expression."}
+    ],
+    "examples": [
+      {"description": "In the context of the function `myFunction(\"V1\",\"V2\")`", "code": "the param of 1 -- yields 'V1'\nthe param of 0 -- yields 'myFunction'"}
+    ]
+  },
+
+  {
+    "title": "Params",
+    "summary": "Returns a comma-separated list of arguments passed to the given handler or function.",
+    "codePrefix": "params",
+    "templates": [
+      "the params"
+    ]
+  },
+
+  {
+    "title": "Param Count",
+    "summary": "Returns the number of parameters passed to the current handler of function.",
+    "codePrefix": "paramcount",
+    "templates": [
+      "the paramCount"
+    ]
+  },
+
+  {
+    "title": "Random",
+    "summary": "Returns a random integer between 0 and the given argument.",
+    "codePrefix": "random",
+    "templates": [
+      "the random of ${integerExpression}"
+    ],
+    "parameters": [
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Screen Rect",
+    "summary": "The rectangle of the screen on which the card is displayed.",
+    "codePrefix": "screenrect",
+    "templates": [
+      "the screenRect"
+    ]
+  },
+
+  {
+    "title": "Seconds",
+    "summary": "Returns the number of seconds since midnight, January 1, 1970 UTC.",
+    "codePrefix": "seconds",
+    "templates": [
+      "the seconds"
+    ]
+  },
+
+  {
+    "title": "Selected Chunk",
+    "summary": "Returns a chunk expression in the form `char x to y of container` describing the active text selection; returns `empty` if no selection exists.",
+    "codePrefix": "selectedchunk",
+    "templates": [
+      "the selectedChunk"
+    ]
+  },
+
+  {
+    "title": "Selected Field",
+    "summary": "Returns a chunk expression identifying the part containing the active selection.",
+    "codePrefix": "selectedfield",
+    "templates": [
+      "the selectedField"
+    ]
+  },
+
+  {
+    "title": "Selected Line",
+    "summary": "Returns a chunk expression identifying the line or lines in a field containing the active selection.",
+    "codePrefix": "selectedline",
+    "templates": [
+      "the selectedLine"
+    ]
+  },
+
+  {
+    "title": "Selected Text",
+    "summary": "Returns the currently selected text within whichever field is in focus, or the empty string if no selection exists.",
+    "codePrefix": "selectedtext",
+    "templates": [
+      "the selectedText"
+    ]
+  },
+
+  {
+    "title": "Shift Key",
+    "summary": "Returns the current state of the shift key, either `up` or `down`.",
+    "codePrefix": "shiftkey",
+    "templates": [
+      "the shiftKey"
+    ]
+  },
+
+  {
+    "title": "Sin",
+    "summary": "Returns the trigonometric sine of the given argument, represented in radians.",
+    "codePrefix": "sin",
+    "templates": [
+      "the sin of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Speech",
+    "summary": "Returns the text currently being spoken via the `speak` command, or `done` if nothing is being spoken.",
+    "codePrefix": "speech",
+    "templates": [
+      "the speech"
+    ]
+  },
+
+  {
+    "title": "Square Root",
+    "summary": "Returns the square root of the given argument or `NaN` if the argument is negative.",
+    "codePrefix": "sqrt",
+    "templates": [
+      "the sqrt of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Sound",
+    "summary": "Returns the name of the currently playing sound, or done if no sound is being played.",
+    "codePrefix": "sound",
+    "templates": [
+      "the sound"
+    ]
+  },
+
+  {
+    "title": "Sum",
+    "summary": "Returns the sum of the arguments.",
+    "codePrefix": "average",
+    "templates": [
+      "sum(${numericExpression}, ${numericExpression}, ...)"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Tan",
+    "summary": "Returns the trigonometric tangent of the given argument, represented in radians.",
+    "codePrefix": "tan",
+    "templates": [
+      "the tan of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Target",
+    "summary": "Returns a HyperTalk expression referring to the part that first received the current message.",
+    "codePrefix": "target",
+    "templates": [
+      "the target"
+    ]
+  },
+
+  {
+    "title": "Ticks",
+    "summary": "Returns the number of ticks (1/60th second) since the JVM was started.",
+    "codePrefix": "ticks",
+    "templates": [
+      "the ticks"
+    ]
+  },
+
+  {
+    "title": "Time",
+    "summary": "Returns the time of day in a variety of formats.",
+    "description": "Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` to yield a time in the format `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.",
+    "codePrefix": "time",
+    "templates": [
+      "the time",
+      "the abbreviated time",
+      "the short time",
+      "the long time",
+      "the English time"
+    ]
+  },
+
+  {
+    "title": "Tool",
+    "summary": "Returns the name of the currently selected tool.",
+    "codePrefix": "tool",
+    "templates": [
+      "the tool"
+    ]
+  },
+
+  {
+    "title": "Trunc",
+    "summary": "Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.",
+    "codePrefix": "tool",
+    "templates": [
+      "the trunc of ${numericExpression}"
+    ],
+    "parameters": [
+      {"parameter": "numericExpression", "description": "An expression that evaluates to a numeric value."}
+    ]
+  },
+
+  {
+    "title": "Value",
+    "summary": "Evaluates the given expression as HyperTalk and returns the result.",
+    "codePrefix": "value",
+    "templates": [
+      "the value of ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "A value to interpret as HyperTalk."}
+    ],
+    "examples": [
+      {"code": "the value of (\"3\" & \"*4\") -- yields 12"}
+    ]
+  },
+
+  {
+    "title": "Voices",
+    "summary": "Returns a list of installed speaking voices. This function is unique to WyldCard and does not exist in HyperCard.",
+    "codePrefix": "voices",
+    "templates": [
+      "the voices"
+    ]
+  }
+]

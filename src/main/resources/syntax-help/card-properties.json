@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Marked",
+    "summary": "A general use logical-valued \"flag\" indicating the card is somehow special; useful to classify or limit search and sort results.",
+    "codePrefix": "marked",
+    "templates": [
+      "set the marked of ${cardExpression} to ${logicalExpression}",
+      "get the marked of ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression that identifies a card or background, for example `the last card of this background`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either true or false."}
+    ]
+  },
+
+  {
+    "title": "Can't Delete",
+    "summary": "A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.",
+    "codePrefix": "cantdelete",
+    "templates": [
+      "set the cantDelete of ${cardExpression} to ${logicalExpression}",
+      "get the cantDelete of ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression that identifies a card or background, for example `the last card of this background`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either true or false."}
+    ]
+  },
+
+  {
+    "title": "Don't Search",
+    "summary": "When true, indicates that fields appearing on this card (or any card sharing this background) will not be searched by the find command.",
+    "codePrefix": "dontsearch",
+    "templates": [
+      "set the dontSearch of ${cardExpression} to ${logicalExpression}",
+      "get the dontSearch of ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression that identifies a card or background, for example `the last card of this background`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either true or false."}
+    ]
+  },
+
+  {
+    "title": "Show Picture",
+    "summary": "A logical value specifying whether the card or background picture is visible.",
+    "codePrefix": "showpict",
+    "templates": [
+      "set the showPict of ${cardExpression} to ${logicalExpression}",
+      "get the showPict of ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression that identifies a card or background, for example `the last card of this background`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either true or false."}
+    ]
+  }
+
+]

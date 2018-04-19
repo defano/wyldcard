@@ -123,7 +123,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
     @RunOnDispatch
     public WindowBuilder withLocationStaggeredOver(Component component) {
         this.window.getWindow().pack();
-        JRootPane root = SwingUtilities.getRootPane(component);
         location = new Point((int) component.getLocationOnScreen().getX() + DEFAULT_SEPARATION, (int) component.getLocationOnScreen().getY() + DEFAULT_SEPARATION);
         return this;
     }

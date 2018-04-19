@@ -1,0 +1,319 @@
+[
+  {
+    "title": "Bottom",
+    "summary": "Returns or sets the bottom-most border of the part's location, moving the part vertically but not affecting its height.",
+    "codePrefix": "bottom",
+    "templates": [
+      "set the bottom of ${partExpression} to ${pointExpression}",
+      "get the bottom of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "pointExpression", "description": "An expression identifying a coordinate on the screen or card; consisting of two, comma-separated integer values like `\"25, 75\"`."}
+    ]
+  },
+
+  {
+    "title": "Bottom Right",
+    "summary": "Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card or screen but does not affect its height or width. This property accepts a point value consisting of a comma-separated x and y coordinate, for example, `\"10, 100\".`",
+    "codePrefix": "bottomright",
+    "templates": [
+      "set the bottomRight of ${partExpression} to ${pointExpression}",
+      "get the bottomRight of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "pointExpression", "description": "An expression identifying a coordinate on the screen or card; consisting of two, comma-separated integer values like `\"25, 75\"`."}
+    ]
+  },
+
+  {
+    "title": "Contents",
+    "summary": "Returns or sets the value of this object as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put \"hello\" into button id 0` sets the contents of the button to `\"Hello\"`. This value could be retrieved with `get the contents of button id 0`.",
+    "codePrefix": "contents",
+    "templates": [
+      "set the contents of ${partExpression} to ${expression}",
+      "get the contents of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "expression", "description": "An expression specifying the value."}
+    ]
+  },
+
+  {
+    "title": "Enabled",
+    "summary": "Returns or sets the value of this object as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put \"hello\" into button id 0` sets the contents of the button to `\"Hello\"`. This value could be retrieved with `get the contents of button id 0`.",
+    "codePrefix": "enabled",
+    "templates": [
+      "set the enabled of ${partExpression} to ${logicalExpression}",
+      "get the enables of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
+    ]
+  },
+
+  {
+    "title": "Height",
+    "summary": "Returns or sets the height of the part (in pixels).",
+    "codePrefix": "height",
+    "templates": [
+      "set the height of ${partExpression} to ${integerExpression}",
+      "get the height of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a whole number."}
+    ]
+  },
+
+  {
+    "title": "ID",
+    "summary": "Returns the part's ID. Each part has a unique ID that is assigned by WyldCard when the part is created. The ID cannot be changed.",
+    "codePrefix": "id",
+    "templates": [
+      "get the id of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."}
+    ]
+  },
+
+  {
+    "title": "Left",
+    "summary": "Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.",
+    "codePrefix": "left",
+    "templates": [
+      "set the left of ${partExpression} to ${integerExpression}",
+      "get the left of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a whole number."}
+    ]
+  },
+
+  {
+    "title": "Location",
+    "summary": "Returns or sets the center coordinate of the part. Also available as `the loc` property.",
+    "codePrefix": "location",
+    "templates": [
+      "set the location of ${partExpression} to ${pointExpression}",
+      "get the location of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "pointExpression", "description": "An expression identifying a coordinate on the screen or card; consisting of two, comma-separated integer values like `\"25, 75\"`."}
+    ]
+  },
+
+  {
+    "title": "Name",
+    "summary": "Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button).",
+    "codePrefix": "name",
+    "templates": [
+      "set the name of ${partExpression} to ${expression}",
+      "get the name of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "expression", "description": "An expression specifying the name."}
+    ]
+  },
+
+  {
+    "title": "Rectangle",
+    "summary": "Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a rectangle value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `\"10, 10, 100, 100\"`. This value is also accessible as `the rect`.",
+    "codePrefix": "rectangle",
+    "templates": [
+      "set the rectangle of ${partExpression} to ${rectangleExpression}",
+      "get the rectangle of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "rectangleExpression", "description": "An expression identifying the top-left and bottom-right points in a rectangle; consisting of four comma-separated integer values like `\"0, 0, 100, 200\"`."}
+    ]
+  },
+
+  {
+    "title": "Right",
+    "summary": "Returns or sets the right-most border of the part's location, moving the part horizontally but not affecting its width.",
+    "codePrefix": "right",
+    "templates": [
+      "set the right of ${partExpression} to ${integerExpression}",
+      "get the right of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a whole number."}
+    ]
+  },
+
+  {
+    "title": "Script",
+    "summary": "Returns or replaces the text of the HyperTalk script associated with a part.",
+    "codePrefix": "script",
+    "templates": [
+      "set the script of ${partExpression} to ${expression}",
+      "get the script of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "expression", "description": "An expression specifying the text of the HyperTalk script."}
+    ]
+  },
+
+  {
+    "title": "Top",
+    "summary": "Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.",
+    "codePrefix": "script",
+    "templates": [
+      "set the top of ${partExpression} to ${integerExpression}",
+      "get the top of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a whole number."}
+    ]
+  },
+
+  {
+    "title": "Top Left",
+    "summary": "Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its height or width. This property only accepts a point value consisting of a comma-separated x and y coordinate, for example, `\"10, 100\"`.",
+    "codePrefix": "topleft",
+    "templates": [
+      "set the topLeft of ${partExpression} to ${pointExpression}",
+      "get the topLeft of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "pointExpression", "description": "An expression identifying a coordinate on the screen or card; consisting of two, comma-separated integer values like `\"25, 75\"`."}
+    ]
+  },
+
+  {
+    "title": "Width",
+    "summary": "Returns or sets the width of the part (in pixels).",
+    "codePrefix": "width",
+    "templates": [
+      "set the width of ${partExpression} to ${integerExpression}",
+      "get the width of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a whole number."}
+    ]
+  },
+
+  {
+    "title": "Selected Text",
+    "summary": "For fields, returns the currently selected text. For buttons, returns the selected menu item of popup-style buttons or the empty string for all other button styles. This property is read-only; it cannot be set via HyperTalk.",
+    "codePrefix": "selectedtext",
+    "templates": [
+      "get the selectedText of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."}
+    ]
+  },
+
+  {
+    "title": "Style",
+    "summary": "Sets or retrieves the style of the part (see the tables below for available button and field styles).",
+    "codePrefix": "style",
+    "templates": [
+      "set the style of ${partExpression} to ${expression}",
+      "get the style of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "expression", "description": "An expression that evaluates to the name of a button or field style (like `popup` or `shadow`)."}
+    ]
+  },
+
+  {
+    "title": "Text Align",
+    "summary": "Returns or sets the text alignment of the part; one of `left`, `right` or `center`. Assumes `center` if any other value is provided.",
+    "codePrefix": "textalign",
+    "templates": [
+      "set the textAlign of ${partExpression} to ${expression}",
+      "get the textAlign of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "expression", "description": "An expression that evaluates to a text alignment."}
+    ]
+  },
+
+  {
+    "title": "Text Font",
+    "summary": "Returns or sets the font (family) of a part or a range of text. Uses the system default font if the specified font family does not exist on the system.",
+    "codePrefix": "textfont",
+    "templates": [
+      "set the textFont of ${textExpression} to ${expression}",
+      "get the textFont of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "textExpression", "description": "An expression identifying a part or a range of field text, like `card button \"My Button\"` or `line 6 of field 2`."},
+      {"parameter": "expression", "description": "An expression that evaluates to font family (like `Courier` or `Times New Roman`."}
+    ],
+    "examples": [
+      {"description": "Set the font of a part", "code": "set the textFont of card button 2 to \"Chicago\""},
+      {"description": "Set the font of a range of text", "code": "set the textFont of the middle word of card field \"Choices\" to \"Helvetica\""}
+    ]
+
+  },
+
+  {
+    "title": "Text Size",
+    "summary": "Returns or sets the size (in points) of a part's text or a range of text.",
+    "codePrefix": "textsize",
+    "templates": [
+      "set the textSize of ${textExpression} to ${integerExpression}",
+      "get the textSize of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "textExpression", "description": "An expression identifying a part or a range of field text, like `card button \"My Button\"` or `line 6 of field 2`."},
+      {"parameter": "integerExpression", "description": "An expression that evaluates to a whole number."}
+    ],
+    "examples": [
+      {"description": "Set the text size of a part", "code": "set the textSize of card button 2 to 24"},
+      {"description": "Set the text size of a range of text", "code": "set the textSize of the middle word of card field \"Choices\" to 14"}
+    ]
+  },
+
+  {
+    "title": "Text Style",
+    "summary": "Returns or sets the text style attributes of a part or a range of text. Valid style attributes include `plain`, `bold`, `italic` (plus `strikeThrough`, `underline`, `subscript` and `superscript` when addressing fields). Provide a list to set multiple attributes together (i.e., `set the textStyle of me to \"bold, italic\"`)",
+    "codePrefix": "textstyle",
+    "templates": [
+      "set the textStyle of ${textExpression} to ${styleExpression}",
+      "get the textStyle of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "textExpression", "description": "An expression identifying a part or a range of field text, like `card button \"My Button\"` or `line 6 of field 2`."},
+      {"parameter": "styleExpression", "description": "An expression that evaluates to a list of text styles."}
+    ],
+    "examples": [
+      {"description": "Set the text style of a part", "code": "set the textStyle of card button 2 to \"bold\""},
+      {"description": "Set the text style of a range of text", "code": "set the textStyle of the middle word of card field \"Choices\" to \"italic, superscript, bold\""}
+    ]
+  },
+
+  {
+    "title": "Visible",
+    "summary": "Returns or sets the visibility of the button (a Boolean value). When invisible, the part is not drawn on the screen and receives no messages from WyldCard. This value can also be changed using the hide and show commands.",
+    "codePrefix": "visible",
+    "templates": [
+      "set the visible of ${partExpression} to ${logicalExpression}",
+      "get the visible of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
+    ]
+  }
+
+]
