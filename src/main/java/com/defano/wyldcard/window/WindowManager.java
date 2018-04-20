@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
@@ -11,6 +12,8 @@ import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WindowManager {
 
@@ -191,22 +194,6 @@ public class WindowManager {
         return expressionEvaluator;
     }
 
-    public HyperCardWindow[] allWindows() {
-        return new HyperCardWindow[] {
-                getStackWindow(),
-                getMessageWindow(),
-                getPaintToolsPalette(),
-                getShapesPalette(),
-                getLinesPalette(),
-                getPatternsPalette(),
-                getBrushesPalette(),
-                getColorPalette(),
-                getMessageWatcher(),
-                getVariableWatcher(),
-                getExpressionEvaluator()
-        };
-    }
-
     public ScriptEditor findScriptEditorForPart(PartModel model) {
         if (model == null) {
             return null;
@@ -224,6 +211,34 @@ public class WindowManager {
         return null;
     }
 
+    public List<HyperCardWindow> getWindow(String name) {
+        ArrayList<HyperCardWindow> windows = new ArrayList<>();
+
+        for (Window thisWindow : JFrame.getWindows()) {
+            if (thisWindow instanceof HyperCardWindow) {
+                HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
+
+                if (thisWyldWindow.getTitle().equalsIgnoreCase(name)) {
+                    windows.add(thisWyldWindow);
+                }
+            }
+        }
+
+        return windows;
+    }
+
+    public List<Value> getWindows() {
+        ArrayList<Value> windows = new ArrayList<>();
+
+        for (Window thisWindow : JFrame.getWindows()) {
+            if (thisWindow instanceof HyperCardFrame) {
+                windows.add(new Value(((HyperCardWindow) thisWindow).getTitle()));
+            }
+        }
+
+        return windows;
+    }
+
     public void setLookAndFeel(String lafClassName) {
         lookAndFeelClassProvider.onNext(lafClassName);
 
@@ -231,11 +246,14 @@ public class WindowManager {
             try {
                 UIManager.setLookAndFeel(lafClassName);
 
-                for (HyperCardWindow thisWindow : allWindows()) {
-                    SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+                for (Window thisWindow : JFrame.getWindows()) {
+                    SwingUtilities.updateComponentTreeUI(thisWindow);
 
-                    thisWindow.getWindow().pack();
-                    thisWindow.applyMenuBar();
+                    if (thisWindow instanceof HyperCardWindow) {
+                        HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
+                        thisWyldWindow.getWindow().pack();
+                        thisWyldWindow.applyMenuBar();
+                    }
                 }
 
                 stackWindow.applyMenuBar();

@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
@@ -12,6 +13,7 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.WindowPartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
@@ -222,7 +224,11 @@ public class ExecutionContext {
      * @throws PartException Thrown if no such part exists
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
-        return WyldCard.getInstance().getActiveStack().getStackModel().findPart(this, ps);
+        if (ps instanceof WindowSpecifier) {
+            return new WindowPartModel(((WindowSpecifier) ps).getSpecifiedWindow());
+        } else {
+            return WyldCard.getInstance().getActiveStack().getStackModel().findPart(this, ps);
+        }
     }
 
     /**

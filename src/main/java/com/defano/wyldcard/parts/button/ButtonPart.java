@@ -1,6 +1,5 @@
 package com.defano.wyldcard.parts.button;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -10,10 +9,8 @@ import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
 import java.awt.*;

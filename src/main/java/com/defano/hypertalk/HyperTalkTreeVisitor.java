@@ -324,6 +324,36 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCardWindowExpr(HyperTalkParser.CardWindowExprContext ctx) {
+        return new WindowExp(ctx, SingletonWindowType.CARD);
+    }
+
+    @Override
+    public Object visitToolWindowExpr(HyperTalkParser.ToolWindowExprContext ctx) {
+        return new WindowExp(ctx, SingletonWindowType.TOOLS);
+    }
+
+    @Override
+    public Object visitPatternWindowExpr(HyperTalkParser.PatternWindowExprContext ctx) {
+        return new WindowExp(ctx, SingletonWindowType.PATTERNS);
+    }
+
+    @Override
+    public Object visitMessageWatcherExpr(HyperTalkParser.MessageWatcherExprContext ctx) {
+        return new WindowExp(ctx, SingletonWindowType.MESSAGE_WATCHER);
+    }
+
+    @Override
+    public Object visitVariableWatcherExpr(HyperTalkParser.VariableWatcherExprContext ctx) {
+        return new WindowExp(ctx, SingletonWindowType.VARIABLE_WATCHER);
+    }
+
+    @Override
+    public Object visitWindowExprExpr(HyperTalkParser.WindowExprExprContext ctx) {
+        return new WindowExp(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitFastSpeed(HyperTalkParser.FastSpeedContext ctx) {
         return VisualEffectSpeed.FAST;
     }
@@ -1358,6 +1388,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWindowPartPart(HyperTalkParser.WindowPartPartContext ctx) {
+        return visit(ctx.windowPart());
+    }
+
+    @Override
     public Object visitThisStackPart(HyperTalkParser.ThisStackPartContext ctx) {
         return new StackPartExp(ctx);
     }
@@ -1967,6 +2002,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case SPEECH: return new SpeechFunc(ctx);
             case VOICES: return new VoicesFunc(ctx);
             case MOUSECLICK: return new MouseClickFunc(ctx);
+            case WINDOWS: return new WindowsFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -2102,6 +2138,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitVoicesFunc(HyperTalkParser.VoicesFuncContext ctx) {
         return BuiltInFunction.VOICES;
+    }
+
+    @Override
+    public Object visitWindowsFunc(HyperTalkParser.WindowsFuncContext ctx) {
+        return BuiltInFunction.WINDOWS;
     }
 
     @Override

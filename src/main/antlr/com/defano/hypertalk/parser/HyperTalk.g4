@@ -341,6 +341,7 @@ part
     | bkgndPart                                                                                                         # bkgndPartPart
     | cardPart                                                                                                          # cardPartPart
     | stackPart                                                                                                         # stackPartPart
+    | windowPart                                                                                                        # windowPartPart
     ;
 
 stackPart
@@ -383,6 +384,15 @@ bkgndPart
     | background factor                                                                                                 # expressionBkgndPart
     | ordinal background                                                                                                # ordinalBkgndPart
     | position background                                                                                               # positionBkgndPart
+    ;
+
+windowPart
+    : 'the'? card 'window'                                                                                              # cardWindowExpr
+    | 'the'? 'tool' 'window'                                                                                            # toolWindowExpr
+    | 'the'? 'pattern' 'window'                                                                                         # patternWindowExpr
+    | 'the'? 'message' 'watcher'                                                                                        # messageWatcherExpr
+    | 'the'? 'variable' 'watcher'                                                                                       # variableWatcherExpr
+    | 'window' expression                                                                                               # windowExprExpr
     ;
 
 listExpression
@@ -511,6 +521,7 @@ zeroArgFunc
     | 'foundfield'                                                                                                      # propDelegatedFunc
     | 'foundline'                                                                                                       # propDelegatedFunc
     | 'foundtext'                                                                                                       # propDelegatedFunc
+    | 'windows'                                                                                                         # windowsFunc
     ;
 
 singleArgFunc
@@ -666,6 +677,7 @@ propertyName
     | 'center'
     | 'scroll'
     | 'script'
+    | 'pattern'
     | ID
     ;
 

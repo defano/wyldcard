@@ -67,5 +67,6 @@ public enum BuiltInFunction {
     TARGET,
     SPEECH,
     VOICES,
-    MOUSECLICK
+    MOUSECLICK,
+    WINDOWS
 }
