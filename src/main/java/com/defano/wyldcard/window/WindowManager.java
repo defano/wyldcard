@@ -1,7 +1,10 @@
 package com.defano.wyldcard.window;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.WindowNameSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -15,7 +18,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WindowManager {
+public class WindowManager implements WindowFinder {
 
     private final static WindowManager instance = new WindowManager();
 
@@ -192,51 +195,6 @@ public class WindowManager {
 
     public ExpressionEvaluator getExpressionEvaluator() {
         return expressionEvaluator;
-    }
-
-    public ScriptEditor findScriptEditorForPart(PartModel model) {
-        if (model == null) {
-            return null;
-        }
-
-        for (Frame frame : JFrame.getFrames()) {
-            if (frame instanceof ScriptEditor) {
-                ScriptEditor editor = (ScriptEditor) frame;
-                if (model.equals(editor.getModel())) {
-                    return editor;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public List<HyperCardWindow> getWindow(String name) {
-        ArrayList<HyperCardWindow> windows = new ArrayList<>();
-
-        for (Window thisWindow : JFrame.getWindows()) {
-            if (thisWindow instanceof HyperCardWindow) {
-                HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
-
-                if (thisWyldWindow.getTitle().equalsIgnoreCase(name)) {
-                    windows.add(thisWyldWindow);
-                }
-            }
-        }
-
-        return windows;
-    }
-
-    public List<Value> getWindows() {
-        ArrayList<Value> windows = new ArrayList<>();
-
-        for (Window thisWindow : JFrame.getWindows()) {
-            if (thisWindow instanceof HyperCardFrame) {
-                windows.add(new Value(((HyperCardWindow) thisWindow).getTitle()));
-            }
-        }
-
-        return windows;
     }
 
     public void setLookAndFeel(String lafClassName) {

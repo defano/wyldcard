@@ -392,7 +392,7 @@
   },
 
   {
-    "title": "Number",
+    "title": "Number Of",
     "summary": "Returns the count of something within a given container.",
     "codePrefix": "number",
     "templates": [
@@ -411,7 +411,8 @@
       "number of cards",
       "number of marked cards",
       "number of backgrounds",
-      "number of cards in background ${backgroundExpression}"
+      "number of cards in background ${backgroundExpression}",
+      "number of windows"
     ],
     "parameters": [
       {"parameter": "expression", "description": "An expression whose words, lines, items or characters should be counted."},
@@ -704,6 +705,15 @@
     "codePrefix": "voices",
     "templates": [
       "the voices"
+    ]
+  },
+
+  {
+    "title": "Windows",
+    "summary": "Accepts no arguments and returns a newline-delimited list containing the name of every window.",
+    "codePrefix": "windows",
+    "templates": [
+      "the windows"
     ]
   }
 ]

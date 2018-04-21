@@ -13,12 +13,13 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.WindowPartModel;
+import com.defano.wyldcard.parts.model.WindowProxyPartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
+import com.defano.wyldcard.window.WindowManager;
 
 import java.util.List;
 import java.util.Stack;
@@ -225,9 +226,9 @@ public class ExecutionContext {
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
         if (ps instanceof WindowSpecifier) {
-            return new WindowPartModel(((WindowSpecifier) ps).getSpecifiedWindow());
+            return new WindowProxyPartModel(WindowManager.getInstance().findWindow((WindowSpecifier) ps));
         } else {
-            return WyldCard.getInstance().getActiveStack().getStackModel().findPart(this, ps);
+            return getActiveStack().getStackModel().findPart(this, ps);
         }
     }
 
@@ -292,7 +293,7 @@ public class ExecutionContext {
     public CardPart getCurrentCard() {
         CardPart currentCard = this.card;
         if (currentCard == null) {
-            return WyldCard.getInstance().getActiveStackDisplayedCard();
+            return getActiveStack().getDisplayedCard();
         } else {
             return currentCard;
         }
@@ -315,7 +316,7 @@ public class ExecutionContext {
      *
      * @return The current stack
      */
-    public StackPart getCurrentStack() {
+    public StackPart getActiveStack() {
         return WyldCard.getInstance().getActiveStack();
     }
 

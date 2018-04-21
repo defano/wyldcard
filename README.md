@@ -28,7 +28,6 @@ WyldCard attempts to maintain high-fidelity to Apple's original software rather 
 
 * WyldCard can't open or import old HyperCard stacks.
 * No home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No multi-window or palette support (`open stack ... in new window`).
 * No external commands or functions (XCMDs/XFCNs).
 
 ## Getting started
@@ -613,7 +612,7 @@ Menus in WyldCard differ from Apple's HyperCard in a few nuanced ways:
 
 ## Properties
 
-[Buttons](#buttons) | [Fields](#fields) | [Menu Items](#menu-items) | [Cards & Backgrounds](#cards-and-backgrounds) | [HyperCard](#hypercard-properties)
+[Buttons](#buttons) | [Fields](#fields) | [Menu Items](#menu-items) | [Cards & Backgrounds](#cards-and-backgrounds) | [Windows](#windows) | [HyperCard](#hypercard-properties)
 
 A property is a HyperTalk-addressable attribute that determines how an object looks, feels, and reacts to user interaction. Properties in WyldCard are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
 
@@ -633,15 +632,16 @@ Property      | Description
 `bottom`      | Returns or sets the bottom-most border of the part's location, moving the part vertically but not affecting its height.
 `bottomRight` | Returns or sets the bottom-right coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `contents`    | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
-`enabled`     | Returns or sets whether the button or field is enabled. When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands.
+`enabled`     | Returns or sets whether the button or field is enabled. When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands. Not applicable to `window` parts.
 `height`      | Returns or sets the height of the part (in pixels)
 `id`          | Returns the part's ID. Each part has a globally unique ID that is assigned by HyperCard at creation and cannot be changed.
 `left`        | Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.
 `location`    | Returns or sets the center point of the part. Also available as the `loc` property.
 `name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
+`number`      | Returns the _number_ of the part, a value representing its order relative to other parts of the same type.
 `rectangle`   | Returns or sets the rectangle of the part, equivalent to getting or setting the `top`, `left`, `height` and `width` properties together. This property only accepts a _rectangle_ value, consisting of two, comma-separated point coordinates representing the top-left and bottom-right positions of the part, for example `"10, 10, 100, 100"`. This value is also accessible as `rect`.
 `right`       | Returns or sets the right-most border of the part's location, moving the part horizontally but not affecting its width.
-`script`      | Retrieves or replaces the current script of the part
+`script`      | Retrieves or replaces the current script of the part; not applicable to `window` parts.
 `top`         | Returns or sets the top-most border of the part's location, moving the part vertically but not affecting its height.
 `topLeft`     | Returns or sets the top-left coordinate of the part. When set, this property adjusts the part's position on the card but does not affect its `height` or `width`. This property only accepts a _point_ value consisting of a comma-separated _x_ and _y_ coordinate, for example, `"10, 100"`
 `width`       | Returns or sets the width of the part (in pixels)
@@ -747,10 +747,18 @@ Cards and backgrounds are objects in HyperCard that support these unique propert
 
 Property     | Description
 -------------|----------------------
-`marked`     | A general use logical-valued "flag" indicating the card is somehow special useful to classify or limit search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
+`marked`     | A general-use, logical-valued "flag" indicating that the card is somehow special; useful for classifying or limiting search and sort results. For example, `sort the marked cards of this stack ...`. (Applies only to cards)
 `cantDelete` | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
 `dontSearch` | When true, indicates that fields appearing on this card (or any card sharing this background) will not be searched by the `find` command.
 `showPict`   | A logical value specifying if the card or background picture is visible.
+
+### Windows
+
+A window is an addressable object in WyldCard and supports these properties (in addition to the properties common to all objects):
+
+Property     | Description
+-------------|----------------------
+`zoomed`     | Indicates or sets whether the window has been maximized or zoomed (that is, currently displayed in its largest allowable dimensions).
 
 ### HyperCard Properties
 
@@ -1148,6 +1156,7 @@ Function        | Description
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
 `voices`        | Returns a list of installed voices. This function is unique to WyldCard and does not exist in HyperCard.
+`windows`       | Accepts no arguments and returns a return-delimited list containing the name of every window in alphabetical order (note that HyperCard returns this list in Z-order).
 
 ### User-defined functions
 

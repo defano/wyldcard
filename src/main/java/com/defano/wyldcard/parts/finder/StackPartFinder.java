@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A mix-in containing methods for locating parts contained anywhere in the stack.
+ * Provides methods for finding parts anywhere in a stack.
  */
 public interface StackPartFinder extends PartFinder {
 

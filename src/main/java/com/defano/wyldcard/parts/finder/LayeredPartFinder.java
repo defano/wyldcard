@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A container of button and field parts. Provides mixin functionality for finding, retrieving and counting parts.
+ * Provided functions for finding "layered" parts, that is, button or field parts that may live on either the card or
+ * background layer of a card.
  */
 public interface LayeredPartFinder extends PartFinder {
 

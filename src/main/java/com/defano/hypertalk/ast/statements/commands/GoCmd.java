@@ -42,7 +42,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'Go back'
         if (destinationExp == null) {
-            WyldCard.getInstance().getActiveStack().popCard(context, visualEffect);
+            context.getActiveStack().popCard(context, visualEffect);
         }
 
         else {
@@ -55,7 +55,7 @@ public class GoCmd extends Command {
                 throw new HtSemanticException("No such card.");
             } else {
                 Integer finalCardIndex = cardIndex;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> WyldCard.getInstance().getActiveStack().goCard(context, finalCardIndex, visualEffect, true));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> context.getActiveStack().goCard(context, finalCardIndex, visualEffect, true));
             }
         }
     }
@@ -68,9 +68,9 @@ public class GoCmd extends Command {
 
         int destinationIndex;
         if (model instanceof CardModel) {
-            destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
+            destinationIndex = context.getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
         } else if (model instanceof BackgroundModel) {
-            destinationIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
+            destinationIndex = context.getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
         } else {
             return null;
         }

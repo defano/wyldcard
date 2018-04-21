@@ -392,7 +392,8 @@ windowPart
     | 'the'? 'pattern' 'window'                                                                                         # patternWindowExpr
     | 'the'? 'message' 'watcher'                                                                                        # messageWatcherExpr
     | 'the'? 'variable' 'watcher'                                                                                       # variableWatcherExpr
-    | 'window' expression                                                                                               # windowExprExpr
+    | 'window' expression                                                                                               # windowNameExpr
+    | 'window' 'id' expression                                                                                          # windowIdExpr
     ;
 
 listExpression
@@ -432,7 +433,6 @@ container
     | property                                                                                                          # propertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
-    | message                                                                                                           # messageDest
     | part                                                                                                              # partDest
     | chunk container                                                                                                   # chunkContainerDest
     ;
@@ -498,6 +498,7 @@ zeroArgFunc
     | 'number' 'of' cards (of 'this' 'stack')?                                                                          # numberOfCardsFunc
     | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCards
     | 'number' 'of' background (of 'this' 'stack')?                                                                     # numberOfBackgrounds
+    | 'number' 'of' 'windows'                                                                                           # numberOfWindows
     | 'menus'                                                                                                           # menusFunc
     | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
     | 'params'                                                                                                          # paramsFunc

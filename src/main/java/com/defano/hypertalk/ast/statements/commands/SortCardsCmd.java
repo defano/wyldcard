@@ -43,10 +43,10 @@ public class SortCardsCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         // Remember which card we're currently viewing
-        int thisCardId = WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getId(context);
+        int thisCardId = context.getActiveStack().getDisplayedCard().getCardModel().getId(context);
 
         // Get a copy of the list of cards in the stack
-        List<CardModel> allCards = WyldCard.getInstance().getActiveStack().getStackModel().getCardModels();
+        List<CardModel> allCards = context.getActiveStack().getStackModel().getCardModels();
 
         // Filter list for cards indicated for sorting (i.e., marked cards; cards of a given background)
         List<CardModel> sortCards = filterCards(context, allCards);
@@ -59,16 +59,16 @@ public class SortCardsCmd extends Command {
             List<CardModel> orderedCards = mergeCards(context, allCards, sortCards);
 
             // Update the stack with the modified card order and invalidate the card cache
-            WyldCard.getInstance().getActiveStack().getStackModel().setCardModels(orderedCards);
+            context.getActiveStack().getStackModel().setCardModels(orderedCards);
 
         } catch (HtUncheckedSemanticException e) {
             // Error occurred sorting; revert all changes
-            WyldCard.getInstance().getActiveStack().getStackModel().setCardModels(allCards);
+            context.getActiveStack().getStackModel().setCardModels(allCards);
             WyldCard.getInstance().showErrorDialog(e.getHtCause());
         } finally {
             // Because card order may have changed, lets navigate back to where we started
-            int thisCardIdx = indexOfCardId(context, WyldCard.getInstance().getActiveStack().getStackModel().getCardModels(), thisCardId);
-            WyldCard.getInstance().getActiveStack().invalidateCache(context, thisCardIdx);
+            int thisCardIdx = indexOfCardId(context, context.getActiveStack().getStackModel().getCardModels(), thisCardId);
+            context.getActiveStack().invalidateCache(context, thisCardIdx);
         }
     }
 

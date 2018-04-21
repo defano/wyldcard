@@ -5,7 +5,10 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.model.ComputedGetter;
+import com.defano.wyldcard.parts.model.DelegatedProperty;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
@@ -40,6 +43,9 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     public static final String PROP_SHORTID = "short id";
     public static final String PROP_ABBREVID = "abbreviated id";
     public static final String PROP_LONGID = "long id";
+    public static final String PROP_OWNER = "owner";
+    public static final String PROP_LONGOWNER = "long owner";
+    public static final String PROP_SHORTOWNER = "short owner";
 
     private int backgroundId = 0;
     private final Collection<FieldModel> fields = new ArrayList<>();
@@ -68,6 +74,10 @@ public class CardModel extends PartModel implements LayeredPartFinder {
     @PostConstruct
     public void initialize() {
         super.initialize();
+
+        defineComputedReadOnlyProperty(PROP_OWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getName(context)));
+        defineComputedReadOnlyProperty(PROP_LONGOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getLongName(context)));
+        defineComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getShortName(context)));
 
         defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
         defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));

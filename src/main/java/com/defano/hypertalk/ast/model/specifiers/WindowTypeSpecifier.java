@@ -16,8 +16,7 @@ public class WindowTypeSpecifier extends WindowSpecifier {
         return windowType.getWindow().getTitle();
     }
 
-    @Override
-    public HyperCardWindow getSpecifiedWindow() {
-        return windowType.getWindow();
+    public SingletonWindowType getWindowType() {
+        return windowType;
     }
 }

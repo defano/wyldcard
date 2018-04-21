@@ -15,6 +15,6 @@ public class WindowsFunc extends Expression {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return Value.ofLines(WindowManager.getInstance().getWindows());
+        return Value.ofLines(WindowManager.getInstance().getWindowNames());
     }
 }

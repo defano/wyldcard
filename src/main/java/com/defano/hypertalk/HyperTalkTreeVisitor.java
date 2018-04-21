@@ -325,32 +325,37 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitCardWindowExpr(HyperTalkParser.CardWindowExprContext ctx) {
-        return new WindowExp(ctx, SingletonWindowType.CARD);
+        return new WindowTypeExp(ctx, SingletonWindowType.CARD);
     }
 
     @Override
     public Object visitToolWindowExpr(HyperTalkParser.ToolWindowExprContext ctx) {
-        return new WindowExp(ctx, SingletonWindowType.TOOLS);
+        return new WindowTypeExp(ctx, SingletonWindowType.TOOLS);
     }
 
     @Override
     public Object visitPatternWindowExpr(HyperTalkParser.PatternWindowExprContext ctx) {
-        return new WindowExp(ctx, SingletonWindowType.PATTERNS);
+        return new WindowTypeExp(ctx, SingletonWindowType.PATTERNS);
     }
 
     @Override
     public Object visitMessageWatcherExpr(HyperTalkParser.MessageWatcherExprContext ctx) {
-        return new WindowExp(ctx, SingletonWindowType.MESSAGE_WATCHER);
+        return new WindowTypeExp(ctx, SingletonWindowType.MESSAGE_WATCHER);
     }
 
     @Override
     public Object visitVariableWatcherExpr(HyperTalkParser.VariableWatcherExprContext ctx) {
-        return new WindowExp(ctx, SingletonWindowType.VARIABLE_WATCHER);
+        return new WindowTypeExp(ctx, SingletonWindowType.VARIABLE_WATCHER);
     }
 
     @Override
-    public Object visitWindowExprExpr(HyperTalkParser.WindowExprExprContext ctx) {
-        return new WindowExp(ctx, (Expression) visit(ctx.expression()));
+    public Object visitWindowNameExpr(HyperTalkParser.WindowNameExprContext ctx) {
+        return new WindowNameExp(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitWindowIdExpr(HyperTalkParser.WindowIdExprContext ctx) {
+        return new WindowIdExp(ctx, (Expression) visit(ctx.expression()));
     }
 
     @Override
@@ -606,11 +611,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
         return new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
-    }
-
-    @Override
-    public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
-        return new MsgBoxExp(ctx);
     }
 
     @Override
@@ -1993,6 +1993,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_CARDS: return new NumberOfFunc(ctx, Countable.CARDS);
             case NUMBER_MARKED_CARDS: return new NumberOfFunc(ctx, Countable.MARKED_CARDS);
             case NUMBER_BKGNDS: return new NumberOfFunc(ctx, Countable.BKGNDS);
+            case NUMBER_WINDOWS: return new NumberOfFunc(ctx, Countable.WINDOWS);
             case MENUS: return new MenusFunc(ctx);
             case DISK_SPACE: return new DiskSpaceFunc(ctx);
             case PARAM_COUNT: return new ParamCountFunc(ctx);
@@ -2238,6 +2239,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNumberOfBackgrounds(HyperTalkParser.NumberOfBackgroundsContext ctx) {
         return BuiltInFunction.NUMBER_BKGNDS;
+    }
+
+    @Override
+    public Object visitNumberOfWindows(HyperTalkParser.NumberOfWindowsContext ctx) {
+        return BuiltInFunction.NUMBER_WINDOWS;
     }
 
     @Override
