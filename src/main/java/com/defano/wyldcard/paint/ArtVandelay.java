@@ -63,7 +63,7 @@ public class ArtVandelay {
     public static void exportPaint(File file) throws HtException {
         try {
             BufferedImage exportImage = ToolsContext.getInstance().getSelectedImage() == null ?
-                    WyldCard.getInstance().getFocusedStack().getDisplayedCard().getScreenshot() :
+                    WindowManager.getInstance().getFocusedStack().getDisplayedCard().getScreenshot() :
                     ToolsContext.getInstance().getSelectedImage();
             exportPaint(file, exportImage);
         } catch (IOException e) {

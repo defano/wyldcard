@@ -68,7 +68,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .withAction(e -> WindowBuilder.make(new StackPropertyEditor())
                         .withTitle("Stack Properties")
                         .asModal()
-                        .withModel(WyldCard.getInstance().getFocusedStack().getStackModel())
+                        .withModel(WindowManager.getInstance().getFocusedStack().getStackModel())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
@@ -103,7 +103,7 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Background")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().newBackground(new ExecutionContext()))
+                .withAction(e -> WindowManager.getInstance().getFocusedStack().newBackground(new ExecutionContext()))
                 .build(this);
     }
 

@@ -25,6 +25,6 @@ public class CompositePartExp extends PartExp {
 
     @Override
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
-        return new CompositePartSpecifier(partExp.evaluateAsSpecifier(context), ofPartExp);
+        return new CompositePartSpecifier(context, partExp.evaluateAsSpecifier(context), ofPartExp);
     }
 }

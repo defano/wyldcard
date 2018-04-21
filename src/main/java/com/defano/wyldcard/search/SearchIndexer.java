@@ -1,6 +1,5 @@
 package com.defano.wyldcard.search;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.field.FieldModel;
@@ -19,7 +18,7 @@ public interface SearchIndexer {
 
     default List<SearchResult> indexResults(ExecutionContext context, SearchQuery query) throws HtException {
         List<SearchResult> results = new ArrayList<>();
-        StackModel thisStack = context.getActiveStack().getStackModel();
+        StackModel thisStack = context.getCurrentStack().getStackModel();
 
         // Indexing a single, user-specified field
         if (query.isSingleFieldSearch()) {
@@ -29,11 +28,11 @@ public interface SearchIndexer {
             }
 
             FieldModel field = (FieldModel) part;
-            CardModel card = context.getActiveStack().getDisplayedCard().getCardModel();
+            CardModel card = context.getCurrentStack().getDisplayedCard().getCardModel();
 
             int cardIndex = card.getCardIndexInStack();
             if (query.searchField instanceof CompositePartSpecifier) {
-                card = context.getActiveStack().getStackModel().findOwningCard(context, (CompositePartSpecifier) query.searchField);
+                card = context.getCurrentStack().getStackModel().findOwningCard(context, (CompositePartSpecifier) query.searchField);
                 cardIndex = card.getCardIndexInStack();
             }
 
@@ -77,7 +76,7 @@ public interface SearchIndexer {
         int searchFrom = 0;
         Range result;
 
-        int cardId = WyldCard.getInstance().getFocusedStack().getStackModel().getCardModel(cardIndex).getId(context);
+        int cardId = context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId(context);
         String fieldText = fieldModel.getText(context, cardId);
 
         do {

@@ -174,7 +174,7 @@ public interface Messagable {
 
         switch (type) {
             case BACKGROUND:
-                return WyldCard.getInstance().getFocusedStack().getStackModel();
+                return context.getCurrentStack().getStackModel();
             case MESSAGE_BOX:
                 return context.getCurrentCard().getCardModel();
             case CARD:

@@ -84,31 +84,31 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().newCard(new ExecutionContext()))
+                .withAction(e -> WindowManager.getInstance().getFocusedStack().newCard(new ExecutionContext()))
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
                 .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().deleteCard(new ExecutionContext()))
+                .withAction(e -> WindowManager.getInstance().getFocusedStack().deleteCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
                 .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().cutCard(new ExecutionContext()))
+                .withAction(e -> WindowManager.getInstance().getFocusedStack().cutCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().copyCard())
+                .withAction(e -> WindowManager.getInstance().getFocusedStack().copyCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
                 .withEnabledProvider(WyldCard.getInstance().getActiveStackCardClipboardProvider().map(Optional::isPresent))
-                .withAction(e -> WyldCard.getInstance().getFocusedStack().pasteCard(new ExecutionContext()))
+                .withAction(e -> WindowManager.getInstance().getFocusedStack().pasteCard(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();

@@ -333,7 +333,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId(context));
 
         if (getType() == PartType.BUTTON || getType() == PartType.FIELD) {
-            return new CompositePartSpecifier(localPart, new LiteralPartExp(null, parent.getMe(context)));
+            return new CompositePartSpecifier(context, localPart, new LiteralPartExp(null, parent.getMe(context)));
         } else {
             return localPart;
         }

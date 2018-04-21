@@ -6,6 +6,8 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.window.WindowManager;
@@ -25,29 +27,11 @@ import java.util.Optional;
  */
 public class StackManager implements StackNavigationObserver {
 
-    private BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
-
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
-
-    /**
-     * Gets the stack that currently has focus.
-     * @return The active stack
-     */
-    public StackPart getFocusedStack() {
-        if (focusedStack.hasValue()) {
-            return focusedStack.blockingFirst();
-        } else {
-            return null;
-        }
-    }
-
-    public Observable<StackPart> getFocusedStackProvider() {
-        return focusedStack;
-    }
 
     /**
      * Creates and activates a new, empty stack with default dimensions.
@@ -83,16 +67,22 @@ public class StackManager implements StackNavigationObserver {
         stackPart.bindToWindow(new ExecutionContext(), WindowManager.getInstance().getStackWindow(stackPart));
     }
 
+    public void unfocusStack(StackPart stackPart) {
+        PartToolContext.getInstance().deselectAllParts();
+    }
+
     public void focusStack(StackPart stackPart) {
         if (stackPart == null) {
             throw new IllegalArgumentException("Focused stack cannot be null.");
         }
 
-        focusedStack.onNext(stackPart);
+        WindowManager.getInstance().setFocusedStack(stackPart);
 
         cardCount.setSource(stackPart.getCardCountProvider());
         cardClipboard.setSource(stackPart.getCardClipboardProvider());
         savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
+
+        ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
     }
 
     /**
@@ -126,7 +116,7 @@ public class StackManager implements StackNavigationObserver {
      * @param context The execution context.
      */
     public void saveActiveStack(ExecutionContext context) {
-        save(context, getFocusedStack().getStackModel());
+        save(context, WindowManager.getInstance().getFocusedStack().getStackModel());
     }
 
     /**
@@ -134,7 +124,7 @@ public class StackManager implements StackNavigationObserver {
      * @param context The execution context.
      */
     public void saveActiveStackAs(ExecutionContext context) {
-        save(context, getFocusedStack().getStackModel(), null);
+        save(context, WindowManager.getInstance().getFocusedStack().getStackModel(), null);
     }
 
     /**
@@ -172,7 +162,7 @@ public class StackManager implements StackNavigationObserver {
     public boolean isActiveStackDirty() {
         try {
             String savedStack = new String(Files.readAllBytes(getSavedStackFileProvider().blockingFirst().get().toPath()), StandardCharsets.UTF_8);
-            String currentStack = Serializer.serialize(getFocusedStack().getStackModel());
+            String currentStack = Serializer.serialize(WindowManager.getInstance().getFocusedStack().getStackModel());
             return !savedStack.equalsIgnoreCase(currentStack);
         } catch (Exception e) {
             return true;
@@ -190,10 +180,10 @@ public class StackManager implements StackNavigationObserver {
      * @return The card currently displayed in the active stack window.
      */
     public CardPart getActiveStackDisplayedCard() {
-        if (getFocusedStack() == null) {
+        if (WindowManager.getInstance().getFocusedStack() == null) {
             return null;
         } else {
-            return getFocusedStack().getDisplayedCard();
+            return WindowManager.getInstance().getFocusedStack().getDisplayedCard();
         }
     }
 

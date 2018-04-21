@@ -2,6 +2,7 @@ package com.defano.wyldcard.runtime.print;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -13,7 +14,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     public void onPrintRequested() {
-        this.jobName = "Stack " + WyldCard.getInstance().getFocusedStack().getStackModel().getStackName(new ExecutionContext());
+        this.jobName = "Stack " + WindowManager.getInstance().getFocusedStack().getStackModel().getStackName(new ExecutionContext());
     }
 
     @Override
@@ -23,19 +24,19 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     protected void onPrintCompleted(boolean successfully) {
-        WyldCard.getInstance().getFocusedStack().goCard(new ExecutionContext(), currentCard, null, false);
+        WindowManager.getInstance().getFocusedStack().goCard(new ExecutionContext(), currentCard, null, false);
     }
 
     @Override
     public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
 
-        if (pageIndex < WyldCard.getInstance().getFocusedStack().getCardCountProvider().blockingFirst()) {
+        if (pageIndex < WindowManager.getInstance().getFocusedStack().getCardCountProvider().blockingFirst()) {
             // Translate printable content to top-left printable coordinate of the page
             Graphics2D g2d = (Graphics2D)g;
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
             // Need to transition to card in order to print it
-            WyldCard.getInstance().getFocusedStack().goCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
+            WindowManager.getInstance().getFocusedStack().goCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
 
             return PAGE_EXISTS;
         } else {

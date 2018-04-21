@@ -52,8 +52,7 @@ public class WyldCard extends StackManager {
     private WyldCard() {}
 
     private void startup() {
-        StackPart newStack = StackPart.newStack(new ExecutionContext());
-        focusStack(newStack);
+        focusStack(StackPart.newStack(new ExecutionContext()));
 
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();
@@ -64,7 +63,7 @@ public class WyldCard extends StackManager {
             PatternManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
 
-            displayStack(newStack, true);
+            displayStack(WindowManager.getInstance().getFocusedStack(), true);
         });
 
         // Close all open files before we die
@@ -83,7 +82,7 @@ public class WyldCard extends StackManager {
         // Prompt to save if user has unsaved changes
         if (isActiveStackDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(
-                    getFocusedStack().getDisplayedCard(),
+                    WindowManager.getInstance().getFocusedStack().getDisplayedCard(),
                     "Save changes to stack?",
                     "Save",
                     JOptionPane.YES_NO_OPTION);

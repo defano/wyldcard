@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.SingletonWindowType;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.HyperCardWindow;
 
 public class WindowTypeSpecifier extends WindowSpecifier {
 

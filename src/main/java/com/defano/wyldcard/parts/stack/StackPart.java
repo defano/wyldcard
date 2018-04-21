@@ -3,10 +3,12 @@ package com.defano.wyldcard.parts.stack;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
+import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -26,9 +28,7 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents the controller object of the stack itself. See {@link StackModel} for the data model.
@@ -36,21 +36,17 @@ import java.util.Optional;
  * This view is "virtual" because a stack has no view aside from the card that is currently displayed in it. Thus, this
  * class has no associated Swing component and cannot be added to a view hierarchy.
  */
-public class StackPart implements PropertyChangeObserver {
+public class StackPart implements Part, PropertyChangeObserver {
 
     private StackModel stackModel;
     private CardPart currentCard;
 
-    private final List<StackObserver> stackObservers = new ArrayList<>();
-    private final List<StackNavigationObserver> stackNavigationObservers = new ArrayList<>();
+    private final Set<StackObserver> stackObservers = new HashSet<>();
+    private final Set<StackNavigationObserver> stackNavigationObservers = new HashSet<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
     private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
     private StackPart() {}
-
-    public static StackPart skeleton() {
-        return new StackPart();
-    }
 
     public static StackPart newStack(ExecutionContext context) {
         return fromStackModel(context, StackModel.newStackModel("Untitled"));
@@ -73,7 +69,7 @@ public class StackPart implements PropertyChangeObserver {
         fireOnStackOpened();
         fireOnCardDimensionChanged(stackModel.getDimension(context));
 
-        getStackModel().receiveMessage(new ExecutionContext(), SystemMessage.OPEN_STACK.messageName);
+        getStackModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_STACK.messageName);
         fireOnCardOpened(getDisplayedCard());
 
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
@@ -505,5 +501,25 @@ public class StackPart implements PropertyChangeObserver {
                 observer.onCardOrderChanged();
             }
         });
+    }
+
+    @Override
+    public PartType getType() {
+        return PartType.STACK;
+    }
+
+    @Override
+    public PartModel getPartModel() {
+        return getStackModel();
+    }
+
+    @Override
+    public void partOpened(ExecutionContext context) {
+        // TODO: Not supported yet
+    }
+
+    @Override
+    public void partClosed(ExecutionContext context) {
+        // TODO: Not supported yet
     }
 }

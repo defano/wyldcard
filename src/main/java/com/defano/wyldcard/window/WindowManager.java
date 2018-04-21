@@ -1,6 +1,5 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
@@ -17,7 +16,7 @@ public class WindowManager implements WindowFinder {
 
     private final static WindowManager instance = new WindowManager();
 
-//    private StackWindow stackWindow = new StackWindow();
+    private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
 
     private final MessageWindow messageWindow = new MessageWindow();
     private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
@@ -30,7 +29,6 @@ public class WindowManager implements WindowFinder {
     private final MessageWatcher messageWatcher = new MessageWatcher();
     private final VariableWatcher variableWatcher = new VariableWatcher();
     private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
-
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
     public static WindowManager getInstance() {
@@ -141,11 +139,11 @@ public class WindowManager implements WindowFinder {
     }
 
     public StackWindow getStackWindow(ExecutionContext context) {
-        return getStackWindow(context.getActiveStack());
+        return getStackWindow(context.getCurrentStack());
     }
 
     public StackWindow getFocusedStackWindow() {
-        return getWindowForStack(WyldCard.getInstance().getFocusedStack());
+        return getWindowForStack(getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -207,6 +205,30 @@ public class WindowManager implements WindowFinder {
         }
 
         return new StackWindow();
+    }
+
+    /**
+     * Gets the stack that currently has focus.
+     * @return The active stack
+     */
+    public StackPart getFocusedStack() {
+        if (focusedStack.hasValue()) {
+            return focusedStack.blockingFirst();
+        } else {
+            return null;
+        }
+    }
+
+    public boolean hasFocusedStack() {
+        return focusedStack.hasValue();
+    }
+
+    public void setFocusedStack(StackPart focusedStack) {
+        this.focusedStack.onNext(focusedStack);
+    }
+
+    public Observable<StackPart> getFocusedStackProvider() {
+        return focusedStack;
     }
 
     public void setLookAndFeel(String lafClassName) {

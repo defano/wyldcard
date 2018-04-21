@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -27,7 +26,7 @@ public class PushCardCmd extends Command {
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
         if (destinationExp == null) {
-            push(context, context.getActiveStack().getDisplayedCard().getId(context));
+            push(context, context.getCurrentStack().getDisplayedCard().getId(context));
         } else {
 
             Integer pushCardId = null;
@@ -52,14 +51,14 @@ public class PushCardCmd extends Command {
         if (model instanceof CardModel) {
             return model.getId(context);
         } else if (model instanceof BackgroundModel) {
-            int cardIndex = context.getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
-            return context.getActiveStack().getStackModel().getCardModel(cardIndex).getId(context);
+            int cardIndex = context.getCurrentStack().getStackModel().getIndexOfBackground(model.getId(context));
+            return context.getCurrentStack().getStackModel().getCardModel(cardIndex).getId(context);
         } else {
             return null;
         }
     }
 
     private void push(ExecutionContext context, int cardId) {
-        context.getActiveStack().getStackModel().getBackStack().push(cardId);
+        context.getCurrentStack().getStackModel().getBackStack().push(cardId);
     }
 }

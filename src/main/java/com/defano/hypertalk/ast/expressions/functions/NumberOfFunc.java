@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -60,14 +59,14 @@ public class NumberOfFunc extends Expression {
             case MENUS:
                 return new Value(HyperCardMenuBar.getInstance().getMenuCount());
             case CARDS:
-                return new Value(context.getActiveStack().getCardCountProvider().blockingFirst());
+                return new Value(context.getCurrentStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:
-                return new Value(context.getActiveStack().getStackModel().getMarkedCards(context).size());
+                return new Value(context.getCurrentStack().getStackModel().getMarkedCards(context).size());
             case BKGNDS:
-                return new Value(context.getActiveStack().getStackModel().getBackgroundCount());
+                return new Value(context.getCurrentStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
                 BackgroundModel model = expression.partFactor(context, BackgroundModel.class, new HtSemanticException("No such background."));
-                return new Value(context.getActiveStack().getStackModel().getCardsInBackground(model.getId(context)).size());
+                return new Value(context.getCurrentStack().getStackModel().getCardsInBackground(model.getId(context)).size());
             case WINDOWS:
                 return new Value(WindowManager.getInstance().getWindows().size());
             default:

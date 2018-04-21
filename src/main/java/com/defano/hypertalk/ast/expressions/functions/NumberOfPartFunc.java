@@ -20,8 +20,6 @@ import com.defano.wyldcard.window.HyperCardWindow;
 import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.awt.*;
-
 public class NumberOfPartFunc extends Expression {
 
     private final Expression partExpression;

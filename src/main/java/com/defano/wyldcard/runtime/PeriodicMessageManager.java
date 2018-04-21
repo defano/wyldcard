@@ -1,6 +1,5 @@
 package com.defano.wyldcard.runtime;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -11,6 +10,7 @@ import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.wyldcard.window.WindowManager;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.Vector;
@@ -42,7 +42,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        WyldCard.getInstance().getFocusedStack().addNavigationObserver(this);
+        WindowManager.getInstance().getFocusedStack().addNavigationObserver(this);
 
         // Stop tracking 'within' when not in browse mode
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {

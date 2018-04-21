@@ -133,7 +133,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
             @Override
             public void windowLostFocus(WindowEvent e) {
-
+                WyldCard.getInstance().unfocusStack(stack);
             }
         });
     }

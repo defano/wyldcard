@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -42,7 +41,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'Go back'
         if (destinationExp == null) {
-            context.getActiveStack().popCard(context, visualEffect);
+            context.getCurrentStack().popCard(context, visualEffect);
         }
 
         else {
@@ -55,7 +54,7 @@ public class GoCmd extends Command {
                 throw new HtSemanticException("No such card.");
             } else {
                 Integer finalCardIndex = cardIndex;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> context.getActiveStack().goCard(context, finalCardIndex, visualEffect, true));
+                ThreadUtils.invokeAndWaitAsNeeded(() -> context.getCurrentStack().goCard(context, finalCardIndex, visualEffect, true));
             }
         }
     }
@@ -68,9 +67,9 @@ public class GoCmd extends Command {
 
         int destinationIndex;
         if (model instanceof CardModel) {
-            destinationIndex = context.getActiveStack().getStackModel().getIndexOfCard((CardModel) model);
+            destinationIndex = context.getCurrentStack().getStackModel().getIndexOfCard((CardModel) model);
         } else if (model instanceof BackgroundModel) {
-            destinationIndex = context.getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
+            destinationIndex = context.getCurrentStack().getStackModel().getIndexOfBackground(model.getId(context));
         } else {
             return null;
         }
