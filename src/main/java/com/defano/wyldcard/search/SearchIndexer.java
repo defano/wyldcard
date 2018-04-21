@@ -19,7 +19,7 @@ public interface SearchIndexer {
 
     default List<SearchResult> indexResults(ExecutionContext context, SearchQuery query) throws HtException {
         List<SearchResult> results = new ArrayList<>();
-        StackModel thisStack = context.getCurrentStack().getStackModel();
+        StackModel thisStack = context.getActiveStack().getStackModel();
 
         // Indexing a single, user-specified field
         if (query.isSingleFieldSearch()) {
@@ -29,11 +29,11 @@ public interface SearchIndexer {
             }
 
             FieldModel field = (FieldModel) part;
-            CardModel card = context.getCurrentStack().getDisplayedCard().getCardModel();
+            CardModel card = context.getActiveStack().getDisplayedCard().getCardModel();
 
             int cardIndex = card.getCardIndexInStack();
             if (query.searchField instanceof CompositePartSpecifier) {
-                card = context.getCurrentStack().getStackModel().findOwningCard(context, (CompositePartSpecifier) query.searchField);
+                card = context.getActiveStack().getStackModel().findOwningCard(context, (CompositePartSpecifier) query.searchField);
                 cardIndex = card.getCardIndexInStack();
             }
 

@@ -1,6 +1,8 @@
 package com.defano.wyldcard.parts.finder;
 
+import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.specifiers.*;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
@@ -8,8 +10,6 @@ import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.window.WindowManager;
 import com.google.common.collect.Lists;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * A mix-in containing methods for locating parts contained anywhere in the stack.
+ * Provides methods for finding parts anywhere in a stack.
  */
 public interface StackPartFinder extends PartFinder {
 

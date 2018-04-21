@@ -314,6 +314,47 @@
       {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."},
       {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
     ]
+  },
+
+  {
+    "title": "Owner",
+    "summary": "For cards, returns the name of the background on which the card appears.",
+    "codePrefix": "visible",
+    "templates": [
+      "get the owner of ${cardExpression}",
+      "get the long owner of ${cardExpression}",
+      "get the short owner of ${cardExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression identifying a card, like `card id 22`."}
+    ]
+  },
+
+  {
+    "title": "Number",
+    "summary": "Returns the order of this part relative to other parts of the same kind.",
+    "description": "For buttons and fields, `number` represents the z-order (drawing order) of the part relative to other parts on the same layer. For cards and backgrounds, `the number` refers to the card or background's position in the stack. For windows, `the number` refers to the window's alphabetical order (in HyperCard this would return the z-order of the window).",
+    "codePrefix": "number",
+    "templates": [
+      "get the number of ${partExpression}"
+    ],
+    "parameters": [
+      {"parameter": "partExpression", "description": "An expression identifying a part, like `card button \"My Button\"`."}
+    ]
+  },
+
+  {
+    "title": "Zoomed",
+    "summary": "Returns or sets whether a window has been maximized or zoomed (that is, currently displayed in its largest allowable dimensions).",
+    "codePrefix": "zoomed",
+    "templates": [
+      "set the zoomed of ${windowExpression} to ${logicalExpression}",
+      "get the zoomed of ${windowExpression}"
+    ],
+    "parameters": [
+      {"parameter": "windowExpression", "description": "An expression identifying a window, like `the card window`."},
+      {"parameter": "logicalExpression", "description": "An expression that evaluates to either `true` or `false`."}
+    ]
   }
 
 ]

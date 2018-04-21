@@ -1,6 +1,10 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.WindowNameSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -11,8 +15,10 @@ import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WindowManager {
+public class WindowManager implements WindowFinder {
 
     private final static WindowManager instance = new WindowManager();
 
@@ -191,39 +197,6 @@ public class WindowManager {
         return expressionEvaluator;
     }
 
-    public HyperCardWindow[] allWindows() {
-        return new HyperCardWindow[] {
-                getStackWindow(),
-                getMessageWindow(),
-                getPaintToolsPalette(),
-                getShapesPalette(),
-                getLinesPalette(),
-                getPatternsPalette(),
-                getBrushesPalette(),
-                getColorPalette(),
-                getMessageWatcher(),
-                getVariableWatcher(),
-                getExpressionEvaluator()
-        };
-    }
-
-    public ScriptEditor findScriptEditorForPart(PartModel model) {
-        if (model == null) {
-            return null;
-        }
-
-        for (Frame frame : JFrame.getFrames()) {
-            if (frame instanceof ScriptEditor) {
-                ScriptEditor editor = (ScriptEditor) frame;
-                if (model.equals(editor.getModel())) {
-                    return editor;
-                }
-            }
-        }
-
-        return null;
-    }
-
     public void setLookAndFeel(String lafClassName) {
         lookAndFeelClassProvider.onNext(lafClassName);
 
@@ -231,11 +204,14 @@ public class WindowManager {
             try {
                 UIManager.setLookAndFeel(lafClassName);
 
-                for (HyperCardWindow thisWindow : allWindows()) {
-                    SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+                for (Window thisWindow : JFrame.getWindows()) {
+                    SwingUtilities.updateComponentTreeUI(thisWindow);
 
-                    thisWindow.getWindow().pack();
-                    thisWindow.applyMenuBar();
+                    if (thisWindow instanceof HyperCardWindow) {
+                        HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
+                        thisWyldWindow.getWindow().pack();
+                        thisWyldWindow.applyMenuBar();
+                    }
                 }
 
                 stackWindow.applyMenuBar();

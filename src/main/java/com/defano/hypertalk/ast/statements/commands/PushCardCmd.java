@@ -27,7 +27,7 @@ public class PushCardCmd extends Command {
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
         if (destinationExp == null) {
-            push(WyldCard.getInstance().getActiveStackDisplayedCard().getId(context));
+            push(context, context.getActiveStack().getDisplayedCard().getId(context));
         } else {
 
             Integer pushCardId = null;
@@ -41,7 +41,7 @@ public class PushCardCmd extends Command {
             }
 
             if (pushCardId != null) {
-                push(pushCardId);
+                push(context, pushCardId);
             } else {
                 throw new HtSemanticException("Can't push that.");
             }
@@ -52,14 +52,14 @@ public class PushCardCmd extends Command {
         if (model instanceof CardModel) {
             return model.getId(context);
         } else if (model instanceof BackgroundModel) {
-            int cardIndex = WyldCard.getInstance().getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
-            return WyldCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId(context);
+            int cardIndex = context.getActiveStack().getStackModel().getIndexOfBackground(model.getId(context));
+            return context.getActiveStack().getStackModel().getCardModel(cardIndex).getId(context);
         } else {
             return null;
         }
     }
 
-    private void push(int cardId) {
-        WyldCard.getInstance().getActiveStack().getStackModel().getBackStack().push(cardId);
+    private void push(ExecutionContext context, int cardId) {
+        context.getActiveStack().getStackModel().getBackStack().push(cardId);
     }
 }

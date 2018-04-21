@@ -324,6 +324,41 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitCardWindowExpr(HyperTalkParser.CardWindowExprContext ctx) {
+        return new WindowTypeExp(ctx, SingletonWindowType.CARD);
+    }
+
+    @Override
+    public Object visitToolWindowExpr(HyperTalkParser.ToolWindowExprContext ctx) {
+        return new WindowTypeExp(ctx, SingletonWindowType.TOOLS);
+    }
+
+    @Override
+    public Object visitPatternWindowExpr(HyperTalkParser.PatternWindowExprContext ctx) {
+        return new WindowTypeExp(ctx, SingletonWindowType.PATTERNS);
+    }
+
+    @Override
+    public Object visitMessageWatcherExpr(HyperTalkParser.MessageWatcherExprContext ctx) {
+        return new WindowTypeExp(ctx, SingletonWindowType.MESSAGE_WATCHER);
+    }
+
+    @Override
+    public Object visitVariableWatcherExpr(HyperTalkParser.VariableWatcherExprContext ctx) {
+        return new WindowTypeExp(ctx, SingletonWindowType.VARIABLE_WATCHER);
+    }
+
+    @Override
+    public Object visitWindowNameExpr(HyperTalkParser.WindowNameExprContext ctx) {
+        return new WindowNameExp(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitWindowIdExpr(HyperTalkParser.WindowIdExprContext ctx) {
+        return new WindowIdExp(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
     public Object visitFastSpeed(HyperTalkParser.FastSpeedContext ctx) {
         return VisualEffectSpeed.FAST;
     }
@@ -576,11 +611,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitMenuItemDest(HyperTalkParser.MenuItemDestContext ctx) {
         return new MenuItemExp(ctx, (MenuItemSpecifier) visit(ctx.menuItem()));
-    }
-
-    @Override
-    public Object visitMessageDest(HyperTalkParser.MessageDestContext ctx) {
-        return new MsgBoxExp(ctx);
     }
 
     @Override
@@ -1358,6 +1388,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWindowPartPart(HyperTalkParser.WindowPartPartContext ctx) {
+        return visit(ctx.windowPart());
+    }
+
+    @Override
     public Object visitThisStackPart(HyperTalkParser.ThisStackPartContext ctx) {
         return new StackPartExp(ctx);
     }
@@ -1958,6 +1993,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_CARDS: return new NumberOfFunc(ctx, Countable.CARDS);
             case NUMBER_MARKED_CARDS: return new NumberOfFunc(ctx, Countable.MARKED_CARDS);
             case NUMBER_BKGNDS: return new NumberOfFunc(ctx, Countable.BKGNDS);
+            case NUMBER_WINDOWS: return new NumberOfFunc(ctx, Countable.WINDOWS);
             case MENUS: return new MenusFunc(ctx);
             case DISK_SPACE: return new DiskSpaceFunc(ctx);
             case PARAM_COUNT: return new ParamCountFunc(ctx);
@@ -1967,6 +2003,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case SPEECH: return new SpeechFunc(ctx);
             case VOICES: return new VoicesFunc(ctx);
             case MOUSECLICK: return new MouseClickFunc(ctx);
+            case WINDOWS: return new WindowsFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -2105,6 +2142,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitWindowsFunc(HyperTalkParser.WindowsFuncContext ctx) {
+        return BuiltInFunction.WINDOWS;
+    }
+
+    @Override
     public Object visitLongTimeFormat(HyperTalkParser.LongTimeFormatContext ctx) {
         return Adjective.LONG;
     }
@@ -2197,6 +2239,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitNumberOfBackgrounds(HyperTalkParser.NumberOfBackgroundsContext ctx) {
         return BuiltInFunction.NUMBER_BKGNDS;
+    }
+
+    @Override
+    public Object visitNumberOfWindows(HyperTalkParser.NumberOfWindowsContext ctx) {
+        return BuiltInFunction.NUMBER_WINDOWS;
     }
 
     @Override

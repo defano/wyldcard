@@ -98,7 +98,7 @@ public class SelectCmd extends Command {
         }
 
         PartModel partModel = context.getPart(specifier);
-        ButtonPart part = (ButtonPart) WyldCard.getInstance().getActiveStackDisplayedCard().getPart(context, partModel);
+        ButtonPart part = (ButtonPart) context.getActiveStack().getDisplayedCard().getPart(context, partModel);
 
         HyperCardButton component = (HyperCardButton) part.getButtonComponent();
         if (component instanceof PopupButton) {
@@ -116,7 +116,7 @@ public class SelectCmd extends Command {
         }
 
         PartModel partModel = context.getPart(specifier);
-        CardLayerPart part = WyldCard.getInstance().getActiveStackDisplayedCard().getPart(context, partModel);
+        CardLayerPart part = context.getActiveStack().getDisplayedCard().getPart(context, partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             WindowManager.getInstance().getStackWindow().requestFocus();

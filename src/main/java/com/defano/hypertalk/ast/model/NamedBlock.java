@@ -3,7 +3,6 @@ package com.defano.hypertalk.ast.model;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.ast.statements.commands.PassCmd;
-import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.HtSyntaxException;
 import com.defano.hypertalk.exception.HtUncheckedSemanticException;
 import org.antlr.v4.runtime.ParserRuleContext;

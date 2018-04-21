@@ -341,6 +341,7 @@ part
     | bkgndPart                                                                                                         # bkgndPartPart
     | cardPart                                                                                                          # cardPartPart
     | stackPart                                                                                                         # stackPartPart
+    | windowPart                                                                                                        # windowPartPart
     ;
 
 stackPart
@@ -385,6 +386,16 @@ bkgndPart
     | position background                                                                                               # positionBkgndPart
     ;
 
+windowPart
+    : 'the'? card 'window'                                                                                              # cardWindowExpr
+    | 'the'? 'tool' 'window'                                                                                            # toolWindowExpr
+    | 'the'? 'pattern' 'window'                                                                                         # patternWindowExpr
+    | 'the'? 'message' 'watcher'                                                                                        # messageWatcherExpr
+    | 'the'? 'variable' 'watcher'                                                                                       # variableWatcherExpr
+    | 'window' expression                                                                                               # windowNameExpr
+    | 'window' 'id' expression                                                                                          # windowIdExpr
+    ;
+
 listExpression
     : expression                                                                                                        # singletonListExp
     | expression ',' listExpression                                                                                     # listExp
@@ -422,7 +433,6 @@ container
     | property                                                                                                          # propertyDest
     | menu                                                                                                              # menuDest
     | menuItem                                                                                                          # menuItemDest
-    | message                                                                                                           # messageDest
     | part                                                                                                              # partDest
     | chunk container                                                                                                   # chunkContainerDest
     ;
@@ -488,6 +498,7 @@ zeroArgFunc
     | 'number' 'of' cards (of 'this' 'stack')?                                                                          # numberOfCardsFunc
     | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCards
     | 'number' 'of' background (of 'this' 'stack')?                                                                     # numberOfBackgrounds
+    | 'number' 'of' 'windows'                                                                                           # numberOfWindows
     | 'menus'                                                                                                           # menusFunc
     | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
     | 'params'                                                                                                          # paramsFunc
@@ -511,6 +522,7 @@ zeroArgFunc
     | 'foundfield'                                                                                                      # propDelegatedFunc
     | 'foundline'                                                                                                       # propDelegatedFunc
     | 'foundtext'                                                                                                       # propDelegatedFunc
+    | 'windows'                                                                                                         # windowsFunc
     ;
 
 singleArgFunc
@@ -666,6 +678,7 @@ propertyName
     | 'center'
     | 'scroll'
     | 'script'
+    | 'pattern'
     | ID
     ;
 

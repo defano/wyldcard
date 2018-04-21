@@ -306,7 +306,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         try {
             setProperty(context, getValueProperty(), value);
         } catch (Exception e) {
-            throw new RuntimeException("Bug! Part's value cannot be set.");
+            throw new RuntimeException(e);
         }
     }
 

@@ -32,6 +32,7 @@ public enum BuiltInFunction {
     NUMBER_MARKED_CARDS,
     NUMBER_BKGNDS,
     NUMBER_BKGND_CARDS,
+    NUMBER_WINDOWS,
     NUMBER_OF_PART,
     RANDOM,
     SQRT,
@@ -67,5 +68,6 @@ public enum BuiltInFunction {
     TARGET,
     SPEECH,
     VOICES,
-    MOUSECLICK
+    MOUSECLICK,
+    WINDOWS
 }

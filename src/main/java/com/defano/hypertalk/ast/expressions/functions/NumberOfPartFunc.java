@@ -7,6 +7,8 @@ import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.WindowProxyPartModel;
+import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -14,7 +16,11 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.awt.*;
 
 public class NumberOfPartFunc extends Expression {
 
@@ -47,6 +53,24 @@ public class NumberOfPartFunc extends Expression {
             return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BACKGROUND));
         }
 
+        if (part instanceof MsgBoxModel) {
+            return getNumberOfWindow(WindowManager.getInstance().getMessageWindow());
+        }
+
+        if (part instanceof WindowProxyPartModel) {
+            return getNumberOfWindow(((WindowProxyPartModel) part).getWindow());
+        }
+
         throw new HtSemanticException("Don't know how to get the number of that.");
+    }
+
+    private Value getNumberOfWindow(HyperCardWindow window) throws HtSemanticException {
+        for (int windowNumber = 1; windowNumber <= WindowManager.getInstance().getWindows().size(); windowNumber++) {
+            if (window == WindowManager.getInstance().getWindows().get(windowNumber - 1)) {
+                return new Value(windowNumber);
+            }
+        }
+
+        throw new HtSemanticException("Can't get the number of that window.");
     }
 }

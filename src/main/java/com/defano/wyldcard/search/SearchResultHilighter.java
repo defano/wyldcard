@@ -25,7 +25,7 @@ public interface SearchResultHilighter {
 
             // Search result is on a different card; go there
             if (result.getCardIndex() != context.getCurrentCard().getCardModel().getCardIndexInStack()) {
-                context.getCurrentStack().goCard(context, result.getCardIndex(), null, false);
+                context.getActiveStack().goCard(context, result.getCardIndex(), null, false);
             }
 
             // Box the found text

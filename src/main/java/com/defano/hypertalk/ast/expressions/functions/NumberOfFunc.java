@@ -11,6 +11,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -59,14 +60,16 @@ public class NumberOfFunc extends Expression {
             case MENUS:
                 return new Value(HyperCardMenuBar.getInstance().getMenuCount());
             case CARDS:
-                return new Value(WyldCard.getInstance().getActiveStack().getCardCountProvider().blockingFirst());
+                return new Value(context.getActiveStack().getCardCountProvider().blockingFirst());
             case MARKED_CARDS:
-                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getMarkedCards(context).size());
+                return new Value(context.getActiveStack().getStackModel().getMarkedCards(context).size());
             case BKGNDS:
-                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getBackgroundCount());
+                return new Value(context.getActiveStack().getStackModel().getBackgroundCount());
             case CARDS_IN_BKGND:
                 BackgroundModel model = expression.partFactor(context, BackgroundModel.class, new HtSemanticException("No such background."));
-                return new Value(WyldCard.getInstance().getActiveStack().getStackModel().getCardsInBackground(model.getId(context)).size());
+                return new Value(context.getActiveStack().getStackModel().getCardsInBackground(model.getId(context)).size());
+            case WINDOWS:
+                return new Value(WindowManager.getInstance().getWindows().size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }

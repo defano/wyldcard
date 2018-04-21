@@ -15,6 +15,6 @@ public class PopCardCmd extends Command {
 
     @Override
     protected void onExecute(ExecutionContext context) throws HtException, Preemption {
-        WyldCard.getInstance().getActiveStack().popCard(context, null);
+        context.getActiveStack().popCard(context, null);
     }
 }
