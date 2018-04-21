@@ -80,7 +80,7 @@ public class PaintToolsPalette extends HyperCardFrame implements Consumer {
         curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
-        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
+        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
 
         ToolsContext.getInstance().getShapesFilledProvider().subscribe(filled -> {
             SwingUtilities.invokeLater(() -> {

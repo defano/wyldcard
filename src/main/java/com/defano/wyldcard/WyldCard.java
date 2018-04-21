@@ -5,6 +5,7 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
+import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -51,6 +52,9 @@ public class WyldCard extends StackManager {
     private WyldCard() {}
 
     private void startup() {
+        StackPart newStack = StackPart.newStack(new ExecutionContext());
+        focusStack(newStack);
+
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();
             MouseManager.getInstance().start();
@@ -60,7 +64,7 @@ public class WyldCard extends StackManager {
             PatternManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
 
-            newStack(new ExecutionContext());
+            displayStack(newStack, true);
         });
 
         // Close all open files before we die
@@ -79,7 +83,7 @@ public class WyldCard extends StackManager {
         // Prompt to save if user has unsaved changes
         if (isActiveStackDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(
-                    getActiveStack().getDisplayedCard(),
+                    getFocusedStack().getDisplayedCard(),
                     "Save changes to stack?",
                     "Save",
                     JOptionPane.YES_NO_OPTION);

@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.HyperCardButton;
@@ -119,7 +118,7 @@ public class SelectCmd extends Command {
         CardLayerPart part = context.getActiveStack().getDisplayedCard().getPart(context, partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getInstance().getStackWindow().requestFocus();
+            WindowManager.getInstance().getStackWindow(context).requestFocus();
 
             ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);

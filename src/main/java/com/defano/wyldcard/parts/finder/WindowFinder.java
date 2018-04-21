@@ -5,8 +5,11 @@ import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.forms.ScriptEditor;
 
 import javax.swing.*;
@@ -20,9 +23,9 @@ import java.util.stream.Collectors;
  */
 public interface WindowFinder {
 
-    default HyperCardWindow findWindow(WindowSpecifier specifier) throws PartException {
+    default HyperCardWindow findWindow(ExecutionContext context, WindowSpecifier specifier) throws PartException {
         if (specifier instanceof WindowTypeSpecifier) {
-            return ((WindowTypeSpecifier) specifier).getWindowType().getWindow();
+            return ((WindowTypeSpecifier) specifier).getWindowType().getWindow(context);
         } else if (specifier instanceof WindowNameSpecifier) {
             return findWindowByName(String.valueOf(specifier.getValue()));
         } else if (specifier instanceof WindowIdSpecifier) {
@@ -78,6 +81,18 @@ public interface WindowFinder {
         if (model != null) {
             return (ScriptEditor) getWindows().stream()
                     .filter(p -> p instanceof ScriptEditor && ((ScriptEditor) p).getModel() == model)
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        return null;
+    }
+
+    @RunOnDispatch
+    default StackWindow findWindowForStack(StackPart stackPart) {
+        if (stackPart != null) {
+            return (StackWindow) getWindows().stream()
+                    .filter(p -> p instanceof StackWindow && ((StackWindow) p).getStack() == stackPart)
                     .findFirst()
                     .orElse(null);
         }

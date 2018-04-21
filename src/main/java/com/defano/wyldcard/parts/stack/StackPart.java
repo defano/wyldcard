@@ -48,6 +48,10 @@ public class StackPart implements PropertyChangeObserver {
 
     private StackPart() {}
 
+    public static StackPart skeleton() {
+        return new StackPart();
+    }
+
     public static StackPart newStack(ExecutionContext context) {
         return fromStackModel(context, StackModel.newStackModel("Untitled"));
     }
@@ -379,7 +383,7 @@ public class StackPart implements PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getInstance().getStackWindow().setAllowResizing(newValue.booleanValue());
+                WindowManager.getInstance().getStackWindow(context).setAllowResizing(newValue.booleanValue());
                 break;
         }
     }

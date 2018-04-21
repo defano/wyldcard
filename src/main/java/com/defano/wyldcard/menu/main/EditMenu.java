@@ -84,31 +84,31 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().newCard(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().newCard(new ExecutionContext()))
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
                 .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getActiveStack().deleteCard(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().deleteCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
                 .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WyldCard.getInstance().getActiveStack().cutCard(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().cutCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().copyCard())
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().copyCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
                 .withEnabledProvider(WyldCard.getInstance().getActiveStackCardClipboardProvider().map(Optional::isPresent))
-                .withAction(e -> WyldCard.getInstance().getActiveStack().pasteCard(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().pasteCard(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();
@@ -118,7 +118,7 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Text Style...")
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
+                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
                 .withShortcut('T')
                 .build(this);
 

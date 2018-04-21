@@ -55,9 +55,12 @@ public class MouseManager {
     }
 
     public Point getMouseLoc() {
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-        SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
+
+        if (WindowManager.getInstance().getFocusedStackWindow() != null) {
+            CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
+            SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
+        }
 
         return mouseLoc;
     }

@@ -18,7 +18,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().popCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().popCard(new ExecutionContext(), null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -42,25 +42,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().goFirstCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goFirstCard(new ExecutionContext(), null))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().goPrevCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goPrevCard(new ExecutionContext(), null))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().goNextCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goNextCard(new ExecutionContext(), null))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> WyldCard.getInstance().getActiveStack().goLastCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goLastCard(new ExecutionContext(), null))
                 .withShortcut('4')
                 .build(this);
 

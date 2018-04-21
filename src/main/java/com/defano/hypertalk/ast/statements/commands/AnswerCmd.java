@@ -58,7 +58,7 @@ public class AnswerCmd extends Command {
         AtomicInteger choice = new AtomicInteger();
 
         SwingUtilities.invokeLater(() -> {
-            Component parent = WindowManager.getInstance().getStackWindow().getWindowPanel();
+            Component parent = WindowManager.getInstance().getStackWindow(context).getWindowPanel();
             Object[] choices = null;
 
             if (choice1 != null && choice2 != null && choice3 != null) {

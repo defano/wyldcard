@@ -27,7 +27,7 @@ public class IconCreator extends HyperCardDialog {
                 iconImage = ButtonIcon.scaleToIconSize(iconImage);
             }
 
-            WyldCard.getInstance().getActiveStack().getStackModel().createIcon(iconName.getText(), iconImage);
+            WyldCard.getInstance().getFocusedStack().getStackModel().createIcon(iconName.getText(), iconImage);
         });
     }
 

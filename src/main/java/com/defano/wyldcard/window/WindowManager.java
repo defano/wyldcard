@@ -1,11 +1,8 @@
 package com.defano.wyldcard.window;
 
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.WindowNameSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.forms.*;
@@ -15,14 +12,13 @@ import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WindowManager implements WindowFinder {
 
     private final static WindowManager instance = new WindowManager();
 
-    private final StackWindow stackWindow = new StackWindow();
+//    private StackWindow stackWindow = new StackWindow();
+
     private final MessageWindow messageWindow = new MessageWindow();
     private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
     private final ShapesPalette shapesPalette = new ShapesPalette();
@@ -47,14 +43,7 @@ public class WindowManager implements WindowFinder {
     public void start() {
         lookAndFeelClassProvider.onNext(UIManager.getSystemLookAndFeelClassName());
 
-        // Create the main window, center it on the screen and display it
-        WindowBuilder.make(stackWindow)
-                .quitOnClose()
-                .ownsMenubar()
-                .withModel(StackPart.newStack(new ExecutionContext()))
-                .build();
-
-        JFrame stackFrame = stackWindow.getWindow();
+        StackWindow stackWindow = getFocusedStackWindow();
 
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
@@ -145,12 +134,18 @@ public class WindowManager implements WindowFinder {
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
-
-        stackFrame.requestFocus();
     }
 
-    public StackWindow getStackWindow() {
-        return stackWindow;
+    public StackWindow getStackWindow(StackPart stackPart) {
+        return getWindowForStack(stackPart);
+    }
+
+    public StackWindow getStackWindow(ExecutionContext context) {
+        return getStackWindow(context.getActiveStack());
+    }
+
+    public StackWindow getFocusedStackWindow() {
+        return getWindowForStack(WyldCard.getInstance().getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -197,6 +192,23 @@ public class WindowManager implements WindowFinder {
         return expressionEvaluator;
     }
 
+    public StackWindow getWindowForStack(StackPart stackPart) {
+        StackWindow existingWindow = findWindowForStack(stackPart);
+        if (existingWindow != null) {
+            return existingWindow;
+        }
+
+        if (stackPart != null) {
+            return (StackWindow) WindowBuilder.make(new StackWindow())
+                    .quitOnClose()
+                    .ownsMenubar()
+                    .withModel(stackPart)
+                    .build();
+        }
+
+        return new StackWindow();
+    }
+
     public void setLookAndFeel(String lafClassName) {
         lookAndFeelClassProvider.onNext(lafClassName);
 
@@ -214,7 +226,7 @@ public class WindowManager implements WindowFinder {
                     }
                 }
 
-                stackWindow.applyMenuBar();
+                getFocusedStackWindow().applyMenuBar();
 
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
                 e.printStackTrace();

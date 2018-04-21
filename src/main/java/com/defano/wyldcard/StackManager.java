@@ -1,5 +1,6 @@
 package com.defano.wyldcard;
 
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
@@ -7,9 +8,7 @@ import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
-import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.hypertalk.exception.HtSemanticException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -26,7 +25,7 @@ import java.util.Optional;
  */
 public class StackManager implements StackNavigationObserver {
 
-    private StackPart activeStack;
+    private BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
 
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
@@ -34,57 +33,66 @@ public class StackManager implements StackNavigationObserver {
     private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
 
-    public StackManager() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> StackManager.this.activeStack = StackPart.newStack(new ExecutionContext()));
-    }
-
     /**
-     * Gets the active stack (the stack that currently has focus).
+     * Gets the stack that currently has focus.
      * @return The active stack
      */
-    public StackPart getActiveStack() {
-        return activeStack;
+    public StackPart getFocusedStack() {
+        if (focusedStack.hasValue()) {
+            return focusedStack.blockingFirst();
+        } else {
+            return null;
+        }
+    }
+
+    public Observable<StackPart> getFocusedStackProvider() {
+        return focusedStack;
     }
 
     /**
      * Creates and activates a new, empty stack with default dimensions.
-     * @param context The execution context.
      */
-    public void newStack(ExecutionContext context) {
-        activateStack(context, StackPart.newStack(context));
+    public void newStack() {
+        displayStack(StackPart.newStack(new ExecutionContext()), true);
     }
 
     /**
      * Prompts the user to choose a stack file to open. If a valid stack file is chosen, the stack is opened and made
      * the active stack.
-     * @param context The execution context.
      */
-    public void open(ExecutionContext context) {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
+    public void open() {
+        ExecutionContext context = new ExecutionContext();
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow(context).getWindow(), "Open Stack", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
             StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
             model.setSavedStackFile(context, fd.getFiles()[0]);
-            activateStack(context, StackPart.fromStackModel(context, model));
+            displayStack(StackPart.fromStackModel(context, model), true);
         }
     }
 
     /**
      * Makes the given stack the "active" stack--that is, the stack in focus which the menu bar and message box are
      * associated with. The active stack represents the stack with application focus.
-     * @param context The execution context.
      * @param stackPart The stack to activate
      */
-    private void activateStack(ExecutionContext context, StackPart stackPart) {
-        activeStack = stackPart;
+    public void displayStack(StackPart stackPart, boolean inNewWindow) {
+        stackPart.addNavigationObserver(this);
+        stackPart.bindToWindow(new ExecutionContext(), WindowManager.getInstance().getStackWindow(stackPart));
+    }
 
-        cardCount.setSource(activeStack.getCardCountProvider());
-        cardClipboard.setSource(activeStack.getCardClipboardProvider());
-        savedStackFile.setSource(activeStack.getStackModel().getSavedStackFileProvider());
-        activeStack.addNavigationObserver(this);
-        activeStack.bindToWindow(context, WindowManager.getInstance().getStackWindow());
+    public void focusStack(StackPart stackPart) {
+        if (stackPart == null) {
+            throw new IllegalArgumentException("Focused stack cannot be null.");
+        }
+
+        focusedStack.onNext(stackPart);
+
+        cardCount.setSource(stackPart.getCardCountProvider());
+        cardClipboard.setSource(stackPart.getCardClipboardProvider());
+        savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
     }
 
     /**
@@ -100,7 +108,7 @@ public class StackManager implements StackNavigationObserver {
             defaultName = stackModel.getStackName(context);
         }
 
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow(context).getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setFile(defaultName);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
@@ -118,7 +126,7 @@ public class StackManager implements StackNavigationObserver {
      * @param context The execution context.
      */
     public void saveActiveStack(ExecutionContext context) {
-        save(context, activeStack.getStackModel());
+        save(context, getFocusedStack().getStackModel());
     }
 
     /**
@@ -126,7 +134,7 @@ public class StackManager implements StackNavigationObserver {
      * @param context The execution context.
      */
     public void saveActiveStackAs(ExecutionContext context) {
-        save(context, activeStack.getStackModel(), null);
+        save(context, getFocusedStack().getStackModel(), null);
     }
 
     /**
@@ -164,7 +172,7 @@ public class StackManager implements StackNavigationObserver {
     public boolean isActiveStackDirty() {
         try {
             String savedStack = new String(Files.readAllBytes(getSavedStackFileProvider().blockingFirst().get().toPath()), StandardCharsets.UTF_8);
-            String currentStack = Serializer.serialize(getActiveStack().getStackModel());
+            String currentStack = Serializer.serialize(getFocusedStack().getStackModel());
             return !savedStack.equalsIgnoreCase(currentStack);
         } catch (Exception e) {
             return true;
@@ -182,7 +190,11 @@ public class StackManager implements StackNavigationObserver {
      * @return The card currently displayed in the active stack window.
      */
     public CardPart getActiveStackDisplayedCard() {
-        return activeStack.getDisplayedCard();
+        if (getFocusedStack() == null) {
+            return null;
+        } else {
+            return getFocusedStack().getDisplayedCard();
+        }
     }
 
     /**

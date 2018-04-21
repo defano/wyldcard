@@ -81,7 +81,7 @@ public class HyperCardMenuBar extends JMenuBar {
             super.repaint();
 
             // Required on non-macOS systems when menu is modified by message window
-            WindowManager.getInstance().getStackWindow().getWindow().pack();
+            WindowManager.getInstance().getFocusedStackWindow().getWindow().pack();
         });
     }
 
@@ -92,7 +92,7 @@ public class HyperCardMenuBar extends JMenuBar {
             super.repaint();
 
             // Required on non-macOS systems when menu is modified by message window
-            WindowManager.getInstance().getStackWindow().getWindow().pack();
+            WindowManager.getInstance().getFocusedStackWindow().getWindow().pack();
         });
     }
 

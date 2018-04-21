@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.fx.CurtainObserver;
@@ -17,6 +18,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.awt.image.BufferedImage;
 
 public class StackWindow extends HyperCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
@@ -42,6 +45,10 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
     public CardPart getDisplayedCard() {
         return card;
+    }
+
+    public StackPart getStack() {
+        return stack;
     }
 
     @RunOnDispatch
@@ -78,6 +85,10 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     public void bindModel(Object data) {
         ExecutionContext context = new ExecutionContext();
 
+        if (data == null) {
+            new Throwable().printStackTrace();;
+        }
+
         if (data instanceof StackPart) {
 
             if (this.stack != null) {
@@ -92,6 +103,9 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
             stack.addObserver(this);
             stack.addNavigationObserver(this);
+
+            WyldCard.getInstance().focusStack(stack);
+
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
         }
@@ -111,6 +125,17 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
         cardPanel.addComponentListener(cardResizeObserver);
         getWindow().addComponentListener(frameResizeObserver);
+        getWindow().addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                WyldCard.getInstance().focusStack(stack);
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+
+            }
+        });
     }
 
     /** {@inheritDoc} */

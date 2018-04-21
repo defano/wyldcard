@@ -5,6 +5,7 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
@@ -32,12 +33,12 @@ public class CursorManager {
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the card changes
-        WyldCard.getInstance().getActiveStack().addNavigationObserver(new StackNavigationObserver() {
-            @Override
-            public void onCardOpened(CardPart newCard) {
-                updateCursor();
-            }
-        });
+//        WyldCard.getInstance().getFocusedStack().addNavigationObserver(new StackNavigationObserver() {
+//            @Override
+//            public void onCardOpened(CardPart newCard) {
+//                updateCursor();
+//            }
+//        });
     }
 
     public void setActiveCursor(HyperCardCursor cursor) {
@@ -69,8 +70,11 @@ public class CursorManager {
         }
 
         SwingUtilities.invokeLater(() -> {
-            WindowManager.getInstance().getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
-            WindowManager.getInstance().getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
+            StackWindow window = WindowManager.getInstance().getFocusedStackWindow();
+            if (window != null) {
+                window.getDisplayedCard().setCursor(effectiveCursor);
+                window.getScreenCurtain().setCursor(effectiveCursor);
+            }
         });
     }
 }

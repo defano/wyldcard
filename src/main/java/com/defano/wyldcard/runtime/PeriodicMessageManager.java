@@ -42,7 +42,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        WyldCard.getInstance().getActiveStack().addNavigationObserver(this);
+        WyldCard.getInstance().getFocusedStack().addNavigationObserver(this);
 
         // Stop tracking 'within' when not in browse mode
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {

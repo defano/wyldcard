@@ -27,6 +27,6 @@ public class WindowTypeExp extends PartExp {
 
     @Override
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context) {
-        return new WindowTypeSpecifier(type);
+        return new WindowTypeSpecifier(context, type);
     }
 }

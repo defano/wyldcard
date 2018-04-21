@@ -40,10 +40,19 @@ public class ExecutionContext {
     // Globals are shared across contexts; SymbolTable is thread safe.
     private final static SymbolTable globals = new BasicSymbolTable();
 
+    private StackPart stack;                                // WyldCard stack that this script is executing in
     private Stack<StackFrame> callStack = new Stack<>();    // Call stack
     private Value result;                                   // Value returned by 'the result'
     private CardPart card;                                  // "Current" card in the context of this execution
     private PartSpecifier theTarget;                        // Part that the message was initially sent
+
+    public ExecutionContext(StackPart stackPart) {
+        this.stack = stackPart;
+    }
+
+    public ExecutionContext() {
+        this.stack = WyldCard.getInstance().getFocusedStack();
+    }
 
     /**
      * Gets the global variable symbol table.
@@ -226,7 +235,7 @@ public class ExecutionContext {
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
         if (ps instanceof WindowSpecifier) {
-            return new WindowProxyPartModel(WindowManager.getInstance().findWindow((WindowSpecifier) ps));
+            return new WindowProxyPartModel(WindowManager.getInstance().findWindow(this, (WindowSpecifier) ps));
         } else {
             return getActiveStack().getStackModel().findPart(this, ps);
         }
@@ -317,7 +326,11 @@ public class ExecutionContext {
      * @return The current stack
      */
     public StackPart getActiveStack() {
-        return WyldCard.getInstance().getActiveStack();
+        return this.stack == null ? WindowManager.getInstance().getFocusedStackWindow().getStack() : this.stack;
+    }
+
+    public void setActiveStack(StackPart stack) {
+        this.stack = stack;
     }
 
     /**

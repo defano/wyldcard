@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.HyperCardWindow;
 import com.defano.wyldcard.window.WindowManager;
 
@@ -11,10 +12,10 @@ public enum SingletonWindowType {
     PATTERNS,
     TOOLS;
 
-    public HyperCardWindow getWindow() {
+    public HyperCardWindow getWindow(ExecutionContext context) {
         switch (this) {
             case CARD:
-                return WindowManager.getInstance().getStackWindow();
+                return WindowManager.getInstance().getStackWindow(context);
             case MESSAGE:
                 return WindowManager.getInstance().getMessageWindow();
             case MESSAGE_WATCHER:

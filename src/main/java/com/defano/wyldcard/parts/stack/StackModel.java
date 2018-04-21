@@ -73,10 +73,10 @@ public class StackModel extends PartModel implements StackPartFinder {
 
         this.savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow().getWindow().getY()));
-        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow().getWindow().setLocation(WindowManager.getInstance().getStackWindow().getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow(context).getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(WindowManager.getInstance().getStackWindow(context).getWindow().getX(), value.integerValue()));
     }
 
     @Override

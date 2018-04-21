@@ -41,7 +41,7 @@ public class HyperTalkErrorDialog {
     @RunOnDispatch
     private void showUneditableError(String message) {
         JOptionPane.showMessageDialog(
-                WindowManager.getInstance().getStackWindow().getWindowPanel(),
+                WindowManager.getInstance().getFocusedStackWindow().getWindowPanel(),
                 message,
                 "HyperTalk Error",
                 JOptionPane.ERROR_MESSAGE
@@ -52,7 +52,7 @@ public class HyperTalkErrorDialog {
     private void showEditableError(String message, PartModel offendingPart, Token offendingToken) {
         Object[] options = {"OK", "Script..."};
         int selection = JOptionPane.showOptionDialog(
-                WindowManager.getInstance().getStackWindow().getWindowPanel(),
+                WindowManager.getInstance().getFocusedStackWindow().getWindowPanel(),
                 message,
                 "HyperTalk Error",
                 JOptionPane.YES_NO_OPTION,

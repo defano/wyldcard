@@ -77,7 +77,7 @@ public interface SearchIndexer {
         int searchFrom = 0;
         Range result;
 
-        int cardId = WyldCard.getInstance().getActiveStack().getStackModel().getCardModel(cardIndex).getId(context);
+        int cardId = WyldCard.getInstance().getFocusedStack().getStackModel().getCardModel(cardIndex).getId(context);
         String fieldText = fieldModel.getText(context, cardId);
 
         do {

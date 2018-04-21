@@ -64,7 +64,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
     }
 
     private void doNewField() {
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
         FieldPart theField = theCard.newField(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
         PartToolContext.getInstance().setSelectedPart(theField);
 
@@ -72,7 +72,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
     }
 
     private void doNewButton() {
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
         ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
         PartToolContext.getInstance().setSelectedPart(theButton);
 
@@ -80,7 +80,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
     }
 
     private void doPartEdit(ToolEditablePart part) {
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
         Point partLocalMouseLoc = SwingUtilities.convertPoint(theCard, clickLoc, part.getComponent());
 
         Rectangle r = new Rectangle();
@@ -105,7 +105,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
     }
 
     private void updateClickLoc() {
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
         this.clickLoc = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(clickLoc, theCard);
     }
@@ -114,7 +114,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
     public boolean dispatchKeyEvent(KeyEvent e) {
         boolean isAltOptionDown = e.isAltDown();
         boolean isCtrlCommandDown = e.isMetaDown() || e.isControlDown();
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
+        CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
 
         if (isScriptEditMode) {
             theCard.repaint();

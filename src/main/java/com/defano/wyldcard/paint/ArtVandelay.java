@@ -25,7 +25,7 @@ public class ArtVandelay {
      * the card as the active selection.
      */
     public static void importPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getFocusedStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> isFileSupportedForImporting(name));
         fd.setVisible(true);
@@ -40,7 +40,7 @@ public class ArtVandelay {
      * exists) to a file of the user's choosing. Displays a syntax error dialog if the export fails for any reason.
      */
     public static void exportPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getFocusedStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
         fd.setFile("Untitled.png");
         fd.setVisible(true);
 
@@ -63,7 +63,7 @@ public class ArtVandelay {
     public static void exportPaint(File file) throws HtException {
         try {
             BufferedImage exportImage = ToolsContext.getInstance().getSelectedImage() == null ?
-                    WyldCard.getInstance().getActiveStack().getDisplayedCard().getScreenshot() :
+                    WyldCard.getInstance().getFocusedStack().getDisplayedCard().getScreenshot() :
                     ToolsContext.getInstance().getSelectedImage();
             exportPaint(file, exportImage);
         } catch (IOException e) {
