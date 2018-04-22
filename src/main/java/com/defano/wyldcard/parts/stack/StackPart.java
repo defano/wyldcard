@@ -41,6 +41,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     private StackModel stackModel;
     private CardPart currentCard;
 
+    private final CurtainManager curtainManager = new CurtainManager();
     private final Set<StackObserver> stackObservers = new HashSet<>();
     private final Set<StackNavigationObserver> stackNavigationObservers = new HashSet<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
@@ -102,9 +103,9 @@ public class StackPart implements Part, PropertyChangeObserver {
         if (visualEffect == null) {
             destination = go(context, cardIndex, pushToBackstack);
         } else {
-            CurtainManager.getInstance().setScreenLocked(true);
+            curtainManager.setScreenLocked(context, true);
             destination = go(context, cardIndex, pushToBackstack);
-            CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
+            curtainManager.unlockScreenWithEffect(context, visualEffect);
         }
 
         this.currentCard = destination;
@@ -358,6 +359,10 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     public void removeNavigationObserver(StackNavigationObserver observer) {
         stackNavigationObservers.remove(observer);
+    }
+
+    public CurtainManager getCurtainManager() {
+        return curtainManager;
     }
 
     /** {@inheritDoc} */

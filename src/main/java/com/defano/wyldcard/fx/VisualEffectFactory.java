@@ -1,11 +1,11 @@
 package com.defano.wyldcard.fx;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.model.VisualEffectImage;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueName;
 import com.defano.jsegue.renderers.*;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,8 +24,8 @@ public class VisualEffectFactory {
         return effect;
     }
 
-    public static PlainEffect createScreenLock() {
-        BufferedImage screenShot = WyldCard.getInstance().getActiveStackDisplayedCard().getScreenshot();
+    public static PlainEffect createScreenLock(ExecutionContext context) {
+        BufferedImage screenShot = context.getCurrentStack().getDisplayedCard().getScreenshot();
 
         PlainEffect effect = new PlainEffect();
         effect.setSource(screenShot);

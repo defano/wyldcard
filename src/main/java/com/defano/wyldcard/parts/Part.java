@@ -149,19 +149,16 @@ public interface Part {
                     return ((CardModel) parentModel).getStackModel();
                 }
 
-            case MESSAGE_BOX:
-                return null;
             case CARD:
                 return ((CardModel) getPartModel()).getStackModel();
             case BACKGROUND:
                 return ((BackgroundModel) getPartModel()).getStackModel();
             case STACK:
                 return (StackModel) getPartModel();
-            case WINDOW:
+
+            default:
                 return null;
         }
-
-        return null;
     }
 
     /**

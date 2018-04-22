@@ -1,5 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -16,17 +17,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class GoCmd extends Command {
 
     private final Expression destinationExp;
+    private final RemoteNavigationOptions navigationOptions;
     private Expression visualEffectExp;
 
-    public GoCmd(ParserRuleContext context, Expression destinationExp) {
-        this(context, destinationExp, null);
+    public GoCmd(ParserRuleContext context, Expression destinationExp, RemoteNavigationOptions navigationOptions) {
+        this(context, destinationExp, null, navigationOptions);
     }
 
-    public GoCmd(ParserRuleContext context, Expression destinationExp, Expression visualEffectExp) {
+    public GoCmd(ParserRuleContext context, Expression destinationExp, Expression visualEffectExp, RemoteNavigationOptions navigationOptions) {
         super(context, "go");
 
         this.destinationExp = destinationExp;
         this.visualEffectExp = visualEffectExp;
+        this.navigationOptions = navigationOptions;
     }
 
     public void onExecute(ExecutionContext context) throws HtException {

@@ -3,7 +3,6 @@ package com.defano.wyldcard.runtime;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
-import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -175,7 +174,10 @@ public class HyperCardProperties extends PropertiesModel {
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {
                 case PROP_LOCKSCREEN:
-                    CurtainManager.getInstance().setScreenLocked(newValue.booleanValue());
+                    WindowManager.getInstance()
+                            .getFocusedStack()
+                            .getCurtainManager()
+                            .setScreenLocked(new ExecutionContext(), newValue.booleanValue());
                     break;
             }
         });

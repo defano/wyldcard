@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VisualEffectExp;
@@ -26,13 +25,13 @@ public class UnlockScreenCmd extends Command {
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
         if (effectExp != null) {
-            CurtainManager.getInstance().unlockScreenWithEffect(effectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
-            CurtainManager.getInstance().waitForEffectToFinish();
+            context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, effectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
+            context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
             return;
         }
 
         VisualEffectSpecifier ves = context.getStackFrame().getVisualEffect();
-        CurtainManager.getInstance().unlockScreenWithEffect(ves);
-        CurtainManager.getInstance().waitForEffectToFinish();
+        context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, ves);
+        context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
     }
 }

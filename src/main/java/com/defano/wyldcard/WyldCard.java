@@ -5,6 +5,7 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
+import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
@@ -23,7 +24,7 @@ import javax.swing.*;
  * responsible for initializing the HyperCard window, tracking mouse changes
  * and reporting exceptions to the user.
  */
-public class WyldCard extends StackManager {
+public class WyldCard extends StackManager implements PartFinder {
 
     private static WyldCard instance = new WyldCard();
 

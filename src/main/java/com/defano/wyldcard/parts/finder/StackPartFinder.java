@@ -3,12 +3,14 @@ package com.defano.wyldcard.parts.finder;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.specifiers.*;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.google.common.collect.Lists;
@@ -17,9 +19,17 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Provides methods for finding parts anywhere in a stack.
+ * Provides methods for finding parts that exist within a specific stack.
+ *
+ * Limitations:
+ *
+ * This finder ignores the "stack" portion of any {@link CompositePartSpecifier} assuming the caller has already
+ * identified the specified stack and directed the {@link #findPart(ExecutionContext, PartSpecifier)} call to the
+ * correct {@link StackPartFinder}.
+ *
+ * This finder does not handle requests for {@link WindowSpecifier} or {@link PartMessageSpecifier} types.
  */
-public interface StackPartFinder extends PartFinder {
+public interface StackPartFinder extends OrderedPartFinder {
 
     /**
      * Gets the stack model in which parts should be found.
@@ -29,9 +39,8 @@ public interface StackPartFinder extends PartFinder {
     StackModel getStackModel();
 
     /**
-     * Finds any kind of part contained in this stack: Buttons and fields (card or background layer), cards and
+     * Finds any kind of part contained within this stack: Buttons and fields (card or background layer), cards and
      * backgrounds.
-     *
      *
      * @param context The execution context.
      * @param ps A {@link PartSpecifier} object describing the part to find.
@@ -40,15 +49,7 @@ public interface StackPartFinder extends PartFinder {
      */
     @Override
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
-        if (ps == null) {
-            throw new PartException("No part specified.");
-        }
-
-        if (ps instanceof PartMessageSpecifier) {
-            return WindowManager.getInstance().getMessageWindow().getPartModel();
-        } else if (ps instanceof StackPartSpecifier) {
-            return findStackPart((StackPartSpecifier) ps);
-        } else if (ps instanceof CompositePartSpecifier) {
+        if (ps instanceof CompositePartSpecifier) {
             return findCompositePart(context, (CompositePartSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
@@ -57,7 +58,7 @@ public interface StackPartFinder extends PartFinder {
         } else if (ps.isBackgroundPartSpecifier()) {
             return context.getCurrentCard().getCardModel().getBackgroundModel().findPart(context, ps);
         } else {
-            return PartFinder.super.findPart(context, ps);
+            return OrderedPartFinder.super.findPart(context, ps);
         }
     }
 
@@ -78,7 +79,7 @@ public interface StackPartFinder extends PartFinder {
         } else if (ps instanceof PartPositionSpecifier) {
             return findPartByPosition((PartPositionSpecifier) ps);
         } else {
-            return PartFinder.super.findPart(context, ps, parts);
+            return OrderedPartFinder.super.findPart(context, ps, parts);
         }
     }
 
@@ -95,9 +96,16 @@ public interface StackPartFinder extends PartFinder {
     default PartModel findCompositePart(ExecutionContext context, CompositePartSpecifier ps) throws PartException {
         try {
             PartModel foundPart;
+            PartSpecifier owningPartSpecifier = ps.getOwningPartExp().evaluateAsSpecifier(context);
+
+            // Special case: This finder assumes the stack portion of the specifier expression refers to the current
+            // stack, but does not verify that's true; it simply ignores the "owning stack" and finds the part itself
+            if (owningPartSpecifier.getType() == PartType.STACK) {
+                return findPart(context, ps.getPart());
+            }
 
             // Recursively find the card or background containing the requested part
-            PartModel owningPart = findPart(context, ps.getOwningPartExp().evaluateAsSpecifier(context));
+            PartModel owningPart = findPart(context, owningPartSpecifier);
 
             // Looking for a background button or field on a remote card or background
             if (ps.isBackgroundPartSpecifier()) {
@@ -127,14 +135,6 @@ public interface StackPartFinder extends PartFinder {
 
         } catch (HtException e) {
             throw new PartException(e);
-        }
-    }
-
-    default StackModel findStackPart(StackPartSpecifier ps) throws PartException {
-        if (ps.isThisStack()) {
-            return getStackModel();
-        } else {
-            throw new PartException("Referring to other stacks has not been implemented yet.");
         }
     }
 

@@ -158,7 +158,7 @@ commandStmnt
     | 'find' expression? 'international'? expression                                                                    # findAnywhere
     | 'get' expression                                                                                                  # getCmdStmnt
     | 'go' 'to'? expression 'with' 'visual' expression                                                                  # goVisualEffectCmdStmnd
-    | 'go' 'to'? expression                                                                                             # goCmdStmnt
+    | 'go' 'to'? expression remoteNavOption                                                                             # goCmdStmnt
     | 'go' 'back'                                                                                                       # goBackCmdStmt
     | 'go' 'back' 'with' 'visual' expression                                                                            # goBackVisualEffectCmdStmt
     | 'hide' expression                                                                                                 # hideCmdStmnt
@@ -223,6 +223,13 @@ commandStmnt
     | 'write' expression 'to' 'file' expression                                                                         # writeFileCmd
     | 'write' expression 'to' 'file' expression 'at' ('eof' | 'end')                                                    # writeEndFileCmd
     | 'write' expression 'to' 'file' expression 'at' expression                                                         # writeAtFileCmd
+    ;
+
+remoteNavOption
+    : 'in' 'a' 'new' 'window'                                                                                           # remoteInNewWindow
+    | 'in' 'a' 'new' 'window' 'without' 'dialog'                                                                        # remoteInNewWindowWithoutDialog
+    | 'without' 'dialog'                                                                                                # remoteWithoutDialog
+    |                                                                                                                   # remoteDefault
     ;
 
 convertible
@@ -376,6 +383,7 @@ cardPart
     | ordinal card                                                                                                      # ordinalCardPart
     | card factor                                                                                                       # expressionCardPart
     | cardPart of bkgndPart                                                                                             # cardOfBkgndPart
+    | cardPart of stackPart                                                                                             # cardOfStackPart
     ;
 
 bkgndPart
@@ -384,6 +392,7 @@ bkgndPart
     | background factor                                                                                                 # expressionBkgndPart
     | ordinal background                                                                                                # ordinalBkgndPart
     | position background                                                                                               # positionBkgndPart
+    | bkgndPart of stackPart                                                                                            # bkgndOfStackPart
     ;
 
 windowPart

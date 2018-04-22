@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Provided functions for finding "layered" parts, that is, button or field parts that may live on either the card or
+ * Provides functions for finding "layered" parts, that is, button or field parts that live on either the card or
  * background layer of a card.
  */
-public interface LayeredPartFinder extends PartFinder {
+public interface LayeredPartFinder extends OrderedPartFinder {
 
     /**
      * Gets a collection of all parts (buttons, fields) that are searchable.

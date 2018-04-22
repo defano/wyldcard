@@ -1,8 +1,14 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
+import com.defano.hypertalk.ast.expressions.CompositePartExp;
+import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public interface PartSpecifier {
 
@@ -26,12 +32,14 @@ public interface PartSpecifier {
 
     /**
      * Gets the type of part being specified. See {@link PartType} for an enumeration of part types.
+     *
      * @return The type of the specified part.
      */
     PartType getType();
 
     /**
      * Determines if this specifier refers to a button or field part.
+     *
      * @return True if this specifier specifies a button or field.
      */
     default boolean isButtonOrFieldSpecifier() {
@@ -40,6 +48,7 @@ public interface PartSpecifier {
 
     /**
      * Determines if this specifier refers to a background part.
+     *
      * @return True if this specifier specifies a background.
      */
     default boolean isBackgroundPartSpecifier() {
@@ -48,6 +57,7 @@ public interface PartSpecifier {
 
     /**
      * Determines if this specifier refers to a card part.
+     *
      * @return True if this specifier specifies a card.
      */
     default boolean isCardPartSpecifier() {
@@ -56,8 +66,43 @@ public interface PartSpecifier {
 
     /**
      * Gets a syntactically valid HyperTalk expression that identifies the specified part (i.e., "card field id 13").
-     * @return A valid HyperTalk expression referring to the specified part.
+     *
      * @param context The execution context.
+     * @return A valid HyperTalk expression referring to the specified part.
      */
     String getHyperTalkIdentifier(ExecutionContext context);
+
+    /**
+     * Traverses the chain of owning parts until we reach the root owner of the part; returns a specifier identifying
+     * that part.
+     * <p>
+     * For example, in the expression 'card 3 of the last background of stack "My Stack"', the root owning part
+     * specifier would return a specifier identifying "My Stack".
+     *
+     * @param context The execution context
+     * @return The value of 'this' if this object is not a {@link CompositePartSpecifier}, otherwise, returns the
+     * specifier at the root of the composite tree.
+     * @throws HtException Thrown if an error occurs evaluating the chain of specifiers
+     */
+    default PartSpecifier getRootOwningPartSpecifier(ExecutionContext context) throws HtException {
+        if (this instanceof CompositePartSpecifier) {
+            PartExp owningPart = ((CompositePartSpecifier) this).getOwningPartExp();
+            if (owningPart instanceof CompositePartExp) {
+                return getRootOwningPartSpecifier(context, owningPart);
+            } else {
+                return owningPart.evaluateAsSpecifier(context);
+            }
+        } else {
+            return this;
+        }
+    }
+
+    default PartSpecifier getRootOwningPartSpecifier(ExecutionContext context, PartExp from) throws HtException {
+        PartSpecifier specifier = from.evaluateAsSpecifier(context);
+        if (specifier instanceof CompositePartSpecifier) {
+            return getRootOwningPartSpecifier(context, ((CompositePartSpecifier) specifier).getOwningPartExp());
+        } else {
+            return specifier;
+        }
+    }
 }

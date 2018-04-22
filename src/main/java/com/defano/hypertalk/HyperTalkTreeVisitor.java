@@ -565,22 +565,22 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
     @Override
     public Object visitGoCmdStmnt(HyperTalkParser.GoCmdStmntContext ctx) {
-        return new GoCmd(ctx, (Expression) visit(ctx.expression()));
+        return new GoCmd(ctx, (Expression) visit(ctx.expression()), (RemoteNavigationOptions) visit(ctx.remoteNavOption()));
     }
 
     @Override
     public Object visitGoBackCmdStmt(HyperTalkParser.GoBackCmdStmtContext ctx) {
-        return new GoCmd(ctx, null);
+        return new GoCmd(ctx, null, new RemoteNavigationOptions(false, false));
     }
 
     @Override
     public Object visitGoBackVisualEffectCmdStmt(HyperTalkParser.GoBackVisualEffectCmdStmtContext ctx) {
-        return new GoCmd(ctx, null, (Expression) visit(ctx.expression()));
+        return new GoCmd(ctx, null, (Expression) visit(ctx.expression()), new RemoteNavigationOptions(false, false));
     }
 
     @Override
     public Object visitGoVisualEffectCmdStmnd(HyperTalkParser.GoVisualEffectCmdStmndContext ctx) {
-        return new GoCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+        return new GoCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), new RemoteNavigationOptions(false, false));
     }
 
     @Override
@@ -1033,6 +1033,26 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitWriteAtFileCmd(HyperTalkParser.WriteAtFileCmdContext ctx) {
         return WriteCmd.writeFileAt(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)), (Expression) visit(ctx.expression(2)));
+    }
+
+    @Override
+    public Object visitRemoteInNewWindow(HyperTalkParser.RemoteInNewWindowContext ctx) {
+        return new RemoteNavigationOptions(true, false);
+    }
+
+    @Override
+    public Object visitRemoteInNewWindowWithoutDialog(HyperTalkParser.RemoteInNewWindowWithoutDialogContext ctx) {
+        return new RemoteNavigationOptions(true, true);
+    }
+
+    @Override
+    public Object visitRemoteWithoutDialog(HyperTalkParser.RemoteWithoutDialogContext ctx) {
+        return new RemoteNavigationOptions(false, true);
+    }
+
+    @Override
+    public Object visitRemoteDefault(HyperTalkParser.RemoteDefaultContext ctx) {
+        return new RemoteNavigationOptions(false, false);
     }
 
     @Override
@@ -1553,6 +1573,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitBkgndOfStackPart(HyperTalkParser.BkgndOfStackPartContext ctx) {
+        return new CompositePartExp(ctx, (PartExp) visit(ctx.bkgndPart()), (PartExp) visit(ctx.stackPart()));
+    }
+
+    @Override
     public Object visitPositionCardPart(HyperTalkParser.PositionCardPartContext ctx) {
         return new PartPositionExp(ctx, PartType.CARD, (Position) visit(ctx.position()));
     }
@@ -1575,6 +1600,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitOrdinalCardPart(HyperTalkParser.OrdinalCardPartContext ctx) {
         return new PartNumberExp(ctx, PartType.CARD, (Ordinal) visit(ctx.ordinal()));
+    }
+
+    @Override
+    public Object visitCardOfStackPart(HyperTalkParser.CardOfStackPartContext ctx) {
+        return new CompositePartExp(ctx, (PartExp) visit(ctx.cardPart()), (PartExp) visit(ctx.stackPart()));
     }
 
     @Override

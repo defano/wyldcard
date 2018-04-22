@@ -10,10 +10,13 @@ import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
+import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -83,6 +86,16 @@ public class StackManager implements StackNavigationObserver {
         savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
 
         ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
+    }
+
+    public List<StackPart> getOpenStacks() {
+        ArrayList<StackPart> stacks = new ArrayList<>();
+        for (Window thisWindow : WindowManager.getInstance().getWindows()) {
+            if (thisWindow instanceof StackWindow) {
+                stacks.add(((StackWindow) thisWindow).getStack());
+            }
+        }
+        return stacks;
     }
 
     /**

@@ -2,9 +2,12 @@ package com.defano.wyldcard.runtime.context;
 
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.Chunk;
+import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
@@ -15,6 +18,7 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.WindowProxyPartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
@@ -253,11 +257,7 @@ public class ExecutionContext {
      * @throws PartException Thrown if no such part exists
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
-        if (ps instanceof WindowSpecifier) {
-            return new WindowProxyPartModel(WindowManager.getInstance().findWindow(this, (WindowSpecifier) ps));
-        } else {
-            return getCurrentStack().getStackModel().findPart(this, ps);
-        }
+        return WyldCard.getInstance().findPart(this, ps);
     }
 
     /**

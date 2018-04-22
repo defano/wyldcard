@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.finder.PartFinder;
+import com.defano.wyldcard.parts.finder.OrderedPartFinder;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
@@ -44,11 +44,11 @@ public class NumberOfPartFunc extends Expression {
         }
 
         if (part instanceof CardModel) {
-            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.CARD));
+            return new Value(((OrderedPartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.CARD));
         }
 
         if (part instanceof BackgroundModel) {
-            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BACKGROUND));
+            return new Value(((OrderedPartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BACKGROUND));
         }
 
         if (part instanceof MsgBoxModel) {

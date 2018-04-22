@@ -2,7 +2,6 @@ package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.fx.CurtainObserver;
 import com.defano.wyldcard.paint.ArtVandelay;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -39,8 +38,6 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
         cardPanel.setLayout(new BorderLayout(0, 0));
         cardPanel.setLayer(screenCurtain, CURTAIN_LAYER);
         cardPanel.add(screenCurtain);
-
-        CurtainManager.getInstance().addScreenCurtainObserver(this);
     }
 
     public CardPart getDisplayedCard() {
@@ -85,11 +82,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
     public void bindModel(Object data) {
         ExecutionContext context = new ExecutionContext();
 
-        if (data == null) {
-            new Throwable().printStackTrace();;
-        }
-
-        if (data instanceof StackPart) {
+       if (data instanceof StackPart) {
 
             if (this.stack != null) {
                 stack.removeObserver(this);
@@ -103,6 +96,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
             stack.addObserver(this);
             stack.addNavigationObserver(this);
+            stack.getCurtainManager().addScreenCurtainObserver(this);
 
             WyldCard.getInstance().focusStack(stack);
 
