@@ -1147,6 +1147,7 @@ Function        | Description
 `speech`        | Returns the text currently being spoken via the `speak` command, or `done` if nothing is being spoken.
 `sqrt`          | Returns the square root of the given argument or `NaN` of the argument is negative.
 `sound`         | Returns the name of the currently playing sound, or `done` if no sound is being played.
+`stacks`        | Returns a line delimited list of currently open stacks. HyperCard orders this list by z-order; WyldCard guarantees no ordering.      
 `sum`           | Returns the sum of the arguments. For example, `sum(1,3,8)` yields `9`.
 `tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
 `target`        | Returns a HyperTalk expression referring to the part that first received the current message. For example, `the target` might yield `card button id 13`. Note that `the target` is a function, but `target` is a container.

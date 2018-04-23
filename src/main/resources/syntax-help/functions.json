@@ -715,5 +715,15 @@
     "templates": [
       "the windows"
     ]
+  },
+
+  {
+    "title": "Stacks",
+    "summary": "Returns a line delimited list of currently open stacks. HyperCard orders this list by z-order; WyldCard guarantees no ordering.",
+    "codePrefix": "stacks",
+    "templates": [
+      "the stacks"
+    ]
   }
+
 ]

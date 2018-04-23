@@ -69,5 +69,6 @@ public enum BuiltInFunction {
     SPEECH,
     VOICES,
     MOUSECLICK,
-    WINDOWS
+    WINDOWS,
+    STACKS
 }

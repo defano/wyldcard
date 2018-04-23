@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.stack;
 
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
@@ -339,5 +340,10 @@ public class StackModel extends PartModel implements StackPartFinder {
                 .orElseGet(() -> getAbbrevName(context));
     }
 
+    public String getStackPath(ExecutionContext context) {
+        return savedStackFileProvider.blockingFirst()
+                .map(file -> file.getAbsolutePath())
+                .orElseGet(() -> getShortName(context));
+    }
 }
 

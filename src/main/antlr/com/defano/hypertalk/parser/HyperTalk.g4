@@ -532,6 +532,7 @@ zeroArgFunc
     | 'foundline'                                                                                                       # propDelegatedFunc
     | 'foundtext'                                                                                                       # propDelegatedFunc
     | 'windows'                                                                                                         # windowsFunc
+    | 'stacks'                                                                                                          # stacksFunc
     ;
 
 singleArgFunc
