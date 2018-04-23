@@ -1,5 +1,8 @@
 package com.defano.wyldcard.parts.stack;
 
+import com.defano.hypertalk.ast.model.*;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.UserIcon;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
@@ -9,10 +12,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.SystemMessage;
-import com.defano.hypertalk.ast.model.Value;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -31,6 +30,9 @@ public class StackModel extends PartModel implements StackPartFinder {
     public final static String FILE_EXTENSION = ".stack";
 
     public static final String PROP_RESIZABLE = "resizable";
+    public static final String PROP_SHORTNAME = "short name";
+    public static final String PROP_ABBREVNAME = "abbreviated name";
+    public static final String PROP_LONGNAME = "long name";
 
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
@@ -52,7 +54,6 @@ public class StackModel extends PartModel implements StackPartFinder {
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
 
-        defineProperty(PROP_ID, new Value(0), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
@@ -73,6 +74,10 @@ public class StackModel extends PartModel implements StackPartFinder {
 
         this.savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
+        defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
+
         defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().x));
         defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow(context).getWindow().getY()));
         defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().y));
@@ -84,6 +89,10 @@ public class StackModel extends PartModel implements StackPartFinder {
         return new Value();
     }
 
+    @Override
+    public PartSpecifier getMe(ExecutionContext context) {
+        return new StackPartSpecifier(getLongName(context));
+    }
 
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
@@ -299,6 +308,35 @@ public class StackModel extends PartModel implements StackPartFinder {
         }
 
         return parts;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isAdjectiveSupportedProperty(String propertyName) {
+        return propertyName.equalsIgnoreCase(PROP_NAME);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+        if (propertyName.equalsIgnoreCase(PROP_NAME)) {
+            return Adjective.ABBREVIATED;
+        } else {
+            return Adjective.DEFAULT;
+        }
+    }
+
+    public String getShortName(ExecutionContext context) {
+        return getKnownProperty(context, PROP_NAME).stringValue();
+    }
+
+    public String getAbbrevName(ExecutionContext context) {
+        return "stack \"" + getShortName(context) + "\"";
+    }
+
+    public String getLongName(ExecutionContext context) {
+        return savedStackFileProvider.blockingFirst()
+                .map(file -> "stack \"" + file.getAbsolutePath() + "\"")
+                .orElseGet(() -> getAbbrevName(context));
     }
 
 }

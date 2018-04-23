@@ -73,8 +73,14 @@ public interface PartFinder {
         if (ps.isThisStack()) {
             return context.getCurrentStack().getStackModel();
         } else {
+            String stackName = String.valueOf(ps.getValue());
+
             for (StackPart thisOpenStack : WyldCard.getInstance().getOpenStacks()) {
-                if (thisOpenStack.getStackModel().getStackName(new ExecutionContext()).equalsIgnoreCase(String.valueOf(ps.getValue()))) {
+                String shortName = thisOpenStack.getStackModel().getShortName(context);
+                String abbrevName = thisOpenStack.getStackModel().getAbbrevName(context);
+                String longName = thisOpenStack.getStackModel().getLongName(context);
+
+                if (stackName.equalsIgnoreCase(shortName) || stackName.equalsIgnoreCase(longName) || stackName.equalsIgnoreCase(abbrevName)) {
                     return thisOpenStack.getStackModel();
                 }
             }

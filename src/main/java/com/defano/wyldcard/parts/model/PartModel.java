@@ -2,6 +2,7 @@ package com.defano.wyldcard.parts.model;
 
 import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
@@ -341,6 +342,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public PartModel getParentPartModel() {
         return parentPartModel;
+    }
+
+    public StackModel getParentStackModel() {
+        if (this instanceof StackModel) {
+            return (StackModel) this;
+        } else if (getParentPartModel() != null) {
+            return getParentPartModel().getParentStackModel();
+        } else {
+            return null;
+        }
     }
 
     public void setParentPartModel(PartModel parentPartModel) {
