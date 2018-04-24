@@ -53,7 +53,9 @@ public class WyldCard extends StackManager implements PartFinder {
     private WyldCard() {}
 
     private void startup() {
-        focusStack(StackPart.newStack(new ExecutionContext()));
+        ExecutionContext context = new ExecutionContext();
+        StackPart stack = StackPart.newStack(context);
+        focusStack(stack);
 
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();
@@ -64,7 +66,7 @@ public class WyldCard extends StackManager implements PartFinder {
             PatternManager.getInstance().start();
             PeriodicMessageManager.getInstance().start();
 
-            displayStack(WindowManager.getInstance().getFocusedStack(), true);
+            stack.displayInWindow(context, WindowManager.getInstance().getStackWindow(stack));
         });
 
         // Close all open files before we die

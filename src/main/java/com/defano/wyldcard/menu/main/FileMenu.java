@@ -25,13 +25,19 @@ public class FileMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Stack...")
-                .withAction(e -> WyldCard.getInstance().newStack())
+                .withAction(e -> WyldCard.getInstance().newStack(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Open Stack...")
-                .withAction(e -> WyldCard.getInstance().open())
+                .withAction(e -> WyldCard.getInstance().open(new ExecutionContext(), false))
                 .withShortcut('O')
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Open New Window...")
+                .withAction(e -> WyldCard.getInstance().open(new ExecutionContext(), true))
+                .withShiftShortcut('O')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

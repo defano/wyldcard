@@ -63,7 +63,7 @@ public class StackPart implements Part, PropertyChangeObserver {
         return stackPart;
     }
 
-    public void bindToWindow(ExecutionContext context, StackWindow stackWindow) {
+    public void displayInWindow(ExecutionContext context, StackWindow stackWindow) {
         stackWindow.bindModel(this);
 
         goCard(context, stackModel.getCurrentCardIndex(), null, false);

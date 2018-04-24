@@ -55,6 +55,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
 
+        defineProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
@@ -345,6 +346,14 @@ public class StackModel extends PartModel implements StackPartFinder {
         return savedStackFileProvider.blockingFirst()
                 .map(file -> file.getAbsolutePath())
                 .orElseGet(() -> getShortName(context));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StackModel that = (StackModel) o;
+        return getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).equals(that.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID));
     }
 }
 
