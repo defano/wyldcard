@@ -98,7 +98,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
         defineComputedSetterProperty(PROP_RECT, (context, model, propertyName, value) -> {
-            if (value.isRectE(context)) {
+            if (value.isRect()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
                 model.setKnownProperty(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
@@ -134,7 +134,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         );
 
         defineComputedSetterProperty(PROP_TOPLEFT, (context, model, propertyName, value) -> {
-            if (value.isPoint(context)) {
+            if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
             } else {
@@ -147,7 +147,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         );
 
         defineComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName, value) -> {
-            if (value.isPoint(context)) {
+            if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
             } else {
@@ -171,7 +171,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 )
         );
         defineComputedSetterProperty(PROP_LOCATION, (context, model, propertyName, value) -> {
-            if (value.isPoint(context)) {
+            if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
             } else {

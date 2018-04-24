@@ -107,7 +107,7 @@ Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to ex
 
 ## Stacks of Cards
 
-HyperCard lets users interact with a document called a _stack_ that consists of a list of _cards_, conceptually similar to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements, called _parts_ (like buttons, menus, and text fields).
+WyldCard lets users interact with a document called a _stack_ that consists of a list of _cards_, conceptually similar to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements, called _parts_ (like buttons, menus, and text fields).
 
 Each card is comprised of two layers: a _background layer_ and a _card layer_ (the foreground). Each card has its own unique foreground, but its background may be shared between cards. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
 
@@ -136,7 +136,7 @@ go to card 4 of background 2
 
 ## Messages and handlers
 
-A _script_ is a set of _message handlers_ and _function handlers_ that describe how the object reacts when HyperCard sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
+A _script_ is a set of _message handlers_ and _function handlers_ that describe how the object reacts when WyldCard sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
 
 Stacks, backgrounds, cards, buttons and fields are scriptable in the HyperTalk language.
 
@@ -148,7 +148,7 @@ on mouseUp
 end mouseUp
 ```
 
-In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes HyperCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog).
+In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes WyldCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" dialog).
 
 Simply invoking the name of a message as a statement in a script "sends" the message to the current part (and subsequently to other parts in its message passing hierarchy, if not trapped).
 
@@ -204,7 +204,7 @@ WyldCard automatically sends the following messages to parts as the user interac
  `openStack`        | Sent to a stack when it is opened
  `tabKey`           | Sent when the tab key is pressed
 
-Messages do not have to originate from HyperCard, nor are they limited to those listed in the table above. A script may send a message of its own creation to another part (or to itself) using the `send` command:
+Messages do not have to originate from WyldCard, nor are they limited to those listed in the table above. A script may send a message of its own creation to another part (or to itself) using the `send` command:
 
 ```
 send mouseUp to button 1                          -- Make 'button 1' act as though user clicked it
@@ -219,7 +219,7 @@ Messages automatically traverse a _message passing hierarchy_: If a part receive
 
 Messages follow this sequence:
 
-**Buttons** and **fields** pass messages to the **card** or **background** on which they appear; a card passes messages to its **background**; and a background passes messages to its **stack**. If the stack does not trap the message, then the message is passed back to **HyperCard** which handles the message itself.
+**Buttons** and **fields** pass messages to the **card** or **background** on which they appear; a card passes messages to its **background**; and a background passes messages to its **stack**. If the stack does not trap the message, then the message is passed back to **WyldCard** which handles the message itself.
 
 Exploiting the architecture empowers parts to override system behavior by _trapping_ the associated event message. For example, add the following script to a field to disallow entry any of any character other than an even number:
 
@@ -231,7 +231,7 @@ on keyDown theKey
 end keyDown
 ```
 
-This works because HyperCard passes the `keyDown` message to the field when a user types a character into it. The script's `on keyDown` handler passes the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing this handler and only conditionally passing the `keyDown` message back to HyperCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the text of the field).
+This works because WyldCard passes the `keyDown` message to the field when a user types a character into it. The script's `on keyDown` handler passes the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing this handler and only conditionally passing the `keyDown` message back to WyldCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the text of the field).
 
 HyperTalk does not short-circuit logical evaluations (as most languages do). Therefore, the above example cannot be simplified to `if theKey is a number and theKey mod 2 is 0` because in the case of `theKey` being a non-numeric value, the `mod` expression will produce an error.
 
@@ -343,9 +343,9 @@ An _operator_ is an expression that takes one or two values (called _operands_),
 
 ### Factors
 
-A _factor_ is an expression that refers to an object (like a card, button or field) that HyperCard interprets in whichever way is most meaningful to the context of its usage. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
+A _factor_ is an expression that refers to an object (like a card, button or field) that WyldCard interprets in whichever way is most meaningful to the context of its usage. Factors have the effect of making HyperTalk feel more like English than a computer programming language. Factors "do what I mean, not what I say."
 
-For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, HyperCard will assume that you mean that it should go wherever the text of card field 1 refers. If no such field exists, or if the text of that field doesn't refer to a card (such as, `next card`) then HyperCard will produce an error.
+For example, the `go` command expects to "go" to a card or to a background. But if you say `go to cd field 1`, WyldCard will assume that you mean that it should go wherever the text of card field 1 refers. If no such field exists, or if the text of that field doesn't refer to a card (such as, `next card`) then WyldCard will produce an error.
 
 #### How factors work in WyldCard
 
@@ -381,7 +381,7 @@ Constant     | Value
 
 [Variables](#variable-containers) | [Parts](#part-containers) | [Menus](#menu-containers) | [Message](#the-message) | [It](#the-it-container) | [Selection](#the-selection-container) | [Target](#the-target-container)
 
-A _container_ is anything in HyperCard that you can `put` a value into: parts, variables, properties, menus, the message box, the selection and the target are all containers. HyperTalk uses the `put` command to place a value into a container; do not use `=` to assign values as you might in other languages.
+A _container_ is anything in WyldCard that you can `put` a value into: parts, variables, properties, menus, the message box, the selection and the target are all containers. HyperTalk uses the `put` command to place a value into a container; do not use `=` to assign values as you might in other languages.
 
 #### Variable containers
 
@@ -458,7 +458,7 @@ Other...
 
 #### The message
 
-The _message box_ is a HyperCard window containing a single-line editable text field (you can show or hide this window from the "Go" menu). Text entered into the message is evaluated as a HyperTalk statement when you press enter. The contents of this field can by read or written as a container and is addressable as `[the] message`, `[the] message box` or `[the] message window`.
+The _message box_ is a WyldCard window containing a single-line editable text field (you can show or hide this window from the "Go" menu). Text entered into the message is evaluated as a HyperTalk statement when you press enter. The contents of this field can by read or written as a container and is addressable as `[the] message`, `[the] message box` or `[the] message window`.
 
 For example:
 
@@ -512,7 +512,7 @@ end mouseUp
 
 A _part_ is a scriptable user interface element.
 
-Buttons, fields, cards, backgrounds and the stack itself are parts. Menus are controllable via HyperTalk, but are modeled a bit differently than other parts in HyperCard. See the section below for details about [controlling the menu bar](#menus).
+Buttons, fields, cards, backgrounds and the stack itself are parts. Menus are controllable via HyperTalk, but are modeled a bit differently than other parts in WyldCard. See the section below for details about [controlling the menu bar](#menus).
 
 Every part maintains a set of _properties_ that describe its look-and-feel (like its size, location and style). Modifying a part's properties modifies how way the part looks and behaves.
 
@@ -531,18 +531,23 @@ put "I like IDs" into background field id 22 of card 3
 
 ### Part Numbers
 
-Each part is assigned a number that represents its logical order within the context of its owner.
+Each part is assigned a number that represents its logical order relative to other objects of the same type.
 
 For buttons and fields, this represents the drawing order of the part (_z-order_); Higher numbered parts are drawn before lowered numbered parts and thereby appear behind them. You cannot directly set a button or field's number, but the "Bring Closer" or "Send Further" commands in the "Objects" menu will affect the number assigned to it.
 
-For cards and backgrounds, their number represents their position in the stack. Card number 1 is the first card in the stack, card number 2 is the second, and so forth. Backgrounds are similarly numbered by their first appearance in the stack.
+For cards and backgrounds, their number represents their position in the stack. Card number 1 is the first card in the stack, card number 2 is the second, and so forth. Backgrounds are similarly numbered by their first appearance in the stack. You can refer to fields and buttons relative to all other parts on the same layer of the card (`background part 14`) or relative to other parts of the same type (`bkgnd button 13` or `bkgnd field 3`).
 
-You can refer to fields and buttons relative to all other parts on the same layer of the card (`background part 14`) or relative to other parts of the same type (`bkgnd button 13` or `bkgnd field 3`). For example,
+For windows, HyperCard assigned numbers based on the Window's front-to-back position on the Macintosh. However, WyldCard numbers windows based on their title's alphabetical order (this limitation is imposed by the multi-platform nature of WyldCard).
+
+For example,
 
 ```
 add 20 to the height of card button 1.
 set the name of background part 9 to "Number 9"   -- might be a card or a field
+hide window 4
 ```
+
+Note that `button 1` refers to button _number_ one, whereas `button "1"` refers to the button named "1".
 
 ### Part Names
 
@@ -600,7 +605,7 @@ on doMenu theMenu, theMenuItem
 end doMenu
 ```
 
-By invoking `pass doMenu` we're letting HyperCard respond to these menu selections. In the case where the user chooses "Background" and does not click "OK" in the dialog box, we are not passing `doMenu` and thereby "trapping" the menu selection and preventing HyperCard from acting upon it.
+By invoking `pass doMenu` we're letting WyldCard respond to these menu selections. In the case where the user chooses "Background" and does not click "OK" in the dialog box, we are not passing `doMenu` and thereby "trapping" the menu selection and preventing WyldCard from acting upon it.
 
 #### Special considerations
 
@@ -612,7 +617,7 @@ Menus in WyldCard differ from Apple's HyperCard in a few nuanced ways:
 
 ## Properties
 
-[Buttons](#buttons) | [Fields](#fields) | [Menu Items](#menu-items) | [Cards & Backgrounds](#cards-and-backgrounds) | [Windows](#windows) | [HyperCard](#hypercard-properties)
+[Buttons](#buttons) | [Fields](#fields) | [Menu Items](#menu-items) | [Cards & Backgrounds](#cards-and-backgrounds) | [Windows](#windows) | [Stacks](#stacks) | [HyperCard](#hypercard-properties)
 
 A property is a HyperTalk-addressable attribute that determines how an object looks, feels, and reacts to user interaction. Properties in WyldCard are _first class_ containers that can be read or written in whole or by chunk using the `set`, `get`, or `put` commands.
 
@@ -634,7 +639,7 @@ Property      | Description
 `contents`    | Returns or sets the value of this object, as set or retrieved via HyperTalk's `put` and `get` commands. For example, `put "hello" into button id 0` sets the contents of the button to "Hello". This value could be retrieved with `get the contents of button id 0`.
 `enabled`     | Returns or sets whether the button or field is enabled. When disabled, the part appears "grayed out". Note that disabled parts continue to receive user interface generated messages such as `mouseUp` or `mouseEnter`. May also be set with the `enable` and `disable` commands. Not applicable to `window` parts.
 `height`      | Returns or sets the height of the part (in pixels)
-`id`          | Returns the part's ID. Each part has a globally unique ID that is assigned by HyperCard at creation and cannot be changed.
+`id`          | Returns the part's ID. Each part has a globally unique ID that is assigned by WyldCard at creation and cannot be changed.
 `left`        | Returns or sets the left-most border of the part's location, moving the part horizontally but not affecting its width.
 `location`    | Returns or sets the center point of the part. Also available as the `loc` property.
 `name`        | Returns or sets the script-addressable name of the part (on buttons, this value determines the label or text that appears drawn on the button)
@@ -656,7 +661,7 @@ Property      | Description
 `textFont`    | Returns or sets the font (family) of the part. Uses the system default font if the specified font family does not exist.
 `textSize`    | Returns or sets the size (in points) of the part's text.
 `textStyle`   | Returns or sets the text style attributes of the part. Valid style attributes include `plain`, `bold`, `italic` (plus `strikeThrough`, `underline`, `subscript` and `superscript` when addressing fields). Provide a list to set multiple attributes together (i.e., `set the textStyle of me to "bold, italic"`)
-`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the part is not drawn on the screen and receives no messages from HyperCard. This value can also be accessed using the `hide` and `show` commands.
+`visible`     | Returns or sets the visibility of the button (a Boolean value). When invisible, the part is not drawn on the screen and receives no messages from WyldCard. This value can also be accessed using the `hide` and `show` commands.
 
 
 ### Buttons
@@ -682,7 +687,7 @@ In addition to the properties common to all parts, a button has these additional
 
 Property    | Description
 ------------|------------
-`autoHilite`| Returns or sets whether the button's `hilite` property is managed by HyperCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
+`autoHilite`| Returns or sets whether the button's `hilite` property is managed by WyldCard. When `autoHilite` is `true`, checkbox and radio buttons automatically check/uncheck when clicked, and other styles of buttons highlight when the mouse is down within their bounds.
 `hilite`    | Returns or sets whether the button is drawn "highlighted"; for checkbox and radio styles, hilite describes whether the checkbox is checked or the radio button is selected; for other styles, `hilite` describes a "pressed" state--a highlight typically drawn while the user holds the mouse down over the part. This property has no effect on `popup` style buttons.
 `iconAlign` | Sets the alignment of the icon relative to the button's label (name), one of: `left`, `right`, `top` or `bottom` (default). Has no effect on buttons that do not have an icon. This property did not exist in HyperCard.
 `showName`  | Returns or sets the visibility of the button's name (a Boolean value). When false, the button is drawn without a name.
@@ -743,7 +748,7 @@ Menu Property   | Description
 
 ### Cards and Backgrounds
 
-Cards and backgrounds are objects in HyperCard that support these unique properties:
+Cards and backgrounds are objects in WyldCard that support these unique properties:
 
 Property     | Description
 -------------|----------------------
@@ -751,6 +756,15 @@ Property     | Description
 `cantDelete` | A logical value indicating that the card or background cannot be deleted from the stack (without first clearing this flag). When applied to a background, cards in the background may be deleted provided at least one card of the background remains.
 `dontSearch` | When true, indicates that fields appearing on this card (or any card sharing this background) will not be searched by the `find` command.
 `showPict`   | A logical value specifying if the card or background picture is visible.
+
+### Stacks
+
+WyldCard stacks support these properties:
+
+Property     | Description
+-------------|-----------------------
+`cantPeek`   | When true, holding `command`-`option` will not highlight the outline of buttons and fields, and clicking a highlighted part will not open its script editor.
+`resizable`  | Indicates or sets whether the card window can be resized to adjust the dimensions of the stack itself. This property does not exist in HyperCard.
 
 ### Windows
 
@@ -760,28 +774,27 @@ Property     | Description
 -------------|----------------------
 `zoomed`     | Indicates or sets whether the window has been maximized or zoomed (that is, currently displayed in its largest allowable dimensions).
 
-### HyperCard Properties
+### WyldCard Properties
 
-Some properties apply to HyperCard writ large (rather than just an individual part). The syntax for setting or getting a global property is similar to part properties. For example:
+Some properties apply to WyldCard writ large (rather than just an individual part). The syntax for setting or getting a global property is similar to part properties. For example:
 
 ```
 set the itemDelimiter to ","
 get the itemDelimiter
 ```
 
-WyldCard supports these HyperCard properties:
+WyldCard supports these global properties:
 
 Global Property | Description
 ----------------|---------------
 `brush`         | An integer value between `0` and `23` indicating the active paintbrush.
-`cantPeek`      | When true, holding `command`-`option` will not highlight the outline of buttons and fields, and clicking a highlighted part will not open its script editor.
 `centered`      | A boolean value indicating whether shapes from center out, or corner-to-corner (equivalent to "Draw Centered" in the "Options" menu).
 `cursor`        | The name of the cursor to be displayed in place of the default, `hand` cursor; one of `ibeam`, `cross`, `plus` (same as `busy`), `watch`, `hand`, `arrow`, `busy` or `none`. Does not effect paint tool, button tool or field tool cursors. Resets to `hand` on idle. Some cursors may not be supported on all operating systems.
 `filled`        | A boolean value indicating whether shapes are being drawn filled (equivalent to "Draw Filled" in the "Options" menu).
 `grid`          | A boolean value indicating whether the paint tool grid is enabled. When `true`, enables an eight pixel grid.
 `lockMessages`  | When true, the `openCard`, `closeCard` and `openStack` messages will not be sent. Reset to `false` at idle time.
 `lockScreen`    | A boolean value indicating whether or not the screen is locked. Reset to `false` at idle. See the "Visual Effects" section for more details.
-`itemDelimiter` | A character or string used to mark the separation between items in a list. HyperCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yields 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
+`itemDelimiter` | A character or string used to mark the separation between items in a list. WyldCard will use this value anywhere it needs to treat a value as a list. For example, `set the itemDelimiter to "***" \n get the second item of "item 1***item 2***item 3" -- yields 'item 2'`. Note that this value has no effect on _point_ or _rectangle_ list items (i.e., when getting or setting the `rect`, `topLeft` or `bottomRight` of a part, the coordinates will always be separated by a comma irrespective of the current `itemDelimiter`).
 `lineSize`      | The width, in pixels, of the line/outline drawn by paint tools.
 `multiple`      | A boolean value indicating whether shapes are being drawn multiple (equivalent to "Draw Multiple" in the "Options" menu).
 `pattern`       | Gets or sets the number of selected paint pattern. Patterns are numbered 0 to 39. Setting to a value outside this range has no effect.
@@ -837,7 +850,7 @@ sort cards of background id 2 by the random of 2
 
 The contents of a HyperTalk container (or a chunk of a container) can be sorted using the command `sort <chunks> {of | in} <container> [<direction>] [<style>] [by <expression>]` where:
 
-* `<chunks>` is `[the] lines`, `[the] words`, `[the] items`, or `[the] chars` (HyperCard only support sorting by `items` or `lines`.)
+* `<chunks>` is `[the] lines`, `[the] words`, `[the] items`, or `[the] chars` (HyperCard only supports sorting by `items` or `lines`.)
 * `<container>` identifies a HyperTalk variable, part, or property
 * `<direction>` is either `ascending` or `descending`
 * `<style>` is `text`, `numeric`, `dateTime` or `international` (as described earlier)
@@ -1039,7 +1052,7 @@ Command	         | Description
 `disable`        | Disables a part, menu or menu item causing it to be drawn in a "greyed-out" state; sets the part's `enabled` property to false. For example, `disable card button 3` or `disable menuItem "Bold" of menu "Style"`
 `divide`         | Divides a container by a value; `divide x by it`
 `do`             | Executes a value as if it were a list of statements; `do "put 2+3 into the message window"` or `do the text of field myscript`
-`doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that HyperCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
+`doMenu`         | Finds a menu item (in the menubar) matching the given argument and performs the action associated with it (behaves as if the user chose the item from the menubar). Causes the `doMenu theMenu, theMenuItem` message to be sent to the card. Note that WyldCard searches the menu bar from left-to-right (File, Edit, Go, ...), top-to-bottom when looking for a matching menu item. The first item matching the given name (case insensitive) is invoked. For example, `doMenu "Card Info..."`
 `drag`           | Drags the mouse from one point to another while optionally holding down one or more modifier keys; `drag from "35,70" to "200,180" with shiftKey`
 `enable`         | Enables a part, menu or menu item; sets the part's `enabled` property to true. For example, `enable menu "Objects"`.
 `edit script`    | Displays the script editor of the given part. For example, `edit script of button id 3` or `edit the script of this card`.
@@ -1056,13 +1069,13 @@ Command	         | Description
 `play`           | Plays a sound (`boing`, `harpsichord` or `flute`) optionally as a series of notes (`c d# eh.`) and with an optional tempo (`play harpsichord tempo 200 "b a g a b b b"`). See the Sound and Music section for details.
 `pop`            | Pops the top card from the back-stack; equivalent to choosing "Back" from the "Go" menu. Has no effect if the back-stack is empty.
 `push`           | Pushes a card or background onto the back-stack. For example, `push card 13`, `push the next background` or `push card id 14`.
-`put`            | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but this implementation does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
+`put`            | Places a value into a container or into a chunk of a container; `put "hello" into the third item of mylist`. When no container is specified, the message box is implied as the default container. Note that HyperCard does not allow "putting" a value into a property, but WyldCard does, for example: `put item 1 of the mouseLoc into item 1 of the location of me`.
 `read`           | Reads text from a file that was previously opened with the `open file` command into the variable `it`. Several forms, including `read from file <filename>` (reads the entire file identified by `<filename>` into memory), `read from file <filename> for <count>` (reads `<count>` characters from the current file position), `read from file <filename> at <position> for <count>` (reads `<count>` characters from the file starting at `<position>`), `read file <filename> until <pattern>` (reads the file until the given case-insensitive `<pattern>` is reached).
 `reset menuBar`  | Resets the menu bar to its default state; removes any custom menus added with the `create menu` command and restores any deleted menus to their default state.
 `reset paint`    | Resets the paint, pattern,brush, grid, and font selections to their default values.
 `select`         | Selects a button or field as if the user had chosen the button or field tool and clicked on the part, or selects a range of text in a field, or moves the selection caret in a field. `select <part>`, `select empty`, `select { before / after / } text of <part>`, `select { before / after / } <chunk> of <part>`.
 `send`           | Send a message with optional arguments to a part; `send "mouseUp" to field id 3` or `send "myMessage 1,2" to this card`
-`set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global HyperCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
+`set`            | Sets the property of a part to a value (`set the wrapText of field id 3 to (5 > 3)`) or sets a global WyldCard property (`set the itemDelim to "*"`). If no such property exists, the given expression is placed into a container (variable) of that name.
 `show`           | Makes a part, image layer, or window title bar visible. Syntax is `show <part-factor>`, `show {card / background} picture`, `show picture of {<card-factor> / <bkgnd-factor>}`, or `show titleBar`. For example `show button "My Button"`, `show picture of card 2`, or `show card picture`.
 `sort`           | Sorts the cards in the stack, or the `lines` or `items` of a container based on value or expression. See the section on sorting for details.
 `speak`          | Speaks text in a default or specified voice. See the "Text to speech" section for details.
@@ -1079,7 +1092,7 @@ Command	         | Description
 
 A _function_ directs HyperTalk to perform a task that produces some value. Therefore, functions can appear as a term in an expression. For example, `3 / the average of "1, 2, 3"` is a legal expression.
 
-HyperCard provides a suite of built-in functions plus the ability to script new ones.
+WyldCard provides a suite of built-in functions plus the ability to script new ones.
 
 ### Built-in functions
 
@@ -1157,7 +1170,7 @@ Function        | Description
 `trunc`         | Returns the integer portion of the given numerical argument; for example `the trunc of 8.99` yields `8`.
 `value`         | Evaluates the given factor as a HyperTalk expression and returns the result. Example: `the value of ("3" & "*4")` yields `12`.
 `voices`        | Returns a list of installed voices. This function is unique to WyldCard and does not exist in HyperCard.
-`windows`       | Accepts no arguments and returns a return-delimited list containing the name of every window in alphabetical order (note that HyperCard returns this list in Z-order).
+`windows`       | Accepts no arguments and returns a return-delimited list containing the name of every window in alphabetical order (note that HyperCard returns this list in Z-order; WyldCard guarantees no ordering).
 
 ### User-defined functions
 

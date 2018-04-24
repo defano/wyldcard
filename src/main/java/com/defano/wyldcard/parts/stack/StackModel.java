@@ -1,6 +1,5 @@
 package com.defano.wyldcard.parts.stack;
 
-import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
@@ -30,6 +29,7 @@ public class StackModel extends PartModel implements StackPartFinder {
     private static final int BACKSTACK_DEPTH = 20;
     public final static String FILE_EXTENSION = ".stack";
 
+    public final static String PROP_CANTPEEK = "cantpeek";
     public static final String PROP_RESIZABLE = "resizable";
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
@@ -59,6 +59,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
         defineProperty(PROP_RESIZABLE, new Value(false), false);
+        defineProperty(PROP_CANTPEEK, new Value(false), false);
 
         initialize();
     }

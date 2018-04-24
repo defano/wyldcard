@@ -1967,8 +1967,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case NUMBER_LINES: return new NumberOfFunc(ctx, Countable.LINE, (Expression) visit(expTree));
             case NUMBER_WORDS: return new NumberOfFunc(ctx, Countable.WORD, (Expression) visit(expTree));
             case NUMBER_MENUITEMS: return new NumberOfFunc(ctx, Countable.MENU_ITEMS, (Expression) visit(expTree));
-            case NUMBER_BKGND_CARDS: return new NumberOfFunc(ctx, Countable.CARDS_IN_BKGND, (Expression) visit(expTree));
             case NUMBER_OF_PART: return new NumberOfPartFunc(ctx, (Expression) visit(expTree));
+            case NUMBER_CARDS: return new NumberOfFunc(ctx, Countable.CARDS, (Expression) visit(expTree));
+            case NUMBER_CARD_PARTS: return new NumberOfFunc(ctx, Countable.CARD_PARTS, (Expression) visit(expTree));
+            case NUMBER_BKGND_PARTS: return new NumberOfFunc(ctx, Countable.BKGND_PARTS, (Expression) visit(expTree));
+            case NUMBER_CARD_BUTTONS: return new NumberOfFunc(ctx, Countable.CARD_BUTTONS, (Expression) visit(expTree));
+            case NUMBER_BKGND_BUTTONS: return new NumberOfFunc(ctx, Countable.BKGND_BUTTONS, (Expression) visit(expTree));
+            case NUMBER_CARD_FIELDS: return new NumberOfFunc(ctx, Countable.CARD_FIELDS, (Expression) visit(expTree));
+            case NUMBER_BKGND_FIELDS: return new NumberOfFunc(ctx, Countable.BKGND_FIELDS, (Expression) visit(expTree));
+            case NUMBER_MARKED_CARDS: return new NumberOfFunc(ctx, Countable.MARKED_CARDS, (Expression) visit(expTree));
+            case NUMBER_BKGNDS: return new NumberOfFunc(ctx, Countable.BKGNDS, (Expression) visit(expTree));
             case RANDOM: return new RandomFunc(ctx, (Expression) visit(expTree));
             case SQRT:
             case TRUNC:
@@ -2028,7 +2036,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case DISK_SPACE: return new DiskSpaceFunc(ctx);
             case PARAM_COUNT: return new ParamCountFunc(ctx);
             case PARAMS: return new ParamsFunc(ctx);
-            case PROPERTY_DELEGATED: return new PropertyDelegatedFunc(ctx, ctx.zeroArgFunc().getText());
             case TARGET: return new TargetFunc(ctx);
             case SPEECH: return new SpeechFunc(ctx);
             case VOICES: return new VoicesFunc(ctx);
@@ -2096,6 +2103,51 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitNumberOfCardPartsOfExprFunc(HyperTalkParser.NumberOfCardPartsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_CARD_PARTS;
+    }
+
+    @Override
+    public Object visitNumberOfBkgndPartsOfExprFunc(HyperTalkParser.NumberOfBkgndPartsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_PARTS;
+    }
+
+    @Override
+    public Object visitNumberOfCardButtonsOfExprFunc(HyperTalkParser.NumberOfCardButtonsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_CARD_BUTTONS;
+    }
+
+    @Override
+    public Object visitNumberOfBkgndButtonsOfExprFunc(HyperTalkParser.NumberOfBkgndButtonsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_BUTTONS;
+    }
+
+    @Override
+    public Object visitNumberOfCardFieldsOfExprFunc(HyperTalkParser.NumberOfCardFieldsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_CARD_FIELDS;
+    }
+
+    @Override
+    public Object visitNumberOfBkgndFieldsofExprFunc(HyperTalkParser.NumberOfBkgndFieldsofExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_BKGND_FIELDS;
+    }
+
+    @Override
+    public Object visitNumberOfCardsOfExprFunc(HyperTalkParser.NumberOfCardsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_CARDS;
+    }
+
+    @Override
+    public Object visitNumberOfBackgroundsOfExprFunc(HyperTalkParser.NumberOfBackgroundsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_BKGNDS;
+    }
+
+    @Override
+    public Object visitNumberOfMarkedCardsOfExprFunc(HyperTalkParser.NumberOfMarkedCardsOfExprFuncContext ctx) {
+        return BuiltInFunction.NUMBER_MARKED_CARDS;
+    }
+
+    @Override
     public Object visitNumberOfCardButtons(HyperTalkParser.NumberOfCardButtonsContext ctx) {
         return BuiltInFunction.NUMBER_CARD_BUTTONS;
     }
@@ -2131,7 +2183,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
 
         // Drop quotes from quoted string literal when converting a value
         if (literal.startsWith("\"") && literal.endsWith("\"")) {
-            return new Value(String.valueOf(literal.substring(1, literal.length() - 1)));
+            return Value.ofQuotedLiteral(String.valueOf(literal.substring(1, literal.length() - 1)));
         }
 
         return new Value(ctx.getText());
@@ -2150,11 +2202,6 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitParamCountFunc(HyperTalkParser.ParamCountFuncContext ctx) {
         return BuiltInFunction.PARAM_COUNT;
-    }
-
-    @Override
-    public Object visitPropDelegatedFunc(HyperTalkParser.PropDelegatedFuncContext ctx) {
-        return BuiltInFunction.PROPERTY_DELEGATED;
     }
 
     @Override

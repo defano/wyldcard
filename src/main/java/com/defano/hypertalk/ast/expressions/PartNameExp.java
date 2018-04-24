@@ -31,7 +31,9 @@ public class PartNameExp extends PartExp {
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
         Value evaluatedName = name.evaluate(context);
 
-        if (evaluatedName.isInteger()) {
+        // Quoted literals are always assumed to refer to name, even if value is a number (i.e., 'button "1"' refers
+        // to button named "1')
+        if (evaluatedName.isInteger() && !evaluatedName.isQuotedLiteral()) {
             return new PartNumberSpecifier(layer, type, evaluatedName.integerValue());
         } else {
             return new PartNameSpecifier(layer, type, evaluatedName.stringValue());

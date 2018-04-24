@@ -2,6 +2,9 @@ package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.wyldcard.menu.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.finder.LayeredPartFinder;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Countable;
 import com.defano.hypertalk.ast.model.Owner;
@@ -45,32 +48,81 @@ public class NumberOfFunc extends Expression {
             case ITEM:
                 return new Value(expression.evaluate(context).itemCount(context));
             case CARD_PARTS:
-                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, null, Owner.CARD));
+                return new Value(getScopedLayeredPart(context).getPartCount(context, null, Owner.CARD));
             case BKGND_PARTS:
-                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, null, Owner.BACKGROUND));
+                return new Value(getScopedLayeredPart(context).getPartCount(context, null, Owner.BACKGROUND));
             case CARD_BUTTONS:
-                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD));
+                return new Value(getScopedLayeredPart(context).getPartCount(context, PartType.BUTTON, Owner.CARD));
             case BKGND_BUTTONS:
-                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND));
+                return new Value(getScopedLayeredPart(context).getPartCount(context, PartType.BUTTON, Owner.BACKGROUND));
             case CARD_FIELDS:
-                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD));
+                return new Value(getScopedLayeredPart(context).getPartCount(context, PartType.FIELD, Owner.CARD));
             case BKGND_FIELDS:
-                return new Value(context.getCurrentCard().getCardModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND));
+                return new Value(getScopedLayeredPart(context).getPartCount(context, PartType.FIELD, Owner.BACKGROUND));
             case MENUS:
                 return new Value(HyperCardMenuBar.getInstance().getMenuCount());
             case CARDS:
-                return new Value(context.getCurrentStack().getCardCountProvider().blockingFirst());
+                return countCards(context);
             case MARKED_CARDS:
-                return new Value(context.getCurrentStack().getStackModel().getMarkedCards(context).size());
+                return countMarkedCards(context);
             case BKGNDS:
-                return new Value(context.getCurrentStack().getStackModel().getBackgroundCount());
-            case CARDS_IN_BKGND:
-                BackgroundModel model = expression.partFactor(context, BackgroundModel.class, new HtSemanticException("No such background."));
-                return new Value(context.getCurrentStack().getStackModel().getCardsInBackground(model.getId(context)).size());
+                return countBackgrounds(context);
             case WINDOWS:
                 return new Value(WindowManager.getInstance().getWindows().size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
+        }
+    }
+
+    private LayeredPartFinder getScopedLayeredPart(ExecutionContext context) throws HtException {
+        if (expression == null) {
+            return context.getCurrentCard().getCardModel();
+        } else {
+            BackgroundModel bkgnd = expression.partFactor(context, BackgroundModel.class);
+            if (bkgnd != null) {
+                return bkgnd;
+            } else {
+                return expression.partFactor(context, CardModel.class, new HtSemanticException("No such stack or background."));
+            }
+        }
+    }
+
+    private Value countMarkedCards(ExecutionContext context) throws HtException {
+        if (expression == null) {
+            return new Value(context.getCurrentStack().getStackModel().getMarkedCards(context).size());
+        } else {
+            BackgroundModel bkgnd = expression.partFactor(context, BackgroundModel.class);
+            if (bkgnd != null) {
+                return new Value(bkgnd.getCardModels(context).stream().filter(p -> p.isMarked(context)).count());
+            } else {
+                return new Value(expression.partFactor(context, StackModel.class, new HtSemanticException("No such stack or background.")).getMarkedCards(context).size());
+            }
+        }
+    }
+
+    private Value countBackgrounds(ExecutionContext context) throws HtException {
+        if (expression == null) {
+            return new Value(context.getCurrentStack().getStackModel().getBackgroundCount());
+        } else {
+            BackgroundModel bkgnd = expression.partFactor(context, BackgroundModel.class);
+            if (bkgnd != null) {
+                return new Value(bkgnd.getCardModels(context).size());
+            } else {
+                return new Value(expression.partFactor(context, StackModel.class, new HtSemanticException("No such stack or background.")).getBackgroundCount());
+            }
+        }
+    }
+
+    private Value countCards(ExecutionContext context) throws HtException {
+        if (expression == null) {
+            return new Value(context.getCurrentStack().getCardCountProvider().blockingFirst());
+        } else {
+            BackgroundModel bkgnd = expression.partFactor(context, BackgroundModel.class);
+            if (bkgnd != null) {
+                return new Value(bkgnd.getCardModels(context).size());
+            } else {
+                return new Value(expression.partFactor(context, StackModel.class, new HtSemanticException("No such stack or background.")).getCardCount());
+            }
         }
     }
 }

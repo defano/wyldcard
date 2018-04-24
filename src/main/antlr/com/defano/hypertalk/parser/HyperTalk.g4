@@ -503,34 +503,18 @@ zeroArgFunc
     | 'number' 'of' background button                                                                                   # numberOfBkgndButtons
     | 'number' 'of' card field                                                                                          # numberOfCardFields
     | 'number' 'of' background? field                                                                                   # numberOfBkgndFields
-    | 'number' 'of' 'menus'                                                                                             # numberOfMenusFunc
-    | 'number' 'of' cards (of 'this' 'stack')?                                                                          # numberOfCardsFunc
+    | 'number' 'of' cards                                                                                               # numberOfCardsFunc
+    | 'number' 'of' background                                                                                          # numberOfBackgrounds
     | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCards
-    | 'number' 'of' background (of 'this' 'stack')?                                                                     # numberOfBackgrounds
+    | 'number' 'of' 'menus'                                                                                             # numberOfMenusFunc
     | 'number' 'of' 'windows'                                                                                           # numberOfWindows
     | 'menus'                                                                                                           # menusFunc
     | 'diskspace'                                                                                                       # diskSpaceNoArgFunc
     | 'params'                                                                                                          # paramsFunc
     | 'paramcount'                                                                                                      # paramCountFunc
-    | 'sound'                                                                                                           # propDelegatedFunc
-    | 'selectedtext'                                                                                                    # propDelegatedFunc
-    | 'selectedchunk'                                                                                                   # propDelegatedFunc
-    | 'selectedfield'                                                                                                   # propDelegatedFunc
-    | 'selectedline'                                                                                                    # propDelegatedFunc
     | 'target'                                                                                                          # targetFunc
     | 'speech'                                                                                                          # speechFunc
     | 'voices'                                                                                                          # voicesFunc
-    | 'clicktext'                                                                                                       # propDelegatedFunc
-    | 'mouseh'                                                                                                          # propDelegatedFunc
-    | 'mousev'                                                                                                          # propDelegatedFunc
-    | 'screenrect'                                                                                                      # propDelegatedFunc
-    | 'clickloc'                                                                                                        # propDelegatedFunc
-    | 'clickh'                                                                                                          # propDelegatedFunc
-    | 'clickv'                                                                                                          # propDelegatedFunc
-    | 'foundchunk'                                                                                                      # propDelegatedFunc
-    | 'foundfield'                                                                                                      # propDelegatedFunc
-    | 'foundline'                                                                                                       # propDelegatedFunc
-    | 'foundtext'                                                                                                       # propDelegatedFunc
     | 'windows'                                                                                                         # windowsFunc
     | 'stacks'                                                                                                          # stacksFunc
     ;
@@ -540,6 +524,15 @@ singleArgFunc
     | 'min'                                                                                                             # minFunc
     | 'max'                                                                                                             # maxFunc
     | 'sum'                                                                                                             # sumFunc
+    | 'number' 'of' card? 'parts'                                                                                       # numberOfCardPartsOfExprFunc
+    | 'number' 'of' background 'parts'                                                                                  # numberOfBkgndPartsOfExprFunc
+    | 'number' 'of' card? button                                                                                        # numberOfCardButtonsOfExprFunc
+    | 'number' 'of' background button                                                                                   # numberOfBkgndButtonsOfExprFunc
+    | 'number' 'of' card field                                                                                          # numberOfCardFieldsOfExprFunc
+    | 'number' 'of' background? field                                                                                   # numberOfBkgndFieldsofExprFunc
+    | 'number' 'of' cards                                                                                               # numberOfCardsOfExprFunc
+    | 'number' 'of' background                                                                                          # numberOfBackgroundsOfExprFunc
+    | 'number' 'of' 'marked' cards                                                                                      # numberOfMarkedCardsOfExprFunc
     | 'number' 'of' character                                                                                           # numberOfCharsFunc
     | 'number' 'of' word                                                                                                # numberOfWordsFunc
     | 'number' 'of' item                                                                                                # numberOfItemsFunc

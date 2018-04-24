@@ -203,7 +203,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         boolean wasDoubleClicked = isSelectedForEditing() && e.getClickCount() == 2;
 
         // Command-option click to edit script
-        if (KeyboardManager.getInstance().isPeeking()) {
+        if (KeyboardManager.getInstance().isPeeking(new ExecutionContext())) {
             getPartModel().editScript(new ExecutionContext());
         }
 

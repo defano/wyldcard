@@ -79,7 +79,7 @@ public interface Messagable {
     default void receiveMessage(ExecutionContext context, String message, ListExp arguments, MessageCompletionObserver onCompletion) {
 
         // No messages are sent cmd-option is down; some messages not sent when 'lockMessages' is true
-        if (KeyboardManager.getInstance().isPeeking() ||
+        if (KeyboardManager.getInstance().isPeeking(context) ||
                 (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_LOCKMESSAGES).booleanValue())
         {
             onCompletion.onMessagePassed(message, false, null);

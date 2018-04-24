@@ -1,9 +1,8 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class PartMeExp extends PartExp {
@@ -12,9 +11,7 @@ public class PartMeExp extends PartExp {
         super(context);
     }
 
-    public PartSpecifier evaluateAsSpecifier(ExecutionContext context)
-    throws HtSemanticException
-    {
+    public PartSpecifier evaluateAsSpecifier(ExecutionContext context) {
         return context.getStackFrame().getMe();
     }
 }

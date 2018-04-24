@@ -401,23 +401,35 @@
       "number of lines in ${expression}",
       "number of items in ${expression}",
       "number of card buttons",
+      "number of card buttons in ${cardExpression}",
       "number of card fields",
+      "number of card fields in ${cardExpression}",
       "number of card parts",
+      "number of card parts in ${cardExpression}",
       "number of background buttons",
+      "number of background buttons in ${backgroundExpression}",
       "number of background fields",
+      "number of background fields in ${backgroundExpression}",
       "number of background parts",
+      "number of background parts in ${backgroundExpression}",
       "number of menuItems in menu ${menuExpression}",
       "number of menus",
       "number of cards",
+      "number of cards in ${backgroundExpression}",
+      "number of cards in ${stackExpression}",
       "number of marked cards",
+      "number of marked cards in ${backgroundExpression}",
+      "number of marked cards in ${stackExpression}",
       "number of backgrounds",
-      "number of cards in background ${backgroundExpression}",
+      "number of backgrounds in ${stackExpression}",
       "number of windows"
     ],
     "parameters": [
       {"parameter": "expression", "description": "An expression whose words, lines, items or characters should be counted."},
       {"parameter": "menuExpression", "description": "An expression that refers to a menu."},
-      {"parameter": "backgroundExpression", "description": "An expression identifying a background."}
+      {"parameter": "backgroundExpression", "description": "An expression identifying a background. For example, `the first bkgnd`."},
+      {"parameter": "cardExpression", "description": "An expression identifying a card. For example `card 13`."},
+      {"parameter": "stackExpression", "description": "An expression identifying a stack. For example `this stack`."}
     ]
   },
 

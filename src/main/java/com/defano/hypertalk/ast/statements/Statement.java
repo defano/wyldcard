@@ -32,10 +32,16 @@ public abstract class Statement extends ASTNode {
             onExecute(context);
 
         } catch (HtException e) {
+            // Adds a breadcrumb and rethrows the exception
             rethrowContextualizedException(context, e);
         }
     }
 
+    /**
+     * Returns a non-null (but possibly empty) list of statements that appear on a given line of the script.
+     * @param line The line number, counting from 1;
+     * @return A list of zero or more found statements
+     */
     public Collection<Statement> findStatementsOnLine(int line) {
         if (getToken().getLine() == line) {
             return Lists.newArrayList(this);

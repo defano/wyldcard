@@ -22,7 +22,7 @@ public class WindowNameExp extends PartExp {
     public PartSpecifier evaluateAsSpecifier(ExecutionContext context) throws HtException {
         Value windowValue = windowNameExpression.evaluate(context);
 
-        if (windowValue.isInteger()) {
+        if (windowValue.isInteger() && !windowValue.isQuotedLiteral()) {
             return new WindowNumberSpecifier(windowValue.integerValue());
         } else {
             return new WindowNameSpecifier(windowValue.stringValue());
