@@ -93,7 +93,7 @@ public class WyldCard extends StackManager implements PartFinder {
             if (dialogResult == JOptionPane.CLOSED_OPTION) {
                 return;
             } else if (dialogResult == JOptionPane.YES_OPTION) {
-                saveActiveStack(new ExecutionContext());
+                saveStack(new ExecutionContext());
             }
         }
 

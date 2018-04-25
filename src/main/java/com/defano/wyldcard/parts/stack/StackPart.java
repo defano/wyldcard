@@ -38,24 +38,25 @@ import java.util.*;
  */
 public class StackPart implements Part, PropertyChangeObserver {
 
-    private StackModel stackModel;
     private CardPart currentCard;
 
+    private final StackModel stackModel;
     private final CurtainManager curtainManager = new CurtainManager();
     private final Set<StackObserver> stackObservers = new HashSet<>();
     private final Set<StackNavigationObserver> stackNavigationObservers = new HashSet<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
     private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
-    private StackPart() {}
+    private StackPart(StackModel stackModel) {
+        this.stackModel = stackModel;
+    }
 
     public static StackPart newStack(ExecutionContext context) {
         return fromStackModel(context, StackModel.newStackModel("Untitled"));
     }
 
     public static StackPart fromStackModel(ExecutionContext context, StackModel model) {
-        StackPart stackPart = new StackPart();
-        stackPart.stackModel = model;
+        StackPart stackPart = new StackPart(model);
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
         stackPart.currentCard = stackPart.openCard(context, model.getCurrentCardIndex());

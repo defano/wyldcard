@@ -92,27 +92,20 @@ public interface WindowFinder {
     @RunOnDispatch
     default StackWindow findWindowForStack(StackPart stackPart) {
         if (stackPart != null) {
-            return (StackWindow) getWindows().stream()
-                    .filter(p -> p instanceof StackWindow && ((StackWindow) p).getStack() == stackPart)
-                    .findFirst()
-                    .orElse(null);
+            return findWindowForStack(stackPart.getStackModel());
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     @RunOnDispatch
     default StackWindow findWindowForStack(StackModel stackModel) {
-        if (stackModel != null) {
-            return (StackWindow) getWindows().stream()
-                    .filter(p -> p instanceof StackWindow)
-                    .filter(p -> ((StackWindow) p).getStack() != null)
-                    .filter(p -> ((StackWindow) p).getStack().getStackModel() == stackModel)
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        return null;
+        return (StackWindow) getWindows().stream()
+                .filter(p -> p instanceof StackWindow &&
+                        ((StackWindow) p).getStack() != null &&
+                        ((StackWindow) p).getStack().getStackModel().equals(stackModel))
+                .findFirst()
+                .orElse(null);
     }
 
     @RunOnDispatch

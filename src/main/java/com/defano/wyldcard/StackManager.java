@@ -46,20 +46,25 @@ public class StackManager implements StackNavigationObserver {
      * Prompts the user to choose a stack file to open. If a valid stack file is chosen, the stack is opened and made
      * the active stack.
      */
-    public void open(ExecutionContext context, boolean inNewWindow) {
+    public void openStack(ExecutionContext context, boolean inNewWindow) {
         FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow(context).getWindow(), "Open Stack", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
+
         if (fd.getFiles().length > 0) {
-            StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
-            model.setSavedStackFile(context, fd.getFiles()[0]);
-            displayStack(context, StackPart.fromStackModel(context, model), inNewWindow);
+            openStack(context, fd.getFiles()[0], inNewWindow);
         }
     }
 
-    public void displayStack(ExecutionContext context, StackPart stackPart, boolean inNewWindow) {
-        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart);
+    public void openStack(ExecutionContext context, File file, boolean inNewWindow) {
+        StackModel model = Serializer.deserialize(file, StackModel.class);
+        model.setSavedStackFile(context, file);
+        displayStack(context, StackPart.fromStackModel(context, model), inNewWindow);
+    }
+
+    private void displayStack(ExecutionContext context, StackPart stackPart, boolean inNewWindow) {
+        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart.getStackModel());
 
         // Special case: Stack is already open, simply focus it
         if (existingWindow != null) {
@@ -75,8 +80,6 @@ public class StackManager implements StackNavigationObserver {
                 stackPart.displayInWindow(context, context.getCurrentStack().getOwningStackWindow());
             }
         }
-
-        focusStack(stackPart);
     }
 
     public void unfocusStack(StackPart stackPart) {
@@ -111,7 +114,7 @@ public class StackManager implements StackNavigationObserver {
      * Prompts the user to choose a file in which to save the current stack; provided user chooses a file (doesn't
      * cancel), the stack is saved to this file.
      */
-    private void saveAs(ExecutionContext context, StackModel stackModel) {
+    private void saveStackAs(ExecutionContext context, StackModel stackModel) {
         String defaultName = "Untitled";
 
         if (WyldCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
@@ -129,7 +132,7 @@ public class StackManager implements StackNavigationObserver {
                     f.getAbsolutePath() :
                     f.getAbsolutePath() + StackModel.FILE_EXTENSION;
 
-            save(context, stackModel, new File(path));
+            saveStack(context, stackModel, new File(path));
         }
     }
 
@@ -137,16 +140,16 @@ public class StackManager implements StackNavigationObserver {
      * Saves the active stack to its associated file (acts like "Save as" if no file is associated).
      * @param context The execution context.
      */
-    public void saveActiveStack(ExecutionContext context) {
-        save(context, WindowManager.getInstance().getFocusedStack().getStackModel());
+    public void saveStack(ExecutionContext context) {
+        saveStack(context, WindowManager.getInstance().getFocusedStack().getStackModel());
     }
 
     /**
      * Prompts the user to select a file, then saves the active stack to this file.
      * @param context The execution context.
      */
-    public void saveActiveStackAs(ExecutionContext context) {
-        save(context, WindowManager.getInstance().getFocusedStack().getStackModel(), null);
+    public void saveStackAs(ExecutionContext context) {
+        saveStack(context, context.getCurrentStack().getStackModel(), null);
     }
 
     /**
@@ -154,9 +157,9 @@ public class StackManager implements StackNavigationObserver {
      * @param context The execution context.
      * @param stackModel The StackModel to save.
      */
-    private void save(ExecutionContext context, StackModel stackModel) {
+    private void saveStack(ExecutionContext context, StackModel stackModel) {
         Optional<File> saveFile = savedStackFile.getObservable().blockingFirst();
-        save(context, stackModel, saveFile.orElse(null));
+        saveStack(context, stackModel, saveFile.orElse(null));
     }
 
     /**
@@ -164,7 +167,7 @@ public class StackManager implements StackNavigationObserver {
      * @param context The execution context.
      * @param file The file where the stack should be saved
      */
-    private void save(ExecutionContext context, StackModel stackModel, File file) {
+    private void saveStack(ExecutionContext context, StackModel stackModel, File file) {
         if (file != null) {
             try {
                 Serializer.serialize(file, stackModel);
@@ -173,7 +176,7 @@ public class StackManager implements StackNavigationObserver {
                 WyldCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
             }
         } else {
-            saveAs(context, stackModel);
+            saveStackAs(context, stackModel);
         }
     }
 

@@ -55,7 +55,6 @@ public class StackModel extends PartModel implements StackPartFinder {
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
 
-        defineProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
         defineProperty(PROP_HEIGHT, new Value(dimension.height), false);
@@ -85,6 +84,10 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow(context).getWindow().getY()));
         defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().y));
         defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(WindowManager.getInstance().getStackWindow(context).getWindow().getX(), value.integerValue()));
+
+        if (!hasProperty(PartModel.PROP_ID)) {
+            defineProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
+        }
     }
 
     @Override
@@ -353,7 +356,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StackModel that = (StackModel) o;
-        return getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).equals(that.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID));
+        return this.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).equals(that.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID));
     }
 }
 
