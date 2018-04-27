@@ -304,11 +304,11 @@ public class ExecutionContext {
      * interrogate when looking for parts and properties.
      * <p>
      * In most cases, this method returns the card visible to the user (not accounting for screen lock; equivalent to
-     * {@link WyldCard#getActiveStackDisplayedCard()} but during certain operations (like card sorting) this method may
+     * {@link WyldCard#getFocusedCard()} but during certain operations (like card sorting) this method may
      * return a different value.
      * <p>
      * In general, scripts should always use this method for getting a reference to the active card; UI elements (like
-     * menus and palettes) should use {@link WyldCard#getActiveStackDisplayedCard()}.
+     * menus and palettes) should use {@link WyldCard#getFocusedCard()}.
      *
      * @return The active card in the context of this script execution.
      */

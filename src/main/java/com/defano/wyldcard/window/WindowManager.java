@@ -1,9 +1,9 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.forms.*;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -15,8 +15,6 @@ import java.awt.*;
 public class WindowManager implements WindowFinder {
 
     private final static WindowManager instance = new WindowManager();
-
-    private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
 
     private final MessageWindow messageWindow = new MessageWindow();
     private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
@@ -31,11 +29,12 @@ public class WindowManager implements WindowFinder {
     private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
     private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
+    private WindowManager() {
+    }
+
     public static WindowManager getInstance() {
         return instance;
     }
-
-    private WindowManager() {}
 
     @RunOnDispatch
     public void start() {
@@ -134,16 +133,8 @@ public class WindowManager implements WindowFinder {
                 .build();
     }
 
-    public StackWindow getStackWindow(StackPart stackPart) {
-        return getWindowForStack(stackPart);
-    }
-
-    public StackWindow getStackWindow(ExecutionContext context) {
-        return getStackWindow(context.getCurrentStack());
-    }
-
     public StackWindow getFocusedStackWindow() {
-        return getWindowForStack(getFocusedStack());
+        return getWindowForStack(WyldCard.getInstance().getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -190,45 +181,31 @@ public class WindowManager implements WindowFinder {
         return expressionEvaluator;
     }
 
+    /**
+     * Gets a window (JFrame) in which to display the given stack. If a window already exists for this stack, then the
+     * existing window is returned, otherwise a new window is created and bound to the stack. If the given stack
+     * is null, a new, unbound stack window will be returned.
+     *
+     * @param stackPart The stack whose window should be retrieved
+     * @return A window (new or existing) bound to the stack.
+     */
     public StackWindow getWindowForStack(StackPart stackPart) {
-        StackWindow existingWindow = findWindowForStack(stackPart);
-        if (existingWindow != null) {
-            return existingWindow;
+        // Special case: return an un-built window for null stack parts (required temporarily on startup)
+        if (stackPart == null) {
+            return new StackWindow();
         }
 
-        if (stackPart != null) {
+        StackWindow existingWindow = findWindowForStack(stackPart.getStackModel());
+
+        if (existingWindow != null) {
+            return existingWindow;
+        } else {
             return (StackWindow) WindowBuilder.make(new StackWindow())
-                    .quitOnClose()
+                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(stackPart))
                     .ownsMenubar()
                     .withModel(stackPart)
                     .build();
         }
-
-        return new StackWindow();
-    }
-
-    /**
-     * Gets the stack that currently has focus.
-     * @return The active stack
-     */
-    public StackPart getFocusedStack() {
-        if (focusedStack.hasValue()) {
-            return focusedStack.blockingFirst();
-        } else {
-            return null;
-        }
-    }
-
-    public boolean hasFocusedStack() {
-        return focusedStack.hasValue();
-    }
-
-    public void setFocusedStack(StackPart focusedStack) {
-        this.focusedStack.onNext(focusedStack);
-    }
-
-    public Observable<StackPart> getFocusedStackProvider() {
-        return focusedStack;
     }
 
     public void setLookAndFeel(String lafClassName) {

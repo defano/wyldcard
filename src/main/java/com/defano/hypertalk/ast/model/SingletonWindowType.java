@@ -15,7 +15,7 @@ public enum SingletonWindowType {
     public HyperCardWindow getWindow(ExecutionContext context) {
         switch (this) {
             case CARD:
-                return WindowManager.getInstance().getStackWindow(context);
+                return WindowManager.getInstance().getWindowForStack(context.getCurrentStack());
             case MESSAGE:
                 return WindowManager.getInstance().getMessageWindow();
             case MESSAGE_WATCHER:

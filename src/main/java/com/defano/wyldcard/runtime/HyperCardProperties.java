@@ -1,5 +1,6 @@
 package com.defano.wyldcard.runtime;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
@@ -131,7 +132,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().x));
         defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().y));
-        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getGraphicsConfiguration().getBounds()));
+        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
         defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));
         defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().y));
@@ -172,7 +173,7 @@ public class HyperCardProperties extends PropertiesModel {
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {
                 case PROP_LOCKSCREEN:
-                    WindowManager.getInstance()
+                    WyldCard.getInstance()
                             .getFocusedStack()
                             .getCurtainManager()
                             .setScreenLocked(new ExecutionContext(), newValue.booleanValue());

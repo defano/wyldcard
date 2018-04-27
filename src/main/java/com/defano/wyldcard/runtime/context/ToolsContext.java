@@ -75,7 +75,7 @@ public class ToolsContext {
 
     public void setGridSpacing(int spacing) {
         if (instance.gridSpacingSubscription == null) {
-            instance.gridSpacingSubscription = instance.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().setGridSpacing(integer));
+            instance.gridSpacingSubscription = instance.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getFocusedCard().getCanvas().setGridSpacing(integer));
         }
         gridSpacingProvider.onNext(spacing);
     }
@@ -119,7 +119,7 @@ public class ToolsContext {
 
     public void selectAll() {
         SelectionTool tool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-        tool.createSelection(new Rectangle(0, 0, WyldCard.getInstance().getActiveStackDisplayedCard().getWidth() - 1, WyldCard.getInstance().getActiveStackDisplayedCard().getHeight() - 1));
+        tool.createSelection(new Rectangle(0, 0, WyldCard.getInstance().getFocusedCard().getWidth() - 1, WyldCard.getInstance().getFocusedCard().getHeight() - 1));
     }
 
     public Color getForegroundColor() {
@@ -251,10 +251,10 @@ public class ToolsContext {
 
     public void toggleMagnifier() {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
-            WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().setScale(1.0);
+            WyldCard.getInstance().getFocusedCard().getCanvas().setScale(1.0);
             forceToolSelection(ToolType.fromPaintTool(lastToolType), false);
-        } else if (WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().getScale() != 1.0) {
-            WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().setScale(1.0);
+        } else if (WyldCard.getInstance().getFocusedCard().getCanvas().getScale() != 1.0) {
+            WyldCard.getInstance().getFocusedCard().getCanvas().setScale(1.0);
         } else {
             forceToolSelection(ToolType.MAGNIFIER, false);
         }
@@ -283,13 +283,13 @@ public class ToolsContext {
     public void toggleIsEditingBackground() {
         getPaintTool().deactivate();
         isEditingBackground.onNext(!isEditingBackground.blockingFirst());
-        reactivateTool(WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas());
+        reactivateTool(WyldCard.getInstance().getFocusedCard().getCanvas());
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {
         getPaintTool().deactivate();
         this.isEditingBackground.onNext(isEditingBackground);
-        reactivateTool(WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas());
+        reactivateTool(WyldCard.getInstance().getFocusedCard().getCanvas());
     }
 
     public boolean isShapesFilled() {
@@ -319,7 +319,7 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
                 forceToolSelection(toolType, false);
             }
@@ -379,7 +379,7 @@ public class ToolsContext {
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
                 .withAntiAliasing(getAntiAliasingModeForTool(selectedToolType))
-                .makeActiveOnCanvas(WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas())
+                .makeActiveOnCanvas(WyldCard.getInstance().getFocusedCard().getCanvas())
                 .build();
 
         // When requested, move current selection over to the new tool

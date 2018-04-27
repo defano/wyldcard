@@ -1,16 +1,15 @@
 package com.defano.wyldcard.window.forms;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.StringUtils;
-import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.StringUtils;
+import com.defano.wyldcard.window.HyperCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -91,8 +90,8 @@ public class CardPropertyEditor extends HyperCardDialog {
         long fieldCount = card.getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD);
         long buttonCount = card.getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
 
-        int cardNumber = WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getCardIndexInStack() + 1;
-        int cardCount = WindowManager.getInstance().getFocusedStack().getCardCountProvider().blockingFirst();
+        int cardNumber = WyldCard.getInstance().getFocusedCard().getCardModel().getCardIndexInStack() + 1;
+        int cardCount = WyldCard.getInstance().getFocusedStack().getCardCountProvider().blockingFirst();
 
         cardNumberLabel.setText(cardNumber + " out of " + cardCount);
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d card button.", "Contains %d card buttons."));

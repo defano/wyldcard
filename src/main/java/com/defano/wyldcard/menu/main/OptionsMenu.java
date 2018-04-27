@@ -31,7 +31,7 @@ public class OptionsMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
                 .withAction(a -> ToolsContext.getInstance().toggleMagnifier())
-                .withCheckmarkProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t.getToolType() == PaintToolType.MAGNIFIER || WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().getScale() != 1.0))
+                .withCheckmarkProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t.getToolType() == PaintToolType.MAGNIFIER || WyldCard.getInstance().getFocusedCard().getCanvas().getScale() != 1.0))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

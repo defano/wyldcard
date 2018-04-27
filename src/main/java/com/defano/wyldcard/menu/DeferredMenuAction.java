@@ -53,7 +53,7 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
+            WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });

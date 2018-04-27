@@ -10,6 +10,7 @@ import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
@@ -20,6 +21,8 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -80,10 +83,10 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
         defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getStackWindow(context).getWindow().getY()));
-        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow(context).getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getStackWindow(context).getWindow().setLocation(WindowManager.getInstance().getStackWindow(context).getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().setLocation(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getX(), value.integerValue()));
 
         if (!hasProperty(PartModel.PROP_ID)) {
             defineProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);
@@ -298,6 +301,21 @@ public class StackModel extends PartModel implements StackPartFinder {
         return icons;
     }
 
+    /**
+     * A cheesy and expensive mechanism to determine if the user has made a change to the stack since it was last opened.
+     *
+     * @return True if the stack has changes; false otherwise
+     */
+    public boolean isStackDirty() {
+        try {
+            String savedStack = new String(Files.readAllBytes(savedStackFileProvider.blockingFirst().get().toPath()), StandardCharsets.UTF_8);
+            String currentStack = Serializer.serialize(this);
+            return !savedStack.equalsIgnoreCase(currentStack);
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
     /** {@inheritDoc}
      * @param context*/
     @Override
@@ -355,8 +373,11 @@ public class StackModel extends PartModel implements StackPartFinder {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StackModel that = (StackModel) o;
-        return this.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).equals(that.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID));
+
+        String thisId = this.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).stringValue();
+        String thatId = ((StackModel) o).getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).stringValue();
+
+        return thisId.equals(thatId);
     }
 }
 

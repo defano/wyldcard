@@ -2,7 +2,6 @@ package com.defano.wyldcard.runtime.print;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;
 import java.awt.print.PageFormat;
@@ -15,9 +14,9 @@ public class PrintCardAction extends PrintActionDelegate {
         StringBuilder jobNameBuilder = new StringBuilder();
 
         jobNameBuilder.append("Card ");
-        jobNameBuilder.append(WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().getCardIndexInStack() + 1);
+        jobNameBuilder.append(WyldCard.getInstance().getFocusedCard().getCardModel().getCardIndexInStack() + 1);
         jobNameBuilder.append(" in ");
-        jobNameBuilder.append(WindowManager.getInstance().getFocusedStack().getStackModel().getStackName(new ExecutionContext()));
+        jobNameBuilder.append(WyldCard.getInstance().getFocusedStack().getStackModel().getStackName(new ExecutionContext()));
 
         super.jobName = jobNameBuilder.toString();
     }
@@ -33,7 +32,7 @@ public class PrintCardAction extends PrintActionDelegate {
         Graphics2D g2d = (Graphics2D)g;
         g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
-        WyldCard.getInstance().getActiveStackDisplayedCard().printAll(g);
+        WyldCard.getInstance().getFocusedCard().printAll(g);
 
         return PAGE_EXISTS;
     }

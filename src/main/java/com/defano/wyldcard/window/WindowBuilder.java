@@ -1,12 +1,14 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class WindowBuilder<T extends HyperCardWindow> {
 
@@ -20,7 +22,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private HyperCardFrame dock;
     private boolean isPalette = false;
     private boolean isFocusable = true;
-    private boolean quitOnClose = false;
+    private WindowClosingAction actionOnClose = null;
 
     private WindowBuilder(T window) {
         this.window = window;
@@ -50,14 +52,14 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     @RunOnDispatch
-    public WindowBuilder quitOnClose() {
-        this.quitOnClose = true;
+    public WindowBuilder setDefaultCloseOperation(int operation) {
+        window.setDefaultCloseOperation(operation);
         return this;
     }
 
     @RunOnDispatch
-    public WindowBuilder setDefaultCloseOperation(int operation) {
-        window.setDefaultCloseOperation(operation);
+    public WindowBuilder withActionOnClose(WindowClosingAction actionOnClose) {
+        this.actionOnClose = actionOnClose;
         return this;
     }
 
@@ -173,11 +175,12 @@ public class WindowBuilder<T extends HyperCardWindow> {
             SwingUtilities.getRootPane(window.getDefaultButton()).setDefaultButton(window.getDefaultButton());
         }
 
-        if (quitOnClose) {
+        if (actionOnClose != null) {
+            this.window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             this.window.getWindow().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    WyldCard.getInstance().quit();
+                    actionOnClose.onWindowClosing((HyperCardWindow) e.getWindow());
                 }
             });
         }

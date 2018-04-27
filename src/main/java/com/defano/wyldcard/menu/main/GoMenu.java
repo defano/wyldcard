@@ -1,5 +1,6 @@
 package com.defano.wyldcard.menu.main;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menu.HyperCardMenu;
 import com.defano.wyldcard.menu.MenuItemBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -17,7 +18,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Back")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().popCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().popCard(new ExecutionContext(), null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -41,25 +42,25 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("First")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().goFirstCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goFirstCard(new ExecutionContext(), null))
                 .withShortcut('1')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Prev")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().goPrevCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goPrevCard(new ExecutionContext(), null))
                 .withShortcut('2')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().goNextCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goNextCard(new ExecutionContext(), null))
                 .withShortcut('3')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Last")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().goLastCard(new ExecutionContext(), null))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().goLastCard(new ExecutionContext(), null))
                 .withShortcut('4')
                 .build(this);
 

@@ -48,7 +48,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .withAction(e -> WindowBuilder.make(new CardPropertyEditor())
                         .asModal()
                         .withTitle("Card Properties")
-                        .withModel(WyldCard.getInstance().getActiveStackDisplayedCard())
+                        .withModel(WyldCard.getInstance().getFocusedCard())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
@@ -58,7 +58,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .withAction(e -> WindowBuilder.make(new BackgroundPropertyEditor())
                         .withTitle("Background Properties")
                         .asModal()
-                        .withModel(WyldCard.getInstance().getActiveStackDisplayedCard())
+                        .withModel(WyldCard.getInstance().getFocusedCard())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
@@ -68,7 +68,7 @@ public class ObjectsMenu extends HyperCardMenu {
                 .withAction(e -> WindowBuilder.make(new StackPropertyEditor())
                         .withTitle("Stack Properties")
                         .asModal()
-                        .withModel(WindowManager.getInstance().getFocusedStack().getStackModel())
+                        .withModel(WyldCard.getInstance().getFocusedStack().getStackModel())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
@@ -93,17 +93,17 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Button")
-                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().newButton(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedCard().newButton(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Field")
-                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().newField(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedCard().newField(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Background")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().newBackground(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().newBackground(new ExecutionContext()))
                 .build(this);
     }
 

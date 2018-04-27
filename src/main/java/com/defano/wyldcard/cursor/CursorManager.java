@@ -1,5 +1,6 @@
 package com.defano.wyldcard.cursor;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
@@ -32,7 +33,7 @@ public class CursorManager implements StackNavigationObserver {
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the focused stack changes
-        WindowManager.getInstance().getFocusedStackProvider().subscribe(stackPart -> {
+        WyldCard.getInstance().getFocusedStackProvider().subscribe(stackPart -> {
             updateCursor();
 
             // ... or when the card of the focused stack changes

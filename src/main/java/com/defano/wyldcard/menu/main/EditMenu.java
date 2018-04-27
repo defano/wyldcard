@@ -31,20 +31,20 @@ public class EditMenu extends HyperCardMenu {
         super("Edit");
 
         // Routes cut/copy/paste actions to the correct canvas
-        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas());
+        CanvasClipboardActionListener canvasActionListener = new CanvasClipboardActionListener(() -> WyldCard.getInstance().getFocusedCard().getCanvas());
         CardActionListener cardActionListener = new CardActionListener();
 
         MenuItemBuilder.ofDefaultType()
                 .named("Undo")
                 .withShortcut('Z')
-                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().undo())
+                .withAction(e -> WyldCard.getInstance().getFocusedCard().getCanvas().undo())
                 .withEnabledProvider(WyldCard.getInstance().getIsUndoableProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Redo")
                 .withShiftShortcut('Z')
-                .withAction(e -> WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().redo())
+                .withAction(e -> WyldCard.getInstance().getFocusedCard().getCanvas().redo())
                 .withEnabledProvider(WyldCard.getInstance().getIsRedoableProvider())
                 .build(this);
 
@@ -84,31 +84,31 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("New Card")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().newCard(new ExecutionContext()))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().newCard(new ExecutionContext()))
                 .withShortcut('N')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Delete Card")
-                .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().deleteCard(new ExecutionContext()))
+                .withDisabledProvider(WyldCard.getInstance().getFocusedStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().deleteCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Cut Card")
-                .withDisabledProvider(WyldCard.getInstance().getActiveStackCardCountProvider().map(c -> c < 2))
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().cutCard(new ExecutionContext()))
+                .withDisabledProvider(WyldCard.getInstance().getFocusedStackCardCountProvider().map(c -> c < 2))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().cutCard(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Copy Card")
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().copyCard())
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().copyCard())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Paste Card")
-                .withEnabledProvider(WyldCard.getInstance().getActiveStackCardClipboardProvider().map(Optional::isPresent))
-                .withAction(e -> WindowManager.getInstance().getFocusedStack().pasteCard(new ExecutionContext()))
+                .withEnabledProvider(WyldCard.getInstance().getFocusedStackCardClipboardProvider().map(Optional::isPresent))
+                .withAction(e -> WyldCard.getInstance().getFocusedStack().pasteCard(new ExecutionContext()))
                 .build(this);
 
         this.addSeparator();

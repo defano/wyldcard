@@ -121,7 +121,7 @@ public class PaintToolsPalette extends HyperCardFrame implements Consumer {
     }
 
     private void eraseAll() {
-        WyldCard.getInstance().getActiveStackDisplayedCard().getCanvas().clearCanvas();
+        WyldCard.getInstance().getFocusedCard().getCanvas().clearCanvas();
 
         if (lastTool.isHyperCardTool()) {
             selectTool(lastTool);

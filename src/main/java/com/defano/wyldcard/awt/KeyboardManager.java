@@ -1,8 +1,8 @@
 package com.defano.wyldcard.awt;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -73,7 +73,7 @@ public class KeyboardManager {
 
     public boolean isPeeking(ExecutionContext context) {
         return isAltOptionDown() && isCtrlCommandDown() &&
-                !WindowManager.getInstance().getFocusedStack()
+                !WyldCard.getInstance().getFocusedStack()
                     .getStackModel()
                     .getKnownProperty(context, StackModel.PROP_CANTPEEK)
                     .booleanValue();

@@ -1,8 +1,8 @@
 package com.defano.wyldcard.window.forms;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.window.HyperCardDialog;
-import com.defano.wyldcard.window.WindowManager;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -27,7 +27,7 @@ public class IconCreator extends HyperCardDialog {
                 iconImage = ButtonIcon.scaleToIconSize(iconImage);
             }
 
-            WindowManager.getInstance().getFocusedStack().getStackModel().createIcon(iconName.getText(), iconImage);
+            WyldCard.getInstance().getFocusedStack().getStackModel().createIcon(iconName.getText(), iconImage);
         });
     }
 

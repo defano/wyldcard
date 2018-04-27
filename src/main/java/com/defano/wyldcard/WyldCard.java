@@ -1,6 +1,7 @@
 package com.defano.wyldcard;
 
-import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.hypertalk.exception.ExitToHyperCardException;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
@@ -13,8 +14,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.window.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.hypertalk.exception.ExitToHyperCardException;
-import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.window.forms.BackgroundPropertyEditor;
 
 import javax.swing.*;
@@ -41,8 +40,9 @@ public class WyldCard extends StackManager implements PartFinder {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
             System.setProperty("com.apple.macos.useScreenMenuBar", "true");
             System.setProperty("com.apple.mrj.application.apple.menu.about.name", "WyldCard");
-            System.setProperty("apple.awt.application.name", "HyperCard");
+            System.setProperty("apple.awt.application.name", "WyldCard");
             System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -53,51 +53,34 @@ public class WyldCard extends StackManager implements PartFinder {
     private WyldCard() {}
 
     private void startup() {
-        ExecutionContext context = new ExecutionContext();
-        StackPart stack = StackPart.newStack(context);
-        focusStack(stack);
+        StackPart stack = focusStack(StackPart.newStack(new ExecutionContext()));
 
         SwingUtilities.invokeLater(() -> {
-            KeyboardManager.getInstance().start();
-            MouseManager.getInstance().start();
-            PartEditManager.getInstance().start();
-            WindowManager.getInstance().start();
-            CursorManager.getInstance().start();
-            PatternManager.getInstance().start();
-            PeriodicMessageManager.getInstance().start();
+            KeyboardManager.getInstance().start();              // Global key event handler
+            MouseManager.getInstance().start();                 // Global mouse event and mouseLoc handler
+            PartEditManager.getInstance().start();              // Button/tool selection and edit management
+            WindowManager.getInstance().start();                // Window and palette management
+            CursorManager.getInstance().start();                // Mouse cursor assignment
+            PatternManager.getInstance().start();               // Update pattern palette on color changes
+            PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
 
-            stack.displayInWindow(context, WindowManager.getInstance().getStackWindow(stack));
+            stack.openStack(WindowManager.getInstance().getWindowForStack(stack));
         });
 
         // Close all open files before we die
         Runtime.getRuntime().addShutdownHook(new Thread(() -> FileContext.getInstance().closeAll()));
     }
 
+    /**
+     * Display a syntax error dialog containing, when a breadcrumb is available, an "edit script" button that launches
+     * a script editor with the offending line highlighted.
+     * @param e
+     */
     public void showErrorDialog(HtException e) {
         SwingUtilities.invokeLater(() -> HyperTalkErrorDialog.getInstance().showError(e));
 
         // Abort further script execution
         throw new ExitToHyperCardException();
-    }
-
-    @RunOnDispatch
-    public void quit() {
-        // Prompt to save if user has unsaved changes
-        if (isActiveStackDirty()) {
-            int dialogResult = JOptionPane.showConfirmDialog(
-                    WindowManager.getInstance().getFocusedStack().getDisplayedCard(),
-                    "Save changes to stack?",
-                    "Save",
-                    JOptionPane.YES_NO_OPTION);
-
-            if (dialogResult == JOptionPane.CLOSED_OPTION) {
-                return;
-            } else if (dialogResult == JOptionPane.YES_OPTION) {
-                saveStack(new ExecutionContext());
-            }
-        }
-
-        System.exit(0);
     }
 
 }

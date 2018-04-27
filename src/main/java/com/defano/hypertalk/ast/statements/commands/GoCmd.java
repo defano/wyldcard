@@ -1,9 +1,11 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -12,6 +14,8 @@ import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.window.StackWindow;
+import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class GoCmd extends Command {
@@ -48,36 +52,55 @@ public class GoCmd extends Command {
         }
 
         else {
-            Integer cardIndex = evaluateAsCardIndex(context, destinationExp.partFactor(context, CardModel.class));
-            if (cardIndex == null) {
-                cardIndex = evaluateAsCardIndex(context, destinationExp.partFactor(context, BackgroundModel.class));
+            Destination destination = getDestination(context, destinationExp.partFactor(context, CardModel.class));
+            if (destination == null) {
+                destination = getDestination(context, destinationExp.partFactor(context, BackgroundModel.class));
             }
 
-            if (cardIndex == null) {
+            if (destination == null) {
                 throw new HtSemanticException("No such card.");
             } else {
-                Integer finalCardIndex = cardIndex;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> context.getCurrentStack().goCard(context, finalCardIndex, visualEffect, true));
+                goToDestination(context, destination, visualEffect);
             }
         }
     }
 
-    private Integer evaluateAsCardIndex(ExecutionContext context, PartModel model) {
+    private void goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.stack);
+            stackWindow.requestFocus();
+            stackWindow.getStack().goCard(context, destination.cardIndex, visualEffect, true);
+        });
+    }
+
+    private Destination getDestination(ExecutionContext context, PartModel model) {
+        Integer destinationIndex;
+        StackModel destinationStack;
 
         if (model == null) {
             return null;
-        }
-
-        int destinationIndex;
-        if (model instanceof CardModel) {
-            destinationIndex = context.getCurrentStack().getStackModel().getIndexOfCard((CardModel) model);
+        } else if (model instanceof CardModel) {
+            destinationStack = ((CardModel) model).getStackModel();
+            destinationIndex = destinationStack.getIndexOfCard((CardModel) model);
+            return new Destination(destinationStack, destinationIndex);
         } else if (model instanceof BackgroundModel) {
-            destinationIndex = context.getCurrentStack().getStackModel().getIndexOfBackground(model.getId(context));
+            destinationStack = ((BackgroundModel) model).getStackModel();
+            destinationIndex = destinationStack.getIndexOfBackground(model.getId(context));
+            return new Destination(destinationStack, destinationIndex);
         } else {
             return null;
         }
 
-        return destinationIndex;
+    }
+
+    private class Destination {
+        public final StackModel stack;
+        public final int cardIndex;
+
+        public Destination(StackModel stackModel, int cardIndex) {
+            this.stack = stackModel;
+            this.cardIndex = cardIndex;
+        }
     }
 
 }

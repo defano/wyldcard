@@ -1,5 +1,12 @@
 package com.defano.wyldcard.parts.stack;
 
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.SystemMessage;
+import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
@@ -16,25 +23,20 @@ import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.SystemMessage;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
-import com.defano.hypertalk.exception.HtSemanticException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents the controller object of the stack itself. See {@link StackModel} for the data model.
  * <p>
- * This view is "virtual" because a stack has no view aside from the card that is currently displayed in it. Thus, this
- * class has no associated Swing component and cannot be added to a view hierarchy.
+ * This controller is "virtual" because a stack has no view of its own, aside from the card that is currently displayed
+ * in it. Thus, this class has no associated Swing component and cannot be added to a view hierarchy.
  */
 public class StackPart implements Part, PropertyChangeObserver {
 
@@ -64,7 +66,8 @@ public class StackPart implements Part, PropertyChangeObserver {
         return stackPart;
     }
 
-    public void displayInWindow(ExecutionContext context, StackWindow stackWindow) {
+    public void openStack(StackWindow stackWindow) {
+        ExecutionContext context = new ExecutionContext(this);
         stackWindow.bindModel(this);
 
         goCard(context, stackModel.getCurrentCardIndex(), null, false);
@@ -385,7 +388,7 @@ public class StackPart implements Part, PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getInstance().getStackWindow(context).setAllowResizing(newValue.booleanValue());
+                WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
                 break;
         }
     }

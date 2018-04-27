@@ -424,7 +424,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .ownsMenubar()
                         .withModel(this)
                         .resizeable(true)
-                        .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow(context).getWindowPanel())
+                        .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel())
                         .build();
             });
 
@@ -446,7 +446,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .asModal()
                         .withTitle(getName(context))
                         .withModel(this)
-                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow(context).getWindowPanel())
+                        .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel())
                         .resizeable(false)
                         .build());
     }

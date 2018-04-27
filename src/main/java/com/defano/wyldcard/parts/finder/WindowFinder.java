@@ -6,7 +6,6 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
-import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.HyperCardFrame;
 import com.defano.wyldcard.window.HyperCardWindow;
@@ -87,15 +86,6 @@ public interface WindowFinder {
         }
 
         return null;
-    }
-
-    @RunOnDispatch
-    default StackWindow findWindowForStack(StackPart stackPart) {
-        if (stackPart != null) {
-            return findWindowForStack(stackPart.getStackModel());
-        } else {
-            return null;
-        }
     }
 
     @RunOnDispatch

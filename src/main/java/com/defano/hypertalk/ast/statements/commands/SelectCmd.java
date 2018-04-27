@@ -118,7 +118,7 @@ public class SelectCmd extends Command {
         CardLayerPart part = context.getCurrentStack().getDisplayedCard().getPart(context, partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getInstance().getStackWindow(context).requestFocus();
+            WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).requestFocus();
 
             ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);
