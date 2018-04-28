@@ -2,9 +2,25 @@
 
 [Features](#features) | [Getting Started](#getting-started) | [Building](doc/BUILDING.md) | [HyperTalk Language Reference](#the-hypertalk-language)
 
-An effort to reproduce Apple's HyperCard in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
+A reproduction of Apple's HyperCard written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
-![Hero](doc/images/hero.png)
+![WyldCard](doc/images/hero.png)
+
+## Features
+
+WyldCard aims to provide high-fidelity to Apple's original software:
+
+* Cards support foreground and background layers; buttons and fields come in a variety of styles similar to HyperCard's; text fields hold richly-styled text. Open multiple stacks in different windows.
+* Paint and draw using all the original paint tools, patterns and image transforms (provided by the [JMonet library](https://www.github.com/defano/jmonet)). Supports full-color graphics and alpha transparency.
+* Attach HyperTalk scripts to buttons, fields, cards, backgrounds and stacks; control the menu bar and address windows as objects. Most aspects of the HyperTalk 2.4.1 language have been implemented, including chunk expressions, message passing and context-sensitive evaluation of object factors. Sports a built-in step debugger with variable watching, message watching and in-context script execution.
+* Compose music using HyperCard's original sound effects (`flute`, `harpsichord` and `boing`); `dial` telephone numbers; and `speak` text.
+* Animate cards and behaviors with one of 23 visual effects provided by the [JSegue library](https://www.github.com/defano/jsegue).
+
+#### What's missing?
+
+* WyldCard can't open or import old HyperCard stacks.
+* No home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
+* No external commands or functions (XCMDs/XFCNs).
 
 #### What's HyperCard?
 
@@ -13,22 +29,6 @@ Released in 1987 and included in the box with every Macintosh sold during the la
 Apple called it "programming for the rest of us." Steve Wozniak called it ["the best program ever written"](https://www.macworld.com/article/1018126/woz.html).
 
 [Watch an interview of HyperCard's creators](https://www.youtube.com/watch?v=BeMRoYDc2z8) Bill Atkinson and Dan Winkler on The Computer Chronicles, circa 1987. Or, watch [a screencast tutorial](https://www.youtube.com/watch?v=AmeUt3_yQ8c).
-
-## Features
-
-WyldCard attempts to maintain high-fidelity to Apple's original software rather than modernize it.
-
-* Organize information in stacks of cards: Cards support a foreground and background layer; buttons and fields come in a variety of styles similar to HyperCard's; text fields hold richly-styled text.
-* Paint and draw using all the original paint tools, patterns and image transforms (via the [JMonet library](https://www.github.com/defano/jmonet)). Supports full-color graphics and alpha transparency.
-* Attach scripts to buttons, fields, cards, backgrounds and stacks; most aspects of the HyperTalk 2.4.1 language have been implemented, including chunk expressions, message passing and context-sensitive evaluation of _factors_. Debug problems with a built-in debugger.
-* Compose music using HyperCard's original sound effects (`flute`, `harpsichord` and `boing`); `dial` telephone numbers; and `speak` text.
-* Animate cards and objects with one of 23 visual effects (provided by the [JSegue library](https://www.github.com/defano/jsegue)).
-
-#### How does this differ from HyperCard?
-
-* WyldCard can't open or import old HyperCard stacks.
-* No home stack; no concept of user levels; no ability to inherit behavior from other stacks (`start using ...`).
-* No external commands or functions (XCMDs/XFCNs).
 
 ## Getting started
 
@@ -54,11 +54,11 @@ This project represents a homework assignment gone awry and is in no way associa
 
 [Stacks](#stacks-of-cards) | [Messages](#messages-and-handlers) | [Expressions](#expressions) | [Containers](#containers) | [Parts](#parts) | [A/V Effects](#audio-visual-effects) | [Commands](#commands) | [Functions](#functions) | [Flow Control](#flow-control)
 
-_This guide describes HyperTalk as implemented by this project; wherever a language feature provided by WyldCard differs from HyperCard, an attempt has been made to note the difference._
+_This guide describes HyperTalk as implemented by WyldCard; an attempt has been made to note the difference wherever a language feature provided by WyldCard differs from HyperCard._
 
 HyperCard's native language, _HyperTalk_, is a message-driven scripting language. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) that contains a script providing a _handler_ for the received message. HyperCard automatically sends messages (like `mouseDown` or `keyDown`) to parts as the user interacts with them, but scripts can send messages to other parts (or to themselves), too.
 
-HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and interpreted as a number, boolean, or list depending on context. HyperCard does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.
+HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and interpreted as a number, boolean, or list depending on context. HyperTalk does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.
 
 Keywords and symbols are case insensitive. Thus, `ask "How are you?"` is the same as `ASK "How are you?"`; a variable named `theName` is no different from `thename`. Comments are preceded by `--` and terminate at the end of the line (there are no multi-line comments in HyperTalk).
 
@@ -91,7 +91,7 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-That said, HyperCard supports a line-wrap character (`¬`) that can be used to break a long statement across multiple lines. To simplify script entry, this application also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
+HyperTalk provides a line-wrap character (`¬`) that can be used to break a long statement across multiple lines. To simplify script entry, WyldCard also supports using the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
 
 ```
 answer "This is totally acceptable!" |
@@ -99,40 +99,11 @@ answer "This is totally acceptable!" |
   or "Hate it"
 ```
 
-#### Multithreading in WyldCard
-
-Script execution in HyperCard was effectively single-threaded, but in WyldCard, up to eight scripts can execute simultaneously. This threading behavior is implicitly managed by WyldCard as there are no language constructs in HyperTalk to manage threads of execution.
-
-Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to execute that message's handler on one of the eight available threads. If all threads are currently busy executing other scripts, then execution of the handler will be enqueued for processing when one of the other scripts completes. Any messages generated in the execution of the handler will execute on the same thread as that handler. In other words, only messages produced by WyldCard are multi-threaded; once a script starts executing, all messages and functions it sends/invokes are single-threaded.
-
 ## Stacks of Cards
 
-WyldCard lets users interact with a document called a _stack_ that consists of a list of _cards_, conceptually similar to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements, called _parts_ (like buttons, menus, and text fields).
+WyldCard lets users interact with a document called a _stack_ consisting of a list of _cards_, conceptually similar to a deck of PowerPoint slides. Each card can contain graphics and text, plus interactive user interface elements, called _parts_ (like buttons, menus, and text fields). Authors can define the behavior of these parts by attaching a HyperTalk script to them.
 
-Each card is comprised of two layers: a _background layer_ and a _card layer_ (the foreground). Each card has its own unique foreground, but its background may be shared between cards. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
-
-### Navigating between cards
-
-Cards in a stack can be referred to by name (`card "Accounting"`), by id (`card id 22`), by their position in the stack (`card 13`), or by their relative position in their background (`the second card of the last background`).
-
-Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or use the HyperTalk `go` command:
-
-```
-go to card "MyCard"        -- navigates to first card named "MyCard"
-go to card 13         
-go next card
-go to the third card
-go to card id 7
-```
-
-You can also navigate to a card based on its background,
-
-```
-go to the next background  -- next card in the stack with a different background than current card
-go to background 3         -- first card with the third unique background in the stack
-go to the middle card of the last bkgnd
-go to card 4 of background 2
-```
+Each card is comprised of two layers: a _background layer_ and a _card layer_ (or _foreground_). Each card has its own unique foreground, but its background may be shared between cards. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
 
 ## Messages and handlers
 
@@ -213,6 +184,12 @@ send doSomethingCool to field "myField"           -- call the 'on doSomethingCoo
 
 Parts do not need to implement a handler for every message they might receive. Messages for which there are no handler are simply ignored.
 
+#### Multithreading in WyldCard
+
+Script execution in HyperCard was effectively single-threaded, but in WyldCard, up to eight scripts can execute simultaneously. This threading behavior is implicitly managed by WyldCard as there are no language constructs in HyperTalk to manage threads of execution.
+
+Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to execute that message's handler on one of the eight available threads. If all threads are currently busy executing other scripts, then execution of the handler will be enqueued for processing when one of the other scripts completes. Any messages generated in the execution of the handler will execute on the same thread as that handler. In other words, only messages produced by WyldCard are multi-threaded; once a script starts executing, all messages and functions it sends/invokes are single-threaded.
+
 ### Message passing order
 
 Messages automatically traverse a _message passing hierarchy_: If a part receives a message and does not have a handler to handle it (or, if its handler invokes the `pass` command), then the message is forwarded to the next part in the sequence.
@@ -233,7 +210,7 @@ end keyDown
 
 This works because WyldCard passes the `keyDown` message to the field when a user types a character into it. The script's `on keyDown` handler passes the `keyDown` through the message passing order only when the pressed key (`theKey`) is a number that is evenly divisible by 2. By implementing this handler and only conditionally passing the `keyDown` message back to WyldCard (`pass keyDown`), the script can "steal" these key press events and prevent their normal behavior (which would be to add the character to the text of the field).
 
-HyperTalk does not short-circuit logical evaluations (as most languages do). Therefore, the above example cannot be simplified to `if theKey is a number and theKey mod 2 is 0` because in the case of `theKey` being a non-numeric value, the `mod` expression will produce an error.
+HyperTalk does not short-circuit logical evaluations (as many languages do). Therefore, the above example cannot be simplified to `if theKey is a number and theKey mod 2 is 0` because in the case of `theKey` being a non-numeric value, the `mod` expression will produce an error.
 
 You could prevent the user from choosing a tool on the tool palette by trapping the `choose` message in the script of the card, background or stack. For example:
 
@@ -253,11 +230,38 @@ on create
 end create
 ```
 
+### Navigating between cards
+
+Cards in a stack can be referred to by name (`card "Accounting"`), by id (`card id 22`), by their position in the stack (`card 13`), or by their relative position in their background (`the second card of the last background`).
+
+Navigate between cards in the stack using commands in the "Go" menu ("First", "Next", "Prev" and "Last") or with the `go` command:
+
+```
+go to card "MyCard"        -- navigates to first card named "MyCard"
+go to card 13         
+go next card
+go to card id 7
+```
+
+It's also possible to navigate to a background, or a card within a background...
+
+```
+go to the next background  -- next card in the stack with a different background than current card
+go to card 4 of background 2
+```
+
+... or even to cards in other stacks:
+
+```
+go to the last card of stack "My Other Stack" in a new window
+go to stack "Home"
+```
+
 ## Expressions
 
 [Operators](#operators) | [Factors](#factors) | [Literals](#constants-and-literals)
 
-An _expression_ is anything in HyperTalk that represents or produces a _value_. Literals (like `"Hello!"`), constants (`quote`), containers and variables (`myVariable`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `f(x)`) are all expressions.
+An _expression_ is a fragment of HyperTalk that represents or produces a _value_. Literals (like `"Hello!"`), constants (`quote`), containers and variables (`myVariable`, `the message window`, `card field 1`), operators (`2 + 2`, `p is within r`) and functions (`the date`, `f(x)`) are all expressions.
 
 A powerful aspect of HyperTalk's expression language is its ability to refer to a _chunk_ of an expression. A script can get or set any range of words, characters, lines, or comma-delimited items in a value by specifying them numerically (`line 3 of`), positionally (`the last line of`, `the middle word of`), randomly (`any item of`), or by ordinal (`the third line of`).
 
@@ -518,7 +522,7 @@ Every part maintains a set of _properties_ that describe its look-and-feel (like
 
 Note that WyldCard treats properties as "first class" containers than can be accessed in whole or by chunk using the `get`, `set` or `put` commands (this was not quite true in HyperCard).
 
-Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. (Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.) You can refer to buttons and fields on other cards in the stack, too (for example, `card button "Push Me" of card 3`).
+Parts may be addressed in HyperTalk by their name, number, or ID, and a part can refer to itself as `me`. (Use the "Button Info..." and "Field Info..." commands from the "Objects" to view the name, number and ID assigned to a part.) You can refer to buttons and fields on other cards, other background, or even in other stacks, too (for example, `card button "Push Me" of card 3 of background id 2 of stack "Cool Stuff"`).
 
 ### Part IDs
 

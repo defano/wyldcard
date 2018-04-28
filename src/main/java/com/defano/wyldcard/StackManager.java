@@ -1,6 +1,9 @@
 package com.defano.wyldcard;
 
+import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
@@ -44,6 +47,21 @@ public class StackManager implements StackNavigationObserver {
         displayStack(context, StackPart.newStack(context), true);
     }
 
+    public StackModel locateStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options) {
+        try {
+            return WyldCard.getInstance().findStackPart(context, specifier);
+        } catch (PartException e) {
+            if (!options.withoutDialog) {
+                StackPart openedStack = openStack(context, options.inNewWindow, "Where is stack " + specifier.getValue() + "?");
+                if (openedStack != null) {
+                    return openedStack.getStackModel();
+                }
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Prompts the user to select a stack file from disk for opening.
      *
@@ -52,15 +70,17 @@ public class StackManager implements StackNavigationObserver {
      *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
      *                    to open a new stack).
      */
-    public void openStack(ExecutionContext context, boolean inNewWindow) {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), "Open Stack", FileDialog.LOAD);
+    public StackPart openStack(ExecutionContext context, boolean inNewWindow, String title) {
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
 
         if (fd.getFiles().length > 0) {
-            openStack(context, fd.getFiles()[0], inNewWindow);
+            return openStack(context, fd.getFiles()[0], inNewWindow);
         }
+
+        return null;
     }
 
     /**
@@ -245,6 +265,7 @@ public class StackManager implements StackNavigationObserver {
 
     public void unfocusStack(StackPart stackPart) {
         PartToolContext.getInstance().deselectAllParts();
+        stackPart.removeNavigationObserver(this);
     }
 
     /**
@@ -265,6 +286,9 @@ public class StackManager implements StackNavigationObserver {
         cardCount.setSource(stackPart.getCardCountProvider());
         cardClipboard.setSource(stackPart.getCardClipboardProvider());
         savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
+        isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
+        isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
+        stackPart.addNavigationObserver(this);
 
         ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
 

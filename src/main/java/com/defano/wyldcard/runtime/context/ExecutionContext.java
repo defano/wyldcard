@@ -13,11 +13,13 @@ import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
+import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 
 import java.util.List;
@@ -28,6 +30,14 @@ import java.util.Stack;
  * <p>
  * This object maintains the call stack, local and global variables, the part referred to as 'me', any pending visual
  * effect, and any return value passed out of a function handler. See {@link StackFrame}
+ * <p>
+ * Stack binding: When a script is executing, it must execute in the context of a specific stack (i.e., 'card 3' refers
+ * to the third card of which stack?). This is problematic when multiple stacks are open and active (and each
+ * potentially may have their own scripts executing concurrently). To solve this problem, an execution context is said
+ * to either be 'bound' or 'unbound'. An unbound execution context refers to whichever stack is currently in focus in
+ * the windowing system. A bound execution context refers to a specific stack irrespective of whether that stack has
+ * window focus. UI commands (like menubar commands) should typically use an unbound context (referring to which stack
+ * is in focus), but messages sent to a part or stack should utilize a bound context.
  * <p>
  * A note about threading: When HyperCard sends a message to a part (like 'mouseDown') the handler associated with that
  * message executes in its own thread. Any messages sent or functions invoked from that system message handler execute
@@ -46,8 +56,8 @@ public class ExecutionContext {
     private PartSpecifier theTarget;                        // Part that the message was initially sent
 
     /**
-     * Creates a dynamically-bound execution context. Scripts executing with a dynamically-bound context will operate on
-     * whichever stack has focus during runtime.
+     * Creates a unbound execution context. Scripts executing with a unbound context will operate on whichever stack has
+     * focus during runtime. Note that the focused stack may change while the script is executing.
      * <p>
      * Typically, the message box and menus should execute in a dynamic context; scripts attached to parts, cards,
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
@@ -69,6 +79,29 @@ public class ExecutionContext {
      */
     public ExecutionContext(Part part) {
         this.stack = part.getOwningStack();
+    }
+
+    /**
+     * Creates a part-bound execution context from a part model. Scripts executing in a part-bound context will operate
+     * on whichever stack the given part is a component of.
+     * <p>
+     * Scripts attached to parts, cards, backgrounds and stacks should create contexts using this constructor or
+     * {@link #ExecutionContext(Part)} when a controller object is available.
+     *
+     * @param partModel The model of the part that is a component of the stack that this context should be bound to.
+     * @throws IllegalStateException If the given part model is not bound to a stack.
+     */
+    public ExecutionContext(PartModel partModel) {
+        StackModel stackModel = partModel.getParentStackModel();
+        if (stackModel != null) {
+            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(stackModel);
+            if (stackWindow != null) {
+                this.stack = stackWindow.getStack();
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Attempt to create a part-bound execution context from a part not connected to a stack.");
     }
 
     /**
@@ -343,6 +376,10 @@ public class ExecutionContext {
      */
     public StackPart getCurrentStack() {
         return this.stack == null ? WindowManager.getInstance().getFocusedStackWindow().getStack() : this.stack;
+    }
+
+    public void setCurrentStack(StackPart stack) {
+        this.stack = stack;
     }
 
     /**

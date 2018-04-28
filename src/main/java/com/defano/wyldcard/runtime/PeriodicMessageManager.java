@@ -91,7 +91,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
             if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
-                model.receiveMessage(new ExecutionContext(), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
+                model.receiveMessage(new ExecutionContext(model), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.printStackTrace();
                         deferCycles = IDLE_DEFERRAL_CYCLES;

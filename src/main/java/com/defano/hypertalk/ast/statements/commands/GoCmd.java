@@ -1,6 +1,11 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.expressions.CompositePartExp;
+import com.defano.hypertalk.ast.expressions.StackPartExp;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
@@ -38,38 +43,73 @@ public class GoCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException {
 
-        VisualEffectSpecifier visualEffect;
-
-        if (visualEffectExp == null) {
-            visualEffect = context.getStackFrame().getVisualEffect();
-        } else {
-            visualEffect = visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
-        }
-
-        // Special case: No destination means 'Go back'
+        // Special case: No destination means 'go back'
         if (destinationExp == null) {
-            context.getCurrentStack().popCard(context, visualEffect);
+            context.getCurrentStack().popCard(context, getVisualEffect(context));
+            return;
         }
 
-        else {
-            Destination destination = getDestination(context, destinationExp.partFactor(context, CardModel.class));
-            if (destination == null) {
-                destination = getDestination(context, destinationExp.partFactor(context, BackgroundModel.class));
-            }
-
-            if (destination == null) {
-                throw new HtSemanticException("No such card.");
+        // Case 1: Navigate to a stack ('go to stack "My Stack"')
+        StackPartExp stackPartExp = destinationExp.factor(context, StackPartExp.class);
+        if (stackPartExp != null) {
+            StackModel model = WyldCard.getInstance().locateStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
+            if (model != null) {
+                goToDestination(context, getDestination(context, model), getVisualEffect(context));
+                return;
             } else {
-                goToDestination(context, destination, visualEffect);
+                throw new HtSemanticException("Don't know where that stack is.");
             }
         }
+
+        // Case 2: Navigate to a card in this stack ('go to card 3', 'go to card 3 of next bg')
+        Destination destination = getDestination(context, destinationExp.partFactor(context, CardModel.class));
+        if (destination != null) {
+            goToDestination(context, destination, getVisualEffect(context));
+            return;
+        }
+
+        // Case 3: Navigate to a background in this stack ('go to next background')
+        destination = getDestination(context, destinationExp.partFactor(context, BackgroundModel.class));
+        if (destination != null) {
+            goToDestination(context, destination, getVisualEffect(context));
+            return;
+        }
+
+        // Case 4: Navigate to a card or background in another stack ('go to cd 3 of bg 2 of stack "Another"')
+        CompositePartExp cpe = destinationExp.factor(context, CompositePartExp.class);
+        if (cpe != null) {
+            CompositePartSpecifier cps = (CompositePartSpecifier) cpe.evaluateAsSpecifier(context);
+            PartSpecifier rps = cps.getRootOwningPartSpecifier(context);
+
+            // Is root part a stack? If not, we're toast
+            if (rps instanceof StackPartSpecifier) {
+
+                // Try to locate (or prompt to locate) requested stack
+                StackModel model = WyldCard.getInstance().locateStack(context, (StackPartSpecifier) rps, navigationOptions);
+                if (model == null) {
+                    throw new HtSemanticException("Don't know where that stack is");
+                }
+
+                // We found the remote stack, now try to find the card
+                destination = getDestination(context, model.findPart(context, cps));
+                if (destination != null) {
+                    goToDestination(context, destination, getVisualEffect(context));
+                    return;
+                } else {
+                    throw new HtSemanticException("No such card in that stack.");
+                }
+            }
+        }
+
+        throw new HtSemanticException("No such card.");
     }
 
     private void goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.stack);
-            stackWindow.requestFocus();
+            context.setCurrentStack(stackWindow.getStack());
             stackWindow.getStack().goCard(context, destination.cardIndex, visualEffect, true);
+            stackWindow.requestFocus();
         });
     }
 
@@ -77,27 +117,42 @@ public class GoCmd extends Command {
         Integer destinationIndex;
         StackModel destinationStack;
 
-        if (model == null) {
-            return null;
-        } else if (model instanceof CardModel) {
+        // Part is a card in a stack
+        if (model instanceof CardModel) {
             destinationStack = ((CardModel) model).getStackModel();
             destinationIndex = destinationStack.getIndexOfCard((CardModel) model);
             return new Destination(destinationStack, destinationIndex);
-        } else if (model instanceof BackgroundModel) {
+        }
+
+        // Part is a background in a stack
+        else if (model instanceof BackgroundModel) {
             destinationStack = ((BackgroundModel) model).getStackModel();
             destinationIndex = destinationStack.getIndexOfBackground(model.getId(context));
             return new Destination(destinationStack, destinationIndex);
-        } else {
-            return null;
         }
 
+        // Part is the stack itself
+        else if (model instanceof StackModel) {
+            return new Destination((StackModel) model, ((StackModel) model).getCurrentCardIndex());
+        }
+
+        // Part was null or something bogus
+        return null;
+    }
+
+    private VisualEffectSpecifier getVisualEffect(ExecutionContext context) throws HtException {
+        if (visualEffectExp == null) {
+            return context.getStackFrame().getVisualEffect();
+        } else {
+            return visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
+        }
     }
 
     private class Destination {
-        public final StackModel stack;
-        public final int cardIndex;
+        final StackModel stack;
+        final int cardIndex;
 
-        public Destination(StackModel stackModel, int cardIndex) {
+        Destination(StackModel stackModel, int cardIndex) {
             this.stack = stackModel;
             this.cardIndex = cardIndex;
         }
