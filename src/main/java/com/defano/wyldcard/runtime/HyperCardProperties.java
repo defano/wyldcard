@@ -4,6 +4,8 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
+import com.defano.wyldcard.parts.model.ComputedGetter;
+import com.defano.wyldcard.parts.model.ComputedSetter;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -56,6 +58,7 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_FOUNDLINE = "foundline";
     public final static String PROP_FOUNDTEXT = "foundtext";
     public final static String PROP_LOCKMESSAGES = "lockmessages";
+    public final static String PROP_THEME = "theme";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -89,6 +92,9 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_LOCKMESSAGES, new Value(true), false);
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
+
+        defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WindowManager.getInstance().getActiveLookAndFeelName()));
+        defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WindowManager.getInstance().setLookAndFeel(WindowManager.getInstance().getLookAndFeelClassForName(value.stringValue())));
 
         defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
         defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamily()));

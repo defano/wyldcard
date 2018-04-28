@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
@@ -11,6 +12,8 @@ import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WindowManager implements WindowFinder {
 
@@ -189,6 +192,7 @@ public class WindowManager implements WindowFinder {
      * @param stackPart The stack whose window should be retrieved
      * @return A window (new or existing) bound to the stack.
      */
+    @RunOnDispatch
     public StackWindow getWindowForStack(StackPart stackPart) {
         // Special case: return an un-built window for null stack parts (required temporarily on startup)
         if (stackPart == null) {
@@ -208,30 +212,70 @@ public class WindowManager implements WindowFinder {
         }
     }
 
-    public void setLookAndFeel(String lafClassName) {
-        lookAndFeelClassProvider.onNext(lafClassName);
+    @RunOnDispatch
+    public List<Value> getLookAndFeelNames() {
+        ArrayList<Value> lafs = new ArrayList<>();
 
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(lafClassName);
+        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
+            lafs.add(new Value(thisLaf.getName()));
+        }
 
-                for (Window thisWindow : JFrame.getWindows()) {
-                    SwingUtilities.updateComponentTreeUI(thisWindow);
+        return lafs;
+    }
 
-                    if (thisWindow instanceof HyperCardWindow) {
-                        HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
-                        thisWyldWindow.getWindow().pack();
-                        thisWyldWindow.applyMenuBar();
-                    }
-                }
-
-                getFocusedStackWindow().applyMenuBar();
-
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                e.printStackTrace();
+    @RunOnDispatch
+    public String getLookAndFeelClassForName(String lafName) {
+        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
+            if (thisLaf.getName().equalsIgnoreCase(lafName)) {
+                return thisLaf.getClassName();
             }
-        });
+        }
 
+        return null;
+    }
+
+    @RunOnDispatch
+    public String getLookAndFeelName(String lafClassName) {
+        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
+            if (thisLaf.getClassName().equalsIgnoreCase(lafClassName)) {
+                return thisLaf.getName();
+            }
+        }
+
+        return null;
+    }
+
+    public void setLookAndFeel(String lafClassName) {
+        if (lafClassName != null) {
+
+            lookAndFeelClassProvider.onNext(lafClassName);
+
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    UIManager.setLookAndFeel(lafClassName);
+
+                    for (Window thisWindow : JFrame.getWindows()) {
+                        SwingUtilities.updateComponentTreeUI(thisWindow);
+
+                        if (thisWindow instanceof HyperCardWindow) {
+                            HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
+                            thisWyldWindow.getWindow().pack();
+                            thisWyldWindow.applyMenuBar();
+                        }
+                    }
+
+                    getFocusedStackWindow().applyMenuBar();
+
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    @RunOnDispatch
+    public String getActiveLookAndFeelName() {
+        return UIManager.getLookAndFeel().getName();
     }
 
     public Observable<String> getLookAndFeelClassProvider() {

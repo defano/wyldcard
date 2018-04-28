@@ -809,6 +809,7 @@ Global Property | Description
 `textFont`      | The currently active font family, as indicated by the selection in the "Font" menu.
 `textSize`      | The currently active font size, as indicated by the selection in the "Style" menu.
 `textStyle`     | The currently active font style, as indicated by the selection in the "Style" menu.
+`theme`         | Sets or get the name of the currently active look-and-feel. Use `the themes` function to determine which themes are available to be used on the current system. This property does not exist in HyperCard.
 
 As noted in the table above, some of these properties are reset to their default values automatically during idle time (when all script handlers have finished executing).
 
@@ -1168,6 +1169,7 @@ Function        | Description
 `sum`           | Returns the sum of the arguments. For example, `sum(1,3,8)` yields `9`.
 `tan`           | Returns the trigonometric tangent of the given argument, represented in radians.
 `target`        | Returns a HyperTalk expression referring to the part that first received the current message. For example, `the target` might yield `card button id 13`. Note that `the target` is a function, but `target` is a container.
+`themes`        | Returns a comma-separated list of available Java Swing look-and-feels installed on this system. The function does not exist in HyperCard.
 `ticks`         | Returns the number of ticks (1/60th second) since the JVM was started.
 `time`          | Returns the time of day in a variety of formats. Use `the time`, `the abbrev time`, `the abbreviated time` or `the short time` to yield a time in the format `11:15 AM`; use `the long time` or `the English time` for `11:15:27 AM`.
 `tool`          | Returns the name of the currently selected tool. Example: `if the tool is "brush" then answer "Happy painting!"`

@@ -2042,6 +2042,7 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
             case MOUSECLICK: return new MouseClickFunc(ctx);
             case WINDOWS: return new WindowsFunc(ctx);
             case STACKS: return new StacksFunc(ctx);
+            case THEMES: return new ThemesFunc(ctx);
 
             default: throw new RuntimeException("Bug! Unimplemented no-arg function: " + ctx.zeroArgFunc().getText());
         }
@@ -2227,6 +2228,11 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     @Override
     public Object visitStacksFunc(HyperTalkParser.StacksFuncContext ctx) {
         return BuiltInFunction.STACKS;
+    }
+
+    @Override
+    public Object visitThemesFunc(HyperTalkParser.ThemesFuncContext ctx) {
+        return BuiltInFunction.THEMES;
     }
 
     @Override

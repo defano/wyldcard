@@ -736,6 +736,15 @@
     "templates": [
       "the stacks"
     ]
+  },
+
+  {
+    "title": "Themes",
+    "summary": "Returns a comma-separated list of available Java Swing look-and-feels installed on this system. The function does not exist in HyperCard.",
+    "codePrefix": "themes",
+    "templates": [
+      "the themes"
+    ]
   }
 
 ]

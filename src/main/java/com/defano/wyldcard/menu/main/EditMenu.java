@@ -156,7 +156,7 @@ public class EditMenu extends HyperCardMenu {
         this.addSeparator();
 
         JMenuItem laf = MenuItemBuilder.ofHierarchicalType()
-                .named("Look & Feel")
+                .named("Theme")
                 .build(this);
 
         for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
