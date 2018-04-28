@@ -15,10 +15,7 @@ import com.defano.wyldcard.util.Throttle;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class StackWindow extends HyperCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
@@ -127,7 +124,7 @@ public class StackWindow extends HyperCardFrame implements StackObserver, StackN
 
             @Override
             public void windowLostFocus(WindowEvent e) {
-                WyldCard.getInstance().unfocusStack(stack);
+                // Nothing to do
             }
         });
     }

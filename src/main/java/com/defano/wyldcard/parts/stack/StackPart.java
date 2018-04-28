@@ -66,11 +66,23 @@ public class StackPart implements Part, PropertyChangeObserver {
         return stackPart;
     }
 
-    public void openStack(StackWindow stackWindow) {
+    /**
+     * "Open" this stack inside of a given window.
+     *
+     * Sets up connections between the window controller and stack controller, displays the stack's current card and
+     * sends the 'openStack' and 'openCard' message to the stack.
+     *
+     * @param stackWindow The window to bind this stack to
+     */
+    public void bindToWindow(StackWindow stackWindow) {
+
+        // Make the window aware of us
         ExecutionContext context = new ExecutionContext(this);
         stackWindow.bindModel(this);
 
+        // Display the current card
         goCard(context, stackModel.getCurrentCardIndex(), null, false);
+
         fireOnStackOpened();
         fireOnCardDimensionChanged(stackModel.getDimension(context));
 

@@ -31,7 +31,7 @@ import java.util.Optional;
  */
 public class StackManager implements StackNavigationObserver {
 
-    protected BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
+    private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
@@ -47,10 +47,27 @@ public class StackManager implements StackNavigationObserver {
         displayStack(context, StackPart.newStack(context), true);
     }
 
+    /**
+     * Attempts to locate a specified stack, prompting the user to locate the stack on disk if necessary.
+     *
+     * @param context The current execution context
+     * @param specifier A specifier identifying the stack we're looking for
+     * @param options Navigation options (like 'in a new window' or 'without dialog')
+     * @return The located stack, or null if the stack could not be located.
+     */
     public StackModel locateStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options) {
         try {
+            // Try to find the requested stack among those already opened...
             return WyldCard.getInstance().findStackPart(context, specifier);
         } catch (PartException e) {
+
+            // ... if that fails, interpret the specifier as a file name
+            StackPart foundStack = openStack(context, new File(String.valueOf(specifier.getValue())), options.inNewWindow);
+            if (foundStack != null) {
+                return foundStack.getStackModel();
+            }
+
+            // ... and finally tonight, prompt the user to choose the stack
             if (!options.withoutDialog) {
                 StackPart openedStack = openStack(context, options.inNewWindow, "Where is stack " + specifier.getValue() + "?");
                 if (openedStack != null) {
@@ -93,7 +110,7 @@ public class StackManager implements StackNavigationObserver {
      *                    to open a new stack).
      * @return The opened StackPart or null if the stack could not be opened for any reason.
      */
-    public StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
+    private StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
         try {
             StackModel model = Serializer.deserialize(stackFile, StackModel.class);
             StackPart part = StackPart.fromStackModel(context, model);
@@ -104,38 +121,6 @@ public class StackManager implements StackNavigationObserver {
             return part;
         } catch (Exception e) {
             return null;
-        }
-    }
-
-    /**
-     * Displays the given stack part in a window. If the stack is already displayed in a window, this method simply
-     * focuses the existing window (it is not legal to have the same stack opened twice in two windows).
-     *
-     * @param context     The current execution context
-     * @param stackPart   The stack to display in a window
-     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
-     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
-     *                    to open a new stack). Has no effect when attempting to open a stack already displayed in a
-     *                    window.
-     */
-    private void displayStack(ExecutionContext context, StackPart stackPart, boolean inNewWindow) {
-        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart.getStackModel());
-
-        // Special case: Stack is already open, simply focus it
-        if (existingWindow != null) {
-            existingWindow.requestFocus();
-        }
-
-        // Stack is not already open
-        else {
-
-            if (inNewWindow) {
-                stackPart.openStack(WindowManager.getInstance().getWindowForStack(stackPart));
-            } else {
-                stackPart.openStack(context.getCurrentStack().getOwningStackWindow());
-            }
-
-            stackPart.addNavigationObserver(this);
         }
     }
 
@@ -154,7 +139,13 @@ public class StackManager implements StackNavigationObserver {
         return stacks;
     }
 
-    private void saveStackAs(ExecutionContext context, StackModel stackModel) {
+    /**
+     * Saves the given stack model to a file/path chosen by the user.
+     *
+     * @param context The execution context
+     * @param stackModel The stack to be saved
+     */
+    public void saveStackAs(ExecutionContext context, StackModel stackModel) {
         String defaultName = "Untitled";
 
         if (WyldCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
@@ -177,31 +168,16 @@ public class StackManager implements StackNavigationObserver {
     }
 
     /**
-     * Saves the stack active in the execution context to its associated file, or behaves like "Save as..." if there is
-     * no file associated with the stack.
-     *
-     * @param context The execution context.
-     */
-    public void saveStack(ExecutionContext context) {
-        saveStack(context, getFocusedStack().getStackModel());
-    }
-
-    /**
-     * Prompts the user to select a file, then saves the stack active in the given execution context to this file.
-     *
-     * @param context The execution context.
-     */
-    public void saveStackAs(ExecutionContext context) {
-        saveStackAs(context, context.getCurrentStack().getStackModel());
-    }
-
-    /**
      * Saves the given stack model to its associated file (acts like "Save as" if no file is associated).
      *
      * @param context    The execution context.
-     * @param stackModel The StackModel to save.
+     * @param stackModel The StackModel to save; when null the focused stack is assumed.
      */
     public void saveStack(ExecutionContext context, StackModel stackModel) {
+        if (stackModel == null) {
+            stackModel = getFocusedStack().getStackModel();
+        }
+
         Optional<File> saveFile = savedStackFile.getObservable().blockingFirst();
         saveStack(context, stackModel, saveFile.orElse(null));
     }
@@ -225,17 +201,26 @@ public class StackManager implements StackNavigationObserver {
         }
     }
 
-    public void closeAllStacksAndExit() {
+    /**
+     * Closes all of the open stack windows (prompting as required to save); when all stacks have closed, the
+     * application exits.
+     */
+    public void closeAllStacks() {
         for (StackPart thisOpenStack : getOpenStacks()) {
             closeStack(thisOpenStack);
         }
     }
 
-    public void closeFocusedStack() {
-        closeStack(getFocusedStack());
-    }
-
+    /**
+     * Attempts to close the requested stack, prompting the user to save it (when necessary) before closing. Note that
+     * the when prompted to save, the user can cancel, resulting in the stack not being closed.
+     *
+     * @param stackPart The stack to be closed
+     */
     public void closeStack(StackPart stackPart) {
+        if (stackPart == null) {
+            stackPart = getFocusedStack();
+        }
 
         // Prompt user to save if stack is dirty
         if (stackPart.getStackModel().isStackDirty()) {
@@ -263,11 +248,6 @@ public class StackManager implements StackNavigationObserver {
         }
     }
 
-    public void unfocusStack(StackPart stackPart) {
-        PartToolContext.getInstance().deselectAllParts();
-        stackPart.removeNavigationObserver(this);
-    }
-
     /**
      * Make the given stack the focused, or active, stack. That is, the stack that is acted upon by the menus, message
      * box and other "unbound" execution contexts.
@@ -280,6 +260,12 @@ public class StackManager implements StackNavigationObserver {
     public StackPart focusStack(StackPart stackPart) {
         if (stackPart == null) {
             throw new IllegalArgumentException("Focused stack cannot be null.");
+        }
+
+        // Remove focus from last-focused stack when applicable
+        if (focusedStack.hasValue()) {
+            PartToolContext.getInstance().deselectAllParts();
+            focusedStack.blockingFirst().removeNavigationObserver(this);
         }
 
         focusedStack.onNext(stackPart);
@@ -308,6 +294,10 @@ public class StackManager implements StackNavigationObserver {
         }
     }
 
+    /**
+     * Gets an observable of the focused stack.
+     * @return The focused stack observable.
+     */
     public Observable<StackPart> getFocusedStackProvider() {
         return focusedStack;
     }
@@ -373,5 +363,37 @@ public class StackManager implements StackNavigationObserver {
     public void onCardOpened(CardPart newCard) {
         isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
+    }
+
+    /**
+     * Displays the given stack part in a window. If the stack is already displayed in a window, this method simply
+     * focuses the existing window (it is not legal to have the same stack opened twice in two windows).
+     *
+     * @param context     The current execution context
+     * @param stackPart   The stack to display in a window
+     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
+     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
+     *                    to open a new stack). Has no effect when attempting to open a stack already displayed in a
+     *                    window.
+     */
+    private void displayStack(ExecutionContext context, StackPart stackPart, boolean inNewWindow) {
+        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart.getStackModel());
+
+        // Special case: Stack is already open, simply focus it
+        if (existingWindow != null) {
+            existingWindow.requestFocus();
+        }
+
+        // Stack is not already open
+        else {
+
+            if (inNewWindow) {
+                stackPart.bindToWindow(WindowManager.getInstance().getWindowForStack(stackPart));
+            } else {
+                stackPart.bindToWindow(context.getCurrentStack().getOwningStackWindow());
+            }
+
+            stackPart.addNavigationObserver(this);
+        }
     }
 }

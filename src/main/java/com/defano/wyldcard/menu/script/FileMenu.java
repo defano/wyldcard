@@ -43,7 +43,7 @@ public class FileMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofDefaultType()
                     .named("Quit HyperCard")
-                    .withAction(e -> WyldCard.getInstance().closeAllStacksAndExit())
+                    .withAction(e -> WyldCard.getInstance().closeAllStacks())
                     .withShortcut('Q')
                     .build(this);
         }

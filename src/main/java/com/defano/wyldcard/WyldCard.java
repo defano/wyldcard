@@ -14,7 +14,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.window.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.forms.BackgroundPropertyEditor;
 
 import javax.swing.*;
 
@@ -32,8 +31,6 @@ public class WyldCard extends StackManager implements PartFinder {
     }
 
     public static void main(String argv[]) {
-
-        new BackgroundPropertyEditor();
 
         try {
             // Configure macOS environment
@@ -64,7 +61,7 @@ public class WyldCard extends StackManager implements PartFinder {
             PatternManager.getInstance().start();               // Update pattern palette on color changes
             PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
 
-            stack.openStack(WindowManager.getInstance().getWindowForStack(stack));
+            stack.bindToWindow(WindowManager.getInstance().getWindowForStack(stack));
         });
 
         // Close all open files before we die

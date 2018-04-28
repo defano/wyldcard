@@ -201,7 +201,7 @@ public class WindowManager implements WindowFinder {
             return existingWindow;
         } else {
             return (StackWindow) WindowBuilder.make(new StackWindow())
-                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(stackPart))
+                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(((StackWindow) window).getStack()))
                     .ownsMenubar()
                     .withModel(stackPart)
                     .build();
