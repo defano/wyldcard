@@ -1152,7 +1152,7 @@ Function        | Description
 `params`        | Returns a comma-separated list of arguments passed to the given handler or function. For example, in the context of `myFunction(1,2,3)`, `the params` would yield `1, 2, 3`.
 `paramCount`    | Returns the number of parameters passed to the current handler of function.
 `random`        | Returns a random integer between 0 and the given argument. Example: `the random of 100` or `random(10)`.
-`result`        | Returns the current value of the implicit variable `it`, for example: `the result`
+`result`        | Accepts no arguments and provides the value returned from a function or message handler, or the error status reported by certain commands.
 `screenRect`    | The rectangle of the screen on which the card is displayed, for example `put item 3 of the screenRect into screenWidth`
 `seconds`       | Returns the number of seconds since midnight, January 1, 1970 UTC.
 `selectedChunk` | Returns a chunk expression in the form `char x to y of container` describing the active text selection; returns `empty` if no selection exists.

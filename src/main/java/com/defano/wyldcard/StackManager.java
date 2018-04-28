@@ -1,6 +1,7 @@
 package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.PartException;

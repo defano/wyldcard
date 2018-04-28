@@ -57,8 +57,12 @@ public class AskCmd extends Command {
                     null,
                     suggestion));
 
-            if (result.get() == null)
+            if (result.get() == null) {
+                context.setResult(new Value("Cancel"));
                 result.set("");
+            } else {
+                context.setResult(new Value());
+            }
 
             latch.countDown();
         });

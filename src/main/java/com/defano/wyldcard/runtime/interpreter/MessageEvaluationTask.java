@@ -1,11 +1,13 @@
 package com.defano.wyldcard.runtime.interpreter;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.ast.statements.commands.MessageCmd;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
@@ -48,6 +50,13 @@ public class MessageEvaluationTask implements Callable<String> {
         // When the last statement is an expression, return the result of evaluating the expression
         else if (lastStatement instanceof ExpressionStatement) {
             return context.getIt().stringValue();
+        }
+
+        // Special case: Command entered into the message provided a result; treat as error
+        else if (!context.getResult().isEmpty()) {
+            String resultError = context.getResult().stringValue();
+            context.setResult(new Value());
+            throw new HtSemanticException(resultError);
         }
 
         // No guesses.

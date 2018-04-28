@@ -45,7 +45,7 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
 
         // Continue last query
         if (isResumingSearch(query)) {
-            processSearchResult(results.get(nextResult++));
+            processSearchResult(context, results.get(nextResult++));
         }
 
         // Start new query
@@ -55,9 +55,9 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
             nextResult = 0;
 
             if (results.isEmpty()) {
-                processSearchResult(null);
+                processSearchResult(context, null);
             } else {
-                processSearchResult(results.get(nextResult++));
+                processSearchResult(context, results.get(nextResult++));
             }
         }
     }
@@ -76,10 +76,9 @@ public class SearchContext implements SearchResultHilighter, SearchIndexer {
         HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDCHUNK, new Value(), true);
     }
 
-    private void processSearchResult(SearchResult result) {
-        ExecutionContext context = new ExecutionContext();
-
+    private void processSearchResult(ExecutionContext context, SearchResult result) {
         if (result == null) {
+            context.setResult(new Value("Not found"));
             Toolkit.getDefaultToolkit().beep();
         } else {
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_FOUNDTEXT, new Value(result.getFoundText()), true);

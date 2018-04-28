@@ -70,20 +70,8 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
 
     }
 
-    public ExecutionContext getStaticContext() {
-        return staticContext;
-    }
-
     public void setStaticContext(ExecutionContext staticContext) {
         this.staticContext = staticContext;
-    }
-
-    public MessageEvaluationObserver getMessageEvaluationObserver() {
-        return messageEvaluationObserver;
-    }
-
-    public void setMessageEvaluationObserver(MessageEvaluationObserver messageEvaluationObserver) {
-        this.messageEvaluationObserver = messageEvaluationObserver;
     }
 
     @RunOnDispatch

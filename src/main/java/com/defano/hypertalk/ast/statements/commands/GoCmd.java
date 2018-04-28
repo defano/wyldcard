@@ -3,6 +3,7 @@ package com.defano.hypertalk.ast.statements.commands;
 import com.defano.hypertalk.ast.expressions.CompositePartExp;
 import com.defano.hypertalk.ast.expressions.StackPartExp;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
@@ -56,9 +57,9 @@ public class GoCmd extends Command {
             if (model != null) {
                 goToDestination(context, getDestination(context, model), getVisualEffect(context));
                 return;
-            } else {
-                throw new HtSemanticException("Don't know where that stack is.");
             }
+
+            context.setResult(new Value("No such stack."));
         }
 
         // Case 2: Navigate to a card in this stack ('go to card 3', 'go to card 3 of next bg')
@@ -87,7 +88,8 @@ public class GoCmd extends Command {
                 // Try to locate (or prompt to locate) requested stack
                 StackModel model = WyldCard.getInstance().locateStack(context, (StackPartSpecifier) rps, navigationOptions);
                 if (model == null) {
-                    throw new HtSemanticException("Don't know where that stack is");
+                    context.setResult(new Value("No such stack."));
+                    return;
                 }
 
                 // We found the remote stack, now try to find the card
@@ -96,12 +98,13 @@ public class GoCmd extends Command {
                     goToDestination(context, destination, getVisualEffect(context));
                     return;
                 } else {
-                    throw new HtSemanticException("No such card in that stack.");
+                    context.setResult(new Value("No such card."));
+                    return;
                 }
             }
         }
 
-        throw new HtSemanticException("No such card.");
+        context.setResult(new Value("No such card."));
     }
 
     private void goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
