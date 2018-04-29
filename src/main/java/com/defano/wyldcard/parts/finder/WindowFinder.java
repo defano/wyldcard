@@ -7,8 +7,8 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.HyperCardFrame;
-import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.forms.ScriptEditor;
 
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 public interface WindowFinder {
 
-    default HyperCardWindow findWindow(ExecutionContext context, WindowSpecifier specifier) throws PartException {
+    default WyldCardWindow findWindow(ExecutionContext context, WindowSpecifier specifier) throws PartException {
         if (specifier instanceof WindowTypeSpecifier) {
             return ((WindowTypeSpecifier) specifier).getWindowType().getWindow(context);
         } else if (specifier instanceof WindowNameSpecifier) {
@@ -38,41 +38,41 @@ public interface WindowFinder {
     }
 
     @RunOnDispatch
-    default HyperCardWindow findWindowById(int id) throws PartException {
+    default WyldCardWindow findWindowById(int id) throws PartException {
         Optional<Window> foundWindow = Arrays.stream(JFrame.getWindows())
-                .filter(p -> p instanceof HyperCardFrame)
+                .filter(p -> p instanceof WyldCardFrame)
                 .filter(p -> System.identityHashCode(p) == id)
                 .findFirst();
 
         if (foundWindow.isPresent()) {
-            return (HyperCardWindow) foundWindow.get();
+            return (WyldCardWindow) foundWindow.get();
         } else {
             throw new PartException("No such window.");
         }
     }
 
     @RunOnDispatch
-    default HyperCardWindow findWindowByName(String name) throws PartException {
+    default WyldCardWindow findWindowByName(String name) throws PartException {
         Optional<Window> foundWindow = Arrays.stream(JFrame.getWindows())
-                .filter(p -> p instanceof HyperCardFrame)
-                .filter(p -> ((HyperCardFrame) p).getTitle().equalsIgnoreCase(name))
+                .filter(p -> p instanceof WyldCardFrame)
+                .filter(p -> ((WyldCardFrame) p).getTitle().equalsIgnoreCase(name))
                 .findFirst();
 
         if (foundWindow.isPresent()) {
-            return (HyperCardWindow) foundWindow.get();
+            return (WyldCardWindow) foundWindow.get();
         } else {
             throw new PartException("No such window.");
         }
     }
 
     @RunOnDispatch
-    default HyperCardWindow findWindowByNumber(int windowNumber) throws PartException {
+    default WyldCardWindow findWindowByNumber(int windowNumber) throws PartException {
         List<Window> windows = getWindows();
 
         if (windowNumber < 1 || windowNumber >= windows.size()) {
             throw new PartException("No such window.");
         } else {
-            return (HyperCardWindow) windows.get(windowNumber - 1);
+            return (WyldCardWindow) windows.get(windowNumber - 1);
         }
     }
 
@@ -103,8 +103,8 @@ public interface WindowFinder {
         ArrayList<Value> windows = new ArrayList<>();
 
         for (Window thisWindow : getWindows()) {
-            if (thisWindow instanceof HyperCardFrame) {
-                windows.add(new Value(((HyperCardWindow) thisWindow).getTitle()));
+            if (thisWindow instanceof WyldCardFrame) {
+                windows.add(new Value(((WyldCardWindow) thisWindow).getTitle()));
             }
         }
 
@@ -114,9 +114,9 @@ public interface WindowFinder {
     @RunOnDispatch
     default List<Window> getWindows() {
         return Arrays.stream(JFrame.getWindows())
-                .filter(p -> p instanceof HyperCardFrame)
-                .filter(p -> ((HyperCardWindow) p).getTitle() != null)
-                .sorted(Comparator.comparing(o -> ((HyperCardWindow) o).getTitle()))
+                .filter(p -> p instanceof WyldCardFrame)
+                .filter(p -> ((WyldCardWindow) p).getTitle() != null)
+                .sorted(Comparator.comparing(o -> ((WyldCardWindow) o).getTitle()))
                 .collect(Collectors.toList());
     }
 }

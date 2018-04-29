@@ -2,7 +2,7 @@ package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import io.reactivex.functions.Consumer;
@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class LinesPalette extends HyperCardDialog implements Consumer<Stroke> {
+public class LinesPalette extends WyldCardDialog implements Consumer<Stroke> {
     private JPanel linesPanel;
 
     private JButton px1;

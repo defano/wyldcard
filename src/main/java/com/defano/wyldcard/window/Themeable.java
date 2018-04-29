@@ -59,8 +59,8 @@ public interface Themeable {
                     for (Window thisWindow : JFrame.getWindows()) {
                         SwingUtilities.updateComponentTreeUI(thisWindow);
 
-                        if (thisWindow instanceof HyperCardWindow) {
-                            HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
+                        if (thisWindow instanceof WyldCardWindow) {
+                            WyldCardWindow thisWyldWindow = (WyldCardWindow) thisWindow;
                             thisWyldWindow.getWindow().pack();
                             thisWyldWindow.applyMenuBar();
                         }

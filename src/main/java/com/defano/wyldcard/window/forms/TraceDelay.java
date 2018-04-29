@@ -1,14 +1,14 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.debug.DebugContext;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class TraceDelay extends HyperCardDialog {
+public class TraceDelay extends WyldCardDialog {
     private JSpinner traceDelay;
     private JButton okButton;
     private JPanel windowPanel;

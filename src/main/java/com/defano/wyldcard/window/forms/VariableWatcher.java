@@ -6,7 +6,7 @@ import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.symbol.SymbolObserver;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
-import com.defano.wyldcard.window.HyperCardFrame;
+import com.defano.wyldcard.window.WyldCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -19,7 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class VariableWatcher extends HyperCardFrame implements SymbolObserver {
+public class VariableWatcher extends WyldCardFrame implements SymbolObserver {
 
     private JPanel windowPanel;
     private JTable variablesTable;

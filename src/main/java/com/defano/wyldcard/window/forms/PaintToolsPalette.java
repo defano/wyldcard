@@ -6,7 +6,7 @@ import com.defano.wyldcard.awt.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.HyperCardFrame;
+import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
@@ -19,7 +19,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class PaintToolsPalette extends HyperCardFrame implements Consumer {
+public class PaintToolsPalette extends WyldCardFrame implements Consumer {
     private JPanel palettePanel;
 
     private JButton selection;

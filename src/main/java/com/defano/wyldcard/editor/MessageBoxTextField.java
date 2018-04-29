@@ -1,4 +1,4 @@
-package com.defano.wyldcard.window;
+package com.defano.wyldcard.editor;
 
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSyntaxException;

@@ -5,7 +5,7 @@ import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.IconFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.WrapLayout;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class IconPicker extends HyperCardDialog {
+public class IconPicker extends WyldCardDialog {
 
     private static final int BUTTON_SIZE = 60;
 

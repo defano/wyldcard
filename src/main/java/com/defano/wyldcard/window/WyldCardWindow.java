@@ -8,7 +8,7 @@ import io.reactivex.Observable;
 import javax.swing.*;
 import java.awt.*;
 
-public interface HyperCardWindow<WindowType extends Window> {
+public interface WyldCardWindow<WindowType extends Window> {
 
     /**
      * Gets the contents of this window; the root component (usually a JPanel) that contains all of the Swing elements

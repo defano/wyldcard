@@ -2,7 +2,7 @@ package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -10,7 +10,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class IntensityPalette extends HyperCardDialog {
+public class IntensityPalette extends WyldCardDialog {
     private JSlider intensitySlider;
     private JPanel intensityPanel;
 

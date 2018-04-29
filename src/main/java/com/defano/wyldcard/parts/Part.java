@@ -13,7 +13,7 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 
@@ -122,7 +122,7 @@ public interface Part {
             return (StackPart) this;
         }
 
-        HyperCardWindow boundWindow = getOwningStackWindow();
+        WyldCardWindow boundWindow = getOwningStackWindow();
         if (boundWindow != null) {
             return ((StackWindow) boundWindow).getStack();
         } else {

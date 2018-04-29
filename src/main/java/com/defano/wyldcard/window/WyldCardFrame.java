@@ -7,12 +7,12 @@ import io.reactivex.subjects.Subject;
 import javax.swing.*;
 import java.awt.event.*;
 
-public abstract class HyperCardFrame extends JFrame implements HyperCardWindow<JFrame> {
+public abstract class WyldCardFrame extends JFrame implements WyldCardWindow<JFrame> {
 
     private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
     private boolean ownsMenubar = false;
 
-    public HyperCardFrame() {
+    public WyldCardFrame() {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
@@ -37,7 +37,7 @@ public abstract class HyperCardFrame extends JFrame implements HyperCardWindow<J
         this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                HyperCardFrame.this.applyMenuBar();
+                WyldCardFrame.this.applyMenuBar();
             }
         });
 

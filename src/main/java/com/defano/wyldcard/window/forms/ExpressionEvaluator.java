@@ -8,7 +8,7 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.runtime.interpreter.MessageEvaluationObserver;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -17,7 +17,7 @@ import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import javax.swing.*;
 import java.awt.*;
 
-public class ExpressionEvaluator extends HyperCardDialog implements SyntaxParserDelegate {
+public class ExpressionEvaluator extends WyldCardDialog implements SyntaxParserDelegate {
     private JButton evaluateButton;
     private JTextArea resultField;
     private JPanel windowPanel;

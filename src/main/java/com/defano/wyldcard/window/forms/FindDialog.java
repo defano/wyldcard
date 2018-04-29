@@ -1,6 +1,6 @@
 package com.defano.wyldcard.window.forms;
 
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -8,7 +8,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class FindDialog extends HyperCardDialog {
+public class FindDialog extends WyldCardDialog {
 
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;

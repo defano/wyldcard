@@ -7,7 +7,7 @@ import com.defano.wyldcard.parts.field.FieldStyle;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.ActionBindable;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -19,7 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 
 @SuppressWarnings("unchecked")
-public class FieldPropertyEditor extends HyperCardDialog implements ActionBindable {
+public class FieldPropertyEditor extends WyldCardDialog implements ActionBindable {
 
     private FieldModel model;
 

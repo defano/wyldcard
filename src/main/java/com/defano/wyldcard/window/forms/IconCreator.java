@@ -2,7 +2,7 @@ package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.icons.ButtonIcon;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class IconCreator extends HyperCardDialog {
+public class IconCreator extends WyldCardDialog {
     private BufferedImage iconImage;
 
     private JTextField iconName;

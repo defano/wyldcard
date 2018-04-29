@@ -16,7 +16,7 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -62,7 +62,7 @@ public class NumberOfPartFunc extends Expression {
         throw new HtSemanticException("Don't know how to get the number of that.");
     }
 
-    private Value getNumberOfWindow(HyperCardWindow window) throws HtSemanticException {
+    private Value getNumberOfWindow(WyldCardWindow window) throws HtSemanticException {
         for (int windowNumber = 1; windowNumber <= WindowManager.getInstance().getWindows().size(); windowNumber++) {
             if (window == WindowManager.getInstance().getWindows().get(windowNumber - 1)) {
                 return new Value(windowNumber);

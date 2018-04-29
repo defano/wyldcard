@@ -1,7 +1,7 @@
 package com.defano.wyldcard.window.forms;
 
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.HyperCardFrame;
+import com.defano.wyldcard.window.WyldCardFrame;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 
-public class ColorPalette extends HyperCardFrame {
+public class ColorPalette extends WyldCardFrame {
 
     private JPanel panel;
     private JTabbedPane tabs;

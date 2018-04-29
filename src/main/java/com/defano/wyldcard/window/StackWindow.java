@@ -18,7 +18,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends HyperCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
+public class StackWindow extends WyldCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;

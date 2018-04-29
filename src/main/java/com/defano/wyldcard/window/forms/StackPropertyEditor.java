@@ -4,7 +4,7 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.StringUtils;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -15,7 +15,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.Optional;
 
-public class StackPropertyEditor extends HyperCardDialog {
+public class StackPropertyEditor extends WyldCardDialog {
     private StackModel model;
 
     private JPanel propertiesPanel;

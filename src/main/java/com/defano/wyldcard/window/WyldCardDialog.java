@@ -7,12 +7,12 @@ import io.reactivex.subjects.Subject;
 import javax.swing.*;
 import java.awt.event.*;
 
-public abstract class HyperCardDialog extends JDialog implements HyperCardWindow<JDialog> {
+public abstract class WyldCardDialog extends JDialog implements WyldCardWindow<JDialog> {
 
     private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
     private boolean ownsMenubar;
 
-    public HyperCardDialog() {
+    public WyldCardDialog() {
         setAlwaysOnTop(true);
 
         this.addComponentListener(new ComponentAdapter() {

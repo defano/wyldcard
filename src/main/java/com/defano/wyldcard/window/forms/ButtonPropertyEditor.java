@@ -7,7 +7,7 @@ import com.defano.wyldcard.parts.button.ButtonStyle;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.ActionBindable;
-import com.defano.wyldcard.window.HyperCardDialog;
+import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.hypertalk.ast.model.Value;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -18,7 +18,7 @@ import com.l2fprod.common.swing.JFontChooser;
 import javax.swing.*;
 import java.awt.*;
 
-public class ButtonPropertyEditor extends HyperCardDialog implements ActionBindable {
+public class ButtonPropertyEditor extends WyldCardDialog implements ActionBindable {
     private ButtonModel model;
 
     private JButton saveButton;

@@ -10,7 +10,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class WindowBuilder<T extends HyperCardWindow> {
+public class WindowBuilder<T extends WyldCardWindow> {
 
     private final static int DEFAULT_SEPARATION = 10;
 
@@ -19,7 +19,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private Component relativeLocation = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
-    private HyperCardFrame dock;
+    private WyldCardFrame dock;
     private boolean isPalette = false;
     private boolean isFocusable = true;
     private WindowClosingAction actionOnClose = null;
@@ -31,11 +31,11 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    public static WindowBuilder<HyperCardWindow> make(HyperCardFrame window) {
+    public static WindowBuilder<WyldCardWindow> make(WyldCardFrame window) {
         return new WindowBuilder<>(window);
     }
 
-    public static WindowBuilder<HyperCardDialog> make(HyperCardDialog window) {
+    public static WindowBuilder<WyldCardDialog> make(WyldCardDialog window) {
         return new WindowBuilder<>(window);
     }
 
@@ -84,7 +84,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     @RunOnDispatch
-    public WindowBuilder dockTo(HyperCardFrame window) {
+    public WindowBuilder dockTo(WyldCardFrame window) {
         this.dock = window;
         return this;
     }
@@ -137,7 +137,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
     @RunOnDispatch
     public WindowBuilder ownsMenubar() {
-        if (window instanceof HyperCardDialog) {
+        if (window instanceof WyldCardDialog) {
             throw new IllegalStateException("This type of window cannot own the menubar.");
         }
 
@@ -152,7 +152,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     @RunOnDispatch
-    public T buildReplacing(HyperCardWindow window) {
+    public T buildReplacing(WyldCardWindow window) {
         window.getWindow().dispose();
         return build();
     }
@@ -167,7 +167,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }
 
-        if (window instanceof HyperCardDialog) {
+        if (window instanceof WyldCardDialog) {
             this.window.setAllowResizing(resizable);
         }
 
@@ -180,7 +180,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.getWindow().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    actionOnClose.onWindowClosing((HyperCardWindow) e.getWindow());
+                    actionOnClose.onWindowClosing((WyldCardWindow) e.getWindow());
                 }
             });
         }
