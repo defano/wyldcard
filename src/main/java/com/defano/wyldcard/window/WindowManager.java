@@ -213,9 +213,39 @@ public class WindowManager implements WindowFinder, Themeable {
         return palettesProvider;
     }
 
+    public WyldCardFrame nextWindow() {
+        List<WyldCardFrame> windows = getFocusableWindows(true);
 
+        for (int index = 0; index < windows.size(); index++) {
+            if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
+                if (index + 1 < windows.size()) {
+                    return windows.get(index + 1);
+                } else {
+                    return windows.get(0);
+                }
+            }
+        }
 
-    public void notifyWindowVisibilityChanged() {
+        return null;
+    }
+
+    public WyldCardFrame prevWindow() {
+        List<WyldCardFrame> windows = getFocusableWindows(true);
+
+        for (int index = 0; index < windows.size(); index++) {
+            if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
+                if (index - 1 > 0) {
+                    return windows.get(index - 1);
+                } else {
+                    return windows.get(windows.size() - 1);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    void notifyWindowVisibilityChanged() {
         framesProvider.onNext(getFrames(false));
         windowsProvider.onNext(getWindows(true));
         palettesProvider.onNext(getPalettes(true));

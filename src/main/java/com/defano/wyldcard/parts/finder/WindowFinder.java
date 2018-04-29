@@ -17,6 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -133,6 +134,13 @@ public interface WindowFinder {
     default List<WyldCardFrame> getPalettes(boolean onlyVisible) {
         return getFrames(onlyVisible).stream()
                 .filter(WyldCardFrame::isPalette)
+                .collect(Collectors.toList());
+    }
+
+    @RunOnDispatch
+    default List<WyldCardFrame> getFocusableWindows(boolean onlyVisible) {
+        return getFrames(onlyVisible).stream()
+                .filter(wyldCardFrame -> wyldCardFrame.getWindow().isFocusableWindow())
                 .collect(Collectors.toList());
     }
 

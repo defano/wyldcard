@@ -227,7 +227,7 @@ public class StackManager implements StackNavigationObserver {
         if (stackPart.getStackModel().isStackDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(
                     stackPart.getDisplayedCard(),
-                    "Save changes to stack?",
+                    "Save changes to " + stackPart.getStackModel().getStackName(null) + "?",
                     "Save",
                     JOptionPane.YES_NO_OPTION);
 

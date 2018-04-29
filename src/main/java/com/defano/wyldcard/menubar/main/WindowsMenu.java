@@ -37,6 +37,18 @@ public class WindowsMenu extends HyperCardMenu {
                 })
                 .build(this);
 
+        MenuItemBuilder.ofDefaultType()
+                .named("Next Window")
+                .withShortcut('.')
+                .withAction(a -> WindowManager.getInstance().nextWindow().getWindow().requestFocus())
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
+                .named("Previous Window")
+                .withShortcut(',')
+                .withAction(a -> WindowManager.getInstance().prevWindow().getWindow().requestFocus())
+                .build(this);
+
         addSeparator();
 
         addPalettes(MenuItemBuilder.ofHierarchicalType()

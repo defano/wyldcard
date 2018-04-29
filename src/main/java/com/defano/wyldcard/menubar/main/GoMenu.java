@@ -87,7 +87,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next Window")
-                .disabled()
+                .withAction(a -> WindowManager.getInstance().nextWindow().getWindow().requestFocus())
                 .withShortcut('L')
                 .build(this);
     }
