@@ -5,12 +5,19 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.window.layouts.*;
+import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WindowManager implements WindowFinder, Themeable {
 
     private final static WindowManager instance = new WindowManager();
+
+    private final BehaviorSubject<List<WyldCardFrame>> framesProvider = BehaviorSubject.createDefault(new ArrayList<>());
+    private final BehaviorSubject<List<WyldCardFrame>> windowsProvider = BehaviorSubject.createDefault(new ArrayList<>());
+    private final BehaviorSubject<List<WyldCardFrame>> palettesProvider = BehaviorSubject.createDefault(new ArrayList<>());
 
     private final MessageWindow messageWindow = new MessageWindow();
     private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
@@ -42,21 +49,18 @@ public class WindowManager implements WindowFinder, Themeable {
                 .asPalette()
                 .focusable(true)
                 .withLocationUnderneath(stackWindow)
-                .dockTo(stackWindow)
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
-                .dockTo(stackWindow)
                 .withLocationLeftOf(stackWindow)
                 .build();
 
         WindowBuilder.make(shapesPalette)
                 .asPalette()
                 .withTitle("Shapes")
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
@@ -64,7 +68,6 @@ public class WindowManager implements WindowFinder, Themeable {
         WindowBuilder.make(linesPalette)
                 .asPalette()
                 .withTitle("Lines")
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
@@ -72,7 +75,6 @@ public class WindowManager implements WindowFinder, Themeable {
         WindowBuilder.make(brushesPalette)
                 .asPalette()
                 .withTitle("Brushes")
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
@@ -80,7 +82,6 @@ public class WindowManager implements WindowFinder, Themeable {
         WindowBuilder.make(patternsPalette)
                 .asPalette()
                 .withTitle("Patterns")
-                .dockTo(stackWindow)
                 .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
@@ -88,7 +89,6 @@ public class WindowManager implements WindowFinder, Themeable {
                 .asPalette()
                 .withTitle("Intensity")
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .build();
 
@@ -97,7 +97,6 @@ public class WindowManager implements WindowFinder, Themeable {
                 .focusable(true)
                 .withTitle("Colors")
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .build();
 
         WindowBuilder.make(messageWatcher)
@@ -105,7 +104,6 @@ public class WindowManager implements WindowFinder, Themeable {
                 .focusable(false)
                 .withTitle("Message Watcher")
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .resizeable(true)
                 .build();
 
@@ -115,7 +113,6 @@ public class WindowManager implements WindowFinder, Themeable {
                 .focusable(true)
                 .notInitiallyVisible()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
-                .dockTo(stackWindow)
                 .resizeable(true)
                 .build();
 
@@ -202,6 +199,26 @@ public class WindowManager implements WindowFinder, Themeable {
                     .withModel(stackPart)
                     .build();
         }
+    }
+
+    public BehaviorSubject<List<WyldCardFrame>> getFramesProvider() {
+        return framesProvider;
+    }
+
+    public BehaviorSubject<List<WyldCardFrame>> getVisibleWindowsProvider() {
+        return windowsProvider;
+    }
+
+    public BehaviorSubject<List<WyldCardFrame>> getVisiblePalettesProvider() {
+        return palettesProvider;
+    }
+
+
+
+    public void notifyWindowVisibilityChanged() {
+        framesProvider.onNext(getFrames(false));
+        windowsProvider.onNext(getWindows(true));
+        palettesProvider.onNext(getPalettes(true));
     }
 
 }

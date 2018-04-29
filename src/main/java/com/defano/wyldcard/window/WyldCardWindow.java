@@ -1,151 +1,76 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
-import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
-import java.awt.*;
+import java.awt.event.*;
 
-public interface WyldCardWindow<WindowType extends Window> {
+public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFrame> {
 
-    /**
-     * Gets the contents of this window; the root component (usually a JPanel) that contains all of the Swing elements
-     * present in this window.
-     *
-     * @return The window contents
-     */
-    JComponent getWindowPanel();
+    private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
+    private boolean ownsMenubar = false;
 
-    /**
-     * Update the contents of the window with the given model data.
-     *
-     * @param data An object representing the data to be displayed in the window.
-     */
-    void bindModel(Object data);
+    public WyldCardWindow() {
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                windowVisibleProvider.onNext(true);
+            }
 
-    /**
-     * Close and dispose the window.
-     */
-    default void dispose() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> SwingUtilities.getWindowAncestor(getWindowPanel()).dispose());
-    }
-
-    /**
-     * Gets the AWT window object that is bound to this application window (e.g., a JFrame or JDialog).
-     *
-     * @return The window object.
-     */
-    WindowType getWindow();
-
-    boolean hasMenuBar();
-
-    void setOwnsMenuBar(boolean ownsMenuBar);
-
-    default JMenuBar getWyldCardMenuBar() {
-        return HyperCardMenuBar.getInstance();
-    }
-
-    Observable<Boolean> getWindowVisibleProvider();
-
-    /**
-     * Specifies the default button in this window (i.e., the button that will be hilited and which activates when the
-     * return/enter key is pressed. Override in window subclasses to specify a default button.
-     *
-     * @return The default button on this window, or null if no button is a default.
-     */
-    @RunOnDispatch
-    default JButton getDefaultButton() {
-        return null;
-    }
-
-    @RunOnDispatch
-    default void positionWindow(int x, int y) {
-        DisplayMode mode = getWindow().getGraphicsConfiguration().getDevice().getDisplayMode();
-
-        int xPos = Math.min(x, mode.getWidth() - getWindow().getWidth());
-        int yPos = Math.min(y, mode.getHeight() - getWindow().getHeight());
-        xPos = Math.max(0, xPos);
-        yPos = Math.max(0, yPos);
-
-        getWindow().setLocation(xPos, yPos);
-    }
-
-    default void setContentPane(Container contentPane) {
-        SwingUtilities.invokeLater(() -> {
-            if (getWindow() instanceof JDialog) {
-                ((JDialog) getWindow()).setContentPane(contentPane);
-            } else if (getWindow() instanceof JFrame) {
-                ((JFrame) getWindow()).setContentPane(contentPane);
+            @Override
+            public void componentHidden(ComponentEvent e) {
+                windowVisibleProvider.onNext(false);
             }
         });
-    }
 
-    default void setDefaultCloseOperation(int operation) {
-        SwingUtilities.invokeLater(() -> {
-            if (getWindow() instanceof JDialog) {
-                ((JDialog) getWindow()).setDefaultCloseOperation(operation);
-            } else if (getWindow() instanceof JFrame) {
-                ((JFrame) getWindow()).setDefaultCloseOperation(operation);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                windowVisibleProvider.onNext(false);
             }
         });
-    }
 
-    @RunOnDispatch
-    default String getTitle() {
-        if (getWindow() instanceof JDialog) {
-            return ((JDialog) getWindow()).getTitle();
-        } else if (getWindow() instanceof JFrame) {
-            return ((JFrame) getWindow()).getTitle();
-        }
-
-        throw new IllegalStateException("Bug! Unimplemented window type.");
-    }
-
-    default void setTitle(String title) {
-        SwingUtilities.invokeLater(() -> {
-            if (getWindow() instanceof JDialog) {
-                ((JDialog) getWindow()).setTitle(title);
-            } else if (getWindow() instanceof JFrame) {
-                ((JFrame) getWindow()).setTitle(title);
+        // Swing does not allow a JMenuBar to "live" on multiple windows at once; this lets us "steal" the
+        // menubar each time the window comes into focus.
+        this.addWindowFocusListener(new WindowAdapter() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                WyldCardWindow.this.applyMenuBar();
             }
         });
+
+        setResizable(true);
     }
 
-    default void setAllowResizing(boolean resizable) {
-        SwingUtilities.invokeLater(() -> {
-            if (getWindow() instanceof JFrame) {
-                ((JFrame) getWindow()).setResizable(resizable);
-            }
-            if (getWindow() instanceof JDialog) {
-                ((JDialog) getWindow()).setResizable(resizable);
-            }
-        });
+    @Override
+    public JFrame getWindow() {
+        return this;
     }
 
-    default void applyMenuBar() {
-        SwingUtilities.invokeLater(() -> {
-            if (getWindow() instanceof JFrame) {
-                JFrame frame = (JFrame) getWindow();
-                if (hasMenuBar() || WindowManager.getInstance().isMacOsTheme()) {
-                    frame.setJMenuBar(getWyldCardMenuBar());
-                    frame.revalidate();
-                }
-            }
-        });
+    public Observable<Boolean> getWindowVisibleProvider() {
+        return windowVisibleProvider;
     }
 
-    default void toggleVisible() {
-        SwingUtilities.invokeLater(() -> getWindow().setVisible(!getWindow().isVisible()));
+    @Override
+    public boolean hasMenuBar() {
+        return this.ownsMenubar;
     }
 
-    @RunOnDispatch
-    default void setIsModal() {
-        if (getWindow() instanceof JDialog) {
-            ((JDialog) getWindow()).setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-        } else {
-            throw new IllegalStateException("This kind of window cannot be made modal");
-        }
+    @Override
+    public void setOwnsMenuBar(boolean ownsMenuBar) {
+        this.ownsMenubar = ownsMenuBar;
+    }
+
+    @Override
+    public void setVisible(boolean isVisible) {
+        super.setVisible(isVisible);
+        WindowManager.getInstance().notifyWindowVisibilityChanged();
+    }
+
+    @Override
+    public String toString() {
+        return getTitle();
     }
 }

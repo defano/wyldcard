@@ -15,7 +15,7 @@ import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
 import com.defano.wyldcard.util.StringUtils;
-import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
@@ -32,7 +32,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-public class ScriptEditor extends WyldCardFrame implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate {
+public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate {
 
     private PartModel model;
     private Script compiledScript;

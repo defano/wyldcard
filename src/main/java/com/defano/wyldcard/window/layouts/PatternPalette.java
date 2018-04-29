@@ -3,7 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.patterns.PatternPaletteButton;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.WyldCardWindow;
 import io.reactivex.functions.Consumer;
 
 import javax.swing.*;
@@ -11,7 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PatternPalette extends WyldCardFrame implements Consumer {
+public class PatternPalette extends WyldCardWindow implements Consumer {
 
     private final static int PATTERN_WIDTH = 30;
     private final static int PATTERN_HEIGHT = 20;

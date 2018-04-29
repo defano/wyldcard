@@ -7,7 +7,7 @@ import io.reactivex.subjects.Subject;
 import javax.swing.*;
 import java.awt.event.*;
 
-public abstract class WyldCardDialog extends JDialog implements WyldCardWindow<JDialog> {
+public abstract class WyldCardDialog extends JDialog implements WyldCardFrame<JDialog> {
 
     private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
     private boolean ownsMenubar;
@@ -56,5 +56,16 @@ public abstract class WyldCardDialog extends JDialog implements WyldCardWindow<J
     @Override
     public void setOwnsMenuBar(boolean ownsMenuBar) {
         this.ownsMenubar = ownsMenuBar;
+    }
+
+    @Override
+    public void setVisible(boolean isVisible) {
+        super.setVisible(isVisible);
+        WindowManager.getInstance().notifyWindowVisibilityChanged();
+    }
+
+    @Override
+    public String toString() {
+        return getTitle();
     }
 }

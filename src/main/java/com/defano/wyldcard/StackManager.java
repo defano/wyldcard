@@ -13,6 +13,7 @@ import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
+import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
@@ -131,8 +132,8 @@ public class StackManager implements StackNavigationObserver {
      */
     public List<StackPart> getOpenStacks() {
         ArrayList<StackPart> stacks = new ArrayList<>();
-        for (Window thisWindow : WindowManager.getInstance().getWindows()) {
-            if (thisWindow instanceof StackWindow && thisWindow.isVisible()) {
+        for (WyldCardFrame thisWindow : WindowManager.getInstance().getFrames(false)) {
+            if (thisWindow instanceof StackWindow && thisWindow.getWindow().isVisible()) {
                 stacks.add(((StackWindow) thisWindow).getStack());
             }
         }

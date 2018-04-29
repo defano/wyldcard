@@ -12,14 +12,14 @@ import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.FileDrop;
 import com.defano.wyldcard.util.Throttle;
-import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.WyldCardWindow;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends WyldCardFrame implements StackObserver, StackNavigationObserver, CurtainObserver {
+public class StackWindow extends WyldCardWindow implements StackObserver, StackNavigationObserver, CurtainObserver {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;

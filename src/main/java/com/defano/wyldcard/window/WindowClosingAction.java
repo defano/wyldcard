@@ -1,5 +1,5 @@
 package com.defano.wyldcard.window;
 
 public interface WindowClosingAction {
-    void onWindowClosing(WyldCardWindow window);
+    void onWindowClosing(WyldCardFrame window);
 }

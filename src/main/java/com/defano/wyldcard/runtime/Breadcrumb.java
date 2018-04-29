@@ -2,7 +2,6 @@ package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;

@@ -2,7 +2,6 @@ package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.parts.stack.StackModel;

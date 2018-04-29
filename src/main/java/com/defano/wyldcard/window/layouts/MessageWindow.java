@@ -8,7 +8,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.msgbox.MsgBoxModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.editor.MessageBoxTextField;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -18,7 +18,7 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class MessageWindow extends WyldCardFrame implements PropertyChangeObserver {
+public class MessageWindow extends WyldCardWindow implements PropertyChangeObserver {
 
     private MsgBoxModel partModel;
     private MessageBoxTextField messageBox;

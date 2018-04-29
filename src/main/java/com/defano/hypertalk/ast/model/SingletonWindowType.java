@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.model;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WyldCardWindow;
+import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WindowManager;
 
 public enum SingletonWindowType {
@@ -12,7 +12,7 @@ public enum SingletonWindowType {
     PATTERNS,
     TOOLS;
 
-    public WyldCardWindow getWindow(ExecutionContext context) {
+    public WyldCardFrame getWindow(ExecutionContext context) {
         switch (this) {
             case CARD:
                 return WindowManager.getInstance().getWindowForStack(context.getCurrentStack());

@@ -5,7 +5,7 @@ import com.defano.wyldcard.awt.MarkdownComboBox;
 import com.defano.wyldcard.debug.message.HandlerInvocation;
 import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.WyldCardWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class MessageWatcher extends WyldCardFrame {
+public class MessageWatcher extends WyldCardWindow {
 
     private JPanel windowPanel;
     private JCheckBox suppressIdleCheckBox;

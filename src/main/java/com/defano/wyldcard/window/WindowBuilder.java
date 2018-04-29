@@ -10,7 +10,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class WindowBuilder<T extends WyldCardWindow> {
+public class WindowBuilder<T extends WyldCardFrame> {
 
     private final static int DEFAULT_SEPARATION = 10;
 
@@ -19,7 +19,7 @@ public class WindowBuilder<T extends WyldCardWindow> {
     private Component relativeLocation = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
-    private WyldCardFrame dock;
+    private WyldCardWindow dock;
     private boolean isPalette = false;
     private boolean isFocusable = true;
     private WindowClosingAction actionOnClose = null;
@@ -31,7 +31,7 @@ public class WindowBuilder<T extends WyldCardWindow> {
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    public static WindowBuilder<WyldCardWindow> make(WyldCardFrame window) {
+    public static WindowBuilder<WyldCardFrame> make(WyldCardWindow window) {
         return new WindowBuilder<>(window);
     }
 
@@ -84,7 +84,7 @@ public class WindowBuilder<T extends WyldCardWindow> {
     }
 
     @RunOnDispatch
-    public WindowBuilder dockTo(WyldCardFrame window) {
+    public WindowBuilder dockTo(WyldCardWindow window) {
         this.dock = window;
         return this;
     }
@@ -152,7 +152,7 @@ public class WindowBuilder<T extends WyldCardWindow> {
     }
 
     @RunOnDispatch
-    public T buildReplacing(WyldCardWindow window) {
+    public T buildReplacing(WyldCardFrame window) {
         window.getWindow().dispose();
         return build();
     }
@@ -180,10 +180,23 @@ public class WindowBuilder<T extends WyldCardWindow> {
             this.window.getWindow().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    actionOnClose.onWindowClosing((WyldCardWindow) e.getWindow());
+                    actionOnClose.onWindowClosing((WyldCardFrame) e.getWindow());
                 }
             });
         }
+
+        // Notify the WindowManager when a new window is opened or closed
+        this.window.getWindow().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                WindowManager.getInstance().notifyWindowVisibilityChanged();
+            }
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                WindowManager.getInstance().notifyWindowVisibilityChanged();
+            }
+        });
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.

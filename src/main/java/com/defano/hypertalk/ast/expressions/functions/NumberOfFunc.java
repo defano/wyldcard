@@ -68,7 +68,7 @@ public class NumberOfFunc extends Expression {
             case BKGNDS:
                 return countBackgrounds(context);
             case WINDOWS:
-                return new Value(WindowManager.getInstance().getWindows().size());
+                return new Value(WindowManager.getInstance().getFrames(false).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }
