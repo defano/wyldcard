@@ -126,6 +126,8 @@ commandStmnt
     | 'answer' expression                                                                                               # answerDefaultCmd
     | 'ask' expression 'with' expression                                                                                # askExpWithCmd
     | 'ask' expression                                                                                                  # askExpCmd
+    | 'ask' 'file' expression                                                                                           # askFileCmd
+    | 'ask' 'file' expression 'with' expression                                                                         # askFileWithCmd
     | 'beep'                                                                                                            # beepCmdStmt
     | 'beep' expression                                                                                                 # beepMultipleStmt
     | 'choose' toolExpression 'tool'?                                                                                   # chooseToolCmdStmt

@@ -1257,6 +1257,16 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitAskFileCmd(HyperTalkParser.AskFileCmdContext ctx) {
+        return new AskFileCmd(ctx, (Expression) visit(ctx.expression()));
+    }
+
+    @Override
+    public Object visitAskFileWithCmd(HyperTalkParser.AskFileWithCmdContext ctx) {
+        return new AskFileCmd(ctx, (Expression) visit(ctx.expression(0)), (Expression) visit(ctx.expression(1)));
+    }
+
+    @Override
     public Object visitPutIntoCmd(HyperTalkParser.PutIntoCmdContext ctx) {
         return new PutCmd(ctx, (Expression) visit(ctx.listExpression()), Preposition.INTO, new MsgBoxExp(ctx));
     }
