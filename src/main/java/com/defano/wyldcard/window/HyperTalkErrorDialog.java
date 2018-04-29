@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.Breadcrumb;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.Token;
@@ -28,7 +29,7 @@ public class HyperTalkErrorDialog {
             errorDialogVisible = true;
 
             if (isEditable(e)) {
-                showEditableError(e.getMessage(), e.getBreadcrumb().getPartModel(new ExecutionContext()), e.getBreadcrumb().getToken());
+                showEditableError(e.getMessage(), e.getBreadcrumb().getContext().getCurrentStack(), e.getBreadcrumb().getPartModel(), e.getBreadcrumb().getToken());
             } else {
                 showUneditableError(e.getMessage());
             }
@@ -49,10 +50,10 @@ public class HyperTalkErrorDialog {
     }
 
     @RunOnDispatch
-    private void showEditableError(String message, PartModel offendingPart, Token offendingToken) {
+    private void showEditableError(String message, StackPart stackPart, PartModel offendingPart, Token offendingToken) {
         Object[] options = {"OK", "Script..."};
         int selection = JOptionPane.showOptionDialog(
-                WindowManager.getInstance().getFocusedStackWindow().getWindowPanel(),
+                WindowManager.getInstance().getWindowForStack(stackPart),
                 message,
                 "HyperTalk Error",
                 JOptionPane.YES_NO_OPTION,
