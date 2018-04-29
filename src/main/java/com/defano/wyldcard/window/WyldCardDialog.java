@@ -10,6 +10,8 @@ import java.awt.event.*;
 public abstract class WyldCardDialog extends JDialog implements WyldCardFrame<JDialog> {
 
     private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> windowFocusedProvider = BehaviorSubject.createDefault(false);
+
     private boolean ownsMenubar;
 
     public WyldCardDialog() {
@@ -34,6 +36,18 @@ public abstract class WyldCardDialog extends JDialog implements WyldCardFrame<JD
             }
         });
 
+        this.addWindowFocusListener(new WindowAdapter() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                windowFocusedProvider.onNext(true);
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                windowFocusedProvider.onNext(false);
+            }
+        });
+
         // Dispose dialog box if user presses escape
         this.getRootPane().registerKeyboardAction(e -> this.dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
@@ -46,6 +60,11 @@ public abstract class WyldCardDialog extends JDialog implements WyldCardFrame<JD
     @Override
     public Observable<Boolean> getWindowVisibleProvider() {
         return windowVisibleProvider;
+    }
+
+    @Override
+    public Observable<Boolean> getWindowFocusedProvider() {
+        return windowFocusedProvider;
     }
 
     @Override

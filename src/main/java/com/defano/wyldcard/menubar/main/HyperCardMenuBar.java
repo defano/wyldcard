@@ -38,6 +38,7 @@ public class HyperCardMenuBar extends JMenuBar {
         ObjectsMenu.instance.reset();
         FontMenu.instance.reset();
         StyleMenu.instance.reset();
+        WindowsMenu.instance.reset();
 
         // Reset menus in the menu bar
         removeAll();
@@ -50,6 +51,7 @@ public class HyperCardMenuBar extends JMenuBar {
         add(ObjectsMenu.instance);
         add(FontMenu.instance);
         add(StyleMenu.instance);
+        add(WindowsMenu.instance);
     }
 
     public void doMenu(String theMenuItem) throws HtSemanticException {

@@ -10,6 +10,8 @@ import java.awt.event.*;
 public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFrame> {
 
     private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Boolean> windowFocusedProvider = BehaviorSubject.createDefault(false);
+
     private boolean ownsMenubar = false;
 
     public WyldCardWindow() {
@@ -38,6 +40,12 @@ public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFr
             @Override
             public void windowGainedFocus(WindowEvent e) {
                 WyldCardWindow.this.applyMenuBar();
+                windowFocusedProvider.onNext(true);
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+                windowFocusedProvider.onNext(false);
             }
         });
 
@@ -49,8 +57,14 @@ public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFr
         return this;
     }
 
+    @Override
     public Observable<Boolean> getWindowVisibleProvider() {
         return windowVisibleProvider;
+    }
+
+    @Override
+    public Observable<Boolean> getWindowFocusedProvider() {
+        return windowFocusedProvider;
     }
 
     @Override

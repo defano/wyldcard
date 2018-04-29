@@ -49,6 +49,8 @@ public interface WyldCardFrame<WindowType extends Window> {
 
     Observable<Boolean> getWindowVisibleProvider();
 
+    Observable<Boolean> getWindowFocusedProvider();
+
     /**
      * Specifies the default button in this window (i.e., the button that will be hilited and which activates when the
      * return/enter key is pressed. Override in window subclasses to specify a default button.

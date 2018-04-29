@@ -31,6 +31,8 @@ public class WyldCard extends StackManager implements PartFinder {
         return instance;
     }
 
+    private WyldCard() {}
+
     public static void main(String argv[]) {
 
         try {
@@ -47,8 +49,6 @@ public class WyldCard extends StackManager implements PartFinder {
 
         getInstance().startup();
     }
-
-    private WyldCard() {}
 
     private void startup() {
         StackPart stack = focusStack(StackPart.newStack(new ExecutionContext()));
