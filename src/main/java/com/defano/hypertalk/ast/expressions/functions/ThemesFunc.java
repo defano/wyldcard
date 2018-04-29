@@ -15,6 +15,6 @@ public class ThemesFunc extends Expression {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return Value.ofItems(WindowManager.getInstance().getLookAndFeelNames());
+        return Value.ofItems(WindowManager.getInstance().getThemeNames());
     }
 }

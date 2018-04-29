@@ -1,21 +1,14 @@
 package com.defano.wyldcard.window;
 
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.window.forms.*;
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
-public class WindowManager implements WindowFinder {
+public class WindowManager implements WindowFinder, Themeable {
 
     private final static WindowManager instance = new WindowManager();
 
@@ -30,7 +23,6 @@ public class WindowManager implements WindowFinder {
     private final MessageWatcher messageWatcher = new MessageWatcher();
     private final VariableWatcher variableWatcher = new VariableWatcher();
     private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
-    private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
 
     private WindowManager() {
     }
@@ -41,7 +33,7 @@ public class WindowManager implements WindowFinder {
 
     @RunOnDispatch
     public void start() {
-        lookAndFeelClassProvider.onNext(UIManager.getSystemLookAndFeelClassName());
+        themeProvider.onNext(UIManager.getSystemLookAndFeelClassName());
 
         StackWindow stackWindow = getFocusedStackWindow();
 
@@ -212,78 +204,4 @@ public class WindowManager implements WindowFinder {
         }
     }
 
-    @RunOnDispatch
-    public List<Value> getLookAndFeelNames() {
-        ArrayList<Value> lafs = new ArrayList<>();
-
-        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
-            lafs.add(new Value(thisLaf.getName()));
-        }
-
-        return lafs;
-    }
-
-    @RunOnDispatch
-    public String getLookAndFeelClassForName(String lafName) {
-        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
-            if (thisLaf.getName().equalsIgnoreCase(lafName)) {
-                return thisLaf.getClassName();
-            }
-        }
-
-        return null;
-    }
-
-    @RunOnDispatch
-    public String getLookAndFeelName(String lafClassName) {
-        for (UIManager.LookAndFeelInfo thisLaf : UIManager.getInstalledLookAndFeels()) {
-            if (thisLaf.getClassName().equalsIgnoreCase(lafClassName)) {
-                return thisLaf.getName();
-            }
-        }
-
-        return null;
-    }
-
-    public void setLookAndFeel(String lafClassName) {
-        if (lafClassName != null) {
-
-            lookAndFeelClassProvider.onNext(lafClassName);
-
-            SwingUtilities.invokeLater(() -> {
-                try {
-                    UIManager.setLookAndFeel(lafClassName);
-
-                    for (Window thisWindow : JFrame.getWindows()) {
-                        SwingUtilities.updateComponentTreeUI(thisWindow);
-
-                        if (thisWindow instanceof HyperCardWindow) {
-                            HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
-                            thisWyldWindow.getWindow().pack();
-                            thisWyldWindow.applyMenuBar();
-                        }
-                    }
-
-                    getFocusedStackWindow().applyMenuBar();
-
-                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                    e.printStackTrace();
-                }
-            });
-        }
-    }
-
-    @RunOnDispatch
-    public String getActiveLookAndFeelName() {
-        return UIManager.getLookAndFeel().getName();
-    }
-
-    public Observable<String> getLookAndFeelClassProvider() {
-        return lookAndFeelClassProvider;
-    }
-
-    @RunOnDispatch
-    public boolean isMacOs() {
-        return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
-    }
 }

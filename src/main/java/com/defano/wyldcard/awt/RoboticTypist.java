@@ -26,7 +26,7 @@ public class RoboticTypist {
     private Robot robot;
 
     private RoboticTypist() {
-        commandKey = WindowManager.getInstance().isMacOs() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+        commandKey = WindowManager.getInstance().isMacOsTheme() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
 
         for (int i = (int) '0'; i <= (int) '9'; i++) {
             keystrokeMap.put((char) i, new KeyStroke(i, false));

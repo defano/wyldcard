@@ -119,7 +119,7 @@ public class FileMenu extends HyperCardMenu {
                 .disabled()
                 .build(this);
 
-        if (!WindowManager.getInstance().isMacOs()) {
+        if (!WindowManager.getInstance().isMacOsTheme()) {
 
             this.addSeparator();
 

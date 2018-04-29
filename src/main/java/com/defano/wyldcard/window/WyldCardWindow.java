@@ -128,7 +128,7 @@ public interface HyperCardWindow<WindowType extends Window> {
         SwingUtilities.invokeLater(() -> {
             if (getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) getWindow();
-                if (hasMenuBar() || WindowManager.getInstance().isMacOs()) {
+                if (hasMenuBar() || WindowManager.getInstance().isMacOsTheme()) {
                     frame.setJMenuBar(getWyldCardMenuBar());
                     frame.revalidate();
                 }
