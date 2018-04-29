@@ -7,6 +7,7 @@ import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.StringUtils;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.wyldcard.window.WyldCardFrame;
@@ -41,13 +42,13 @@ public interface WindowFinder {
 
     @RunOnDispatch
     default WyldCardFrame findWindowById(int id) throws PartException {
-        Optional<Window> foundWindow = Arrays.stream(JFrame.getWindows())
+        Optional<WyldCardFrame> foundWindow = getFrames(false).stream()
                 .filter(p -> p instanceof WyldCardWindow)
                 .filter(p -> System.identityHashCode(p) == id)
                 .findFirst();
 
         if (foundWindow.isPresent()) {
-            return (WyldCardFrame) foundWindow.get();
+            return foundWindow.get();
         } else {
             throw new PartException("No such window.");
         }
@@ -55,13 +56,12 @@ public interface WindowFinder {
 
     @RunOnDispatch
     default WyldCardFrame findWindowByName(String name) throws PartException {
-        Optional<Window> foundWindow = Arrays.stream(JFrame.getWindows())
-                .filter(p -> p instanceof WyldCardWindow)
-                .filter(p -> ((WyldCardWindow) p).getTitle().equalsIgnoreCase(name))
+        Optional<WyldCardFrame> foundWindow = getFrames(false).stream()
+                .filter(p -> p.getTitle().equalsIgnoreCase(name))
                 .findFirst();
 
         if (foundWindow.isPresent()) {
-            return (WyldCardFrame) foundWindow.get();
+            return foundWindow.get();
         } else {
             throw new PartException("No such window.");
         }
@@ -100,6 +100,13 @@ public interface WindowFinder {
                 .orElse(null);
     }
 
+    /**
+     * Gets a list of names of all WyldCard-managed windows (windows, dialogs and palettes) irrespective of whether the
+     * window is visible or not. Does not return the name of any system-produced window not generated using
+     * {@link com.defano.wyldcard.window.WindowBuilder}.
+     *
+     * @return A list of names of every WyldCard-managed window.
+     */
     @RunOnDispatch
     default List<Value> getWindowNames() {
         return getFrames(false).stream()
@@ -107,6 +114,13 @@ public interface WindowFinder {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets a list of WyldCard-managed windows of any type. Does not include system dialogs or other windows not
+     * produced using {@link com.defano.wyldcard.window.WindowBuilder}.
+     *
+     * @param onlyVisible When true, only visible windows are returned.
+     * @return A list of WyldCard-managed windows.
+     */
     @RunOnDispatch
     default List<WyldCardFrame> getFrames(boolean onlyVisible) {
         ArrayList<WyldCardFrame> windows = new ArrayList<>();
@@ -114,8 +128,7 @@ public interface WindowFinder {
         for (Window thisWindow : JFrame.getWindows()) {
             if (thisWindow instanceof WyldCardFrame &&
                     ((WyldCardFrame) thisWindow).getTitle() != null &&
-                    (!onlyVisible || thisWindow.isVisible()))
-            {
+                    (!onlyVisible || thisWindow.isVisible())) {
                 windows.add((WyldCardFrame) thisWindow);
             }
         }
@@ -137,8 +150,14 @@ public interface WindowFinder {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Gets a list of all focusable windows (including dialogs and focusable palettes).
+     *
+     * @param onlyVisible When true, only visible windows are returned.
+     * @return A list of focusable windows (of any kind).
+     */
     @RunOnDispatch
-    default List<WyldCardFrame> getFocusableWindows(boolean onlyVisible) {
+    default List<WyldCardFrame> getFocusableFrames(boolean onlyVisible) {
         return getFrames(onlyVisible).stream()
                 .filter(wyldCardFrame -> wyldCardFrame.getWindow().isFocusableWindow())
                 .collect(Collectors.toList());

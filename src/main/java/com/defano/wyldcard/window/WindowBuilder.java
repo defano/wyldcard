@@ -221,26 +221,6 @@ public class WindowBuilder<T extends WyldCardFrame> {
             if (isPalette) {
                 dock.getWindow().addWindowListener(new PaletteActivationManager(window));
             }
-
-            // When dock window moves, move docked windows too (keep relative window layout)
-            dock.getWindow().addComponentListener(new ComponentAdapter() {
-                private Point lastLocation;
-
-                @Override
-                public void componentMoved(ComponentEvent e) {
-                    super.componentMoved(e);
-                    Point location = e.getComponent().getLocation();
-
-                    if (lastLocation != null) {
-                        int deltaX = location.x - lastLocation.x;
-                        int deltaY = location.y - lastLocation.y;
-
-                        window.getWindow().setLocation(window.getWindow().getLocation().x + deltaX, window.getWindow().getLocation().y + deltaY);
-                    }
-
-                    lastLocation = location;
-                }
-            });
         }
 
         this.window.applyMenuBar();

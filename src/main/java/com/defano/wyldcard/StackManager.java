@@ -13,6 +13,7 @@ import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
+import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
@@ -268,6 +269,9 @@ public class StackManager implements StackNavigationObserver {
             PartToolContext.getInstance().deselectAllParts();
             focusedStack.blockingFirst().removeNavigationObserver(this);
         }
+
+        // Make the focused stack the window dock
+        WindowDock.getInstance().setDock(stackPart.getOwningStackWindow());
 
         focusedStack.onNext(stackPart);
         cardCount.setSource(stackPart.getCardCountProvider());

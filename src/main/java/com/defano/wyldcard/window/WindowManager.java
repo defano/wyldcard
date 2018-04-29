@@ -18,6 +18,7 @@ public class WindowManager implements WindowFinder, Themeable {
     private final BehaviorSubject<List<WyldCardFrame>> framesProvider = BehaviorSubject.createDefault(new ArrayList<>());
     private final BehaviorSubject<List<WyldCardFrame>> windowsProvider = BehaviorSubject.createDefault(new ArrayList<>());
     private final BehaviorSubject<List<WyldCardFrame>> palettesProvider = BehaviorSubject.createDefault(new ArrayList<>());
+    private final BehaviorSubject<Boolean> palettesDockedProvider = BehaviorSubject.createDefault(false);
 
     private final MessageWindow messageWindow = new MessageWindow();
     private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
@@ -214,7 +215,7 @@ public class WindowManager implements WindowFinder, Themeable {
     }
 
     public WyldCardFrame nextWindow() {
-        List<WyldCardFrame> windows = getFocusableWindows(true);
+        List<WyldCardFrame> windows = getFocusableFrames(true);
 
         for (int index = 0; index < windows.size(); index++) {
             if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
@@ -230,7 +231,7 @@ public class WindowManager implements WindowFinder, Themeable {
     }
 
     public WyldCardFrame prevWindow() {
-        List<WyldCardFrame> windows = getFocusableWindows(true);
+        List<WyldCardFrame> windows = getFocusableFrames(true);
 
         for (int index = 0; index < windows.size(); index++) {
             if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
@@ -243,6 +244,22 @@ public class WindowManager implements WindowFinder, Themeable {
         }
 
         return null;
+    }
+
+    public void toggleDockPalettes() {
+        palettesDockedProvider.onNext(!palettesDockedProvider.blockingFirst());
+
+        if (palettesDockedProvider.blockingFirst()) {
+            WindowDock.getInstance().undockWindows(getPalettes(false));
+            WindowDock.getInstance().setDock(getFocusedStackWindow());
+            WindowDock.getInstance().dockWindows(getPalettes(false));
+        } else {
+            WindowDock.getInstance().undockWindows(getPalettes(false));
+        }
+    }
+
+    public BehaviorSubject<Boolean> getPalettesDockedProvider() {
+        return palettesDockedProvider;
     }
 
     void notifyWindowVisibilityChanged() {

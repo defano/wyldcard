@@ -1,8 +1,10 @@
 package com.defano.wyldcard.parts.editor;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
+import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldPart;
@@ -74,6 +76,8 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
     private void doNewButton() {
         CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
         ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
+        theButton.getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_STYLE, new Value("transparent"));
+
         PartToolContext.getInstance().setSelectedPart(theButton);
 
         new PartResizer(theButton, theCard);
