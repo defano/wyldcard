@@ -59,6 +59,7 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_FOUNDTEXT = "foundtext";
     public final static String PROP_LOCKMESSAGES = "lockmessages";
     public final static String PROP_THEME = "theme";
+    public final static String PROP_THEMS = "themes";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -93,6 +94,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 
+        defineComputedReadOnlyProperty(PROP_THEMS, (context, model, propertyName) -> Value.ofItems(WindowManager.getInstance().getLookAndFeelNames()));
         defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WindowManager.getInstance().getActiveLookAndFeelName()));
         defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WindowManager.getInstance().setLookAndFeel(WindowManager.getInstance().getLookAndFeelClassForName(value.stringValue())));
 

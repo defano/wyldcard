@@ -517,7 +517,6 @@ zeroArgFunc
     | 'voices'                                                                                                          # voicesFunc
     | 'windows'                                                                                                         # windowsFunc
     | 'stacks'                                                                                                          # stacksFunc
-    | 'themes'                                                                                                          # themesFunc
     ;
 
 singleArgFunc
