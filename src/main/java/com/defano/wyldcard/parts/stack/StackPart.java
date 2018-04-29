@@ -21,7 +21,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.StackWindow;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;

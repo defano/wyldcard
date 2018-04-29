@@ -35,9 +35,7 @@ public abstract class WyldCardDialog extends JDialog implements WyldCardWindow<J
         });
 
         // Dispose dialog box if user presses escape
-        this.getRootPane().registerKeyboardAction(e -> {
-            this.dispose();
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+        this.getRootPane().registerKeyboardAction(e -> this.dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     @Override

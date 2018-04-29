@@ -1,7 +1,7 @@
 package com.defano.wyldcard.window;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.menu.main.HyperCardMenuBar;
+import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
 import io.reactivex.Observable;
 

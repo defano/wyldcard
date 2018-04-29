@@ -14,7 +14,7 @@ import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WyldCardWindow;
-import com.defano.wyldcard.window.StackWindow;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;

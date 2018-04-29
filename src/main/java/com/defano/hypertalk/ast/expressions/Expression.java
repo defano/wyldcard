@@ -2,6 +2,8 @@ package com.defano.hypertalk.ast.expressions;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.expressions.factor.FactorAction;
+import com.defano.hypertalk.ast.expressions.factor.FactorAssociation;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;

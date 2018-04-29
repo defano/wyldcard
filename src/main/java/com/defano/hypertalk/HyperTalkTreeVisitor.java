@@ -1,5 +1,6 @@
 package com.defano.hypertalk;
 
+import com.defano.hypertalk.ast.expressions.parts.*;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperator;
 import com.defano.hypertalk.ast.expressions.operators.BinaryOperatorExp;
 import com.defano.hypertalk.ast.expressions.operators.UnaryOperator;
@@ -19,7 +20,7 @@ import com.defano.hypertalk.ast.statements.commands.*;
 import com.defano.hypertalk.ast.statements.conditional.EditScriptCmd;
 import com.defano.hypertalk.ast.statements.conditional.IfStatement;
 import com.defano.hypertalk.ast.statements.conditional.ThenElseBlock;
-import com.defano.hypertalk.ast.statements.loop.*;
+import com.defano.hypertalk.ast.statements.repeat.*;
 import com.defano.hypertalk.parser.HyperTalkBaseVisitor;
 import com.defano.hypertalk.parser.HyperTalkParser;
 import com.defano.jsegue.SegueName;

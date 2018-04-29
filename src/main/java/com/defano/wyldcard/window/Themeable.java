@@ -50,7 +50,7 @@ public interface Themeable {
 
     default void setTheme(String themeClassName) {
         if (themeClassName != null) {
-            themeProvider.onNext(themeClassName);
+            themeProvider.onNext(getThemeNameForClass(themeClassName));
 
             SwingUtilities.invokeLater(() -> {
                 try {
@@ -83,7 +83,7 @@ public interface Themeable {
         return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
     }
 
-    default Observable<String> getThemeClassProvider() {
+    default Observable<String> getThemeProvider() {
         return themeProvider;
     }
 }

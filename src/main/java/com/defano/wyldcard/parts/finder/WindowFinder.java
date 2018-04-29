@@ -9,8 +9,8 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WyldCardWindow;
-import com.defano.wyldcard.window.StackWindow;
-import com.defano.wyldcard.window.forms.ScriptEditor;
+import com.defano.wyldcard.window.layouts.StackWindow;
+import com.defano.wyldcard.window.layouts.ScriptEditor;
 
 import javax.swing.*;
 import java.awt.*;

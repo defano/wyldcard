@@ -1,7 +1,6 @@
 package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.PartException;
@@ -14,7 +13,7 @@ import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
-import com.defano.wyldcard.window.StackWindow;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;

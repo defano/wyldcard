@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
-import com.defano.wyldcard.menu.main.HyperCardMenuBar;
+import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.hypertalk.ast.model.Ordinal;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;

@@ -4,7 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.window.forms.*;
+import com.defano.wyldcard.window.layouts.*;
 
 import javax.swing.*;
 
@@ -33,7 +33,7 @@ public class WindowManager implements WindowFinder, Themeable {
 
     @RunOnDispatch
     public void start() {
-        themeProvider.onNext(UIManager.getSystemLookAndFeelClassName());
+        themeProvider.onNext(UIManager.getLookAndFeel().getName());
 
         StackWindow stackWindow = getFocusedStackWindow();
 

@@ -7,7 +7,7 @@ import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.forms.ScriptEditor;
+import com.defano.wyldcard.window.layouts.ScriptEditor;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 

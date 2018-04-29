@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.menu.main.HyperCardMenuBar;
+import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;

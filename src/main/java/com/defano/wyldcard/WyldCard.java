@@ -12,7 +12,7 @@ import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
-import com.defano.wyldcard.window.HyperTalkErrorDialog;
+import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
 
 import javax.swing.*;

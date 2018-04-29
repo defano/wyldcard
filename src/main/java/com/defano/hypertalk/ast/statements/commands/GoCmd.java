@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.hypertalk.ast.expressions.CompositePartExp;
-import com.defano.hypertalk.ast.expressions.StackPartExp;
+import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
+import com.defano.hypertalk.ast.expressions.parts.StackPartExp;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
@@ -20,7 +20,7 @@ import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.window.StackWindow;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
 

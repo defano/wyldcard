@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.expressions.containers;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.forms.MessageWindow;
+import com.defano.wyldcard.window.layouts.MessageWindow;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
