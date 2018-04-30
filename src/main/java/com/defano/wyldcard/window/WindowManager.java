@@ -235,7 +235,7 @@ public class WindowManager implements WindowFinder, Themeable {
 
         for (int index = 0; index < windows.size(); index++) {
             if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
-                if (index - 1 > 0) {
+                if (index - 1 >= 0) {
                     return windows.get(index - 1);
                 } else {
                     return windows.get(windows.size() - 1);

@@ -5,8 +5,6 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -19,7 +17,6 @@ public class WindowBuilder<T extends WyldCardFrame> {
     private Component relativeLocation = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
-    private WyldCardWindow dock;
     private boolean isPalette = false;
     private boolean isFocusable = true;
     private WindowClosingAction actionOnClose = null;
@@ -84,22 +81,11 @@ public class WindowBuilder<T extends WyldCardFrame> {
     }
 
     @RunOnDispatch
-    public WindowBuilder dockTo(WyldCardWindow window) {
-        this.dock = window;
-        return this;
-    }
-
-    public WindowBuilder withLocation(int x, int y) {
-        location = new Point(x, y);
-        return this;
-    }
-
-    @RunOnDispatch
     public WindowBuilder withLocationUnderneath(Component component) {
         this.window.getWindow().pack();
 
         int targetY = (int) component.getLocation().getY() + component.getHeight() + DEFAULT_SEPARATION;
-        int targetX = (int) component.getLocation().getX() - ((window.getWindow().getWidth() / 2) - (component.getWidth() / 2));
+        int targetX = (int) component.getLocation().getX();
         location = new Point(targetX, targetY);
 
         return this;
@@ -215,13 +201,6 @@ public class WindowBuilder<T extends WyldCardFrame> {
             minHeight += glm.getMargin().top + glm.getMargin().bottom;
         }
         this.window.getWindow().setMinimumSize(new Dimension(minWidth, minHeight));
-
-        if (dock != null) {
-
-            if (isPalette) {
-                dock.getWindow().addWindowListener(new PaletteActivationManager(window));
-            }
-        }
 
         this.window.applyMenuBar();
         this.window.getWindow().setVisible(initiallyVisible);

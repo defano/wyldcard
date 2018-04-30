@@ -2,7 +2,6 @@ package com.defano.wyldcard.menubar.main;
 
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
-import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
@@ -11,7 +10,6 @@ import com.defano.wyldcard.window.layouts.StackWindow;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class WindowsMenu extends HyperCardMenu {
 
@@ -68,6 +66,7 @@ public class WindowsMenu extends HyperCardMenu {
     private void addPalettes(JMenuItem parent) {
         MenuItemBuilder.ofCheckType()
                 .named("Dock to Stack")
+                .withShiftShortcut('D')
                 .withAction(a -> WindowManager.getInstance().toggleDockPalettes())
                 .withCheckmarkProvider(WindowManager.getInstance().getPalettesDockedProvider())
                 .build(parent);

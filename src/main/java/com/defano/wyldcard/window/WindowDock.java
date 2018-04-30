@@ -30,7 +30,7 @@ public class WindowDock extends ComponentAdapter {
 
             this.dock = dock;
             this.dock.getWindow().addComponentListener(this);
-            this.lastLocation = null;
+            this.lastLocation = dock.getWindow().getLocation();
         }
     }
 

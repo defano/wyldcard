@@ -16,7 +16,6 @@ import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
 import com.defano.wyldcard.window.WindowManager;
 
 import javax.swing.*;
-import java.util.Arrays;
 
 /**
  * The HyperCard runtime environment; this is the program's main class and is
