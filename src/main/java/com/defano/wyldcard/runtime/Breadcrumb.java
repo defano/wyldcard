@@ -9,17 +9,20 @@ import org.antlr.v4.runtime.Token;
 
 public class Breadcrumb {
 
+    private final ExecutionContext context;
     private final Token token;
     private final PartSpecifier part;
 
-    public Breadcrumb (Token token, PartSpecifier part) {
+    public Breadcrumb (ExecutionContext context, Token token) {
+        this.context = context;
         this.token = token;
-        this.part = part;
+        this.part = context.getStackFrame().getMe();
     }
 
     public Breadcrumb (Token token) {
         this.token = token;
         this.part = null;
+        this.context = null;
     }
 
     public Range getCharRange() {
@@ -41,6 +44,10 @@ public class Breadcrumb {
         return part;
     }
 
+    public ExecutionContext getContext() {
+        return context;
+    }
+
     @Override
     public String toString() {
         String breadcrumb = "";
@@ -56,7 +63,7 @@ public class Breadcrumb {
         return breadcrumb;
     }
 
-    public PartModel getPartModel(ExecutionContext context) {
+    public PartModel getPartModel() {
         PartModel partModel = null;
 
         if (getPart() != null) {

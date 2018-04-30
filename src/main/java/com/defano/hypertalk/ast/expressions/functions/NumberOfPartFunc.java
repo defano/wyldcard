@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.finder.PartFinder;
+import com.defano.wyldcard.parts.finder.OrderedPartFinder;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
@@ -16,11 +16,9 @@ import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.WindowManager;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.awt.*;
 
 public class NumberOfPartFunc extends Expression {
 
@@ -46,11 +44,11 @@ public class NumberOfPartFunc extends Expression {
         }
 
         if (part instanceof CardModel) {
-            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.CARD));
+            return new Value(((OrderedPartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.CARD));
         }
 
         if (part instanceof BackgroundModel) {
-            return new Value(((PartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BACKGROUND));
+            return new Value(((OrderedPartFinder) part.getParentPartModel()).getPartNumber(context, part, PartType.BACKGROUND));
         }
 
         if (part instanceof MsgBoxModel) {
@@ -64,9 +62,9 @@ public class NumberOfPartFunc extends Expression {
         throw new HtSemanticException("Don't know how to get the number of that.");
     }
 
-    private Value getNumberOfWindow(HyperCardWindow window) throws HtSemanticException {
-        for (int windowNumber = 1; windowNumber <= WindowManager.getInstance().getWindows().size(); windowNumber++) {
-            if (window == WindowManager.getInstance().getWindows().get(windowNumber - 1)) {
+    private Value getNumberOfWindow(WyldCardFrame window) throws HtSemanticException {
+        for (int windowNumber = 1; windowNumber <= WindowManager.getInstance().getFrames(false).size(); windowNumber++) {
+            if (window == WindowManager.getInstance().getFrames(false).get(windowNumber - 1)) {
                 return new Value(windowNumber);
             }
         }

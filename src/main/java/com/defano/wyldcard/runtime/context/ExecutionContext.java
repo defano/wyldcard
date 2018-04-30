@@ -5,20 +5,21 @@ import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.WindowProxyPartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 
 import java.util.List;
@@ -30,6 +31,14 @@ import java.util.Stack;
  * This object maintains the call stack, local and global variables, the part referred to as 'me', any pending visual
  * effect, and any return value passed out of a function handler. See {@link StackFrame}
  * <p>
+ * Stack binding: When a script is executing, it must execute in the context of a specific stack (i.e., 'card 3' refers
+ * to the third card of which stack?). This is problematic when multiple stacks are open and active (and each
+ * potentially may have their own scripts executing concurrently). To solve this problem, an execution context is said
+ * to either be 'bound' or 'unbound'. An unbound execution context refers to whichever stack is currently in focus in
+ * the windowing system. A bound execution context refers to a specific stack irrespective of whether that stack has
+ * window focus. UI commands (like menubar commands) should typically use an unbound context (referring to which stack
+ * is in focus), but messages sent to a part or stack should utilize a bound context.
+ * <p>
  * A note about threading: When HyperCard sends a message to a part (like 'mouseDown') the handler associated with that
  * message executes in its own thread. Any messages sent or functions invoked from that system message handler execute
  * in the same thread. Thus, each system message effectively produces its own thread (albeit threads are pooled and
@@ -40,10 +49,60 @@ public class ExecutionContext {
     // Globals are shared across contexts; SymbolTable is thread safe.
     private final static SymbolTable globals = new BasicSymbolTable();
 
+    private StackPart stack;                                // WyldCard stack that this script is bound to
     private Stack<StackFrame> callStack = new Stack<>();    // Call stack
     private Value result;                                   // Value returned by 'the result'
     private CardPart card;                                  // "Current" card in the context of this execution
     private PartSpecifier theTarget;                        // Part that the message was initially sent
+
+    /**
+     * Creates a unbound execution context. Scripts executing with a unbound context will operate on whichever stack has
+     * focus during runtime. Note that the focused stack may change while the script is executing.
+     * <p>
+     * Typically, the message box and menus should execute in a dynamic context; scripts attached to parts, cards,
+     * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
+     */
+    public ExecutionContext() {
+        this.stack = null;
+    }
+
+    /**
+     * Creates a part-bound execution context. Scripts executing in a part-bound context will operate on whichever stack
+     * the given part is a component of.
+     * <p>
+     * Scripts attached to parts, cards, backgrounds and stacks should create contexts using this constructor.
+     *
+     * @param part A part, the owning stack of which will be bound to this execution context. If the given part is not
+     *             a component in a stack (either because the type of part is a not a component--like the message box--
+     *             or because it hasn't been bound to a stack yet), then this constructor creates a dynamically bound
+     *             context. See {@link ExecutionContext()}.
+     */
+    public ExecutionContext(Part part) {
+        this.stack = part.getOwningStack();
+    }
+
+    /**
+     * Creates a part-bound execution context from a part model. Scripts executing in a part-bound context will operate
+     * on whichever stack the given part is a component of.
+     * <p>
+     * Scripts attached to parts, cards, backgrounds and stacks should create contexts using this constructor or
+     * {@link #ExecutionContext(Part)} when a controller object is available.
+     *
+     * @param partModel The model of the part that is a component of the stack that this context should be bound to.
+     * @throws IllegalStateException If the given part model is not bound to a stack.
+     */
+    public ExecutionContext(PartModel partModel) {
+        StackModel stackModel = partModel.getParentStackModel();
+        if (stackModel != null) {
+            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(stackModel);
+            if (stackWindow != null) {
+                this.stack = stackWindow.getStack();
+                return;
+            }
+        }
+
+        throw new IllegalStateException("Attempt to create a part-bound execution context from a part not connected to a stack.");
+    }
 
     /**
      * Gets the global variable symbol table.
@@ -61,8 +120,8 @@ public class ExecutionContext {
     /**
      * Pushes a new frame onto the call stack representing a handler or function invocation.
      *
-     * @param message The name of the message (i.e., handler or function) that this frame represents.
-     * @param me The part which the 'me' keyword refers to in this context.
+     * @param message   The name of the message (i.e., handler or function) that this frame represents.
+     * @param me        The part which the 'me' keyword refers to in this context.
      * @param arguments Evaluated arguments passed to this handler or function.
      */
     public void pushStackFrame(String message, PartSpecifier me, List<Value> arguments) {
@@ -225,11 +284,7 @@ public class ExecutionContext {
      * @throws PartException Thrown if no such part exists
      */
     public PartModel getPart(PartSpecifier ps) throws PartException {
-        if (ps instanceof WindowSpecifier) {
-            return new WindowProxyPartModel(WindowManager.getInstance().findWindow((WindowSpecifier) ps));
-        } else {
-            return getActiveStack().getStackModel().findPart(this, ps);
-        }
+        return WyldCard.getInstance().findPart(this, ps);
     }
 
     /**
@@ -282,18 +337,18 @@ public class ExecutionContext {
      * interrogate when looking for parts and properties.
      * <p>
      * In most cases, this method returns the card visible to the user (not accounting for screen lock; equivalent to
-     * {@link WyldCard#getActiveStackDisplayedCard()} but during certain operations (like card sorting) this method may
+     * {@link WyldCard#getFocusedCard()} but during certain operations (like card sorting) this method may
      * return a different value.
      * <p>
      * In general, scripts should always use this method for getting a reference to the active card; UI elements (like
-     * menus and palettes) should use {@link WyldCard#getActiveStackDisplayedCard()}.
+     * menus and palettes) should use {@link WyldCard#getFocusedCard()}.
      *
      * @return The active card in the context of this script execution.
      */
     public CardPart getCurrentCard() {
         CardPart currentCard = this.card;
         if (currentCard == null) {
-            return getActiveStack().getDisplayedCard();
+            return getCurrentStack().getDisplayedCard();
         } else {
             return currentCard;
         }
@@ -312,12 +367,19 @@ public class ExecutionContext {
     }
 
     /**
-     * Gets the stack which this script is operating on.
+     * Gets the stack on which this script is operating. For dynamically-bound contexts, this value returns whichever
+     * script has window focus; for part-bound contexts this returns the owning stack of the bound part.
+     * <p>
+     * See {@link ExecutionContext()} and {@link ExecutionContext(Part)}
      *
-     * @return The current stack
+     * @return The stack that is in scope for this execution.
      */
-    public StackPart getActiveStack() {
-        return WyldCard.getInstance().getActiveStack();
+    public StackPart getCurrentStack() {
+        return this.stack == null ? WindowManager.getInstance().getFocusedStackWindow().getStack() : this.stack;
+    }
+
+    public void setCurrentStack(StackPart stack) {
+        this.stack = stack;
     }
 
     /**

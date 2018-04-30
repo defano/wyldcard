@@ -1,14 +1,14 @@
 package com.defano.wyldcard.window;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class WindowBuilder<T extends HyperCardWindow> {
+public class WindowBuilder<T extends WyldCardFrame> {
 
     private final static int DEFAULT_SEPARATION = 10;
 
@@ -17,10 +17,9 @@ public class WindowBuilder<T extends HyperCardWindow> {
     private Component relativeLocation = null;
     private boolean initiallyVisible = true;
     private boolean resizable = false;
-    private HyperCardFrame dock;
     private boolean isPalette = false;
     private boolean isFocusable = true;
-    private boolean quitOnClose = false;
+    private WindowClosingAction actionOnClose = null;
 
     private WindowBuilder(T window) {
         this.window = window;
@@ -29,11 +28,11 @@ public class WindowBuilder<T extends HyperCardWindow> {
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
-    public static WindowBuilder<HyperCardWindow> make(HyperCardFrame window) {
+    public static WindowBuilder<WyldCardFrame> make(WyldCardWindow window) {
         return new WindowBuilder<>(window);
     }
 
-    public static WindowBuilder<HyperCardDialog> make(HyperCardDialog window) {
+    public static WindowBuilder<WyldCardDialog> make(WyldCardDialog window) {
         return new WindowBuilder<>(window);
     }
 
@@ -50,14 +49,14 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     @RunOnDispatch
-    public WindowBuilder quitOnClose() {
-        this.quitOnClose = true;
+    public WindowBuilder setDefaultCloseOperation(int operation) {
+        window.setDefaultCloseOperation(operation);
         return this;
     }
 
     @RunOnDispatch
-    public WindowBuilder setDefaultCloseOperation(int operation) {
-        window.setDefaultCloseOperation(operation);
+    public WindowBuilder withActionOnClose(WindowClosingAction actionOnClose) {
+        this.actionOnClose = actionOnClose;
         return this;
     }
 
@@ -82,22 +81,11 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     @RunOnDispatch
-    public WindowBuilder dockTo(HyperCardFrame window) {
-        this.dock = window;
-        return this;
-    }
-
-    public WindowBuilder withLocation(int x, int y) {
-        location = new Point(x, y);
-        return this;
-    }
-
-    @RunOnDispatch
     public WindowBuilder withLocationUnderneath(Component component) {
         this.window.getWindow().pack();
 
         int targetY = (int) component.getLocation().getY() + component.getHeight() + DEFAULT_SEPARATION;
-        int targetX = (int) component.getLocation().getX() - ((window.getWindow().getWidth() / 2) - (component.getWidth() / 2));
+        int targetX = (int) component.getLocation().getX();
         location = new Point(targetX, targetY);
 
         return this;
@@ -135,7 +123,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
 
     @RunOnDispatch
     public WindowBuilder ownsMenubar() {
-        if (window instanceof HyperCardDialog) {
+        if (window instanceof WyldCardDialog) {
             throw new IllegalStateException("This type of window cannot own the menubar.");
         }
 
@@ -150,7 +138,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
     }
 
     @RunOnDispatch
-    public T buildReplacing(HyperCardWindow window) {
+    public T buildReplacing(WyldCardFrame window) {
         window.getWindow().dispose();
         return build();
     }
@@ -165,7 +153,7 @@ public class WindowBuilder<T extends HyperCardWindow> {
             this.window.getWindow().setLocationRelativeTo(relativeLocation);
         }
 
-        if (window instanceof HyperCardDialog) {
+        if (window instanceof WyldCardDialog) {
             this.window.setAllowResizing(resizable);
         }
 
@@ -173,14 +161,28 @@ public class WindowBuilder<T extends HyperCardWindow> {
             SwingUtilities.getRootPane(window.getDefaultButton()).setDefaultButton(window.getDefaultButton());
         }
 
-        if (quitOnClose) {
+        if (actionOnClose != null) {
+            this.window.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             this.window.getWindow().addWindowListener(new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    WyldCard.getInstance().quit();
+                    actionOnClose.onWindowClosing((WyldCardFrame) e.getWindow());
                 }
             });
         }
+
+        // Notify the WindowManager when a new window is opened or closed
+        this.window.getWindow().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                WindowManager.getInstance().notifyWindowVisibilityChanged();
+            }
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+                WindowManager.getInstance().notifyWindowVisibilityChanged();
+            }
+        });
 
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.
@@ -199,33 +201,6 @@ public class WindowBuilder<T extends HyperCardWindow> {
             minHeight += glm.getMargin().top + glm.getMargin().bottom;
         }
         this.window.getWindow().setMinimumSize(new Dimension(minWidth, minHeight));
-
-        if (dock != null) {
-
-            if (isPalette) {
-                dock.getWindow().addWindowListener(new PaletteActivationManager(window));
-            }
-
-            // When dock window moves, move docked windows too (keep relative window layout)
-            dock.getWindow().addComponentListener(new ComponentAdapter() {
-                private Point lastLocation;
-
-                @Override
-                public void componentMoved(ComponentEvent e) {
-                    super.componentMoved(e);
-                    Point location = e.getComponent().getLocation();
-
-                    if (lastLocation != null) {
-                        int deltaX = location.x - lastLocation.x;
-                        int deltaY = location.y - lastLocation.y;
-
-                        window.getWindow().setLocation(window.getWindow().getLocation().x + deltaX, window.getWindow().getLocation().y + deltaY);
-                    }
-
-                    lastLocation = location;
-                }
-            });
-        }
 
         this.window.applyMenuBar();
         this.window.getWindow().setVisible(initiallyVisible);

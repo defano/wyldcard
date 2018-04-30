@@ -2,16 +2,17 @@ package com.defano.wyldcard.parts.model;
 
 import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.forms.ButtonPropertyEditor;
-import com.defano.wyldcard.window.forms.FieldPropertyEditor;
-import com.defano.wyldcard.window.forms.ScriptEditor;
-import com.defano.hypertalk.ast.expressions.LiteralPartExp;
+import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
+import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
+import com.defano.wyldcard.window.layouts.ScriptEditor;
+import com.defano.hypertalk.ast.expressions.parts.LiteralPartExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
@@ -97,7 +98,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         // Convert rectangle (consisting of top left and bottom right coordinates) into top, left, height and width
         defineComputedSetterProperty(PROP_RECT, (context, model, propertyName, value) -> {
-            if (value.isRectE(context)) {
+            if (value.isRect()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
                 model.setKnownProperty(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
@@ -133,7 +134,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         );
 
         defineComputedSetterProperty(PROP_TOPLEFT, (context, model, propertyName, value) -> {
-            if (value.isPoint(context)) {
+            if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
             } else {
@@ -146,7 +147,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         );
 
         defineComputedSetterProperty(PROP_BOTTOMRIGHT, (context, model, propertyName, value) -> {
-            if (value.isPoint(context)) {
+            if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
             } else {
@@ -170,7 +171,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 )
         );
         defineComputedSetterProperty(PROP_LOCATION, (context, model, propertyName, value) -> {
-            if (value.isPoint(context)) {
+            if (value.isPoint()) {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
             } else {
@@ -333,7 +334,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         PartSpecifier localPart = new PartIdSpecifier(getOwner(), getType(), getId(context));
 
         if (getType() == PartType.BUTTON || getType() == PartType.FIELD) {
-            return new CompositePartSpecifier(localPart, new LiteralPartExp(null, parent.getMe(context)));
+            return new CompositePartSpecifier(context, localPart, new LiteralPartExp(null, parent.getMe(context)));
         } else {
             return localPart;
         }
@@ -341,6 +342,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     public PartModel getParentPartModel() {
         return parentPartModel;
+    }
+
+    public StackModel getParentStackModel() {
+        if (this instanceof StackModel) {
+            return (StackModel) this;
+        } else if (getParentPartModel() != null) {
+            return getParentPartModel().getParentStackModel();
+        } else {
+            return null;
+        }
     }
 
     public void setParentPartModel(PartModel parentPartModel) {
@@ -413,7 +424,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .ownsMenubar()
                         .withModel(this)
                         .resizeable(true)
-                        .withLocationStaggeredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                        .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel())
                         .build();
             });
 
@@ -435,7 +446,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .asModal()
                         .withTitle(getName(context))
                         .withModel(this)
-                        .withLocationCenteredOver(WindowManager.getInstance().getStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel())
                         .resizeable(false)
                         .build());
     }

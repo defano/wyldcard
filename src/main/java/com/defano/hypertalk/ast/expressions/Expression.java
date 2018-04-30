@@ -1,18 +1,25 @@
 package com.defano.hypertalk.ast.expressions;
 
-import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
+import com.defano.hypertalk.ast.expressions.factor.FactorAction;
+import com.defano.hypertalk.ast.expressions.factor.FactorAssociation;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 
-
+/**
+ * Any HyperTalk fragment that represents or returns a {@link Value}. Literals, variables, function calls, constants,
+ * etc. are all expressions.
+ * <p>
+ * Contrast to {@link com.defano.hypertalk.ast.statements.Statement}.
+ */
 public abstract class Expression extends ASTNode {
 
     public Expression(ParserRuleContext context) {
@@ -20,11 +27,11 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * Evaluates the expression as a HyperTalk {@link Value}.
+     * Evaluates this expression as a HyperTalk {@link Value}.
      *
+     * @param context The execution context
      * @return The evaluated {@link Value} of this expression.
      * @throws HtException Thrown if an error occurs evaluating the expression.
-     * @param context The execution context
      */
     protected abstract Value onEvaluate(ExecutionContext context) throws HtException;
 
@@ -34,9 +41,9 @@ public abstract class Expression extends ASTNode {
      * {@link com.defano.wyldcard.runtime.Breadcrumb} referring to the script token and script-owning part that
      * resulted in the exception.
      *
+     * @param context The execution context
      * @return The value that this expression evaluated to.
      * @throws HtException Thrown to indicate a semantic error was encountered during evaluation.
-     * @param context The execution context
      */
     public Value evaluate(ExecutionContext context) throws HtException {
         try {
@@ -50,14 +57,14 @@ public abstract class Expression extends ASTNode {
 
     /**
      * Evaluates this expression as a list of comma-separated values.
-     *
+     * <p>
      * Note that this method is primarily intended for parsing comma-separated argument values in an argument list,
-     * point or rectangle literal. Therefore, it does not respect the itemDelimiter property (which does not apply to
-     * argument lists or coordinate literals).
+     * point or rectangle literal. It does not respect the itemDelimiter property (which does not apply to argument
+     * lists or coordinate literals).
      *
+     * @param context The execution context
      * @return A list of Value objects
      * @throws HtException Thrown to indicate a semantic error was encountered during evaluation.
-     * @param context The execution context
      */
     public List<Value> evaluateAsList(ExecutionContext context) throws HtException {
         return onEvaluate(context).getListItems();
@@ -76,12 +83,13 @@ public abstract class Expression extends ASTNode {
      * If, in this example, card field 1 contained an expression like "cd fld 2", then this method would attempt to
      * evaluate the text of card field 2 looking for a valid card reference.
      *
-     * @param <T>   A subtype of PartModel
+     * @param <T>     A subtype of PartModel
      * @param context The execution context
-     * @param clazz The class of part model to coerce this expression to.
+     * @param clazz   The class of part model to coerce this expression to.
      * @return The part model referred to by this expression or null if the expression does not refer to a part of this
      * type.
      */
+    @SuppressWarnings("unchecked")
     public <T extends PartModel> T partFactor(ExecutionContext context, Class<T> clazz) {
         PartExp partExp = factor(context, PartExp.class);
 
@@ -109,8 +117,8 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * A convenience form of {@link #partFactor(ExecutionContext, Class)} that throws an exception rather than returning null if this
-     * expression cannot be evaluated as a {@link PartModel} of the requested type.
+     * A convenience form of {@link #partFactor(ExecutionContext, Class)} that throws an exception rather than returning
+     * null if this expression cannot be evaluated as a {@link PartModel} of the requested type.
      *
      * @param <T>     A subtype of PartModel
      * @param context The execution context
@@ -138,14 +146,14 @@ public abstract class Expression extends ASTNode {
      * <p>
      * This method enables a recursive, context-sensitive evaluation of terms.
      *
-     *
-     * @param context The execution context
+     * @param context     The execution context
      * @param evaluations A prioritized order list of acceptable factor types, plus an action associated with each
      * @return True if this expression can be interpreted as an acceptable type (indicates that a {@link FactorAction}
      * was invoked); false otherwise.
      * @throws HtException Thrown if an invoked {@link FactorAction} produces an exception. Will not be thrown as part
      *                     of the process of evaluating the expression.
      */
+    @SuppressWarnings("unchecked")
     public boolean factor(ExecutionContext context, FactorAssociation... evaluations) throws HtException {
 
         // Special case: Expression is a group (has parens around it), try to factor the evaluated result first. If not,
@@ -187,11 +195,12 @@ public abstract class Expression extends ASTNode {
      * and attempts to interpret this expression as that type. Returns null if this expression cannot be interpreted
      * in the requested format.
      *
-     * @param <T>   The requested factor subtype of {@link Expression}
+     * @param <T>     The requested factor subtype of {@link Expression}
      * @param context The execution context
-     * @param clazz The requested type of expression to factor this expression into.
+     * @param clazz   The requested type of expression to factor this expression into.
      * @return This expression interpreted as the requested type, or null if unable to interpret as requested.
      */
+    @SuppressWarnings("unchecked")
     public <T extends Expression> T factor(ExecutionContext context, Class<T> clazz) {
         try {
             final Object[] expr = new Object[1];
@@ -224,16 +233,17 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * Attempts to evaluate this expression as an Expression of the requested subtype.
+     * Attempts to evaluate this expression as an {@link Expression} of the requested subtype.
      * <p>
      * Evaluates this expression as a HyperTalk {@link Value}, then invokes the {@link Interpreter} to re-parse the
      * value. If the re-interpreted value matches the requested type then it is returned. Otherwise, null is returned.
      *
-     * @param <T>   The requested Expression subtype.
+     * @param <T>     The requested Expression subtype.
      * @param context The execution context
-     * @param klazz The requested class to evaluate this expression as.
+     * @param klazz   The requested class to evaluate this expression as.
      * @return This expression evaluated as the requested type or null.
      */
+    @SuppressWarnings("unchecked")
     private <T extends Expression> T evaluateAs(ExecutionContext context, Class<T> klazz) {
         if (this.ungroup().getClass().isAssignableFrom(klazz)) {
             return (T) this.ungroup();

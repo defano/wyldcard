@@ -693,5 +693,20 @@
       {"parameter": "file", "description": "An expression identifying the name of a file previously opened with the `open file` command."},
       {"parameter": "position", "description": "An integer value representing the position in the file to write data."}
     ]
+  },
+
+  {
+    "title": "Ask File",
+    "summary": "Displays a directory chooser in which the user can enter a file name (same as a user would typically see when choosing 'Save As...' from the 'File' menu).",
+    "codePrefix": "ask",
+    "templates": [
+      "ask file ${expression} with ${fileExpression}",
+      "ask file ${expression}"
+    ],
+    "parameters": [
+      {"parameter": "expression", "description": "The prompt string to display in the directory chooser dialog. Note that some systems (like Mac OS X) do not display a prompt."},
+      {"parameter": "fileExpression", "description": "An expression evaluating to the default file name populated in the chooser."}
+    ]
   }
+
 ]

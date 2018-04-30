@@ -158,8 +158,8 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mousePressed(e);
 
         if (SwingUtilities.isLeftMouseButton(e) && !isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOWN.messageName);
-            MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_STILL_DOWN.messageName));
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN.messageName);
+            MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN.messageName));
         }
     }
 
@@ -171,7 +171,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         // Do not set mouseUp if cursor is not released while over the part
         if (SwingUtilities.isLeftMouseButton(e) && isStillInFocus && !isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_UP.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP.messageName);
         }
     }
 
@@ -181,7 +181,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mouseEntered(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_ENTER.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
             PeriodicMessageManager.getInstance().addWithin(getPartModel());
         }
     }
@@ -192,7 +192,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
         super.mouseExited(e);
 
         if (!isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_LEAVE.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
             PeriodicMessageManager.getInstance().removeWithin(getPartModel());
         }
     }
@@ -202,7 +202,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void mouseClicked(MouseEvent e) {
         super.mouseClicked(e);
         if (e.getClickCount() == 2 && !isPartToolActive()) {
-            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
     }
 

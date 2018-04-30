@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.model;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.window.WyldCardFrame;
 
 import javax.swing.*;
 
@@ -23,9 +23,9 @@ public class WindowProxyPartModel extends PartModel {
     public static final String PROP_OWNER = "owner";
     public static final String PROP_ZOOMED = "zoomed";
 
-    private final HyperCardWindow window;
+    private final WyldCardFrame window;
 
-    public WindowProxyPartModel(HyperCardWindow window) {
+    public WindowProxyPartModel(WyldCardFrame window) {
         super(PartType.WINDOW, Owner.HYPERCARD, null);
         this.window = window;
 
@@ -69,7 +69,7 @@ public class WindowProxyPartModel extends PartModel {
         // Nothing to do
     }
 
-    public HyperCardWindow getWindow() {
+    public WyldCardFrame getWindow() {
         return window;
     }
 }

@@ -3,6 +3,7 @@ package com.defano.wyldcard.parts.card;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
@@ -170,8 +171,17 @@ public abstract class CardLayerPartModel extends PartModel {
     }
 
     public String getLongName(ExecutionContext context) {
-        // TODO: Add 'of stack ...' portion of long name (after supporting that HyperTalk syntax)
-        return getAbbrevName(context) + " of card id " + getCurrentCardId(context);
+        StackModel parentStack = getParentStackModel();
+
+        if (parentStack != null) {
+            return getAbbrevName(context)
+                    + " of card id "
+                    + getCurrentCardId(context)
+                    + " of "
+                    + parentStack.getLongName(context);
+        } else {
+            return getAbbrevName(context);
+        }
     }
 
 }

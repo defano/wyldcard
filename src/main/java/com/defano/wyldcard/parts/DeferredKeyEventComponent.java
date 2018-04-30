@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts;
 
-import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -10,8 +11,8 @@ import java.awt.event.KeyEvent;
  *
  * Swing requires a bit of event gymnastics in order to allow HyperTalk to conditionally trap key-press events.
  * Components requiring this behavior should implement this interface and use the
- * {@link Messagable#receiveAndDeferKeyEvent(String, Expression, KeyEvent, DeferredKeyEventComponent)} method
- * on the recipient part.
+ * {@link Messagable#receiveAndDeferKeyEvent(ExecutionContext, String, ListExp, KeyEvent, DeferredKeyEventComponent)}
+ * method on the recipient part.
  */
 public interface DeferredKeyEventComponent {
     /**
@@ -19,8 +20,8 @@ public interface DeferredKeyEventComponent {
      * key event should be ignored by the underlying Swing component.
      *
      * Once this method is invoked with 'true', the message-receiving component should not invoke
-     * {@link Messagable#receiveAndDeferKeyEvent(String, Expression, KeyEvent, DeferredKeyEventComponent)} until
-     * it receives a subsequent call with false.
+     * {@link Messagable#receiveAndDeferKeyEvent(ExecutionContext, String, ListExp, KeyEvent, DeferredKeyEventComponent)}
+     * until it receives a subsequent call with false.
      *
      * @param redispatchInProcess True if a script is executing and the message recipient should ignore the event;
      *                            false otherwise.

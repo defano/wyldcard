@@ -1,23 +1,19 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.wyldcard.WyldCard;
+import com.defano.hypertalk.ast.model.Adjective;
+import com.defano.hypertalk.ast.model.Owner;
+import com.defano.hypertalk.ast.model.PartType;
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
-import com.defano.wyldcard.parts.model.ComputedGetter;
-import com.defano.wyldcard.parts.model.DelegatedProperty;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.hypertalk.ast.model.Adjective;
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.Value;
 import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;
@@ -99,7 +95,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
 
         // Card inherits size and location properties from the stack
         delegateProperties(Lists.newArrayList(PROP_RECT, PROP_RECTANGLE, PROP_TOP, PROP_LEFT, PROP_BOTTOM, PROP_RIGHT, PROP_TOPLEFT, PROP_BOTTOMRIGHT, PROP_HEIGHT, PROP_WIDTH, StackModel.PROP_RESIZABLE),
-                property -> WyldCard.getInstance().getActiveStack().getStackModel());
+                (context, property) -> context.getCurrentStack().getStackModel());
     }
 
     /**

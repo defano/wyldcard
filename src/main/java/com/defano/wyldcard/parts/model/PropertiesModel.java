@@ -178,7 +178,7 @@ public class PropertiesModel {
         propertyName = propertyName.toLowerCase();
 
         if (delegatedProperties.containsKey(propertyName)) {
-            delegatedProperties.get(propertyName).getDelegatedModel(propertyName).setProperty(context, propertyName, value, quietly);
+            delegatedProperties.get(propertyName).getDelegatedModel(context, propertyName).setProperty(context, propertyName, value, quietly);
             return;
         }
 
@@ -282,7 +282,7 @@ public class PropertiesModel {
         property = property.toLowerCase();
 
         if (delegatedProperties.containsKey(property)) {
-            return delegatedProperties.get(property).getDelegatedModel(property).getProperty(context, property);
+            return delegatedProperties.get(property).getDelegatedModel(context, property).getProperty(context, property);
         }
 
         if (!hasProperty(property)) {

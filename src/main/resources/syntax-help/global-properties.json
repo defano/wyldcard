@@ -221,6 +221,23 @@
     "examples": [
       {"code": "set the textStyle to \"bold, italic\""}
     ]
+  },
+
+  {
+    "title": "Theme",
+    "summary": "The currently active look-and-feel. This property does not exist in HyperCard.",
+    "codePrefix": "theme",
+    "templates": [
+      "set the theme to ${themeExpression}",
+      "get the theme"
+    ],
+    "parameters": [
+      {"parameter": "themeExpression", "description": "An expression that evaluates to the name of an installed theme (as returned by `the themes` function)."}
+    ],
+    "examples": [
+      {"code": "set the theme to \"Nimbus\""}
+    ]
   }
+
 
 ]

@@ -1,11 +1,11 @@
 package com.defano.wyldcard.fx;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueAnimationObserver;
 import com.defano.jsegue.SegueCompletionObserver;
 import com.defano.jsegue.renderers.PlainEffect;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -19,35 +19,26 @@ import java.util.concurrent.CountDownLatch;
  */
 public class CurtainManager implements SegueAnimationObserver, SegueCompletionObserver {
 
-    private final static CurtainManager instance = new CurtainManager();
     private final Set<CurtainObserver> curtainObservers = new HashSet<>();
-
     private CountDownLatch latch = new CountDownLatch(0);
     private AnimatedSegue activeEffect;
 
-    private CurtainManager() {
-    }
-
-    public static CurtainManager getInstance() {
-        return instance;
-    }
-
-    public void setScreenLocked(boolean locked) {
+    public void setScreenLocked(ExecutionContext context, boolean locked) {
         if (locked && !isScreenLocked()) {
-            startEffect(VisualEffectFactory.createScreenLock());
+            startEffect(VisualEffectFactory.createScreenLock(context));
         } else if (this.activeEffect instanceof PlainEffect) {
             cancelEffect();
         }
     }
 
-    public void unlockScreenWithEffect(VisualEffectSpecifier effectSpecifier) {
+    public void unlockScreenWithEffect(ExecutionContext context, VisualEffectSpecifier effectSpecifier) {
         if (isScreenLocked()) {
             this.activeEffect.stop();
 
             // Unlock with effect
             if (effectSpecifier != null) {
                 BufferedImage from = activeEffect.getSource();
-                BufferedImage to = WyldCard.getInstance().getActiveStackDisplayedCard().getScreenshot();
+                BufferedImage to = context.getCurrentStack().getDisplayedCard().getScreenshot();
                 startEffect(VisualEffectFactory.create(effectSpecifier, from, to));
             }
 
@@ -76,7 +67,7 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         }
     }
 
-    public void cancelEffect() {
+    private void cancelEffect() {
         if (activeEffect != null) {
             activeEffect.stop();
             activeEffect.removeAnimationObserver(this);
@@ -88,12 +79,8 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
         fireOnCurtainUpdated(null);
     }
 
-    public boolean isScreenLocked() {
+    private boolean isScreenLocked() {
         return this.activeEffect != null && this.activeEffect instanceof PlainEffect;
-    }
-
-    public boolean isEffectActive() {
-        return this.activeEffect != null;
     }
 
     public void addScreenCurtainObserver(CurtainObserver observer) {

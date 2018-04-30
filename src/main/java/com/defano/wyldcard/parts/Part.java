@@ -5,9 +5,17 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardLayerPartModel;
+import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.stack.StackModel;
+import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.layouts.StackWindow;
+import com.defano.wyldcard.window.WindowManager;
 
 import java.awt.*;
 
@@ -99,5 +107,71 @@ public interface Part {
      */
     default boolean isPartToolActive() {
         return ToolsContext.getInstance().getToolMode().isPartTool();
+    }
+
+    /**
+     * Gets the stack that this part is a component of.
+     *
+     * @return The stack that this part is a component of or null if the component is not part of a stack, or has not
+     * yet been bound to a specific stack.
+     */
+    default StackPart getOwningStack() {
+
+        // Base case; part may already be the stack
+        if (this instanceof StackPart) {
+            return (StackPart) this;
+        }
+
+        WyldCardFrame boundWindow = getOwningStackWindow();
+        if (boundWindow != null) {
+            return ((StackWindow) boundWindow).getStack();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets the stack model that this part is a component of.
+     *
+     * @return The model of the stack that this part is a component of, or null if the component is not part of a stack,
+     * or has not yet been bound to a specific stack.
+     */
+    default StackModel getOwningStackModel() {
+        switch (getType()) {
+            case FIELD:
+            case BUTTON:
+                CardLayerPartModel partModel = (CardLayerPartModel) getPartModel();
+                PartModel parentModel = partModel.getParentPartModel();
+
+                if (parentModel instanceof BackgroundModel) {
+                    return ((BackgroundModel) parentModel).getStackModel();
+                } else {
+                    return ((CardModel) parentModel).getStackModel();
+                }
+
+            case CARD:
+                return ((CardModel) getPartModel()).getStackModel();
+            case BACKGROUND:
+                return ((BackgroundModel) getPartModel()).getStackModel();
+            case STACK:
+                return (StackModel) getPartModel();
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Gets the stack window bound to the stack that this part is a component of.
+     *
+     * @return The stack window in which this part appears, or null, if this component is not part of a stack.
+     */
+    default StackWindow getOwningStackWindow() {
+        StackModel boundModel = getOwningStackModel();
+        if (boundModel != null) {
+            return WindowManager.getInstance().findWindowForStack(boundModel);
+        } else {
+            return null;
+        }
     }
 }

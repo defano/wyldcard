@@ -1,9 +1,9 @@
 package com.defano.wyldcard.runtime;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
-import com.defano.wyldcard.fx.CurtainManager;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -56,7 +56,8 @@ public class HyperCardProperties extends PropertiesModel {
     public final static String PROP_FOUNDLINE = "foundline";
     public final static String PROP_FOUNDTEXT = "foundtext";
     public final static String PROP_LOCKMESSAGES = "lockmessages";
-    public final static String PROP_CANTPEEK = "cantpeek";
+    public final static String PROP_THEME = "theme";
+    public final static String PROP_THEMS = "themes";
 
     private final static HyperCardProperties instance = new HyperCardProperties();
 
@@ -88,9 +89,12 @@ public class HyperCardProperties extends PropertiesModel {
         defineProperty(PROP_FOUNDLINE, new Value(), true);
         defineProperty(PROP_FOUNDTEXT, new Value(), true);
         defineProperty(PROP_LOCKMESSAGES, new Value(true), false);
-        defineProperty(PROP_CANTPEEK, new Value(false), false);
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
+
+        defineComputedReadOnlyProperty(PROP_THEMS, (context, model, propertyName) -> Value.ofItems(WindowManager.getInstance().getThemeNames()));
+        defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WindowManager.getInstance().getCurrentThemeName()));
+        defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WindowManager.getInstance().setTheme(WindowManager.getInstance().getThemeClassForName(value.stringValue())));
 
         defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
         defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamily()));
@@ -134,7 +138,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().x));
         defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().y));
-        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getStackWindow().getWindow().getGraphicsConfiguration().getBounds()));
+        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
         defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));
         defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().y));
@@ -175,7 +179,10 @@ public class HyperCardProperties extends PropertiesModel {
         addPropertyWillChangeObserver((property, oldValue, newValue) -> {
             switch (property.toLowerCase()) {
                 case PROP_LOCKSCREEN:
-                    CurtainManager.getInstance().setScreenLocked(newValue.booleanValue());
+                    WyldCard.getInstance()
+                            .getFocusedStack()
+                            .getCurtainManager()
+                            .setScreenLocked(new ExecutionContext(), newValue.booleanValue());
                     break;
             }
         });

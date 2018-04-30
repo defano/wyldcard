@@ -46,7 +46,7 @@ public class ClickCmd extends Command {
 
         Value clickLoc = this.clickLoc.evaluate(context);
 
-        if (clickLoc.isPoint(context)) {
+        if (clickLoc.isPoint()) {
             int xLoc = clickLoc.getItems(context).get(0).integerValue();
             int yLoc = clickLoc.getItems(context).get(1).integerValue();
 

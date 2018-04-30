@@ -9,9 +9,9 @@ import java.awt.event.WindowEvent;
  */
 public class PaletteActivationManager extends WindowAdapter {
 
-    private final HyperCardWindow paletteWindow;
+    private final WyldCardFrame paletteWindow;
 
-    public PaletteActivationManager(HyperCardWindow paletteWindow) {
+    public PaletteActivationManager(WyldCardFrame paletteWindow) {
         this.paletteWindow = paletteWindow;
     }
 

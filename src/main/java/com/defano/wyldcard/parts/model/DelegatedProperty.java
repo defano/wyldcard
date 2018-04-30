@@ -1,5 +1,7 @@
 package com.defano.wyldcard.parts.model;
 
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+
 /**
  * Represents a property in a model that refers to a property of the same name in another model.
  */
@@ -14,5 +16,5 @@ public interface DelegatedProperty {
      * @param property The name of the property being delegated
      * @return The PropertiesModel to which to property should be delegated
      */
-    PropertiesModel getDelegatedModel(String property);
+    PropertiesModel getDelegatedModel(ExecutionContext context, String property);
 }

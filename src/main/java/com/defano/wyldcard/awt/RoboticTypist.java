@@ -26,7 +26,19 @@ public class RoboticTypist {
     private Robot robot;
 
     private RoboticTypist() {
-        commandKey = WindowManager.getInstance().isMacOs() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+        commandKey = WindowManager.getInstance().isMacOsTheme() ? KeyEvent.VK_META : KeyEvent.VK_CONTROL;
+
+        for (int i = (int) '0'; i <= (int) '9'; i++) {
+            keystrokeMap.put((char) i, new KeyStroke(i, false));
+        }
+
+        for (int i = (int) 'A'; i <= (int) 'Z'; i++) {
+            keystrokeMap.put((char) i, new KeyStroke(i, true));
+        }
+
+        for (int i = (int) 'A'; i <= (int) 'Z'; i++) {
+            keystrokeMap.put((char) (i + ((int) 'a' - (int) 'A')), new KeyStroke(i, false));
+        }
 
         keystrokeMap.put('\n', new KeyStroke(KeyEvent.VK_ENTER, false));
         keystrokeMap.put('\t', new KeyStroke(KeyEvent.VK_TAB, false));
@@ -47,9 +59,6 @@ public class RoboticTypist {
         keystrokeMap.put('-', new KeyStroke(KeyEvent.VK_MINUS, false));
         keystrokeMap.put('.', new KeyStroke(KeyEvent.VK_PERIOD, false));
         keystrokeMap.put('/', new KeyStroke(KeyEvent.VK_SLASH, false));
-        for (int i = (int) '0'; i <= (int) '9'; i++) {
-            keystrokeMap.put((char) i, new KeyStroke(i, false));
-        }
         keystrokeMap.put(':', new KeyStroke(KeyEvent.VK_SEMICOLON, true));
         keystrokeMap.put(';', new KeyStroke(KeyEvent.VK_SEMICOLON, false));
         keystrokeMap.put('<', new KeyStroke(KeyEvent.VK_COMMA, true));
@@ -57,18 +66,12 @@ public class RoboticTypist {
         keystrokeMap.put('>', new KeyStroke(KeyEvent.VK_PERIOD, true));
         keystrokeMap.put('?', new KeyStroke(KeyEvent.VK_SLASH, true));
         keystrokeMap.put('@', new KeyStroke(KeyEvent.VK_2, true));
-        for (int i = (int) 'A'; i <= (int) 'Z'; i++) {
-            keystrokeMap.put((char) i, new KeyStroke(i, true));
-        }
         keystrokeMap.put('[', new KeyStroke(KeyEvent.VK_OPEN_BRACKET, false));
         keystrokeMap.put('\\', new KeyStroke(KeyEvent.VK_BACK_SLASH, false));
         keystrokeMap.put(']', new KeyStroke(KeyEvent.VK_CLOSE_BRACKET, false));
         keystrokeMap.put('^', new KeyStroke(KeyEvent.VK_6, true));
         keystrokeMap.put('_', new KeyStroke(KeyEvent.VK_MINUS, true));
         keystrokeMap.put('`', new KeyStroke(KeyEvent.VK_BACK_QUOTE, false));
-        for (int i = (int) 'A'; i <= (int) 'Z'; i++) {
-            keystrokeMap.put((char) (i + ((int) 'a' - (int) 'A')), new KeyStroke(i, false));
-        }
         keystrokeMap.put('{', new KeyStroke(KeyEvent.VK_OPEN_BRACKET, true));
         keystrokeMap.put('|', new KeyStroke(KeyEvent.VK_BACK_SLASH, true));
         keystrokeMap.put('}', new KeyStroke(KeyEvent.VK_CLOSE_BRACKET, true));

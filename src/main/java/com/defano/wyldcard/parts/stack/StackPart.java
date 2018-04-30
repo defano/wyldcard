@@ -1,19 +1,5 @@
 package com.defano.wyldcard.parts.stack;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.fx.CurtainManager;
-import com.defano.wyldcard.parts.PartException;
-import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
-import com.defano.wyldcard.parts.card.CardModel;
-import com.defano.wyldcard.parts.card.CardPart;
-import com.defano.wyldcard.parts.model.PropertiesModel;
-import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.StackWindow;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.SystemMessage;
@@ -21,40 +7,58 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.aspect.RunOnDispatch;
+import com.defano.wyldcard.fx.CurtainManager;
+import com.defano.wyldcard.parts.Part;
+import com.defano.wyldcard.parts.PartException;
+import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
+import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.PropertyChangeObserver;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.window.layouts.StackWindow;
+import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Represents the controller object of the stack itself. See {@link StackModel} for the data model.
  * <p>
- * This view is "virtual" because a stack has no view aside from the card that is currently displayed in it. Thus, this
- * class has no associated Swing component and cannot be added to a view hierarchy.
+ * This controller is "virtual" because a stack has no view of its own, aside from the card that is currently displayed
+ * in it. Thus, this class has no associated Swing component and cannot be added to a view hierarchy.
  */
-public class StackPart implements PropertyChangeObserver {
+public class StackPart implements Part, PropertyChangeObserver {
 
-    private StackModel stackModel;
     private CardPart currentCard;
 
-    private final List<StackObserver> stackObservers = new ArrayList<>();
-    private final List<StackNavigationObserver> stackNavigationObservers = new ArrayList<>();
+    private final StackModel stackModel;
+    private final CurtainManager curtainManager = new CurtainManager();
+    private final Set<StackObserver> stackObservers = new HashSet<>();
+    private final Set<StackNavigationObserver> stackNavigationObservers = new HashSet<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
     private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
 
-    private StackPart() {}
+    private StackPart(StackModel stackModel) {
+        this.stackModel = stackModel;
+    }
 
     public static StackPart newStack(ExecutionContext context) {
         return fromStackModel(context, StackModel.newStackModel("Untitled"));
     }
 
     public static StackPart fromStackModel(ExecutionContext context, StackModel model) {
-        StackPart stackPart = new StackPart();
-        stackPart.stackModel = model;
+        StackPart stackPart = new StackPart(model);
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
         stackPart.currentCard = stackPart.openCard(context, model.getCurrentCardIndex());
@@ -62,14 +66,27 @@ public class StackPart implements PropertyChangeObserver {
         return stackPart;
     }
 
-    public void bindToWindow(ExecutionContext context, StackWindow stackWindow) {
+    /**
+     * "Open" this stack inside of a given window.
+     *
+     * Sets up connections between the window controller and stack controller, displays the stack's current card and
+     * sends the 'openStack' and 'openCard' message to the stack.
+     *
+     * @param stackWindow The window to bind this stack to
+     */
+    public void bindToWindow(StackWindow stackWindow) {
+
+        // Make the window aware of us
+        ExecutionContext context = new ExecutionContext(this);
         stackWindow.bindModel(this);
 
+        // Display the current card
         goCard(context, stackModel.getCurrentCardIndex(), null, false);
+
         fireOnStackOpened();
         fireOnCardDimensionChanged(stackModel.getDimension(context));
 
-        getStackModel().receiveMessage(new ExecutionContext(), SystemMessage.OPEN_STACK.messageName);
+        getStackModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_STACK.messageName);
         fireOnCardOpened(getDisplayedCard());
 
         ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
@@ -102,9 +119,9 @@ public class StackPart implements PropertyChangeObserver {
         if (visualEffect == null) {
             destination = go(context, cardIndex, pushToBackstack);
         } else {
-            CurtainManager.getInstance().setScreenLocked(true);
+            curtainManager.setScreenLocked(context, true);
             destination = go(context, cardIndex, pushToBackstack);
-            CurtainManager.getInstance().unlockScreenWithEffect(visualEffect);
+            curtainManager.unlockScreenWithEffect(context, visualEffect);
         }
 
         this.currentCard = destination;
@@ -360,6 +377,10 @@ public class StackPart implements PropertyChangeObserver {
         stackNavigationObservers.remove(observer);
     }
 
+    public CurtainManager getCurtainManager() {
+        return curtainManager;
+    }
+
     /** {@inheritDoc} */
     @Override
     @RunOnDispatch
@@ -379,7 +400,7 @@ public class StackPart implements PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getInstance().getStackWindow().setAllowResizing(newValue.booleanValue());
+                WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
                 break;
         }
     }
@@ -501,5 +522,25 @@ public class StackPart implements PropertyChangeObserver {
                 observer.onCardOrderChanged();
             }
         });
+    }
+
+    @Override
+    public PartType getType() {
+        return PartType.STACK;
+    }
+
+    @Override
+    public PartModel getPartModel() {
+        return getStackModel();
+    }
+
+    @Override
+    public void partOpened(ExecutionContext context) {
+        // TODO: Not supported yet
+    }
+
+    @Override
+    public void partClosed(ExecutionContext context) {
+        // TODO: Not supported yet
     }
 }

@@ -1,97 +1,153 @@
 package com.defano.wyldcard;
 
+import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
+import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.window.WindowDock;
+import com.defano.wyldcard.window.WyldCardFrame;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.hypertalk.exception.HtSemanticException;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
- * Provides methods to open, close, save and focus stacks.
- * TODO: Build out infrastructure to support multiple stack windows
+ * Manages opening, closing, saving and focusing stacks.
  */
 public class StackManager implements StackNavigationObserver {
 
-    private StackPart activeStack;
-
+    private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
 
-    public StackManager() {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> StackManager.this.activeStack = StackPart.newStack(new ExecutionContext()));
-    }
-
     /**
-     * Gets the active stack (the stack that currently has focus).
-     * @return The active stack
-     */
-    public StackPart getActiveStack() {
-        return activeStack;
-    }
-
-    /**
-     * Creates and activates a new, empty stack with default dimensions.
-     * @param context The execution context.
+     * Creates and opens a new stack in a new stack window.
+     *
+     * @param context The current execution context
      */
     public void newStack(ExecutionContext context) {
-        activateStack(context, StackPart.newStack(context));
+        displayStack(context, StackPart.newStack(context), true);
     }
 
     /**
-     * Prompts the user to choose a stack file to open. If a valid stack file is chosen, the stack is opened and made
-     * the active stack.
-     * @param context The execution context.
+     * Attempts to locate a specified stack, prompting the user to locate the stack on disk if necessary.
+     *
+     * @param context The current execution context
+     * @param specifier A specifier identifying the stack we're looking for
+     * @param options Navigation options (like 'in a new window' or 'without dialog')
+     * @return The located stack, or null if the stack could not be located.
      */
-    public void open(ExecutionContext context) {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Open Stack", FileDialog.LOAD);
+    public StackModel locateStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options) {
+        try {
+            // Try to find the requested stack among those already opened...
+            return WyldCard.getInstance().findStackPart(context, specifier);
+        } catch (PartException e) {
+
+            // ... if that fails, interpret the specifier as a file name
+            StackPart foundStack = openStack(context, new File(String.valueOf(specifier.getValue())), options.inNewWindow);
+            if (foundStack != null) {
+                return foundStack.getStackModel();
+            }
+
+            // ... and finally tonight, prompt the user to choose the stack
+            if (!options.withoutDialog) {
+                StackPart openedStack = openStack(context, options.inNewWindow, "Where is stack " + specifier.getValue() + "?");
+                if (openedStack != null) {
+                    return openedStack.getStackModel();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Prompts the user to select a stack file from disk for opening.
+     *
+     * @param context     The current execution context
+     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
+     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
+     *                    to open a new stack).
+     */
+    public StackPart openStack(ExecutionContext context, boolean inNewWindow, String title) {
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
+
         if (fd.getFiles().length > 0) {
-            StackModel model = Serializer.deserialize(fd.getFiles()[0], StackModel.class);
-            model.setSavedStackFile(context, fd.getFiles()[0]);
-            activateStack(context, StackPart.fromStackModel(context, model));
+            return openStack(context, fd.getFiles()[0], inNewWindow);
+        }
+
+        return null;
+    }
+
+    /**
+     * Attempts to open the identified stack file.
+     *
+     * @param context     The current execution context
+     * @param stackFile   The stack file to open
+     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
+     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
+     *                    to open a new stack).
+     * @return The opened StackPart or null if the stack could not be opened for any reason.
+     */
+    private StackPart openStack(ExecutionContext context, File stackFile, boolean inNewWindow) {
+        try {
+            StackModel model = Serializer.deserialize(stackFile, StackModel.class);
+            StackPart part = StackPart.fromStackModel(context, model);
+
+            model.setSavedStackFile(context, stackFile);
+            displayStack(context, part, inNewWindow);
+
+            return part;
+        } catch (Exception e) {
+            return null;
         }
     }
 
     /**
-     * Makes the given stack the "active" stack--that is, the stack in focus which the menu bar and message box are
-     * associated with. The active stack represents the stack with application focus.
-     * @param context The execution context.
-     * @param stackPart The stack to activate
+     * Gets a list of all currently open stacks (those which are displayed inside of a window).
+     *
+     * @return The list of open stacks.
      */
-    private void activateStack(ExecutionContext context, StackPart stackPart) {
-        activeStack = stackPart;
-
-        cardCount.setSource(activeStack.getCardCountProvider());
-        cardClipboard.setSource(activeStack.getCardClipboardProvider());
-        savedStackFile.setSource(activeStack.getStackModel().getSavedStackFileProvider());
-        activeStack.addNavigationObserver(this);
-        activeStack.bindToWindow(context, WindowManager.getInstance().getStackWindow());
+    public List<StackPart> getOpenStacks() {
+        ArrayList<StackPart> stacks = new ArrayList<>();
+        for (WyldCardFrame thisWindow : WindowManager.getInstance().getFrames(false)) {
+            if (thisWindow instanceof StackWindow && thisWindow.getWindow().isVisible()) {
+                stacks.add(((StackWindow) thisWindow).getStack());
+            }
+        }
+        return stacks;
     }
 
     /**
-     * Prompts the user to choose a file in which to save the current stack; provided user chooses a file (doesn't
-     * cancel), the stack is saved to this file.
+     * Saves the given stack model to a file/path chosen by the user.
+     *
+     * @param context The execution context
+     * @param stackModel The stack to be saved
      */
-    private void saveAs(ExecutionContext context, StackModel stackModel) {
+    public void saveStackAs(ExecutionContext context, StackModel stackModel) {
         String defaultName = "Untitled";
 
         if (WyldCard.getInstance().getSavedStackFileProvider().blockingFirst().isPresent()) {
@@ -100,7 +156,7 @@ public class StackManager implements StackNavigationObserver {
             defaultName = stackModel.getStackName(context);
         }
 
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getStackWindow().getWindow(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setFile(defaultName);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
@@ -109,42 +165,32 @@ public class StackManager implements StackNavigationObserver {
                     f.getAbsolutePath() :
                     f.getAbsolutePath() + StackModel.FILE_EXTENSION;
 
-            save(context, stackModel, new File(path));
+            saveStack(context, stackModel, new File(path));
         }
     }
 
     /**
-     * Saves the active stack to its associated file (acts like "Save as" if no file is associated).
-     * @param context The execution context.
-     */
-    public void saveActiveStack(ExecutionContext context) {
-        save(context, activeStack.getStackModel());
-    }
-
-    /**
-     * Prompts the user to select a file, then saves the active stack to this file.
-     * @param context The execution context.
-     */
-    public void saveActiveStackAs(ExecutionContext context) {
-        save(context, activeStack.getStackModel(), null);
-    }
-
-    /**
      * Saves the given stack model to its associated file (acts like "Save as" if no file is associated).
-     * @param context The execution context.
-     * @param stackModel The StackModel to save.
+     *
+     * @param context    The execution context.
+     * @param stackModel The StackModel to save; when null the focused stack is assumed.
      */
-    private void save(ExecutionContext context, StackModel stackModel) {
+    public void saveStack(ExecutionContext context, StackModel stackModel) {
+        if (stackModel == null) {
+            stackModel = getFocusedStack().getStackModel();
+        }
+
         Optional<File> saveFile = savedStackFile.getObservable().blockingFirst();
-        save(context, stackModel, saveFile.orElse(null));
+        saveStack(context, stackModel, saveFile.orElse(null));
     }
 
     /**
      * Writes the serialized stack data into the given file. Prompts the "Save as..." dialog if the given file is null.
+     *
      * @param context The execution context.
-     * @param file The file where the stack should be saved
+     * @param file    The file where the stack should be saved
      */
-    private void save(ExecutionContext context, StackModel stackModel, File file) {
+    private void saveStack(ExecutionContext context, StackModel stackModel, File file) {
         if (file != null) {
             try {
                 Serializer.serialize(file, stackModel);
@@ -153,60 +199,157 @@ public class StackManager implements StackNavigationObserver {
                 WyldCard.getInstance().showErrorDialog(new HtSemanticException("An error occurred saving the file " + file.getAbsolutePath()));
             }
         } else {
-            saveAs(context, stackModel);
+            saveStackAs(context, stackModel);
         }
     }
 
     /**
-     * A cheesy and expensive mechanism to determine if the user has made a change to the stack since it was last opened.
-     * @return True if the stack has changes; false otherwise
+     * Closes all of the open stack windows (prompting as required to save); when all stacks have closed, the
+     * application exits.
      */
-    public boolean isActiveStackDirty() {
-        try {
-            String savedStack = new String(Files.readAllBytes(getSavedStackFileProvider().blockingFirst().get().toPath()), StandardCharsets.UTF_8);
-            String currentStack = Serializer.serialize(getActiveStack().getStackModel());
-            return !savedStack.equalsIgnoreCase(currentStack);
-        } catch (Exception e) {
-            return true;
+    public void closeAllStacks() {
+        for (StackPart thisOpenStack : getOpenStacks()) {
+            closeStack(thisOpenStack);
         }
     }
 
     /**
-     * Gets the card currently displayed in the stack window (which may not be visible if the screen is currently
-     * locked).
+     * Attempts to close the requested stack, prompting the user to save it (when necessary) before closing. Note that
+     * the when prompted to save, the user can cancel, resulting in the stack not being closed.
      *
+     * @param stackPart The stack to be closed
+     */
+    public void closeStack(StackPart stackPart) {
+        if (stackPart == null) {
+            stackPart = getFocusedStack();
+        }
+
+        // Prompt user to save if stack is dirty
+        if (stackPart.getStackModel().isStackDirty()) {
+            int dialogResult = JOptionPane.showConfirmDialog(
+                    stackPart.getDisplayedCard(),
+                    "Save changes to " + stackPart.getStackModel().getStackName(null) + "?",
+                    "Save",
+                    JOptionPane.YES_NO_OPTION);
+
+            if (dialogResult == JOptionPane.CLOSED_OPTION) {
+                return;
+            } else if (dialogResult == JOptionPane.YES_OPTION) {
+                saveStack(new ExecutionContext(), stackPart.getStackModel());
+            }
+        }
+
+        // Dispose the stack's frame (if one exists)
+        if (stackPart.getOwningStackWindow() != null) {
+            stackPart.getOwningStackWindow().dispose();
+        }
+
+        // Finally, quit application when last stack window has closed
+        if (getOpenStacks().size() == 0) {
+            System.exit(0);
+        }
+    }
+
+    /**
+     * Make the given stack the focused, or active, stack. That is, the stack that is acted upon by the menus, message
+     * box and other "unbound" execution contexts.
+     * <p>
+     * Note that this method does not actually attempt to bring the specified stack's window to the front or otherwise
+     * adjust the focus subsystem's view of the world..
+     *
+     * @param stackPart The stack part to focus.
+     */
+    public StackPart focusStack(StackPart stackPart) {
+        if (stackPart == null) {
+            throw new IllegalArgumentException("Focused stack cannot be null.");
+        }
+
+        // Remove focus from last-focused stack when applicable
+        if (focusedStack.hasValue()) {
+            PartToolContext.getInstance().deselectAllParts();
+            focusedStack.blockingFirst().removeNavigationObserver(this);
+        }
+
+        // Make the focused stack the window dock
+        WindowDock.getInstance().setDock(stackPart.getOwningStackWindow());
+
+        focusedStack.onNext(stackPart);
+        cardCount.setSource(stackPart.getCardCountProvider());
+        cardClipboard.setSource(stackPart.getCardClipboardProvider());
+        savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
+        isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
+        isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
+        stackPart.addNavigationObserver(this);
+
+        ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
+
+        return stackPart;
+    }
+
+    /**
+     * Gets the stack that currently has focus.
+     *
+     * @return The active stack
+     */
+    public StackPart getFocusedStack() {
+        if (focusedStack.hasValue()) {
+            return focusedStack.blockingFirst();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Gets an observable of the focused stack.
+     * @return The focused stack observable.
+     */
+    public Observable<StackPart> getFocusedStackProvider() {
+        return focusedStack;
+    }
+
+    /**
+     * Gets the card currently displayed in the focused stack window.
+     * <p>
      * Note that HyperTalk-implementing classes should always use {@link ExecutionContext#getCurrentCard()} to retrieve
-     * a reference to the current card, since, from the perspective of a script the active card may differ from the
-     * displayed card under certain conditions (like stack sorting).
+     * a reference to the current card, since, from the perspective of a script the focused card may differ from the
+     * "current" card under certain runtime conditions (like stack sorting or when a script is executing in an un-
+     * focused stack window).
      *
-     * @return The card currently displayed in the active stack window.
+     * @return The card currently displayed in the focused stack window.
      */
-    public CardPart getActiveStackDisplayedCard() {
-        return activeStack.getDisplayedCard();
+    public CardPart getFocusedCard() {
+        if (getFocusedStack() == null) {
+            return null;
+        } else {
+            return getFocusedStack().getDisplayedCard();
+        }
     }
 
     /**
      * Gets an observable count of the number of cards present in the active stack.
+     *
      * @return An observable count of cards in the active stack.
      */
-    public Observable<Integer> getActiveStackCardCountProvider() {
+    public Observable<Integer> getFocusedStackCardCountProvider() {
         return cardCount.getObservable();
     }
 
     /**
      * Gets an observable "clipboard" of cards from the active stack. This clipboard is non-empty when a card in the
      * active stack has been cut or copied from the stack.
+     *
      * @return The card clipboard associated with the active stack.
      */
-    public Observable<Optional<CardPart>> getActiveStackCardClipboardProvider() {
+    public Observable<Optional<CardPart>> getFocusedStackCardClipboardProvider() {
         return cardClipboard.getObservable();
     }
 
     /**
      * Gets an observable optional file representing the file to which the active stack is current bound (that is, the
      * file where the stack was last saved or opened from).
-     *
+     * <p>
      * An empty optional indicates the stack has never been saved and has no associated file.
+     *
      * @return An observable optional file.
      */
     public Observable<Optional<File>> getSavedStackFileProvider() {
@@ -225,5 +368,37 @@ public class StackManager implements StackNavigationObserver {
     public void onCardOpened(CardPart newCard) {
         isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
+    }
+
+    /**
+     * Displays the given stack part in a window. If the stack is already displayed in a window, this method simply
+     * focuses the existing window (it is not legal to have the same stack opened twice in two windows).
+     *
+     * @param context     The current execution context
+     * @param stackPart   The stack to display in a window
+     * @param inNewWindow When true, the stack will open in a new stack window. When false, the opened stack will
+     *                    replace the stack active in the execution context (i.e., the focused stack or stack requesting
+     *                    to open a new stack). Has no effect when attempting to open a stack already displayed in a
+     *                    window.
+     */
+    private void displayStack(ExecutionContext context, StackPart stackPart, boolean inNewWindow) {
+        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart.getStackModel());
+
+        // Special case: Stack is already open, simply focus it
+        if (existingWindow != null) {
+            existingWindow.requestFocus();
+        }
+
+        // Stack is not already open
+        else {
+
+            if (inNewWindow) {
+                stackPart.bindToWindow(WindowManager.getInstance().getWindowForStack(stackPart));
+            } else {
+                stackPart.bindToWindow(context.getCurrentStack().getOwningStackWindow());
+            }
+
+            stackPart.addNavigationObserver(this);
+        }
     }
 }

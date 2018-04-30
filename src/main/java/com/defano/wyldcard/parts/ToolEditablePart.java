@@ -24,8 +24,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 /**
- * An interface defining actions common to all tool-editable parts (buttons and fields that can be edited using the
- * button tool or field tool).
+ * An interface defining actions common to buttons and fields that can be edited using the button tool or field tool.
  */
 public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLayerPart {
 
@@ -203,7 +202,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         boolean wasDoubleClicked = isSelectedForEditing() && e.getClickCount() == 2;
 
         // Command-option click to edit script
-        if (KeyboardManager.getInstance().isPeeking()) {
+        if (KeyboardManager.getInstance().isPeeking(new ExecutionContext())) {
             getPartModel().editScript(new ExecutionContext());
         }
 

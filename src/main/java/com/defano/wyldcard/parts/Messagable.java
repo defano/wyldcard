@@ -24,8 +24,8 @@ public interface Messagable {
     /**
      * Gets the script associated with this part.
      *
-     * @return The script
      * @param context The execution context.
+     * @return The script
      */
     Script getScript(ExecutionContext context);
 
@@ -33,8 +33,8 @@ public interface Messagable {
      * Gets a part specifier that uniquely identifies this part in the stack. This part will be bound to the 'me'
      * keyword in the script that receives messages.
      *
-     * @return The part specifier for the 'me' keyword.
      * @param context The execution context.
+     * @return The part specifier for the 'me' keyword.
      */
     PartSpecifier getMe(ExecutionContext context);
 
@@ -55,7 +55,7 @@ public interface Messagable {
     /**
      * Sends a message with bound arguments (i.e., 'doMenu') to this part's message passing hierarchy.
      *
-     * @param context The execution context
+     * @param context   The execution context
      * @param message   The message to be passed
      * @param arguments The arguments to the message
      */
@@ -70,18 +70,17 @@ public interface Messagable {
     /**
      * Sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing hierarchy.
      *
-     * @param context The execution context
+     * @param context      The execution context
      * @param message      The name of the command; cannot be null.
      * @param arguments    The arguments to pass to this command; cannot be null.
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
-*                     Note that this callback will not fire if the script terminates as a result of an error or
+     *                     Note that this callback will not fire if the script terminates as a result of an error or
      */
     default void receiveMessage(ExecutionContext context, String message, ListExp arguments, MessageCompletionObserver onCompletion) {
 
         // No messages are sent cmd-option is down; some messages not sent when 'lockMessages' is true
-        if (KeyboardManager.getInstance().isPeeking() ||
-                (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_LOCKMESSAGES).booleanValue())
-        {
+        if (KeyboardManager.getInstance().isPeeking(context) ||
+                (SystemMessage.isLockable(message)) && HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_LOCKMESSAGES).booleanValue()) {
             onCompletion.onMessagePassed(message, false, null);
             return;
         }
@@ -136,8 +135,7 @@ public interface Messagable {
     /**
      * Invokes a function defined in the part's script, blocking until the function completes.
      *
-     *
-     * @param context The execution context
+     * @param context      The execution context
      * @param functionName The name of the function to execute.
      * @param arguments    The arguments to the function.
      * @return The value returned by the function upon completion.
@@ -174,13 +172,11 @@ public interface Messagable {
 
         switch (type) {
             case BACKGROUND:
-                return WyldCard.getInstance().getActiveStack().getStackModel();
+                return context.getCurrentStack().getStackModel();
             case MESSAGE_BOX:
                 return context.getCurrentCard().getCardModel();
             case CARD:
                 return context.getCurrentCard().getCardModel().getBackgroundModel();
-            case STACK:
-                return null;
             case FIELD:
             case BUTTON:
                 if (getMe(context).getOwner() == Owner.BACKGROUND) {
@@ -188,8 +184,8 @@ public interface Messagable {
                 } else {
                     return context.getCurrentCard().getCardModel();
                 }
+            default:
+                return null;
         }
-
-        throw new IllegalArgumentException("Bug! Don't know what the next message recipient is for: " + getMe(context).getOwner());
     }
 }

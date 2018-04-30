@@ -13,10 +13,12 @@ public class CompositePartSpecifier implements PartSpecifier {
 
     private final PartSpecifier part;      // The button or field
     private final PartExp owningPart;      // The card the button or field can be found on
+    private final ExecutionContext context;
 
-    public CompositePartSpecifier(PartSpecifier part, PartExp owningPart) {
+    public CompositePartSpecifier(ExecutionContext context, PartSpecifier part, PartExp owningPart) {
         this.part = part;
         this.owningPart = owningPart;
+        this.context = context;
     }
 
     public PartExp getOwningPartExp() {
@@ -63,7 +65,7 @@ public class CompositePartSpecifier implements PartSpecifier {
         CompositePartSpecifier that = (CompositePartSpecifier) o;
 
         try {
-            return part.equals(that.part) && owningPart.evaluateAsSpecifier(new ExecutionContext()).equals(that.owningPart.evaluateAsSpecifier(new ExecutionContext()));
+            return part.equals(that.part) && owningPart.evaluateAsSpecifier(context).equals(that.owningPart.evaluateAsSpecifier(context));
         } catch (HtException e) {
             return false;
         }

@@ -53,11 +53,11 @@ public class PartToolContext {
 
     public void deselectAllParts() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (ButtonPart thisButton : WyldCard.getInstance().getActiveStackDisplayedCard().getButtons()) {
+            for (ButtonPart thisButton : WyldCard.getInstance().getFocusedCard().getButtons()) {
                 thisButton.setSelectedForEditing(new ExecutionContext(), false);
             }
 
-            for (FieldPart thisField : WyldCard.getInstance().getActiveStackDisplayedCard().getFields()) {
+            for (FieldPart thisField : WyldCard.getInstance().getFocusedCard().getFields()) {
                 thisField.setSelectedForEditing(new ExecutionContext(), false);
             }
 
@@ -76,7 +76,7 @@ public class PartToolContext {
     public void deleteSelectedPart() {
         Optional<ToolEditablePart> selectedPart = this.selectedPart.blockingFirst();
         selectedPart.ifPresent(part -> {
-            WyldCard.getInstance().getActiveStackDisplayedCard().getCardModel().removePartModel(new ExecutionContext(), part.getPartModel());
+            WyldCard.getInstance().getFocusedCard().getCardModel().removePartModel(new ExecutionContext(), part.getPartModel());
             this.selectedPart.onNext(Optional.empty());
         });
     }

@@ -15,6 +15,6 @@ public class IsNotAOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return lhs(context).isA(context, rhs(context)).not();
+        return lhs(context).isA(rhs(context)).not();
     }
 }

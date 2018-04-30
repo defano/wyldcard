@@ -55,16 +55,19 @@ public class MouseManager {
     }
 
     public Point getMouseLoc() {
-        CardPart theCard = WindowManager.getInstance().getStackWindow().getDisplayedCard();
         Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-        SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
+
+        if (WindowManager.getInstance().getFocusedStackWindow() != null) {
+            CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
+            SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
+        }
 
         return mouseLoc;
     }
 
     public void dragFrom(Point p1, Point p2, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        Component cardComponent = WyldCard.getInstance().getActiveStackDisplayedCard();
+        Component cardComponent = WyldCard.getInstance().getFocusedCard();
         SwingUtilities.convertPointToScreen(p1, cardComponent);
         SwingUtilities.convertPointToScreen(p2, cardComponent);
 
@@ -94,7 +97,7 @@ public class MouseManager {
 
     public void clickAt(Point p, boolean withShift, boolean withOption, boolean withCommand) throws HtSemanticException {
 
-        SwingUtilities.convertPointToScreen(p, WyldCard.getInstance().getActiveStackDisplayedCard());
+        SwingUtilities.convertPointToScreen(p, WyldCard.getInstance().getFocusedCard());
 
         try {
             Robot r = new Robot();

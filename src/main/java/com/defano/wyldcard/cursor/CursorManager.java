@@ -5,6 +5,7 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
@@ -16,7 +17,7 @@ import java.awt.*;
 /**
  * A singleton facade for managing the HyperCard cursor.
  */
-public class CursorManager {
+public class CursorManager implements StackNavigationObserver {
 
     private final static CursorManager instance = new CursorManager();
     private HyperCardCursor activeCursor = HyperCardCursor.HAND;
@@ -31,13 +32,14 @@ public class CursorManager {
         // Update cursor when the tool mode changes...
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
-        // ... or when the card changes
-        WyldCard.getInstance().getActiveStack().addNavigationObserver(new StackNavigationObserver() {
-            @Override
-            public void onCardOpened(CardPart newCard) {
-                updateCursor();
-            }
+        // ... or when the focused stack changes
+        WyldCard.getInstance().getFocusedStackProvider().subscribe(stackPart -> {
+            updateCursor();
+
+            // ... or when the card of the focused stack changes
+            stackPart.addNavigationObserver(CursorManager.this);
         });
+
     }
 
     public void setActiveCursor(HyperCardCursor cursor) {
@@ -69,8 +71,16 @@ public class CursorManager {
         }
 
         SwingUtilities.invokeLater(() -> {
-            WindowManager.getInstance().getStackWindow().getDisplayedCard().setCursor(effectiveCursor);
-            WindowManager.getInstance().getStackWindow().getScreenCurtain().setCursor(effectiveCursor);
+            StackWindow window = WindowManager.getInstance().getFocusedStackWindow();
+            if (window != null) {
+                window.getDisplayedCard().setCursor(effectiveCursor);
+                window.getScreenCurtain().setCursor(effectiveCursor);
+            }
         });
+    }
+
+    @Override
+    public void onCardOpened(CardPart newCard) {
+        updateCursor();
     }
 }

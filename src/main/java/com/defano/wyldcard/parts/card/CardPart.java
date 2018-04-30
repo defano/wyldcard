@@ -196,7 +196,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(context, this, layer.asOwner());
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
@@ -213,7 +213,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(context, this, layer.asOwner(), rectangle);
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -229,7 +229,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(new ExecutionContext(), this, layer.asOwner());
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
@@ -245,7 +245,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(context, this, layer.asOwner(), rectangle);
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
         return newField;
     }
 
@@ -309,7 +309,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         setPartsOnLayerVisible(context, Owner.CARD, visible);
 
         // Notify the window manager that background editing mode changed
-        WindowManager.getInstance().getStackWindow().invalidateWindowTitle();
+        WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).invalidateWindowTitle();
     }
 
     /**
@@ -541,7 +541,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         ButtonPart newButton = ButtonPart.fromModel(context, this, model);
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -565,7 +565,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         FieldPart newField = FieldPart.fromModel(context, this, model);
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
 
         return newField;
     }
@@ -678,7 +678,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         getForegroundCanvas().getSurface().addMouseListener(this);
         getForegroundCanvas().getSurface().addKeyListener(this);
 
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.OPEN_CARD.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName);
         ((CardModel) getPartModel()).setObserver(cardModelObserver);
 
         getCardModel().addPropertyChangedObserver(this);
@@ -693,7 +693,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.CLOSE_CARD.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD.messageName);
 
         // Lets parts know they're about to go away
         notifyPartsClosing(context);
@@ -749,7 +749,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @RunOnDispatch
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-            getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
+            getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOUBLE_CLICK.messageName);
         }
 
         // Search results are reset/cleared whenever the card is clicked
@@ -759,32 +759,32 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     @RunOnDispatch
     public void mousePressed(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_DOWN.messageName);
-        MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_STILL_DOWN.messageName));
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_DOWN.messageName);
+        MouseStillDown.then(() -> getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_STILL_DOWN.messageName));
     }
 
     @Override
     @RunOnDispatch
     public void mouseReleased(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_UP.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_UP.messageName);
     }
 
     @Override
     @RunOnDispatch
     public void mouseEntered(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_ENTER.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
     }
 
     @Override
     @RunOnDispatch
     public void mouseExited(MouseEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.MOUSE_LEAVE.messageName);
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
     }
 
     @Override
     @RunOnDispatch
     public void keyTyped(KeyEvent e) {
-        getPartModel().receiveMessage(new ExecutionContext(), SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
+        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.KEY_DOWN.messageName, new ListExp(null, new LiteralExp(null, String.valueOf(e.getKeyChar()))));
     }
 
     @Override
@@ -792,7 +792,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     public void keyPressed(KeyEvent e) {
         BoundSystemMessage bsm = SystemMessage.fromKeyEvent(e, false);
         if (bsm != null) {
-            getPartModel().receiveMessage(new ExecutionContext(), bsm.message.messageName, bsm.boundArguments);
+            getPartModel().receiveMessage(new ExecutionContext(this), bsm.message.messageName, bsm.boundArguments);
         }
     }
 

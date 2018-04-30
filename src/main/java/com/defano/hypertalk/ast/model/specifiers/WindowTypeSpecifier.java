@@ -1,19 +1,21 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
 import com.defano.hypertalk.ast.model.SingletonWindowType;
-import com.defano.wyldcard.window.HyperCardWindow;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 public class WindowTypeSpecifier extends WindowSpecifier {
 
     private final SingletonWindowType windowType;
+    private final ExecutionContext context;
 
-    public WindowTypeSpecifier(SingletonWindowType type) {
+    public WindowTypeSpecifier(ExecutionContext context, SingletonWindowType type) {
         this.windowType = type;
+        this.context = context;
     }
 
     @Override
     public Object getValue() {
-        return windowType.getWindow().getTitle();
+        return windowType.getWindow(context).getTitle();
     }
 
     public SingletonWindowType getWindowType() {

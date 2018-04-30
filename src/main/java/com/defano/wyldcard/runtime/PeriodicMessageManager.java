@@ -1,5 +1,7 @@
 package com.defano.wyldcard.runtime;
 
+import com.defano.hypertalk.ast.expressions.ListExp;
+import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.paint.ToolMode;
@@ -9,8 +11,6 @@ import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
-import com.defano.hypertalk.ast.expressions.ListExp;
-import com.defano.hypertalk.ast.model.SystemMessage;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.Vector;
@@ -42,7 +42,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
         idleTimeExecutor.scheduleAtFixedRate(this, 0, IDLE_PERIOD_MS, TimeUnit.MILLISECONDS);
 
         // Stop tracking 'within' when card goes away
-        WyldCard.getInstance().getActiveStack().addNavigationObserver(this);
+        WyldCard.getInstance().getFocusedStack().addNavigationObserver(this);
 
         // Stop tracking 'within' when not in browse mode
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {
@@ -91,7 +91,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
             if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
-                model.receiveMessage(new ExecutionContext(), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
+                model.receiveMessage(new ExecutionContext(model), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.printStackTrace();
                         deferCycles = IDLE_DEFERRAL_CYCLES;

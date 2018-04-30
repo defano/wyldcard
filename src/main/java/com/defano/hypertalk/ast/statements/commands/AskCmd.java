@@ -46,7 +46,7 @@ public class AskCmd extends Command {
         AtomicReference<String> result = new AtomicReference<>();
         
         SwingUtilities.invokeLater(() -> {
-            Component parent = WindowManager.getInstance().getStackWindow().getWindowPanel();
+            Component parent = WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel();
 
             result.set((String) JOptionPane.showInputDialog(
                     parent,
@@ -57,8 +57,12 @@ public class AskCmd extends Command {
                     null,
                     suggestion));
 
-            if (result.get() == null)
+            if (result.get() == null) {
+                context.setResult(new Value("Cancel"));
                 result.set("");
+            } else {
+                context.setResult(new Value());
+            }
 
             latch.countDown();
         });

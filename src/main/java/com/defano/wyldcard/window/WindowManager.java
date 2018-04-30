@@ -1,28 +1,25 @@
 package com.defano.wyldcard.window;
 
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.model.specifiers.WindowNameSpecifier;
-import com.defano.hypertalk.ast.model.specifiers.WindowSpecifier;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
-import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackPart;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.forms.*;
-import io.reactivex.Observable;
+import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WindowManager implements WindowFinder {
+public class WindowManager implements WindowFinder, Themeable {
 
     private final static WindowManager instance = new WindowManager();
 
-    private final StackWindow stackWindow = new StackWindow();
+    private final BehaviorSubject<List<WyldCardFrame>> framesProvider = BehaviorSubject.createDefault(new ArrayList<>());
+    private final BehaviorSubject<List<WyldCardFrame>> windowsProvider = BehaviorSubject.createDefault(new ArrayList<>());
+    private final BehaviorSubject<List<WyldCardFrame>> palettesProvider = BehaviorSubject.createDefault(new ArrayList<>());
+    private final BehaviorSubject<Boolean> palettesDockedProvider = BehaviorSubject.createDefault(false);
+
     private final MessageWindow messageWindow = new MessageWindow();
     private final PaintToolsPalette paintToolsPalette = new PaintToolsPalette();
     private final ShapesPalette shapesPalette = new ShapesPalette();
@@ -35,47 +32,36 @@ public class WindowManager implements WindowFinder {
     private final VariableWatcher variableWatcher = new VariableWatcher();
     private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
 
-    private final Subject<String> lookAndFeelClassProvider = BehaviorSubject.create();
+    private WindowManager() {
+    }
 
     public static WindowManager getInstance() {
         return instance;
     }
 
-    private WindowManager() {}
-
     @RunOnDispatch
     public void start() {
-        lookAndFeelClassProvider.onNext(UIManager.getSystemLookAndFeelClassName());
+        themeProvider.onNext(UIManager.getLookAndFeel().getName());
 
-        // Create the main window, center it on the screen and display it
-        WindowBuilder.make(stackWindow)
-                .quitOnClose()
-                .ownsMenubar()
-                .withModel(StackPart.newStack(new ExecutionContext()))
-                .build();
-
-        JFrame stackFrame = stackWindow.getWindow();
+        StackWindow stackWindow = getFocusedStackWindow();
 
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
                 .asPalette()
                 .focusable(true)
                 .withLocationUnderneath(stackWindow)
-                .dockTo(stackWindow)
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
-                .dockTo(stackWindow)
                 .withLocationLeftOf(stackWindow)
                 .build();
 
         WindowBuilder.make(shapesPalette)
                 .asPalette()
                 .withTitle("Shapes")
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
@@ -83,7 +69,6 @@ public class WindowManager implements WindowFinder {
         WindowBuilder.make(linesPalette)
                 .asPalette()
                 .withTitle("Lines")
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
@@ -91,7 +76,6 @@ public class WindowManager implements WindowFinder {
         WindowBuilder.make(brushesPalette)
                 .asPalette()
                 .withTitle("Brushes")
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
@@ -99,7 +83,6 @@ public class WindowManager implements WindowFinder {
         WindowBuilder.make(patternsPalette)
                 .asPalette()
                 .withTitle("Patterns")
-                .dockTo(stackWindow)
                 .withLocationLeftOf(paintToolsPalette.getWindow())
                 .build();
 
@@ -107,7 +90,6 @@ public class WindowManager implements WindowFinder {
                 .asPalette()
                 .withTitle("Intensity")
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .withLocationUnderneath(paintToolsPalette.getWindow())
                 .build();
 
@@ -116,7 +98,6 @@ public class WindowManager implements WindowFinder {
                 .focusable(true)
                 .withTitle("Colors")
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .build();
 
         WindowBuilder.make(messageWatcher)
@@ -124,7 +105,6 @@ public class WindowManager implements WindowFinder {
                 .focusable(false)
                 .withTitle("Message Watcher")
                 .notInitiallyVisible()
-                .dockTo(stackWindow)
                 .resizeable(true)
                 .build();
 
@@ -134,7 +114,6 @@ public class WindowManager implements WindowFinder {
                 .focusable(true)
                 .notInitiallyVisible()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
-                .dockTo(stackWindow)
                 .resizeable(true)
                 .build();
 
@@ -145,12 +124,10 @@ public class WindowManager implements WindowFinder {
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
-
-        stackFrame.requestFocus();
     }
 
-    public StackWindow getStackWindow() {
-        return stackWindow;
+    public StackWindow getFocusedStackWindow() {
+        return getWindowForStack(WyldCard.getInstance().getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -197,38 +174,98 @@ public class WindowManager implements WindowFinder {
         return expressionEvaluator;
     }
 
-    public void setLookAndFeel(String lafClassName) {
-        lookAndFeelClassProvider.onNext(lafClassName);
-
-        SwingUtilities.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(lafClassName);
-
-                for (Window thisWindow : JFrame.getWindows()) {
-                    SwingUtilities.updateComponentTreeUI(thisWindow);
-
-                    if (thisWindow instanceof HyperCardWindow) {
-                        HyperCardWindow thisWyldWindow = (HyperCardWindow) thisWindow;
-                        thisWyldWindow.getWindow().pack();
-                        thisWyldWindow.applyMenuBar();
-                    }
-                }
-
-                stackWindow.applyMenuBar();
-
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-                e.printStackTrace();
-            }
-        });
-
-    }
-
-    public Observable<String> getLookAndFeelClassProvider() {
-        return lookAndFeelClassProvider;
-    }
-
+    /**
+     * Gets a window (JFrame) in which to display the given stack. If a window already exists for this stack, then the
+     * existing window is returned, otherwise a new window is created and bound to the stack. If the given stack
+     * is null, a new, unbound stack window will be returned.
+     *
+     * @param stackPart The stack whose window should be retrieved
+     * @return A window (new or existing) bound to the stack.
+     */
     @RunOnDispatch
-    public boolean isMacOs() {
-        return UIManager.getLookAndFeel().getName().equalsIgnoreCase("Mac OS X");
+    public StackWindow getWindowForStack(StackPart stackPart) {
+        // Special case: return an un-built window for null stack parts (required temporarily on startup)
+        if (stackPart == null) {
+            return new StackWindow();
+        }
+
+        StackWindow existingWindow = findWindowForStack(stackPart.getStackModel());
+
+        if (existingWindow != null) {
+            return existingWindow;
+        } else {
+            return (StackWindow) WindowBuilder.make(new StackWindow())
+                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(((StackWindow) window).getStack()))
+                    .ownsMenubar()
+                    .withModel(stackPart)
+                    .build();
+        }
     }
+
+    public BehaviorSubject<List<WyldCardFrame>> getFramesProvider() {
+        return framesProvider;
+    }
+
+    public BehaviorSubject<List<WyldCardFrame>> getVisibleWindowsProvider() {
+        return windowsProvider;
+    }
+
+    public BehaviorSubject<List<WyldCardFrame>> getVisiblePalettesProvider() {
+        return palettesProvider;
+    }
+
+    public WyldCardFrame nextWindow() {
+        List<WyldCardFrame> windows = getFocusableFrames(true);
+
+        for (int index = 0; index < windows.size(); index++) {
+            if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
+                if (index + 1 < windows.size()) {
+                    return windows.get(index + 1);
+                } else {
+                    return windows.get(0);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public WyldCardFrame prevWindow() {
+        List<WyldCardFrame> windows = getFocusableFrames(true);
+
+        for (int index = 0; index < windows.size(); index++) {
+            if (windows.get(index) == FocusManager.getCurrentManager().getFocusedWindow()) {
+                if (index - 1 >= 0) {
+                    return windows.get(index - 1);
+                } else {
+                    return windows.get(windows.size() - 1);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public void toggleDockPalettes() {
+        palettesDockedProvider.onNext(!palettesDockedProvider.blockingFirst());
+
+        if (palettesDockedProvider.blockingFirst()) {
+            WindowDock.getInstance().undockWindows(getPalettes(false));
+            WindowDock.getInstance().setDock(getFocusedStackWindow());
+            WindowDock.getInstance().dockWindows(getPalettes(false));
+        } else {
+            WindowDock.getInstance().undockWindows(getPalettes(false));
+        }
+    }
+
+    public BehaviorSubject<Boolean> getPalettesDockedProvider() {
+        return palettesDockedProvider;
+    }
+
+    void notifyWindowVisibilityChanged() {
+        framesProvider.onNext(getFrames(false));
+        windowsProvider.onNext(getWindows(true));
+        palettesProvider.onNext(getPalettes(true));
+    }
+
 }

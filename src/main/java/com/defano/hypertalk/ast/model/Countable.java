@@ -16,6 +16,5 @@ public enum Countable {
     CARDS,
     MARKED_CARDS,
     BKGNDS,
-    CARDS_IN_BKGND,
     WINDOWS
 }

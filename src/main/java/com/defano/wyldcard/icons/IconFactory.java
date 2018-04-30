@@ -1,7 +1,7 @@
 package com.defano.wyldcard.icons;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.WyldCard;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class IconFactory {
     }
 
     public static List<ButtonIcon> getStackIcons() {
-        return WyldCard.getInstance().getActiveStack().getStackModel().getUserIcons();
+        return WyldCard.getInstance().getFocusedStack().getStackModel().getUserIcons();
     }
 
     public static ButtonIcon findIconForValue(Value value) {

@@ -1,6 +1,7 @@
 package com.defano.wyldcard.awt;
 
-import com.defano.wyldcard.runtime.HyperCardProperties;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.awt.*;
@@ -70,11 +71,12 @@ public class KeyboardManager {
         return isCtrlCommandDown;
     }
 
-    public boolean isPeeking() {
+    public boolean isPeeking(ExecutionContext context) {
         return isAltOptionDown() && isCtrlCommandDown() &&
-                !HyperCardProperties.getInstance().getKnownProperty(
-                        new ExecutionContext(),
-                        HyperCardProperties.PROP_CANTPEEK).booleanValue();
+                !WyldCard.getInstance().getFocusedStack()
+                    .getStackModel()
+                    .getKnownProperty(context, StackModel.PROP_CANTPEEK)
+                    .booleanValue();
     }
 
     private static void fireGlobalKeyListeners(KeyEvent e) {
