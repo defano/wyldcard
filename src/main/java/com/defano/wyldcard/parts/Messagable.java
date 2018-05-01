@@ -173,6 +173,7 @@ public interface Messagable {
         switch (type) {
             case BACKGROUND:
                 return context.getCurrentStack().getStackModel();
+            case WINDOW:
             case MESSAGE_BOX:
                 return context.getCurrentCard().getCardModel();
             case CARD:

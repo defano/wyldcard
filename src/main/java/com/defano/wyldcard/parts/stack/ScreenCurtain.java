@@ -10,6 +10,9 @@ import java.awt.image.BufferedImage;
 /**
  * A Swing component used to obscure the "actual" contents of the stack window. Used for screen locking and card-to-card
  * animated visual effects.
+ *
+ * See {@link com.defano.wyldcard.fx.CurtainManager} for the class that provides the overlaid image during screen locks
+ * and visual effects.
  */
 public class ScreenCurtain extends JLabel {
 

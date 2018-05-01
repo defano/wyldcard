@@ -15,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * The "screen curtain" represents a drawable layer that obscures the card with a fixed or animated graphic (for the
- * purposes of 'lock screen' and visual effects). This singleton provides a facade for managing the screen curtain.
+ * purposes of 'lock screen' and visual effects). This class provides a facade for managing the screen curtain.
  */
 public class CurtainManager implements SegueAnimationObserver, SegueCompletionObserver {
 

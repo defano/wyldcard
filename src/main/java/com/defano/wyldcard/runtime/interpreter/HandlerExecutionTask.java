@@ -22,14 +22,12 @@ public class HandlerExecutionTask implements Callable<String> {
     private final NamedBlock handler;
     private final PartSpecifier me;
     private final ListExp arguments;
-    private final boolean isTheTarget;
 
-    public HandlerExecutionTask(ExecutionContext context, PartSpecifier me, boolean isTheTarget, NamedBlock handler, ListExp arguments) {
+    public HandlerExecutionTask(ExecutionContext context, PartSpecifier me, NamedBlock handler, ListExp arguments) {
         this.context = context;
         this.handler = handler;
         this.me = me;
         this.arguments = arguments;
-        this.isTheTarget = isTheTarget;
     }
 
     @Override
@@ -43,7 +41,8 @@ public class HandlerExecutionTask implements Callable<String> {
         // Push a new context
         context.pushStackFrame(handler.name, me, evaluatedArguments);
 
-        if (isTheTarget) {
+        // Target refers to the part first receiving the message
+        if (context.getTarget() == null) {
             context.setTarget(me);
         }
 
@@ -59,11 +58,17 @@ public class HandlerExecutionTask implements Callable<String> {
         // Execute handler
         try {
             handler.statements.execute(context);
-        } catch (TerminateHandlerPreemption e) {
+        }
+
+        // Script invoked 'exit {handlerName}' command; check semantics
+        catch (TerminateHandlerPreemption e) {
             if (e.getHandlerName() != null && !e.getHandlerName().equalsIgnoreCase(handler.name)) {
                 WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit '" + e.getHandlerName() + "' from inside '" + handler.name + "'."));
             }
-        } catch (Preemption e) {
+        }
+
+        // Script invoked some other (illegal) form of exit (like 'exit repeat')
+        catch (Preemption e) {
             WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot exit from here."));
         }
 

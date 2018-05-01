@@ -1,5 +1,7 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.expressions.Expression;
+import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
 import com.defano.hypertalk.ast.expressions.parts.StackPartExp;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
@@ -7,22 +9,23 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
+import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.ast.statements.Command;
+import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.hypertalk.ast.expressions.Expression;
-import com.defano.hypertalk.ast.expressions.VisualEffectExp;
-import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
-import com.defano.hypertalk.ast.statements.Command;
-import com.defano.hypertalk.exception.HtException;
-import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import javax.swing.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GoCmd extends Command {
 
@@ -107,13 +110,38 @@ public class GoCmd extends Command {
         context.setResult(new Value("No such card."));
     }
 
+    /**
+     * Attempts to navigate to the given destination, applying a visual effect as requested and blocking the thread
+     * until the navigation and animation has completed.
+     *
+     * @param context The execution context
+     * @param destination The destination to navigate to
+     * @param visualEffect The optional visual effect (null for no effect)
+     */
     private void goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.stack);
-            context.setCurrentStack(stackWindow.getStack());
-            stackWindow.getStack().goCard(context, destination.cardIndex, visualEffect, true);
-            stackWindow.requestFocus();
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<StackWindow> stackWindow = new AtomicReference<>();
+
+        // Start the navigation on the UI thread
+        SwingUtilities.invokeLater(() -> {
+            stackWindow.set(WindowManager.getInstance().findWindowForStack(destination.stack));
+            context.setCurrentStack(stackWindow.get().getStack());
+            stackWindow.get().setVisible(true);
+            stackWindow.get().requestFocus();
+            stackWindow.get().getStack().goCard(context, destination.cardIndex, visualEffect, true);
+            latch.countDown();
         });
+
+        try {
+            // Wait for the navigation to start...
+            latch.await();
+
+            // ... then wait for the visual effect to complete
+            stackWindow.get().getStack().getCurtainManager().waitForEffectToFinish();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
     }
 
     private Destination getDestination(ExecutionContext context, PartModel model) {

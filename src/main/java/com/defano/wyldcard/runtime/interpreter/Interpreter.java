@@ -324,7 +324,7 @@ public class Interpreter {
      * @return A future to the name of the message passed from the block or null if no message was passed.
      */
     private static CheckedFuture<String, HtException> asyncExecuteBlock(ExecutionContext context, PartSpecifier me, NamedBlock handler, ListExp arguments) {
-        HandlerExecutionTask handlerTask = new HandlerExecutionTask(context, me, SwingUtilities.isEventDispatchThread(), handler, arguments);
+        HandlerExecutionTask handlerTask = new HandlerExecutionTask(context, me, handler, arguments);
 
         if (isScriptExecutorThread()) {
             try {

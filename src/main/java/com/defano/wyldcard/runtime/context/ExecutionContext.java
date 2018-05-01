@@ -1,6 +1,5 @@
 package com.defano.wyldcard.runtime.context;
 
-import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.Chunk;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
@@ -19,8 +18,8 @@ import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
-import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.layouts.StackWindow;
 
 import java.util.List;
 import java.util.Stack;
@@ -434,25 +433,6 @@ public class ExecutionContext {
      */
     public void setTarget(PartSpecifier theTarget) {
         this.theTarget = theTarget;
-    }
-
-    /**
-     * Sends a message to a part on the current card. This is a convenience method; sending messages do not affect the
-     * current script execution context.
-     *
-     * @param ps        A specifier identifying the part
-     * @param message   The message to be sent
-     * @param arguments Message arguments
-     * @throws PartException Thrown if the specified part does not exist
-     */
-    public void sendMessage(PartSpecifier ps, String message, ListExp arguments) throws PartException {
-        PartModel thePart = getPart(ps);
-
-        if (thePart != null) {
-            thePart.receiveMessage(this, message, arguments);
-        } else {
-            throw new PartException("No such part.");
-        }
     }
 
     @Override

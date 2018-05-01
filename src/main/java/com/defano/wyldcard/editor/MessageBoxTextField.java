@@ -108,6 +108,9 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
         if (!getText().trim().isEmpty()) {
             String messageText = getText();
             Interpreter.asyncEvaluateMessage(staticContext, messageText, messageEvaluationObserver);
+
+            // Special case: Message may have set the stack context; unset it after evaluation (un-bind the context)
+            staticContext.setCurrentStack(null);
         }
     }
 
