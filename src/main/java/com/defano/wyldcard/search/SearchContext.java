@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchContext implements SearchResultHilighter, SearchIndexer {
+public class SearchContext implements SearchResultHighlighter, SearchIndexer {
 
     private final static SearchContext instance = new SearchContext();
 

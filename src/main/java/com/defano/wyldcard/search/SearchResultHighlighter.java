@@ -8,7 +8,7 @@ import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
 
-public interface SearchResultHilighter {
+public interface SearchResultHighlighter {
 
     default void clearSearchHighlights(ExecutionContext context) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
