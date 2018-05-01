@@ -15,6 +15,7 @@ public class TextStyleSpecifier {
 
     private AttributeSet attributes;
 
+    private String align;
     private String fontFamily;
     private int fontSize;
     private boolean isBold;
@@ -45,9 +46,10 @@ public class TextStyleSpecifier {
         return tss;
     }
 
-    public static TextStyleSpecifier fromNameStyleSize(Value fontName, Value fontStyle, Value fontSize) {
+    public static TextStyleSpecifier fromAlignNameStyleSize(Value align, Value fontName, Value fontStyle, Value fontSize) {
         TextStyleSpecifier tss = new TextStyleSpecifier();
 
+        tss.align = align.toString().toLowerCase();
         tss.fontFamily = fontName.stringValue();
         tss.fontSize = fontSize.integerValue();
         tss.setFontStyle(fontStyle);
@@ -79,15 +81,29 @@ public class TextStyleSpecifier {
         tss.isSubscript = Boolean.valueOf(String.valueOf(as.getAttribute(StyleConstants.Subscript)));
         tss.isSuperscript = Boolean.valueOf(String.valueOf(as.getAttribute(StyleConstants.Superscript)));
 
-        return tss;
-    }
+        if (as.getAttribute(StyleConstants.Alignment) instanceof Integer) {
+            switch ((Integer) (as.getAttribute(StyleConstants.Alignment))) {
+                case StyleConstants.ALIGN_RIGHT:
+                    tss.align = "right";
+                    break;
+                case StyleConstants.ALIGN_CENTER:
+                    tss.align = "center";
+                    break;
+                default:
+                    tss.align = "left";
+                    break;
+            }
+        }
 
-    public Font toFont() {
-        return FontUtils.getFontByNameStyleSize(fontFamily, getAwtFontStyle(), fontSize);
+        return tss;
     }
 
     public static int convertHyperTalkStyleToAwt(Value style) {
         return TextStyleSpecifier.fromFontStyle(style).getAwtFontStyle();
+    }
+
+    public Font toFont() {
+        return FontUtils.getFontByNameStyleSize(fontFamily, getAwtFontStyle(), fontSize);
     }
 
     public int getAwtFontStyle() {
@@ -247,6 +263,10 @@ public class TextStyleSpecifier {
         isStrikeThrough = v.contains("strikethrough");
     }
 
+    public String getAlign() {
+        return align;
+    }
+
     public int getFontSize() {
         return fontSize;
     }
@@ -259,52 +279,52 @@ public class TextStyleSpecifier {
         return isBold;
     }
 
-    public boolean isItalic() {
-        return isItalic;
-    }
-
-    public boolean isUnderline() {
-        return isUnderline;
-    }
-
-    public boolean isStrikeThrough() {
-        return isStrikeThrough;
-    }
-
-    public boolean isSuperscript() {
-        return isSuperscript;
-    }
-
-    public boolean isSubscript() {
-        return isSubscript;
-    }
-
-    public boolean isPlain() {
-        return !isBold && !isItalic && !isUnderline && !isStrikeThrough && !isSuperscript && !isSubscript;
-    }
-
     public void setBold(boolean bold) {
         isBold = bold;
+    }
+
+    public boolean isItalic() {
+        return isItalic;
     }
 
     public void setItalic(boolean italic) {
         isItalic = italic;
     }
 
+    public boolean isUnderline() {
+        return isUnderline;
+    }
+
     public void setUnderline(boolean underline) {
         isUnderline = underline;
+    }
+
+    public boolean isStrikeThrough() {
+        return isStrikeThrough;
     }
 
     public void setStrikeThrough(boolean strikeThrough) {
         isStrikeThrough = strikeThrough;
     }
 
+    public boolean isSuperscript() {
+        return isSuperscript;
+    }
+
     public void setSuperscript(boolean superscript) {
         isSuperscript = superscript;
     }
 
+    public boolean isSubscript() {
+        return isSubscript;
+    }
+
     public void setSubscript(boolean subscript) {
         isSubscript = subscript;
+    }
+
+    public boolean isPlain() {
+        return !isBold && !isItalic && !isUnderline && !isStrikeThrough && !isSuperscript && !isSubscript;
     }
 
     @Override

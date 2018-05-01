@@ -26,6 +26,7 @@ public class PartToolContext {
     private final TextFontObserver fontObserver = new TextFontObserver();
     private final TextStyleObserver styleObserver = new TextStyleObserver();
     private final TextSizeObserver sizeObserver = new TextSizeObserver();
+    private final TextAlignObserver alignObserver = new TextAlignObserver();
 
     private PartToolContext() {
         // Deselect all parts when user changes tool mode
@@ -35,6 +36,7 @@ public class PartToolContext {
         FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontObserver);
         FontContext.getInstance().getSelectedFontSizeProvider().subscribe(sizeObserver);
         FontContext.getInstance().getSelectedFontStyleProvider().subscribe(styleObserver);
+        FontContext.getInstance().getSelectedTextAlignProvider().subscribe(alignObserver);
     }
 
     public static PartToolContext getInstance() {
@@ -110,6 +112,14 @@ public class PartToolContext {
         public void accept(Value value) {
             Optional<ToolEditablePart> selectedPart = PartToolContext.this.selectedPart.blockingFirst();
             selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTFONT, value));
+        }
+    }
+
+    private class TextAlignObserver implements Consumer<Value> {
+        @Override
+        public void accept(Value value) {
+            Optional<ToolEditablePart> selectedPart = PartToolContext.this.selectedPart.blockingFirst();
+            selectedPart.ifPresent(toolEditablePart -> toolEditablePart.getPartModel().setKnownProperty(new ExecutionContext(), CardLayerPartModel.PROP_TEXTALIGN, value));
         }
     }
 

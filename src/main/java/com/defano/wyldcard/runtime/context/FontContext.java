@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.google.common.collect.Sets;
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
@@ -60,11 +61,13 @@ public class FontContext {
     private final Subject<Boolean> focusedStrikethroughProvider = BehaviorSubject.createDefault(false);
     private final Subject<Boolean> focusedSuperscriptProvider = BehaviorSubject.createDefault(false);
     private final Subject<Boolean> focusedSubscriptProvider = BehaviorSubject.createDefault(false);
+    private final Subject<Value> focusedTextAlignProvider = BehaviorSubject.createDefault(new Value("left"));
 
     // Font, size and style of last font, size and style chosen by the user from the menus or chooser dialog
     private final Subject<Value> selectedFontFamilyProvider = BehaviorSubject.createDefault(new Value(DEFAULT_FONT_FAMILY));
     private final Subject<Value> selectedFontSizeProvider = BehaviorSubject.createDefault(new Value(DEFAULT_FONT_SIZE));
     private final Subject<Value> selectedFontStyleProvider = BehaviorSubject.createDefault(new Value(DEFAULT_FONT_STYLE));
+    private final Subject<Value> selectedTextAlignProvider = BehaviorSubject.createDefault(new Value("left"));
 
     // For JMonet use only; components should listen for and react to font, style and size changes individually.
     private final Subject<Font> paintFontProvider = BehaviorSubject.createDefault(FontUtils.getFontByNameStyleSize(DEFAULT_FONT_FAMILY, DEFAULT_FONT_STYLE_CONST, DEFAULT_FONT_SIZE));
@@ -75,6 +78,7 @@ public class FontContext {
         selectedFontFamilyProvider.subscribe(value -> focusedFontFamilyProvider.onNext(Sets.newHashSet(value)));
         selectedFontSizeProvider.subscribe(value -> focusedFontSizeProvider.onNext(Sets.newHashSet(value)));
         selectedFontStyleProvider.subscribe(value -> setFocusedFontStyle(TextStyleSpecifier.fromFontStyle(value), false));
+        selectedTextAlignProvider.subscribe(focusedTextAlignProvider::onNext);
 
         // Change in selected font should update paint tool
         selectedFontFamilyProvider.subscribe(value -> paintFontProvider.onNext(FontUtils.getFontByNameStyleSize(String.valueOf(value), getFocusedTextStyle().getAwtFontStyle(), getFocusedTextStyle().getFontSize())));
@@ -111,6 +115,14 @@ public class FontContext {
         TextStyleSpecifier tss = TextStyleSpecifier.fromFontStyle(getFocusedHyperTalkFontStyle());
         tss.toggleFontStyle(style);
         selectedFontStyleProvider.onNext(tss.getHyperTalkStyle());
+    }
+
+    public void setSelectedFontAlign(Value align) {
+        selectedTextAlignProvider.onNext(align);
+    }
+
+    public Observable<Value> getSelectedTextAlignProvider() {
+        return selectedTextAlignProvider;
     }
 
     public Value getSelectedFontFamily() {
@@ -194,6 +206,18 @@ public class FontContext {
         return focusedPlainProvider;
     }
 
+    public Observable<Boolean> getFocusedLeftAlignProvider() {
+        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("left"));
+    }
+
+    public Observable<Boolean> getFocusedRightAlignProvider() {
+        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("right"));
+    }
+
+    public Observable<Boolean> getFocusedCenterAlignProvider() {
+        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("center"));
+    }
+
     /**
      * Gets a "single" text style representing the current focus. Careful: This method is inherently lossy. The current
      * focused text may contain a mixture of fonts, sizes, and styles. The method reduces that selection to a single
@@ -205,7 +229,8 @@ public class FontContext {
      * @return A lossy, single-style representation of the focused text style.
      */
     public TextStyleSpecifier getFocusedTextStyle() {
-        return TextStyleSpecifier.fromNameStyleSize(
+        return TextStyleSpecifier.fromAlignNameStyleSize(
+                focusedTextAlignProvider.blockingFirst(),
                 (Value) focusedFontFamilyProvider.blockingFirst().toArray()[0],
                 getFocusedHyperTalkFontStyle(),
                 (Value) focusedFontSizeProvider.blockingFirst().toArray()[0]
@@ -219,6 +244,7 @@ public class FontContext {
      */
     public void setFocusedTextStyle(TextStyleSpecifier tss) {
         if (tss != null) {
+            focusedTextAlignProvider.onNext(new Value(tss.getAlign()));
             focusedFontFamilyProvider.onNext(Sets.newHashSet(new Value(tss.getFontFamily())));
             focusedFontSizeProvider.onNext(Sets.newHashSet(new Value(tss.getFontSize())));
 
@@ -270,5 +296,9 @@ public class FontContext {
         }
 
         setFocusedFontStyle(tss, includesPlain);
+    }
+
+    public void setFocusedTextAlign(Value align) {
+        focusedTextAlignProvider.onNext(align);
     }
 }

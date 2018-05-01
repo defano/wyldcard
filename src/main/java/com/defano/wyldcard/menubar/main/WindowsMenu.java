@@ -65,7 +65,7 @@ public class WindowsMenu extends HyperCardMenu {
 
     private void addPalettes(JMenuItem parent) {
         MenuItemBuilder.ofCheckType()
-                .named("Dock to Stack")
+                .named("Dock to Card Window")
                 .withShiftShortcut('D')
                 .withAction(a -> WindowManager.getInstance().toggleDockPalettes())
                 .withCheckmarkProvider(WindowManager.getInstance().getPalettesDockedProvider())

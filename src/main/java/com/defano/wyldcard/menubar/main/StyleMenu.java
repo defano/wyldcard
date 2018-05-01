@@ -1,12 +1,12 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
-import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.window.layouts.FontSizePicker;
 
 import java.awt.*;
@@ -20,6 +20,29 @@ public class StyleMenu extends HyperCardMenu {
 
     private StyleMenu() {
         super("Style");
+
+        MenuItemBuilder.ofCheckType()
+                .named("Align Left")
+                .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("left")))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedLeftAlignProvider())
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
+                .named("Align Center")
+                .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("center")))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedCenterAlignProvider())
+                .build(this);
+
+        MenuItemBuilder.ofCheckType()
+                .named("Align Right")
+                .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("right")))
+                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withCheckmarkProvider(FontContext.getInstance().getFocusedRightAlignProvider())
+                .build(this);
+
+        addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Plain")

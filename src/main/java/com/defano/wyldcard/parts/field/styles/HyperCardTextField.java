@@ -46,6 +46,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
     private final HyperCardTextPane textPane;
     private final ToolModeObserver toolModeObserver = new ToolModeObserver();
+    private final FontAlignObserver fontAlignObserver = new FontAlignObserver();
     private final FontSizeObserver fontSizeObserver = new FontSizeObserver();
     private final FontStyleObserver fontStyleObserver = new FontStyleObserver();
     private final FontFamilyObserver fontFamilyObserver = new FontFamilyObserver();
@@ -58,6 +59,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     private Disposable fontSizeSubscription;
     private Disposable fontStyleSubscription;
     private Disposable fontFamilySubscription;
+    private Disposable fontAlignSubscription;
 
     private final ToolEditablePart toolEditablePart;
     private final static Throttle fontSelectionThrottle = new Throttle("font-selection-throttle", 500);
@@ -187,6 +189,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         // Get notified when field tool is selected
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
 
+        fontAlignSubscription = FontContext.getInstance().getSelectedTextAlignProvider().subscribe(fontAlignObserver);
         fontFamilySubscription = FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);
         fontStyleSubscription = FontContext.getInstance().getSelectedFontStyleProvider().subscribe(fontStyleObserver);
         fontSizeSubscription = FontContext.getInstance().getSelectedFontSizeProvider().subscribe(fontSizeObserver);
@@ -237,6 +240,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         fontStyleSubscription.dispose();
         fontSizeSubscription.dispose();
         toolModeSubscription.dispose();
+        fontAlignSubscription.dispose();
     }
 
     /**
@@ -448,11 +452,14 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             Set<Value> styles = new HashSet<>();
             Set<Value> families = new HashSet<>();
             Set<Value> sizes = new HashSet<>();
+            Value alignment = new Value("left");
 
             // No selection; aggregate and report styles of entire field
             if (selection.isEmpty()) {
                 AttributeSet attributes = textPane.getCharacterAttributes();
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
+
+                alignment = new Value(tss.getAlign());
                 styles.add(tss.getHyperTalkStyle());
                 families.add(new Value(tss.getFontFamily()));
                 sizes.add(new Value(tss.getFontSize()));
@@ -463,6 +470,8 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
                 for (int thisChar = selection.start; thisChar < selection.end; thisChar++) {
                     AttributeSet attributes = textPane.getStyledDocument().getCharacterElement(thisChar).getAttributes();
                     TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(attributes);
+
+                    alignment = new Value(tss.getAlign());
                     styles.add(tss.getHyperTalkStyle());
                     families.add(new Value(tss.getFontFamily()));
                     sizes.add(new Value(tss.getFontSize()));
@@ -472,6 +481,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
             FontContext.getInstance().getFocusedFontFamilyProvider().onNext(families);
             FontContext.getInstance().getFocusedFontSizeProvider().onNext(sizes);
             FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
+            FontContext.getInstance().setFocusedTextAlign(alignment);
         });
     }
 
@@ -480,6 +490,15 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         public void accept(Value style) {
             if (hasFocus()) {
                 ThreadUtils.invokeAndWaitAsNeeded(() -> setTextFontStyle(new ExecutionContext(), style));
+            }
+        }
+    }
+
+    private class FontAlignObserver implements Consumer<Value> {
+        @Override
+        public void accept(Value align) {
+            if (hasFocus()) {
+                ThreadUtils.invokeAndWaitAsNeeded(() -> setActiveTextAlign(new ExecutionContext(), align));
             }
         }
     }

@@ -79,7 +79,11 @@ public abstract class CardLayerPartModel extends PartModel {
     }
 
     public TextStyleSpecifier getTextStyle(ExecutionContext context) {
-        return TextStyleSpecifier.fromNameStyleSize(getKnownProperty(context, PROP_TEXTFONT), getKnownProperty(context, PROP_TEXTSTYLE), getKnownProperty(context, PROP_TEXTSIZE));
+        return TextStyleSpecifier.fromAlignNameStyleSize(
+                getKnownProperty(context, PROP_TEXTALIGN),
+                getKnownProperty(context, PROP_TEXTFONT),
+                getKnownProperty(context, PROP_TEXTSTYLE),
+                getKnownProperty(context, PROP_TEXTSIZE));
     }
 
     public void setTextStyle(ExecutionContext context, TextStyleSpecifier style) {
