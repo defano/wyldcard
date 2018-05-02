@@ -18,9 +18,7 @@ public class HyperCardMenuBar extends JMenuBar {
 
     private final static HyperCardMenuBar instance = new HyperCardMenuBar();
 
-    private HyperCardMenuBar() {
-        reset();
-    }
+    private HyperCardMenuBar() {}
 
     public static HyperCardMenuBar getInstance() {
         return instance;

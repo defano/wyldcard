@@ -4,6 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 
@@ -43,7 +44,7 @@ public class FileMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofDefaultType()
                     .named("Quit HyperCard")
-                    .withAction(e -> WyldCard.getInstance().closeAllStacks())
+                    .withAction(e -> WyldCard.getInstance().closeAllStacks(new ExecutionContext()))
                     .withShortcut('Q')
                     .build(this);
         }

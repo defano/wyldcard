@@ -83,10 +83,10 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
         defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
-        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getLocation().x));
-        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getY()));
-        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getLocation().y));
-        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().setLocation(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow().getX(), value.integerValue()));
+        defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
+        defineComputedSetterProperty(PartModel.PROP_LEFT, (context, model, propertyName, value) -> WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(value.integerValue(), WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getY()));
+        defineComputedGetterProperty(PartModel.PROP_TOP, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().y));
+        defineComputedSetterProperty(PartModel.PROP_TOP, (context, model, propertyName, value) -> WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().setLocation(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getX(), value.integerValue()));
 
         if (!hasProperty(PartModel.PROP_ID)) {
             defineProperty(PartModel.PROP_ID, new Value(UUID.randomUUID().toString()), true);

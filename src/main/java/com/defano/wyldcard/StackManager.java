@@ -1,6 +1,7 @@
 package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
+import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.parts.PartException;
@@ -14,9 +15,9 @@ import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.window.WindowDock;
+import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.StackWindow;
-import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -52,9 +53,9 @@ public class StackManager implements StackNavigationObserver {
     /**
      * Attempts to locate a specified stack, prompting the user to locate the stack on disk if necessary.
      *
-     * @param context The current execution context
+     * @param context   The current execution context
      * @param specifier A specifier identifying the stack we're looking for
-     * @param options Navigation options (like 'in a new window' or 'without dialog')
+     * @param options   Navigation options (like 'in a new window' or 'without dialog')
      * @return The located stack, or null if the stack could not be located.
      */
     public StackModel locateStack(ExecutionContext context, StackPartSpecifier specifier, RemoteNavigationOptions options) {
@@ -90,7 +91,7 @@ public class StackManager implements StackNavigationObserver {
      *                    to open a new stack).
      */
     public StackPart openStack(ExecutionContext context, boolean inNewWindow, String title) {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
@@ -144,7 +145,7 @@ public class StackManager implements StackNavigationObserver {
     /**
      * Saves the given stack model to a file/path chosen by the user.
      *
-     * @param context The execution context
+     * @param context    The execution context
      * @param stackModel The stack to be saved
      */
     public void saveStackAs(ExecutionContext context, StackModel stackModel) {
@@ -156,7 +157,7 @@ public class StackManager implements StackNavigationObserver {
             defaultName = stackModel.getStackName(context);
         }
 
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setFile(defaultName);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
@@ -206,10 +207,11 @@ public class StackManager implements StackNavigationObserver {
     /**
      * Closes all of the open stack windows (prompting as required to save); when all stacks have closed, the
      * application exits.
+     * @param context The execution context
      */
-    public void closeAllStacks() {
+    public void closeAllStacks(ExecutionContext context) {
         for (StackPart thisOpenStack : getOpenStacks()) {
-            closeStack(thisOpenStack);
+            closeStack(context, thisOpenStack);
         }
     }
 
@@ -217,9 +219,10 @@ public class StackManager implements StackNavigationObserver {
      * Attempts to close the requested stack, prompting the user to save it (when necessary) before closing. Note that
      * the when prompted to save, the user can cancel, resulting in the stack not being closed.
      *
+     * @param context The execution context
      * @param stackPart The stack to be closed
      */
-    public void closeStack(StackPart stackPart) {
+    public void closeStack(ExecutionContext context, StackPart stackPart) {
         if (stackPart == null) {
             stackPart = getFocusedStack();
         }
@@ -238,6 +241,8 @@ public class StackManager implements StackNavigationObserver {
                 saveStack(new ExecutionContext(), stackPart.getStackModel());
             }
         }
+
+        stackPart.partClosed(context);
 
         // Dispose the stack's frame (if one exists)
         if (stackPart.getOwningStackWindow() != null) {
@@ -260,18 +265,27 @@ public class StackManager implements StackNavigationObserver {
      * @param stackPart The stack part to focus.
      */
     public StackPart focusStack(StackPart stackPart) {
-        if (stackPart == null) {
-            throw new IllegalArgumentException("Focused stack cannot be null.");
+
+        // Don't refocus the focused stack
+        if (focusedStack.hasValue() && focusedStack.blockingFirst() == stackPart) {
+            return stackPart;
         }
 
         // Remove focus from last-focused stack when applicable
         if (focusedStack.hasValue()) {
             PartToolContext.getInstance().deselectAllParts();
             focusedStack.blockingFirst().removeNavigationObserver(this);
+
+            // Send suspendStack/resumeStack messages
+            focusedStack.blockingFirst().getDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(focusedStack.blockingFirst()), SystemMessage.SUSPEND_STACK.messageName);
+            stackPart.getDisplayedCard().getCardModel().receiveMessage(new ExecutionContext(stackPart), SystemMessage.RESUME_STACK.messageName);
         }
 
         // Make the focused stack the window dock
         WindowDock.getInstance().setDock(stackPart.getOwningStackWindow());
+
+        // Make the selected tool active on the focused card
+        ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
 
         focusedStack.onNext(stackPart);
         cardCount.setSource(stackPart.getCardCountProvider());
@@ -280,8 +294,6 @@ public class StackManager implements StackNavigationObserver {
         isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
         isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
         stackPart.addNavigationObserver(this);
-
-        ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
 
         return stackPart;
     }
@@ -301,6 +313,7 @@ public class StackManager implements StackNavigationObserver {
 
     /**
      * Gets an observable of the focused stack.
+     *
      * @return The focused stack observable.
      */
     public Observable<StackPart> getFocusedStackProvider() {
@@ -391,14 +404,16 @@ public class StackManager implements StackNavigationObserver {
 
         // Stack is not already open
         else {
-
             if (inNewWindow) {
-                stackPart.bindToWindow(WindowManager.getInstance().getWindowForStack(stackPart));
+                stackPart.bindToWindow(WindowManager.getInstance().getWindowForStack(context, stackPart));
             } else {
                 stackPart.bindToWindow(context.getCurrentStack().getOwningStackWindow());
             }
 
             stackPart.addNavigationObserver(this);
+            stackPart.partOpened(context);
         }
+
+        focusStack(stackPart);
     }
 }

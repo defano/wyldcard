@@ -18,6 +18,7 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
+import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.Subject;
@@ -98,7 +99,9 @@ public class ToolsContext {
 
     public void reactivateTool(PaintCanvas canvas) {
         paintToolProvider.blockingFirst().deactivate();
-        paintToolProvider.blockingFirst().activate(canvas);
+        if (canvas != null) {
+            paintToolProvider.blockingFirst().activate(canvas);
+        }
     }
 
     public Subject<PaintTool> getPaintToolProvider() {
@@ -284,6 +287,7 @@ public class ToolsContext {
         getPaintTool().deactivate();
         isEditingBackground.onNext(!isEditingBackground.blockingFirst());
         reactivateTool(WyldCard.getInstance().getFocusedCard().getCanvas());
+        WindowManager.getInstance().getFocusedStackWindow().invalidateWindowTitle();
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {

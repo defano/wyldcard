@@ -6,6 +6,7 @@ import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
+import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
@@ -21,8 +22,8 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
@@ -61,7 +62,11 @@ public class StackPart implements Part, PropertyChangeObserver {
         StackPart stackPart = new StackPart(model);
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
-        stackPart.currentCard = stackPart.openCard(context, model.getCurrentCardIndex());
+        try {
+            stackPart.currentCard = CardPart.fromPositionInStack(context, model.getCurrentCardIndex(), model);
+        } catch (HtException e) {
+            throw new RuntimeException("Failed to create card.");
+        }
 
         return stackPart;
     }
@@ -83,13 +88,8 @@ public class StackPart implements Part, PropertyChangeObserver {
         // Display the current card
         goCard(context, stackModel.getCurrentCardIndex(), null, false);
 
-        fireOnStackOpened();
+        // Resize the window to fit this stack
         fireOnCardDimensionChanged(stackModel.getDimension(context));
-
-        getStackModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_STACK.messageName);
-        fireOnCardOpened(getDisplayedCard());
-
-        ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
     }
 
     /**
@@ -400,7 +400,7 @@ public class StackPart implements Part, PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
+                WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
                 break;
         }
     }
@@ -536,11 +536,15 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     @Override
     public void partOpened(ExecutionContext context) {
-        // TODO: Not supported yet
+        currentCard = openCard(context, getStackModel().getCurrentCardIndex());
+        getStackModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_STACK.messageName);
+
+        fireOnCardOpened(getDisplayedCard());
+        fireOnStackOpened();
     }
 
     @Override
     public void partClosed(ExecutionContext context) {
-        // TODO: Not supported yet
+        // Nothing to do
     }
 }

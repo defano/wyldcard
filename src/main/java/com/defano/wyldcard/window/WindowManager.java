@@ -4,6 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -43,20 +44,17 @@ public class WindowManager implements WindowFinder, Themeable {
     public void start() {
         themeProvider.onNext(UIManager.getLookAndFeel().getName());
 
-        StackWindow stackWindow = getFocusedStackWindow();
-
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
                 .asPalette()
                 .focusable(true)
-                .withLocationUnderneath(stackWindow)
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
-                .withLocationLeftOf(stackWindow)
+                .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(shapesPalette)
@@ -84,6 +82,7 @@ public class WindowManager implements WindowFinder, Themeable {
                 .asPalette()
                 .withTitle("Patterns")
                 .withLocationLeftOf(paintToolsPalette.getWindow())
+                .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(intensityPalette)
@@ -127,7 +126,7 @@ public class WindowManager implements WindowFinder, Themeable {
     }
 
     public StackWindow getFocusedStackWindow() {
-        return getWindowForStack(WyldCard.getInstance().getFocusedStack());
+        return getWindowForStack(new ExecutionContext(), WyldCard.getInstance().getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -179,14 +178,15 @@ public class WindowManager implements WindowFinder, Themeable {
      * existing window is returned, otherwise a new window is created and bound to the stack. If the given stack
      * is null, a new, unbound stack window will be returned.
      *
+     *
+     * @param context
      * @param stackPart The stack whose window should be retrieved
      * @return A window (new or existing) bound to the stack.
      */
     @RunOnDispatch
-    public StackWindow getWindowForStack(StackPart stackPart) {
-        // Special case: return an un-built window for null stack parts (required temporarily on startup)
+    public StackWindow getWindowForStack(ExecutionContext context, StackPart stackPart) {
         if (stackPart == null) {
-            return new StackWindow();
+            throw new IllegalArgumentException("Can't get window for null stack part.");
         }
 
         StackWindow existingWindow = findWindowForStack(stackPart.getStackModel());
@@ -195,7 +195,7 @@ public class WindowManager implements WindowFinder, Themeable {
             return existingWindow;
         } else {
             return (StackWindow) WindowBuilder.make(new StackWindow())
-                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(((StackWindow) window).getStack()))
+                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(context, ((StackWindow) window).getStack()))
                     .ownsMenubar()
                     .withModel(stackPart)
                     .build();

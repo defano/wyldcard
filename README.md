@@ -173,6 +173,8 @@ WyldCard automatically sends the following messages to parts as the user interac
  `openCard`         | Sent to cards as they are navigated to
  `openField`        | Sent to editable fields when they gain focus
  `openStack`        | Sent to a stack when it is opened
+ `resumeStack`      | Sent to the current card of a stack when it gains focus from another stack window.
+ `suspendStack`     | Sent to the current card of a stack when it loses focus to another stack window.
  `tabKey`           | Sent when the tab key is pressed
 
 Messages do not have to originate from WyldCard, nor are they limited to those listed in the table above. A script may send a message of its own creation to another part (or to itself) using the `send` command:

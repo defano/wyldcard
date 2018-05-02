@@ -381,6 +381,10 @@ public class ExecutionContext {
         this.stack = stack;
     }
 
+    public boolean isBoundToStack() {
+        return this.stack != null;
+    }
+
     /**
      * Gets the current value of the implicit variable 'it' in this context.
      *

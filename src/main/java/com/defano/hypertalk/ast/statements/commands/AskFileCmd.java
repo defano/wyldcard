@@ -30,7 +30,7 @@ public class AskFileCmd extends Command {
     @Override
     protected void onExecute(ExecutionContext context) throws HtException {
         String prompt = promptExpression.evaluate(context).stringValue();
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow(), prompt, FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow(), prompt, FileDialog.SAVE);
 
         if (fileExpression != null) {
             fd.setFile(fileExpression.evaluate(context).stringValue());
