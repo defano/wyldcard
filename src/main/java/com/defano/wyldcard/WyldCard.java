@@ -61,13 +61,12 @@ public class WyldCard extends StackManager implements PartFinder {
             PatternManager.getInstance().start();               // Update pattern palette on color changes
             PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
             CursorManager.getInstance().start();                // Mouse cursor assignment
-            PartToolContext.getInstance().start();              // Button and field selection state
+            PartToolContext.getInstance().start();              // Button and field tool selection state
 
             super.newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
             SwingUtilities.invokeLater(() -> HyperCardMenuBar.getInstance().reset());
-
         });
 
         // Close all open files before we die

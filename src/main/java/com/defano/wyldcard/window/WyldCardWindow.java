@@ -73,7 +73,7 @@ public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFr
     }
 
     @Override
-    public void setOwnsMenuBar(boolean ownsMenuBar) {
+    public void setHasMenuBar(boolean ownsMenuBar) {
         this.ownsMenubar = ownsMenuBar;
     }
 

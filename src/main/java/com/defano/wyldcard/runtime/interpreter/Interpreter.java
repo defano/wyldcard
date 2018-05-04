@@ -181,7 +181,7 @@ public class Interpreter {
      * @param arguments          A list of expressions representing arguments passed with the message
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
      */
-    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
+    public synchronized static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
         NamedBlock handler = script == null ? null : script.getHandler(message);
 
         // Script does not have a handler for this message; create a "default" handler to pass it
@@ -205,7 +205,7 @@ public class Interpreter {
 
                 // Semantic error: Handler passed a message other than the one being handled.
                 else {
-                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass a message other than the one being handled."));
+                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass " + passedMessage + " from within " + message));
                 }
 
             }

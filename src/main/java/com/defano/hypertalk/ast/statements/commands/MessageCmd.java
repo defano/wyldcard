@@ -48,7 +48,7 @@ public class MessageCmd extends Statement {
 
         // Typical case: One stack part is sending a message to another stack part
         else {
-            recipientModel.receiveMessage(new ExecutionContext(recipientModel), message, messageArgs);
+            recipientModel.receiveMessage(context.bind(recipientModel), message, messageArgs);
         }
     }
 

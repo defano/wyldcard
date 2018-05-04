@@ -18,6 +18,6 @@ public class DoMenuCmd extends Statement {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        HyperCardMenuBar.getInstance().doMenu(theMenuItem.evaluate(context).stringValue());
+        HyperCardMenuBar.getInstance().doMenu(context, theMenuItem.evaluate(context).stringValue());
     }
 }

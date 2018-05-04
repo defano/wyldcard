@@ -26,10 +26,11 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     private final ArrayList<String> messageStack = new ArrayList<>();
     private int messageStackIndex = -1;
 
-    private ExecutionContext staticContext = new ExecutionContext();
+    private final ExecutionContext staticContext = new ExecutionContext();
     private MessageEvaluationObserver messageEvaluationObserver = this;
 
     public MessageBoxTextField() {
+        this.staticContext.unbind();
 
         // Handle syntax checking and message execution key typed events
         addKeyListener(new KeyAdapter() {
@@ -70,10 +71,6 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
 
     }
 
-    public void setStaticContext(ExecutionContext staticContext) {
-        this.staticContext = staticContext;
-    }
-
     @RunOnDispatch
     private void checkSyntax() {
         try {
@@ -110,7 +107,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
             Interpreter.asyncEvaluateMessage(staticContext, messageText, messageEvaluationObserver);
 
             // Special case: Message may have set the stack context; unset it after evaluation (un-bind the context)
-            staticContext.setCurrentStack(null);
+            staticContext.unbind();
         }
     }
 
@@ -118,7 +115,7 @@ public class MessageBoxTextField extends JTextField implements MessageEvaluation
     public void onMessageEvaluated(String result) {
         // Replace the message box text with the result of evaluating the expression (ignore if user entered statement)
         if (result != null) {
-            ThreadUtils.invokeAndWaitAsNeeded(() -> setToolTipText(result));
+            ThreadUtils.invokeAndWaitAsNeeded(() -> setText(result));
         }
     }
 

@@ -16,7 +16,6 @@ import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -34,6 +33,7 @@ import java.util.Optional;
  */
 public class StackManager implements StackNavigationObserver {
 
+    private final ArrayList<StackPart> openedStacks = new ArrayList<>();
     private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
@@ -47,7 +47,8 @@ public class StackManager implements StackNavigationObserver {
      * @param context The current execution context
      */
     public void newStack(ExecutionContext context) {
-        displayStack(context, StackPart.newStack(context), true);
+        StackPart newStack = StackPart.newStack(context);
+        displayStack(context, newStack, true);
     }
 
     /**
@@ -133,13 +134,7 @@ public class StackManager implements StackNavigationObserver {
      * @return The list of open stacks.
      */
     public List<StackPart> getOpenStacks() {
-        ArrayList<StackPart> stacks = new ArrayList<>();
-        for (WyldCardFrame thisWindow : WindowManager.getInstance().getFrames(false)) {
-            if (thisWindow instanceof StackWindow && thisWindow.getWindow().isVisible()) {
-                stacks.add(((StackWindow) thisWindow).getStack());
-            }
-        }
-        return stacks;
+        return this.openedStacks;
     }
 
     /**
@@ -238,7 +233,7 @@ public class StackManager implements StackNavigationObserver {
             if (dialogResult == JOptionPane.CLOSED_OPTION) {
                 return;
             } else if (dialogResult == JOptionPane.YES_OPTION) {
-                saveStack(new ExecutionContext(), stackPart.getStackModel());
+                saveStack(context, stackPart.getStackModel());
             }
         }
 
@@ -248,6 +243,8 @@ public class StackManager implements StackNavigationObserver {
         if (stackPart.getOwningStackWindow() != null) {
             stackPart.getOwningStackWindow().dispose();
         }
+
+        openedStacks.remove(stackPart);
 
         // Finally, quit application when last stack window has closed
         if (getOpenStacks().size() == 0) {
@@ -395,9 +392,9 @@ public class StackManager implements StackNavigationObserver {
      *                    window.
      */
     private void displayStack(ExecutionContext context, StackPart stackPart, boolean inNewWindow) {
-        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart.getStackModel());
 
         // Special case: Stack is already open, simply focus it
+        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stackPart.getStackModel());
         if (existingWindow != null) {
             existingWindow.requestFocus();
         }
@@ -410,6 +407,7 @@ public class StackManager implements StackNavigationObserver {
                 stackPart.bindToWindow(context.getCurrentStack().getOwningStackWindow());
             }
 
+            this.openedStacks.add(stackPart);
             stackPart.addNavigationObserver(this);
             stackPart.partOpened(context);
         }

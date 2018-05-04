@@ -167,7 +167,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(context, this, layer.asOwner());
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
@@ -184,7 +184,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(context, this, layer.asOwner(), rectangle);
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -200,7 +200,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(new ExecutionContext(), this, layer.asOwner());
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
@@ -216,7 +216,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(context, this, layer.asOwner(), rectangle);
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
         return newField;
     }
 
@@ -509,7 +509,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         ButtonPart newButton = ButtonPart.fromModel(context, this, model);
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -533,7 +533,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         FieldPart newField = FieldPart.fromModel(context, this, model);
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
 
         return newField;
     }
@@ -678,7 +678,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         getForegroundCanvas().getSurface().addMouseListener(this);
         getForegroundCanvas().getSurface().addKeyListener(this);
 
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName);
+        getPartModel().receiveMessage(context.bind(this), SystemMessage.OPEN_CARD.messageName);
         ((CardModel) getPartModel()).setObserver(cardModelObserver);
 
         getCardModel().addPropertyChangedObserver(this);
@@ -693,7 +693,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD.messageName);
+        getPartModel().receiveMessage(context.bind(this), SystemMessage.CLOSE_CARD.messageName);
 
         // Lets parts know they're about to go away
         notifyPartsClosing(context);

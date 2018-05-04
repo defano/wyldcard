@@ -39,16 +39,42 @@ public interface WyldCardFrame<WindowType extends Window> {
      */
     WindowType getWindow();
 
+    /**
+     * Determines if this window has a menu bar.
+     *
+     * @return True if the window has a menu bar, false otherwise.
+     */
     boolean hasMenuBar();
 
-    void setOwnsMenuBar(boolean ownsMenuBar);
+    /**
+     * Specifies if this window has a menu bar. On Mac OS X systems, windows without a menu bar inherit the system menu
+     * bar, {@link HyperCardMenuBar}.
+     *
+     * @param ownsMenuBar True if this window should have a menu bar
+     */
+    void setHasMenuBar(boolean ownsMenuBar);
 
+    /**
+     * Gets the JMenuBar that should be applied to this window; by default, returns the {@link HyperCardMenuBar}.
+     *
+     * @return The menu bar belonging to this window.
+     */
     default JMenuBar getWyldCardMenuBar() {
         return HyperCardMenuBar.getInstance();
     }
 
+    /**
+     * Gets an observable indication of whether this window is presently visible.
+     *
+     * @return An observable of whether this window is visible
+     */
     Observable<Boolean> getWindowVisibleProvider();
 
+    /**
+     * Gets an observerable indication of whether this window has focus.
+     *
+     * @return An observable of whether this window is focused
+     */
     Observable<Boolean> getWindowFocusedProvider();
 
     /**
@@ -62,6 +88,13 @@ public interface WyldCardFrame<WindowType extends Window> {
         return null;
     }
 
+    /**
+     * Sets the location of this window, but adjusting the actual location of the window as necessary to assure that no
+     * portion of the window appears offscreen.
+     *
+     * @param x The requested x coordinate of the window
+     * @param y The requested y coordinate of the window
+     */
     @RunOnDispatch
     default void positionWindow(int x, int y) {
         DisplayMode mode = getWindow().getGraphicsConfiguration().getDevice().getDisplayMode();
@@ -137,6 +170,12 @@ public interface WyldCardFrame<WindowType extends Window> {
                 JFrame frame = (JFrame) getWindow();
                 if (hasMenuBar() || WindowManager.getInstance().isMacOsTheme()) {
                     frame.setJMenuBar(getWyldCardMenuBar());
+                    frame.revalidate();
+                }
+
+                // Clear previously applied menubar (applicable to some systems when changing themes)
+                else {
+                    frame.setJMenuBar(null);
                     frame.revalidate();
                 }
             }

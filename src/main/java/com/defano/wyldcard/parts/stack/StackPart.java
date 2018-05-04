@@ -537,7 +537,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     @Override
     public void partOpened(ExecutionContext context) {
         currentCard = openCard(context, getStackModel().getCurrentCardIndex());
-        getStackModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_STACK.messageName);
+        getStackModel().receiveMessage(context.bind(this), SystemMessage.OPEN_STACK.messageName);
 
         fireOnCardOpened(getDisplayedCard());
         fireOnStackOpened();

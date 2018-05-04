@@ -125,7 +125,7 @@ public class GoCmd extends Command {
         // Start the navigation on the UI thread
         SwingUtilities.invokeLater(() -> {
             stackWindow.set(WindowManager.getInstance().findWindowForStack(destination.stack));
-            context.setCurrentStack(stackWindow.get().getStack());
+            context.bind(stackWindow.get().getStack());
             stackWindow.get().setVisible(true);
             stackWindow.get().requestFocus();
             stackWindow.get().getStack().goCard(context, destination.cardIndex, visualEffect, true);

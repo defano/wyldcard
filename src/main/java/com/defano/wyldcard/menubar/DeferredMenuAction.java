@@ -21,11 +21,12 @@ import java.util.concurrent.Executors;
 public class DeferredMenuAction implements ActionListener {
 
     private final static ExecutorService delegatedActionExecutor = Executors.newCachedThreadPool();
-
-    private CountDownLatch blocker;
     private final List<ActionListener> actionListeners;
     private final String theMenu;
     private final String theMenuItem;
+
+    private ExecutionContext context;
+    private CountDownLatch blocker;
 
     public DeferredMenuAction(String theMenu, String theMenuItem, List<ActionListener> actionListeners) {
         this.actionListeners = actionListeners;
@@ -33,18 +34,22 @@ public class DeferredMenuAction implements ActionListener {
         this.theMenuItem = theMenuItem;
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        actionPerformed(new ExecutionContext(), e);
+    }
+
     /**
-     * Attempts to perform the requested action, if and only if the current card's message passing heirarchy does not
+     * Attempts to perform the requested action, if and only if the current card's message passing hierarchy does not
      * trap the 'doMenu' message. (This allows scripts to conditionally trap or override the behavior of a menu item).
-     *
+     * <p>
      * Note that while this action "waits" for the message passing to occur, it does not block the current thread. Use
-     * {@link #blockingInvokeActionPerformed(ActionEvent)} for situations when subsequent code is dependent on the
-     * side effects of this action.
+     * {@link #blockingInvokeActionPerformed(ExecutionContext, ActionEvent)} for situations when subsequent code is
+     * dependent on the side effects of this action.
      *
      * @param e The ActionEvent to perform.
      */
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ExecutionContext context, ActionEvent e) {
 
         // Attempts to invoke 'doMenu' handler which may require UI thread, thus, we have to wait on a background
         // thread while determining if 'doMenu' trapped menu handler.
@@ -53,7 +58,7 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
+            WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(context, SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });
@@ -80,17 +85,17 @@ public class DeferredMenuAction implements ActionListener {
     /**
      * Performs the requested action, blocking the current thread until the action has been completed or trapped in
      * script.
-     *
+     * <p>
      * This method cannot be executed on the Swing dispatch thread, as many scripts will require this thread in order to
      * complete.
      *
      * @param e The ActionEvent to perform.
      */
-    public void blockingInvokeActionPerformed(ActionEvent e) {
+    public void blockingInvokeActionPerformed(ExecutionContext context, ActionEvent e) {
         ThreadUtils.assertWorkerThread();
 
         blocker = new CountDownLatch(1);
-        actionPerformed(e);
+        actionPerformed(context, e);
         try {
             blocker.await();
         } catch (InterruptedException e1) {

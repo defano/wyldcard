@@ -179,7 +179,7 @@ public class WindowManager implements WindowFinder, Themeable {
      * is null, a new, unbound stack window will be returned.
      *
      *
-     * @param context
+     * @param context The execution context
      * @param stackPart The stack whose window should be retrieved
      * @return A window (new or existing) bound to the stack.
      */

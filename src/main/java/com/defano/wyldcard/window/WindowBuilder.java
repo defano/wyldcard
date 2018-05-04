@@ -127,7 +127,7 @@ public class WindowBuilder<T extends WyldCardFrame> {
             throw new IllegalStateException("This type of window cannot own the menubar.");
         }
 
-        this.window.setOwnsMenuBar(true);
+        this.window.setHasMenuBar(true);
         return this;
     }
 

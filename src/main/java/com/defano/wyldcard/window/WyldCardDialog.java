@@ -73,7 +73,7 @@ public abstract class WyldCardDialog extends JDialog implements WyldCardFrame<JD
     }
 
     @Override
-    public void setOwnsMenuBar(boolean ownsMenuBar) {
+    public void setHasMenuBar(boolean ownsMenuBar) {
         this.ownsMenubar = ownsMenuBar;
     }
 
