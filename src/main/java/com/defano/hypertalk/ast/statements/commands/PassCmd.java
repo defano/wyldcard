@@ -1,6 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.hypertalk.ast.preemptions.PassPreemption;
 import com.defano.hypertalk.ast.preemptions.TerminateHandlerPreemption;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
@@ -17,7 +19,10 @@ public class PassCmd extends Statement {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException, TerminateHandlerPreemption {
-        context.getStackFrame().setPassedMessage(passedMessage);
-        throw new TerminateHandlerPreemption(passedMessage);
+        if (!context.getStackFrame().getMessage().equalsIgnoreCase(passedMessage)) {
+            throw new HtSemanticException("Cannot pass " + passedMessage + " from within " + context.getStackFrame().getMessage());
+        } else {
+            throw new PassPreemption(passedMessage);
+        }
     }
 }

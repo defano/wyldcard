@@ -39,8 +39,8 @@ public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFr
         this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                WyldCardWindow.this.applyMenuBar();
                 windowFocusedProvider.onNext(true);
+                WyldCardWindow.this.applyMenuBar();
             }
 
             @Override

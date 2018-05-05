@@ -6,9 +6,12 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
+import com.google.common.collect.ConcurrentHashMultiset;
+import com.google.common.collect.Sets;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A model of HyperTalk-addressable properties that provides observability, derived getters and setters, and read-only
@@ -17,10 +20,10 @@ import java.util.*;
 public class PropertiesModel {
 
     // Properties which can be read/set by HyperTalk
-    private final Map<String, Value> properties = new HashMap<>();
+    private final Map<String, Value> properties = new ConcurrentHashMap<>();
 
     // Properties which are readable, but not writable via HyperTalk (i.e., part id)
-    private final Set<String> immutableProperties = new HashSet<>();
+    private final Set<String> immutableProperties = Sets.newConcurrentHashSet();
 
     // Transient fields will not be serialized and must be re-hydrated programmatically in @PostConstruct.
     private transient Map<String, String> propertyAliases;
@@ -30,19 +33,19 @@ public class PropertiesModel {
     private transient Map<String,ComputedSetter> computerSetters;
     private transient Map<String,DelegatedProperty> delegatedProperties;
 
-    // Required to initialize transient data member when object is deserialized
+    // Required to initialize transient data member when object is de-serialized
     public PropertiesModel() {
         initialize();
     }
 
     @PostConstruct
     protected void initialize() {
-        propertyAliases = new HashMap<>();
-        changeObservers = new HashSet<>();
-        willChangeObservers = new HashSet<>();
-        computerGetters = new HashMap<>();
-        computerSetters = new HashMap<>();
-        delegatedProperties = new HashMap<>();
+        propertyAliases = new ConcurrentHashMap<>();
+        changeObservers = Sets.newConcurrentHashSet();
+        willChangeObservers = Sets.newConcurrentHashSet();
+        computerGetters = new ConcurrentHashMap<>();
+        computerSetters = new ConcurrentHashMap<>();
+        delegatedProperties = new ConcurrentHashMap<>();
     }
 
     /**

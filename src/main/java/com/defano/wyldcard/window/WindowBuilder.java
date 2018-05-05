@@ -201,8 +201,6 @@ public class WindowBuilder<T extends WyldCardFrame> {
             minHeight += glm.getMargin().top + glm.getMargin().bottom;
         }
         this.window.getWindow().setMinimumSize(new Dimension(minWidth, minHeight));
-
-        this.window.applyMenuBar();
         this.window.getWindow().setVisible(initiallyVisible);
 
         return window;

@@ -9,15 +9,16 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.ExpressionStatement;
 import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
-import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.debug.message.HandlerInvocation;
+import com.defano.wyldcard.debug.message.HandlerInvocationBridge;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.google.common.util.concurrent.*;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -30,7 +31,8 @@ public class Interpreter {
     private final static int MAX_COMPILE_THREADS = 6;          // Simultaneous background parse tasks
     private final static int MAX_EXECUTOR_THREADS = 8;         // Simultaneous scripts executing
 
-    private static final ThreadPoolExecutor backgroundCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("compiler-%d").build());
+    private static final ThreadPoolExecutor bestEffortCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, new ThreadFactoryBuilder().setNameFormat("beasync-compiler-%d").build());
+    private static final ThreadPoolExecutor asyncCompileExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_COMPILE_THREADS, new ThreadFactoryBuilder().setNameFormat("async-compiler-%d").build());
     private static final ThreadPoolExecutor scriptExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_EXECUTOR_THREADS, new ThreadFactoryBuilder().setNameFormat("script-executor-%d").build());
     private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
 
@@ -47,12 +49,19 @@ public class Interpreter {
      * @param scriptText The script to parse.
      * @param observer   A non-null callback to fire when compilation is complete.
      */
-    public static void asyncCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
+    public static void asyncBestEffortCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
 
         // Preempt any previously enqueued parse jobs
-        backgroundCompileExecutor.getQueue().clear();
+        bestEffortCompileExecutor.getQueue().clear();
+        bestEffortCompileExecutor.submit(getCompileTask(compilationUnit, scriptText, observer));
+    }
 
-        backgroundCompileExecutor.submit(() -> {
+    public static void asyncCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
+        asyncCompileExecutor.submit(getCompileTask(compilationUnit, scriptText, observer));
+    }
+
+    private static Runnable getCompileTask(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
+        return () -> {
             HtException generatedError = null;
             Object compiledScript = null;
 
@@ -63,7 +72,7 @@ public class Interpreter {
             }
 
             observer.onCompileCompleted(scriptText, compiledScript, generatedError);
-        });
+        };
     }
 
     /**
@@ -168,11 +177,8 @@ public class Interpreter {
     /**
      * Executes a script handler on a background thread and notifies an observer when complete.
      * <p>
-     * If the current thread is already a background thread (not the Swing dispatch thread), the handler executes
-     * synchronously on the current thread.
-     * <p>
-     * Any handler that does not 'pass' the handler name, traps its behavior and prevents other scripts (or WyldCard)
-     * from acting upon it. A script that does not implement the handler is assumed to 'pass' it.
+     * Any handler that does not 'pass' the handler name traps its behavior and prevents other scripts (or WyldCard)
+     * from acting upon it. A script that does not implement a handler for a given message is assumed to 'pass' it.
      *
      * @param context            The execution context
      * @param me                 The part whose script is being executed (for the purposes of the 'me' keyword).
@@ -181,54 +187,28 @@ public class Interpreter {
      * @param arguments          A list of expressions representing arguments passed with the message
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
      */
-    public synchronized static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
+    public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
         NamedBlock handler = script == null ? null : script.getHandler(message);
+        CheckedFuture<Boolean, HtException> future;
 
-        // Script does not have a handler for this message; create a "default" handler to pass it
-        if (handler == null) {
-            handler = NamedBlock.emptyPassBlock(message);
+        // Execute implemented handler in the script
+        if (handler != null) {
+            future = getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, handler, arguments));
         }
 
-        Futures.addCallback(asyncExecuteBlock(context, me, handler, arguments), new FutureCallback<String>() {
-            @Override
-            public void onSuccess(String passedMessage) {
+        // Special case: No handler in the script for this message; produce a "no-op" execution
+        else {
+            future = getFutureForHandlerExecutionTask(() -> {
+                // Synthesize handler invocation for message watcher
+                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message, new ArrayList<>(), me, context.getStackDepth(), false);
+                HandlerInvocationBridge.getInstance().notifyMessageHandled(invocation);
 
-                // Handler did not invoke pass: message was trapped
-                if (completionObserver != null && passedMessage == null || passedMessage.isEmpty()) {
-                    completionObserver.onHandlerRan(me, script, message, true);
-                }
+                // Unimplemented handlers don't trap message
+                return false;
+            });
+        }
 
-                // Handler invoked pass; message not trapped
-                else if (completionObserver != null && passedMessage.equalsIgnoreCase(message)) {
-                    completionObserver.onHandlerRan(me, script, message, false);
-                }
-
-                // Semantic error: Handler passed a message other than the one being handled.
-                else {
-                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("Cannot pass " + passedMessage + " from within " + message));
-                }
-
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-                if (t instanceof ExitToHyperCardException) {
-                    // Nothing to do
-                }
-
-                // HyperTalk error occurred during execution
-                else if (t instanceof HtException) {
-                    WyldCard.getInstance().showErrorDialog((HtException) t);
-                }
-
-                // So other error occurred that we're ill-equipped to deal with
-                else {
-                    t.printStackTrace();
-                    WyldCard.getInstance().showErrorDialog(new HtSemanticException("Bug! An unexpected error occurred."));
-                }
-            }
-        });
+        Futures.addCallback(future, new HandlerExecutionFutureCallback(me, script, message, completionObserver));
     }
 
     /**
@@ -286,8 +266,8 @@ public class Interpreter {
      * HtException if an error occurs while executing the script.
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
-    public static CheckedFuture<String, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return asyncExecuteBlock(context, me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ListExp(null));
+    public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
+        return getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ListExp(null)));
     }
 
     /**
@@ -311,21 +291,21 @@ public class Interpreter {
     }
 
     /**
-     * Executes a named block on a background thread and returns a future to the name of the message passed from the
-     * block (if any).
-     * <p>
-     * Executes on the current thread if the current thread is not the dispatch thread. If the current thread is the
-     * dispatch thread, then submits execution to the scriptExecutor.
+     * Gets a CheckedFuture representing the future result of executing a script handler (a boolean value indicating
+     * whether the handler trapped the message, or, an {@link HtException} if the script failed to complete executing).
      *
-     * @param context   The execution context
-     * @param me        The part that the 'me' keyword refers to.
-     * @param handler   The block to execute
-     * @param arguments The arguments to be passed to the block
-     * @return A future to the name of the message passed from the block or null if no message was passed.
+     * If this thread is a script execution thread, the handler is executed synchronously on this thread and the result
+     * is returned as an immediate future.
+     *
+     * If this thread is not a script execution thread (e.g., the Swing dispatch thread), then the handler task is
+     * submitted for execution by one of the available script executor threads.
+     *
+     * @param handlerTask The handler task to execute
+     * @return A future (placeholder) for the result of executing the handler (which may occur after some delay). The
+     * success disposition provides a boolean indicating whether the handler "trapped" the message; the failure
+     * disposition provides a {@link HtException} describing why the handler failed to execute.
      */
-    private static CheckedFuture<String, HtException> asyncExecuteBlock(ExecutionContext context, PartSpecifier me, NamedBlock handler, ListExp arguments) {
-        HandlerExecutionTask handlerTask = new HandlerExecutionTask(context, me, handler, arguments);
-
+    private static CheckedFuture<Boolean, HtException> getFutureForHandlerExecutionTask(HandlerExecutionTask handlerTask) {
         if (isScriptExecutorThread()) {
             try {
                 return Futures.makeChecked(Futures.immediateFuture(handlerTask.call()), new CheckedFutureExceptionMapper());

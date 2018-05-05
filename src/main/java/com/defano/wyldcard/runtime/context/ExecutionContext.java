@@ -60,8 +60,17 @@ public class ExecutionContext {
     private PartSpecifier theTarget;                        // Part that the message was initially sent
 
     /**
-     * Creates a unbound execution context. Scripts executing with a unbound context will operate on whichever stack has
-     * focus during runtime. Note that the focused stack may change while the script is executing.
+     * Creates an unbound execution context. Scripts executing with a unbound context will operate on whichever stack
+     * has focus whenever the 'current' stack is requested. Note that the focused stack may change while the script is
+     * executing and this could have unintended consequences.
+     * @return An unbound execution context
+     */
+    public static ExecutionContext unboundInstance() {
+        return new ExecutionContext().unbind();
+    }
+
+    /**
+     * Creates a execution context bound to the currently-focused stack.
      * <p>
      * Typically, the message box and menus should execute in a dynamic context; scripts attached to parts, cards,
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.

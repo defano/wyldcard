@@ -18,11 +18,13 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.Subject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -323,9 +325,9 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(ExecutionContext.unboundInstance(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
-                forceToolSelection(toolType, false);
+                SwingUtilities.invokeLater(() -> forceToolSelection(toolType, false));
             }
         });
     }

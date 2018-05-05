@@ -20,12 +20,11 @@ import java.util.concurrent.Executors;
  */
 public class DeferredMenuAction implements ActionListener {
 
-    private final static ExecutorService delegatedActionExecutor = Executors.newCachedThreadPool();
+    private final static ExecutorService delegatedActionExecutor = Executors.newSingleThreadExecutor();
     private final List<ActionListener> actionListeners;
     private final String theMenu;
     private final String theMenuItem;
 
-    private ExecutionContext context;
     private CountDownLatch blocker;
 
     public DeferredMenuAction(String theMenu, String theMenuItem, List<ActionListener> actionListeners) {
@@ -36,7 +35,7 @@ public class DeferredMenuAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        actionPerformed(new ExecutionContext(), e);
+        actionPerformed(ExecutionContext.unboundInstance(), e);
     }
 
     /**
@@ -49,7 +48,7 @@ public class DeferredMenuAction implements ActionListener {
      *
      * @param e The ActionEvent to perform.
      */
-    public void actionPerformed(ExecutionContext context, ActionEvent e) {
+    private void actionPerformed(ExecutionContext context, ActionEvent e) {
 
         // Attempts to invoke 'doMenu' handler which may require UI thread, thus, we have to wait on a background
         // thread while determining if 'doMenu' trapped menu handler.
@@ -58,7 +57,7 @@ public class DeferredMenuAction implements ActionListener {
             CountDownLatch cdl = new CountDownLatch(1);
             final boolean[] trapped = new boolean[1];
 
-            WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(context, SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
+            context.getCurrentStack().getDisplayedCard().getCardModel().receiveMessage(context, SystemMessage.DO_MENU.messageName, ListExp.fromValues(null, new Value(theMenu), new Value(theMenuItem)), (command, wasTrapped, err) -> {
                 trapped[0] = wasTrapped;
                 cdl.countDown();
             });
