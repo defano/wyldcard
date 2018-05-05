@@ -378,17 +378,21 @@ public class StackManager implements StackNavigationObserver {
         else {
             if (inNewWindow) {
                 stackPart.bindToWindow(WindowManager.getInstance().getWindowForStack(context, stackPart));
+                this.openedStacks.add(stackPart);
             } else {
-                if (promptToSave(context, context.getCurrentStack())) {
+                StackPart oldStack = context.getCurrentStack();
+
+                if (promptToSave(context, oldStack)) {
                     return;     // User cancelled
                 }
 
-                stackPart.bindToWindow(context.getCurrentStack().getOwningStackWindow());
+                stackPart.bindToWindow(oldStack.getOwningStackWindow());
+                this.openedStacks.add(stackPart);
                 context.bind(stackPart);
-                disposeStack(context, context.getCurrentStack(), false);
+
+                disposeStack(context, oldStack, false);
             }
 
-            this.openedStacks.add(stackPart);
             stackPart.addNavigationObserver(this);
             stackPart.partOpened(context);
         }
