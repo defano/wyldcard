@@ -59,6 +59,13 @@ public class DebugMenu extends HyperCardMenu {
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
+                .named("Abort")
+                .withShortcut('A')
+                .withEnabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
+                .withAction(a -> DebugContext.getInstance().abort())
+                .build(this);
+
+        MenuItemBuilder.ofDefaultType()
                 .named("Step Over")
                 .withShortcut('O')
                 .withAction(a -> DebugContext.getInstance().stepOver())

@@ -72,7 +72,7 @@ public class VariableWatcher extends WyldCardWindow implements SymbolObserver {
     }
 
     public void setWatchedVariables(ExecutionContext context) {
-        if (context.getStackDepth() == 0) {
+        if (context == null || context.getStackDepth() == 0) {
             setWatchGlobalVariables();
         } else {
             StackFrame frame = context.getStackFrame();

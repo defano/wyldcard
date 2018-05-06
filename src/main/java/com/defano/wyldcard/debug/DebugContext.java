@@ -114,6 +114,11 @@ public class DebugContext {
         resume(true);
     }
 
+    public void abort() {
+        debugStatement.abort();
+        resume(true);
+    }
+
     /**
      * Resumes execution of the debugged thread, optionally releasing the active script editor from debug mode.
      *
