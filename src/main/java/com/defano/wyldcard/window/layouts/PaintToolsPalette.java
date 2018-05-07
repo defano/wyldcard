@@ -174,6 +174,12 @@ public class PaintToolsPalette extends WyldCardWindow implements Consumer {
         }
     }
 
+    @Override
+    public void toggleVisible() {
+        setLocationLeftOf(WindowManager.getInstance().getFocusedStackWindow());
+        super.toggleVisible();
+    }
+
     @RunOnDispatch
     private void enableAllTools() {
         for (JButton thisToolButton : allTools) {

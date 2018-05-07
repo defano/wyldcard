@@ -113,8 +113,6 @@ public class EditMenu extends HyperCardMenu {
 
         this.addSeparator();
 
-        this.addSeparator();
-
         MenuItemBuilder.ofDefaultType()
                 .named("Text Style...")
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))

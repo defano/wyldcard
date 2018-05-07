@@ -10,8 +10,6 @@ import java.awt.event.WindowEvent;
 
 public class WindowBuilder<T extends WyldCardFrame> {
 
-    private final static int DEFAULT_SEPARATION = 10;
-
     private final T window;
     private Point location = null;
     private Component relativeLocation = null;
@@ -81,37 +79,15 @@ public class WindowBuilder<T extends WyldCardFrame> {
     }
 
     @RunOnDispatch
-    public WindowBuilder withLocationUnderneath(Component component) {
-        this.window.getWindow().pack();
-
-        int targetY = (int) component.getLocation().getY() + component.getHeight() + DEFAULT_SEPARATION;
-        int targetX = (int) component.getLocation().getX();
-        location = new Point(targetX, targetY);
-
-        return this;
-    }
-
-    @RunOnDispatch
-    public WindowBuilder withLocationLeftOf(Component component) {
-        this.window.getWindow().pack();
-
-        int targetY = (int) component.getLocation().getY();
-        int targetX = (int) component.getLocation().getX() - window.getWindow().getWidth() - DEFAULT_SEPARATION;
-        location = new Point(targetX, targetY);
-
-        return this;
-    }
-
-    @RunOnDispatch
     public WindowBuilder withLocationCenteredOver(Component component) {
-        relativeLocation = component;
+        this.window.setLocationCenteredOver(component);
         return this;
     }
 
     @RunOnDispatch
     public WindowBuilder withLocationStaggeredOver(Component component) {
         this.window.getWindow().pack();
-        location = new Point((int) component.getLocationOnScreen().getX() + DEFAULT_SEPARATION, (int) component.getLocationOnScreen().getY() + DEFAULT_SEPARATION);
+        this.window.setLocationStaggeredOver(component);
         return this;
     }
 

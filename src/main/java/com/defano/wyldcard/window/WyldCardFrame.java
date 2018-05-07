@@ -7,8 +7,11 @@ import io.reactivex.Observable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
 
 public interface WyldCardFrame<WindowType extends Window> {
+
+    int DEFAULT_SEPARATION = 10;
 
     /**
      * Gets the contents of this window; the root component (usually a JPanel) that contains all of the Swing elements
@@ -195,5 +198,57 @@ public interface WyldCardFrame<WindowType extends Window> {
         } else {
             throw new IllegalStateException("This kind of window cannot be made modal");
         }
+    }
+
+    @RunOnDispatch
+    default WyldCardFrame<WindowType> setLocationRightOf(Component component) {
+        int targetX = component.getX() + component.getWidth() + DEFAULT_SEPARATION;
+        getWindow().setLocation(targetX, getWindow().getY());
+        return this;
+    }
+
+    @RunOnDispatch
+    default WyldCardFrame<WindowType> setLocationLeftOf(Component component) {
+        int targetX = component.getX() - getWindow().getWidth() - DEFAULT_SEPARATION;
+        getWindow().setLocation(targetX, getWindow().getY());
+        return this;
+    }
+
+    @RunOnDispatch
+    default WyldCardFrame<WindowType> setLocationBelow(Component component) {
+        int targetY = component.getY() + component.getHeight() + DEFAULT_SEPARATION;
+        getWindow().setLocation(getWindow().getX(), targetY);
+        return this;
+    }
+
+    @RunOnDispatch
+    default WyldCardFrame<WindowType> alignTopTo(Component component) {
+        getWindow().setLocation(getWindow().getX(), component.getY());
+        return this;
+    }
+
+    @RunOnDispatch
+    default WyldCardFrame<WindowType> alignLeftTo(Component component) {
+        getWindow().setLocation(component.getX(), getWindow().getY());
+        return this;
+    }
+
+    @RunOnDispatch
+    default WyldCardFrame<WindowType> alignTopStaggeredTo(Component component) {
+        getWindow().setLocation(getWindow().getX(), component.getY() + DEFAULT_SEPARATION);
+        return this;
+    }
+
+    @RunOnDispatch
+    default void setLocationCenteredOver(Component component) {
+        getWindow().setLocationRelativeTo(component);
+    }
+
+    @RunOnDispatch
+    default void setLocationStaggeredOver(Component component) {
+        getWindow().setLocation(new Point(
+                (int) component.getLocationOnScreen().getX() + DEFAULT_SEPARATION,
+                (int) component.getLocationOnScreen().getY() + DEFAULT_SEPARATION)
+        );
     }
 }

@@ -66,7 +66,12 @@ public class WyldCard extends StackManager implements PartFinder {
             super.newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
-            SwingUtilities.invokeLater(() -> HyperCardMenuBar.getInstance().reset());
+            HyperCardMenuBar.getInstance().reset();
+
+            // Apply default palette layout
+            WindowManager.getInstance().restoreDefaultLayout();
+            WindowManager.getInstance().getPaintToolsPalette().toggleVisible();
+            WindowManager.getInstance().getPatternsPalette().toggleVisible();
         });
 
         // Close all open files before we die

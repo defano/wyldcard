@@ -9,6 +9,7 @@ import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,28 +61,24 @@ public class WindowManager implements WindowFinder, Themeable {
         WindowBuilder.make(shapesPalette)
                 .asPalette()
                 .withTitle("Shapes")
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(linesPalette)
                 .asPalette()
                 .withTitle("Lines")
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(brushesPalette)
                 .asPalette()
                 .withTitle("Brushes")
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(patternsPalette)
                 .asPalette()
                 .withTitle("Patterns")
-                .withLocationLeftOf(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
@@ -89,7 +86,6 @@ public class WindowManager implements WindowFinder, Themeable {
                 .asPalette()
                 .withTitle("Intensity")
                 .notInitiallyVisible()
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(colorPalette)
@@ -123,6 +119,39 @@ public class WindowManager implements WindowFinder, Themeable {
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
+    }
+
+    public void restoreDefaultLayout() {
+
+        StackWindow stackWindow = getFocusedStackWindow();
+
+        paintToolsPalette
+                .setLocationLeftOf(stackWindow)
+                .alignTopTo(stackWindow);
+
+        patternsPalette
+                .setLocationLeftOf(stackWindow)
+                .setLocationBelow(paintToolsPalette.getWindow());
+
+        messageWindow
+                .setLocationBelow(stackWindow)
+                .alignLeftTo(stackWindow);
+
+        brushesPalette
+                .setLocationRightOf(stackWindow)
+                .alignTopTo(stackWindow);
+
+        linesPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(brushesPalette.getWindow());
+
+        intensityPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(linesPalette.getWindow());
+
+        shapesPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(intensityPalette.getWindow());
     }
 
     public StackWindow getFocusedStackWindow() {

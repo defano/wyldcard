@@ -24,7 +24,7 @@ public class FileMenu extends HyperCardMenu {
         super("File");
 
         MenuItemBuilder.ofDefaultType()
-                .named("New Stack...")
+                .named("New Stack")
                 .withAction(e -> WyldCard.getInstance().newStack(new ExecutionContext()))
                 .build(this);
 
