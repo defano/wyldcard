@@ -160,6 +160,11 @@ public class WindowBuilder<T extends WyldCardFrame> {
             }
         });
 
+        // Push palettes to back when WyldCard is not in foreground
+        if (!isPalette) {
+            this.window.getWindow().addWindowListener(new PaletteActivationManager());
+        }
+
         // Very strange: When running inside IntelliJ on macOS, setResizable must be called after setVisible,
         // otherwise, the frame will "automagically" move to the lower left of the screen.
         // See: http://stackoverflow.com/questions/26332251/jframe-moves-to-the-bottom-left-corner-of-the-screen
