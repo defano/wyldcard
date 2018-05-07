@@ -15,7 +15,7 @@ public enum SingletonWindowType {
     public WyldCardFrame getWindow(ExecutionContext context) {
         switch (this) {
             case CARD:
-                return WindowManager.getInstance().getWindowForStack(context.getCurrentStack());
+                return WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack());
             case MESSAGE:
                 return WindowManager.getInstance().getMessageWindow();
             case MESSAGE_WATCHER:

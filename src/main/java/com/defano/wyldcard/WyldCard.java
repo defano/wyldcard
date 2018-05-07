@@ -5,15 +5,16 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
+import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
-import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
-import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
+import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.window.WindowManager;
+import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
 
 import javax.swing.*;
 
@@ -26,11 +27,12 @@ public class WyldCard extends StackManager implements PartFinder {
 
     private static WyldCard instance = new WyldCard();
 
+    private WyldCard() {
+    }
+
     public static WyldCard getInstance() {
         return instance;
     }
-
-    private WyldCard() {}
 
     public static void main(String argv[]) {
 
@@ -50,18 +52,26 @@ public class WyldCard extends StackManager implements PartFinder {
     }
 
     private void startup() {
-        StackPart stack = focusStack(StackPart.newStack(new ExecutionContext()));
 
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();              // Global key event handler
             MouseManager.getInstance().start();                 // Global mouse event and mouseLoc handler
-            PartEditManager.getInstance().start();              // Button/tool selection and edit management
+            PartEditManager.getInstance().start();              // Button field movement and resize management
             WindowManager.getInstance().start();                // Window and palette management
-            CursorManager.getInstance().start();                // Mouse cursor assignment
             PatternManager.getInstance().start();               // Update pattern palette on color changes
             PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
+            CursorManager.getInstance().start();                // Mouse cursor assignment
+            PartToolContext.getInstance().start();              // Button and field tool selection state
 
-            stack.bindToWindow(WindowManager.getInstance().getWindowForStack(stack));
+            super.newStack(new ExecutionContext());
+
+            // Need to have an open stack before showing the menu bar
+            HyperCardMenuBar.getInstance().reset();
+
+            // Apply default palette layout
+            WindowManager.getInstance().restoreDefaultLayout();
+            WindowManager.getInstance().getPaintToolsPalette().toggleVisible();
+            WindowManager.getInstance().getPatternsPalette().toggleVisible();
         });
 
         // Close all open files before we die
@@ -71,6 +81,7 @@ public class WyldCard extends StackManager implements PartFinder {
     /**
      * Display a syntax error dialog containing, when a breadcrumb is available, an "edit script" button that launches
      * a script editor with the offending line highlighted.
+     *
      * @param e
      */
     public void showErrorDialog(HtException e) {

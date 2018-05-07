@@ -68,13 +68,14 @@ public interface Messagable {
     }
 
     /**
-     * Sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing hierarchy.
+     * Asynchronously sends a message with arguments (i.e., 'doMenu theMenu, theItem') to this part's message passing
+     * hierarchy, notifying an observer when complete.
      *
      * @param context      The execution context
      * @param message      The name of the command; cannot be null.
      * @param arguments    The arguments to pass to this command; cannot be null.
      * @param onCompletion A callback that will fire as soon as the command has been executed in script; cannot be null.
-     *                     Note that this callback will not fire if the script terminates as a result of an error or
+     *                     Note that this callback will not fire if the script terminates as a result of an error.
      */
     default void receiveMessage(ExecutionContext context, String message, ListExp arguments, MessageCompletionObserver onCompletion) {
 
@@ -86,11 +87,20 @@ public interface Messagable {
         }
 
         // Attempt to invoke command handler in this part and listen for completion
-        Interpreter.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage) -> {
+        Interpreter.asyncExecuteHandler(context, getMe(context), getScript(context), message, arguments, (me, script, handler, trappedMessage, exception) -> {
+
+            // Did message generate an error
+            if (exception != null) {
+                onCompletion.onMessagePassed(message, true, exception);
+            }
+
             // Did this part trap this command?
-            if (trappedMessage) {
+            else if (trappedMessage) {
                 onCompletion.onMessagePassed(message, true, null);
-            } else {
+            }
+
+            // Message not trapped, send message to next part in the hierarchy
+            else {
                 // Get next recipient in message passing order; null if no other parts receive message
                 Messagable nextRecipient = getNextMessageRecipient(context, getMe(context).getType());
                 if (nextRecipient == null) {

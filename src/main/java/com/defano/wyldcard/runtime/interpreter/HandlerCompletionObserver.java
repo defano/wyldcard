@@ -2,6 +2,7 @@ package com.defano.wyldcard.runtime.interpreter;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
+import com.defano.hypertalk.exception.HtException;
 
 public interface HandlerCompletionObserver {
 
@@ -13,5 +14,5 @@ public interface HandlerCompletionObserver {
      * @param handler The name of handler that executed
      * @param trappedMessage True if the handler trapped the message, false otherwise.
      */
-    void onHandlerRan(PartSpecifier me, Script script, String handler, boolean trappedMessage);
+    void onHandlerRan(PartSpecifier me, Script script, String handler, boolean trappedMessage, HtException error);
 }

@@ -18,10 +18,13 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
+import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.Subject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -98,7 +101,9 @@ public class ToolsContext {
 
     public void reactivateTool(PaintCanvas canvas) {
         paintToolProvider.blockingFirst().deactivate();
-        paintToolProvider.blockingFirst().activate(canvas);
+        if (canvas != null) {
+            paintToolProvider.blockingFirst().activate(canvas);
+        }
     }
 
     public Subject<PaintTool> getPaintToolProvider() {
@@ -284,6 +289,7 @@ public class ToolsContext {
         getPaintTool().deactivate();
         isEditingBackground.onNext(!isEditingBackground.blockingFirst());
         reactivateTool(WyldCard.getInstance().getFocusedCard().getCanvas());
+        WindowManager.getInstance().getFocusedStackWindow().invalidateWindowTitle();
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {
@@ -319,9 +325,9 @@ public class ToolsContext {
      * @param toolType The requested tool selection.
      */
     public void chooseTool(ToolType toolType) {
-        WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(new ExecutionContext(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
+        WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(ExecutionContext.unboundInstance(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
-                forceToolSelection(toolType, false);
+                SwingUtilities.invokeLater(() -> forceToolSelection(toolType, false));
             }
         });
     }

@@ -11,6 +11,8 @@ import com.defano.wyldcard.editor.SyntaxParserDelegate;
 import com.defano.wyldcard.fonts.FontUtils;
 import com.defano.wyldcard.menubar.script.ScriptEditorMenuBar;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.parts.model.PropertiesModel;
+import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.HandlerComboBox;
@@ -29,10 +31,15 @@ import org.fife.ui.rtextarea.SearchResult;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
-public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate {
+public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate, PropertyChangeObserver {
 
     private PartModel model;
     private Script compiledScript;
@@ -58,6 +65,7 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
 
         editor.getScriptField().addCaretListener(e -> updateActiveHandler());
         editor.getScriptField().addCaretListener(e -> updateCaretPositionLabel());
+        editor.addBreakpointToggleObserver(breakpoints -> saveBreakpoints());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
                 HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
@@ -73,9 +81,8 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
             }
         });
 
-        editor.setBreakpointToggleObserver(breakpoints -> model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(breakpoints))));
-
         // Prompt to save when closing window
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         getWindow().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -103,23 +110,14 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
     public void bindModel(Object properties) {
         if (properties instanceof PartModel) {
             this.model = (PartModel) properties;
-            String script = this.model.getKnownProperty(new ExecutionContext(), "script").stringValue();
-            editor.getScriptField().setText(script);
 
-            moveCaretToPosition(model.getScriptEditorCaretPosition());
-            editor.getScriptField().addCaretListener(e -> saveCaretPosition());
-            editor.getScriptField().forceReparsing(0);
+            // Render the script and breakpoints in the editor
+            applyScriptToEditor();
 
-            for (int thisBreakpoint : model.getBreakpoints()) {
-                try {
-                    editor.getGutter().toggleBookmark(thisBreakpoint);
-                } catch (BadLocationException e) {
-                    e.printStackTrace();
-                }
-            }
+            // Listen for programmatically-applied script changes
+            this.model.addPropertyChangedObserver(this);
 
-            SwingUtilities.invokeLater(() -> editor.getScriptField().requestFocus());
-            setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+            restoreCaretPosition();
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
         }
@@ -137,15 +135,25 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
                     JOptionPane.ERROR_MESSAGE);
 
             return false;
-
         }
 
         // No syntax error; okay to save
         else {
-            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
-            model.setKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
+            saveBreakpoints();
+            saveCaretPosition();
+            saveScript();
             return true;
         }
+    }
+
+    @RunOnDispatch
+    private void saveScript() {
+        model.setKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT, new Value(editor.getScriptField().getText()));
+    }
+
+    @RunOnDispatch
+    private void  saveBreakpoints() {
+        model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
     }
 
     @RunOnDispatch
@@ -189,6 +197,13 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
         else {
             dispose();
         }
+    }
+
+    @RunOnDispatch
+    @Override
+    public void dispose() {
+        this.model.removePropertyChangedObserver(this);
+        super.dispose();
     }
 
     @RunOnDispatch
@@ -255,7 +270,7 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
                     appendHandler(handler);
                 }
             } else {
-                editor.requestFocus();
+                editor.getScriptField().requestFocusInWindow();
                 jumpToLine(lineNumber);
             }
         }
@@ -323,7 +338,7 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
                 }
             }
         } catch (BadLocationException e) {
-            throw new IllegalStateException("Bug! Bad location.");
+            // Ignore bogus caret position
         }
     }
 
@@ -340,7 +355,7 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
                 editor.getScriptField().insert("--", lineStartPos);
             }
         } catch (BadLocationException e) {
-            throw new IllegalStateException("Bug! Bad location.");
+            // Ignore bogus caret position
         }
     }
 
@@ -392,18 +407,8 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
     }
 
     @RunOnDispatch
-    public boolean isDirty() {
+    private boolean isDirty() {
         return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
-    }
-
-    @RunOnDispatch
-    private void moveCaretToPosition(int position) {
-        try {
-            editor.getScriptField().setCaretPosition(position);
-            editor.requestFocus();
-        } catch (Exception e) {
-            // Ignore bogus caret positions
-        }
     }
 
     @RunOnDispatch
@@ -412,16 +417,25 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
     }
 
     @RunOnDispatch
+    private void restoreCaretPosition() {
+        try {
+            editor.getScriptField().setCaretPosition(model.getScriptEditorCaretPosition());
+        } catch (Exception e) {
+            // Ignore bogus caret positions
+        }
+    }
+
+    @RunOnDispatch
     private void updateCaretPositionLabel() {
         try {
-            int caretpos = editor.getScriptField().getCaretPosition();
-            int row = editor.getScriptField().getLineOfOffset(caretpos);
-            int column = caretpos - editor.getScriptField().getLineStartOffset(row);
+            int caretPosition = editor.getScriptField().getCaretPosition();
+            int row = editor.getScriptField().getLineOfOffset(caretPosition);
+            int column = caretPosition - editor.getScriptField().getLineStartOffset(row);
 
             charCount.setText("Line " + (row + 1) + ", column " + column);
 
         } catch (BadLocationException e1) {
-            charCount.setText("");
+            // Ignore bogus caret position
         }
     }
 
@@ -534,8 +548,40 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
         }
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
+    @Override
+    public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
+        switch (property.toLowerCase()) {
+
+            // Special case: Script text was programatically changed
+            case PartModel.PROP_SCRIPT:
+                saveCaretPosition();
+                applyScriptToEditor();
+                break;
+        }
+    }
+
+    /**
+     * Applies the script associated with the currently bound model to the script editor replacing the text of the
+     * script editor with the script text, applying any breakpoints to the gutter and restoring the caret position to
+     * its last saved location and re-focusing the script editor component.
+     */
+    @RunOnDispatch
+    private void applyScriptToEditor() {
+        String script = this.model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue();
+        editor.getScriptField().setText(script);
+        editor.getScriptField().forceReparsing(0);
+
+        // Reset all breakpoints
+        editor.clearBreakpoints();
+        for (int thisBreakpoint : model.getBreakpoints()) {
+            try {
+                editor.getGutter().toggleBookmark(thisBreakpoint);
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+
+        restoreCaretPosition();
     }
 
     {

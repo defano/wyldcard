@@ -48,8 +48,9 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
 
     @RunOnDispatch
     public void invalidateWindowTitle() {
-        // Don't update title when screen is locked or before card is loaded
-        if (screenCurtain.isVisible() || card == null) {
+
+        // Don't update title when screen is locked
+        if (screenCurtain.isVisible()) {
             return;
         }
 
@@ -95,8 +96,6 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
             stack.addObserver(this);
             stack.addNavigationObserver(this);
             stack.getCurtainManager().addScreenCurtainObserver(this);
-
-            WyldCard.getInstance().focusStack(stack);
 
         } else {
             throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);

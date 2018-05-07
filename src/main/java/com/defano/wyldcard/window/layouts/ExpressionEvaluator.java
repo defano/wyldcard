@@ -29,6 +29,8 @@ public class ExpressionEvaluator extends WyldCardDialog implements SyntaxParserD
     private HyperTalkTextEditor editor;
 
     public ExpressionEvaluator() {
+        context.unbind();
+
         editor = new HyperTalkTextEditor(this);
         editorArea.setLayout(new BorderLayout());
         editorArea.add(editor);

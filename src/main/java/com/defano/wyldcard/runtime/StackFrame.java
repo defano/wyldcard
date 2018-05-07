@@ -173,31 +173,6 @@ public class StackFrame {
     }
 
     /**
-     * The name of the (last) message passed from this frame. Typically set in response to 'pass xxx'. Used to tell
-     * the execution environment that parts down the message passing hierarchy should continue to process the message
-     * (i.e., the script did not trap the message).
-     * <p>
-     * Note that a semantically correct script must pass the name of its handler (you cannot pass the name of a handler
-     * other than the handler presently executing). However, a semantically incorrect script may pass any arbitrary
-     * value. Thus, callers should not necessarily expect the value returned by this method to equal
-     * {@link StackFrame#getMessage()}.
-     *
-     * @return The name of the passed message or null if no message was passed.
-     */
-    public String getPassedMessage() {
-        return passedMessage;
-    }
-
-    /**
-     * Sets the name of the passed message. See {@link #getPassedMessage()}.
-     *
-     * @param passedMessage The name of the passed message or null if no message passed.
-     */
-    public void setPassedMessage(String passedMessage) {
-        this.passedMessage = passedMessage;
-    }
-
-    /**
      * Gets the visual effect to use when next unlocking the screen within the current execution frame.
      *
      * @return The visual effect.

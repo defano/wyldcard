@@ -2,6 +2,7 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.preemptions.Preemption;
+import com.defano.hypertalk.exception.ExitToHyperCardException;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -16,6 +17,7 @@ public abstract class Statement extends ASTNode {
 
     private boolean breakpoint;         // Breakpoint applied to this line
     private CountDownLatch hold;        // Latch used to pause execution during breakpoint debugging
+    private boolean abortFlag;          // Indicates script should be aborted when breakpoint is released
 
     public Statement(ParserRuleContext context) {
         super(context);
@@ -64,11 +66,16 @@ public abstract class Statement extends ASTNode {
     protected void handleBreakpoints(ExecutionContext context) {
         if (DebugContext.getInstance().isBreakpoint(context, this)) {
             DebugContext.getInstance().debug(context, this);
+
+            if (abortFlag) {
+                abortFlag = false;
+                throw new ExitToHyperCardException();
+            }
         }
     }
 
     /**
-     * Pauses execution of this thread until {@link #release()} is invoked.
+     * Pauses execution of this script until {@link #release()} is invoked.
      */
     public void hold() {
         try {
@@ -80,11 +87,21 @@ public abstract class Statement extends ASTNode {
     }
 
     /**
-     * Resumes execution of this thread. Has no effect if the thread was not paused via a call to {@link #hold()}
+     * Resumes execution of this script. Has no effect if the thread was not paused via a call to {@link #hold()}
      */
     public void release() {
         if (hold != null) {
             hold.countDown();
+        }
+    }
+
+    /**
+     * Aborts execution of this script (equivalent to 'exit to hypercard').
+     */
+    public void abort() {
+        if (hold != null) {
+            abortFlag = true;
+            release();
         }
     }
 }

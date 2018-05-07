@@ -24,7 +24,7 @@ public class FileMenu extends HyperCardMenu {
         super("File");
 
         MenuItemBuilder.ofDefaultType()
-                .named("New Stack...")
+                .named("New Stack")
                 .withAction(e -> WyldCard.getInstance().newStack(new ExecutionContext()))
                 .build(this);
 
@@ -43,7 +43,7 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Close Stack")
                 .withShortcut('W')
-                .withAction(e -> WyldCard.getInstance().closeStack(null))
+                .withAction(e -> WyldCard.getInstance().closeStack(new ExecutionContext(), null))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -125,7 +125,7 @@ public class FileMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofDefaultType()
                     .named("Quit HyperCard")
-                    .withAction(e -> WyldCard.getInstance().closeAllStacks())
+                    .withAction(e -> WyldCard.getInstance().closeAllStacks(new ExecutionContext()))
                     .withShortcut('Q')
                     .build(this);
         }

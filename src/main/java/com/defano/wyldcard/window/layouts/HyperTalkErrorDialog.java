@@ -54,7 +54,7 @@ public class HyperTalkErrorDialog {
     private void showEditableError(String message, StackPart stackPart, PartModel offendingPart, Token offendingToken) {
         Object[] options = {"OK", "Script..."};
         int selection = JOptionPane.showOptionDialog(
-                WindowManager.getInstance().getWindowForStack(stackPart),
+                WindowManager.getInstance().getWindowForStack(new ExecutionContext(), stackPart),
                 message,
                 "HyperTalk Error",
                 JOptionPane.YES_NO_OPTION,

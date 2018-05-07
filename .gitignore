@@ -13,3 +13,4 @@ bundles/
 *.html
 *.jnlp
 *.jar
+*.class

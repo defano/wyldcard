@@ -39,7 +39,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     private Object traceHighlightTag;
 
     private GutterIconInfo[] bookmarks;
-    private BreakpointToggleObserver breakpointToggleObserver;
+    private ArrayList<BreakpointToggleObserver> breakpointToggleObservers = new ArrayList<>();
 
     public HyperTalkTextEditor(SyntaxParserDelegate parserObserver) {
         super(new RSyntaxTextArea());
@@ -188,9 +188,16 @@ public class HyperTalkTextEditor extends RTextScrollPane {
     }
 
     @RunOnDispatch
-    public void setBreakpointToggleObserver(BreakpointToggleObserver observer) {
-        installBreakpointToggleObserver();
-        this.breakpointToggleObserver = observer;
+    public void addBreakpointToggleObserver(BreakpointToggleObserver observer) {
+        if (breakpointToggleObservers.size() == 0) {
+            installBreakpointToggleObserver();
+        }
+        breakpointToggleObservers.add(observer);
+    }
+
+    @RunOnDispatch
+    public void removeBreakpointToggleObserver(BreakpointToggleObserver observer) {
+        breakpointToggleObservers.remove(observer);
     }
 
     @RunOnDispatch
@@ -202,7 +209,7 @@ public class HyperTalkTextEditor extends RTextScrollPane {
                     @Override
                     public void mousePressed(MouseEvent e) {
                         SwingUtilities.invokeLater(() -> {
-                            if (breakpointToggleObserver != null && (bookmarks == null || bookmarks.length != irh.getBookmarks().length)) {
+                            if (breakpointToggleObservers != null && (bookmarks == null || bookmarks.length != irh.getBookmarks().length)) {
                                 fireBookmarkToggleListener();
                             }
                             bookmarks = irh.getBookmarks();
@@ -215,8 +222,8 @@ public class HyperTalkTextEditor extends RTextScrollPane {
 
     @RunOnDispatch
     private void fireBookmarkToggleListener() {
-        if (breakpointToggleObserver != null) {
-            breakpointToggleObserver.onBookmarkToggle(getBreakpoints());
+        for (BreakpointToggleObserver thisObserver : breakpointToggleObservers) {
+            thisObserver.onBookmarkToggle(getBreakpoints());
         }
     }
 }

@@ -20,7 +20,6 @@ import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.search.SearchContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
@@ -98,34 +97,6 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardPart card = skeletonFromModel(context, model);
         StackModel stack = model.getStackModel();
 
-        // Setup part cut, copy and paste
-        card.setTransferHandler(new CardPartTransferHandler(card));
-
-        // Setup the foreground paint canvas
-        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(), CANVAS_UNDO_DEPTH));
-        card.getForegroundCanvas().addCanvasCommitObserver(card);
-        card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
-        card.getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
-
-        // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(model.getBackgroundModel().getBackgroundImage(), CANVAS_UNDO_DEPTH));
-        card.getBackgroundCanvas().addCanvasCommitObserver(card);
-        card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
-        card.getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
-
-        // Resize card (Swing) component
-        card.setMaximumSize(stack.getSize(context));
-        card.setSize(stack.getWidth(context), stack.getHeight(context));
-
-        // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
-        for (ButtonPart thisButton : card.buttons.getParts()) {
-            thisButton.getPartModel().notifyPropertyChangedObserver(context, thisButton);
-        }
-
-        for (FieldPart thisField : card.fields.getParts()) {
-            thisField.getPartModel().notifyPropertyChangedObserver(context, thisField);
-        }
-
         return card;
     }
 
@@ -196,7 +167,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(context, this, layer.asOwner());
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
@@ -213,7 +184,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         ButtonPart newButton = ButtonPart.newButton(context, this, layer.asOwner(), rectangle);
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -229,7 +200,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(new ExecutionContext(), this, layer.asOwner());
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
         ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
@@ -245,7 +216,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         CardLayer layer = CardLayerPart.getActivePartLayer();
         FieldPart newField = FieldPart.newField(context, this, layer.asOwner(), rectangle);
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
         return newField;
     }
 
@@ -304,12 +275,9 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     private void setForegroundVisible(ExecutionContext context, boolean visible) {
         if (getForegroundCanvas() != null) {
             getForegroundCanvas().setVisible(visible);
+
+            setPartsOnLayerVisible(context, Owner.CARD, visible);
         }
-
-        setPartsOnLayerVisible(context, Owner.CARD, visible);
-
-        // Notify the window manager that background editing mode changed
-        WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).invalidateWindowTitle();
     }
 
     /**
@@ -541,7 +509,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         ButtonPart newButton = ButtonPart.fromModel(context, this, model);
         addButton(context, newButton);
-        newButton.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_BUTTON.messageName);
+        newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         return newButton;
     }
@@ -565,7 +533,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         FieldPart newField = FieldPart.fromModel(context, this, model);
         addField(context, newField);
-        newField.getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.NEW_FIELD.messageName);
+        newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
 
         return newField;
     }
@@ -671,6 +639,38 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
+
+        CardPart card = this;
+        StackModel stack = getOwningStackModel();
+
+        // Setup part cut, copy and paste
+        card.setTransferHandler(new CardPartTransferHandler(card));
+
+        // Setup the foreground paint canvas
+        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(), CANVAS_UNDO_DEPTH));
+        card.getForegroundCanvas().addCanvasCommitObserver(card);
+        card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
+        card.getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
+
+        // Setup the background paint canvas
+        card.setBackgroundCanvas(new JMonetCanvas(getCardModel().getBackgroundModel().getBackgroundImage(), CANVAS_UNDO_DEPTH));
+        card.getBackgroundCanvas().addCanvasCommitObserver(card);
+        card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
+        card.getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
+
+        // Resize card (Swing) component
+        card.setMaximumSize(stack.getSize(context));
+        card.setSize(stack.getWidth(context), stack.getHeight(context));
+
+        // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
+        for (ButtonPart thisButton : card.buttons.getParts()) {
+            thisButton.getPartModel().notifyPropertyChangedObserver(context, thisButton);
+        }
+
+        for (FieldPart thisField : card.fields.getParts()) {
+            thisField.getPartModel().notifyPropertyChangedObserver(context, thisField);
+        }
+
         editingBackgroundSubscription = ToolsContext.getInstance().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
         foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
         backgroundScaleSubscription = getBackgroundCanvas().getScaleObservable().subscribe(backgroundScaleObserver);
@@ -678,7 +678,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         getForegroundCanvas().getSurface().addMouseListener(this);
         getForegroundCanvas().getSurface().addKeyListener(this);
 
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.OPEN_CARD.messageName);
+        getPartModel().receiveMessage(context.bind(this), SystemMessage.OPEN_CARD.messageName);
         ((CardModel) getPartModel()).setObserver(cardModelObserver);
 
         getCardModel().addPropertyChangedObserver(this);
@@ -693,7 +693,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
-        getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.CLOSE_CARD.messageName);
+        getPartModel().receiveMessage(context.bind(this), SystemMessage.CLOSE_CARD.messageName);
 
         // Lets parts know they're about to go away
         notifyPartsClosing(context);

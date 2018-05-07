@@ -4,10 +4,12 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,54 +45,47 @@ public class WindowManager implements WindowFinder, Themeable {
     public void start() {
         themeProvider.onNext(UIManager.getLookAndFeel().getName());
 
-        StackWindow stackWindow = getFocusedStackWindow();
-
         WindowBuilder.make(messageWindow)
                 .withTitle("Message")
                 .asPalette()
                 .focusable(true)
-                .withLocationUnderneath(stackWindow)
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
-                .withLocationLeftOf(stackWindow)
+                .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(shapesPalette)
                 .asPalette()
                 .withTitle("Shapes")
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(linesPalette)
                 .asPalette()
                 .withTitle("Lines")
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(brushesPalette)
                 .asPalette()
                 .withTitle("Brushes")
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(patternsPalette)
                 .asPalette()
                 .withTitle("Patterns")
-                .withLocationLeftOf(paintToolsPalette.getWindow())
+                .notInitiallyVisible()
                 .build();
 
         WindowBuilder.make(intensityPalette)
                 .asPalette()
                 .withTitle("Intensity")
                 .notInitiallyVisible()
-                .withLocationUnderneath(paintToolsPalette.getWindow())
                 .build();
 
         WindowBuilder.make(colorPalette)
@@ -126,8 +121,41 @@ public class WindowManager implements WindowFinder, Themeable {
                 .build();
     }
 
+    public void restoreDefaultLayout() {
+
+        StackWindow stackWindow = getFocusedStackWindow();
+
+        paintToolsPalette
+                .setLocationLeftOf(stackWindow)
+                .alignTopTo(stackWindow);
+
+        patternsPalette
+                .setLocationLeftOf(stackWindow)
+                .setLocationBelow(paintToolsPalette.getWindow());
+
+        messageWindow
+                .setLocationBelow(stackWindow)
+                .alignLeftTo(stackWindow);
+
+        brushesPalette
+                .setLocationRightOf(stackWindow)
+                .alignTopTo(stackWindow);
+
+        linesPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(brushesPalette.getWindow());
+
+        intensityPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(linesPalette.getWindow());
+
+        shapesPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(intensityPalette.getWindow());
+    }
+
     public StackWindow getFocusedStackWindow() {
-        return getWindowForStack(WyldCard.getInstance().getFocusedStack());
+        return getWindowForStack(new ExecutionContext(), WyldCard.getInstance().getFocusedStack());
     }
 
     public MessageWindow getMessageWindow() {
@@ -179,14 +207,15 @@ public class WindowManager implements WindowFinder, Themeable {
      * existing window is returned, otherwise a new window is created and bound to the stack. If the given stack
      * is null, a new, unbound stack window will be returned.
      *
+     *
+     * @param context The execution context
      * @param stackPart The stack whose window should be retrieved
      * @return A window (new or existing) bound to the stack.
      */
     @RunOnDispatch
-    public StackWindow getWindowForStack(StackPart stackPart) {
-        // Special case: return an un-built window for null stack parts (required temporarily on startup)
+    public StackWindow getWindowForStack(ExecutionContext context, StackPart stackPart) {
         if (stackPart == null) {
-            return new StackWindow();
+            throw new IllegalArgumentException("Can't get window for null stack part.");
         }
 
         StackWindow existingWindow = findWindowForStack(stackPart.getStackModel());
@@ -195,7 +224,7 @@ public class WindowManager implements WindowFinder, Themeable {
             return existingWindow;
         } else {
             return (StackWindow) WindowBuilder.make(new StackWindow())
-                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(((StackWindow) window).getStack()))
+                    .withActionOnClose(window -> WyldCard.getInstance().closeStack(context, ((StackWindow) window).getStack()))
                     .ownsMenubar()
                     .withModel(stackPart)
                     .build();

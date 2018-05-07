@@ -28,7 +28,13 @@ public class PartToolContext {
     private final TextSizeObserver sizeObserver = new TextSizeObserver();
     private final TextAlignObserver alignObserver = new TextAlignObserver();
 
-    private PartToolContext() {
+    private PartToolContext() {}
+
+    public static PartToolContext getInstance() {
+        return instance;
+    }
+
+    public void start() {
         // Deselect all parts when user changes tool mode
         ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> deselectAllParts());
 
@@ -37,10 +43,6 @@ public class PartToolContext {
         FontContext.getInstance().getSelectedFontSizeProvider().subscribe(sizeObserver);
         FontContext.getInstance().getSelectedFontStyleProvider().subscribe(styleObserver);
         FontContext.getInstance().getSelectedTextAlignProvider().subscribe(alignObserver);
-    }
-
-    public static PartToolContext getInstance() {
-        return instance;
     }
 
     public void setSelectedPart(ToolEditablePart part) {
@@ -55,12 +57,14 @@ public class PartToolContext {
 
     public void deselectAllParts() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            for (ButtonPart thisButton : WyldCard.getInstance().getFocusedCard().getButtons()) {
-                thisButton.setSelectedForEditing(new ExecutionContext(), false);
-            }
+            if (WyldCard.getInstance().getFocusedCard() != null) {
+                for (ButtonPart thisButton : WyldCard.getInstance().getFocusedCard().getButtons()) {
+                    thisButton.setSelectedForEditing(new ExecutionContext(), false);
+                }
 
-            for (FieldPart thisField : WyldCard.getInstance().getFocusedCard().getFields()) {
-                thisField.setSelectedForEditing(new ExecutionContext(), false);
+                for (FieldPart thisField : WyldCard.getInstance().getFocusedCard().getFields()) {
+                    thisField.setSelectedForEditing(new ExecutionContext(), false);
+                }
             }
 
             selectedPart.onNext(Optional.empty());

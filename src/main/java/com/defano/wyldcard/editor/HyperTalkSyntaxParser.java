@@ -25,7 +25,7 @@ public class HyperTalkSyntaxParser extends AbstractParser implements CompileComp
             delegate.onCompileStarted();
 
             String scriptText = doc.getText(0, doc.getLength());
-            Interpreter.asyncCompile(delegate.getParseCompilationUnit(), scriptText, this);
+            Interpreter.asyncBestEffortCompile(delegate.getParseCompilationUnit(), scriptText, this);
         } catch (BadLocationException e) {
             // Impossible
         }

@@ -7,7 +7,6 @@ import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.Subject;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,14 +55,14 @@ public interface Themeable {
                 try {
                     UIManager.setLookAndFeel(themeClassName);
 
-                    for (Window thisWindow : JFrame.getWindows()) {
-                        SwingUtilities.updateComponentTreeUI(thisWindow);
+                    for (WyldCardFrame thisWindow : WindowManager.getInstance().getFrames(true)) {
+                        thisWindow.getWindow().dispose();
 
-                        if (thisWindow instanceof WyldCardFrame) {
-                            WyldCardFrame thisWyldWindow = (WyldCardFrame) thisWindow;
-                            thisWyldWindow.getWindow().pack();
-                            thisWyldWindow.applyMenuBar();
-                        }
+                        SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());
+                        thisWindow.applyMenuBar();
+                        thisWindow.getWindow().pack();
+                        thisWindow.getWindow().validate();
+                        thisWindow.getWindow().setVisible(true);
                     }
 
                 } catch (Exception e) {

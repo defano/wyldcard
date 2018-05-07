@@ -43,12 +43,12 @@ public class MessageCmd extends Statement {
 
         // Special case: Message is originating from message box; use unbound context when sending
         if (recipientModel.getParentStackModel() == null) {
-            recipientModel.receiveMessage(new ExecutionContext(), message, messageArgs);
+            recipientModel.receiveMessage(context.unbind(), message, messageArgs);
         }
 
         // Typical case: One stack part is sending a message to another stack part
         else {
-            recipientModel.receiveMessage(new ExecutionContext(recipientModel), message, messageArgs);
+            recipientModel.receiveMessage(context.bind(recipientModel), message, messageArgs);
         }
     }
 

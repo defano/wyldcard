@@ -39,8 +39,8 @@ public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFr
         this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                WyldCardWindow.this.applyMenuBar();
                 windowFocusedProvider.onNext(true);
+                WyldCardWindow.this.applyMenuBar();
             }
 
             @Override
@@ -73,7 +73,7 @@ public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFr
     }
 
     @Override
-    public void setOwnsMenuBar(boolean ownsMenuBar) {
+    public void setHasMenuBar(boolean ownsMenuBar) {
         this.ownsMenubar = ownsMenuBar;
     }
 

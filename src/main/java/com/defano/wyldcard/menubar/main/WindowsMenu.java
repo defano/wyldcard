@@ -48,6 +48,11 @@ public class WindowsMenu extends HyperCardMenu {
                 .withAction(a -> WindowManager.getInstance().prevWindow().getWindow().requestFocus())
                 .build(this);
 
+        MenuItemBuilder.ofDefaultType()
+                .named("Restore Default Layout")
+                .withAction(a -> WindowManager.getInstance().restoreDefaultLayout())
+                .build(this);
+
         addSeparator();
 
         addPalettes(MenuItemBuilder.ofHierarchicalType()

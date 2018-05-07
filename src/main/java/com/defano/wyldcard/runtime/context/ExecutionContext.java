@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
@@ -18,8 +19,6 @@ import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.symbol.BasicSymbolTable;
 import com.defano.wyldcard.runtime.symbol.SymbolTable;
-import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.layouts.StackWindow;
 
 import java.util.List;
 import java.util.Stack;
@@ -27,8 +26,11 @@ import java.util.Stack;
 /**
  * Represents the state of HyperCard during the execution of a HyperTalk script.
  * <p>
- * This object maintains the call stack, local and global variables, the part referred to as 'me', any pending visual
- * effect, and any return value passed out of a function handler. See {@link StackFrame}
+ * This object maintains the call stack (including local and global variables, see {@link StackFrame}); the part
+ * referred to as 'me'; the stack referred to as 'this stack' (the one we're operating on); the current card (typically
+ * the card presently displayed, but may vary during certain operations like card sorting); the part referred to as
+ * 'the target'; the value returned by 'the result'; and any pending visual effect to apply when the screen is next
+ * unlocked.
  * <p>
  * Stack binding: When a script is executing, it must execute in the context of a specific stack (i.e., 'card 3' refers
  * to the third card of which stack?). This is problematic when multiple stacks are open and active (and each
@@ -45,7 +47,10 @@ import java.util.Stack;
  */
 public class ExecutionContext {
 
-    // Globals are shared across contexts; SymbolTable is thread safe.
+    // Throw 'too much recursion' if HyperTalk call stack exceeds this depth
+    private final static int MAX_CALL_STACK_DEPTH = 256;
+
+    // Globals are shared across all contexts... that what makes them global :)
     private final static SymbolTable globals = new BasicSymbolTable();
 
     private StackPart stack;                                // WyldCard stack that this script is bound to
@@ -55,14 +60,23 @@ public class ExecutionContext {
     private PartSpecifier theTarget;                        // Part that the message was initially sent
 
     /**
-     * Creates a unbound execution context. Scripts executing with a unbound context will operate on whichever stack has
-     * focus during runtime. Note that the focused stack may change while the script is executing.
+     * Creates an unbound execution context. Scripts executing with a unbound context will operate on whichever stack
+     * has focus whenever the 'current' stack is requested. Note that the focused stack may change while the script is
+     * executing and this could have unintended consequences.
+     * @return An unbound execution context
+     */
+    public static ExecutionContext unboundInstance() {
+        return new ExecutionContext().unbind();
+    }
+
+    /**
+     * Creates a execution context bound to the currently-focused stack.
      * <p>
      * Typically, the message box and menus should execute in a dynamic context; scripts attached to parts, cards,
      * backgrounds or stacks should use {@link #ExecutionContext(Part)}.
      */
     public ExecutionContext() {
-        this.stack = null;
+        this.stack = WyldCard.getInstance().getFocusedStack();
     }
 
     /**
@@ -77,7 +91,7 @@ public class ExecutionContext {
      *             context. See {@link ExecutionContext()}.
      */
     public ExecutionContext(Part part) {
-        this.stack = part.getOwningStack();
+        bind(part);
     }
 
     /**
@@ -91,16 +105,56 @@ public class ExecutionContext {
      * @throws IllegalStateException If the given part model is not bound to a stack.
      */
     public ExecutionContext(PartModel partModel) {
-        StackModel stackModel = partModel.getParentStackModel();
-        if (stackModel != null) {
-            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(stackModel);
-            if (stackWindow != null) {
-                this.stack = stackWindow.getStack();
-                return;
-            }
+        bind(partModel);
+    }
+
+    /**
+     * Unbinds this execution context from the currently bound stack. An unbound execution context operates on whichever
+     * stack currently has window focus.
+     *
+     * @return This execution context
+     */
+    public ExecutionContext unbind() {
+        this.stack = null;
+        return this;
+    }
+
+    /**
+     * Binds this execution context to the stack that owns the given part. All future part references encountered in the
+     * execution of the script will be interpreted as being a part of the same stack as the given part.
+     *
+     * @param part The part whose owning stack this context should be bound to.
+     * @return This execution context
+     */
+    public ExecutionContext bind(Part part) {
+        this.stack = part.getOwningStack();
+
+        if (this.stack == null) {
+            throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
         }
 
-        throw new IllegalStateException("Attempt to create a part-bound execution context from a part not connected to a stack.");
+        return this;
+    }
+
+    /**
+     * Binds this execution context to the stack that owns the given part. All future part references encountered in the
+     * execution of the script will be interpreted as being a part of the same stack as the given part.
+     *
+     * @param partModel The part whose owning stack this context should be bound to.
+     * @return This execution context
+     */
+    public ExecutionContext bind(PartModel partModel) {
+        StackModel stackModel = partModel.getParentStackModel();
+        if (stackModel != null) {
+            this.stack = WyldCard.getInstance().getOpenStacks().stream()
+                    .filter(stack -> stack.getStackModel() == stackModel)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Attempt to bind execution context to a part not connected to a stack."));
+        } else {
+            throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
+        }
+
+        return this;
     }
 
     /**
@@ -123,7 +177,13 @@ public class ExecutionContext {
      * @param me        The part which the 'me' keyword refers to in this context.
      * @param arguments Evaluated arguments passed to this handler or function.
      */
-    public void pushStackFrame(String message, PartSpecifier me, List<Value> arguments) {
+    public void pushStackFrame(String message, PartSpecifier me, List<Value> arguments) throws HtException {
+
+        // Kill script execution before we overflow JVM call stack
+        if (callStack.size() == MAX_CALL_STACK_DEPTH) {
+            throw new HtSemanticException("Too much recursion.");
+        }
+
         callStack.push(new StackFrame(me, message, arguments));
     }
 
@@ -131,7 +191,13 @@ public class ExecutionContext {
      * Pushes a new frame onto the call stack representing message box text evaluation (i.e., code executing not in the
      * context of a handler or function).
      */
-    public void pushStackFrame() {
+    public void pushStackFrame() throws HtException {
+
+        // Kill script execution before we overflow JVM call stack
+        if (callStack.size() == MAX_CALL_STACK_DEPTH) {
+            throw new HtSemanticException("Too much recursion.");
+        }
+
         callStack.push(new StackFrame());
     }
 
@@ -176,7 +242,7 @@ public class ExecutionContext {
     }
 
     /**
-     * Defines a given symbol (variable name) as being a global variable in the scope of the current frame.
+     * Defines a given symbol as being a global variable in the scope of the current frame.
      *
      * @param id The name of the variable to be made global.
      */
@@ -229,7 +295,7 @@ public class ExecutionContext {
     /**
      * Gets the value assigned to a symbol (variable). If the variable is an in-scope global, returns the globally
      * assigned value; if the variable is an in-scope local variable, returns its value. If the variable does not
-     * exist, then returns the a Value containing the name of the symbol (allows unrecognized symbols to be treated as
+     * exist, then returns a Value containing the name of the symbol (allows unrecognized symbols to be treated as
      * unquoted string literals, i.e., 'answer hello').
      *
      * @param symbol The symbol/variable whose value should be retrieved.
@@ -374,11 +440,7 @@ public class ExecutionContext {
      * @return The stack that is in scope for this execution.
      */
     public StackPart getCurrentStack() {
-        return this.stack == null ? WindowManager.getInstance().getFocusedStackWindow().getStack() : this.stack;
-    }
-
-    public void setCurrentStack(StackPart stack) {
-        this.stack = stack;
+        return this.stack == null ? WyldCard.getInstance().getFocusedStack() : this.stack;
     }
 
     /**

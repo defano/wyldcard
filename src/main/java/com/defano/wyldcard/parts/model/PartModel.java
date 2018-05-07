@@ -181,12 +181,6 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
         definePropertyAlias(PROP_RECT, PROP_RECTANGLE);
 
-        defineComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
-        defineComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
-            model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
-            precompile(context);
-        });
-
         // When breakpoints change, automatically apply them to the script
         addPropertyChangedObserver((context, model, property, oldValue, newValue) -> {
             if (property.equalsIgnoreCase(PROP_BREAKPOINTS)) {
@@ -194,6 +188,12 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
             }
         });
         definePropertyAlias(PROP_BREAKPOINTS, PROP_CHECKPOINTS);
+
+        defineComputedGetterProperty(PROP_SCRIPT, (context, model, propertyName) -> model.getKnownProperty(context, PROP_SCRIPTTEXT));
+        defineComputedSetterProperty(PROP_SCRIPT, (context, model, propertyName, value) -> {
+            model.setKnownProperty(context, PROP_SCRIPTTEXT, value);
+            precompile(context);
+        });
 
         precompile(new ExecutionContext());
     }
@@ -424,7 +424,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .ownsMenubar()
                         .withModel(this)
                         .resizeable(true)
-                        .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel())
+                        .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .build();
             });
 
@@ -446,7 +446,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .asModal()
                         .withTitle(getName(context))
                         .withModel(this)
-                        .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindowPanel())
+                        .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .resizeable(false)
                         .build());
     }

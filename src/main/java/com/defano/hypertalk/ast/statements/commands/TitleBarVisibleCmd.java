@@ -21,7 +21,7 @@ public class TitleBarVisibleCmd extends Command {
     @Override
     protected void onExecute(ExecutionContext context) throws HtException, Preemption {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = WindowManager.getInstance().getWindowForStack(context.getCurrentStack()).getWindow();
+            JFrame frame = WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow();
 
             frame.dispose();
             frame.setUndecorated(!visibility);
