@@ -1,6 +1,6 @@
 package com.defano.wyldcard.runtime.interpreter;
 
-import com.defano.hypertalk.exception.ExitToHyperCardException;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.google.common.base.Function;
 
@@ -22,8 +22,8 @@ public class CheckedFutureExceptionMapper implements Function<Exception, HtExcep
             return (HtException) input;
         } else if (input.getCause() instanceof HtException) {
             return (HtException) input.getCause();
-        } else if (input.getCause() instanceof ExitToHyperCardException) {
-            throw new ExitToHyperCardException();
+        } else if (input.getCause() instanceof ExitToHyperCardPreemption) {
+            throw new ExitToHyperCardPreemption();
         } else {
             input.printStackTrace();
             return new HtException("An unexpected error occurred while executing the script: " + input.getMessage());

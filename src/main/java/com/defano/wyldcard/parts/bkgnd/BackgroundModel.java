@@ -114,6 +114,10 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         return fieldModels;
     }
 
+    public Collection<ButtonModel> getButtonModels() {
+        return buttonModels;
+    }
+
     public List<CardModel> getCardModels(ExecutionContext context) {
         return ((StackModel) getParentPartModel()).getCardsInBackground(getId(context));
     }
@@ -152,6 +156,10 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         } else {
             return this.backgroundImage;
         }
+    }
+
+    public boolean hasBackgroundImage() {
+        return this.backgroundImage != null;
     }
 
     public boolean hasName() {

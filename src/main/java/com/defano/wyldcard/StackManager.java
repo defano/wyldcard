@@ -436,7 +436,7 @@ public class StackManager implements StackNavigationObserver {
      */
     private boolean promptToSave(ExecutionContext context, StackPart stackPart) {
         // Prompt user to save if stack is dirty
-        if (stackPart.getStackModel().isStackDirty()) {
+        if (stackPart.getStackModel().isDirty()) {
             int dialogResult = JOptionPane.showConfirmDialog(
                     stackPart.getDisplayedCard(),
                     "Save changes to " + stackPart.getStackModel().getStackName(null) + "?",

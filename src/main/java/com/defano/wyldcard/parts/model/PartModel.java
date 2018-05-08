@@ -247,13 +247,17 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     public Script getScript(ExecutionContext context) {
         if (script == null) {
             try {
-                script = Interpreter.blockingCompileScript(getKnownProperty(context, PROP_SCRIPTTEXT).stringValue());
+                script = Interpreter.blockingCompileScript(getScriptText(context));
                 script.applyBreakpoints(getBreakpoints());
             } catch (HtException e) {
                 e.printStackTrace();
             }
         }
         return script;
+    }
+
+    public String getScriptText(ExecutionContext context) {
+        return getKnownProperty(context, PROP_SCRIPTTEXT).stringValue();
     }
 
     public Owner getOwner() {

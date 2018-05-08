@@ -89,7 +89,7 @@ public class WindowsMenu extends HyperCardMenu {
     private void addScriptEditors(JMenuItem parent) {
         List<WyldCardFrame> windows = WindowManager.getInstance().getWindows(true);
 
-        parent.setEnabled(windows.stream().filter(p -> p instanceof ScriptEditor).count() > 0);
+        parent.setEnabled(windows.stream().anyMatch(p -> p instanceof ScriptEditor));
 
         windows.stream()
                 .filter(w -> w instanceof ScriptEditor)

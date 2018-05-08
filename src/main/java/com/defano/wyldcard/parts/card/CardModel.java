@@ -113,6 +113,10 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         return fields;
     }
 
+    public Collection<ButtonModel> getButtonModels() {
+        return buttons;
+    }
+
     /**
      * Removes the specified part (button or field). Has no effect if the part doesn't exist on this card.
      *
@@ -193,6 +197,10 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         } else {
             return this.cardImage;
         }
+    }
+
+    public boolean hasCardImage() {
+        return cardImage != null;
     }
 
     /**

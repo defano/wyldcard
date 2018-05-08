@@ -29,15 +29,15 @@ import java.util.stream.Collectors;
 
 public class StackModel extends PartModel implements StackPartFinder {
 
-    private static final int BACKSTACK_DEPTH = 20;
     public final static String FILE_EXTENSION = ".stack";
-
     public final static String PROP_CANTPEEK = "cantpeek";
     public static final String PROP_RESIZABLE = "resizable";
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";
-
+    private static final int BACKSTACK_DEPTH = 20;
+    private final Map<Integer, BackgroundModel> backgroundModels;
+    private final Map<String, BufferedImage> userIcons;
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
     private int nextCardId = 0;
@@ -45,9 +45,6 @@ public class StackModel extends PartModel implements StackPartFinder {
     private int currentCardIndex = 0;
     private LimitedDepthStack<Integer> backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
     private List<CardModel> cardModels;
-    private final Map<Integer, BackgroundModel> backgroundModels;
-    private final Map<String, BufferedImage> userIcons;
-
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
 
@@ -65,6 +62,12 @@ public class StackModel extends PartModel implements StackPartFinder {
         defineProperty(PROP_CANTPEEK, new Value(false), false);
 
         initialize();
+    }
+
+    public static StackModel newStackModel(String stackName) {
+        StackModel stack = new StackModel(stackName, new Dimension(640, 480));
+        stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel(), stack));
+        return stack;
     }
 
     @PostConstruct
@@ -131,12 +134,6 @@ public class StackModel extends PartModel implements StackPartFinder {
         setKnownProperty(context, PROP_NAME, new Value(filename));
     }
 
-    public static StackModel newStackModel(String stackName) {
-        StackModel stack = new StackModel(stackName, new Dimension(640, 480));
-        stack.cardModels.add(CardModel.emptyCardModel(stack.getNextCardId(), stack.newBackgroundModel(), stack));
-        return stack;
-    }
-
     public int insertCard(CardModel cardModel) {
         cardModels.add(currentCardIndex + 1, cardModel);
         receiveMessage(new ExecutionContext(), SystemMessage.NEW_CARD.messageName);
@@ -190,12 +187,12 @@ public class StackModel extends PartModel implements StackPartFinder {
         return currentCardIndex;
     }
 
-    public CardModel getCurrentCard() {
-        return getCardModel(getCurrentCardIndex());
-    }
-
     public void setCurrentCardIndex(int currentCard) {
         this.currentCardIndex = currentCard;
+    }
+
+    public CardModel getCurrentCard() {
+        return getCardModel(getCurrentCardIndex());
     }
 
     public int getIndexOfCard(CardModel card) {
@@ -306,18 +303,50 @@ public class StackModel extends PartModel implements StackPartFinder {
      *
      * @return True if the stack has changes; false otherwise
      */
-    public boolean isStackDirty() {
-        try {
-            String savedStack = new String(Files.readAllBytes(savedStackFileProvider.blockingFirst().get().toPath()), StandardCharsets.UTF_8);
-            String currentStack = Serializer.serialize(this);
-            return !savedStack.equalsIgnoreCase(currentStack);
-        } catch (Exception e) {
-            return true;
+    public boolean isDirty() {
+        if (savedStackFileProvider.blockingFirst().isPresent()) {
+
+            try {
+                String savedStack = new String(Files.readAllBytes(savedStackFileProvider.blockingFirst().get().toPath()), StandardCharsets.UTF_8);
+                String currentStack = Serializer.serialize(this);
+
+                return !isEmpty() && !savedStack.equalsIgnoreCase(currentStack);
+
+            } catch (Exception e) {
+                return true;
+            }
         }
+
+        return !isEmpty();
     }
 
-    /** {@inheritDoc}
-     * @param context*/
+    /**
+     * Determines if this stack is empty, that is, the stack is essentially a new stack with no parts, cards, or
+     * graphics added.
+     *
+     * @return True if the stack is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        BackgroundModel background = getBackground(getCurrentCard().getBackgroundId());
+        CardModel card = getCurrentCard();
+
+        return getCardCount() == 1 &&                                   // Single card
+                card.getFieldModels().size() == 0 &&                    // No card fields
+                card.getButtonModels().size() == 0 &&                   // No card buttons
+                background.getFieldModels().size() == 0 &&              // No bkgnd fields
+                background.getButtonModels().size() == 0 &&             // No bkgnd buttons
+                !card.hasCardImage() &&                                 // No card graphics
+                !background.hasBackgroundImage() &&                     // No bkgnd graphics
+                card.getScriptText(null).isEmpty() &&           // No card script
+                background.getScriptText(null).isEmpty() &&     // No bkgnd script
+                getScriptText(null).isEmpty();                  // No stack script
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param context
+     */
     @Override
     public List<PartModel> getPartsInDisplayOrder(ExecutionContext context) {
         ArrayList<PartModel> parts = new ArrayList<>();
@@ -334,12 +363,16 @@ public class StackModel extends PartModel implements StackPartFinder {
         return parts;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean isAdjectiveSupportedProperty(String propertyName) {
         return propertyName.equalsIgnoreCase(PROP_NAME);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Adjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {

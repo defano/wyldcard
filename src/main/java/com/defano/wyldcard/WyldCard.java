@@ -1,6 +1,6 @@
 package com.defano.wyldcard;
 
-import com.defano.hypertalk.exception.ExitToHyperCardException;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
@@ -88,7 +88,7 @@ public class WyldCard extends StackManager implements PartFinder {
         SwingUtilities.invokeLater(() -> HyperTalkErrorDialog.getInstance().showError(e));
 
         // Abort further script execution
-        throw new ExitToHyperCardException();
+        throw new ExitToHyperCardPreemption();
     }
 
 }

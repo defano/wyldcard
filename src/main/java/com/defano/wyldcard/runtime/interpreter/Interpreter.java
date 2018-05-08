@@ -46,8 +46,9 @@ public class Interpreter {
      * <p>
      * This method is primarily useful for parse-as-you-type syntax checking.
      *
-     * @param scriptText The script to parse.
-     * @param observer   A non-null callback to fire when compilation is complete.
+     * @param compilationUnit The type of script/scriptlet to compile
+     * @param scriptText      The script to parse.
+     * @param observer        A non-null callback to fire when compilation is complete.
      */
     public static void asyncBestEffortCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
 
@@ -56,23 +57,16 @@ public class Interpreter {
         bestEffortCompileExecutor.submit(getCompileTask(compilationUnit, scriptText, observer));
     }
 
+    /**
+     * Compiles the given script on a background thread and invokes the CompileCompletionObserver (on the background
+     * thread) when complete.
+     *
+     * @param compilationUnit The type of script/scriptlet to compile
+     * @param scriptText      The script to parse.
+     * @param observer        A non-null callback to fire when compilation is complete.
+     */
     public static void asyncCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
         asyncCompileExecutor.submit(getCompileTask(compilationUnit, scriptText, observer));
-    }
-
-    private static Runnable getCompileTask(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
-        return () -> {
-            HtException generatedError = null;
-            Object compiledScript = null;
-
-            try {
-                compiledScript = TwoPhaseParser.parseScript(compilationUnit, scriptText);
-            } catch (HtException e) {
-                generatedError = e;
-            }
-
-            observer.onCompileCompleted(scriptText, compiledScript, generatedError);
-        };
     }
 
     /**
@@ -98,7 +92,8 @@ public class Interpreter {
     }
 
     /**
-     * Evaluates a string as a HyperTalk expression on the current thread.
+     * Evaluates a string as a HyperTalk expression on the current thread. May not be executed on the Swing dispatch
+     * thread.
      *
      * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
      *                   evaluated or is not a legal expression evaluates to itself.
@@ -106,6 +101,8 @@ public class Interpreter {
      * @return The Value of the evaluated expression.
      */
     public static Value blockingEvaluate(String expression, ExecutionContext context) {
+        ThreadUtils.assertWorkerThread();
+
         try {
             Statement statement = blockingCompileScriptlet(expression).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
@@ -120,7 +117,8 @@ public class Interpreter {
     }
 
     /**
-     * Attempts to evaluate the given value as an AST node identified by klass on the current thread.
+     * Attempts to evaluate the given value as an AST node identified by klass on the current thread. May not be
+     * executed on the Swing dispatch thread.
      * <p>
      * The given value is compiled as a HyperTalk scriptlet and the first statement in the script is coerced to the
      * requested type. Returns null if the value is not a valid HyperTalk script or contains a script fragment that
@@ -137,7 +135,9 @@ public class Interpreter {
      * the dereferenced value.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T blockingEvaluate(Value value, Class<T> klass) {
+    public static <T> T blockingDereference(Value value, Class<T> klass) {
+        ThreadUtils.assertWorkerThread();
+
         try {
             Statement statement = Interpreter.blockingCompileScriptlet(value.stringValue()).getStatements().list.get(0);
 
@@ -188,10 +188,12 @@ public class Interpreter {
      * @param completionObserver Invoked after the handler has executed on the same thread on which the handler ran.
      */
     public static void asyncExecuteHandler(ExecutionContext context, PartSpecifier me, Script script, String message, ListExp arguments, HandlerCompletionObserver completionObserver) {
+
+        // Find handler for message in the script
         NamedBlock handler = script == null ? null : script.getHandler(message);
         CheckedFuture<Boolean, HtException> future;
 
-        // Execute implemented handler in the script
+        // Script implements handler for message; execute it
         if (handler != null) {
             future = getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, handler, arguments));
         }
@@ -272,7 +274,7 @@ public class Interpreter {
 
     /**
      * Gets the number of scripts that are either actively executing or waiting to be executed. Returns 0 when HyperCard
-     * is "idle". Does not include any script evaluation done via the message box.
+     * is "idle".
      *
      * @return The number of active or pending scripts
      */
@@ -293,10 +295,10 @@ public class Interpreter {
     /**
      * Gets a CheckedFuture representing the future result of executing a script handler (a boolean value indicating
      * whether the handler trapped the message, or, an {@link HtException} if the script failed to complete executing).
-     *
+     * <p>
      * If this thread is a script execution thread, the handler is executed synchronously on this thread and the result
      * is returned as an immediate future.
-     *
+     * <p>
      * If this thread is not a script execution thread (e.g., the Swing dispatch thread), then the handler task is
      * submitted for execution by one of the available script executor threads.
      *
@@ -315,5 +317,29 @@ public class Interpreter {
         } else {
             return Futures.makeChecked(listeningScriptExecutor.submit(handlerTask), new CheckedFutureExceptionMapper());
         }
+    }
+
+    /**
+     * Gets a {@link Runnable} that, when executed, compiles the given script and notifies a
+     * {@link CompileCompletionObserver}.
+     *
+     * @param compilationUnit The type of script/scriptlet to compile
+     * @param scriptText      The script to parse.
+     * @param observer        A non-null callback to fire when compilation is complete.
+     * @return A runnable that compiles the script
+     */
+    private static Runnable getCompileTask(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
+        return () -> {
+            HtException generatedError = null;
+            Object compiledScript = null;
+
+            try {
+                compiledScript = TwoPhaseParser.parseScript(compilationUnit, scriptText);
+            } catch (HtException e) {
+                generatedError = e;
+            }
+
+            observer.onCompileCompleted(scriptText, compiledScript, generatedError);
+        };
     }
 }

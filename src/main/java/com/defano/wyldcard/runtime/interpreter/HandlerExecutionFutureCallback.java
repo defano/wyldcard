@@ -2,7 +2,7 @@ package com.defano.wyldcard.runtime.interpreter;
 
 import com.defano.hypertalk.ast.model.Script;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
-import com.defano.hypertalk.exception.ExitToHyperCardException;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.common.util.concurrent.FutureCallback;
@@ -28,7 +28,9 @@ public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
 
     @Override
     public void onFailure(Throwable t) {
-        if (t instanceof ExitToHyperCardException) {
+
+        // Script requested termination of thread
+        if (t instanceof ExitToHyperCardPreemption) {
             completionObserver.onHandlerRan(me, script, message, true, null);
         }
 
@@ -37,7 +39,7 @@ public class HandlerExecutionFutureCallback implements FutureCallback<Boolean> {
             completionObserver.onHandlerRan(me, script, message, true, (HtException) t);
         }
 
-        // So other error occurred that we're ill-equipped to deal with
+        // Other error occurred that we're ill-equipped to deal with
         else {
             completionObserver.onHandlerRan(me, script, message, true, new HtSemanticException("Bug! An unexpected error occurred:" + t.getMessage()));
         }

@@ -40,7 +40,7 @@ public class StackPartSpecifier implements PartSpecifier {
         if (stackName == null) {
             return "this stack";
         } else {
-            return "stack " + stackName;
+            return stackName;
         }
     }
 }

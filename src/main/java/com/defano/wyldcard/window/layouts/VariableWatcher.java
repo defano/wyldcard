@@ -45,6 +45,7 @@ public class VariableWatcher extends WyldCardWindow implements SymbolObserver {
             variableEditor.setText(getSelectedVariableValue());
         });
 
+        variableEditor.setTabSize(2);
         variableEditor.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -259,6 +260,7 @@ public class VariableWatcher extends WyldCardWindow implements SymbolObserver {
                 setFont(getFont().deriveFont(Font.ITALIC));
             }
 
+            setToolTipText(getText());
             return this;
         }
     }

@@ -216,6 +216,8 @@ public class MessageWatcher extends WyldCardWindow {
                 }
             }
 
+            setToolTipText(getText());
+
             return this;
         }
     }

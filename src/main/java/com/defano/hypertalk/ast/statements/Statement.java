@@ -2,7 +2,7 @@ package com.defano.hypertalk.ast.statements;
 
 import com.defano.hypertalk.ast.ASTNode;
 import com.defano.hypertalk.ast.preemptions.Preemption;
-import com.defano.hypertalk.exception.ExitToHyperCardException;
+import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -69,7 +69,7 @@ public abstract class Statement extends ASTNode {
 
             if (abortFlag) {
                 abortFlag = false;
-                throw new ExitToHyperCardException();
+                throw new ExitToHyperCardPreemption();
             }
         }
     }
@@ -96,7 +96,7 @@ public abstract class Statement extends ASTNode {
     }
 
     /**
-     * Aborts execution of this script (equivalent to 'exit to hypercard').
+     * Aborts execution of this script (equivalent to invoking 'exit to hypercard').
      */
     public void abort() {
         if (hold != null) {
