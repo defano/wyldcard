@@ -20,6 +20,7 @@ import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.util.Throttle;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.window.layouts.FontSizePicker;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -586,7 +587,9 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         @RunOnDispatch
         public void focusLost(FocusEvent e) {
-            didLoseFocusToMenu = e.getOppositeComponent() instanceof JRootPane;
+            System.err.println(e.getOppositeComponent());
+            didLoseFocusToMenu = e.getOppositeComponent() instanceof JRootPane ||
+                    SwingUtilities.getWindowAncestor(e.getOppositeComponent()) instanceof FontSizePicker;
         }
     }
 
