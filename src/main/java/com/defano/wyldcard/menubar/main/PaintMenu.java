@@ -5,6 +5,7 @@ import com.defano.jmonet.model.ImageAntiAliasingMode;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
@@ -29,7 +30,8 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Select")
                 .withShortcut('S')
-                .disabled()
+                .withEnabledProvider(WyldCard.getInstance().getIsUndoableProvider())
+                .withAction(a -> ToolsContext.getInstance().select())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

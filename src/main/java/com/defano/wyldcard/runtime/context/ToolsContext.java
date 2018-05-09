@@ -6,6 +6,8 @@ import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
+import com.defano.jmonet.algo.transform.Transform;
+import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImageAntiAliasingMode;
 import com.defano.jmonet.model.PaintToolType;
@@ -126,8 +128,29 @@ public class ToolsContext {
     }
 
     public void selectAll() {
-        SelectionTool tool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-        tool.createSelection(new Rectangle(0, 0, WyldCard.getInstance().getFocusedCard().getWidth() - 1, WyldCard.getInstance().getFocusedCard().getHeight() - 1));
+        ((SelectionTool) forceToolSelection(ToolType.SELECT, false)).createSelection(new Rectangle(
+                0,
+                0,
+                WyldCard.getInstance().getFocusedCard().getWidth() - 1,
+                WyldCard.getInstance().getFocusedCard().getHeight() - 1)
+        );
+    }
+
+    public void select() {
+        ChangeSet undid = WyldCard.getInstance().getFocusedCard().getCanvas().undo();
+
+        // Ignore if no selectable image exists
+        if (undid != null) {
+            BufferedImage undidImage = undid.getImage();
+
+            // Calculate minimum bounds sub-image.
+            Rectangle reduction = Transform.getMinimumBounds(undidImage);
+            BufferedImage subimage = undid.getImage().getSubimage(reduction.x, reduction.y, reduction.width + 1, reduction.height + 1);
+
+            // Force selection tool and create new selection from it
+            SelectionTool selectionTool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
+            selectionTool.createSelection(subimage, new Point(reduction.x,reduction.y));
+        }
     }
 
     public Color getForegroundColor() {
@@ -437,11 +460,9 @@ public class ToolsContext {
                 .withIntensityObservable(intensityProvider)
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
+                .withAntiAliasingObservable(antiAliasingProvider)
                 .makeActiveOnCanvas(WyldCard.getInstance().getFocusedCard().getCanvas())
                 .build();
-
-        // TODO: Add to paint tool builder
-        selectedTool.setAntiAliasingObservable(antiAliasingProvider);
 
         // When requested, move current selection over to the new tool
         if (keepSelection) {
