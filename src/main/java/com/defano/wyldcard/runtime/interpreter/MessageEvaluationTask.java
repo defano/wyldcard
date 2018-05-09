@@ -25,7 +25,7 @@ public class MessageEvaluationTask implements Callable<String> {
 
     @Override
     public String call() throws HtException {
-        StatementList statements = Interpreter.blockingCompileScriptlet(messageText).getStatements();
+        StatementList statements = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, messageText).getStatements();
 
         if (context.getStackDepth() == 0) {
             context.pushStackFrame();

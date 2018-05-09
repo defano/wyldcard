@@ -38,7 +38,7 @@ public class ExpressionEvaluator extends WyldCardDialog implements SyntaxParserD
         closeButton.addActionListener(a -> setVisible(false));
 
         evaluateButton.addActionListener(a -> {
-            Interpreter.asyncEvaluateMessage(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
+            Interpreter.asyncInContextEvaluate(context, editor.getScriptField().getText(), new MessageEvaluationObserver() {
                 @Override
                 public void onMessageEvaluated(String result) {
                     SwingUtilities.invokeLater(() -> resultField.setText(result));

@@ -1,14 +1,15 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.jmonet.algo.dither.*;
+import com.defano.jmonet.model.ImageAntiAliasingMode;
+import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
+import com.defano.jmonet.tools.selection.TransformableImageSelection;
+import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.patterns.HyperCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.jmonet.algo.dither.*;
-import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
-import com.defano.jmonet.tools.selection.TransformableImageSelection;
-import com.defano.jmonet.tools.selection.TransformableSelection;
 
 import javax.swing.*;
 
@@ -41,32 +42,32 @@ public class PaintMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Fill")
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableImageSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableImageSelectionProvider())
                 .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(HyperCardPatternFactory.getInstance().getPattern(ToolsContext.getInstance().getFillPattern())))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Invert")
                 .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).invert())
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableImageSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Pickup")
                 .withAction(e -> ((TransformableCanvasSelection) ToolsContext.getInstance().getPaintTool()).pickupSelection())
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableCanvasSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableCanvasSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Darken")
                 .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).adjustBrightness(-20))
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Lighten")
                 .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).adjustBrightness(20))
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -77,25 +78,25 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Left")
                 .withAction(e -> ((TransformableSelection) ToolsContext.getInstance().getPaintTool()).rotateLeft())
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Rotate Right")
                 .withAction(e -> ((TransformableSelection) ToolsContext.getInstance().getPaintTool()).rotateRight())
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Vertical")
                 .withAction(e -> ((TransformableSelection) ToolsContext.getInstance().getPaintTool()).flipVertical())
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Flip Horizontal")
                 .withAction(e -> ((TransformableSelection) ToolsContext.getInstance().getPaintTool()).flipHorizontal())
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         this.addSeparator();
@@ -103,13 +104,13 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("More Opaque")
                 .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).adjustTransparency(20))
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("More Transparent")
                 .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).adjustTransparency(-20))
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
         this.addSeparator();
@@ -127,9 +128,45 @@ public class PaintMenu extends HyperCardMenu {
 
         this.addSeparator();
 
+        JMenuItem antialiasingMenu = MenuItemBuilder.ofHierarchicalType()
+                .named("Antialiasing")
+                .build(this);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("None")
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.OFF))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.OFF))
+                        .build(antialiasingMenu);
+
+                antialiasingMenu.add(new JSeparator());
+
+                MenuItemBuilder.ofCheckType()
+                        .named("Default")
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.DEFAULT))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.DEFAULT))
+                        .build(antialiasingMenu);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("Nearest Neighbor")
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.NEAREST_NEIGHBOR))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.NEAREST_NEIGHBOR))
+                        .build(antialiasingMenu);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("Bilinear")
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.BILINEAR))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.BILINEAR))
+                        .build(antialiasingMenu);
+
+                MenuItemBuilder.ofCheckType()
+                        .named("Bicubic")
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.BICUBIC))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.BICUBIC))
+                        .build(antialiasingMenu);
+
         JMenuItem reduceColorMenu = MenuItemBuilder.ofHierarchicalType()
                 .named("Reduce Color")
-                .withEnabledProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t instanceof TransformableSelection))
+                .withEnabledProvider(ToolsContext.getInstance().hasTransformableSelectionProvider())
                 .build(this);
 
                 MenuItemBuilder.ofDefaultType()
@@ -194,6 +231,7 @@ public class PaintMenu extends HyperCardMenu {
                         .build(reduceColorMenu);
 
                 reduceColorMenu.add(new JSeparator());
+
 
                 JMenuItem ditherMenu = MenuItemBuilder.ofHierarchicalType()
                         .named("Dithering")

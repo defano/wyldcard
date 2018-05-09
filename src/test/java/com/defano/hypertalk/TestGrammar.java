@@ -8,6 +8,7 @@
 
 package com.defano.hypertalk;
 
+import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.hypertalk.exception.HtException;
 import org.apache.commons.io.IOUtils;
@@ -24,19 +25,19 @@ public class TestGrammar {
         String testScript = IOUtils.toString(in);
 
         long start = System.currentTimeMillis();
-        Interpreter.blockingCompileScript(testScript);
+        Interpreter.blockingCompile(CompilationUnit.SCRIPT, testScript);
         long end = System.currentTimeMillis();
 
         System.out.println("Cold-compiled test script in " + (end - start) + "ms.");
 
         start = System.currentTimeMillis();
-        Interpreter.blockingCompileScript(testScript);
+        Interpreter.blockingCompile(CompilationUnit.SCRIPT, testScript);
         end = System.currentTimeMillis();
 
         System.out.println("Warm-compiled test script in " + (end - start) + "ms.");
 
         start = System.currentTimeMillis();
-        Interpreter.blockingCompileScript(testScript);
+        Interpreter.blockingCompile(CompilationUnit.SCRIPT, testScript);
         end = System.currentTimeMillis();
 
         System.out.println("Hot-compiled test script in " + (end - start) + "ms.");
@@ -48,7 +49,7 @@ public class TestGrammar {
         String testScript = IOUtils.toString(in);
 
         long start = System.currentTimeMillis();
-        Interpreter.blockingCompileScript(testScript);
+        Interpreter.blockingCompile(CompilationUnit.SCRIPT, testScript);
         long end = System.currentTimeMillis();
 
         System.out.println("Cold-compiled test script in " + (end - start) + "ms.");
@@ -57,7 +58,7 @@ public class TestGrammar {
         int count = 400;
         for (int x = 0; x < count; x++) {
             start = System.currentTimeMillis();
-            Interpreter.blockingCompileScript(testScript);
+            Interpreter.blockingCompile(CompilationUnit.SCRIPT, testScript);
             end = System.currentTimeMillis();
 
             total += (end - start);

@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -37,7 +38,7 @@ public class SendCmd extends Command {
 
     private MessageCmd interpretMessage(String message) {
         try {
-            Script compiled = Interpreter.blockingCompileScriptlet(message);
+            Script compiled = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, message);
             return (MessageCmd) compiled.getStatements().list.get(0);
         } catch (Exception e) {
             return null;

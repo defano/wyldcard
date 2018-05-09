@@ -37,12 +37,12 @@ public class Interpreter {
     private static final ListeningExecutorService listeningScriptExecutor = MoreExecutors.listeningDecorator(scriptExecutor);
 
     /**
-     * Preemptively compiles the given script text on a background thread and invokes the CompileCompletionObserver
+     * Attempts to compile the given script text on a background thread and invoke the CompileCompletionObserver
      * (on the background thread) when complete.
      * <p>
-     * Note that this method cancels any previously requested compilation except the currently executing one (if one is
-     * executing). Thus, invocation of the completion observer is not guaranteed; some jobs will be canceled
-     * before they run and thus never complete.
+     * This method cancels any previously requested compilation tasks except those that may already be executing. Thus,
+     * invocation of the completion observer is not guaranteed; some jobs will be canceled before they run and thus
+     * never complete.
      * <p>
      * This method is primarily useful for parse-as-you-type syntax checking.
      *
@@ -54,7 +54,7 @@ public class Interpreter {
 
         // Preempt any previously enqueued parse jobs
         bestEffortCompileExecutor.getQueue().clear();
-        bestEffortCompileExecutor.submit(getCompileTask(compilationUnit, scriptText, observer));
+        bestEffortCompileExecutor.submit(createCompileTask(compilationUnit, scriptText, observer));
     }
 
     /**
@@ -66,34 +66,27 @@ public class Interpreter {
      * @param observer        A non-null callback to fire when compilation is complete.
      */
     public static void asyncCompile(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
-        asyncCompileExecutor.submit(getCompileTask(compilationUnit, scriptText, observer));
+        asyncCompileExecutor.submit(createCompileTask(compilationUnit, scriptText, observer));
     }
 
     /**
-     * Compiles the given {@link CompilationUnit#SCRIPTLET} on the current thread.
+     * Compiles the given script on the current thread.
      *
+     *
+     * @param compilationUnit The type of script/scriptlet to compile
      * @param scriptText The script text to parse.
      * @return The compiled Script object (the root of the abstract syntax tree)
      * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
      */
-    public static Script blockingCompileScriptlet(String scriptText) throws HtException {
-        return (Script) TwoPhaseParser.parseScript(CompilationUnit.SCRIPTLET, scriptText);
+    public static Script blockingCompile(CompilationUnit compilationUnit, String scriptText) throws HtException {
+        return (Script) TwoPhaseParser.parseScript(compilationUnit, scriptText);
     }
 
     /**
-     * Compiles the given {@link CompilationUnit#SCRIPT} on the current thread.
+     * Returns the result of evaluating a string as a HyperTalk expression on the current thread. An expression that
+     * cannot be evaluated (i.e., invalid syntax or an execution error occurs) results in the script text itself.
      *
-     * @param scriptText The script text to parse.
-     * @return The compiled Script object (the root of the abstract syntax tree)
-     * @throws HtException Thrown if an error (i.e., syntax error) occurs when compiling.
-     */
-    public static Script blockingCompileScript(String scriptText) throws HtException {
-        return (Script) TwoPhaseParser.parseScript(CompilationUnit.SCRIPT, scriptText);
-    }
-
-    /**
-     * Evaluates a string as a HyperTalk expression on the current thread. May not be executed on the Swing dispatch
-     * thread.
+     * This method may not be executed on the Swing dispatch thread.
      *
      * @param expression The value of the evaluated text; based on HyperTalk language semantics, text that cannot be
      *                   evaluated or is not a legal expression evaluates to itself.
@@ -104,7 +97,7 @@ public class Interpreter {
         ThreadUtils.assertWorkerThread();
 
         try {
-            Statement statement = blockingCompileScriptlet(expression).getStatements().list.get(0);
+            Statement statement = blockingCompile(CompilationUnit.SCRIPTLET, expression).getStatements().list.get(0);
             if (statement instanceof ExpressionStatement) {
                 return ((ExpressionStatement) statement).expression.evaluate(context);
             }
@@ -139,7 +132,7 @@ public class Interpreter {
         ThreadUtils.assertWorkerThread();
 
         try {
-            Statement statement = Interpreter.blockingCompileScriptlet(value.stringValue()).getStatements().list.get(0);
+            Statement statement = Interpreter.blockingCompile(CompilationUnit.SCRIPTLET, value.stringValue()).getStatements().list.get(0);
 
             // Simple case; statement matches requested type
             if (statement.getClass().isAssignableFrom(klass)) {
@@ -218,21 +211,21 @@ public class Interpreter {
      * complete. This is primarily useful for message window text evaluation (also used in the "Evaluate Expression"
      * feature of the debugger).
      * <p>
-     * Message evaluation is a special case of script execution:
+     * In-context evaluation is a special case of script execution:
      * <p>
-     * 1. All messages entered into the message window share a single stack frame so that symbols created in one message
+     * 1. All script text evaluated with this method share a single stack frame so that symbols created in one call
      * are available to the next. For example, 'put 10 into x' followed by 'put x' should result in 10. To achieve this,
-     * all message evaluations must occur in the same execution context and a special execution task is required to
+     * all such evaluations must occur in the same execution context and a special execution task is utilized to
      * prevent pushing a new stack frame during each evaluation.
      * <p>
-     * 2. When evaluating from the message window, 'the target' returns the current card, not the message box (for
+     * 2. When evaluating from this method, 'the target' returns the current card, not the message box (for
      * whatever reason). This results in a special case where the target is not the base of the 'me' stack.
      * <p>
      * 3. When multiple statements are evaluated using this method, the last statement is interpreted as an expression
      * and the evaluation of that expression is returned as the result. This has the otherwise unusual behavior of
      * treating a literal symbol value as the last statement as a request to evaluate the symbol as a variable. For
      * example, if the last statement evaluated is "doSomething", HyperTalk will typically interpret that as a message
-     * to be sent; but in this case, it will be sent as a message, and then evalauted as a variable returning to the
+     * to be sent; but in this case, it will be sent as a message, and then evaluated as a variable returning to the
      * observer whatever symbolic value "doSomething" has been assigned, or the literal "doSomething" if no value is
      * bound to it.
      *
@@ -241,7 +234,7 @@ public class Interpreter {
      * @param evaluationObserver A set of observer callbacks that fire (on the Swing dispatch thread) when evaluation is
      *                           complete.
      */
-    public static void asyncEvaluateMessage(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
+    public static void asyncInContextEvaluate(ExecutionContext staticContext, String message, MessageEvaluationObserver evaluationObserver) {
 
         Futures.addCallback(Futures.makeChecked(listeningScriptExecutor.submit(new MessageEvaluationTask(staticContext, message)), new CheckedFutureExceptionMapper()), new FutureCallback<String>() {
             @Override
@@ -269,7 +262,7 @@ public class Interpreter {
      * @throws HtException Thrown if an error occurs compiling the statements.
      */
     public static CheckedFuture<Boolean, HtException> asyncExecuteString(ExecutionContext context, PartSpecifier me, String statementList) throws HtException {
-        return getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompileScriptlet(statementList).getStatements()), new ListExp(null)));
+        return getFutureForHandlerExecutionTask(new DefaultHandlerExecutionTask(context, me, NamedBlock.anonymousBlock(blockingCompile(CompilationUnit.SCRIPTLET, statementList).getStatements()), new ListExp(null)));
     }
 
     /**
@@ -328,7 +321,7 @@ public class Interpreter {
      * @param observer        A non-null callback to fire when compilation is complete.
      * @return A runnable that compiles the script
      */
-    private static Runnable getCompileTask(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
+    private static Runnable createCompileTask(CompilationUnit compilationUnit, String scriptText, CompileCompletionObserver observer) {
         return () -> {
             HtException generatedError = null;
             Object compiledScript = null;

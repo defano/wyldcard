@@ -1,9 +1,5 @@
 package com.defano.wyldcard.runtime.context;
 
-import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.paint.PaintBrush;
-import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.patterns.HyperCardPatternFactory;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.ToolType;
@@ -18,7 +14,13 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
-import com.defano.wyldcard.util.ThreadUtils;
+import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
+import com.defano.jmonet.tools.selection.TransformableImageSelection;
+import com.defano.jmonet.tools.selection.TransformableSelection;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.paint.PaintBrush;
+import com.defano.wyldcard.paint.ToolMode;
+import com.defano.wyldcard.patterns.HyperCardPatternFactory;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -60,6 +62,7 @@ public class ToolsContext {
     private final Subject<Color> backgroundColorProvider = createDefault(Color.WHITE);
     private final Subject<Double> intensityProvider = createDefault(0.1);
     private final Subject<Ditherer> dithererProvider = createDefault(new FloydSteinbergDitherer());
+    private final Subject<ImageAntiAliasingMode> antiAliasingProvider = createDefault(ImageAntiAliasingMode.OFF);
 
     // Properties that we provide the canvas
     private final Subject<Integer> gridSpacingProvider = createDefault(1);
@@ -250,6 +253,14 @@ public class ToolsContext {
         dithererProvider.onNext(ditherer);
     }
 
+    public Subject<ImageAntiAliasingMode> getAntiAliasingProvider() {
+        return antiAliasingProvider;
+    }
+
+    public void setAntiAliasingMode(ImageAntiAliasingMode antiAliasingMode) {
+        this.antiAliasingProvider.onNext(antiAliasingMode);
+    }
+
     public Observable<Ditherer> getDithererProvider() {
         return dithererProvider;
     }
@@ -371,6 +382,48 @@ public class ToolsContext {
         return ToolType.fromToolMode(getToolMode(), getPaintTool().getToolType());
     }
 
+    /**
+     * Gets an observable of whether an image selection exists using a tool that conforms to
+     * {@link TransformableImageSelection}.
+     *
+     * @return The observable
+     */
+    public Observable<Boolean> hasTransformableImageSelectionProvider() {
+        return Observable.combineLatest(
+                ToolsContext.getInstance().getPaintToolProvider(),
+                ToolsContext.getInstance().getSelectedImageProvider(),
+                (paintTool, bufferedImage) -> paintTool instanceof TransformableImageSelection && bufferedImage.isPresent()
+        );
+    }
+
+    /**
+     * Gets an observable of whether an image selection exists using a tool that conforms to
+     * {@link TransformableSelection}.
+     *
+     * @return The observable
+     */
+    public Observable<Boolean> hasTransformableSelectionProvider() {
+        return Observable.combineLatest(
+                ToolsContext.getInstance().getPaintToolProvider(),
+                ToolsContext.getInstance().getSelectedImageProvider(),
+                (paintTool, bufferedImage) -> paintTool instanceof TransformableSelection && bufferedImage.isPresent()
+        );
+    }
+
+    /**
+     * Gets an observable of whether an image selection exists using a tool that conforms to
+     * {@link TransformableCanvasSelection}.
+     *
+     * @return The observable
+     */
+    public Observable<Boolean> hasTransformableCanvasSelectionProvider() {
+        return Observable.combineLatest(
+                ToolsContext.getInstance().getPaintToolProvider(),
+                ToolsContext.getInstance().getSelectedImageProvider(),
+                (paintTool, bufferedImage) -> paintTool instanceof TransformableCanvasSelection && bufferedImage.isPresent()
+        );
+    }
+
     private PaintTool activatePaintTool(PaintToolType selectedToolType, boolean keepSelection) {
 
         // Create and activate new paint tool
@@ -384,9 +437,11 @@ public class ToolsContext {
                 .withIntensityObservable(intensityProvider)
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
-                .withAntiAliasing(getAntiAliasingModeForTool(selectedToolType))
                 .makeActiveOnCanvas(WyldCard.getInstance().getFocusedCard().getCanvas())
                 .build();
+
+        // TODO: Add to paint tool builder
+        selectedTool.setAntiAliasingObservable(antiAliasingProvider);
 
         // When requested, move current selection over to the new tool
         if (keepSelection) {
@@ -407,16 +462,6 @@ public class ToolsContext {
 
         paintToolProvider.onNext(selectedTool);
         return selectedTool;
-    }
-
-    private ImageAntiAliasingMode getAntiAliasingModeForTool(PaintToolType type) {
-        switch (type) {
-            case PAINTBRUSH:
-                return ImageAntiAliasingMode.OFF;
-
-            default:
-                return ImageAntiAliasingMode.BILINEAR;
-        }
     }
 
     private Observable<Stroke> getStrokeProviderForTool(PaintToolType type) {
