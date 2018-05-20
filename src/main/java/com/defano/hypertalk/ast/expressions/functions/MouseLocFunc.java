@@ -13,6 +13,6 @@ public class MouseLocFunc extends Expression {
     }
     
     public Value onEvaluate(ExecutionContext context) {
-        return new Value(MouseManager.getInstance().getMouseLoc());
+        return new Value(MouseManager.getInstance().getMouseLoc(context));
     }
 }

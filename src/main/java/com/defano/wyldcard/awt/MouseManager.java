@@ -2,6 +2,7 @@ package com.defano.wyldcard.awt;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardPart;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -54,11 +55,11 @@ public class MouseManager {
         return clickTime;
     }
 
-    public Point getMouseLoc() {
+    public Point getMouseLoc(ExecutionContext context) {
         Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 
         if (WindowManager.getInstance().getFocusedStackWindow() != null) {
-            CardPart theCard = WindowManager.getInstance().getFocusedStackWindow().getDisplayedCard();
+            CardPart theCard = context.getCurrentCard();
             SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
         }
 
@@ -137,7 +138,7 @@ public class MouseManager {
 
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
             mouseIsDown = true;
-            clickLoc = getMouseLoc();
+            clickLoc = getMouseLoc(new ExecutionContext());
             clickTime = System.currentTimeMillis();
             fireOnMousePressed();
         }

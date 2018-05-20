@@ -1,7 +1,8 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.jmonet.algo.dither.*;
-import com.defano.jmonet.model.ImageAntiAliasingMode;
+import com.defano.jmonet.algo.fill.DefaultFillFunction;
+import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
@@ -30,7 +31,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Select")
                 .withShortcut('S')
-                .withEnabledProvider(WyldCard.getInstance().getIsUndoableProvider())
+                .withEnabledProvider(WyldCard.getInstance().getIsSelectableProvider())
                 .withAction(a -> ToolsContext.getInstance().select())
                 .build(this);
 
@@ -45,7 +46,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Fill")
                 .withEnabledProvider(ToolsContext.getInstance().hasTransformableImageSelectionProvider())
-                .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(HyperCardPatternFactory.getInstance().getPattern(ToolsContext.getInstance().getFillPattern())))
+                .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(HyperCardPatternFactory.getInstance().getPattern(ToolsContext.getInstance().getFillPattern()), new DefaultFillFunction()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -136,34 +137,34 @@ public class PaintMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofCheckType()
                         .named("None")
-                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.OFF))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.OFF))
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(Interpolation.NONE))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == Interpolation.NONE))
                         .build(antialiasingMenu);
 
                 antialiasingMenu.add(new JSeparator());
 
                 MenuItemBuilder.ofCheckType()
                         .named("Default")
-                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.DEFAULT))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.DEFAULT))
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(Interpolation.DEFAULT))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == Interpolation.DEFAULT))
                         .build(antialiasingMenu);
 
                 MenuItemBuilder.ofCheckType()
                         .named("Nearest Neighbor")
-                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.NEAREST_NEIGHBOR))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.NEAREST_NEIGHBOR))
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(Interpolation.NEAREST_NEIGHBOR))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == Interpolation.NEAREST_NEIGHBOR))
                         .build(antialiasingMenu);
 
                 MenuItemBuilder.ofCheckType()
                         .named("Bilinear")
-                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.BILINEAR))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.BILINEAR))
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(Interpolation.BILINEAR))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == Interpolation.BILINEAR))
                         .build(antialiasingMenu);
 
                 MenuItemBuilder.ofCheckType()
                         .named("Bicubic")
-                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(ImageAntiAliasingMode.BICUBIC))
-                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == ImageAntiAliasingMode.BICUBIC))
+                        .withAction(a -> ToolsContext.getInstance().setAntiAliasingMode(Interpolation.BICUBIC))
+                        .withCheckmarkProvider(ToolsContext.getInstance().getAntiAliasingProvider().map(m -> m == Interpolation.BICUBIC))
                         .build(antialiasingMenu);
 
         JMenuItem reduceColorMenu = MenuItemBuilder.ofHierarchicalType()

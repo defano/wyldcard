@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
@@ -24,7 +25,6 @@ import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
@@ -405,7 +405,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /** {@inheritDoc} */
     @Override
-    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
             cardModel.getBackgroundModel().setBackgroundImage(canvasImage);
         } else {

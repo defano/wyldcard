@@ -6,10 +6,9 @@ import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
-import com.defano.jmonet.algo.transform.Transform;
-import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.model.ImageAntiAliasingMode;
+import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
@@ -19,6 +18,7 @@ import com.defano.jmonet.tools.builder.StrokeBuilder;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
+import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
@@ -64,7 +64,7 @@ public class ToolsContext {
     private final Subject<Color> backgroundColorProvider = createDefault(Color.WHITE);
     private final Subject<Double> intensityProvider = createDefault(0.1);
     private final Subject<Ditherer> dithererProvider = createDefault(new FloydSteinbergDitherer());
-    private final Subject<ImageAntiAliasingMode> antiAliasingProvider = createDefault(ImageAntiAliasingMode.OFF);
+    private final Subject<Interpolation> antiAliasingProvider = createDefault(Interpolation.NONE);
 
     // Properties that we provide the canvas
     private final Subject<Integer> gridSpacingProvider = createDefault(1);
@@ -137,20 +137,16 @@ public class ToolsContext {
     }
 
     public void select() {
-        ChangeSet undid = WyldCard.getInstance().getFocusedCard().getCanvas().undo();
+        ImageLayerSet undid = WyldCard.getInstance().getFocusedCard().getCanvas().undo();
+        BufferedImage undidImage = undid.render();
 
-        // Ignore if no selectable image exists
-        if (undid != null) {
-            BufferedImage undidImage = undid.getImage();
+        // Calculate minimum bounds sub-image.
+        Rectangle reduction = ImageUtils.getMinimumBounds(undidImage);
+        BufferedImage sub = undid.render().getSubimage(reduction.x, reduction.y, reduction.width + 1, reduction.height + 1);
 
-            // Calculate minimum bounds sub-image.
-            Rectangle reduction = Transform.getMinimumBounds(undidImage);
-            BufferedImage subimage = undid.getImage().getSubimage(reduction.x, reduction.y, reduction.width + 1, reduction.height + 1);
-
-            // Force selection tool and create new selection from it
-            SelectionTool selectionTool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-            selectionTool.createSelection(subimage, new Point(reduction.x,reduction.y));
-        }
+        // Force selection tool and create new selection from it
+        SelectionTool selectionTool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
+        selectionTool.createSelection(sub, new Point(reduction.x, reduction.y));
     }
 
     public Color getForegroundColor() {
@@ -276,11 +272,11 @@ public class ToolsContext {
         dithererProvider.onNext(ditherer);
     }
 
-    public Subject<ImageAntiAliasingMode> getAntiAliasingProvider() {
+    public Subject<Interpolation> getAntiAliasingProvider() {
         return antiAliasingProvider;
     }
 
-    public void setAntiAliasingMode(ImageAntiAliasingMode antiAliasingMode) {
+    public void setAntiAliasingMode(Interpolation antiAliasingMode) {
         this.antiAliasingProvider.onNext(antiAliasingMode);
     }
 

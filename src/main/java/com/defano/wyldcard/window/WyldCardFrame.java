@@ -7,7 +7,6 @@ import io.reactivex.Observable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
 
 public interface WyldCardFrame<WindowType extends Window> {
 
