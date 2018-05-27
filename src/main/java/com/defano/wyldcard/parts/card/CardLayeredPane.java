@@ -1,6 +1,5 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.jmonet.canvas.JMonetScrollPane;
 import com.defano.wyldcard.parts.util.MouseEventDispatcher;
 import com.defano.jmonet.canvas.JMonetCanvas;
 
@@ -127,6 +126,24 @@ public abstract class CardLayeredPane extends JLayeredPane {
         mouseEventDispatcher.unbind();
         foregroundCanvas = null;
         backgroundCanvas = null;
+    }
+
+    private class JMonetScrollPane extends JScrollPane {
+
+        private final JMonetCanvas canvas;
+
+        public JMonetScrollPane(JMonetCanvas canvas) {
+            this.canvas = canvas;
+
+            setViewportView(canvas);
+            getViewport().setOpaque(false);
+            setBorder(null);
+            setOpaque(false);
+        }
+
+        public JMonetCanvas getCanvas() {
+            return canvas;
+        }
     }
 
 }
