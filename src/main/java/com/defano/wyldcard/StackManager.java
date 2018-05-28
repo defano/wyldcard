@@ -41,6 +41,7 @@ public class StackManager implements StackNavigationObserver {
     private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isSelectable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
+    private final ProxyObservable<Double> canvasScale = new ProxyObservable<>(BehaviorSubject.createDefault(1.0));
 
     /**
      * Creates and opens a new stack in a new stack window.
@@ -271,6 +272,7 @@ public class StackManager implements StackNavigationObserver {
         savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
         isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
         isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
+        canvasScale.setSource(stackPart.getDisplayedCard().getCanvas().getScaleObservable());
         isSelectable.setSource(Observable.combineLatest(
                 stackPart.getDisplayedCard().getCanvas().isUndoableObservable(),
                 ToolsContext.getInstance().getSelectedImageProvider(),
@@ -371,10 +373,15 @@ public class StackManager implements StackNavigationObserver {
         return isSelectable.getObservable();
     }
 
+    public Observable<Double> getScaleProvider() {
+        return canvasScale.getObservable();
+    }
+
     @Override
     public void onCardOpened(CardPart newCard) {
         isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
+        canvasScale.setSource(newCard.getCanvas().getScaleObservable());
     }
 
     /**

@@ -198,7 +198,6 @@ public class PaintToolsPalette extends WyldCardWindow implements Consumer {
                 // Special case; "pseudo" transform tools highlight selection tools
                 if (selectedTool.getToolType() == PaintToolType.SLANT ||
                         selectedTool.getToolType() == PaintToolType.ROTATE ||
-                        selectedTool.getToolType() == PaintToolType.MAGNIFIER ||
                         selectedTool.getToolType() == PaintToolType.PERSPECTIVE ||
                         selectedTool.getToolType() == PaintToolType.PROJECTION ||
                         selectedTool.getToolType() == PaintToolType.RUBBERSHEET) {
@@ -207,8 +206,8 @@ public class PaintToolsPalette extends WyldCardWindow implements Consumer {
                 } else {
                     JButton selectedToolButton = getButtonForTool(selectedTool.getToolType());
 
+                    enableAllTools();
                     if (selectedToolButton != null) {
-                        enableAllTools();
                         selectedToolButton.setEnabled(false);
                     }
                 }
