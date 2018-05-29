@@ -29,8 +29,8 @@ public class MagnificationPalette extends WyldCardDialog {
 
         Hashtable<Integer, JLabel> map = new Hashtable<>();
         map.put(1, new JLabel("1x"));
-        map.put(20, new JLabel("20x"));
-        map.put(40, new JLabel("40x"));
+        map.put(16, new JLabel("16x"));
+        map.put(32, new JLabel("32x"));
         slider1.setLabelTable(map);
 
         magnifierButton.addActionListener(e -> ToolsContext.getInstance().forceToolSelection(ToolType.MAGNIFIER, false));
@@ -86,7 +86,7 @@ public class MagnificationPalette extends WyldCardDialog {
         windowPanel = new JPanel();
         windowPanel.setLayout(new GridLayoutManager(2, 2, new Insets(0, 10, 0, 10), -1, -1));
         slider1 = new JSlider();
-        slider1.setMaximum(40);
+        slider1.setMaximum(32);
         slider1.setMinimum(1);
         slider1.setPaintLabels(true);
         slider1.setPaintTicks(true);
