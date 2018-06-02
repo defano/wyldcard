@@ -587,7 +587,6 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         @Override
         @RunOnDispatch
         public void focusLost(FocusEvent e) {
-            System.err.println(e.getOppositeComponent());
             didLoseFocusToMenu = e.getOppositeComponent() instanceof JRootPane ||
                     SwingUtilities.getWindowAncestor(e.getOppositeComponent()) instanceof FontSizePicker;
         }

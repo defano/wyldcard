@@ -40,6 +40,8 @@ public class StackManager implements StackNavigationObserver {
     private final ProxyObservable<Optional<File>> savedStackFile = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
     private final ProxyObservable<Boolean> isUndoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
     private final ProxyObservable<Boolean> isRedoable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
+    private final ProxyObservable<Boolean> isSelectable = new ProxyObservable<>(BehaviorSubject.createDefault(false));
+    private final ProxyObservable<Double> canvasScale = new ProxyObservable<>(BehaviorSubject.createDefault(1.0));
 
     /**
      * Creates and opens a new stack in a new stack window.
@@ -202,6 +204,7 @@ public class StackManager implements StackNavigationObserver {
     /**
      * Closes all of the open stack windows (prompting as required to save); when all stacks have closed, the
      * application exits.
+     *
      * @param context The execution context
      */
     public void closeAllStacks(ExecutionContext context) {
@@ -214,7 +217,7 @@ public class StackManager implements StackNavigationObserver {
      * Attempts to close the requested stack, prompting the user to save it (when necessary) before closing. Note that
      * the when prompted to save, the user can cancel, resulting in the stack not being closed.
      *
-     * @param context The execution context
+     * @param context   The execution context
      * @param stackPart The stack to be closed; when null, closes the focused stack.
      */
     public void closeStack(ExecutionContext context, StackPart stackPart) {
@@ -262,11 +265,28 @@ public class StackManager implements StackNavigationObserver {
         ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
 
         focusedStack.onNext(stackPart);
+
+        // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());
         cardClipboard.setSource(stackPart.getCardClipboardProvider());
         savedStackFile.setSource(stackPart.getStackModel().getSavedStackFileProvider());
         isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
         isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
+        canvasScale.setSource(stackPart.getDisplayedCard().getCanvas().getScaleObservable());
+        isSelectable.setSource(Observable.combineLatest(
+                stackPart.getDisplayedCard().getCanvas().isUndoableObservable(),
+                ToolsContext.getInstance().getSelectedImageProvider(),
+
+                // Select command is available when an undoable change is present; the user does not have an active
+                // graphic selection; there are no re-doable changes; and the last graphic change in the undo buffer
+                // did not "remove" paint from the canvas (i.e., eraser changes are not selectable)
+                (hasUndoableChanges, selection) ->
+                        hasUndoableChanges &&
+                        !selection.isPresent() &&
+                        getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
+                        !getFocusedCard().getCanvas().peek(0).isRemovingPaint())
+        );
+
         stackPart.addNavigationObserver(this);
     }
 
@@ -349,10 +369,19 @@ public class StackManager implements StackNavigationObserver {
         return isRedoable.getObservable();
     }
 
+    public Observable<Boolean> getIsSelectableProvider() {
+        return isSelectable.getObservable();
+    }
+
+    public Observable<Double> getScaleProvider() {
+        return canvasScale.getObservable();
+    }
+
     @Override
     public void onCardOpened(CardPart newCard) {
         isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
+        canvasScale.setSource(newCard.getCanvas().getScaleObservable());
     }
 
     /**
@@ -404,8 +433,8 @@ public class StackManager implements StackNavigationObserver {
      * Disposes resources associated with the given stack (including its bound window, when requested). Quits the
      * application when all stack windows are disposed.
      *
-     * @param context The execution context
-     * @param stackPart The stack to dispose
+     * @param context       The execution context
+     * @param stackPart     The stack to dispose
      * @param disposeWindow When true, dispose the stack's window
      */
     private void disposeStack(ExecutionContext context, StackPart stackPart, boolean disposeWindow) {
@@ -430,7 +459,7 @@ public class StackManager implements StackNavigationObserver {
      * If the given stack is dirty, prompts the user to save it (further performing the save operation if confirmed by
      * the user).
      *
-     * @param context The current execution context
+     * @param context   The current execution context
      * @param stackPart The stack part to prompt to save
      * @return True if the user canceled the prompt; false if the user chose to save or not save the stack.
      */
@@ -452,4 +481,5 @@ public class StackManager implements StackNavigationObserver {
 
         return false;
     }
+
 }

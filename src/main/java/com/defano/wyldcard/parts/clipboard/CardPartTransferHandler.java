@@ -53,7 +53,7 @@ public class CardPartTransferHandler extends TransferHandler {
             ToolEditablePart importedPart = (ToolEditablePart) WyldCard.getInstance().getFocusedCard().importPart(new ExecutionContext(), part, layer);
 
             // Position pasted part over the mouse cursor
-            importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc()));
+            importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc(new ExecutionContext())));
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected

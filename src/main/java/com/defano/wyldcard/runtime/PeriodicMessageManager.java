@@ -63,7 +63,6 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
     @Override
     public void run() {
         try {
-
             // Send 'within' message to any parts whose bounds the mouse is within
             send(SystemMessage.MOUSE_WITHIN, withinParts.toArray(new PartModel[] {}));
 

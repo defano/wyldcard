@@ -3,6 +3,7 @@ package com.defano.wyldcard.runtime.serializer;
 import com.google.gson.*;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,7 +18,7 @@ public class BufferedImageSerializer implements JsonSerializer<BufferedImage>, J
         byte[] imageData = Base64.getDecoder().decode(json.getAsString());
 
         if (imageData == null || imageData.length == 0) {
-            return emptyImage();
+            throw new IllegalStateException("Bogus image size");
         } else {
             try {
                 ByteArrayInputStream stream = new ByteArrayInputStream(imageData);
@@ -42,8 +43,8 @@ public class BufferedImageSerializer implements JsonSerializer<BufferedImage>, J
         }
     }
 
-    public static BufferedImage emptyImage() {
-        return new BufferedImage(1,1, BufferedImage.TYPE_INT_ARGB);
+    public static BufferedImage emptyImage(Dimension dimension) {
+        return new BufferedImage(dimension.width,dimension.height, BufferedImage.TYPE_INT_ARGB);
     }
 
 }

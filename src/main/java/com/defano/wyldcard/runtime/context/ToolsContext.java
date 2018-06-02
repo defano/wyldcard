@@ -6,8 +6,9 @@ import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.model.ImageAntiAliasingMode;
+import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
@@ -17,6 +18,7 @@ import com.defano.jmonet.tools.builder.StrokeBuilder;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
+import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
@@ -62,7 +64,7 @@ public class ToolsContext {
     private final Subject<Color> backgroundColorProvider = createDefault(Color.WHITE);
     private final Subject<Double> intensityProvider = createDefault(0.1);
     private final Subject<Ditherer> dithererProvider = createDefault(new FloydSteinbergDitherer());
-    private final Subject<ImageAntiAliasingMode> antiAliasingProvider = createDefault(ImageAntiAliasingMode.OFF);
+    private final Subject<Interpolation> antiAliasingProvider = createDefault(Interpolation.NONE);
 
     // Properties that we provide the canvas
     private final Subject<Integer> gridSpacingProvider = createDefault(1);
@@ -126,8 +128,25 @@ public class ToolsContext {
     }
 
     public void selectAll() {
-        SelectionTool tool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
-        tool.createSelection(new Rectangle(0, 0, WyldCard.getInstance().getFocusedCard().getWidth() - 1, WyldCard.getInstance().getFocusedCard().getHeight() - 1));
+        ((SelectionTool) forceToolSelection(ToolType.SELECT, false)).createSelection(new Rectangle(
+                0,
+                0,
+                WyldCard.getInstance().getFocusedCard().getWidth() - 1,
+                WyldCard.getInstance().getFocusedCard().getHeight() - 1)
+        );
+    }
+
+    public void select() {
+        ImageLayerSet undid = WyldCard.getInstance().getFocusedCard().getCanvas().undo();
+        BufferedImage undidImage = undid.render();
+
+        // Calculate minimum bounds sub-image.
+        Rectangle reduction = ImageUtils.getMinimumBounds(undidImage);
+        BufferedImage sub = undid.render().getSubimage(reduction.x, reduction.y, reduction.width + 1, reduction.height + 1);
+
+        // Force selection tool and create new selection from it
+        SelectionTool selectionTool = (SelectionTool) forceToolSelection(ToolType.SELECT, false);
+        selectionTool.createSelection(sub, new Point(reduction.x, reduction.y));
     }
 
     public Color getForegroundColor() {
@@ -253,11 +272,11 @@ public class ToolsContext {
         dithererProvider.onNext(ditherer);
     }
 
-    public Subject<ImageAntiAliasingMode> getAntiAliasingProvider() {
+    public Subject<Interpolation> getAntiAliasingProvider() {
         return antiAliasingProvider;
     }
 
-    public void setAntiAliasingMode(ImageAntiAliasingMode antiAliasingMode) {
+    public void setAntiAliasingMode(Interpolation antiAliasingMode) {
         this.antiAliasingProvider.onNext(antiAliasingMode);
     }
 
@@ -437,11 +456,9 @@ public class ToolsContext {
                 .withIntensityObservable(intensityProvider)
                 .withDrawCenteredObservable(drawCenteredProvider)
                 .withDrawMultipleObservable(drawMultipleProvider)
+                .withAntiAliasingObservable(antiAliasingProvider)
                 .makeActiveOnCanvas(WyldCard.getInstance().getFocusedCard().getCanvas())
                 .build();
-
-        // TODO: Add to paint tool builder
-        selectedTool.setAntiAliasingObservable(antiAliasingProvider);
 
         // When requested, move current selection over to the new tool
         if (keepSelection) {

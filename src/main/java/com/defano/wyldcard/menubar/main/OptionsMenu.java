@@ -1,6 +1,5 @@
 package com.defano.wyldcard.menubar.main;
 
-import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
@@ -30,8 +29,8 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
-                .withAction(a -> ToolsContext.getInstance().toggleMagnifier())
-                .withCheckmarkProvider(ToolsContext.getInstance().getPaintToolProvider().map(t -> t.getToolType() == PaintToolType.MAGNIFIER || WyldCard.getInstance().getFocusedCard().getCanvas().getScale() != 1.0))
+                .withAction(a -> WindowManager.getInstance().getMagnifierPalette().toggleVisible())
+                .withCheckmarkProvider(WindowManager.getInstance().getMagnifierPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

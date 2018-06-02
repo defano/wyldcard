@@ -6,7 +6,6 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
-import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Sets;
 
 import javax.annotation.PostConstruct;

@@ -17,6 +17,7 @@ import com.defano.wyldcard.util.ThreadUtils;
 import com.google.common.collect.Lists;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -191,9 +192,9 @@ public class CardModel extends PartModel implements LayeredPartFinder {
      *
      * @return The foreground image.
      */
-    public BufferedImage getCardImage() {
+    public BufferedImage getCardImage(Dimension dimension) {
         if (cardImage == null) {
-            return BufferedImageSerializer.emptyImage();
+            return BufferedImageSerializer.emptyImage(dimension);
         } else {
             return this.cardImage;
         }

@@ -15,6 +15,7 @@ import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -150,9 +151,9 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
         this.backgroundImage = image;
     }
 
-    public BufferedImage getBackgroundImage() {
+    public BufferedImage getBackgroundImage(Dimension dimension) {
         if (this.backgroundImage == null) {
-            return BufferedImageSerializer.emptyImage();
+            return BufferedImageSerializer.emptyImage(dimension);
         } else {
             return this.backgroundImage;
         }

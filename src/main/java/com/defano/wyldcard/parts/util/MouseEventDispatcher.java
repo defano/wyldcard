@@ -103,7 +103,7 @@ public class MouseEventDispatcher implements MouseListener, MouseMotionListener 
 
             // TODO: Canvas shouldn't behave unusually in this respect.
             if (c instanceof JMonetCanvas) {
-                ((JMonetCanvas) c).getSurface().dispatchEvent(e);
+                c.dispatchEvent(e);
             }
 
             // Obscured components will not automatically receive focus; force focus as needed

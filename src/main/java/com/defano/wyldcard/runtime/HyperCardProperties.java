@@ -136,8 +136,8 @@ public class HyperCardProperties extends PropertiesModel {
         });
         defineComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getFillPattern()));
 
-        defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().x));
-        defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc().y));
+        defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc(context).x));
+        defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc(context).y));
         defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
         defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));

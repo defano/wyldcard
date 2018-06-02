@@ -63,7 +63,7 @@ public class WyldCard extends StackManager implements PartFinder {
             CursorManager.getInstance().start();                // Mouse cursor assignment
             PartToolContext.getInstance().start();              // Button and field tool selection state
 
-            super.newStack(new ExecutionContext());
+            newStack(new ExecutionContext());
 
             // Need to have an open stack before showing the menu bar
             HyperCardMenuBar.getInstance().reset();

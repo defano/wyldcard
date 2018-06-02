@@ -9,7 +9,6 @@ import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ public class WindowManager implements WindowFinder, Themeable {
     private final MessageWatcher messageWatcher = new MessageWatcher();
     private final VariableWatcher variableWatcher = new VariableWatcher();
     private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
+    private final MagnificationPalette magnifierPalette = new MagnificationPalette();
 
     private WindowManager() {
     }
@@ -119,6 +119,14 @@ public class WindowManager implements WindowFinder, Themeable {
                 .notInitiallyVisible()
                 .resizeable(true)
                 .build();
+
+        WindowBuilder.make(magnifierPalette)
+                .withTitle("Magnifier")
+                .asPalette()
+                .notInitiallyVisible()
+                .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
+                .resizeable(false)
+                .build();
     }
 
     public void restoreDefaultLayout() {
@@ -137,9 +145,13 @@ public class WindowManager implements WindowFinder, Themeable {
                 .setLocationBelow(stackWindow)
                 .alignLeftTo(stackWindow);
 
-        brushesPalette
+        magnifierPalette
                 .setLocationRightOf(stackWindow)
                 .alignTopTo(stackWindow);
+
+        brushesPalette
+                .setLocationRightOf(stackWindow)
+                .setLocationBelow(magnifierPalette);
 
         linesPalette
                 .setLocationRightOf(stackWindow)
@@ -200,6 +212,10 @@ public class WindowManager implements WindowFinder, Themeable {
 
     public ExpressionEvaluator getExpressionEvaluator() {
         return expressionEvaluator;
+    }
+
+    public MagnificationPalette getMagnifierPalette() {
+        return magnifierPalette;
     }
 
     /**

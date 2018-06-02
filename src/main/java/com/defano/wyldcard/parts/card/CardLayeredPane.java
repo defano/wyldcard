@@ -5,15 +5,27 @@ import com.defano.jmonet.canvas.JMonetCanvas;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 /**
  * An extension of JLayeredPane that provides routines for addressing card layers. See {@link CardLayer}.
  */
 public abstract class CardLayeredPane extends JLayeredPane {
 
-    private JMonetCanvas foregroundCanvas;
-    private JMonetCanvas backgroundCanvas;
+    private JMonetScrollPane foregroundCanvas;
+    private JMonetScrollPane backgroundCanvas;
     private MouseEventDispatcher mouseEventDispatcher;
+
+    public CardLayeredPane() {
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                foregroundCanvas.setBounds(0, 0, getWidth(), getHeight());
+                backgroundCanvas.setBounds(0, 0, getWidth(), getHeight());
+            }
+        });
+    }
 
     /**
      * Returns the layer of the card on which the given component exists.
@@ -51,7 +63,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
             remove(backgroundCanvas);
         }
 
-        this.backgroundCanvas = canvas;
+        this.backgroundCanvas = new JMonetScrollPane(canvas);
         setLayer(backgroundCanvas, CardLayer.BACKGROUND_GRAPHICS.paneLayer);
         add(backgroundCanvas);
     }
@@ -61,10 +73,10 @@ public abstract class CardLayeredPane extends JLayeredPane {
             remove(foregroundCanvas);
         }
 
-        this.foregroundCanvas = canvas;
+        this.foregroundCanvas = new JMonetScrollPane(canvas);
 
         // Pass mouse events to parts obscured behind the canvas.
-        mouseEventDispatcher = MouseEventDispatcher.bindTo(this.foregroundCanvas.getSurface(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
+        mouseEventDispatcher = MouseEventDispatcher.bindTo(this.foregroundCanvas.getCanvas(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
 
         setLayer(foregroundCanvas, CardLayer.CARD_GRAPHICS.paneLayer);
         add(foregroundCanvas);
@@ -72,7 +84,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
 
     public void setBackgroundImageVisible(boolean visible) {
         if (visible) {
-            setBackgroundCanvas(backgroundCanvas);
+            setBackgroundCanvas(backgroundCanvas.getCanvas());
         } else {
             remove(backgroundCanvas);
         }
@@ -83,7 +95,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
 
     public void setCardImageVisible(boolean visible) {
         if (visible) {
-            setForegroundCanvas(foregroundCanvas);
+            setForegroundCanvas(foregroundCanvas.getCanvas());
         } else {
             remove(foregroundCanvas);
         }
@@ -93,11 +105,15 @@ public abstract class CardLayeredPane extends JLayeredPane {
     }
 
     public JMonetCanvas getBackgroundCanvas() {
-        return backgroundCanvas;
+        return backgroundCanvas.getCanvas();
+    }
+
+    public JScrollPane getForegroundCanvasScrollPane() {
+        return foregroundCanvas;
     }
 
     public JMonetCanvas getForegroundCanvas() {
-        return foregroundCanvas;
+        return foregroundCanvas.getCanvas();
     }
 
     private Component[] getComponentsInCardLayer(CardLayer layer) {
@@ -111,4 +127,29 @@ public abstract class CardLayeredPane extends JLayeredPane {
         foregroundCanvas = null;
         backgroundCanvas = null;
     }
+
+    private class JMonetScrollPane extends JScrollPane {
+
+        private final JMonetCanvas canvas;
+
+        public JMonetScrollPane(JMonetCanvas canvas) {
+            this.canvas = canvas;
+
+            setViewportView(canvas);
+            getViewport().setOpaque(false);
+            setBorder(null);
+            setOpaque(false);
+        }
+
+        public JMonetCanvas getCanvas() {
+            return canvas;
+        }
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+            canvas.setVisible(visible);
+        }
+    }
+
 }

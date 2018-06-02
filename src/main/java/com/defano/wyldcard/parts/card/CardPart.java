@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
@@ -24,7 +25,6 @@ import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
-import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
@@ -94,10 +94,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @throws HtException Thrown if an error occurs instantiating the card.
      */
     private static CardPart fromModel(CardModel model, ExecutionContext context) throws HtException {
-        CardPart card = skeletonFromModel(context, model);
-        StackModel stack = model.getStackModel();
-
-        return card;
+        return skeletonFromModel(context, model);
     }
 
     /**
@@ -274,7 +271,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     @RunOnDispatch
     private void setForegroundVisible(ExecutionContext context, boolean visible) {
         if (getForegroundCanvas() != null) {
-            getForegroundCanvas().setVisible(visible);
+            getForegroundCanvasScrollPane().setVisible(visible);
 
             setPartsOnLayerVisible(context, Owner.CARD, visible);
         }
@@ -405,7 +402,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
     /** {@inheritDoc} */
     @Override
-    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         if (ToolsContext.getInstance().isEditingBackground()) {
             cardModel.getBackgroundModel().setBackgroundImage(canvasImage);
         } else {
@@ -642,18 +639,19 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         CardPart card = this;
         StackModel stack = getOwningStackModel();
+        Dimension dimension = stack.getSize(context);
 
         // Setup part cut, copy and paste
         card.setTransferHandler(new CardPartTransferHandler(card));
 
         // Setup the foreground paint canvas
-        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(), CANVAS_UNDO_DEPTH));
+        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(dimension), CANVAS_UNDO_DEPTH));
         card.getForegroundCanvas().addCanvasCommitObserver(card);
         card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
         card.getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(getCardModel().getBackgroundModel().getBackgroundImage(), CANVAS_UNDO_DEPTH));
+        card.setBackgroundCanvas(new JMonetCanvas(getCardModel().getBackgroundModel().getBackgroundImage(dimension), CANVAS_UNDO_DEPTH));
         card.getBackgroundCanvas().addCanvasCommitObserver(card);
         card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
         card.getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
@@ -675,8 +673,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
         backgroundScaleSubscription = getBackgroundCanvas().getScaleObservable().subscribe(backgroundScaleObserver);
 
-        getForegroundCanvas().getSurface().addMouseListener(this);
-        getForegroundCanvas().getSurface().addKeyListener(this);
+        getForegroundCanvas().addMouseListener(this);
+        getForegroundCanvas().addKeyListener(this);
 
         getPartModel().receiveMessage(context.bind(this), SystemMessage.OPEN_CARD.messageName);
         ((CardModel) getPartModel()).setObserver(cardModelObserver);
@@ -705,8 +703,8 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         foregroundScaleSubscription.dispose();
         backgroundScaleSubscription.dispose();
 
-        getForegroundCanvas().getSurface().removeMouseListener(this);
-        getForegroundCanvas().getSurface().removeKeyListener(this);
+        getForegroundCanvas().removeMouseListener(this);
+        getForegroundCanvas().removeKeyListener(this);
 
         getForegroundCanvas().dispose();
         getBackgroundCanvas().dispose();
