@@ -64,7 +64,7 @@ idea {
 dependencies {
 	antlr "org.antlr:antlr4:4.7.1"
 
-    compile (group: 'com.defano.jmonet', name: 'jmonet', version: '0.2.5') {changing = false}
+    compile (group: 'com.defano.jmonet', name: 'jmonet', version: '0.3.0') {changing = true}
     compile (group: 'com.defano.jsegue', name: 'jsegue', version: '0.0.1') {changing = false}
 
 	compile group: 'com.intellij', name: 'javac2', version: '7.0.3'
@@ -80,6 +80,8 @@ dependencies {
 	compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '2.6.0'
 	compile group: 'com.fifesoft', name: 'autocomplete', version: '2.6.0'
 	compile group: 'com.atlassian.commonmark', name: 'commonmark', version: '0.11.0'
+	compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.8'
+    compile group: 'gov.nist.math', name: 'jama', version: '1.0.3'
 
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'commons-io', name: 'commons-io', version: '2.4'
