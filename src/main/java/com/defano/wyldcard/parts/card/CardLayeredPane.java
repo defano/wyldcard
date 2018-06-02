@@ -144,6 +144,12 @@ public abstract class CardLayeredPane extends JLayeredPane {
         public JMonetCanvas getCanvas() {
             return canvas;
         }
+
+        @Override
+        public void setVisible(boolean visible) {
+            super.setVisible(visible);
+            canvas.setVisible(visible);
+        }
     }
 
 }
