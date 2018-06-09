@@ -13,6 +13,7 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
+import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.WindowManager;
@@ -284,7 +285,7 @@ public class StackManager implements StackNavigationObserver {
                         hasUndoableChanges &&
                         !selection.isPresent() &&
                         getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
-                        !getFocusedCard().getCanvas().peek(0).isRemovingPaint())
+                        !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getCanvas().peek(0).getImageLayers()))
         );
 
         stackPart.addNavigationObserver(this);
