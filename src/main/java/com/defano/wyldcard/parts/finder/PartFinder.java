@@ -77,7 +77,7 @@ public interface PartFinder {
 
             for (StackPart thisOpenStack : WyldCard.getInstance().getOpenStacks()) {
                 String shortName = thisOpenStack.getStackModel().getShortName(context);
-                String abbrevName = thisOpenStack.getStackModel().getAbbrevName(context);
+                String abbrevName = thisOpenStack.getStackModel().getAbbreviatedName(context);
                 String longName = thisOpenStack.getStackModel().getLongName(context);
 
                 if (stackName.equalsIgnoreCase(shortName) || stackName.equalsIgnoreCase(longName) || stackName.equalsIgnoreCase(abbrevName)) {

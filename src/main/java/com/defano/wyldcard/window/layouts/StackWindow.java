@@ -23,14 +23,12 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;
-
-    private StackPart stack;
-    private CardPart card;
-
     private final JLayeredPane cardPanel = new JLayeredPane();
     private final ScreenCurtain screenCurtain = new ScreenCurtain();
     private final CardResizeObserver cardResizeObserver = new CardResizeObserver();
     private final FrameResizeObserver frameResizeObserver = new FrameResizeObserver();
+    private StackPart stack;
+    private CardPart card;
 
     public StackWindow() {
         cardPanel.setLayout(new BorderLayout(0, 0));
@@ -69,19 +67,23 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
         return screenCurtain;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public JComponent getWindowPanel() {
         return cardPanel;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void bindModel(Object data) {
         ExecutionContext context = new ExecutionContext();
 
-       if (data instanceof StackPart) {
+        if (data instanceof StackPart) {
 
             if (this.stack != null) {
                 stack.removeObserver(this);
@@ -102,7 +104,9 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onStackOpened(StackPart newStack) {
@@ -129,29 +133,34 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
         });
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onCardOpened(CardPart newCard) {
+
+        // Remove the current card from the window
+        cardPanel.remove(card);
+
         this.card = newCard;
 
         // Listen for image files that are dropped onto the card
         new FileDrop(card, ArtVandelay::importPaint);
 
-        for (Component c : cardPanel.getComponentsInLayer(CARD_LAYER)) {
-            cardPanel.remove(c);
-        }
-
         cardPanel.setLayer(card, CARD_LAYER);
         cardPanel.add(card);
-
         cardPanel.revalidate();
-        cardPanel.repaint();
 
         invalidateWindowTitle();
+
+        // Needs to occur *after* all other validations have occurred
+        SwingUtilities.invokeLater(cardPanel::revalidate);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onStackDimensionChanged(Dimension newDimension) {
@@ -159,14 +168,18 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
         getWindow().pack();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onStackNameChanged(String newName) {
         invalidateWindowTitle();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onCurtainUpdated(BufferedImage curtainImage) {
@@ -178,7 +191,9 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onCardOrderChanged() {

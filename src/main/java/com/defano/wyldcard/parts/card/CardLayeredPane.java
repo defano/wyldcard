@@ -56,56 +56,57 @@ public abstract class CardLayeredPane extends JLayeredPane {
 
         setLayer(component, layer.paneLayer);
         add(component);
+        revalidate();
     }
 
-    protected void setBackgroundCanvas(JMonetCanvas canvas) {
+    protected void setBackgroundCanvas(JMonetScrollPane canvas) {
         if (backgroundCanvas != null) {
             remove(backgroundCanvas);
         }
 
-        this.backgroundCanvas = new JMonetScrollPane(canvas);
+        this.backgroundCanvas = canvas;
         setLayer(backgroundCanvas, CardLayer.BACKGROUND_GRAPHICS.paneLayer);
         add(backgroundCanvas);
+        revalidate();
     }
 
-    protected void setForegroundCanvas(JMonetCanvas canvas) {
+    protected void setForegroundCanvas(JMonetScrollPane canvas) {
         if (foregroundCanvas != null) {
             remove(foregroundCanvas);
         }
 
-        this.foregroundCanvas = new JMonetScrollPane(canvas);
+        this.foregroundCanvas = canvas;
 
         // Pass mouse events to parts obscured behind the canvas.
         mouseEventDispatcher = MouseEventDispatcher.bindTo(this.foregroundCanvas.getCanvas(), () -> getComponentsInCardLayer(CardLayer.BACKGROUND_PARTS));
 
         setLayer(foregroundCanvas, CardLayer.CARD_GRAPHICS.paneLayer);
         add(foregroundCanvas);
+        revalidate();
     }
 
     public void setBackgroundImageVisible(boolean visible) {
         if (visible) {
-            setBackgroundCanvas(backgroundCanvas.getCanvas());
+            setBackgroundCanvas(backgroundCanvas);
         } else {
             remove(backgroundCanvas);
         }
 
-        this.invalidate();
-        this.repaint();
+        revalidate();
     }
 
     public void setCardImageVisible(boolean visible) {
         if (visible) {
-            setForegroundCanvas(foregroundCanvas.getCanvas());
+            setForegroundCanvas(foregroundCanvas);
         } else {
             remove(foregroundCanvas);
         }
 
-        this.invalidate();
-        this.repaint();
+        revalidate();
     }
 
     public JMonetCanvas getBackgroundCanvas() {
-        return backgroundCanvas.getCanvas();
+        return backgroundCanvas == null ? null : backgroundCanvas.getCanvas();
     }
 
     public JScrollPane getForegroundCanvasScrollPane() {
@@ -113,7 +114,7 @@ public abstract class CardLayeredPane extends JLayeredPane {
     }
 
     public JMonetCanvas getForegroundCanvas() {
-        return foregroundCanvas.getCanvas();
+        return foregroundCanvas == null ? null : foregroundCanvas.getCanvas();
     }
 
     private Component[] getComponentsInCardLayer(CardLayer layer) {
@@ -124,32 +125,12 @@ public abstract class CardLayeredPane extends JLayeredPane {
         removeAll();
 
         mouseEventDispatcher.unbind();
+
+        foregroundCanvas.getCanvas().dispose();
+        backgroundCanvas.getCanvas().dispose();
+
         foregroundCanvas = null;
         backgroundCanvas = null;
-    }
-
-    private class JMonetScrollPane extends JScrollPane {
-
-        private final JMonetCanvas canvas;
-
-        public JMonetScrollPane(JMonetCanvas canvas) {
-            this.canvas = canvas;
-
-            setViewportView(canvas);
-            getViewport().setOpaque(false);
-            setBorder(null);
-            setOpaque(false);
-        }
-
-        public JMonetCanvas getCanvas() {
-            return canvas;
-        }
-
-        @Override
-        public void setVisible(boolean visible) {
-            super.setVisible(visible);
-            canvas.setVisible(visible);
-        }
     }
 
 }

@@ -141,6 +141,19 @@ public class StackManager implements StackNavigationObserver {
     }
 
     /**
+     * Gets the opened stack associated with the given model, or null if no such stack exists.
+     *
+     * @param model The stack model whose stack should be located
+     * @return The opened stack associated with this model.
+     */
+    public StackPart getOpenStack(StackModel model) {
+        return getOpenStacks().stream()
+                .filter(stack -> stack.getStackModel().equals(model))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
      * Saves the given stack model to a file/path chosen by the user.
      *
      * @param context    The execution context
@@ -274,8 +287,9 @@ public class StackManager implements StackNavigationObserver {
         isUndoable.setSource(stackPart.getDisplayedCard().getCanvas().isUndoableObservable());
         isRedoable.setSource(stackPart.getDisplayedCard().getCanvas().isRedoableObservable());
         canvasScale.setSource(stackPart.getDisplayedCard().getCanvas().getScaleObservable());
+
         isSelectable.setSource(Observable.combineLatest(
-                stackPart.getDisplayedCard().getCanvas().isUndoableObservable(),
+                isUndoable.getObservable(),
                 ToolsContext.getInstance().getSelectedImageProvider(),
 
                 // Select command is available when an undoable change is present; the user does not have an active
@@ -283,9 +297,9 @@ public class StackManager implements StackNavigationObserver {
                 // did not "remove" paint from the canvas (i.e., eraser changes are not selectable)
                 (hasUndoableChanges, selection) ->
                         hasUndoableChanges &&
-                        !selection.isPresent() &&
-                        getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
-                        !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getCanvas().peek(0).getImageLayers()))
+                                !selection.isPresent() &&
+                                getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
+                                !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getCanvas().peek(0).getImageLayers()))
         );
 
         stackPart.addNavigationObserver(this);
@@ -408,16 +422,18 @@ public class StackManager implements StackNavigationObserver {
         else {
             if (inNewWindow) {
                 stackPart.bindToWindow(WindowManager.getInstance().getWindowForStack(context, stackPart));
-                this.openedStacks.add(stackPart);
+                openedStacks.add(stackPart);
             } else {
                 StackPart oldStack = context.getCurrentStack();
+                StackWindow oldStackWindow = oldStack.getOwningStackWindow();
 
                 if (promptToSave(context, oldStack)) {
-                    return;     // User cancelled
+                    return;     // User cancelled saving existing stack; abort open process
                 }
 
-                stackPart.bindToWindow(oldStack.getOwningStackWindow());
-                this.openedStacks.add(stackPart);
+                stackPart.bindToWindow(oldStackWindow);
+
+                openedStacks.add(stackPart);
                 context.bind(stackPart);
 
                 disposeStack(context, oldStack, false);

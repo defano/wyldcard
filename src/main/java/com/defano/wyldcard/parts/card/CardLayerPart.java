@@ -31,7 +31,8 @@ public interface CardLayerPart extends Part {
      * @return The layer of the card the part is on or null if indeterminate
      */
     default CardLayer getCardLayer() {
-        return getCard().getCardLayer(getComponent());
+        CardPart card = getCard();
+        return card == null ? null : card.getCardLayer(getComponent());
     }
 
     /**

@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
+import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonPart;
@@ -93,7 +94,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return The fully instantiated CardPart.
      * @throws HtException Thrown if an error occurs instantiating the card.
      */
-    private static CardPart fromModel(CardModel model, ExecutionContext context) throws HtException {
+    public static CardPart fromModel(CardModel model, ExecutionContext context) throws HtException {
         return skeletonFromModel(context, model);
     }
 
@@ -300,7 +301,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     }
 
     public boolean isForegroundHidden() {
-        return getForegroundCanvas() != null && !getForegroundCanvas().isVisible();
+        return getForegroundCanvas() == null || !getForegroundCanvas().isVisible();
     }
 
     /**
@@ -631,41 +632,39 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         return getCardModel();
     }
 
-    /** {@inheritDoc}
-     * @param context*/
+    /** {@inheritDoc} */
     @Override
     @RunOnDispatch
     public void partOpened(ExecutionContext context) {
 
-        CardPart card = this;
         StackModel stack = getOwningStackModel();
         Dimension dimension = stack.getSize(context);
 
         // Setup part cut, copy and paste
-        card.setTransferHandler(new CardPartTransferHandler(card));
+        setTransferHandler(new CardPartTransferHandler(this));
 
         // Setup the foreground paint canvas
-        card.setForegroundCanvas(new JMonetCanvas(card.cardModel.getCardImage(dimension), CANVAS_UNDO_DEPTH));
-        card.getForegroundCanvas().addCanvasCommitObserver(card);
-        card.getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getForegroundCanvas(), card));
-        card.getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
+        setForegroundCanvas(new JMonetScrollPane(new JMonetCanvas(cardModel.getCardImage(dimension), CANVAS_UNDO_DEPTH)));
+        getForegroundCanvas().addCanvasCommitObserver(this);
+        getForegroundCanvas().setTransferHandler(new CanvasTransferHandler(getForegroundCanvas(), this));
+        getForegroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Setup the background paint canvas
-        card.setBackgroundCanvas(new JMonetCanvas(getCardModel().getBackgroundModel().getBackgroundImage(dimension), CANVAS_UNDO_DEPTH));
-        card.getBackgroundCanvas().addCanvasCommitObserver(card);
-        card.getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(card.getBackgroundCanvas(), card));
-        card.getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
+        setBackgroundCanvas(new JMonetScrollPane(new JMonetCanvas(getCardModel().getBackgroundModel().getBackgroundImage(dimension), CANVAS_UNDO_DEPTH)));
+        getBackgroundCanvas().addCanvasCommitObserver(this);
+        getBackgroundCanvas().setTransferHandler(new CanvasTransferHandler(getBackgroundCanvas(), this));
+        getBackgroundCanvas().setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Resize card (Swing) component
-        card.setMaximumSize(stack.getSize(context));
-        card.setSize(stack.getWidth(context), stack.getHeight(context));
+        setMaximumSize(stack.getSize(context));
+        setSize(stack.getWidth(context), stack.getHeight(context));
 
         // Fire property change observers on the parts (so that they can draw themselves in their correct initial state)
-        for (ButtonPart thisButton : card.buttons.getParts()) {
+        for (ButtonPart thisButton : buttons.getParts()) {
             thisButton.getPartModel().notifyPropertyChangedObserver(context, thisButton);
         }
 
-        for (FieldPart thisField : card.fields.getParts()) {
+        for (FieldPart thisField : fields.getParts()) {
             thisField.getPartModel().notifyPropertyChangedObserver(context, thisField);
         }
 

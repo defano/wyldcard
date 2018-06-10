@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.wyldcard.icons.ButtonIcon;
 import com.defano.wyldcard.icons.UserIcon;
+import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
@@ -27,7 +28,7 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class StackModel extends PartModel implements StackPartFinder {
+public class StackModel extends PartModel implements StackPartFinder, NamedPart {
 
     public final static String FILE_EXTENSION = ".stack";
     public final static String PROP_CANTPEEK = "cantpeek";
@@ -38,6 +39,7 @@ public class StackModel extends PartModel implements StackPartFinder {
     private static final int BACKSTACK_DEPTH = 20;
     private final Map<Integer, BackgroundModel> backgroundModels;
     private final Map<String, BufferedImage> userIcons;
+
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
     private int nextCardId = 0;
@@ -45,6 +47,7 @@ public class StackModel extends PartModel implements StackPartFinder {
     private int currentCardIndex = 0;
     private LimitedDepthStack<Integer> backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
     private List<CardModel> cardModels;
+
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
 
@@ -83,7 +86,7 @@ public class StackModel extends PartModel implements StackPartFinder {
         this.savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
 
         defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
         defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
         defineComputedGetterProperty(PartModel.PROP_LEFT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getLocation().x));
@@ -344,8 +347,6 @@ public class StackModel extends PartModel implements StackPartFinder {
 
     /**
      * {@inheritDoc}
-     *
-     * @param context
      */
     @Override
     public List<PartModel> getPartsInDisplayOrder(ExecutionContext context) {
@@ -382,24 +383,32 @@ public class StackModel extends PartModel implements StackPartFinder {
         }
     }
 
+    @Override
     public String getShortName(ExecutionContext context) {
         return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public String getAbbrevName(ExecutionContext context) {
+    @Override
+    public String getAbbreviatedName(ExecutionContext context) {
         return "stack \"" + getShortName(context) + "\"";
     }
 
+    @Override
     public String getLongName(ExecutionContext context) {
         return savedStackFileProvider.blockingFirst()
                 .map(file -> "stack \"" + file.getAbsolutePath() + "\"")
-                .orElseGet(() -> getAbbrevName(context));
+                .orElseGet(() -> getAbbreviatedName(context));
     }
 
     public String getStackPath(ExecutionContext context) {
         return savedStackFileProvider.blockingFirst()
-                .map(file -> file.getAbsolutePath())
+                .map(File::getAbsolutePath)
                 .orElseGet(() -> getShortName(context));
+    }
+
+    @Override
+    public int getId(ExecutionContext context) {
+        throw new IllegalStateException("Not valid for stack parts.");
     }
 
     @Override

@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.hypertalk.exception.PropertyPermissionException;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.card.CardModel;
@@ -13,7 +14,6 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.wyldcard.window.WindowManager;
 
@@ -116,18 +116,7 @@ public interface Part {
      * yet been bound to a specific stack.
      */
     default StackPart getOwningStack() {
-
-        // Base case; part may already be the stack
-        if (this instanceof StackPart) {
-            return (StackPart) this;
-        }
-
-        WyldCardFrame boundWindow = getOwningStackWindow();
-        if (boundWindow != null) {
-            return ((StackWindow) boundWindow).getStack();
-        } else {
-            return null;
-        }
+        return WyldCard.getInstance().getOpenStack(getOwningStackModel());
     }
 
     /**
