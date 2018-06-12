@@ -28,4 +28,12 @@ public class VisualEffectSpecifier {
         this.image = image;
     }
 
+    @Override
+    public String toString() {
+        return "VisualEffectSpecifier{" +
+                "name=" + name +
+                ", speed=" + speed +
+                ", image=" + image +
+                '}';
+    }
 }

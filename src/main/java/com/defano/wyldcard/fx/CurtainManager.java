@@ -5,6 +5,7 @@ import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueAnimationObserver;
 import com.defano.jsegue.SegueCompletionObserver;
 import com.defano.jsegue.renderers.PlainEffect;
+import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;
@@ -24,7 +25,13 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     private AnimatedSegue activeEffect;
 
     public void setScreenLocked(ExecutionContext context, boolean locked) {
-        if (locked && !isScreenLocked()) {
+
+        // Nothing to do when trying to lock a locked screen
+        if (locked && isScreenLocked()) {
+            return;
+        }
+
+        if (locked) {
             startEffect(VisualEffectFactory.createScreenLock(context));
         } else if (this.activeEffect instanceof PlainEffect) {
             cancelEffect();

@@ -45,6 +45,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * The "controller" object representing a card in the stack. Note that a card cannot exist apart from a Stack; this
@@ -450,13 +451,11 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      */
     public BufferedImage getScreenshot() {
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = screenshot.createGraphics();
 
-        ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            Graphics2D g = screenshot.createGraphics();
-            CardPart.this.printAll(g);
-            g.dispose();
-        });
+        ThreadUtils.invokeAndWaitAsNeeded(() -> CardPart.this.printAll(g));
 
+        g.dispose();
         return screenshot;
     }
 
