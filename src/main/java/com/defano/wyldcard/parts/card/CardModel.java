@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.field.FieldModel;
@@ -26,7 +27,7 @@ import java.util.Collection;
  * A data model representing a card in a stack. See {@link CardPart} for the associated
  * controller object.
  */
-public class CardModel extends PartModel implements LayeredPartFinder {
+public class CardModel extends PartModel implements LayeredPartFinder, NamedPart {
 
     public final static String PROP_ID = "id";
     public final static String PROP_MARKED = "marked";
@@ -77,7 +78,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         defineComputedReadOnlyProperty(PROP_SHORTOWNER, (context, model, propertyName) -> new Value(getBackgroundModel().getShortName(context)));
 
         defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
         defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
 
         defineComputedReadOnlyProperty(PROP_LONGID, (context, model, propertyName) -> new Value(getLongId(context)));
@@ -223,7 +224,7 @@ public class CardModel extends PartModel implements LayeredPartFinder {
 
     @Override
     public void relinkParentPartModel(PartModel parentPartModel) {
-        this.setParentPartModel(parentPartModel);
+        setParentPartModel(parentPartModel);
 
         for (FieldModel thisField : fields) {
             thisField.relinkParentPartModel(this);
@@ -292,16 +293,18 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         return getAbbrevId(context);
     }
 
-    public boolean hasName() {
+    private boolean hasName() {
         Value raw = getRawProperty(PROP_NAME);
         return raw != null && !raw.isEmpty();
     }
 
+    @Override
     public String getShortName(ExecutionContext context) {
         return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public String getAbbrevName(ExecutionContext context) {
+    @Override
+    public String getAbbreviatedName(ExecutionContext context) {
         if (hasName()) {
             return "card \"" + getShortName(context) + "\"";
         } else {
@@ -309,9 +312,10 @@ public class CardModel extends PartModel implements LayeredPartFinder {
         }
     }
 
+    @Override
     public String getLongName(ExecutionContext context) {
         // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbrevName(context);
+        return getAbbreviatedName(context);
     }
 
     private void firePartRemoved(ExecutionContext context, PartModel part) {

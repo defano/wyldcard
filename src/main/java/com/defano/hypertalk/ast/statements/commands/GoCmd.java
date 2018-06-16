@@ -16,16 +16,13 @@ import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
+import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import javax.swing.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class GoCmd extends Command {
 
@@ -49,7 +46,7 @@ public class GoCmd extends Command {
 
         // Special case: No destination means 'go back'
         if (destinationExp == null) {
-            context.getCurrentStack().popCard(context, getVisualEffect(context));
+            context.getCurrentStack().gotoPopCard(context, getVisualEffect(context));
             return;
         }
 
@@ -57,8 +54,10 @@ public class GoCmd extends Command {
         StackPartExp stackPartExp = destinationExp.factor(context, StackPartExp.class);
         if (stackPartExp != null) {
             StackModel model = WyldCard.getInstance().locateStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
-            if (model != null) {
-                goToDestination(context, getDestination(context, model), getVisualEffect(context));
+            Destination destination = getDestination(context, model);
+
+            if (destination != null) {
+                goToDestination(context, destination, getVisualEffect(context));
                 return;
             }
 
@@ -68,14 +67,28 @@ public class GoCmd extends Command {
         // Case 2: Navigate to a card in this stack ('go to card 3', 'go to card 3 of next bg')
         Destination destination = getDestination(context, destinationExp.partFactor(context, CardModel.class));
         if (destination != null) {
-            goToDestination(context, destination, getVisualEffect(context));
+            VisualEffectSpecifier visual = getVisualEffect(context);
+            CardPart card = goToDestination(context, destination, visual);
+
+            // Wait for applied visual effect to end
+            if (visual != null) {
+                card.getOwningStack().getCurtainManager().waitForEffectToFinish();
+            }
+
             return;
         }
 
         // Case 3: Navigate to a background in this stack ('go to next background')
         destination = getDestination(context, destinationExp.partFactor(context, BackgroundModel.class));
         if (destination != null) {
-            goToDestination(context, destination, getVisualEffect(context));
+            VisualEffectSpecifier visual = getVisualEffect(context);
+            CardPart card = goToDestination(context, destination, visual);
+
+            // Wait for applied visual effect to end
+            if (visual != null) {
+                card.getOwningStack().getCurtainManager().waitForEffectToFinish();
+            }
+
             return;
         }
 
@@ -114,34 +127,18 @@ public class GoCmd extends Command {
      * Attempts to navigate to the given destination, applying a visual effect as requested and blocking the thread
      * until the navigation and animation has completed.
      *
-     * @param context The execution context
-     * @param destination The destination to navigate to
+     * @param context      The execution context
+     * @param destination  The destination to navigate to
      * @param visualEffect The optional visual effect (null for no effect)
+     * @return The destination card
      */
-    private void goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<StackWindow> stackWindow = new AtomicReference<>();
+    private CardPart goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
+        StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.stack);
+        context.bind(stackWindow.getStack());
+        stackWindow.setVisible(true);
+        stackWindow.requestFocus();
 
-        // Start the navigation on the UI thread
-        SwingUtilities.invokeLater(() -> {
-            stackWindow.set(WindowManager.getInstance().findWindowForStack(destination.stack));
-            context.bind(stackWindow.get().getStack());
-            stackWindow.get().setVisible(true);
-            stackWindow.get().requestFocus();
-            stackWindow.get().getStack().goCard(context, destination.cardIndex, visualEffect, true);
-            latch.countDown();
-        });
-
-        try {
-            // Wait for the navigation to start...
-            latch.await();
-
-            // ... then wait for the visual effect to complete
-            stackWindow.get().getStack().getCurtainManager().waitForEffectToFinish();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
+        return stackWindow.getStack().gotoCard(context, destination.cardIndex, visualEffect, true);
     }
 
     private Destination getDestination(ExecutionContext context, PartModel model) {
@@ -167,7 +164,7 @@ public class GoCmd extends Command {
             return new Destination((StackModel) model, ((StackModel) model).getCurrentCardIndex());
         }
 
-        // Part was null or something bogus
+        // Part model was null or otherwise can't resolve destination
         return null;
     }
 

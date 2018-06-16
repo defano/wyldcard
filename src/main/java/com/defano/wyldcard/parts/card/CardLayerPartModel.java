@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.card;
 
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
+import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -17,7 +18,7 @@ import java.awt.*;
 /**
  * A model of properties common to parts that live on a layer of the card (i.e., buttons and fields).
  */
-public abstract class CardLayerPartModel extends PartModel {
+public abstract class CardLayerPartModel extends PartModel implements NamedPart {
 
     public static final String PROP_ZORDER = "zorder";
     public static final String PROP_SELECTEDTEXT = "selectedtext";
@@ -59,7 +60,7 @@ public abstract class CardLayerPartModel extends PartModel {
         this.currentCardId.set(new ExecutionContext().getCurrentCard().getId(new ExecutionContext()));
 
         defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
-        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbrevName(context)));
+        defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));
         defineComputedReadOnlyProperty(PROP_SHORTNAME, (context, model, propertyName) -> new Value(getShortName(context)));
     }
 
@@ -166,25 +167,28 @@ public abstract class CardLayerPartModel extends PartModel {
         return ((LayeredPartFinder) getParentPartModel()).getPartCount(context, null, getOwner());
     }
 
+    @Override
     public String getShortName(ExecutionContext context) {
         return getKnownProperty(context, PROP_NAME).stringValue();
     }
 
-    public String getAbbrevName(ExecutionContext context) {
+    @Override
+    public String getAbbreviatedName(ExecutionContext context) {
         return getOwner().hyperTalkName.toLowerCase() + " " + getType().hypertalkName + " \"" + getShortName(context) + "\"";
     }
 
+    @Override
     public String getLongName(ExecutionContext context) {
         StackModel parentStack = getParentStackModel();
 
         if (parentStack != null) {
-            return getAbbrevName(context)
+            return getAbbreviatedName(context)
                     + " of card id "
                     + getCurrentCardId(context)
                     + " of "
                     + parentStack.getLongName(context);
         } else {
-            return getAbbrevName(context);
+            return getAbbreviatedName(context);
         }
     }
 

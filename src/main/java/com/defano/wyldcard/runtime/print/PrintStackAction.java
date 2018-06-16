@@ -23,7 +23,7 @@ public class PrintStackAction extends PrintActionDelegate {
 
     @Override
     protected void onPrintCompleted(boolean successfully) {
-        WyldCard.getInstance().getFocusedStack().goCard(new ExecutionContext(), currentCard, null, false);
+        WyldCard.getInstance().getFocusedStack().gotoCard(new ExecutionContext(), currentCard, null, false);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class PrintStackAction extends PrintActionDelegate {
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
 
             // Need to transition to card in order to print it
-            WyldCard.getInstance().getFocusedStack().goCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
+            WyldCard.getInstance().getFocusedStack().gotoCard(new ExecutionContext(), pageIndex, null, false).printAll(g);
 
             return PAGE_EXISTS;
         } else {

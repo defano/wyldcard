@@ -8,6 +8,7 @@ import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.jsegue.SegueName;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.fx.CurtainManager;
@@ -41,14 +42,13 @@ import java.util.Set;
  */
 public class StackPart implements Part, PropertyChangeObserver {
 
-    private CardPart currentCard;
-
     private final StackModel stackModel;
     private final CurtainManager curtainManager = new CurtainManager();
     private final Set<StackObserver> stackObservers = new HashSet<>();
     private final Set<StackNavigationObserver> stackNavigationObservers = new HashSet<>();
     private final Subject<Integer> cardCountProvider = BehaviorSubject.createDefault(0);
     private final Subject<Optional<CardPart>> cardClipboardProvider = BehaviorSubject.createDefault(Optional.empty());
+    private CardPart currentCard;
 
     private StackPart(StackModel stackModel) {
         this.stackModel = stackModel;
@@ -60,8 +60,10 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     public static StackPart fromStackModel(ExecutionContext context, StackModel model) {
         StackPart stackPart = new StackPart(model);
+
         stackPart.cardCountProvider.onNext(model.getCardCount());
         stackPart.stackModel.addPropertyChangedObserver(stackPart);
+
         try {
             stackPart.currentCard = CardPart.fromPositionInStack(context, model.getCurrentCardIndex(), model);
         } catch (HtException e) {
@@ -72,8 +74,8 @@ public class StackPart implements Part, PropertyChangeObserver {
     }
 
     /**
-     * "Open" this stack inside of a given window.
-     *
+     * "Opens" this stack inside of a given window.
+     * <p>
      * Sets up connections between the window controller and stack controller, displays the stack's current card and
      * sends the 'openStack' and 'openCard' message to the stack.
      *
@@ -86,7 +88,7 @@ public class StackPart implements Part, PropertyChangeObserver {
         stackWindow.bindModel(this);
 
         // Display the current card
-        goCard(context, stackModel.getCurrentCardIndex(), null, false);
+        gotoCard(context, stackModel.getCurrentCardIndex(), null, false);
 
         // Resize the window to fit this stack
         fireOnCardDimensionChanged(stackModel.getDimension(context));
@@ -94,6 +96,7 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     /**
      * Gets the data model associated with this stack.
+     *
      * @return The stack model.
      */
     public StackModel getStackModel() {
@@ -103,52 +106,50 @@ public class StackPart implements Part, PropertyChangeObserver {
     /**
      * Navigates to the given card index, applying a visual effect to the transition. Has no affect if no card with the
      * requested index exists in this stack.
-     *
+     * <p>
      * Note that card index is zero-based, but card's are numbered starting from one from a user's perspective.
      *
-     *
-     * @param context The execution context.
-     * @param cardIndex The zero-based index of the card to navigate to.
+     * @param context      The execution context.
+     * @param cardIndex    The zero-based index of the card to navigate to.
      * @param visualEffect The visual effect to apply to the transition
      * @return The destination card (now visible in the stack window).
      */
     @RunOnDispatch
-    public CardPart goCard(ExecutionContext context, int cardIndex, VisualEffectSpecifier visualEffect, boolean pushToBackstack) {
-        CardPart destination;
-
-        if (visualEffect == null) {
-            destination = go(context, cardIndex, pushToBackstack);
+    public CardPart gotoCard(ExecutionContext context, int cardIndex, VisualEffectSpecifier visualEffect, boolean pushToBackstack) {
+        if (visualEffect == null || visualEffect.name == SegueName.PLAIN) {
+            currentCard = go(context, cardIndex, pushToBackstack);
         } else {
             curtainManager.setScreenLocked(context, true);
-            destination = go(context, cardIndex, pushToBackstack);
+            currentCard = go(context, cardIndex, pushToBackstack);
             curtainManager.unlockScreenWithEffect(context, visualEffect);
         }
 
-        this.currentCard = destination;
-        return destination;
+        return currentCard;
     }
 
     /**
-     * Navigates to the next card in the stack; has no affect if the current card is the last card.
+     * Navigates to the next card in the stack (index + 1); has no affect if the current card is the last card.
+     *
      * @return The card now visible in the stack window or null if no next card.
      */
     @RunOnDispatch
-    public CardPart goNextCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
+    public CardPart gotoNextCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() + 1 < stackModel.getCardCount()) {
-            return goCard(context, stackModel.getCurrentCardIndex() + 1, visualEffect, true);
+            return gotoCard(context, stackModel.getCurrentCardIndex() + 1, visualEffect, true);
         } else {
             return null;
         }
     }
 
     /**
-     * Navigates to the previous card in the stack; has no affect if the current card is the first card.
+     * Navigates to the previous card in the stack (index - 1); has no affect if the current card is the first card.
+     *
      * @return The card now visible in the stack window or null if no previous card.
      */
     @RunOnDispatch
-    public CardPart goPrevCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
+    public CardPart gotoPrevCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
         if (stackModel.getCurrentCardIndex() - 1 >= 0) {
-            return goCard(context, stackModel.getCurrentCardIndex() - 1, visualEffect, true);
+            return gotoCard(context, stackModel.getCurrentCardIndex() - 1, visualEffect, true);
         } else {
             return null;
         }
@@ -156,14 +157,15 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     /**
      * Navigates to the last card on the backstack; has no affect if the backstack is empty.
+     *
      * @return The card now visible in the stack window, or null if no card available to pop
      */
     @RunOnDispatch
-    public CardPart popCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
+    public CardPart gotoPopCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
         if (!stackModel.getBackStack().isEmpty()) {
             try {
                 CardModel model = (CardModel) getStackModel().findPart(context, new PartIdSpecifier(Owner.STACK, PartType.CARD, stackModel.getBackStack().pop()));
-                return goCard(context, getStackModel().getIndexOfCard(model), visualEffect, false);
+                return gotoCard(context, getStackModel().getIndexOfCard(model), visualEffect, false);
             } catch (PartException e) {
                 return null;
             }
@@ -173,39 +175,30 @@ public class StackPart implements Part, PropertyChangeObserver {
     }
 
     /**
-     * Navigates to the current card; useful only to apply a visual effect to the current card
-     * image.
-     * @param visualEffectSpecifier The visual effect to apply
-     * @param context The execution context.
-     * @return The current card
-     */
-    @RunOnDispatch
-    public CardPart goThisCard(VisualEffectSpecifier visualEffectSpecifier, ExecutionContext context) {
-        return goCard(context, stackModel.getCurrentCardIndex(), visualEffectSpecifier, false);
-    }
-
-    /**
      * Navigates to the first card in the stack.
+     *
      * @return The first card in the stack
      */
     @RunOnDispatch
-    public CardPart goFirstCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
-        return goCard(context, 0, visualEffect, true);
+    public CardPart gotoFirstCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
+        return gotoCard(context, 0, visualEffect, true);
     }
 
     /**
      * Navigates to the last card in the stack.
+     *
      * @return The last card in the stack
      */
     @RunOnDispatch
-    public CardPart goLastCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
-        return goCard(context, stackModel.getCardCount() - 1, visualEffect, true);
+    public CardPart gotoLastCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
+        return gotoCard(context, stackModel.getCardCount() - 1, visualEffect, true);
     }
 
     /**
      * Deletes the current card provided there are more than one card in the stack.
-     * @return The card now visible in the stack window, or null if the current card could not be deleted.
+     *
      * @param context The execution context.
+     * @return The card now visible in the stack window, or null if the current card could not be deleted.
      */
     @RunOnDispatch
     public CardPart deleteCard(ExecutionContext context) {
@@ -228,8 +221,8 @@ public class StackPart implements Part, PropertyChangeObserver {
      * Creates a new card with a new background. Differs from {@link #newCard(ExecutionContext)} in that {@link #newCard(ExecutionContext)} creates a
      * new card with the same background as the current card.
      *
-     * @return The newly created card.
      * @param context The execution context.
+     * @return The newly created card.
      */
     @RunOnDispatch
     public CardPart newBackground(ExecutionContext context) {
@@ -239,15 +232,15 @@ public class StackPart implements Part, PropertyChangeObserver {
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
-        return goNextCard(context, null);
+        return gotoNextCard(context, null);
     }
 
     /**
      * Creates a new card with the same background as the current card. See {@link #newBackground(ExecutionContext)} to create a new
      * card with a new background.
      *
-     * @return The newly created card.
      * @param context The execution context.
+     * @return The newly created card.
      */
     @RunOnDispatch
     public CardPart newCard(ExecutionContext context) {
@@ -257,12 +250,13 @@ public class StackPart implements Part, PropertyChangeObserver {
         cardCountProvider.onNext(stackModel.getCardCount());
         fireOnCardOrderChanged();
 
-        return goNextCard(context, null);
+        return gotoNextCard(context, null);
     }
 
     /**
      * Removes the current card from the stack and places it into the card clipboard (for pasting elsewhere in the
      * stack).
+     *
      * @param context The execution context.
      */
     @RunOnDispatch
@@ -284,6 +278,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     /**
      * Adds the card presently held in the card clipboard to the stack in the current card's position. Has no affect
      * if the clipboard is empty.
+     *
      * @param context The execution context.
      */
     @RunOnDispatch
@@ -299,12 +294,13 @@ public class StackPart implements Part, PropertyChangeObserver {
             cardCountProvider.onNext(stackModel.getCardCount());
             fireOnCardOrderChanged();
 
-            goNextCard(context, null);
+            gotoNextCard(context, null);
         }
     }
 
     /**
      * Gets an observable object containing the contents of the card clipboard.
+     *
      * @return The card clipboard provider.
      */
     public Observable<Optional<CardPart>> getCardClipboardProvider() {
@@ -313,6 +309,7 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     /**
      * Gets the currently displayed card.
+     *
      * @return The current card
      */
     public CardPart getDisplayedCard() {
@@ -323,22 +320,23 @@ public class StackPart implements Part, PropertyChangeObserver {
      * Invalidates the card cache; useful only if modifying this stack's underlying stack model (i.e., as a
      * result of card sorting or re-ordering).
      *
-     * @param context The execution context.
+     * @param context   The execution context.
      * @param cardIndex - The index of the card in the stack to transition to after invalidating the cache.
      */
     @RunOnDispatch
     public void invalidateCache(ExecutionContext context, int cardIndex) {
         this.currentCard.partClosed(context);
-        this.currentCard = openCard(context, getStackModel().getCurrentCardIndex());
+        this.currentCard = loadCard(context, getStackModel().getCurrentCardIndex());
 
         this.cardCountProvider.onNext(stackModel.getCardCount());
 
         fireOnCardOrderChanged();
-        goCard(context, cardIndex, null, false);
+        gotoCard(context, cardIndex, null, false);
     }
 
     /**
      * Gets an observable object containing the number of card in the stack.
+     *
      * @return The card count provider
      */
     public Observable<Integer> getCardCountProvider() {
@@ -347,22 +345,25 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     /**
      * Adds an observer of stack changes.
+     *
      * @param observer The observer
      */
-    public void addObserver (StackObserver observer) {
+    public void addObserver(StackObserver observer) {
         stackObservers.add(observer);
     }
 
     /**
      * Removes an observer of stack changes.
+     *
      * @param observer The observer
      */
-    public void removeObserver (StackObserver observer) {
+    public void removeObserver(StackObserver observer) {
         stackObservers.remove(observer);
     }
 
     /**
      * Adds an observer of stack navigation changes (i.e., user changed cards)
+     *
      * @param observer The observer
      */
     public void addNavigationObserver(StackNavigationObserver observer) {
@@ -371,6 +372,7 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     /**
      * Removes an observer of stack navigation changes.
+     *
      * @param observer The observer to remove
      */
     public void removeNavigationObserver(StackNavigationObserver observer) {
@@ -381,7 +383,9 @@ public class StackPart implements Part, PropertyChangeObserver {
         return curtainManager;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @RunOnDispatch
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
@@ -405,19 +409,39 @@ public class StackPart implements Part, PropertyChangeObserver {
         }
     }
 
+    /**
+     * Loads the requested card in the stack, allowing the card to initialize itself before being returned.
+     *
+     * @param context   The execution context
+     * @param cardIndex The index of the card in this stack (0-based) to load.
+     * @return The loaded and initialized card
+     */
     @RunOnDispatch
-    private CardPart openCard(ExecutionContext context, int index) {
+    private CardPart loadCard(ExecutionContext context, int cardIndex) {
         try {
-            currentCard = CardPart.fromPositionInStack(context, index, stackModel);
-            ThreadUtils.invokeAndWaitAsNeeded(() -> currentCard.partOpened(context));
-            return currentCard;
+            CardPart card = CardPart.fromPositionInStack(context, cardIndex, stackModel);
+            card.partOpened(context);
+            return card;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create card.", e);
+            throw new RuntimeException("Failed to load card.", e);
         }
     }
 
+    /**
+     * Attempts to navigate to the specified card; has no effect if the requested card is already the current card or if
+     * the requested card refers to an invalid card index.
+     * <p>
+     * When the requested card is not the current card, has the effect of deactivating the current card and activating
+     * the requested card.
+     *
+     * @param context   The execution context
+     * @param cardIndex The index (0-based) card to navigate to
+     * @param push      True to add this card to the backstack
+     * @return The current card after navigation.
+     */
     @RunOnDispatch
     private CardPart go(ExecutionContext context, int cardIndex, boolean push) {
+
         // Nothing to do if navigating to current card or an invalid card index
         if (cardIndex == stackModel.getCurrentCardIndex() || cardIndex < 0 || cardIndex >= stackModel.getCardCount()) {
             return getDisplayedCard();
@@ -427,6 +451,13 @@ public class StackPart implements Part, PropertyChangeObserver {
         return activateCard(context, cardIndex);
     }
 
+    /**
+     * Closes the current card by deactivating paint tools on its canvas and notifying observers that the card is being
+     * closed.
+     *
+     * @param context The execution context
+     * @param push    True to indicate this card should be added to the backstack
+     */
     @RunOnDispatch
     private void deactivateCard(ExecutionContext context, boolean push) {
         CardPart displayedCard = getDisplayedCard();
@@ -447,13 +478,21 @@ public class StackPart implements Part, PropertyChangeObserver {
         displayedCard.partClosed(context);
     }
 
+    /**
+     * Loads and activates the identified card in the stack (that is, the requested card becomes the card that the user
+     * is currently interacting with).
+     *
+     * @param context   The execution context
+     * @param cardIndex The index (0-based) of the card to activate in this stack
+     * @return The activated card
+     */
     @RunOnDispatch
     private CardPart activateCard(ExecutionContext context, int cardIndex) {
 
         try {
             // Change card
             stackModel.setCurrentCardIndex(cardIndex);
-            currentCard = openCard(context, cardIndex);
+            currentCard = loadCard(context, cardIndex);
 
             // Notify observers of new card
             fireOnCardOpened(currentCard);
@@ -476,7 +515,7 @@ public class StackPart implements Part, PropertyChangeObserver {
                 (cardCountInBackground > 1 || !getDisplayedCard().getCardModel().getBackgroundModel().getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
     }
 
-    private void fireOnStackOpened () {
+    private void fireOnStackOpened() {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (StackObserver observer : stackObservers) {
                 observer.onStackOpened(StackPart.this);
@@ -484,7 +523,7 @@ public class StackPart implements Part, PropertyChangeObserver {
         });
     }
 
-    private void fireOnCardClosing (CardPart closingCard) {
+    private void fireOnCardClosing(CardPart closingCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardClosed(closingCard);
@@ -492,7 +531,7 @@ public class StackPart implements Part, PropertyChangeObserver {
         });
     }
 
-    private void fireOnCardOpened (CardPart openedCard) {
+    private void fireOnCardOpened(CardPart openedCard) {
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
             for (StackNavigationObserver observer : stackNavigationObservers) {
                 observer.onCardOpened(openedCard);
@@ -536,7 +575,7 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     @Override
     public void partOpened(ExecutionContext context) {
-        currentCard = openCard(context, getStackModel().getCurrentCardIndex());
+        currentCard = loadCard(context, getStackModel().getCurrentCardIndex());
         getStackModel().receiveMessage(context.bind(this), SystemMessage.OPEN_STACK.messageName);
 
         fireOnCardOpened(getDisplayedCard());
@@ -545,6 +584,6 @@ public class StackPart implements Part, PropertyChangeObserver {
 
     @Override
     public void partClosed(ExecutionContext context) {
-        // Nothing to do
+        deactivateCard(context, false);
     }
 }

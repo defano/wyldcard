@@ -24,14 +24,19 @@ public class UnlockScreenCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
+
+        // User unlocked screen with form 'unlock screen with visual effect...'
         if (effectExp != null) {
             context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, effectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier);
             context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
-            return;
         }
 
-        VisualEffectSpecifier ves = context.getStackFrame().getVisualEffect();
-        context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, ves);
-        context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
+        else {
+            // User unlocked screen without visual effect arg ('unlock screen') or specified the effect earlier in the
+            // script (via the visual command... 'visual effect dissolve')
+            VisualEffectSpecifier ves = context.getStackFrame().getVisualEffect();
+            context.getCurrentStack().getCurtainManager().unlockScreenWithEffect(context, ves);
+            context.getCurrentStack().getCurtainManager().waitForEffectToFinish();
+        }
     }
 }

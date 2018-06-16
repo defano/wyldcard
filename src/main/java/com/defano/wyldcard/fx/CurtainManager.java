@@ -24,7 +24,13 @@ public class CurtainManager implements SegueAnimationObserver, SegueCompletionOb
     private AnimatedSegue activeEffect;
 
     public void setScreenLocked(ExecutionContext context, boolean locked) {
-        if (locked && !isScreenLocked()) {
+
+        // Nothing to do when trying to lock a locked screen
+        if (locked && isScreenLocked()) {
+            return;
+        }
+
+        if (locked) {
             startEffect(VisualEffectFactory.createScreenLock(context));
         } else if (this.activeEffect instanceof PlainEffect) {
             cancelEffect();

@@ -127,10 +127,12 @@ public class ExecutionContext {
      * @return This execution context
      */
     public ExecutionContext bind(Part part) {
-        this.stack = part.getOwningStack();
+        return bind(part.getOwningStack());
+    }
 
-        if (this.stack == null) {
-            throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
+    public ExecutionContext bind(StackPart part) {
+        if (part != null) {
+            this.stack = part;
         }
 
         return this;
@@ -145,16 +147,12 @@ public class ExecutionContext {
      */
     public ExecutionContext bind(PartModel partModel) {
         StackModel stackModel = partModel.getParentStackModel();
+
         if (stackModel != null) {
-            this.stack = WyldCard.getInstance().getOpenStacks().stream()
-                    .filter(stack -> stack.getStackModel() == stackModel)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Attempt to bind execution context to a part not connected to a stack."));
+            return bind(WyldCard.getInstance().getOpenStack(stackModel));
         } else {
             throw new IllegalStateException("Attempt to bind execution context to a part not connected to a stack.");
         }
-
-        return this;
     }
 
     /**
