@@ -5,7 +5,6 @@ import com.defano.jsegue.AnimatedSegue;
 import com.defano.jsegue.SegueAnimationObserver;
 import com.defano.jsegue.SegueCompletionObserver;
 import com.defano.jsegue.renderers.PlainEffect;
-import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.*;

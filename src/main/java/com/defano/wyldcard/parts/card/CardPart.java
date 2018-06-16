@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
-import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.button.ButtonPart;
@@ -45,7 +44,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * The "controller" object representing a card in the stack. Note that a card cannot exist apart from a Stack; this
