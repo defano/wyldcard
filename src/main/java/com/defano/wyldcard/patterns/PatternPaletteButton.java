@@ -1,5 +1,7 @@
 package com.defano.wyldcard.patterns;
 
+import com.defano.wyldcard.aspect.RunOnDispatch;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -50,6 +52,7 @@ public class PatternPaletteButton extends JLabel {
         return selected;
     }
 
+    @RunOnDispatch
     public void setSelected(boolean selected) {
         this.selected = selected;
         invalidateSelection();
@@ -59,6 +62,7 @@ public class PatternPaletteButton extends JLabel {
         return topFrame;
     }
 
+    @RunOnDispatch
     public void setTopFrame(boolean topFrame) {
         this.topFrame = topFrame;
     }
@@ -67,6 +71,7 @@ public class PatternPaletteButton extends JLabel {
         return leftFrame;
     }
 
+    @RunOnDispatch
     public void setLeftFrame(boolean leftFrame) {
         this.leftFrame = leftFrame;
     }
@@ -75,11 +80,13 @@ public class PatternPaletteButton extends JLabel {
         return patternId;
     }
 
+    @RunOnDispatch
     public void setPatternId(int patternId) {
         this.patternId = patternId;
         invalidatePattern();
     }
 
+    @RunOnDispatch
     private void invalidateSelection() {
         if (selected) {
             setBorder(selectedBorder);
@@ -87,15 +94,20 @@ public class PatternPaletteButton extends JLabel {
             setBorder(unselectedBorder);
         }
 
-        invalidate();
-        repaint();
+        Component parent = getParent();
+        if (parent != null) {
+            parent.revalidate();
+            parent.repaint();
+        }
     }
 
+    @RunOnDispatch
     private void invalidatePattern() {
         setIcon(new ImageIcon(createIconForButton(getWidth(), getHeight(), patternId)));
         invalidateSelection();
     }
 
+    @RunOnDispatch
     private BufferedImage createIconForButton(int width, int height, int patternId) {
         width = Math.max(1, width);
         height = Math.max(1, height);

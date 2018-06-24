@@ -119,8 +119,8 @@ public class PatternPalette extends WyldCardWindow implements Consumer {
         SwingUtilities.invokeLater(() -> {
             if (newValue instanceof Integer) {
                 if ((int) newValue >= 0 && (int) newValue < 40) {
-                    for (int index = 0; index < allPatterns.length; index++) {
-                        allPatterns[index].setSelected(false);
+                    for (PatternPaletteButton thisPattern : allPatterns) {
+                        thisPattern.setSelected(false);
                     }
 
                     allPatterns[(int) newValue].setSelected(true);
