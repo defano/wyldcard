@@ -228,8 +228,8 @@ commandStmnt
     ;
 
 remoteNavOption
-    : 'in' 'a' 'new' 'window'                                                                                           # remoteInNewWindow
-    | 'in' 'a' 'new' 'window' 'without' 'dialog'                                                                        # remoteInNewWindowWithoutDialog
+    : 'in a' 'new' 'window'                                                                                             # remoteInNewWindow
+    | 'in a' 'new' 'window' 'without' 'dialog'                                                                          # remoteInNewWindowWithoutDialog
     | 'without' 'dialog'                                                                                                # remoteWithoutDialog
     |                                                                                                                   # remoteDefault
     ;
