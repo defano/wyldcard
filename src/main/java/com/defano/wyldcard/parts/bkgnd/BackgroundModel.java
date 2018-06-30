@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.bkgnd;
 
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -9,7 +10,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.BufferedImageSerializer;
-import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -94,11 +94,11 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
 
     /** {@inheritDoc} */
     @Override
-    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+    public LengthAdjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {
-            return Adjective.ABBREVIATED;
+            return LengthAdjective.ABBREVIATED;
         } else {
-            return Adjective.DEFAULT;
+            return LengthAdjective.DEFAULT;
         }
     }
 
@@ -181,8 +181,7 @@ public class BackgroundModel extends PartModel implements LayeredPartFinder {
     }
 
     public String getLongName(ExecutionContext context) {
-        // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbrevName(context);
+        return getAbbrevName(context) + " of " + getStackModel().getLongName(context);
     }
 
     @Override

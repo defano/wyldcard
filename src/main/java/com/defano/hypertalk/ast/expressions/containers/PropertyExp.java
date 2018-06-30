@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.expressions.containers;
 
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
@@ -55,7 +55,7 @@ public class PropertyExp extends ContainerExp {
     public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
 
         // Cannot set the adjective-form of a property (i.e., set 'the name' not 'the long name')
-        if (propertySpec.getAdjective() != Adjective.DEFAULT) {
+        if (propertySpec.getLengthAdjective() != LengthAdjective.DEFAULT) {
             throw new HtSemanticException("Cannot set that property.");
         }
 

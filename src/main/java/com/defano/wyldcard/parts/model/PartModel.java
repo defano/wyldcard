@@ -207,10 +207,16 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * @param propertyName The name of the property whose default adjective should be returned.
      * @return The default adjective.
      */
-    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
-        return Adjective.DEFAULT;
+    public LengthAdjective getDefaultAdjectiveForProperty(String propertyName) {
+        return LengthAdjective.DEFAULT;
     }
 
+    /**
+     * Determines if a length adjective may be applied to the given property of this part (i.e., 'the long name').
+     *
+     * @param propertyName The name of the property
+     * @return True if the property supports length adjectives for this part, false otherwise.
+     */
     public boolean isAdjectiveSupportedProperty(String propertyName) {
         return false;
     }
@@ -294,8 +300,8 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     /**
      * Gets the value of this part; thus, reads the value of the property returned by {@link #getValueProperty()}.
      *
-     * @return The value of this property
      * @param context The execution context.
+     * @return The value of this property
      */
     public Value getValue(ExecutionContext context) {
         return getKnownProperty(context, getValueProperty());
@@ -304,7 +310,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     /**
      * Sets the value of this part; thus, sets the value of the property returned by {@link #getValueProperty()}.
      *
-     * @param value The value of this part.
+     * @param value   The value of this part.
      * @param context The execution context.
      */
     public void setValue(Value value, ExecutionContext context) {
@@ -330,8 +336,8 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * Gets a part specifier that refers to this part in the stack. If this part is a button or a field, the part
      * specifier is a {@link CompositePartSpecifier} referring to the button or field on a specific card or background.
      *
-     * @return A part specifier referring to this part.
      * @param context The execution context.
+     * @return A part specifier referring to this part.
      */
     public PartSpecifier getMe(ExecutionContext context) {
         PartModel parent = getParentPartModel();
@@ -348,6 +354,10 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         return parentPartModel;
     }
 
+    public void setParentPartModel(PartModel parentPartModel) {
+        this.parentPartModel = parentPartModel;
+    }
+
     public StackModel getParentStackModel() {
         if (this instanceof StackModel) {
             return (StackModel) this;
@@ -356,10 +366,6 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
         } else {
             return null;
         }
-    }
-
-    public void setParentPartModel(PartModel parentPartModel) {
-        this.parentPartModel = parentPartModel;
     }
 
     public int getScriptEditorCaretPosition() {
@@ -385,6 +391,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * <p>
      * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
      * command from the Objects menu, or invoked the 'edit script of' command.
+     *
      * @param context The execution context
      */
     public ScriptEditor editScript(ExecutionContext context) {
@@ -397,7 +404,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * Typically invoked when the user has selected and double-control-clicked the part, chosen the appropriate
      * command from the Objects menu, or invoked the 'edit script of' command.
      *
-     * @param context The execution context
+     * @param context       The execution context
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
     public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
@@ -442,6 +449,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * <p>
      * Typically invoked when the user has selected and double-clicked the part, or chosen the appropriate command from
      * the Objects menu.
+     *
      * @param context The execution context.
      */
     public void editProperties(ExecutionContext context) {

@@ -1,6 +1,6 @@
 package com.defano.wyldcard.parts.card;
 
-import com.defano.hypertalk.ast.model.Adjective;
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -241,13 +241,13 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     /** {@inheritDoc} */
     @Override
-    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+    public LengthAdjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {
-            return Adjective.ABBREVIATED;
+            return LengthAdjective.ABBREVIATED;
         } else if (propertyName.equalsIgnoreCase(PROP_ID)) {
-            return Adjective.ABBREVIATED;
+            return LengthAdjective.ABBREVIATED;
         } else {
-            return Adjective.DEFAULT;
+            return LengthAdjective.DEFAULT;
         }
     }
 
@@ -289,8 +289,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     }
 
     public String getLongId(ExecutionContext context) {
-        // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbrevId(context);
+        return getAbbrevId(context) + " of " + getStackModel().getLongName(context);
     }
 
     private boolean hasName() {
@@ -314,8 +313,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     @Override
     public String getLongName(ExecutionContext context) {
-        // TODO: Add "of stack..." portion once implemented in HyperTalk
-        return getAbbreviatedName(context);
+        return getAbbreviatedName(context) + " of " + getStackModel().getLongName(context);
     }
 
     private void firePartRemoved(ExecutionContext context, PartModel part) {

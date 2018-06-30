@@ -53,7 +53,7 @@ public class GoCmd extends Command {
         // Case 1: Navigate to a stack ('go to stack "My Stack"')
         StackPartExp stackPartExp = destinationExp.factor(context, StackPartExp.class);
         if (stackPartExp != null) {
-            StackModel model = WyldCard.getInstance().locateStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
+            StackModel model = WyldCard.getInstance().findStack(context, (StackPartSpecifier) stackPartExp.evaluateAsSpecifier(context), navigationOptions);
             Destination destination = getDestination(context, model);
 
             if (destination != null) {
@@ -102,7 +102,7 @@ public class GoCmd extends Command {
             if (rps instanceof StackPartSpecifier) {
 
                 // Try to locate (or prompt to locate) requested stack
-                StackModel model = WyldCard.getInstance().locateStack(context, (StackPartSpecifier) rps, navigationOptions);
+                StackModel model = WyldCard.getInstance().findStack(context, (StackPartSpecifier) rps, navigationOptions);
                 if (model == null) {
                     context.setResult(new Value("No such stack."));
                     return;

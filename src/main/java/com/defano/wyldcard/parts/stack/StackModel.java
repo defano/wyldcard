@@ -324,7 +324,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     /**
-     * Determines if this stack is empty, that is, the stack is essentially a new stack with no parts, cards, or
+     * Determines if this stack is empty. That is, whether the stack is essentially a new stack with no parts, cards, or
      * graphics added.
      *
      * @return True if the stack is empty, false otherwise
@@ -375,11 +375,11 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
      * {@inheritDoc}
      */
     @Override
-    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+    public LengthAdjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {
-            return Adjective.ABBREVIATED;
+            return LengthAdjective.ABBREVIATED;
         } else {
-            return Adjective.DEFAULT;
+            return LengthAdjective.DEFAULT;
         }
     }
 

@@ -1,7 +1,7 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
 import com.defano.hypertalk.ast.model.ConvertibleDateFormat;
-import com.defano.hypertalk.ast.model.Adjective;
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -12,16 +12,16 @@ import java.util.Date;
 
 public class TimeFunc extends Expression {
 
-    private final Adjective adjective;
+    private final LengthAdjective lengthAdjective;
 
-    public TimeFunc(ParserRuleContext context, Adjective adjective) {
+    public TimeFunc(ParserRuleContext context, LengthAdjective lengthAdjective) {
         super(context);
-        this.adjective = adjective;
+        this.lengthAdjective = lengthAdjective;
     }
 
     @Override
     public Value onEvaluate(ExecutionContext context) throws HtSemanticException {
-        switch (adjective) {
+        switch (lengthAdjective) {
             case LONG:
                 return new Value(ConvertibleDateFormat.LONG_TIME.dateFormat.format(new Date()));
             case SHORT:

@@ -1,6 +1,6 @@
 package com.defano.hypertalk.ast.model;
 
-public enum Adjective {
+public enum LengthAdjective {
     LONG("long"),
     SHORT("short"),
     ABBREVIATED("abbreviated"),
@@ -8,12 +8,12 @@ public enum Adjective {
 
     public final String hypertalkIdentifier;
 
-    Adjective(String hypertalkIdentifier) {
+    LengthAdjective(String hypertalkIdentifier) {
         this.hypertalkIdentifier = hypertalkIdentifier;
     }
 
     public String apply(String propertyName) {
-        if (this == Adjective.DEFAULT) {
+        if (this == LengthAdjective.DEFAULT) {
             return propertyName;
         } else {
             return hypertalkIdentifier + " " + propertyName;

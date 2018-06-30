@@ -1,11 +1,11 @@
 package com.defano.hypertalk.ast.model.specifiers;
 
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.containers.MenuItemExp;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.model.Chunk;
-import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -14,20 +14,20 @@ public class PropertySpecifier {
 
     private final String property;
     private final Expression partExp;
-    private final Adjective adjective;
+    private final LengthAdjective lengthAdjective;
 
     public PropertySpecifier(String globalProperty) {
         this(globalProperty, null);
     }
 
     public PropertySpecifier(String property, Expression part) {
-        this(Adjective.DEFAULT, property, part);
+        this(LengthAdjective.DEFAULT, property, part);
     }
 
-    public PropertySpecifier(Adjective adjective, String property, Expression part) {
+    public PropertySpecifier(LengthAdjective lengthAdjective, String property, Expression part) {
         this.property = property;
         this.partExp = part;
-        this.adjective = adjective;
+        this.lengthAdjective = lengthAdjective;
     }
 
     public boolean isGlobalPropertySpecifier(ExecutionContext context) {
@@ -42,8 +42,8 @@ public class PropertySpecifier {
         return getChunk(context) != null;
     }
 
-    public Adjective getAdjective() {
-        return adjective;
+    public LengthAdjective getLengthAdjective() {
+        return lengthAdjective;
     }
 
     public String getProperty() {
@@ -52,7 +52,7 @@ public class PropertySpecifier {
 
     /**
      * Returns the name of the specified property with the specified adjective applied (where applicable). For example,
-     * applying {@link Adjective#SHORT} to the property 'name' yields 'short name'
+     * applying {@link LengthAdjective#SHORT} to the property 'name' yields 'short name'
      * <p>
      * Certain properties (like name and id) support length adjectives (like 'long', 'short' or 'abbrev') when
      * applied to certain objects. This method attempts to compute an applied property name given a property
@@ -69,10 +69,10 @@ public class PropertySpecifier {
 
         // Apply adjective only to properties that support it
         if (model != null && model.isAdjectiveSupportedProperty(property)) {
-            if (adjective == Adjective.DEFAULT) {
+            if (lengthAdjective == LengthAdjective.DEFAULT) {
                 return model.getDefaultAdjectiveForProperty(property).apply(property);
             } else {
-                return adjective.apply(property);
+                return lengthAdjective.apply(property);
             }
         }
 

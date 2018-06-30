@@ -2,7 +2,7 @@ package com.defano.hypertalk.utils;
 
 import com.defano.hypertalk.ast.model.ConvertibleDateFormat;
 import com.defano.hypertalk.ast.model.Convertible;
-import com.defano.hypertalk.ast.model.Adjective;
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.hypertalk.ast.model.Value;
 
 import java.text.*;
@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class DateUtils {
 
-    public static Value valueOf(Date d, Adjective format) {
+    public static Value valueOf(Date d, LengthAdjective format) {
         switch (format) {
             case LONG:
                 return new Value(ConvertibleDateFormat.LONG_DATE.dateFormat.format(d));

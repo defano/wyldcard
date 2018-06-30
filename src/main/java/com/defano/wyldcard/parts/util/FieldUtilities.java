@@ -13,7 +13,7 @@ public class FieldUtilities {
      *
      * @param component The text component whose contents should be ranged
      * @param lines     One or more lines to range.
-     * @return The range of characters, or an empty range in the lines is null/empty.
+     * @return The range of characters, or an empty range if the set of lines is null/empty.
      */
     public static Range getLinesRange(JTextComponent component, int... lines) {
         if (lines == null || lines.length == 0) {
@@ -28,8 +28,8 @@ public class FieldUtilities {
     }
 
     /**
-     * Given a line number (counting from 1), returns a character range that identifies the first character position
-     * and the last.
+     * Given a line number (counting from 1), returns a character range that identifies the first and last character
+     * positions of that line.
      *
      * @param component The text component whose contents should be ranged
      * @param line      The line number to range, counting from 1
@@ -48,6 +48,16 @@ public class FieldUtilities {
         }
     }
 
+    /**
+     * Given a string and a set of line numbers (counting from 1), returns a character range that identifies the first
+     * character in the first line and the last character in the last line.
+     *
+     * @param text The text whose lines should be ranged
+     * @param lines A list of line numbers (counting from 1); does not have to be in order and does not have to be
+     *              contiguous.
+     * @return A range identifying the first character of the lowest numbered line and last character of the highest
+     * numbered line.
+     */
     public static Range getLinesRange(String text, int... lines) {
         if (lines == null || lines.length == 0) {
             return new Range();
@@ -102,9 +112,9 @@ public class FieldUtilities {
     /**
      * Determines the displayed line on which a given character is rendered on a JTextComponent.
      *
-     * The displayed line is the line that the character appears on after the string has been wrapped to fit the bounds
-     * of the text view. This is not necessarily the same as the physical line of the character (i.e., the number of
-     * '\n' characters that proceed it).
+     * The displayed line is the line that the character appears on after the string has been line-wrapped to fit the
+     * bounds of the text view. This is not necessarily the same as the physical line of the character (i.e., the number
+     * of '\n' characters that proceed it).
      *
      * @param comp      The text component
      * @param charIdx   The index of the requested character

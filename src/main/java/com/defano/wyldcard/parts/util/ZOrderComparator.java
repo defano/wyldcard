@@ -6,6 +6,10 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import java.util.Comparator;
 
+/**
+ * Compares two part models on the basis of their z-order (front-to-back drawing order). Applies only to parts on the
+ * same card layer.
+ */
 public class ZOrderComparator implements Comparator<PartModel> {
 
     private final ExecutionContext context;

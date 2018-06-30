@@ -1,12 +1,12 @@
 package com.defano.wyldcard.parts.card;
 
+import com.defano.hypertalk.ast.model.LengthAdjective;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.NamedPart;
 import com.defano.wyldcard.parts.finder.LayeredPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.hypertalk.ast.model.Adjective;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -66,11 +66,11 @@ public abstract class CardLayerPartModel extends PartModel implements NamedPart 
 
     /** {@inheritDoc} */
     @Override
-    public Adjective getDefaultAdjectiveForProperty(String propertyName) {
+    public LengthAdjective getDefaultAdjectiveForProperty(String propertyName) {
         if (propertyName.equalsIgnoreCase(PROP_NAME)) {
-            return Adjective.ABBREVIATED;
+            return LengthAdjective.ABBREVIATED;
         } else {
-            return Adjective.DEFAULT;
+            return LengthAdjective.DEFAULT;
         }
     }
 

@@ -12,16 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A hack to re-dispatch mouse events to parts (Swing components) in the background layer
+ * A hack to re-dispatch mouse events to parts (Swing components) in the background layer of a card
  * that are obstructed by the foreground (card-layer) graphics canvas.
  * <p>
  * Swing does not support the concept of a component which is "transparent" to mouse events. That
- * is, a component (like a canvas) that covers buttons behind it--even if that component is
- * graphically transparent--prevents mouse events from reaching the obscured components.
+ * is, a paint canvas component that covers buttons and fields behind it--even if the canvas is
+ * graphically transparent--prevents mouse events from reaching the occluded components.
  * <p>
  * In order to get the card's foreground canvas to appear on top of parts in the background,
  * and yet still allow the background parts to receive mouse clicks, drags, enters and exits, we
- * have to capture mouse events on the canvas then translate and re-dispatch them on the
+ * have to capture mouse events on the foreground canvas then translate and re-dispatch them on the
  * background parts. What a PITA.
  */
 public class MouseEventDispatcher implements MouseListener, MouseMotionListener {
