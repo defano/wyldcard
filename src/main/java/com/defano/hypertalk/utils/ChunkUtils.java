@@ -117,8 +117,10 @@ public class ChunkUtils {
                 return insertInto(context, mutableString, s, mutatorString);
             case AFTER:
                 return insertAfter(context, mutableString, c.getMutatedChunkType(), s, mutatorString);
+            case REPLACING:
+                return replace(context, mutableString, c.getMutatedChunkType(), s.start + 1, s.end, mutatorString);
             default:
-                throw new RuntimeException("Bug! Not implemented");
+                throw new RuntimeException("Bug! Not implemented: " + p);
         }
     }
 
@@ -177,7 +179,7 @@ public class ChunkUtils {
                 return Pattern.compile(patternBuilder.toString());
 
             default:
-                throw new RuntimeException("Bug! Not implemented.");
+                throw new RuntimeException("Bug! Not implemented: " + chunkType);
         }
     }
 
@@ -229,7 +231,7 @@ public class ChunkUtils {
             case ITEM:
                 return HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).stringValue();
             default:
-                throw new RuntimeException("Bug! Not implemented.");
+                throw new RuntimeException("Bug! Not implemented: " + chunkType);
         }
     }
 
@@ -260,7 +262,7 @@ public class ChunkUtils {
             case REPLACING:
                 return replace(context, value, c, start, start, replacement);
             default:
-                throw new RuntimeException("Bug! Not implemented.");
+                throw new RuntimeException("Bug! Not implemented: " + p);
         }
     }
 
@@ -275,7 +277,7 @@ public class ChunkUtils {
             case REPLACING:
                 return replace(context, value, c, start, end, replacement);
             default:
-                throw new RuntimeException("Bug! Not implemented.");
+                throw new RuntimeException("Bug! Not implemented: " + p);
         }
     }
 
