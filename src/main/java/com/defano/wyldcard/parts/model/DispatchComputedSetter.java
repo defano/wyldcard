@@ -5,7 +5,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * A computer property setter that always executes on the the Swing dispatch thread.
+ * A computed property setter that always executes on the the Swing dispatch thread.
  */
 public interface DispatchComputedSetter extends ComputedSetter {
 

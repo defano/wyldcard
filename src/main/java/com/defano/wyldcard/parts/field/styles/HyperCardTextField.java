@@ -73,7 +73,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         this.toolEditablePart = toolEditablePart;
 
         // Create the editor component
-        textPane = new HyperCardTextPane(new DefaultStyledDocument());
+        textPane = new HyperCardTextPane(new DefaultStyledDocument(), getViewport());
         textPane.setEditorKit(new RTFEditorKit());
 
         this.setViewportView(textPane);
@@ -222,7 +222,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
     }
 
     @RunOnDispatch
-    public void partClosedE(ExecutionContext context) {
+    public void partClosed(ExecutionContext context) {
         syncModelToView(context);
         textPane.getStyledDocument().removeDocumentListener(this);
 

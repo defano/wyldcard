@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * An extension to {@link JTextPane} that adds a variety of HyperCard-specific features to a standard text pane,
  * including:
- *
+ * <p>
  * - Ability to enable or disable vertical scrolling (within a JScrollPane),
  * - Ability to disable auto-wrapping text across lines,
  * - Draw dotted lines underneath each line of text,
@@ -30,22 +30,21 @@ import java.util.Set;
  */
 public class HyperCardTextPane extends JTextPane {
 
-    private static Throttle lineCalculationThrottle = new Throttle("line-calculation-throttle", 50);
-
-    private boolean wrapText = true;
-    private boolean scrollable = true;
-    private boolean showLines = false;
-
-    private HashMap <Integer, Integer> baselinesCache;
-    private int startLine, endLine, viewPortBottom;
-
+    private final static Throttle lineCalculationThrottle = new Throttle("line-calculation-throttle", 50);
+    private final static Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
     private final Set<Integer> autoSelection = new HashSet<>();
     private final Highlighter highlighter = new DefaultHighlighter();
     private final AutoSelectionHighlighterPainter hilitePainter = new AutoSelectionHighlighterPainter();
     private final FoundSelectionHighlightPainter foundPainter = new FoundSelectionHighlightPainter();
+    private final JViewport viewport;
+    private boolean wrapText = true;
+    private boolean scrollable = true;
+    private boolean showLines = false;
+    private HashMap<Integer, Integer> baselinesCache;
 
-    HyperCardTextPane(StyledDocument doc) {
+    HyperCardTextPane(StyledDocument doc, JViewport viewport) {
         super(doc);
+        this.viewport = viewport;
 
         super.addMouseListener(new MouseAdapter() {
             @Override
@@ -208,29 +207,14 @@ public class HyperCardTextPane extends JTextPane {
 
     public void invalidateViewport(JViewport viewport) {
         if (viewport != null) {
-
             lineCalculationThrottle.submitOnUiThread(hashCode(), () -> {
-                Point startPoint = viewport.getViewPosition();
-                Dimension size = viewport.getExtentSize();
-                Point endPoint = new Point(startPoint.x + size.width, startPoint.y + size.height);
-
-                try {
-                    startLine = FieldUtilities.getWrappedLineOfChar(HyperCardTextPane.this, viewToModel(startPoint));
-                    endLine = FieldUtilities.getWrappedLineOfChar(HyperCardTextPane.this, viewToModel(endPoint));
-                    viewPortBottom = startPoint.y + size.height;
-
-                    invalidateLineHeights();
-
-                    viewport.repaint();
-
-                } catch (Exception ignored) {
-                    ignored.printStackTrace();
-                }
+                invalidateLineHeights();
+                viewport.repaint();
             });
         }
     }
 
-    public void invalidateLineHeights() {
+    private void invalidateLineHeights() {
         this.baselinesCache = null;
     }
 
@@ -243,36 +227,52 @@ public class HyperCardTextPane extends JTextPane {
         super.paintComponent(g);
 
         if (showLines) {
-            HashMap<Integer, Integer> baselines = this.baselinesCache;
+            paintLines(g);
+        }
+    }
 
-            // Calculate line heights
-            if (baselines == null) {
-                baselines = buildLineCache();
+    @RunOnDispatch
+    private void paintLines(Graphics g) {
+        HashMap<Integer, Integer> baselines = this.baselinesCache;
+        int startLine = 0, endLine = 0, viewPortBottom = 0;
+
+        if (viewport != null) {
+            Point startPoint = viewport.getViewPosition();
+            Dimension size = viewport.getExtentSize();
+            Point endPoint = new Point(startPoint.x + size.width, startPoint.y + size.height);
+
+            startLine = FieldUtilities.getRenderedLineOfChar(HyperCardTextPane.this, viewToModel(startPoint));
+            endLine = FieldUtilities.getRenderedLineOfChar(HyperCardTextPane.this, viewToModel(endPoint));
+            viewPortBottom = viewport.getViewPosition().y + viewport.getExtentSize().height;
+        }
+
+        // Calculate line heights
+        if (baselines == null) {
+            baselines = buildLineCache();
+        }
+
+        int minX = getInsets().left;
+        int maxX = getBounds().width - getInsets().right;
+        int lastBaseline = 0;
+
+        ((Graphics2D) g).setStroke(dottedLine);
+
+        // Draw lines under visible text
+        for (int line = startLine; line <= endLine; line++) {
+            Integer baselineY = baselines.get(line);
+            if (baselineY != null && baselineY > 0) {
+                lastBaseline = baselines.get(line);
+                g.drawLine(minX, lastBaseline, maxX, lastBaseline);
             }
+        }
 
-            int minX = getInsets().left;
-            int maxX = getBounds().width - getInsets().right;
-            int lastBaseline = 0;
+        // If text does not fill entire field, interpolate lines in unused space
+        float interpolatedHeight = (int) getLineHeight(baselinesCache.size() - 1);
+        int thisBaseline = lastBaseline + (int) interpolatedHeight;
 
-            Stroke dottedLine = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 1, new float[]{1}, 0);
-            ((Graphics2D) g).setStroke(dottedLine);
-
-            // Draw lines under visible text
-            for (int line = startLine; line <= endLine; line++) {
-                Integer baselineY = baselines.get(line);
-                if (baselineY != null && baselineY > 0) {
-                    lastBaseline = baselines.get(line);
-                    g.drawLine(minX, lastBaseline, maxX, lastBaseline);
-                }
-            }
-
-            // If text does not fill entire field, interpolate lines in unused space
-            float interpolatedHeight = (int) getLineHeight(baselinesCache.size() - 1);
-            int thisBaseline = lastBaseline + (int)interpolatedHeight;
-            while (thisBaseline <= viewPortBottom && interpolatedHeight > 0) {
-                g.drawLine(minX, thisBaseline, maxX, thisBaseline);
-                thisBaseline += interpolatedHeight;
-            }
+        while (thisBaseline <= viewPortBottom && interpolatedHeight > 0) {
+            g.drawLine(minX, thisBaseline, maxX, thisBaseline);
+            thisBaseline += interpolatedHeight;
         }
     }
 

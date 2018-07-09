@@ -120,7 +120,7 @@ public class FieldUtilities {
      * @param charIdx   The index of the requested character
      * @return          The displayed line number of the character
      */
-    public static int getWrappedLineOfChar(JTextComponent comp, int charIdx) {
+    public static int getRenderedLineOfChar(JTextComponent comp, int charIdx) {
         int charCount = 0;
         int lineCount = 0;
 

@@ -4,7 +4,7 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 /**
- * A computer property getter that always executes on the Swing dispatch thread.
+ * A computed property getter that always executes on the Swing dispatch thread.
  */
 public interface DispatchComputedGetter extends ComputedGetter {
 

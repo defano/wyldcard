@@ -114,7 +114,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
 
     @Override
     public void partClosed(ExecutionContext context) {
-        fieldComponent.partClosedE(context);
+        fieldComponent.partClosed(context);
 
         getPartModel().removePropertyChangedObserver(fieldComponent);
         KeyboardManager.getInstance().removeGlobalKeyListener(this);
