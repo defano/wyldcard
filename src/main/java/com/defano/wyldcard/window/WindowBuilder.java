@@ -34,6 +34,13 @@ public class WindowBuilder<T extends WyldCardFrame> {
         return new WindowBuilder<>(window);
     }
 
+    public static JFrame buildHiddenPrintFrame() {
+        JFrame frame = new JFrame();
+        frame.setLocation(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        frame.setVisible(true);
+        return frame;
+    }
+
     @RunOnDispatch
     public WindowBuilder withTitle(String title) {
         this.window.setTitle(title);

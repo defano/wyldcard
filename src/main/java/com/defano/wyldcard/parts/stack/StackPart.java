@@ -410,14 +410,16 @@ public class StackPart implements Part, PropertyChangeObserver {
     }
 
     /**
-     * Loads the requested card in the stack, allowing the card to initialize itself before being returned.
+     * Loads the requested card in the stack, allowing the card to initialize itself before being returned. Note that
+     * this only creates the card controller object (it does not display it in the stack window); use
+     * {@link #gotoCard(ExecutionContext, int, VisualEffectSpecifier, boolean)} to navigate to and display the card.
      *
      * @param context   The execution context
      * @param cardIndex The index of the card in this stack (0-based) to load.
      * @return The loaded and initialized card
      */
     @RunOnDispatch
-    private CardPart loadCard(ExecutionContext context, int cardIndex) {
+    public CardPart loadCard(ExecutionContext context, int cardIndex) {
         try {
             CardPart card = CardPart.fromPositionInStack(context, cardIndex, stackModel);
             card.partOpened(context);
