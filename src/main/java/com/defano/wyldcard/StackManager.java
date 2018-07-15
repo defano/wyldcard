@@ -1,5 +1,6 @@
 package com.defano.wyldcard;
 
+import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
@@ -14,6 +15,7 @@ import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ImageLayerUtils;
+import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.WindowManager;
@@ -35,6 +37,8 @@ import java.util.Optional;
 public class StackManager implements StackNavigationObserver {
 
     private final ArrayList<StackPart> openedStacks = new ArrayList<>();
+    private final LimitedDepthStack<Destination> backstack = new LimitedDepthStack<>(20);
+
     private final BehaviorSubject<StackPart> focusedStack = BehaviorSubject.create();
     private final ProxyObservable<Integer> cardCount = new ProxyObservable<>(BehaviorSubject.createDefault(1));
     private final ProxyObservable<Optional<CardPart>> cardClipboard = new ProxyObservable<>(BehaviorSubject.createDefault(Optional.empty()));
@@ -397,6 +401,10 @@ public class StackManager implements StackNavigationObserver {
         isUndoable.setSource(newCard.getCanvas().isUndoableObservable());
         isRedoable.setSource(newCard.getCanvas().isRedoableObservable());
         canvasScale.setSource(newCard.getCanvas().getScaleObservable());
+    }
+
+    public LimitedDepthStack<Destination> getBackstack() {
+        return backstack;
     }
 
     /**

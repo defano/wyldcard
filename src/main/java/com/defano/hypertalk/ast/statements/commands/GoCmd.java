@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.expressions.VisualEffectExp;
 import com.defano.hypertalk.ast.expressions.parts.CompositePartExp;
 import com.defano.hypertalk.ast.expressions.parts.StackPartExp;
+import com.defano.hypertalk.ast.model.Destination;
 import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.CompositePartSpecifier;
@@ -132,13 +133,18 @@ public class GoCmd extends Command {
      * @param visualEffect The optional visual effect (null for no effect)
      * @return The destination card
      */
-    private CardPart goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) {
-        StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.stack);
+    private CardPart goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) throws HtSemanticException {
+        StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.getStack());
         context.bind(stackWindow.getStack());
         stackWindow.setVisible(true);
         stackWindow.requestFocus();
 
-        return stackWindow.getStack().gotoCard(context, destination.cardIndex, visualEffect, true);
+        Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardId());
+        if (cardIndex != null) {
+            return stackWindow.getStack().gotoCard(context, cardIndex, visualEffect, true);
+        }
+
+        throw new HtSemanticException("Can't find that card.");
     }
 
     private Destination getDestination(ExecutionContext context, PartModel model) {
@@ -148,20 +154,19 @@ public class GoCmd extends Command {
         // Part is a card in a stack
         if (model instanceof CardModel) {
             destinationStack = ((CardModel) model).getStackModel();
-            destinationIndex = destinationStack.getIndexOfCard((CardModel) model);
-            return new Destination(destinationStack, destinationIndex);
+            return new Destination(destinationStack, model.getId(context));
         }
 
         // Part is a background in a stack
         else if (model instanceof BackgroundModel) {
             destinationStack = ((BackgroundModel) model).getStackModel();
             destinationIndex = destinationStack.getIndexOfBackground(model.getId(context));
-            return new Destination(destinationStack, destinationIndex);
+            return new Destination(destinationStack, destinationStack.getCardModels().get(destinationIndex).getId(context));
         }
 
         // Part is the stack itself
         else if (model instanceof StackModel) {
-            return new Destination((StackModel) model, ((StackModel) model).getCurrentCardIndex());
+            return new Destination((StackModel) model, ((StackModel) model).getCardModels().get(((StackModel) model).getCurrentCardIndex()).getId(context));
         }
 
         // Part model was null or otherwise can't resolve destination
@@ -173,16 +178,6 @@ public class GoCmd extends Command {
             return context.getStackFrame().getVisualEffect();
         } else {
             return visualEffectExp.factor(context, VisualEffectExp.class, new HtSemanticException("Not a visual effect.")).effectSpecifier;
-        }
-    }
-
-    private class Destination {
-        final StackModel stack;
-        final int cardIndex;
-
-        Destination(StackModel stackModel, int cardIndex) {
-            this.stack = stackModel;
-            this.cardIndex = cardIndex;
         }
     }
 

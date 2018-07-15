@@ -21,8 +21,13 @@ public abstract class CardLayeredPane extends JLayeredPane {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                foregroundCanvas.setBounds(0, 0, getWidth(), getHeight());
-                backgroundCanvas.setBounds(0, 0, getWidth(), getHeight());
+                if (foregroundCanvas != null) {
+                    foregroundCanvas.setBounds(0, 0, getWidth(), getHeight());
+                }
+
+                if (backgroundCanvas != null) {
+                    backgroundCanvas.setBounds(0, 0, getWidth(), getHeight());
+                }
             }
         });
     }

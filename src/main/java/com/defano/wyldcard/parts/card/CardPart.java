@@ -33,6 +33,7 @@ import com.defano.jmonet.clipboard.CanvasTransferHandler;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -448,10 +449,21 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return A screenshot of this card.
      */
     public BufferedImage getScreenshot() {
+
+        // Swing cannot print components that are not actively displayed in a window (this is a side effect of the
+        // native component peering architecture). Therefore, if this card is not already being displayed in a
+        // window, we will need to create one and place ourselves inside of it before attempting to print. However,
+        // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
+        // utilize the screenshot buffer frame only when not already attached to a card window.
+        if (getRootPane() == null) {
+            WindowManager.getInstance().getScreenshotBufferWindow().setContentPane(this);
+        }
+
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = screenshot.createGraphics();
-
-        ThreadUtils.invokeAndWaitAsNeeded(() -> CardPart.this.printAll(g));
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+            CardPart.this.printAll(g);
+        });
 
         g.dispose();
         return screenshot;

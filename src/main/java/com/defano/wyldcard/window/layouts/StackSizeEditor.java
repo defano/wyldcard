@@ -45,7 +45,7 @@ public class StackSizeEditor extends JDialog {
 
     @RunOnDispatch
     private void onOK() {
-        stackDimension = new Dimension(Integer.parseInt(newWidth.getText()), Integer.parseInt(newHeight.getText()));
+        stackDimension = new Dimension(Integer.parseInt(newWidth.getText().replace(",", "")), Integer.parseInt(newHeight.getText().replace(",", "")));
         dispose();
     }
 
