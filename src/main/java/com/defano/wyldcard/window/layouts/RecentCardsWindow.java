@@ -14,7 +14,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.List;
+import java.util.Set;
 
 public class RecentCardsWindow extends WyldCardDialog {
     private JPanel windowPanel;
@@ -22,18 +22,27 @@ public class RecentCardsWindow extends WyldCardDialog {
     private JScrollPane scrollPane;
 
     public RecentCardsWindow() {
-        List<Destination> recentCards = WyldCard.getInstance().getBackstack().asList();
-        Destination currentCard = new Destination(
-                WyldCard.getInstance().getFocusedStack().getStackModel(),
-                WyldCard.getInstance().getFocusedCard().getId(new ExecutionContext())
-        );
 
-        if (!recentCards.contains(currentCard)) {
-            recentCards.add(currentCard);
+        // Add call cards currently on the backstack
+        Set<Destination> recentCards = WyldCard.getInstance().getBackstack().asSet();
+
+        // Add currently visible cards on all open stacks (which may not yet appear in the backstack)
+        for (StackPart thisOpenStack : WyldCard.getInstance().getOpenStacks()) {
+            recentCards.add(new Destination(
+                    thisOpenStack.getStackModel(),
+                    thisOpenStack.getDisplayedCard().getId(new ExecutionContext())
+            ));
         }
 
+        // Which card currently has focus? (We'll focus the associated button)
+        Destination focusedCard = new Destination(
+            WyldCard.getInstance().getFocusedStack().getStackModel(),
+            WyldCard.getInstance().getFocusedCard().getId(new ExecutionContext())
+        );
+
+        // Generate thumbnails for each card
         for (Destination thisCard : recentCards) {
-            loadCard(thisCard);
+            addDestinationThumbnail(thisCard, thisCard.equals(focusedCard));
         }
     }
 
@@ -52,7 +61,7 @@ public class RecentCardsWindow extends WyldCardDialog {
         // Nothing to do
     }
 
-    private void loadCard(Destination destination) {
+    private void addDestinationThumbnail(Destination destination, boolean focused) {
         StackPart stack = WyldCard.getInstance().getOpenStack(destination.getStack());
         int cardNumber = stack.getStackModel().getIndexOfCardId(destination.getCardId());
 
@@ -75,6 +84,11 @@ public class RecentCardsWindow extends WyldCardDialog {
             button.setIcon(icon);
 
             thumbnailsPanel.add(button);
+
+            if (focused) {
+                button.requestFocus();
+            }
+
             loadedCard.dispose();
         });
     }
