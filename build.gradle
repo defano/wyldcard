@@ -64,7 +64,7 @@ idea {
 dependencies {
 	antlr "org.antlr:antlr4:4.7.1"
 
-    compile (group: 'com.defano.jmonet', name: 'jmonet', version: '0.3.0') {changing = true}
+    compile (group: 'com.defano.jmonet', name: 'jmonet', version: '0.3.1') {changing = true}
     compile (group: 'com.defano.jsegue', name: 'jsegue', version: '0.0.1') {changing = false}
 
 	compile group: 'com.intellij', name: 'javac2', version: '7.0.3'
