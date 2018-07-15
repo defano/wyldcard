@@ -45,7 +45,6 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     private int nextCardId = 0;
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
-    private LimitedDepthStack<Integer> backStack = new LimitedDepthStack<>(BACKSTACK_DEPTH);
     private List<CardModel> cardModels;
 
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
@@ -202,6 +201,14 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         return cardModels.indexOf(card);
     }
 
+    public Integer getIndexOfCardId(int cardId) {
+        return cardModels.stream()
+                .filter(c -> c.getId(null) == cardId)
+                .map(c -> cardModels.indexOf(c))
+                .findFirst()
+                .orElse(null);
+    }
+
     public int getIndexOfBackground(int backgroundId) {
         Optional<CardModel> card = cardModels.stream()
                 .filter(c -> c.getBackgroundId() == backgroundId)
@@ -245,10 +252,6 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     public BackgroundModel getBackground(int backgroundId) {
         return backgroundModels.get(backgroundId);
-    }
-
-    public LimitedDepthStack<Integer> getBackStack() {
-        return backStack;
     }
 
     public int getNextButtonId() {

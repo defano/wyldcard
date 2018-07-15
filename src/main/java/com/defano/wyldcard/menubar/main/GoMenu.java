@@ -4,11 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.wyldcard.window.layouts.RecentsWindow;
-
-import javax.swing.*;
 
 /**
  * The HyperCard Go menu.
@@ -38,13 +34,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Recent")
-                .withAction(e -> WindowBuilder.make(new RecentsWindow())
-                        .withTitle("Recent Cards")
-                        .asModal()
-                        .withModel(WyldCard.getInstance().getFocusedStack())
-                        .resizeable(true)
-                        .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
-                        .build())
+                .withAction(e -> WindowManager.getInstance().showRecentCardsWindow())
                 .withShortcut('R')
                 .build(this);
 

@@ -34,10 +34,24 @@ public class WindowBuilder<T extends WyldCardFrame> {
         return new WindowBuilder<>(window);
     }
 
-    public static JFrame buildHiddenPrintFrame() {
+    /**
+     * Creates a JFrame intended to be used when creating card screenshots (for use in visual effects processing and
+     * displaying card thumbnails).
+     *
+     * Swing has some seemingly odd requirements here. Components can only be printed if they're attached to a JFrame
+     * and that frame has been made visible at some point. If these conditions are not met, calls to
+     * {@link Component#printAll(Graphics)} produce empty or partially populated renderings. Ostensibly, this is a side
+     * effect of Swings Java-to-native component peering architecture.
+     *
+     * @return A JFrame intended to be used for screen printing.
+     */
+    public static JFrame buildHiddenScreenshotFrame() {
         JFrame frame = new JFrame();
-        frame.setLocation(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
+        // Frame doesn't have to be visible when grabbing screen, but *must* have been visible at some point.
         frame.setVisible(true);
+        frame.setVisible(false);
+
         return frame;
     }
 

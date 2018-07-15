@@ -9,6 +9,7 @@ import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class WindowManager implements WindowFinder, Themeable {
     private final VariableWatcher variableWatcher = new VariableWatcher();
     private final ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator();
     private final MagnificationPalette magnifierPalette = new MagnificationPalette();
+    private final JFrame hiddenPrintFrame = WindowBuilder.buildHiddenScreenshotFrame();
 
     private WindowManager() {
     }
@@ -218,12 +220,35 @@ public class WindowManager implements WindowFinder, Themeable {
         return magnifierPalette;
     }
 
+    public void showRecentCardsWindow() {
+        WindowBuilder.make(new RecentCardsWindow())
+                .withTitle("Recent Cards")
+                .asModal()
+                .resizeable(true)
+                .setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE)
+                .build();
+    }
+
+    /**
+     * Returns a JFrame intended to be used when creating card screenshots (for use in visual effects processing and
+     * displaying card thumbnails).
+     *
+     * Swing has some seemingly odd requirements here: Components can only be printed if they're attached to a JFrame
+     * and that frame has been made visible at some point. If these conditions are not met, calls to
+     * {@link Component#printAll(Graphics)} produce empty or partially populated renderings. Ostensibly, this is a side
+     * effect of Swing's Java-to-native component peering architecture.
+     *
+     * @return A JFrame intended to be used for screen printing.
+     */
+    public JFrame getScreenshotBufferWindow() {
+        return hiddenPrintFrame;
+    }
+
     /**
      * Gets a window (JFrame) in which to display the given stack. If a window already exists for this stack, then the
      * existing window is returned, otherwise a new window is created and bound to the stack. If the given stack
      * is null, a new, unbound stack window will be returned.
-     *
-     *
+     *z
      * @param context The execution context
      * @param stackPart The stack whose window should be retrieved
      * @return A window (new or existing) bound to the stack.

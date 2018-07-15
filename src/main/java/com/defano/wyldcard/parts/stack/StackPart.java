@@ -1,9 +1,6 @@
 package com.defano.wyldcard.parts.stack;
 
-import com.defano.hypertalk.ast.model.Owner;
-import com.defano.hypertalk.ast.model.PartType;
-import com.defano.hypertalk.ast.model.SystemMessage;
-import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.model.specifiers.PartIdSpecifier;
 import com.defano.hypertalk.ast.model.specifiers.VisualEffectSpecifier;
 import com.defano.hypertalk.exception.HtException;
@@ -162,9 +159,10 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart gotoPopCard(ExecutionContext context, VisualEffectSpecifier visualEffect) {
-        if (!stackModel.getBackStack().isEmpty()) {
+        if (!WyldCard.getInstance().getBackstack().isEmpty()) {
             try {
-                CardModel model = (CardModel) getStackModel().findPart(context, new PartIdSpecifier(Owner.STACK, PartType.CARD, stackModel.getBackStack().pop()));
+                Destination poppedDestination = WyldCard.getInstance().getBackstack().pop();
+                CardModel model = (CardModel) poppedDestination.getStack().findPart(context, new PartIdSpecifier(Owner.STACK, PartType.CARD, poppedDestination.getCardId()));
                 return gotoCard(context, getStackModel().getIndexOfCard(model), visualEffect, false);
             } catch (PartException e) {
                 return null;
@@ -472,7 +470,8 @@ public class StackPart implements Part, PropertyChangeObserver {
 
         // When requested, push the current card onto the backstack
         if (push) {
-            stackModel.getBackStack().push(displayedCard.getId(context));
+            Destination destination = new Destination(this.getStackModel(), displayedCard.getId(context));
+            WyldCard.getInstance().getBackstack().push(destination);
         }
 
         // Notify observers that current card is going away
