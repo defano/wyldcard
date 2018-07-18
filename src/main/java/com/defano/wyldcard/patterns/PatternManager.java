@@ -17,7 +17,7 @@ public class PatternManager {
     }
 
     public void start() {
-        ToolsContext.getInstance().getForegroundColorProvider().subscribe(color -> HyperCardPatternFactory.getInstance().invalidatePatternCache());
-        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(color -> HyperCardPatternFactory.getInstance().invalidatePatternCache());
+        ToolsContext.getInstance().getForegroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
+        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
     }
 }

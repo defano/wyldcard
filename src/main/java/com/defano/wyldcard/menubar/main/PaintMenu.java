@@ -10,7 +10,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.patterns.HyperCardPatternFactory;
+import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 
 import javax.swing.*;
@@ -46,7 +46,7 @@ public class PaintMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Fill")
                 .withEnabledProvider(ToolsContext.getInstance().hasTransformableImageSelectionProvider())
-                .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(HyperCardPatternFactory.getInstance().getPattern(ToolsContext.getInstance().getFillPattern()), new DefaultFillFunction()))
+                .withAction(e -> ((TransformableImageSelection) ToolsContext.getInstance().getPaintTool()).fill(WyldCardPatternFactory.getInstance().getPattern(ToolsContext.getInstance().getFillPattern()), new DefaultFillFunction()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

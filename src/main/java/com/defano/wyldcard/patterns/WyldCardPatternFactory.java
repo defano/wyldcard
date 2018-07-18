@@ -8,23 +8,23 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class HyperCardPatternFactory {
+public class WyldCardPatternFactory {
 
-    private final static HyperCardPatternFactory instance = new HyperCardPatternFactory();
+    private final static WyldCardPatternFactory instance = new WyldCardPatternFactory();
 
     private final static int SPRITE_MATRIX_WIDTH = 17;
     private final static int SPRITE_MATRIX_HEIGHT = 12;
 
-    private final static int PATTERN_WIDTH = 8;
-    private final static int PATTERN_HEIGHT = 8;
+    public final static int PATTERN_WIDTH = 8;
+    public final static int PATTERN_HEIGHT = 8;
 
     private HashMap<Integer, TexturePaint> patternCache = new HashMap<>();
 
-    private HyperCardPatternFactory() {
+    private WyldCardPatternFactory() {
         invalidatePatternCache();
     }
 
-    public static HyperCardPatternFactory getInstance() {
+    public static WyldCardPatternFactory getInstance() {
         return instance;
     }
 
@@ -52,7 +52,7 @@ public class HyperCardPatternFactory {
         int yOffset = 1 + (row * SPRITE_MATRIX_HEIGHT) + row;
 
         try {
-            BufferedImage spriteSheet = ImageIO.read(HyperCardPatternFactory.class.getResource("/patterns/patterns.png"));
+            BufferedImage spriteSheet = ImageIO.read(WyldCardPatternFactory.class.getResource("/patterns/patterns.png"));
             BufferedImage sprite = spriteSheet.getSubimage(xOffset, yOffset, PATTERN_WIDTH, PATTERN_HEIGHT);
 
             for (int x = 0; x < sprite.getWidth(); x++) {

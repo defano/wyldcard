@@ -3,6 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.patterns.PatternPaletteButton;
 import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WyldCardWindow;
 import io.reactivex.functions.Consumer;
 
@@ -96,6 +97,18 @@ public class PatternPalette extends WyldCardWindow implements Consumer {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     ToolsContext.getInstance().setPattern(i);
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        WindowBuilder.make(new PatternEditor())
+                                .withTitle("Pattern Editor")
+                                .withModel(i)
+                                .resizeable(false)
+                                .asModal()
+                                .build();
+                    }
                 }
             });
         }

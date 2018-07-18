@@ -22,7 +22,7 @@ import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.patterns.HyperCardPatternFactory;
+import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
@@ -449,7 +449,7 @@ public class ToolsContext {
         PaintTool selectedTool = PaintToolBuilder.create(selectedToolType)
                 .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintObservable(getStrokePaintProviderForTool(selectedToolType))
-                .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(HyperCardPatternFactory.getInstance().getPattern(t)) : Optional.empty()))
+                .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(WyldCardPatternFactory.getInstance().getPattern(t)) : Optional.empty()))
                 .withFontObservable(FontContext.getInstance().getPaintFontProvider())
                 .withFontColorObservable(foregroundColorProvider)
                 .withShapeSidesObservable(shapeSidesProvider)
@@ -497,7 +497,7 @@ public class ToolsContext {
         switch (type) {
             case PAINTBRUSH:
             case AIRBRUSH:
-                return fillPatternProvider.map(patternId -> HyperCardPatternFactory.getInstance().getPattern(patternId));
+                return fillPatternProvider.map(patternId -> WyldCardPatternFactory.getInstance().getPattern(patternId));
 
             default:
                 return linePaintProvider;

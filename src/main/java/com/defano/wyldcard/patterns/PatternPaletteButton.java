@@ -114,7 +114,7 @@ public class PatternPaletteButton extends JLabel {
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setPaint(HyperCardPatternFactory.getInstance().getPattern(patternId));
+        g.setPaint(WyldCardPatternFactory.getInstance().getPattern(patternId));
         g.fillRect(0, 0, width, height);
 
         g.dispose();
