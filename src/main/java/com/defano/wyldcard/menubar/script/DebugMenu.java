@@ -46,7 +46,7 @@ public class DebugMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Set Trace Delay...")
                 .withEnabledProvider(DebugContext.getInstance().getIsDebuggingProvider())
-                .withAction(a -> WindowBuilder.make(new TraceDelay()).asModal().withTitle("Trace Delay").build())
+                .withAction(a -> new WindowBuilder<>(new TraceDelay()).asModal().withTitle("Trace Delay").build())
                 .build(this);
 
         addSeparator();

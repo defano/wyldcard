@@ -10,7 +10,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class IntensityPalette extends WyldCardDialog {
+public class IntensityPalette extends WyldCardDialog<Object> {
     private JSlider intensitySlider;
     private JPanel intensityPanel;
 

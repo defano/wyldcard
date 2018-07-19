@@ -130,11 +130,11 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
                 .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
-                .withAction(e -> WindowBuilder.make(new IconCreator())
+                .withAction(e -> new WindowBuilder<>(new IconCreator())
+                        .withModel(ToolsContext.getInstance().getSelectedImage())
                         .resizeable(false)
                         .withTitle("Create Icon")
                         .asModal()
-                        .withModel(ToolsContext.getInstance().getSelectedImage())
                         .build())
                 .withShortcut('I')
                 .build(this);

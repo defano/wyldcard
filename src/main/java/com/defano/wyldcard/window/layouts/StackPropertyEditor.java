@@ -15,7 +15,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.Optional;
 
-public class StackPropertyEditor extends WyldCardDialog {
+public class StackPropertyEditor extends WyldCardDialog<StackModel> {
     private StackModel model;
 
     private JPanel propertiesPanel;
@@ -59,8 +59,8 @@ public class StackPropertyEditor extends WyldCardDialog {
     }
 
     @Override
-    public void bindModel(Object data) {
-        model = (StackModel) data;
+    public void bindModel(StackModel data) {
+        model = data;
         Optional<File> stackFile = model.getSavedStackFileProvider().blockingFirst();
 
         stackName.setText(model.getStackName(new ExecutionContext()));

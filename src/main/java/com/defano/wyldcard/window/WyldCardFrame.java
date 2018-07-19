@@ -8,7 +8,7 @@ import io.reactivex.Observable;
 import javax.swing.*;
 import java.awt.*;
 
-public interface WyldCardFrame<WindowType extends Window> {
+public interface WyldCardFrame<WindowType extends Window, ModelType> {
 
     int DEFAULT_SEPARATION = 10;
 
@@ -25,7 +25,7 @@ public interface WyldCardFrame<WindowType extends Window> {
      *
      * @param data An object representing the data to be displayed in the window.
      */
-    void bindModel(Object data);
+    void bindModel(ModelType data);
 
     /**
      * Close and dispose the window.
@@ -200,40 +200,40 @@ public interface WyldCardFrame<WindowType extends Window> {
     }
 
     @RunOnDispatch
-    default WyldCardFrame<WindowType> setLocationRightOf(Component component) {
+    default WyldCardFrame<WindowType, ModelType> setLocationRightOf(Component component) {
         int targetX = component.getX() + component.getWidth() + DEFAULT_SEPARATION;
         getWindow().setLocation(targetX, getWindow().getY());
         return this;
     }
 
     @RunOnDispatch
-    default WyldCardFrame<WindowType> setLocationLeftOf(Component component) {
+    default WyldCardFrame<WindowType, ModelType> setLocationLeftOf(Component component) {
         int targetX = component.getX() - getWindow().getWidth() - DEFAULT_SEPARATION;
         getWindow().setLocation(targetX, getWindow().getY());
         return this;
     }
 
     @RunOnDispatch
-    default WyldCardFrame<WindowType> setLocationBelow(Component component) {
+    default WyldCardFrame<WindowType, ModelType> setLocationBelow(Component component) {
         int targetY = component.getY() + component.getHeight() + DEFAULT_SEPARATION;
         getWindow().setLocation(getWindow().getX(), targetY);
         return this;
     }
 
     @RunOnDispatch
-    default WyldCardFrame<WindowType> alignTopTo(Component component) {
+    default WyldCardFrame<WindowType, ModelType> alignTopTo(Component component) {
         getWindow().setLocation(getWindow().getX(), component.getY());
         return this;
     }
 
     @RunOnDispatch
-    default WyldCardFrame<WindowType> alignLeftTo(Component component) {
+    default WyldCardFrame<WindowType, ModelType> alignLeftTo(Component component) {
         getWindow().setLocation(component.getX(), getWindow().getY());
         return this;
     }
 
     @RunOnDispatch
-    default WyldCardFrame<WindowType> alignTopStaggeredTo(Component component) {
+    default WyldCardFrame<WindowType, ModelType> alignTopStaggeredTo(Component component) {
         getWindow().setLocation(getWindow().getX(), component.getY() + DEFAULT_SEPARATION);
         return this;
     }

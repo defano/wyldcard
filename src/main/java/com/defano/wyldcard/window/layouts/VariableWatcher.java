@@ -19,7 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-public class VariableWatcher extends WyldCardWindow implements SymbolObserver {
+public class VariableWatcher extends WyldCardWindow<Object> implements SymbolObserver {
 
     private JPanel windowPanel;
     private JTable variablesTable;

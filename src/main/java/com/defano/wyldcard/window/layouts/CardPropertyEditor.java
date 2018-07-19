@@ -17,7 +17,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class CardPropertyEditor extends WyldCardDialog {
+public class CardPropertyEditor extends WyldCardDialog<CardPart> {
     private CardModel cardModel;
 
     private JTextField cardName;
@@ -70,10 +70,9 @@ public class CardPropertyEditor extends WyldCardDialog {
     }
 
     @Override
-    public void bindModel(Object data) {
+    public void bindModel(CardPart card) {
         ExecutionContext context = new ExecutionContext();
 
-        CardPart card = (CardPart) data;
         cardModel = card.getCardModel();
 
         // Don't display "default" name ('card id xxx')

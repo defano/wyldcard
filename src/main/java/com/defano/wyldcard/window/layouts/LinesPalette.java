@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class LinesPalette extends WyldCardDialog implements Consumer<Stroke> {
+public class LinesPalette extends WyldCardDialog<Object> implements Consumer<Stroke> {
     private JPanel linesPanel;
 
     private JButton px1;

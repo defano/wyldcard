@@ -1,8 +1,13 @@
 package com.defano.wyldcard.window.layouts;
 
 import com.defano.jmonet.canvas.JMonetCanvas;
+import com.defano.jmonet.canvas.layer.ImageLayer;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
@@ -11,18 +16,42 @@ import com.intellij.uiDesigner.core.Spacer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
-public class PatternEditor extends WyldCardDialog {
+public class PatternEditor extends WyldCardDialog<Integer> {
+
+    private final static int EDIT_SCALE = 32;
+    private final static int PREVIEW_SIZE = 80;
+
     private JPanel windowPanel;
     private JPanel editorPanel;
     private JButton saveButton;
     private JPanel patternPanel;
+    private JButton revertButton;
+    private JLabel preview;
     private JMonetCanvas patternCanvas;
 
+    private int patternId;
+
     public PatternEditor() {
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                patternCanvas.dispose();
+            }
+        });
+
+        revertButton.addActionListener(e -> {
+            TexturePaint paint = WyldCardPatternFactory.getInstance().getPattern(patternId);
+            setPreviewPaint(paint);
+            setCanvasImage(makePaintImage(paint));
+        });
+
         saveButton.addActionListener(e -> {
-            patternCanvas.dispose();
+            StackModel focusedStack = WyldCard.getInstance().getFocusedStack().getStackModel();
+            focusedStack.setUserPattern(patternId, patternCanvas.getCanvasImage());
             dispose();
         });
     }
@@ -33,39 +62,53 @@ public class PatternEditor extends WyldCardDialog {
     }
 
     @Override
-    public void bindModel(Object data) {
-        final int scale = 32;
-        final int previewSize = 80;
+    public void bindModel(Integer patternId) {
 
-        TexturePaint paint = WyldCardPatternFactory.getInstance().getPattern((int) data);
+        this.patternId = patternId;
+        TexturePaint paint = WyldCardPatternFactory.getInstance().getPattern(patternId);
+
+        setPreviewPaint(paint);
+
+        patternCanvas = new JMonetCanvas(makePaintImage(paint));
+        patternCanvas.setScale(EDIT_SCALE);
+        patternCanvas.addCanvasCommitObserver((canvas, imageLayerSet, canvasImage) -> setPreviewPaint(new TexturePaint(canvasImage, new Rectangle(0, 0, WyldCardPatternFactory.PATTERN_WIDTH, WyldCardPatternFactory.PATTERN_HEIGHT))));
+
+        PaintToolBuilder.create(PaintToolType.PENCIL)
+                .makeActiveOnCanvas(patternCanvas)
+                .withErasePaint(Color.WHITE)
+                .withAntiAliasing(Interpolation.NONE)
+                .build();
+
+        editorPanel.setSize(new Dimension(EDIT_SCALE * WyldCardPatternFactory.PATTERN_WIDTH, EDIT_SCALE * WyldCardPatternFactory.PATTERN_HEIGHT));
+        editorPanel.add(patternCanvas);
+        editorPanel.invalidate();
+    }
+
+    private BufferedImage makePaintImage(TexturePaint paint) {
         BufferedImage paintImage = new BufferedImage(WyldCardPatternFactory.PATTERN_WIDTH, WyldCardPatternFactory.PATTERN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        BufferedImage previewImage = new BufferedImage(previewSize, previewSize, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = paintImage.createGraphics();
         g.setPaint(paint);
         g.fillRect(0, 0, WyldCardPatternFactory.PATTERN_WIDTH, WyldCardPatternFactory.PATTERN_HEIGHT);
         g.dispose();
 
-        g = previewImage.createGraphics();
+        return paintImage;
+    }
+
+    private void setCanvasImage(BufferedImage image) {
+        patternCanvas.commit(new ImageLayerSet(new ImageLayer(image)));
+    }
+
+    private void setPreviewPaint(TexturePaint paint) {
+        BufferedImage previewImage = new BufferedImage(PREVIEW_SIZE, PREVIEW_SIZE, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g = previewImage.createGraphics();
         g.setPaint(paint);
-        g.fillRect(0, 0, previewSize, previewSize);
+        g.fillRect(0, 0, PREVIEW_SIZE, PREVIEW_SIZE);
         g.dispose();
 
-        JLabel preview = new JLabel();
         ImageIcon previewIcon = new ImageIcon(previewImage);
         preview.setIcon(previewIcon);
-        patternPanel.add(preview);
-
-        patternCanvas = new JMonetCanvas(paintImage);
-        patternCanvas.setScale(scale);
-
-        PaintToolBuilder.create(PaintToolType.PENCIL)
-                .makeActiveOnCanvas(patternCanvas)
-                .build();
-
-        editorPanel.setSize(new Dimension(scale * WyldCardPatternFactory.PATTERN_WIDTH, scale * WyldCardPatternFactory.PATTERN_HEIGHT));
-        editorPanel.add(patternCanvas);
-        editorPanel.invalidate();
     }
 
     @Override
@@ -89,22 +132,28 @@ public class PatternEditor extends WyldCardDialog {
      */
     private void $$$setupUI$$$() {
         windowPanel = new JPanel();
-        windowPanel.setLayout(new GridLayoutManager(4, 2, new Insets(10, 10, 10, 10), -1, -1));
+        windowPanel.setLayout(new GridLayoutManager(5, 2, new Insets(10, 10, 10, 10), -1, -1));
         editorPanel = new JPanel();
         editorPanel.setLayout(new BorderLayout(0, 0));
-        windowPanel.add(editorPanel, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        windowPanel.add(editorPanel, new GridConstraints(0, 0, 4, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         editorPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
-        final Spacer spacer1 = new Spacer();
-        windowPanel.add(spacer1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         patternPanel = new JPanel();
         patternPanel.setLayout(new BorderLayout(0, 0));
         windowPanel.add(patternPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         patternPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
+        preview = new JLabel();
+        preview.setText("");
+        patternPanel.add(preview, BorderLayout.CENTER);
+        final Spacer spacer1 = new Spacer();
+        windowPanel.add(spacer1, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         saveButton = new JButton();
         saveButton.setText("Save");
-        windowPanel.add(saveButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        windowPanel.add(saveButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
-        windowPanel.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        windowPanel.add(spacer2, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        revertButton = new JButton();
+        revertButton.setText("Revert");
+        windowPanel.add(revertButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         windowPanel.add(spacer3, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }

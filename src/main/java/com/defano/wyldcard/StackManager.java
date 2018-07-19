@@ -10,6 +10,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
@@ -305,6 +306,9 @@ public class StackManager implements StackNavigationObserver {
                                 getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
                                 !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getCanvas().peek(0).getImageLayers()))
         );
+
+        // Update patterns to show user-created patterns
+        WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         stackPart.addNavigationObserver(this);
     }

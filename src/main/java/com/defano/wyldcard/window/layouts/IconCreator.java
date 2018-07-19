@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class IconCreator extends WyldCardDialog {
+public class IconCreator extends WyldCardDialog<BufferedImage> {
     private BufferedImage iconImage;
 
     private JTextField iconName;
@@ -42,8 +42,8 @@ public class IconCreator extends WyldCardDialog {
     }
 
     @Override
-    public void bindModel(Object data) {
-        this.iconImage = (BufferedImage) data;
+    public void bindModel(BufferedImage data) {
+        this.iconImage = data;
     }
 
     {

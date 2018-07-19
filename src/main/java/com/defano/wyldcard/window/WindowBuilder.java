@@ -8,9 +8,9 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class WindowBuilder<T extends WyldCardFrame> {
+public class WindowBuilder<ModelType, WindowType extends WyldCardFrame<?,ModelType>> {
 
-    private final T window;
+    private final WindowType window;
     private Point location = null;
     private Component relativeLocation = null;
     private boolean initiallyVisible = true;
@@ -19,19 +19,11 @@ public class WindowBuilder<T extends WyldCardFrame> {
     private boolean isFocusable = true;
     private WindowClosingAction actionOnClose = null;
 
-    private WindowBuilder(T window) {
+    public WindowBuilder(WindowType window) {
         this.window = window;
 
         this.window.setContentPane(window.getWindowPanel());
         this.window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    }
-
-    public static WindowBuilder<WyldCardFrame> make(WyldCardWindow window) {
-        return new WindowBuilder<>(window);
-    }
-
-    public static WindowBuilder<WyldCardDialog> make(WyldCardDialog window) {
-        return new WindowBuilder<>(window);
     }
 
     /**
@@ -80,7 +72,7 @@ public class WindowBuilder<T extends WyldCardFrame> {
     }
 
     @RunOnDispatch
-    public WindowBuilder withModel(Object model) {
+    public WindowBuilder withModel(ModelType model) {
         window.bindModel(model);
         return this;
     }
@@ -135,13 +127,13 @@ public class WindowBuilder<T extends WyldCardFrame> {
     }
 
     @RunOnDispatch
-    public T buildReplacing(WyldCardFrame window) {
+    public WindowType buildReplacing(WyldCardFrame window) {
         window.getWindow().dispose();
         return build();
     }
 
     @RunOnDispatch
-    public T build() {
+    public WindowType build() {
         this.window.getWindow().pack();
 
         if (location != null) {

@@ -19,7 +19,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class PaintToolsPalette extends WyldCardWindow implements Consumer {
+public class PaintToolsPalette extends WyldCardWindow<Object> implements Consumer {
     private JPanel palettePanel;
 
     private JButton selection;

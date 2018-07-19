@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class IconPicker extends WyldCardDialog {
+public class IconPicker extends WyldCardDialog<ButtonModel> {
 
     private static final int BUTTON_SIZE = 60;
 
@@ -54,8 +54,8 @@ public class IconPicker extends WyldCardDialog {
 
     @Override
     @RunOnDispatch
-    public void bindModel(Object data) {
-        this.model = (ButtonModel) data;
+    public void bindModel(ButtonModel data) {
+        this.model = data;
 
         iconAlign.setSelectedItem(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICONALIGN).stringValue());
         buttons = getButtons();

@@ -1,7 +1,9 @@
 package com.defano.wyldcard.parts.model;
 
 import com.defano.wyldcard.parts.Messagable;
+import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayer;
+import com.defano.wyldcard.parts.field.FieldModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
@@ -430,10 +432,10 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                     setScriptEditorCaretPosition(caretPosition);
                 }
 
-                WindowBuilder.make(newEditor.get())
+                new WindowBuilder<>(newEditor.get())
+                        .withModel(this)
                         .withTitle("Script of " + getName(context))
                         .ownsMenubar()
-                        .withModel(this)
                         .resizeable(true)
                         .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .build();
@@ -453,13 +455,24 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * @param context The execution context.
      */
     public void editProperties(ExecutionContext context) {
-        ThreadUtils.invokeAndWaitAsNeeded(() ->
-                WindowBuilder.make(getType() == PartType.FIELD ? new FieldPropertyEditor() : new ButtonPropertyEditor())
-                        .asModal()
-                        .withTitle(getName(context))
-                        .withModel(this)
-                        .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
-                        .resizeable(false)
-                        .build());
+        ThreadUtils.invokeAndWaitAsNeeded(() -> {
+                if (getType() == PartType.FIELD) {
+                    new WindowBuilder<>(new FieldPropertyEditor())
+                            .withModel((FieldModel) this)
+                            .asModal()
+                            .withTitle(getName(context))
+                            .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .resizeable(false)
+                            .build();
+                } else {
+                    new WindowBuilder<>(new ButtonPropertyEditor())
+                            .withModel((ButtonModel) this)
+                            .asModal()
+                            .withTitle(getName(context))
+                            .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .resizeable(false)
+                            .build();
+                }
+        });
     }
 }

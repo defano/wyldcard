@@ -147,10 +147,10 @@ public class StyleMenu extends HyperCardMenu {
                 .named("Other...")
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
                 .withAction(e ->
-                        WindowBuilder.make(new FontSizePicker())
+                        new WindowBuilder<>(new FontSizePicker())
+                                .withModel(null)
                                 .withTitle("Font Size")
                                 .asModal()
-                                .withModel(null)
                                 .build())
                 .build(this);
     }

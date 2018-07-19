@@ -17,7 +17,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class BackgroundPropertyEditor extends WyldCardDialog {
+public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
     private CardPart cardPart;
     private BackgroundModel backgroundModel;
 
@@ -62,12 +62,12 @@ public class BackgroundPropertyEditor extends WyldCardDialog {
 
     @Override
     @RunOnDispatch
-    public void bindModel(Object data) {
+    public void bindModel(CardPart cardPart) {
         ExecutionContext context = new ExecutionContext();
-        cardPart = (CardPart) data;
-        backgroundModel = cardPart.getCardModel().getBackgroundModel();
+        this.cardPart = cardPart;
+        backgroundModel = this.cardPart.getCardModel().getBackgroundModel();
 
-        int backgroundId = cardPart.getCardModel().getBackgroundId();
+        int backgroundId = this.cardPart.getCardModel().getBackgroundId();
         backgroundIdLabel.setText("Background ID: " + backgroundId);
         cantDeleteBkgndCheckBox.setSelected(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_CANTDELETE).booleanValue());
         dontSearchCheckBox.setSelected(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_DONTSEARCH).booleanValue());
@@ -78,9 +78,9 @@ public class BackgroundPropertyEditor extends WyldCardDialog {
             backgroundName.setText(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_NAME).stringValue());
         }
 
-        long cardCount = cardPart.getCardModel().getStackModel().getCardsInBackground(backgroundId).size();
-        long fieldCount = cardPart.getCardModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
-        long buttonCount = cardPart.getCardModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
+        long cardCount = this.cardPart.getCardModel().getStackModel().getCardsInBackground(backgroundId).size();
+        long fieldCount = this.cardPart.getCardModel().getPartCount(context, PartType.FIELD, Owner.BACKGROUND);
+        long buttonCount = this.cardPart.getCardModel().getPartCount(context, PartType.BUTTON, Owner.BACKGROUND);
 
         cardCountLabel.setText(StringUtils.pluralize(cardCount, "Background shared by %d card.", "Background shared by %d cards."));
         buttonCountLabel.setText(StringUtils.pluralize(buttonCount, "Contains %d background button.", "Contains %d background buttons."));
