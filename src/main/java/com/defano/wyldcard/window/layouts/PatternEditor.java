@@ -75,7 +75,7 @@ public class PatternEditor extends WyldCardDialog<Integer> {
 
         PaintToolBuilder.create(PaintToolType.PENCIL)
                 .makeActiveOnCanvas(patternCanvas)
-                .withErasePaint(Color.WHITE)
+                .withEraseColor(Color.WHITE)
                 .withAntiAliasing(Interpolation.NONE)
                 .build();
 
