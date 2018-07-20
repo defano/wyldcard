@@ -280,10 +280,13 @@ public class StackManager implements StackNavigationObserver {
         // Make the focused stack the window dock
         WindowDock.getInstance().setDock(stackPart.getOwningStackWindow());
 
+        focusedStack.onNext(stackPart);
+
+        // Update patterns to show user-created patterns
+        WyldCardPatternFactory.getInstance().invalidatePatternCache();
+
         // Make the selected tool active on the focused card
         ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
-
-        focusedStack.onNext(stackPart);
 
         // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());
@@ -306,9 +309,6 @@ public class StackManager implements StackNavigationObserver {
                                 getFocusedCard().getCanvas().getRedoBufferDepth() == 0 &&
                                 !ImageLayerUtils.layersRemovesPaint(getFocusedCard().getCanvas().peek(0).getImageLayers()))
         );
-
-        // Update patterns to show user-created patterns
-        WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         stackPart.addNavigationObserver(this);
     }
