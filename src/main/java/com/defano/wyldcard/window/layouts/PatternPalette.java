@@ -1,11 +1,9 @@
 package com.defano.wyldcard.window.layouts;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.patterns.PatternInvalidatonObserver;
 import com.defano.wyldcard.patterns.PatternPaletteButton;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import io.reactivex.functions.Consumer;
