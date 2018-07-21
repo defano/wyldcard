@@ -10,6 +10,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
+import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
@@ -279,10 +280,13 @@ public class StackManager implements StackNavigationObserver {
         // Make the focused stack the window dock
         WindowDock.getInstance().setDock(stackPart.getOwningStackWindow());
 
+        focusedStack.onNext(stackPart);
+
+        // Update patterns to show user-created patterns
+        WyldCardPatternFactory.getInstance().invalidatePatternCache();
+
         // Make the selected tool active on the focused card
         ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
-
-        focusedStack.onNext(stackPart);
 
         // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());

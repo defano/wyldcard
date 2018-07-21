@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class BrushesPalette extends WyldCardDialog implements Consumer<PaintBrush> {
+public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<PaintBrush> {
 
     private JPanel brushesPanel;
 

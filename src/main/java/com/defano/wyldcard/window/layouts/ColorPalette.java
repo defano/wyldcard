@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import java.awt.*;
 
-public class ColorPalette extends WyldCardWindow {
+public class ColorPalette extends WyldCardWindow<Object> {
 
     private JPanel panel;
     private JTabbedPane tabs;

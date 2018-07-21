@@ -10,9 +10,9 @@ import com.defano.wyldcard.parts.bkgnd.BackgroundModel;
 import com.defano.wyldcard.parts.card.CardModel;
 import com.defano.wyldcard.parts.finder.StackPartFinder;
 import com.defano.wyldcard.parts.model.PartModel;
+import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.serializer.Serializer;
-import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -36,9 +36,10 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public static final String PROP_SHORTNAME = "short name";
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";
-    private static final int BACKSTACK_DEPTH = 20;
+
     private final Map<Integer, BackgroundModel> backgroundModels;
     private final Map<String, BufferedImage> userIcons;
+    private final Map<Integer, BufferedImage> userPatterns;
 
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
@@ -56,6 +57,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         this.cardModels = new ArrayList<>();
         this.backgroundModels = new HashMap<>();
         this.userIcons = new HashMap<>();
+        this.userPatterns = new HashMap<>();
 
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
@@ -302,6 +304,15 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         }
 
         return icons;
+    }
+
+    public BufferedImage getUserPattern(int patternId) {
+        return userPatterns.get(patternId);
+    }
+
+    public void setUserPattern(int patternId, BufferedImage pattern) {
+        userPatterns.put(patternId, pattern);
+        WyldCardPatternFactory.getInstance().invalidatePatternCache();
     }
 
     /**

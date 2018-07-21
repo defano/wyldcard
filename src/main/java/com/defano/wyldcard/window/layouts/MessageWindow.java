@@ -18,7 +18,7 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class MessageWindow extends WyldCardWindow implements PropertyChangeObserver {
+public class MessageWindow extends WyldCardWindow<Object> implements PropertyChangeObserver {
 
     private MsgBoxModel partModel;
     private MessageBoxTextField messageBox;

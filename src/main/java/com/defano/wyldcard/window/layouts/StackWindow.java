@@ -19,7 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class StackWindow extends WyldCardWindow implements StackObserver, StackNavigationObserver, CurtainObserver {
+public class StackWindow extends WyldCardWindow<StackPart> implements StackObserver, StackNavigationObserver, CurtainObserver {
 
     private final static int CARD_LAYER = 0;
     private final static int CURTAIN_LAYER = 1;
@@ -80,28 +80,22 @@ public class StackWindow extends WyldCardWindow implements StackObserver, StackN
      */
     @Override
     @RunOnDispatch
-    public void bindModel(Object data) {
+    public void bindModel(StackPart data) {
         ExecutionContext context = new ExecutionContext();
 
-        if (data instanceof StackPart) {
-
-            if (this.stack != null) {
-                stack.removeObserver(this);
-                stack.removeNavigationObserver(this);
-            }
-
-            this.stack = (StackPart) data;
-            this.card = stack.getDisplayedCard();
-
-            getWindowPanel().setPreferredSize(stack.getStackModel().getSize(context));
-
-            stack.addObserver(this);
-            stack.addNavigationObserver(this);
-            stack.getCurtainManager().addScreenCurtainObserver(this);
-
-        } else {
-            throw new RuntimeException("Bug! Don't know how to bind data class to window." + data);
+        if (this.stack != null) {
+            stack.removeObserver(this);
+            stack.removeNavigationObserver(this);
         }
+
+        this.stack = data;
+        this.card = stack.getDisplayedCard();
+
+        getWindowPanel().setPreferredSize(stack.getStackModel().getSize(context));
+
+        stack.addObserver(this);
+        stack.addNavigationObserver(this);
+        stack.getCurtainManager().addScreenCurtainObserver(this);
     }
 
     /**

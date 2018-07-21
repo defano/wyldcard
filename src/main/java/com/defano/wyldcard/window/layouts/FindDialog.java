@@ -8,7 +8,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import javax.swing.*;
 import java.awt.*;
 
-public class FindDialog extends WyldCardDialog {
+public class FindDialog extends WyldCardDialog<ScriptEditor> {
 
     private JTextField findField;
     private JRadioButton wholeWordRadioButton;
@@ -41,8 +41,8 @@ public class FindDialog extends WyldCardDialog {
     }
 
     @Override
-    public void bindModel(Object data) {
-        editor = (ScriptEditor) data;
+    public void bindModel(ScriptEditor scriptEditor) {
+        editor = scriptEditor;
 
         wholeWordRadioButton.setSelected(editor.getContext().getWholeWord());
         caseSensitiveCheckBox.setSelected(editor.getContext().getMatchCase());

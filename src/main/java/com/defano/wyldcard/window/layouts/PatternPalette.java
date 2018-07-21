@@ -2,7 +2,9 @@ package com.defano.wyldcard.window.layouts;
 
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.patterns.PatternPaletteButton;
+import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import io.reactivex.functions.Consumer;
 
@@ -11,7 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PatternPalette extends WyldCardWindow implements Consumer {
+public class PatternPalette extends WyldCardWindow<Object> implements Consumer {
 
     private final static int PATTERN_WIDTH = 30;
     private final static int PATTERN_HEIGHT = 20;
@@ -76,6 +78,8 @@ public class PatternPalette extends WyldCardWindow implements Consumer {
         ToolsContext.getInstance().getFillPatternProvider().subscribe(this);
         ToolsContext.getInstance().getBackgroundColorProvider().subscribe(this);
         ToolsContext.getInstance().getForegroundColorProvider().subscribe(this);
+
+        WyldCardPatternFactory.getInstance().addPatternInvalidationObserver(() -> redrawPatternButtons());
     }
 
     @Override
@@ -96,6 +100,13 @@ public class PatternPalette extends WyldCardWindow implements Consumer {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     ToolsContext.getInstance().setPattern(i);
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        WindowManager.getInstance().showPatternEditor();
+                    }
                 }
             });
         }

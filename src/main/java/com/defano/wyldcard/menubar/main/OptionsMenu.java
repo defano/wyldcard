@@ -54,7 +54,7 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Edit Pattern...")
-                .disabled()
+                .withAction(a -> WindowManager.getInstance().showPatternEditor())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

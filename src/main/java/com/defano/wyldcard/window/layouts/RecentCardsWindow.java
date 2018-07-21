@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 
-public class RecentCardsWindow extends WyldCardDialog {
+public class RecentCardsWindow extends WyldCardDialog<Object> {
     private JPanel windowPanel;
     private JPanel thumbnailsPanel;
     private JScrollPane scrollPane;

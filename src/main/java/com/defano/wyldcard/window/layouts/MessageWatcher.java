@@ -14,7 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class MessageWatcher extends WyldCardWindow {
+public class MessageWatcher extends WyldCardWindow<Object> {
 
     private JPanel windowPanel;
     private JCheckBox suppressIdleCheckBox;

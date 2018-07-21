@@ -7,7 +7,7 @@ import io.reactivex.subjects.Subject;
 import javax.swing.*;
 import java.awt.event.*;
 
-public abstract class WyldCardWindow extends JFrame implements WyldCardFrame<JFrame> {
+public abstract class WyldCardWindow<ModelType> extends JFrame implements WyldCardFrame<JFrame, ModelType> {
 
     private final Subject<Boolean> windowVisibleProvider = BehaviorSubject.createDefault(false);
     private final Subject<Boolean> windowFocusedProvider = BehaviorSubject.createDefault(false);

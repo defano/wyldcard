@@ -45,30 +45,30 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Card Info...")
-                .withAction(e -> WindowBuilder.make(new CardPropertyEditor())
+                .withAction(e -> new WindowBuilder<>(new CardPropertyEditor())
+                        .withModel(WyldCard.getInstance().getFocusedCard())
                         .asModal()
                         .withTitle("Card Properties")
-                        .withModel(WyldCard.getInstance().getFocusedCard())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Background Info...")
-                .withAction(e -> WindowBuilder.make(new BackgroundPropertyEditor())
+                .withAction(e -> new WindowBuilder<>(new BackgroundPropertyEditor())
+                        .withModel(WyldCard.getInstance().getFocusedCard())
                         .withTitle("Background Properties")
                         .asModal()
-                        .withModel(WyldCard.getInstance().getFocusedCard())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Stack Info...")
-                .withAction(e -> WindowBuilder.make(new StackPropertyEditor())
+                .withAction(e -> new WindowBuilder<>(new StackPropertyEditor())
+                        .withModel(WyldCard.getInstance().getFocusedStack().getStackModel())
                         .withTitle("Stack Properties")
                         .asModal()
-                        .withModel(WyldCard.getInstance().getFocusedStack().getStackModel())
                         .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);

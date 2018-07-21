@@ -18,7 +18,7 @@ import com.l2fprod.common.swing.JFontChooser;
 import javax.swing.*;
 import java.awt.*;
 
-public class ButtonPropertyEditor extends WyldCardDialog implements ActionBindable {
+public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements ActionBindable {
     private ButtonModel model;
 
     private JButton saveButton;
@@ -59,10 +59,10 @@ public class ButtonPropertyEditor extends WyldCardDialog implements ActionBindab
             dispose();
         });
 
-        iconButton.addActionListener(e -> WindowBuilder.make(new IconPicker())
+        iconButton.addActionListener(e -> new WindowBuilder<>(new IconPicker())
+                .withModel(model)
                 .withTitle("Icon")
                 .resizeable(false)
-                .withModel(model)
                 .asModal()
                 .buildReplacing(this));
 
@@ -94,8 +94,8 @@ public class ButtonPropertyEditor extends WyldCardDialog implements ActionBindab
 
     @Override
     @RunOnDispatch
-    public void bindModel(Object data) {
-        this.model = (ButtonModel) data;
+    public void bindModel(ButtonModel buttonModel) {
+        this.model = buttonModel;
         ExecutionContext context = new ExecutionContext();
 
         long partNumber = model.getPartNumber(context);

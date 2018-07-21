@@ -17,7 +17,7 @@ import org.fife.ui.rsyntaxtextarea.parser.Parser;
 import javax.swing.*;
 import java.awt.*;
 
-public class ExpressionEvaluator extends WyldCardDialog implements SyntaxParserDelegate {
+public class ExpressionEvaluator extends WyldCardDialog<Object> implements SyntaxParserDelegate {
     private JButton evaluateButton;
     private JTextArea resultField;
     private JPanel windowPanel;

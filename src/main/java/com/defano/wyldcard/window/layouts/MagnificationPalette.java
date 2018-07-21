@@ -16,7 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Hashtable;
 
-public class MagnificationPalette extends WyldCardDialog {
+public class MagnificationPalette extends WyldCardDialog<Object> {
     private JSlider slider1;
     private JPanel windowPanel;
     private JButton magnifierButton;
@@ -65,7 +65,7 @@ public class MagnificationPalette extends WyldCardDialog {
 
     @Override
     public void bindModel(Object data) {
-        //
+        // Nothing to do
     }
 
     {

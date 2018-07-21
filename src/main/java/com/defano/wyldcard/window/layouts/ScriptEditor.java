@@ -39,12 +39,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate, PropertyChangeObserver {
+public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerComboBox.HandlerComboBoxDelegate, SyntaxParserDelegate, PropertyChangeObserver {
 
+    private final HyperTalkTextEditor editor;
+    private final SearchContext context = new SearchContext();
+    private final ScriptEditorMenuBar menuBar = new ScriptEditorMenuBar(this);
     private PartModel model;
     private Script compiledScript;
-    private final HyperTalkTextEditor editor;
-
     private JPanel scriptEditor;
     private HandlerComboBox handlersMenu;
     private HandlerComboBox functionsMenu;
@@ -52,9 +53,6 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
     private EditorStatus status;
     private JPanel textArea;
     private JLabel helpIcon;
-
-    private final SearchContext context = new SearchContext();
-    private final ScriptEditorMenuBar menuBar = new ScriptEditorMenuBar(this);
 
     public ScriptEditor() {
 
@@ -107,20 +105,16 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
 
     @Override
     @RunOnDispatch
-    public void bindModel(Object properties) {
-        if (properties instanceof PartModel) {
-            this.model = (PartModel) properties;
+    public void bindModel(PartModel partModel) {
+        this.model = partModel;
 
-            // Render the script and breakpoints in the editor
-            applyScriptToEditor();
+        // Render the script and breakpoints in the editor
+        applyScriptToEditor();
 
-            // Listen for programmatically-applied script changes
-            this.model.addPropertyChangedObserver(this);
+        // Listen for programmatically-applied script changes
+        this.model.addPropertyChangedObserver(this);
 
-            restoreCaretPosition();
-        } else {
-            throw new RuntimeException("Bug! Don't know how to bind data class to window: " + properties);
-        }
+        restoreCaretPosition();
     }
 
     @RunOnDispatch
@@ -152,7 +146,7 @@ public class ScriptEditor extends WyldCardWindow implements HandlerComboBox.Hand
     }
 
     @RunOnDispatch
-    private void  saveBreakpoints() {
+    private void saveBreakpoints() {
         model.setKnownProperty(new ExecutionContext(), PartModel.PROP_BREAKPOINTS, Value.ofItems(StringUtils.getValueList(editor.getBreakpoints())));
     }
 

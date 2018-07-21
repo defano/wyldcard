@@ -5,6 +5,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.finder.WindowFinder;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.layouts.*;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -47,57 +48,57 @@ public class WindowManager implements WindowFinder, Themeable {
     public void start() {
         themeProvider.onNext(UIManager.getLookAndFeel().getName());
 
-        WindowBuilder.make(messageWindow)
+        new WindowBuilder<>(messageWindow)
                 .withTitle("Message")
                 .asPalette()
                 .focusable(true)
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(paintToolsPalette)
+        new WindowBuilder<>(paintToolsPalette)
                 .asPalette()
                 .withTitle("Tools")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(shapesPalette)
+        new WindowBuilder<>(shapesPalette)
                 .asPalette()
                 .withTitle("Shapes")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(linesPalette)
+        new WindowBuilder<>(linesPalette)
                 .asPalette()
                 .withTitle("Lines")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(brushesPalette)
+        new WindowBuilder<>(brushesPalette)
                 .asPalette()
                 .withTitle("Brushes")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(patternsPalette)
+        new WindowBuilder<>(patternsPalette)
                 .asPalette()
                 .withTitle("Patterns")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(intensityPalette)
+        new WindowBuilder<>(intensityPalette)
                 .asPalette()
                 .withTitle("Intensity")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(colorPalette)
+        new WindowBuilder<>(colorPalette)
                 .asPalette()
                 .focusable(true)
                 .withTitle("Colors")
                 .notInitiallyVisible()
                 .build();
 
-        WindowBuilder.make(messageWatcher)
+        new WindowBuilder<>(messageWatcher)
                 .asPalette()
                 .focusable(false)
                 .withTitle("Message Watcher")
@@ -105,7 +106,7 @@ public class WindowManager implements WindowFinder, Themeable {
                 .resizeable(true)
                 .build();
 
-        WindowBuilder.make(variableWatcher)
+        new WindowBuilder<>(variableWatcher)
                 .asPalette()
                 .withTitle("Variable Watcher")
                 .focusable(true)
@@ -114,7 +115,7 @@ public class WindowManager implements WindowFinder, Themeable {
                 .resizeable(true)
                 .build();
 
-        WindowBuilder.make(expressionEvaluator)
+        new WindowBuilder<>(expressionEvaluator)
                 .withTitle("Evaluate Expression")
                 .asModal()
                 .setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE)
@@ -122,7 +123,7 @@ public class WindowManager implements WindowFinder, Themeable {
                 .resizeable(true)
                 .build();
 
-        WindowBuilder.make(magnifierPalette)
+        new WindowBuilder<>(magnifierPalette)
                 .withTitle("Magnifier")
                 .asPalette()
                 .notInitiallyVisible()
@@ -220,8 +221,17 @@ public class WindowManager implements WindowFinder, Themeable {
         return magnifierPalette;
     }
 
+    public void showPatternEditor() {
+        new WindowBuilder<>(new PatternEditor())
+                .withModel(ToolsContext.getInstance().getFillPattern())
+                .withTitle("Edit Pattern")
+                .resizeable(false)
+                .asModal()
+                .build();
+    }
+
     public void showRecentCardsWindow() {
-        WindowBuilder.make(new RecentCardsWindow())
+        new WindowBuilder<>(new RecentCardsWindow())
                 .withTitle("Recent Cards")
                 .asModal()
                 .resizeable(true)
@@ -264,10 +274,10 @@ public class WindowManager implements WindowFinder, Themeable {
         if (existingWindow != null) {
             return existingWindow;
         } else {
-            return (StackWindow) WindowBuilder.make(new StackWindow())
+            return (StackWindow) new WindowBuilder<>(new StackWindow())
+                    .withModel(stackPart)
                     .withActionOnClose(window -> WyldCard.getInstance().closeStack(context, ((StackWindow) window).getStack()))
                     .ownsMenubar()
-                    .withModel(stackPart)
                     .build();
         }
     }

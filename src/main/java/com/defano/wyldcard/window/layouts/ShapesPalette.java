@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
 import javax.swing.*;
 import java.awt.*;
 
-public class ShapesPalette extends WyldCardDialog implements Consumer<Integer> {
+public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<Integer> {
 
     private JPanel shapesPanel;
 
