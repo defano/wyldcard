@@ -13,6 +13,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.hypertalk.ast.model.Value;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -50,10 +51,14 @@ public class CardPartTransferHandler extends TransferHandler {
         try {
             ToolEditablePart part = (ToolEditablePart) info.getTransferable().getTransferData(TransferablePart.partFlavor);
             CardLayer layer = CardLayerPart.getActivePartLayer();
-            ToolEditablePart importedPart = (ToolEditablePart) WyldCard.getInstance().getFocusedCard().importPart(new ExecutionContext(), part, layer);
+            CardPart focusedCard = WyldCard.getInstance().getFocusedCard();
+            ToolEditablePart importedPart = (ToolEditablePart) focusedCard.importPart(new ExecutionContext(), part, layer);
 
             // Position pasted part over the mouse cursor
-            importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(MouseManager.getInstance().getMouseLoc(new ExecutionContext())));
+            Point mouseLoc = MouseManager.getInstance().getMouseLoc(new ExecutionContext());
+            if (focusedCard.getBounds().contains(mouseLoc)) {
+                importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(mouseLoc));
+            }
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected
