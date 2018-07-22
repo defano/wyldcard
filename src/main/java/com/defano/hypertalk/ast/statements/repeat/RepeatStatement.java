@@ -1,19 +1,16 @@
 package com.defano.hypertalk.ast.statements.repeat;
 
+import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.preemptions.Preemption;
-import com.defano.hypertalk.ast.statements.Statement;
-import com.defano.hypertalk.ast.statements.StatementList;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.preemptions.TerminateIterationPreemption;
 import com.defano.hypertalk.ast.preemptions.TerminateLoopPreemption;
-import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.statements.repeat.*;
+import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.hypertalk.ast.statements.StatementList;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import javax.swing.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -137,25 +134,11 @@ public class RepeatStatement extends Statement {
 
         try {
             statements.execute(context);
-            rest(context);
+            if (context.didAbort()) {
+                throw new HtSemanticException("Script aborted.");
+            }
         } catch (TerminateIterationPreemption e) {
             // Nothing to do; keep repeating
-        }
-    }
-
-    private void rest(ExecutionContext context) throws HtException {
-
-        if (context.didAbort()) {
-            throw new HtSemanticException("Script aborted.");
-        } else {
-            try {
-                // Flush the Swing UI event queue
-                SwingUtilities.invokeAndWait(() -> {});
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-            } catch (InvocationTargetException e) {
-                // Nothing to do
-            }
         }
     }
 }

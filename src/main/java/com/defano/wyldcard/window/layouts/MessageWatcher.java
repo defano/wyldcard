@@ -40,13 +40,15 @@ public class MessageWatcher extends WyldCardWindow<Object> {
         threadDropDown.setModel(threadDropDownModel);
 
         HandlerInvocationBridge.getInstance().addObserver((invocation) -> {
-            if (!hasThread(invocation.getThread())) {
-                threadDropDownModel.addElement(invocation.getThread());
-            }
+            if (isVisible()) {
+                if (!hasThread(invocation.getThread())) {
+                    threadDropDownModel.addElement(invocation.getThread());
+                }
 
-            if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(invocation.getThread())) {
-                invalidateData();
-                smartScroll();
+                if (threadDropDown.getSelectedIndex() == 0 || String.valueOf(threadDropDown.getSelectedItem()).equalsIgnoreCase(invocation.getThread())) {
+                    invalidateData();
+                    smartScroll();
+                }
             }
         });
 
