@@ -707,6 +707,23 @@
       {"parameter": "expression", "description": "The prompt string to display in the directory chooser dialog. Note that some systems (like Mac OS X) do not display a prompt."},
       {"parameter": "fileExpression", "description": "An expression evaluating to the default file name populated in the chooser."}
     ]
+  },
+
+  {
+    "title": "Speak",
+    "summary": "Speaks a passage of text using a computer voice.",
+    "description": "Speaking occurs asynchronously to other script actions (that is, the rest of the script continues to execute while the text is being spoken). Subsequent calls to `speak` will be enqueued and begin speaking when the current speech is complete.\n\nUse `the speech` function to determine what (if any) text is currently being spoken; `the speech` returns the text currently being spoken or done when nothing is being spoken.\n\nUse `the voices` to retrieve a list of available speaking voices.",
+    "codePrefix": "speak",
+    "templates": [
+      "speak ${textExpression}",
+      "speak ${textExpression} with male voice",
+      "speak ${textExpression} with female voice",
+      "speak ${textExpression} with voice ${voiceName}"
+    ],
+    "parameters": [
+      {"parameter": "text", "description": "An expression evaluating to the text that should be spoken."},
+      {"parameter": "voiceName", "description": "An expression evaluating to name of the voice to speak with."}
+    ]
   }
 
 ]
