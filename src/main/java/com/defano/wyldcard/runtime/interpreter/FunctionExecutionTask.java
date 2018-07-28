@@ -35,7 +35,7 @@ public class FunctionExecutionTask implements Callable<Value> {
         // Arguments passed to function must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList(context);
 
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, context.getStackDepth(), true));
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), function.name, evaluatedArguments, me, true, context.getStackDepth(), true));
 
         context.pushStackFrame(function.name, me, evaluatedArguments);
 

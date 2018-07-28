@@ -22,6 +22,7 @@ public class MessageWatcher extends WyldCardWindow<Object> {
     private JScrollPane scrollPane;
     private JCheckBox suppressUnusedCheckBox;
     private MarkdownComboBox threadDropDown;
+    private JCheckBox showOnlyMessageTargetCheckBox;
 
     private DefaultComboBoxModel<String> threadDropDownModel = new DefaultComboBoxModel<>();
     private DefaultTableModel model = new DefaultTableModel();
@@ -78,11 +79,13 @@ public class MessageWatcher extends WyldCardWindow<Object> {
             HandlerInvocationBridge.getInstance().getInvocationHistory().stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
                     .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessage()))
+                    .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         } else {
             HandlerInvocationBridge.getInstance().getInvocationHistory(String.valueOf(threadDropDown.getSelectedItem())).stream()
                     .filter(i -> !suppressUnusedCheckBox.isSelected() || i.isMessageHandled())
                     .filter(i -> !suppressIdleCheckBox.isSelected() || !isPeriodicMessage(i.getMessage()))
+                    .filter(i -> !showOnlyMessageTargetCheckBox.isSelected() || i.isTarget())
                     .forEach(i -> model.addRow(new Object[]{i.getThread(), i, i.getRecipient().getHyperTalkIdentifier(new ExecutionContext())}));
         }
     }
@@ -140,12 +143,16 @@ public class MessageWatcher extends WyldCardWindow<Object> {
         suppressIdleCheckBox.setToolTipText("When checked, messages that are sent periodically (like 'idle') will be supressed.");
         windowPanel.add(suppressIdleCheckBox, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         suppressUnusedCheckBox = new JCheckBox();
-        suppressUnusedCheckBox.setText("Show only handeled messages");
+        suppressUnusedCheckBox.setText("Hide ignored messages");
         suppressUnusedCheckBox.setToolTipText("When checked, only messages for which a handler exist will be shown.");
         windowPanel.add(suppressUnusedCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setText("Show:");
         windowPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        showOnlyMessageTargetCheckBox = new JCheckBox();
+        showOnlyMessageTargetCheckBox.setText("Show only message target");
+        showOnlyMessageTargetCheckBox.setToolTipText("When checked only messages delivered to their target (first part in the message passing order) will be shown.");
+        windowPanel.add(showOnlyMessageTargetCheckBox, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

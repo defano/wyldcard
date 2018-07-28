@@ -195,8 +195,13 @@ public class Interpreter {
         else {
             future = getFutureForHandlerExecutionTask(() -> {
                 // Synthesize handler invocation for message watcher
-                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message, new ArrayList<>(), me, context.getStackDepth(), false);
+                HandlerInvocation invocation = new HandlerInvocation(Thread.currentThread().getName(), message, new ArrayList<>(), me, context.getTarget() == null, context.getStackDepth(), false);
                 HandlerInvocationBridge.getInstance().notifyMessageHandled(invocation);
+
+                // No handler for script, but we still need to capture that this part was the target
+                if (context.getTarget() == null) {
+                    context.setTarget(me);
+                }
 
                 // Unimplemented handlers don't trap message
                 return false;

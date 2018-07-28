@@ -46,7 +46,7 @@
           <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Show only handeled messages"/>
+          <text value="Hide ignored messages"/>
           <toolTipText value="When checked, only messages for which a handler exist will be shown."/>
         </properties>
       </component>
@@ -56,6 +56,15 @@
         </constraints>
         <properties>
           <text value="Show:"/>
+        </properties>
+      </component>
+      <component id="9377b" class="javax.swing.JCheckBox" binding="showOnlyMessageTargetCheckBox" default-binding="true">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Show only message target"/>
+          <toolTipText value="When checked only messages delivered to their target (first part in the message passing order) will be shown."/>
         </properties>
       </component>
     </children>

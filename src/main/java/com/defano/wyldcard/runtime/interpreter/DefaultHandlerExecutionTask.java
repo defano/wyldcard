@@ -37,7 +37,7 @@ public class DefaultHandlerExecutionTask implements HandlerExecutionTask {
         // Arguments passed to handler must be evaluated in the context of the caller (i.e., before we push a new stack frame)
         List<Value> evaluatedArguments = arguments.evaluateAsList(context);
 
-        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, evaluatedArguments, me, context.getStackDepth(), !handler.isEmptyPassBlock()));
+        HandlerInvocationBridge.getInstance().notifyMessageHandled(new HandlerInvocation(Thread.currentThread().getName(), handler.name, evaluatedArguments, me, context.getTarget() == null, context.getStackDepth(), !handler.isEmptyPassBlock()));
 
         // Push a new context
         context.pushStackFrame(handler.name, me, evaluatedArguments);

@@ -15,16 +15,18 @@ public class HandlerInvocation implements Comparable<HandlerInvocation> {
     private final int stackDepth;
     private final boolean messageHandled;
     private final long sequence;
+    private final boolean isTarget;
 
     private static AtomicLong globalSequence = new AtomicLong(0);
 
-    public HandlerInvocation(String thread, String message, List<Value> arguments, PartSpecifier recipient, int stackDepth, boolean msgHandled) {
+    public HandlerInvocation(String thread, String message, List<Value> arguments, PartSpecifier recipient, boolean isTarget, int stackDepth, boolean msgHandled) {
         this.thread = thread;
         this.message = message;
         this.arguments = arguments;
         this.recipient = recipient;
         this.stackDepth = stackDepth;
         this.messageHandled = msgHandled;
+        this.isTarget = isTarget;
 
         sequence = globalSequence.incrementAndGet();
     }
@@ -51,6 +53,10 @@ public class HandlerInvocation implements Comparable<HandlerInvocation> {
 
     public boolean isMessageHandled() {
         return messageHandled;
+    }
+
+    public boolean isTarget() {
+        return isTarget;
     }
 
     @Override
