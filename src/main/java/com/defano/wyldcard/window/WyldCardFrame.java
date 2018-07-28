@@ -109,9 +109,8 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
         getWindow().setLocation(xPos, yPos);
     }
 
-    @RunOnDispatch
     default boolean isPalette() {
-        return getWindow().getType() == Window.Type.UTILITY;
+        return ThreadUtils.callAndWaitAsNeeded(() -> getWindow().getType() == Window.Type.UTILITY);
     }
 
     default void setContentPane(Container contentPane) {

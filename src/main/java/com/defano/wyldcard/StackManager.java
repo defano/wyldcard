@@ -5,6 +5,7 @@ import com.defano.hypertalk.ast.model.RemoteNavigationOptions;
 import com.defano.hypertalk.ast.model.SystemMessage;
 import com.defano.hypertalk.ast.model.specifiers.StackPartSpecifier;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackModel;
@@ -18,6 +19,7 @@ import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.util.ProxyObservable;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowDock;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
@@ -56,7 +58,7 @@ public class StackManager implements StackNavigationObserver {
      */
     public void newStack(ExecutionContext context) {
         StackPart newStack = StackPart.newStack(context);
-        displayStack(context, newStack, true);
+        ThreadUtils.invokeAndWaitAsNeeded(() -> displayStack(context, newStack, true));
     }
 
     /**
@@ -422,6 +424,7 @@ public class StackManager implements StackNavigationObserver {
      *                    to open a new stack). Has no effect when attempting to open a stack already displayed in a
      *                    window.
      */
+    @RunOnDispatch
     private void displayStack(ExecutionContext context, StackPart stack, boolean inNewWindow) {
 
         // Special case: Stack is already open, simply focus it

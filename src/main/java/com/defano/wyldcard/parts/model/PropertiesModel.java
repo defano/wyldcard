@@ -300,7 +300,7 @@ public class PropertiesModel {
             if (computerGetters.get(property) instanceof DispatchComputedGetter) {
                 final Value[] value = new Value[1];
                 String finalProperty = property;
-                ThreadUtils.invokeAndWaitAsNeeded(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
+                ThreadUtils.callAndWaitAsNeeded(() -> value[0] = computerGetters.get(finalProperty).getComputedValue(context, this, finalProperty));
                 return value[0];
             } else {
                 return computerGetters.get(property).getComputedValue(context, this, property);

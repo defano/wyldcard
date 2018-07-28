@@ -21,51 +21,56 @@ public class WindowsMenu extends HyperCardMenu {
     }
 
     public void reset() {
-        super.removeAll();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                WindowsMenu.super.removeAll();
 
-        MenuItemBuilder.ofDefaultType()
-                .named("Minimize")
-                .withAction(a -> WindowManager.getInstance().getFocusedStackWindow().getWindow().setState(Frame.ICONIFIED))
-                .build(this);
+                MenuItemBuilder.ofDefaultType()
+                        .named("Minimize")
+                        .withAction(a -> WindowManager.getInstance().getFocusedStackWindow().getWindow().setState(Frame.ICONIFIED))
+                        .build(WindowsMenu.this);
 
-        MenuItemBuilder.ofDefaultType()
-                .named("Zoom")
-                .withAction(a -> {
-                    JFrame focusedFrame = WindowManager.getInstance().getFocusedStackWindow().getWindow();
-                    focusedFrame.setExtendedState(focusedFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-                })
-                .build(this);
+                MenuItemBuilder.ofDefaultType()
+                        .named("Zoom")
+                        .withAction(a -> {
+                            JFrame focusedFrame = WindowManager.getInstance().getFocusedStackWindow().getWindow();
+                            focusedFrame.setExtendedState(focusedFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+                        })
+                        .build(WindowsMenu.this);
 
-        MenuItemBuilder.ofDefaultType()
-                .named("Next Window")
-                .withShortcut('.')
-                .withAction(a -> WindowManager.getInstance().nextWindow().getWindow().requestFocus())
-                .build(this);
+                MenuItemBuilder.ofDefaultType()
+                        .named("Next Window")
+                        .withShortcut('.')
+                        .withAction(a -> WindowManager.getInstance().nextWindow().getWindow().requestFocus())
+                        .build(WindowsMenu.this);
 
-        MenuItemBuilder.ofDefaultType()
-                .named("Previous Window")
-                .withShortcut(',')
-                .withAction(a -> WindowManager.getInstance().prevWindow().getWindow().requestFocus())
-                .build(this);
+                MenuItemBuilder.ofDefaultType()
+                        .named("Previous Window")
+                        .withShortcut(',')
+                        .withAction(a -> WindowManager.getInstance().prevWindow().getWindow().requestFocus())
+                        .build(WindowsMenu.this);
 
-        MenuItemBuilder.ofDefaultType()
-                .named("Restore Default Layout")
-                .withAction(a -> WindowManager.getInstance().restoreDefaultLayout())
-                .build(this);
+                MenuItemBuilder.ofDefaultType()
+                        .named("Restore Default Layout")
+                        .withAction(a -> WindowManager.getInstance().restoreDefaultLayout())
+                        .build(WindowsMenu.this);
 
-        addSeparator();
+                addSeparator();
 
-        addPalettes(MenuItemBuilder.ofHierarchicalType()
-                .named("Palettes")
-                .build(this));
+                addPalettes(MenuItemBuilder.ofHierarchicalType()
+                        .named("Palettes")
+                        .build(WindowsMenu.this));
 
-        addScriptEditors(MenuItemBuilder.ofHierarchicalType()
-                .named("Script Editors")
-                .build(this));
+                addScriptEditors(MenuItemBuilder.ofHierarchicalType()
+                        .named("Script Editors")
+                        .build(WindowsMenu.this));
 
-        addSeparator();
+                addSeparator();
 
-        addStacks();
+                addStacks();
+            }
+        });
     }
 
     private void addPalettes(JMenuItem parent) {

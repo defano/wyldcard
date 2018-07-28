@@ -37,27 +37,22 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public static final String PROP_ABBREVNAME = "abbreviated name";
     public static final String PROP_LONGNAME = "long name";
 
-    private final Map<Integer, BackgroundModel> backgroundModels;
-    private final Map<String, BufferedImage> userIcons;
-    private final Map<Integer, BufferedImage> userPatterns;
+    private Map<Integer, BackgroundModel> backgroundModels = new HashMap<>();
+    private Map<String, BufferedImage> userIcons = new HashMap<>();
+    private Map<Integer, BufferedImage> userPatterns = new HashMap<>();
 
     // Model properties that are not HyperTalk-addressable
     private int nextPartId = 0;
     private int nextCardId = 0;
     private int nextBackgroundId = 0;
     private int currentCardIndex = 0;
-    private List<CardModel> cardModels;
+    private List<CardModel> cardModels = new ArrayList<>();
 
     // The location where this stack was saved to, or opened from, on disk. Null if the stack has not been saved.
     private transient Subject<Optional<File>> savedStackFileProvider;
 
     private StackModel(String stackName, Dimension dimension) {
         super(PartType.STACK, Owner.HYPERCARD, null);
-
-        this.cardModels = new ArrayList<>();
-        this.backgroundModels = new HashMap<>();
-        this.userIcons = new HashMap<>();
-        this.userPatterns = new HashMap<>();
 
         defineProperty(PROP_NAME, new Value(stackName), false);
         defineProperty(PROP_WIDTH, new Value(dimension.width), false);
@@ -84,7 +79,17 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     public void initialize() {
         super.initialize();
 
-        this.savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
+        savedStackFileProvider = BehaviorSubject.createDefault(Optional.empty());
+
+        // User patterns may be missing from serialized object form; rehydrate empty map in this case
+        if (userPatterns == null) {
+            userPatterns = new HashMap<>();
+        }
+
+        // User icons may be missing from serialized object form; rehydrate empty map in this case
+        if (userIcons == null) {
+            userIcons = new HashMap<>();
+        }
 
         defineComputedReadOnlyProperty(PROP_LONGNAME, (context, model, propertyName) -> new Value(getLongName(context)));
         defineComputedReadOnlyProperty(PROP_ABBREVNAME, (context, model, propertyName) -> new Value(getAbbreviatedName(context)));

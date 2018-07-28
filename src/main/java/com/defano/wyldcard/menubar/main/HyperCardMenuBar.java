@@ -1,12 +1,12 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.DeferredMenuAction;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
-import com.defano.hypertalk.exception.HtSemanticException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -97,43 +97,46 @@ public class HyperCardMenuBar extends JMenuBar {
         });
     }
 
-    @RunOnDispatch
     public JMenu findMenuByNumber(int index) {
-        if (index < 0 || index >= getMenuCount()) {
-            return null;
-        }
-
-        return getMenu(index);
-    }
-
-    @RunOnDispatch
-    public JMenu findMenuByName(String name) {
-        for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
-            JMenu thisMenu = this.getMenu(thisMenuIndex);
-
-            if (thisMenu != null && name.equalsIgnoreCase(thisMenu.getText())) {
-                return thisMenu;
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            if (index < 0 || index >= getMenuCount()) {
+                return null;
             }
-        }
 
-        return null;
+            return getMenu(index);
+        });
     }
 
-    @RunOnDispatch
-    private JMenuItem findMenuItemByName(String name) {
-        for (int thisMenuIndex = 0; thisMenuIndex < this.getMenuCount(); thisMenuIndex++) {
-            JMenu thisMenu = this.getMenu(thisMenuIndex);
+    public JMenu findMenuByName(String name) {
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            for (int thisMenuIndex = 0; thisMenuIndex < HyperCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
+                JMenu thisMenu = HyperCardMenuBar.this.getMenu(thisMenuIndex);
 
-            for (int thisMenuItemIndex = 0; thisMenuItemIndex < thisMenu.getItemCount(); thisMenuItemIndex++) {
-                JMenuItem thisMenuItem = thisMenu.getItem(thisMenuItemIndex);
-
-                if (thisMenuItem != null && thisMenuItem.getText() != null && thisMenuItem.getText().equalsIgnoreCase(name)) {
-                    return thisMenuItem;
+                if (thisMenu != null && name.equalsIgnoreCase(thisMenu.getText())) {
+                    return thisMenu;
                 }
             }
-        }
 
-        return null;
+            return null;
+        });
+    }
+
+    private JMenuItem findMenuItemByName(String name) {
+        return ThreadUtils.callAndWaitAsNeeded(() -> {
+            for (int thisMenuIndex = 0; thisMenuIndex < HyperCardMenuBar.this.getMenuCount(); thisMenuIndex++) {
+                JMenu thisMenu = HyperCardMenuBar.this.getMenu(thisMenuIndex);
+
+                for (int thisMenuItemIndex = 0; thisMenuItemIndex < thisMenu.getItemCount(); thisMenuItemIndex++) {
+                    JMenuItem thisMenuItem = thisMenu.getItem(thisMenuItemIndex);
+
+                    if (thisMenuItem != null && thisMenuItem.getText() != null && thisMenuItem.getText().equalsIgnoreCase(name)) {
+                        return thisMenuItem;
+                    }
+                }
+            }
+
+            return null;
+        });
     }
 
 }

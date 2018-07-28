@@ -21,6 +21,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -134,17 +135,20 @@ public class GoCmd extends Command {
      * @return The destination card
      */
     private CardPart goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) throws HtSemanticException {
-        StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.getStack());
-        context.bind(stackWindow.getStack());
-        stackWindow.setVisible(true);
-        stackWindow.requestFocus();
+        // This code needs to run on the Swing dispatch thread
+        return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
+            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.getStack());
+            context.bind(stackWindow.getStack());
+            stackWindow.setVisible(true);
+            stackWindow.requestFocus();
 
-        Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardId());
-        if (cardIndex != null) {
-            return stackWindow.getStack().gotoCard(context, cardIndex, visualEffect, true);
-        }
+            Integer cardIndex = destination.getStack().getIndexOfCardId(destination.getCardId());
+            if (cardIndex != null) {
+                return ThreadUtils.callAndWaitAsNeeded(() -> stackWindow.getStack().gotoCard(context, cardIndex, visualEffect, true));
+            }
 
-        throw new HtSemanticException("Can't find that card.");
+            throw new HtSemanticException("Can't find that card.");
+        }, HtSemanticException.class);
     }
 
     private Destination getDestination(ExecutionContext context, PartModel model) {
