@@ -4,7 +4,8 @@
 
 A reproduction of Apple's HyperCard written in Java. Originally developed as a class project for a graduate-level compiler design course at DePaul University in Chicago.
 
-[![Build Status](https://travis-ci.org/defano/wyldcard.svg?branch=master)](https://travis-ci.org/defano/wyldcard)
+[![Build Status](https://travis-ci.org/defano/wyldcard.svg?branch=master)](https://travis-ci.org/defano/wyldcard) [![Sonar](https://sonarcloud.io/api/project_badges/measure?project=wyldcard&metric=alert_status)](https://sonarcloud.io/dashboard?id=wyldcard)
+
 
 ![WyldCard](doc/images/hero.png)
 
