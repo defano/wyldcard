@@ -1,16 +1,20 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
+	}
+}
+
+plugins {
+	id "org.sonarqube" version "2.6"
+}
+
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'antlr'
 apply plugin: 'idea'
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "com.github.sedovalx.gradle:gradle-aspectj-binary:1.0.25"
-    }
-}
 
 allprojects {
 	apply plugin: 'java'
