@@ -1,7 +1,5 @@
 language: java
-
-jdk:
-- oraclejdk8
+os: osx
 
 after_success:
-- gradle sonarqube -Dsonar.organization=defano-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_KEY -Dsonar.exclusions=generated-src/**/*
+- gradle generateBundle
