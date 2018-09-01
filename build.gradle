@@ -119,7 +119,7 @@ task generateBundle(type: Exec) {
 			"-native",
 			"-outdir", ".",
 			"-outfile", "WyldCard.app",
-			"-srcfiles", "./build/libs/wyldcard.jar",
+			"-srcfiles", "$projectDir/build/libs/wyldcard.jar",
             "-appclass", "com.defano.wyldcard.WyldCard",
 			"-name", "WyldCard",
 			"-title", "WyldCard"
