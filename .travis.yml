@@ -5,5 +5,5 @@ before_install:
 - brew update
 - brew install gradle
 
-after_success:
-- gradle generateBundle
+script:
+- gradle build generateBundle
