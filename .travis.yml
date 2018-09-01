@@ -1,5 +1,9 @@
 language: java
 os: osx
 
+before_install:
+- brew update
+- brew install gradle
+
 after_success:
 - gradle generateBundle
