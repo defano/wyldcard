@@ -49,7 +49,7 @@ public interface StackPartFinder extends OrderedPartFinder {
         if (ps instanceof CompositePartSpecifier) {
             return findCompositePart(context, (CompositePartSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
-            return findPartByPosition((PartPositionSpecifier) ps);
+            return findPartByPosition(context, (PartPositionSpecifier) ps);
         } else if (ps.isCardPartSpecifier()) {
             return context.getCurrentCard().getCardModel().findPart(context, ps);
         } else if (ps.isBackgroundPartSpecifier()) {
@@ -74,7 +74,7 @@ public interface StackPartFinder extends OrderedPartFinder {
         if (ps instanceof CompositePartSpecifier) {
             return findCompositePart(context, (CompositePartSpecifier) ps);
         } else if (ps instanceof PartPositionSpecifier) {
-            return findPartByPosition((PartPositionSpecifier) ps);
+            return findPartByPosition(context, (PartPositionSpecifier) ps);
         } else {
             return OrderedPartFinder.super.findPart(context, ps, parts);
         }
@@ -142,14 +142,14 @@ public interface StackPartFinder extends OrderedPartFinder {
      * @return The model of the requested part.
      * @throws PartException Thrown if the requested part cannot be found.
      */
-    default PartModel findPartByPosition(PartPositionSpecifier ps) throws PartException {
+    default PartModel findPartByPosition(ExecutionContext context, PartPositionSpecifier ps) throws PartException {
 
         // Bail if request to find any kind of part other than a card or background
         if (ps.getType() != PartType.BACKGROUND && ps.getType() != PartType.CARD) {
             throw new PartException("Cannot find " + ps.getType().toString().toLowerCase() + " by position.");
         }
 
-        int thisCard = getStackModel().getCurrentCard().getCardIndexInStack();
+        int thisCard = context.getCurrentCard().getCardModel().getCardIndexInStack();
 
         try {
             if (ps.getType() == PartType.CARD) {
