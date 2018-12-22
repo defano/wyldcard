@@ -3,9 +3,10 @@ package com.defano.wyldcard.parts;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.HyperCardButton;
@@ -202,7 +203,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         boolean wasDoubleClicked = isSelectedForEditing() && e.getClickCount() == 2;
 
         // Command-option click to edit script
-        if (KeyboardManager.getInstance().isPeeking(new ExecutionContext())) {
+        if (WyldCard.getInstance().getKeyboardManager().isPeeking(new ExecutionContext())) {
             getPartModel().editScript(new ExecutionContext());
         }
 

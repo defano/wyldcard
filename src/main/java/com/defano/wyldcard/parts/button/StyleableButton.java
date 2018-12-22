@@ -1,7 +1,8 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;
@@ -178,14 +179,14 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
         getPartModel().addPropertyChangedObserver(buttonComponent);
         getPartModel().notifyPropertyChangedObserver(context, buttonComponent);
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
-        KeyboardManager.getInstance().addGlobalKeyListener(this);
+        WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
 
     @Override
     @RunOnDispatch
     public void partClosed(ExecutionContext context) {
         getPartModel().removePropertyChangedObserver(buttonComponent);
-        KeyboardManager.getInstance().removeGlobalKeyListener(this);
+        WyldCard.getInstance().getKeyboardManager().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }
 

@@ -1,6 +1,7 @@
 package com.defano.wyldcard.sound;
 
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -108,8 +109,8 @@ public class SoundPlayer {
 
             // Break out of playback sequence if user type cmd-. Can't use ExecutionContext here because this
             // executes in a non-handler thread
-            if (KeyboardManager.getInstance().getBreakTime() != null &&
-                    KeyboardManager.getInstance().getBreakTime() > playStartTime)
+            if (WyldCard.getInstance().getKeyboardManager().getBreakTime() != null &&
+                    WyldCard.getInstance().getKeyboardManager().getBreakTime() > playStartTime)
             {
                 return;
             }

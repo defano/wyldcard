@@ -8,7 +8,7 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;
@@ -332,7 +332,7 @@ public class ExecutionContext {
      * @return True if script should be aborted, false otherwise
      */
     public boolean didAbort() {
-        Long breakTime = KeyboardManager.getInstance().getBreakTime();
+        Long breakTime = WyldCard.getInstance().getKeyboardManager().getBreakTime();
         long startTime = getStackFrame().getCreationTimeMs();
 
         return breakTime != null && breakTime > startTime;

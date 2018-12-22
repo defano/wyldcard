@@ -1,14 +1,18 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.ModifierKey;
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ModifierKeyFunc extends Expression {
+
+    @Inject
+    private KeyboardManager keyboardManager;
 
     private final ModifierKey modifierKey;
 
@@ -21,11 +25,11 @@ public class ModifierKeyFunc extends Expression {
     public Value onEvaluate(ExecutionContext context) throws HtSemanticException {
         switch (modifierKey) {
             case COMMAND:
-                return new Value(KeyboardManager.getInstance().isCtrlCommandDown() ? "down" : "up");
+                return new Value(keyboardManager.isCtrlCommandDown() ? "down" : "up");
             case OPTION:
-                return new Value(KeyboardManager.getInstance().isAltOptionDown() ? "down" : "up");
+                return new Value(keyboardManager.isAltOptionDown() ? "down" : "up");
             case SHIFT:
-                return new Value(KeyboardManager.getInstance().isShiftDown() ? "down" : "up");
+                return new Value(keyboardManager.isShiftDown() ? "down" : "up");
         }
 
         throw new HtSemanticException("Bug! Unimplemented modifier key: " + modifierKey);

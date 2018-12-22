@@ -1,7 +1,8 @@
 package com.defano.wyldcard.parts.editor;
 
 import com.defano.hypertalk.ast.model.Value;
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.button.ButtonModel;
@@ -55,7 +56,7 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
 
         // User dragged the mouse
         else if (event.getID() == MouseEvent.MOUSE_DRAGGED) {
-            if (KeyboardManager.getInstance().isCtrlCommandDown() && part == null){
+            if (WyldCard.getInstance().getKeyboardManager().isCtrlCommandDown() && part == null){
                 if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON) {
                     doNewButton();
                 } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {

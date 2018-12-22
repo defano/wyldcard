@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.field;
 
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;
@@ -109,7 +110,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
 
         getPartModel().addPropertyChangedObserver(fieldComponent);
         toolModeSubscription = ToolsContext.getInstance().getToolModeProvider().subscribe(toolModeObserver);
-        KeyboardManager.getInstance().addGlobalKeyListener(this);
+        WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(this);
     }
 
     @Override
@@ -117,7 +118,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
         fieldComponent.partClosed(context);
 
         getPartModel().removePropertyChangedObserver(fieldComponent);
-        KeyboardManager.getInstance().removeGlobalKeyListener(this);
+        WyldCard.getInstance().getKeyboardManager().removeGlobalKeyListener(this);
         toolModeSubscription.dispose();
     }
 

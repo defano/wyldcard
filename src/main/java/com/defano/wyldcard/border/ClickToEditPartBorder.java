@@ -1,6 +1,7 @@
 package com.defano.wyldcard.border;
 
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.border.Border;
@@ -22,7 +23,7 @@ public class ClickToEditPartBorder extends CompoundBorder implements Border {
 
         @Override
         public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            if (KeyboardManager.getInstance().isPeeking(new ExecutionContext())) {
+            if (WyldCard.getInstance().getKeyboardManager().isPeeking(new ExecutionContext())) {
                 int frameWidth = getClickToEditScriptBorderWidth();
                 Color frameColor = getBorderColor(c);
 

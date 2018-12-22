@@ -2,8 +2,8 @@ package com.defano.wyldcard;
 
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.awt.KeyboardManager;
-import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
@@ -34,8 +34,8 @@ public class WyldCard extends StackManager implements PartFinder {
     private static WyldCard instance;
     private static Injector injector;
 
-    @Inject
-    private MouseManager mouseManager;
+    @Inject private MouseManager mouseManager;
+    @Inject private KeyboardManager keyboardManager;
 
     WyldCard() {}
 
@@ -60,13 +60,13 @@ public class WyldCard extends StackManager implements PartFinder {
         injector = Guice.createInjector(new WyldCardModule());
         instance = injector.getInstance(WyldCard.class);
 
-        getInstance().startup();
+        instance.startup();
     }
 
     private void startup() {
 
         SwingUtilities.invokeLater(() -> {
-            KeyboardManager.getInstance().start();              // Global key event handler
+            keyboardManager.start();                            // Global key event handler
             mouseManager.start();                               // Global mouse event and mouseLoc handler
             PartEditManager.getInstance().start();              // Button field movement and resize management
             WindowManager.getInstance().start();                // Window and palette management
@@ -105,6 +105,10 @@ public class WyldCard extends StackManager implements PartFinder {
 
     public MouseManager getMouseManager() {
         return mouseManager;
+    }
+
+    public KeyboardManager getKeyboardManager() {
+        return keyboardManager;
     }
 
     public static Injector getInjector() {

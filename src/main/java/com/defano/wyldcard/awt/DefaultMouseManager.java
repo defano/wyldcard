@@ -5,6 +5,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.google.inject.Singleton;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.util.Set;
 /**
  * Provides an AWT-level view of mouse actions, plus routines for scripted control of the mouse.
  */
+@Singleton
 public class DefaultMouseManager implements MouseManager {
 
     private static boolean mouseIsDown;

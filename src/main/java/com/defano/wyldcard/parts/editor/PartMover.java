@@ -1,11 +1,10 @@
 package com.defano.wyldcard.parts.editor;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.NumberUtils;
 import com.defano.hypertalk.ast.model.Value;
@@ -48,8 +47,8 @@ public class PartMover {
                 Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
                 SwingUtilities.convertPointFromScreen(mouseLoc, withinInst);
 
-                int newTop = KeyboardManager.getInstance().isShiftDown() ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
-                int newLeft = KeyboardManager.getInstance().isShiftDown() ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
+                int newTop = WyldCard.getInstance().getKeyboardManager().isShiftDown() ? (((mouseLoc.y - mouseLocInPart.y) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.y - mouseLocInPart.y;
+                int newLeft = WyldCard.getInstance().getKeyboardManager().isShiftDown() ? (((mouseLoc.x - mouseLocInPart.x) / SNAP_TO_GRID_SIZE) * SNAP_TO_GRID_SIZE) : mouseLoc.x - mouseLocInPart.x;
 
                 try {
                     partInst.setProperty(context, PartModel.PROP_TOP, new Value(newTop));
