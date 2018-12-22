@@ -503,6 +503,28 @@ on commandsTest
     find international "bonjour"
     find string international "bonjour" in field id 14 of marked cards
 
+    mark all cards
+    mark the first card of the second background of this stack
+    mark cards where the name of this card contains "special"
+    mark cards by finding word "word"
+    mark cards by finding word "word" in the last cd fld
+    mark cards by finding chars "chars"
+    mark cards by finding chars "chars" in any bg field
+    mark cards by finding whole "whole"
+    mark cards by finding string "string"
+    mark cards by finding word international "bonjour" in field id 22
+
+    unmark all cards
+    unmark the first card of the second background of this stack
+    unmark cards where the name of this card contains "special"
+    unmark cards by finding word "word"
+    unmark cards by finding word "word" in the last cd fld
+    unmark cards by finding chars "chars"
+    unmark cards by finding chars "chars" in any bg field
+    unmark cards by finding whole "whole"
+    unmark cards by finding string "string"
+    unmark cards by finding word international "bonjour" in field id 22
+
     get 2 + 2 / 3
     get char 3 of the middle word of item 11 of line 17 of theText
     get the number of bg button x
@@ -527,6 +549,10 @@ on commandsTest
     go the first card of the last background
     go card 14 of bkgnd 15
     go next card with visual effect dissolve very slowly to black
+    go to the first card of stack "another stack"
+    go to the first card of the second background of stack "another stack"
+    go to the first card of stack "another stack" in a new window
+    go to the first card of stack "another stack" in a new window without dialog
 
     hide field "bananas"
     hide the third cd btn

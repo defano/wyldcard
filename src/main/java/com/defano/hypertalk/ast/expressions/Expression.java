@@ -15,8 +15,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.List;
 
 /**
- * Any HyperTalk fragment that represents or returns a {@link Value}. Literals, variables, function calls, constants,
- * etc. are all expressions.
+ * A HyperTalk fragment that represents or returns a {@link Value}. Literals, variables, function calls, constants,
+ * factors, etc. are all expressions.
  * <p>
  * Contrast to {@link com.defano.hypertalk.ast.statements.Statement}.
  */
@@ -191,9 +191,9 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * A convenience form of {@link #factor(ExecutionContext, FactorAssociation[])} that accepts a single, acceptable expression type
-     * and attempts to interpret this expression as that type. Returns null if this expression cannot be interpreted
-     * in the requested format.
+     * A convenience form of {@link #factor(ExecutionContext, FactorAssociation[])} that accepts a single, acceptable
+     * expression type and attempts to interpret this expression as that type. Returns null if this expression cannot be
+     * interpreted in the requested format.
      *
      * @param <T>     The requested factor subtype of {@link Expression}
      * @param context The execution context
@@ -213,8 +213,8 @@ public abstract class Expression extends ASTNode {
     }
 
     /**
-     * A convenience form of {@link #factor(ExecutionContext, FactorAssociation[])} that accepts a single, acceptable expression type and
-     * an exception to throw if this expression cannot be interpreted as the requested type.
+     * A convenience form of {@link #factor(ExecutionContext, FactorAssociation[])} that accepts a single, acceptable
+     * expression type and an exception to throw if this expression cannot be interpreted as the requested type.
      *
      * @param <T>     The requested factor subtype of {@link Expression}
      * @param context The execution context

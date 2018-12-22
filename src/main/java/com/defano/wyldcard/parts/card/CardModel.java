@@ -27,6 +27,7 @@ import java.util.Collection;
  * A data model representing a card in a stack. See {@link CardPart} for the associated
  * controller object.
  */
+@SuppressWarnings("WeakerAccess")
 public class CardModel extends PartModel implements LayeredPartFinder, NamedPart {
 
     public final static String PROP_ID = "id";
@@ -45,7 +46,7 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
     public static final String PROP_LONGOWNER = "long owner";
     public static final String PROP_SHORTOWNER = "short owner";
 
-    private int backgroundId = 0;
+    private int backgroundId;
     private final Collection<FieldModel> fields = new ArrayList<>();
     private final Collection<ButtonModel> buttons = new ArrayList<>();
     private BufferedImage cardImage;
@@ -237,6 +238,10 @@ public class CardModel extends PartModel implements LayeredPartFinder, NamedPart
 
     public boolean isMarked(ExecutionContext context) {
         return getKnownProperty(context, PROP_MARKED).booleanValue();
+    }
+
+    public void setMarked(ExecutionContext context, boolean marked) {
+        setKnownProperty(context, PROP_MARKED, new Value(marked));
     }
 
     /** {@inheritDoc} */

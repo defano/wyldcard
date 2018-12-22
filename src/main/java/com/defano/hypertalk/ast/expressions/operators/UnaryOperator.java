@@ -6,8 +6,8 @@ import java.util.List;
 public enum UnaryOperator {
     NOT("not"),
     NEGATE("-"),
-    THERE_IS_A("there is a", "there is an"),
-    THERE_IS_NOT_A("there is no", "there is not a", "there is not an");
+    THERE_IS_A("thereisa", "thereisan"),
+    THERE_IS_NOT_A("thereisno", "thereisnota", "thereisnotan");
 
     private final List<String> tokens;
 
@@ -16,6 +16,8 @@ public enum UnaryOperator {
     }
 
     public static UnaryOperator fromName (String name) {
+        name = name.replace(" ", "");
+
         for (UnaryOperator thisOperator : values()) {
             if (thisOperator.tokens.contains(name.toLowerCase())) {
                 return thisOperator;

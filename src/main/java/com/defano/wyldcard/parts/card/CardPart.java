@@ -106,6 +106,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * Object returned does not contain a built graphics canvas; mouse and keyboard listeners are not registered; and
      * part components (button and field views) are not updated to reflect the values in their model.
      *
+     * TODO: This method indicates a broken model-view-controller pattern and should be eliminated.
      *
      * @param context The execution context.
      * @param model The model of the card to instantiate.

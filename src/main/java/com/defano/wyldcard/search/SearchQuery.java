@@ -4,10 +4,10 @@ import com.defano.hypertalk.ast.model.SearchType;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 
 public class SearchQuery {
-    public final SearchType searchType;
-    public final String searchTerm;
-    public final PartSpecifier searchField;
-    public final boolean searchOnlyMarkedCards;
+    private final SearchType searchType;
+    private final String searchTerm;
+    private final PartSpecifier searchField;
+    private final boolean searchOnlyMarkedCards;
 
     public SearchQuery(SearchType searchType, String searchTerm, PartSpecifier fieldSpecifier) {
         this.searchType = searchType;
@@ -21,6 +21,22 @@ public class SearchQuery {
         this.searchTerm = searchTerm;
         this.searchField = null;
         this.searchOnlyMarkedCards = searchOnlyMarkedCards;
+    }
+
+    public SearchType getSearchType() {
+        return searchType;
+    }
+
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public PartSpecifier getSearchField() {
+        return searchField;
+    }
+
+    public boolean isSearchOnlyMarkedCards() {
+        return searchOnlyMarkedCards;
     }
 
     public boolean isSingleFieldSearch() {

@@ -9,7 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchContext implements SearchResultHighlighter, SearchIndexer {
+public class SearchContext implements SearchResultHighlighter {
 
     private final static SearchContext instance = new SearchContext();
 
@@ -51,7 +51,7 @@ public class SearchContext implements SearchResultHighlighter, SearchIndexer {
         // Start new query
         else {
             lastQuery = query;
-            results = indexResults(context, query);
+            results = SearchIndexer.indexResults(context, query);
             nextResult = 0;
 
             if (results.isEmpty()) {
