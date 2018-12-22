@@ -5,7 +5,7 @@ import java.util.List;
 
 public enum BinaryOperator {
     EQUALS("=", "is"),
-    NOT_EQUALS("<>", "is not", "≠"),
+    NOT_EQUALS("<>", "isnot", "≠"),
     LESS_THAN("<"),
     GREATER_THAN(">"),
     LESS_THAN_OR_EQUALS("<=", "≤"),
@@ -19,14 +19,14 @@ public enum BinaryOperator {
     AND("and"),
     OR("or"),
     CONTAINS("contains"),
-    IS_IN("is in"),
-    IS_NOT_IN("is not in"),
+    IS_IN("isin"),
+    IS_NOT_IN("isnotin"),
     AMP("&"),
     AMP_AMP("&&"),
-    IS_WITHIN("is within"),
-    IS_NOT_WITHIN("is not within"),
-    IS_A("is a", "is an"),
-    IS_NOT_A("is not a", "is not an");
+    IS_WITHIN("iswithin"),
+    IS_NOT_WITHIN("isnotwithin"),
+    IS_A("isa", "isan"),
+    IS_NOT_A("isnota", "isnotan");
 
     private final List<String> tokens;
 
@@ -35,6 +35,8 @@ public enum BinaryOperator {
     }
 
     public static BinaryOperator fromName (String name) {
+        name = name.replace(" ", "");
+
         for (BinaryOperator thisOperator : values()) {
             if (thisOperator.tokens.contains(name.toLowerCase())) {
                 return thisOperator;

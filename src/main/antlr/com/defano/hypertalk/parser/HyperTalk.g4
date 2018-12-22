@@ -238,8 +238,8 @@ commandStmnt
     ;
 
 remoteNavOption
-    : 'in a' 'new' 'window'                                                                                             # remoteInNewWindow
-    | 'in a' 'new' 'window' 'without' 'dialog'                                                                          # remoteInNewWindowWithoutDialog
+    : IN_A_NEW 'window'                                                                                             # remoteInNewWindow
+    | IN_A_NEW 'window' 'without' 'dialog'                                                                          # remoteInNewWindowWithoutDialog
     | 'without' 'dialog'                                                                                                # remoteWithoutDialog
     |                                                                                                                   # remoteDefault
     ;
@@ -426,13 +426,13 @@ expression
     : factor                                                                                                            # factorExp
     | 'not' expression                                                                                                  # notExp
     | '-' expression                                                                                                    # negateExp
-    | op=('there is a'|'there is an'|'there is no'|'there is not a'|'there is not an') expression                       # unaryOpExp
+    | op=(THERE_IS_A|THERE_IS_NO) expression                                                                            # unaryOpExp
     | expression '^' expression                                                                                         # powOpExp
     | expression op=('mod'| 'div'| '/'| '*') expression                                                                 # binaryOpExp
     | expression op=('+'| '-') expression                                                                               # binaryOpExp
     | expression op=('&&'| '&') expression                                                                              # binaryOpExp
-    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|'is in'|'is not in'|'is a'|'is an'|'is not a'|'is not an'|'is within'|'is not within') expression # binaryOpExp
-    | expression op=('='|'is not'|'is'|'<>'|'≠') expression                                                             # binaryOpExp
+    | expression op=('>='|'<='|'≤'|'≥'|'<'|'>'|'contains'|IS_IN|IS_NOT_IN|IS_A|IS_NOT_A|IS_WITHIN|IS_NOT_WITHIN) expression # binaryOpExp
+    | expression op=('='|IS_NOT|'is'|'<>'|'≠') expression                                                               # binaryOpExp
     | expression 'and' expression                                                                                       # binaryAndExp
     | expression 'or' expression                                                                                        # binaryOrExp
     ;
@@ -939,6 +939,51 @@ NEWLINE
 
 WHITESPACE
     : (' ' | '\t')+ -> channel(HIDDEN)
+    ;
+
+IN_A_NEW
+    : 'in' WHITESPACE 'a' WHITESPACE 'new'
+    ;
+
+THERE_IS_A
+    : 'there' WHITESPACE 'is' WHITESPACE 'a'
+    | 'there' WHITESPACE 'is' WHITESPACE 'an'
+    ;
+
+THERE_IS_NO
+    : 'there' WHITESPACE 'is' WHITESPACE 'no'
+    | 'there' WHITESPACE 'is' WHITESPACE 'not' WHITESPACE 'a'
+    | 'there' WHITESPACE 'is' WHITESPACE 'not' WHITESPACE 'an'
+    ;
+
+IS_IN
+    : 'is' WHITESPACE 'in'
+    ;
+
+IS_NOT_IN
+    : 'is' WHITESPACE 'not' WHITESPACE 'in'
+    ;
+
+IS_A
+    : 'is' WHITESPACE 'a'
+    | 'is' WHITESPACE 'an'
+    ;
+
+IS_NOT_A
+    : 'is' WHITESPACE 'not' WHITESPACE 'a'
+    | 'is' WHITESPACE 'not' WHITESPACE 'an'
+    ;
+
+IS_WITHIN
+    : 'is' WHITESPACE 'within'
+    ;
+
+IS_NOT_WITHIN
+    : 'is' WHITESPACE 'not' WHITESPACE 'within'
+    ;
+
+IS_NOT
+    : 'is' WHITESPACE 'not'
     ;
 
 UNLEXED_CHAR
