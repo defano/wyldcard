@@ -325,6 +325,14 @@ public class Value implements StyledComparable<Value> {
             return 0.0;
     }
 
+    public double doubleValueOrError(HtException error) throws HtException {
+        if (isNumber()) {
+            return doubleValue();
+        } else {
+            throw error;
+        }
+    }
+
     /**
      * Gets this value's boolean representation, or false if this value is not a logical value.
      * @return The boolean representaion of this value.

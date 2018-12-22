@@ -23,8 +23,8 @@ public class AnnuityFunc extends ArgListFunction {
             throw new HtSemanticException("Annuity function expects two arguments, but got " + evaluatedArgs.size());
         }
 
-        double rate = evaluatedArgs.get(0).doubleValue();
-        double periods = evaluatedArgs.get(1).doubleValue();
+        double rate = evaluatedArgs.get(0).doubleValueOrError(new HtSemanticException("Expected a numerical value for annuity rate."));
+        double periods = evaluatedArgs.get(1).doubleValueOrError(new HtSemanticException("Expected a numerical value for annuity period."));
 
         return new Value((1 - Math.pow(1 + rate, periods * -1)) / rate);
     }
