@@ -724,6 +724,48 @@
       {"parameter": "text", "description": "An expression evaluating to the text that should be spoken."},
       {"parameter": "voiceName", "description": "An expression evaluating to name of the voice to speak with."}
     ]
+  },
+
+  {
+    "title": "Mark",
+    "summary": "Mark cards by query or logical expression.",
+    "description": "Find and mark all cards, a single card, or any card matching search criteria:\n* Mark all cards in the stack: `mark all cards`\n* Mark an individual card: `mark the second card`\n* Mark any card on which a logical expression evaluates to true: `mark cards where the name of this card contains \"special\"`\n* Mark all cards containing found text on the card or within a specific field on the card: `mark cards by finding \"WyldCard\" in card field 1`",
+    "codePrefix": "mark",
+    "templates": [
+      "mark ${cardExpression}",
+      "mark all cards",
+      "mark cards where ${logicalExpression}",
+      "mark cards by finding ${searchStrategy} ${searchTerm}",
+      "mark cards by finding ${searchStrategy} ${searchTerm} in ${fieldExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression that evaluates to a card. For example, `card three`"},
+      {"parameter": "logicalExpression", "description": "An expression evaluating to a boolean (true or false) value."},
+      {"parameter": "searchTerm", "description": "The text that should be searched for."},
+      {"parameter": "searchStrategy", "description": "Optionally one of `word`, `chars`, `whole`, or `string`. When no `strategy` is specified, `whole` is assumed."},
+      {"parameter": "fieldExpression", "description": "An expression evaluating to a field where text should be searched. If the expression does not evaluate to a valid field on the card, the card will not be marked."}
+    ]
+  },
+
+  {
+    "title": "Unmark",
+    "summary": "Unmark cards by query or logical expression.",
+    "description": "Find and unmark all cards, a single card, or any card matching search criteria:\n* Unmark all cards in the stack: `unmark all cards`\n* Unmark an individual card: `unmark the second card`\n* Unmark any card on which a logical expression evaluates to true: `unmark cards where the name of this card contains \"special\"`\n* Unmark all cards containing found text on the card or within a specific field on the card: `unmark cards by finding \"WyldCard\" in card field 1`",
+    "codePrefix": "unmark",
+    "templates": [
+      "unmark ${cardExpression}",
+      "unmark all cards",
+      "unmark cards where ${logicalExpression}",
+      "unmark cards by finding ${searchStrategy} ${searchTerm}",
+      "unmark cards by finding ${searchStrategy} ${searchTerm} in ${fieldExpression}"
+    ],
+    "parameters": [
+      {"parameter": "cardExpression", "description": "An expression that evaluates to a card. For example, `card three`"},
+      {"parameter": "logicalExpression", "description": "An expression evaluating to a boolean (true or false) value."},
+      {"parameter": "searchTerm", "description": "The text that should be searched for."},
+      {"parameter": "searchStrategy", "description": "Optionally one of `word`, `chars`, `whole`, or `string`. When no `strategy` is specified, `whole` is assumed."},
+      {"parameter": "fieldExpression", "description": "An expression evaluating to a field where text should be searched. If the expression does not evaluate to a valid field on the card, the card will not be unmarked."}
+    ]
   }
 
 ]

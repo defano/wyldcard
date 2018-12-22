@@ -58,16 +58,16 @@ This project represents a homework assignment gone awry and is in no way associa
 
 _This guide describes HyperTalk as implemented by WyldCard; an attempt has been made to note the difference wherever a language feature provided by WyldCard differs from HyperCard._
 
-HyperCard's native scripting language is called _HyperTalk_. Scripts execute when a _message_ is sent to a user interface element (called a _part_ or an _object_) whose script provides a _handler_ for the received message. HyperCard sends messages to parts as the user interacts with them (like `mouseDown` or `keyDown`), but scripts can send their own messages to other parts (or to themselves), too.
+HyperCard's native scripting language is called _HyperTalk_. A HyperTalk script consists of one or more _handlers_ that execute when a _message_ of the same name is received by the user interface element (called a _part_) containing the handler. HyperCard sends messages to parts as the user interacts with them (like `mouseDown` or `keyDown`), but scripts can send messages of their own, too.
 
-HyperTalk is a [duck-typed](https://en.wikipedia.org/wiki/Duck_typing) language. Internally, each value is stored as a string of characters and interpreted as a number, boolean, list, coordinate or rectangle depending on context. HyperTalk does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.
+HyperTalk is a dynamically typed language. Internally, WyldCard stores each value as a string of characters and interprets it as a number, boolean, list, coordinate or rectangle depending on context. The language does not allow nonsensical conversions: `5 + "12"` yields `17`, but `5 + "huh?"` produces an error.  It has been argued that HyperTalk is an object oriented programming language, but one clearly not in the classical sense most programmers are familiar with. HyperTalk's objects are its user interface elements. Programmers can instantiate new user interface elements (i.e., _objects_) but cannot define any new ones (i.e., _classes_).
 
-Keywords and symbols are case insensitive. Thus, `put x into y` is the same as `PUT x iNTo Y`. Comments are preceded by `--` and terminate at the end of the line (there are no multi-line comments in HyperTalk).
+Keywords and symbols in the language are case insensitive. Thus, `put x into y` is the same as `PUT x iNTo Y`. Comments are preceded by `--` and terminate at the end of the line. HyperTalk has no construct for mutliline comments.
 
 A simple script to prompt the user to enter their name then greet them might look like:
 
 ```
--- This is my first script
+-- This is my first script. It fires when the user clicks this part.
 
 on mouseUp
   ask "Hi! What's your name?"
@@ -93,7 +93,7 @@ answer "How are you today" with
   "Stinky!"
 ```
 
-HyperTalk provides a line-wrap symbol (`¬`) that can be used to break a long statement across multiple lines. WyldCard supports `¬` or the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return to be valid. For example:
+That being said, HyperTalk provides a line-wrap symbol (`¬`) that can be used to break a long statement across multiple lines. WyldCard supports `¬` or the pipe character (`|`) for this purpose. Either symbol must be immediately followed by a carriage-return in order to be valid, and you may not break a quoted string literal across lines. For example:
 
 ```
 answer "This is totally acceptable!" |
@@ -103,13 +103,13 @@ answer "This is totally acceptable!" |
 
 ## Stacks of Cards
 
-WyldCard lets users author a document called a _stack_. A stack is comprised of a list of _cards_ conceptually similar to a deck of PowerPoint slides. Each card can contain graphics, text, and interactive user interface elements, called _parts_ (like buttons, menus, and text fields). Stack authors may define the behavior of these interactive parts by attaching a HyperTalk script to them.
+WyldCard lets users author a document called a _stack_, comprised of a list of _cards_ conceptually similar to a deck of PowerPoint slides. Each card can contain graphics, text, and interactive user interface elements called _parts_ (like buttons, menus, and text fields). Stack authors may define the behavior of these interactive parts by attaching a HyperTalk script to them.
 
 Each card is made up of two layers: a _background layer_ and a _card layer_ (the _foreground_). Each card has its own unique foreground, but its background may be shared between cards. Cards sharing a background do not have to be contiguous, and a stack can have multiple backgrounds.
 
 ## Messages and handlers
 
-A _script_ is a set of _message handlers_ and _function handlers_ that describe how the script's owner reacts when WyldCard sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can return a value to its caller.
+A _script_ is a set of _message handlers_ and _function handlers_ that describe how the owning part reacts when WyldCard sends a message to it. A message handler handles incoming messages; a function handler is a subroutine that can be invoked by a message handler to return a value to its caller.
 
 Stacks, backgrounds, cards, buttons and fields are scriptable in the HyperTalk language.
 
@@ -121,9 +121,9 @@ on mouseUp
 end mouseUp
 ```
 
-In this example, when the user clicks the button containing this script, the action of the mouse button being released over the part causes WyldCard to send the message `mouseUp` to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" message).
+When the user clicks the button containing this script, the action of the mouse button being released over the part causes WyldCard to send the `mouseUp` message to the button. Upon receipt of this message, the button executes its `mouseUp` handler (which, in turn, generates a "hello world" message). If the button's script has no `mouseUp` handler, the message is forwarded to the next part in the message passing order (a process described in greater detail below).
 
-Simply invoking the name of a message as a statement in a script "sends" the message to the current part (and subsequently to other parts in its message passing hierarchy, if not trapped). For example, consider this change:
+Simply invoking the name of a message as a statement in a script "sends" the message to the current part (and, if not trapped, sent to other parts in its message passing hierarchy). For example, consider this change:
 
 ```
 on mouseUp
@@ -190,12 +190,6 @@ WyldCard automatically sends the following messages to parts as the user interac
 
 Parts do not need to implement a handler for every message they might receive. Messages for which no handler exists are simply ignored.
 
-#### Multithreading in WyldCard
-
-Script execution in HyperCard was effectively single-threaded, but in WyldCard up to eight scripts can execute concurrently. This threading behavior is implicitly managed by WyldCard as there are no language constructs in HyperTalk to manage threads of execution.
-
-Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to execute that message's handler on one of the eight available threads. If all threads are currently busy executing other scripts, then execution of the handler will be enqueued for processing when one of the other scripts completes. Any messages generated in the execution of the handler will execute synchronously on the same thread as the calling handler. In other words, only messages produced by WyldCard are multi-threaded; once a script starts executing, all messages and functions it sends/invokes are single-threaded.
-
 ### Message passing order
 
 Messages automatically traverse a hierarchy of objects: If a part receives a message and does not have a handler to handle it (or, if its handler invokes the `pass` command), then the message is forwarded to the next part in the sequence.
@@ -226,6 +220,12 @@ on create
   if it is "Yes" then pass create
 end create
 ```
+
+#### Multithreading in WyldCard
+
+Script execution in HyperCard is essentially single-threaded, but in WyldCard up to eight scripts can execute concurrently. This threading behavior is implicitly managed by WyldCard as there are no language constructs in HyperTalk to manage threads of execution.
+
+Each time WyldCard sends a message to a part (e.g., `mouseUp`) it attempts to execute that message's handler on one of the eight available threads. If all threads are currently busy executing other scripts, then execution of the handler will be enqueued for processing when one of the other scripts completes. Any messages generated in the execution of the handler will execute synchronously on the same thread as the calling handler. In other words, only messages produced by WyldCard are multi-threaded; once a script starts executing, all messages and functions it sends/invokes are single-threaded.
 
 ### Navigating between cards
 
@@ -1073,7 +1073,9 @@ Command	         | Description
 `hide`           | Makes a part, image layer, or window title bar invisible. Syntax is `hide <part-factor>`, `hide {card / background} picture`, `hide picture of {<card-factor> / <bkgnd-factor>}`, or `hide titleBar`. For example `hide button id 0`, `hide picture of the last bg`, or `hide card picture`.
 `import paint`   | Pastes the graphics from a given file onto the current card's canvas (making the imported graphic the active selection). For example, `import paint from file "Card Image.png"`.
 `lock screen`    | "Locks" the screen until WyldCard is idle or the screen is unlocked explicitly via the `unlock screen` command.
+`mark`           | Marks cards matching a query or expression. Several forms including, `mark <card-expression>`, `mark all cards`, `mark cards where <logical-expression>`, `mark cards by finding <term> [in <field-expression>]`
 `multiply`       | Multiplies a container by a value; `multiply x by 3`
+`unmark`         | The inverse of 'mark'; unmarks cards matching a query or expression, `unmark <card-expression>`, `unmark all cards`, `unmark cards where <logical-expression>`, `unmark cards by finding <term> [in <field-expression>]`
 `open file`      | Opens a file for reading or writing. Specify either a file name or a path to a file. When only a file name is provided, the file is assumed to be in the "current" directory as returned by the JVM (`user.dir` system property). For example, `open file myfile.txt` or `open file "/Users/john/Desktop/textfile.txt"`.
 `play`           | Plays a sound (`boing`, `harpsichord` or `flute`) optionally as a series of notes (`c d# eh.`) and with an optional tempo (`play harpsichord tempo 200 "b a g a b b b"`). See the Sound and Music section for details.
 `pop`            | Pops the top card from the back-stack; equivalent to choosing "Back" from the "Go" menu. Has no effect if the back-stack is empty.

@@ -170,6 +170,11 @@ commandStmnt
     | 'hide' 'titlebar'                                                                                                 # hideTitleBar
     | 'import' 'paint' 'from' 'file' expression                                                                         # importPaintCmdStmt
     | 'lock' 'screen'                                                                                                   # lockScreenCmdStmt
+    | 'mark' 'all' cards                                                                                                # markAllCardsCmdStmt
+    | 'mark' expression                                                                                                 # markCardCmdStmt
+    | 'mark' cards 'where' expression                                                                                   # markCardsWhereCmdStmt
+    | 'mark' cards 'by' 'finding' expression? 'international'? expression of expression                                 # markCardsFindingInFieldCmdStmt
+    | 'mark' cards 'by' 'finding' expression? 'international'? expression                                               # markCardsFindingCmdStmt
     | 'multiply' expression 'by' expression                                                                             # multiplyCmdStmnt
     | 'next' 'repeat'                                                                                                   # nextRepeatCmdStmt
     | 'open' 'file' expression                                                                                          # openFileCmdStmt
@@ -217,6 +222,11 @@ commandStmnt
     | 'type' expression 'with' ('commandkey' | 'cmdkey')                                                                # typeWithCmdKeyCmdStmt
     | 'unlock' 'screen'                                                                                                 # unlockScreenCmdStmt
     | 'unlock' 'screen' 'with' 'visual' expression                                                                      # unlockScreenVisualCmdStmt
+    | 'unmark' 'all' cards                                                                                              # unmarkAllCardsCmdStmt
+    | 'unmark' expression                                                                                               # unmarkCardCmdStmt
+    | 'unmark' cards 'where' expression                                                                                 # unmarkCardsWhereCmdStmt
+    | 'unmark' cards 'by' 'finding' expression? 'international'? expression of expression                               # unmarkCardsFindingInFieldCmdStmt
+    | 'unmark' cards 'by' 'finding' expression? 'international'? expression                                             # unmarkCardsFindingCmdStmt
     | 'visual' expression                                                                                               # visualEffectCmdStmt
     | 'wait' expression timeUnit                                                                                        # waitCountCmd
     | 'wait' 'for' expression timeUnit                                                                                  # waitForCountCmd

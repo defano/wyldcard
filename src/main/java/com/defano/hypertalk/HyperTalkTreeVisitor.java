@@ -1087,6 +1087,66 @@ public class HyperTalkTreeVisitor extends HyperTalkBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitMarkAllCardsCmdStmt(HyperTalkParser.MarkAllCardsCmdStmtContext ctx) {
+        return new MarkCmd(ctx, true, null, null, null, null, null);
+    }
+
+    @Override
+    public Object visitMarkCardCmdStmt(HyperTalkParser.MarkCardCmdStmtContext ctx) {
+        return new MarkCmd(ctx, true, (Expression) visit(ctx.expression()), null, null,  null, null);
+    }
+
+    @Override
+    public Object visitMarkCardsWhereCmdStmt(HyperTalkParser.MarkCardsWhereCmdStmtContext ctx) {
+        return new MarkCmd(ctx, true, null, (Expression) visit(ctx.expression()), null, null, null);
+    }
+
+    @Override
+    public Object visitMarkCardsFindingInFieldCmdStmt(HyperTalkParser.MarkCardsFindingInFieldCmdStmtContext ctx) {
+        Expression searchType  = ctx.expression().size() == 2 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        Expression searchField = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(1)) : (Expression) visit(ctx.expression(2));
+        return new MarkCmd(ctx, true, null, null, searchType, searchTerm, searchField);
+    }
+
+    @Override
+    public Object visitMarkCardsFindingCmdStmt(HyperTalkParser.MarkCardsFindingCmdStmtContext ctx) {
+        Expression searchType  = ctx.expression().size() == 1 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 1 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        return new MarkCmd(ctx, true, null, null, searchType, searchTerm, null);
+    }
+
+    @Override
+    public Object visitUnmarkAllCardsCmdStmt(HyperTalkParser.UnmarkAllCardsCmdStmtContext ctx) {
+        return new MarkCmd(ctx, false, null, null, null, null, null);
+    }
+
+    @Override
+    public Object visitUnmarkCardCmdStmt(HyperTalkParser.UnmarkCardCmdStmtContext ctx) {
+        return new MarkCmd(ctx, false, (Expression) visit(ctx.expression()), null, null,  null, null);
+    }
+
+    @Override
+    public Object visitUnmarkCardsWhereCmdStmt(HyperTalkParser.UnmarkCardsWhereCmdStmtContext ctx) {
+        return new MarkCmd(ctx, false, null, (Expression) visit(ctx.expression()), null, null, null);
+    }
+
+    @Override
+    public Object visitUnmarkCardsFindingInFieldCmdStmt(HyperTalkParser.UnmarkCardsFindingInFieldCmdStmtContext ctx) {
+        Expression searchType  = ctx.expression().size() == 2 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        Expression searchField = ctx.expression().size() == 2 ? (Expression) visit(ctx.expression(1)) : (Expression) visit(ctx.expression(2));
+        return new MarkCmd(ctx, false, null, null, searchType, searchTerm, searchField);
+    }
+
+    @Override
+    public Object visitUnmarkCardsFindingCmdStmt(HyperTalkParser.UnmarkCardsFindingCmdStmtContext ctx) {
+        Expression searchType  = ctx.expression().size() == 1 ? null : (Expression) visit(ctx.expression(0));
+        Expression searchTerm  = ctx.expression().size() == 1 ? (Expression) visit(ctx.expression(0)) : (Expression) visit(ctx.expression(1));
+        return new MarkCmd(ctx, true, null, null, searchType, searchTerm, null);
+    }
+
+    @Override
     public Object visitUnlockScreenCmdStmt(HyperTalkParser.UnlockScreenCmdStmtContext ctx) {
         return new UnlockScreenCmd(ctx);
     }
