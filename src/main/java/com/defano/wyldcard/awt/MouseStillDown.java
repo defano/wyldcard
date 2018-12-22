@@ -1,5 +1,6 @@
 package com.defano.wyldcard.awt;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.util.Throttle;
 
 import java.awt.event.MouseEvent;
@@ -21,7 +22,7 @@ public class MouseStillDown {
      */
     public static void then (Runnable r) {
         mouseStillPressedThrottle.submitOnUiThread(() -> {
-            if (MouseManager.getInstance().isMouseDown()) {
+            if (WyldCard.getInstance().getMouseManager().isMouseDown()) {
                 r.run();
             }
         });

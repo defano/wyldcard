@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.editor;
 
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.awt.KeyboardManager;
@@ -76,7 +77,7 @@ public class PartResizer {
         this.within = new WeakReference<>(within);
         this.originalBounds = new Rectangle(part.getRect(new ExecutionContext()));
 
-        MouseManager.getInstance().notifyOnMouseReleased(() -> done = true);
+        WyldCard.getInstance().getMouseManager().notifyOnMouseReleased(() -> done = true);
         executor.schedule(new ResizerTask(), 0, TimeUnit.MILLISECONDS);
     }
 }

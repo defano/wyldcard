@@ -1,17 +1,22 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.awt.*;
 
 public class ClickCmd extends Command {
+
+    @Inject
+    private MouseManager mouseManager;
 
     private final Expression clickLoc;
     private final Expression modifierKeys;
@@ -50,7 +55,7 @@ public class ClickCmd extends Command {
             int xLoc = clickLoc.getItems(context).get(0).integerValue();
             int yLoc = clickLoc.getItems(context).get(1).integerValue();
 
-            MouseManager.getInstance().clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
+            mouseManager.clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
         } else {
             throw new HtSemanticException(clickLoc.stringValue() + " is not a valid location.");
         }

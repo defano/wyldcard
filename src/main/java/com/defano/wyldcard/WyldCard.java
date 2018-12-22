@@ -3,6 +3,7 @@ package com.defano.wyldcard;
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.KeyboardManager;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
@@ -15,6 +16,10 @@ import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import javax.swing.*;
 
@@ -23,12 +28,16 @@ import javax.swing.*;
  * responsible for initializing the HyperCard window, tracking mouse changes
  * and reporting exceptions to the user.
  */
+@Singleton
 public class WyldCard extends StackManager implements PartFinder {
 
-    private static WyldCard instance = new WyldCard();
+    private static WyldCard instance;
+    private static Injector injector;
 
-    private WyldCard() {
-    }
+    @Inject
+    private MouseManager mouseManager;
+
+    WyldCard() {}
 
     public static WyldCard getInstance() {
         return instance;
@@ -48,6 +57,9 @@ public class WyldCard extends StackManager implements PartFinder {
             e.printStackTrace();
         }
 
+        injector = Guice.createInjector(new WyldCardModule());
+        instance = injector.getInstance(WyldCard.class);
+
         getInstance().startup();
     }
 
@@ -55,7 +67,7 @@ public class WyldCard extends StackManager implements PartFinder {
 
         SwingUtilities.invokeLater(() -> {
             KeyboardManager.getInstance().start();              // Global key event handler
-            MouseManager.getInstance().start();                 // Global mouse event and mouseLoc handler
+            mouseManager.start();                               // Global mouse event and mouseLoc handler
             PartEditManager.getInstance().start();              // Button field movement and resize management
             WindowManager.getInstance().start();                // Window and palette management
             PatternManager.getInstance().start();               // Update pattern palette on color changes
@@ -91,4 +103,11 @@ public class WyldCard extends StackManager implements PartFinder {
         throw new ExitToHyperCardPreemption();
     }
 
+    public MouseManager getMouseManager() {
+        return mouseManager;
+    }
+
+    public static Injector getInjector() {
+        return injector;
+    }
 }

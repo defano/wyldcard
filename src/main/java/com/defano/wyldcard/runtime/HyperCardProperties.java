@@ -1,7 +1,7 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
@@ -136,12 +136,12 @@ public class HyperCardProperties extends PropertiesModel {
         });
         defineComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getFillPattern()));
 
-        defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc(context).x));
-        defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getMouseLoc(context).y));
+        defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).x));
+        defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).y));
         defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
-        defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc()));
-        defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().x));
-        defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(MouseManager.getInstance().getClickLoc().y));
+        defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc()));
+        defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().x));
+        defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().y));
         defineComputedGetterProperty(PROP_SOUND, (context, model, propertyName) -> new Value(SoundPlayer.getSound()));
 
         defineComputedGetterProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> {

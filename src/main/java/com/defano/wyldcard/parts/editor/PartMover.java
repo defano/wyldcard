@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.editor;
 
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.card.CardLayerPart;
 import com.defano.wyldcard.parts.model.PartModel;
@@ -94,7 +95,7 @@ public class PartMover {
                     NumberUtils.range(mouseLoc.y, 0, partComp.getHeight())
             );
 
-            MouseManager.getInstance().notifyOnMouseReleased(() -> done = true);
+            WyldCard.getInstance().getMouseManager().notifyOnMouseReleased(() -> done = true);
             executor.schedule(new MoverTask(), 0, TimeUnit.MILLISECONDS);
         }
     }

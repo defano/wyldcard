@@ -4,7 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.parts.*;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -55,7 +55,7 @@ public class CardPartTransferHandler extends TransferHandler {
             ToolEditablePart importedPart = (ToolEditablePart) focusedCard.importPart(new ExecutionContext(), part, layer);
 
             // Position pasted part over the mouse cursor
-            Point mouseLoc = MouseManager.getInstance().getMouseLoc(new ExecutionContext());
+            Point mouseLoc = WyldCard.getInstance().getMouseManager().getMouseLoc(new ExecutionContext());
             if (focusedCard.getBounds().contains(mouseLoc)) {
                 importedPart.getPartModel().setKnownProperty(new ExecutionContext(), PartModel.PROP_LOC, new Value(mouseLoc));
             }
