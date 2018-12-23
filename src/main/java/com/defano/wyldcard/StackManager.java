@@ -14,7 +14,7 @@ import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.LimitedDepthStack;
@@ -287,7 +287,7 @@ public class StackManager implements StackNavigationObserver {
         WyldCardPatternFactory.getInstance().invalidatePatternCache();
 
         // Make the selected tool active on the focused card
-        ToolsContext.getInstance().reactivateTool(stackPart.getDisplayedCard().getCanvas());
+        WyldCard.getInstance().getToolsManager().reactivateTool(stackPart.getDisplayedCard().getCanvas());
 
         // Update proxied observables (so that they reference newly focused stack)
         cardCount.setSource(stackPart.getCardCountProvider());
@@ -299,7 +299,7 @@ public class StackManager implements StackNavigationObserver {
 
         isSelectable.setSource(Observable.combineLatest(
                 isUndoable.getObservable(),
-                ToolsContext.getInstance().getSelectedImageProvider(),
+                WyldCard.getInstance().getToolsManager().getSelectedImageProvider(),
 
                 // Select command is available when an undoable change is present; the user does not have an active
                 // graphic selection; there are no re-doable changes; and the last graphic change in the undo buffer

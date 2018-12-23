@@ -23,6 +23,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
+import com.google.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.Subject;
@@ -38,9 +39,8 @@ import static io.reactivex.subjects.BehaviorSubject.createDefault;
  * A singleton representation of paint tool context. Responsible for all configurable properties of the paint subsystem
  * including line width, brush selection, pattern, poly sides, draw multiple, draw centered, grid spacing, etc.
  */
-public class ToolsContext {
-
-    private final static ToolsContext instance = new ToolsContext();
+@Singleton
+public class DefaultToolsManager implements ToolsManager {
 
     // Tool mode properties
     private final Subject<ToolMode> toolModeProvider = createDefault(ToolMode.BROWSE);
@@ -72,37 +72,40 @@ public class ToolsContext {
     private Disposable selectedImageSubscription;
     private Disposable gridSpacingSubscription;
 
-    public static ToolsContext getInstance() {
-        return instance;
-    }
-
+    @Override
     public int getGridSpacing() {
         return gridSpacingProvider.blockingFirst();
     }
 
+    @Override
     public void setGridSpacing(int spacing) {
-        if (instance.gridSpacingSubscription == null) {
-            instance.gridSpacingSubscription = instance.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getFocusedCard().getCanvas().setGridSpacing(integer));
+        if (this.gridSpacingSubscription == null) {
+            this.gridSpacingSubscription = this.gridSpacingProvider.subscribe(integer -> WyldCard.getInstance().getFocusedCard().getCanvas().setGridSpacing(integer));
         }
         gridSpacingProvider.onNext(spacing);
     }
 
+    @Override
     public Subject<Integer> getGridSpacingProvider() {
         return gridSpacingProvider;
     }
 
+    @Override
     public Subject<Stroke> getLineStrokeProvider() {
         return lineStrokeProvider;
     }
 
+    @Override
     public Subject<Paint> getLinePaintProvider() {
         return linePaintProvider;
     }
 
+    @Override
     public void setLinePaint(Paint p) {
         linePaintProvider.onNext(p);
     }
 
+    @Override
     public void reactivateTool(PaintCanvas canvas) {
         paintToolProvider.blockingFirst().deactivate();
         if (canvas != null) {
@@ -110,22 +113,27 @@ public class ToolsContext {
         }
     }
 
+    @Override
     public Subject<PaintTool> getPaintToolProvider() {
         return paintToolProvider;
     }
 
+    @Override
     public Subject<ToolMode> getToolModeProvider() {
         return toolModeProvider;
     }
 
+    @Override
     public ToolMode getToolMode() {
         return toolModeProvider.blockingFirst();
     }
 
+    @Override
     public PaintTool getPaintTool() {
         return paintToolProvider.blockingFirst();
     }
 
+    @Override
     public void selectAll() {
         ((SelectionTool) forceToolSelection(ToolType.SELECT, false)).createSelection(new Rectangle(
                 0,
@@ -135,6 +143,7 @@ public class ToolsContext {
         );
     }
 
+    @Override
     public void select() {
         ImageLayerSet undid = WyldCard.getInstance().getFocusedCard().getCanvas().undo();
         BufferedImage undidImage = undid.render();
@@ -148,78 +157,97 @@ public class ToolsContext {
         selectionTool.createSelection(sub, new Point(reduction.x, reduction.y));
     }
 
+    @Override
     public Color getForegroundColor() {
         return foregroundColorProvider.blockingFirst();
     }
 
+    @Override
     public void setForegroundColor(Color color) {
         foregroundColorProvider.onNext(color);
     }
 
+    @Override
     public Color getBackgroundColor() {
         return backgroundColorProvider.blockingFirst();
     }
 
+    @Override
     public void setBackgroundColor(Color color) {
         backgroundColorProvider.onNext(color);
     }
 
+    @Override
     public Subject<Color> getBackgroundColorProvider() {
         return backgroundColorProvider;
     }
 
+    @Override
     public Subject<Color> getForegroundColorProvider() {
         return foregroundColorProvider;
     }
 
+    @Override
     public PaintBrush getSelectedBrush() {
         return brushStrokeProvider.blockingFirst();
     }
 
+    @Override
     public void setSelectedBrush(PaintBrush brush) {
         brushStrokeProvider.onNext(brush);
     }
 
+    @Override
     public Subject<PaintBrush> getSelectedBrushProvider() {
         return brushStrokeProvider;
     }
 
+    @Override
     public void toggleDrawCentered() {
         setDrawCentered(!isDrawCentered());
     }
 
+    @Override
     public boolean isDrawCentered() {
         return this.drawCenteredProvider.blockingFirst();
     }
 
+    @Override
     public void setDrawCentered(boolean drawCentered) {
         this.drawCenteredProvider.onNext(drawCentered);
     }
 
+    @Override
     public Subject<Boolean> getDrawCenteredProvider() {
         return drawCenteredProvider;
     }
 
+    @Override
     public void toggleDrawMultiple() {
         setDrawMultiple(!isDrawMultiple());
     }
 
+    @Override
     public boolean isDrawMultiple() {
         return this.drawMultipleProvider.blockingFirst();
     }
 
+    @Override
     public void setDrawMultiple(boolean drawMultiple) {
         this.drawMultipleProvider.onNext(drawMultiple);
     }
 
+    @Override
     public Subject<Boolean> getDrawMultipleProvider() {
         return drawMultipleProvider;
     }
 
+    @Override
     public Subject<Optional<BufferedImage>> getSelectedImageProvider() {
         return selectedImageProvider;
     }
 
+    @Override
     public BufferedImage getSelectedImage() {
         return selectedImageProvider.blockingFirst().orElse(null);
     }
@@ -231,58 +259,72 @@ public class ToolsContext {
         selectedImageSubscription = imageProvider.subscribe(selectedImageProvider::onNext);
     }
 
+    @Override
     public int getShapeSides() {
         return shapeSidesProvider.blockingFirst();
     }
 
+    @Override
     public void setShapeSides(int shapeSides) {
         shapeSidesProvider.onNext(shapeSides);
     }
 
+    @Override
     public Subject<Integer> getShapeSidesProvider() {
         return shapeSidesProvider;
     }
 
+    @Override
     public Subject<Integer> getFillPatternProvider() {
         return fillPatternProvider;
     }
 
+    @Override
     public int getFillPattern() {
         return fillPatternProvider.blockingFirst();
     }
 
+    @Override
     public void setFillPattern(int pattern) {
         fillPatternProvider.onNext(pattern);
     }
 
+    @Override
     public double getIntensity() {
         return intensityProvider.blockingFirst();
     }
 
+    @Override
     public void setIntensity(double intensity) {
         intensityProvider.onNext(intensity);
     }
 
+    @Override
     public Ditherer getDitherer() {
         return dithererProvider.blockingFirst();
     }
 
+    @Override
     public void setDitherer(Ditherer ditherer) {
         dithererProvider.onNext(ditherer);
     }
 
+    @Override
     public Subject<Interpolation> getAntiAliasingProvider() {
         return antiAliasingProvider;
     }
 
+    @Override
     public void setAntiAliasingMode(Interpolation antiAliasingMode) {
         this.antiAliasingProvider.onNext(antiAliasingMode);
     }
 
+    @Override
     public Observable<Ditherer> getDithererProvider() {
         return dithererProvider;
     }
 
+    @Override
     public void toggleMagnifier() {
         if (getPaintTool().getToolType() == PaintToolType.MAGNIFIER) {
             WyldCard.getInstance().getFocusedCard().getCanvas().setScale(1.0);
@@ -294,26 +336,32 @@ public class ToolsContext {
         }
     }
 
+    @Override
     public int getLineWidth() {
         return Math.round((int) ((BasicStroke) lineStrokeProvider.blockingFirst()).getLineWidth());
     }
 
+    @Override
     public void setLineWidth(int width) {
         lineStrokeProvider.onNext(StrokeBuilder.withBasicStroke().ofWidth(width).withRoundCap().withRoundJoin().build());
     }
 
+    @Override
     public void setPattern(int patternId) {
         fillPatternProvider.onNext(patternId);
     }
 
+    @Override
     public boolean isEditingBackground() {
         return isEditingBackground.blockingFirst();
     }
 
+    @Override
     public Subject<Boolean> isEditingBackgroundProvider() {
         return isEditingBackground;
     }
 
+    @Override
     public void toggleIsEditingBackground() {
         getPaintTool().deactivate();
         isEditingBackground.onNext(!isEditingBackground.blockingFirst());
@@ -321,38 +369,35 @@ public class ToolsContext {
         WyldCard.getInstance().getWindowManager().getFocusedStackWindow().invalidateWindowTitle();
     }
 
+    @Override
     public void setIsEditingBackground(boolean isEditingBackground) {
         getPaintTool().deactivate();
         this.isEditingBackground.onNext(isEditingBackground);
         reactivateTool(WyldCard.getInstance().getFocusedCard().getCanvas());
     }
 
+    @Override
     public boolean isShapesFilled() {
         return shapesFilledProvider.blockingFirst();
     }
 
+    @Override
     public void setShapesFilled(boolean shapesFilled) {
         this.shapesFilledProvider.onNext(shapesFilled);
     }
 
+    @Override
     public void toggleShapesFilled() {
         shapesFilledProvider.onNext(!shapesFilledProvider.blockingFirst());
         forceToolSelection(ToolType.fromPaintTool(paintToolProvider.blockingFirst().getToolType()), false);
     }
 
+    @Override
     public Subject<Boolean> getShapesFilledProvider() {
         return shapesFilledProvider;
     }
 
-    /**
-     * Attempts to make the given tool active on the card. Sends a {@link SystemMessage#CHOOSE} message to the
-     * current card. If any script in the message passing hierarchy traps the message, then the request is ignored
-     * and the tool is not changed.
-     * <p>
-     * For programmatic tool changes that should not be trappable, see {@link #forceToolSelection(ToolType, boolean)}.
-     *
-     * @param toolType The requested tool selection.
-     */
+    @Override
     public void chooseTool(ToolType toolType) {
         WyldCard.getInstance().getFocusedCard().getCardModel().receiveMessage(ExecutionContext.unboundInstance(), SystemMessage.CHOOSE.messageName, ListExp.fromValues(null, new Value(toolType.getPrimaryToolName()), new Value(toolType.getToolNumber())), (command, wasTrapped, err) -> {
             if (!wasTrapped) {
@@ -361,19 +406,7 @@ public class ToolsContext {
         });
     }
 
-    /**
-     * Make the given tool the active tool on the card. Does not generate a HyperTalk {@link SystemMessage#CHOOSE}
-     * message, and therefore is not overridable in script.
-     * <p>
-     * This method should be used for "programmatic" tool selection where the user/card should have no ability to "see"
-     * the change or prevent it. User-driven changes to the tool selection should use {@link #chooseTool(ToolType)}
-     * instead.
-     *
-     * @param tool          The tool selection
-     * @param keepSelection Attempt to maintain / morph the active selection as the tool changes. Has no effect if
-     *                      the tool transition does not operate on a selection or does not support selection morphing.
-     * @return The instance of the newly activated tool.
-     */
+    @Override
     public PaintTool forceToolSelection(ToolType tool, boolean keepSelection) {
         PaintTool selected = activatePaintTool(tool.toPaintTool(), keepSelection);
 
@@ -396,48 +429,34 @@ public class ToolsContext {
         return selected;
     }
 
+    @Override
     public ToolType getSelectedTool() {
         return ToolType.fromToolMode(getToolMode(), getPaintTool().getToolType());
     }
 
-    /**
-     * Gets an observable of whether an image selection exists using a tool that conforms to
-     * {@link TransformableImageSelection}.
-     *
-     * @return The observable
-     */
+    @Override
     public Observable<Boolean> hasTransformableImageSelectionProvider() {
         return Observable.combineLatest(
-                ToolsContext.getInstance().getPaintToolProvider(),
-                ToolsContext.getInstance().getSelectedImageProvider(),
+                DefaultToolsManager.this.getPaintToolProvider(),
+                DefaultToolsManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableImageSelection && bufferedImage.isPresent()
         );
     }
 
-    /**
-     * Gets an observable of whether an image selection exists using a tool that conforms to
-     * {@link TransformableSelection}.
-     *
-     * @return The observable
-     */
+    @Override
     public Observable<Boolean> hasTransformableSelectionProvider() {
         return Observable.combineLatest(
-                ToolsContext.getInstance().getPaintToolProvider(),
-                ToolsContext.getInstance().getSelectedImageProvider(),
+                DefaultToolsManager.this.getPaintToolProvider(),
+                DefaultToolsManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableSelection && bufferedImage.isPresent()
         );
     }
 
-    /**
-     * Gets an observable of whether an image selection exists using a tool that conforms to
-     * {@link TransformableCanvasSelection}.
-     *
-     * @return The observable
-     */
+    @Override
     public Observable<Boolean> hasTransformableCanvasSelectionProvider() {
         return Observable.combineLatest(
-                ToolsContext.getInstance().getPaintToolProvider(),
-                ToolsContext.getInstance().getSelectedImageProvider(),
+                DefaultToolsManager.this.getPaintToolProvider(),
+                DefaultToolsManager.this.getSelectedImageProvider(),
                 (paintTool, bufferedImage) -> paintTool instanceof TransformableCanvasSelection && bufferedImage.isPresent()
         );
     }

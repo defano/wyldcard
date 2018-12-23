@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.expressions.functions;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -14,6 +15,6 @@ public class ToolFunc extends Expression {
 
     @Override
     public Value onEvaluate(ExecutionContext context) {
-        return new Value(ToolsContext.getInstance().getSelectedTool().getPrimaryToolName().toLowerCase() + " tool");
+        return new Value(WyldCard.getInstance().getToolsManager().getSelectedTool().getPrimaryToolName().toLowerCase() + " tool");
     }
 }

@@ -1,6 +1,7 @@
 package com.defano.wyldcard.patterns;
 
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 /**
  * Utility class responsible for listening to changes to the set of available patterns and invaliding the pattern cache
@@ -17,7 +18,7 @@ public class PatternManager {
     }
 
     public void start() {
-        ToolsContext.getInstance().getForegroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
-        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
+        WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
+        WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(color -> WyldCardPatternFactory.getInstance().invalidatePatternCache());
     }
 }

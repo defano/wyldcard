@@ -9,7 +9,7 @@ import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.parts.clipboard.CardActionListener;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.IconCreator;
 import com.l2fprod.common.swing.JFontChooser;
@@ -75,8 +75,8 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Clear")
-                .withAction(e -> ((AbstractSelectionTool) ToolsContext.getInstance().getPaintTool()).deleteSelection())
-                .withDisabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Objects::isNull))
+                .withAction(e -> ((AbstractSelectionTool) WyldCard.getInstance().getToolsManager().getPaintTool()).deleteSelection())
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Objects::isNull))
                 .build(this);
 
         this.addSeparator();
@@ -121,16 +121,16 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Background")
-                .withCheckmarkProvider(ToolsContext.getInstance().isEditingBackgroundProvider())
-                .withAction(e -> ToolsContext.getInstance().toggleIsEditingBackground())
+                .withCheckmarkProvider(WyldCard.getInstance().getToolsManager().isEditingBackgroundProvider())
+                .withAction(e -> WyldCard.getInstance().getToolsManager().toggleIsEditingBackground())
                 .withShortcut('B')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Create Icon...")
-                .withEnabledProvider(ToolsContext.getInstance().getSelectedImageProvider().map(Optional::isPresent))
+                .withEnabledProvider(WyldCard.getInstance().getToolsManager().getSelectedImageProvider().map(Optional::isPresent))
                 .withAction(e -> new WindowBuilder<>(new IconCreator())
-                        .withModel(ToolsContext.getInstance().getSelectedImage())
+                        .withModel(WyldCard.getInstance().getToolsManager().getSelectedImage())
                         .resizeable(false)
                         .withTitle("Create Icon")
                         .asModal()

@@ -6,7 +6,7 @@ import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ArtVandelay;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.runtime.print.PrintCardAction;
 import com.defano.wyldcard.runtime.print.PrintStackAction;
 
@@ -63,13 +63,13 @@ public class FileMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Import Paint...")
                 .withAction(e -> ArtVandelay.importPaint())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(m -> m != ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Export Paint...")
                 .withAction(e -> ArtVandelay.exportPaint())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(m -> m != ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(m -> m != ToolMode.PAINT))
                 .build(this);
 
         this.addSeparator();

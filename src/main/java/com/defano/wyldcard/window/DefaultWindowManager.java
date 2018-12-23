@@ -4,7 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.layouts.*;
 import com.google.inject.Singleton;
 import io.reactivex.subjects.BehaviorSubject;
@@ -230,7 +230,7 @@ public class DefaultWindowManager implements WindowManager {
 
     public void showPatternEditor() {
         new WindowBuilder<>(new PatternEditor())
-                .withModel(ToolsContext.getInstance().getFillPattern())
+                .withModel(WyldCard.getInstance().getToolsManager().getFillPattern())
                 .withTitle("Edit Pattern")
                 .resizeable(false)
                 .asModal()

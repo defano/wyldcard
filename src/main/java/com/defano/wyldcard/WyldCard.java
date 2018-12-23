@@ -12,9 +12,7 @@ import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
-import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FileContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.window.DefaultWindowManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
@@ -36,6 +34,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private MouseManager mouseManager;
     @Inject private KeyboardManager keyboardManager;
     @Inject private WindowManager windowManager;
+    @Inject private ToolsManager toolsManager;
 
     WyldCard() {}
 
@@ -115,6 +114,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return windowManager;
     }
 
+    public ToolsManager getToolsManager() {
+        return toolsManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -125,6 +128,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(MouseManager.class).to(DefaultMouseManager.class);
             bind(KeyboardManager.class).to(DefaultKeyboardManager.class);
             bind(WindowManager.class).to(DefaultWindowManager.class);
+            bind(ToolsManager.class).to(DefaultToolsManager.class);
         }
     }
 }

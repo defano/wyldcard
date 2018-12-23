@@ -18,7 +18,7 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.PartsTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.search.SearchContext;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -169,7 +169,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         newButton.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_BUTTON.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
-        ToolsContext.getInstance().forceToolSelection(ToolType.BUTTON, false);
+        WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.BUTTON, false);
         PartToolContext.getInstance().setSelectedPart(newButton);
     }
 
@@ -202,7 +202,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         newField.getPartModel().receiveMessage(context.bind(this), SystemMessage.NEW_FIELD.messageName);
 
         // When a new button is created, make the button tool active and select the newly created button
-        ToolsContext.getInstance().forceToolSelection(ToolType.FIELD, false);
+        WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.FIELD, false);
         PartToolContext.getInstance().setSelectedPart(newField);
     }
 
@@ -260,7 +260,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
      * @return The active paint canvas for this card.
      */
     public JMonetCanvas getCanvas() {
-        return ToolsContext.getInstance().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
+        return WyldCard.getInstance().getToolsManager().isEditingBackground() ? getBackgroundCanvas() : getForegroundCanvas();
     }
 
     /**
@@ -405,7 +405,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
-        if (ToolsContext.getInstance().isEditingBackground()) {
+        if (WyldCard.getInstance().getToolsManager().isEditingBackground()) {
             cardModel.getBackgroundModel().setBackgroundImage(canvasImage);
         } else {
             cardModel.setCardImage(canvasImage);
@@ -415,7 +415,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public BufferedImage copySelection() {
-        PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
+        PaintTool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
         if (activeTool instanceof AbstractSelectionTool) {
             return ((AbstractSelectionTool) activeTool).getSelectedImage();
         }
@@ -426,7 +426,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
     /** {@inheritDoc} */
     @Override
     public void deleteSelection() {
-        PaintTool activeTool = ToolsContext.getInstance().getPaintTool();
+        PaintTool activeTool = WyldCard.getInstance().getToolsManager().getPaintTool();
         if (activeTool instanceof AbstractSelectionTool) {
             ((AbstractSelectionTool) activeTool).deleteSelection();
         }
@@ -438,7 +438,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         int cardCenterX = getWidth() / 2;
         int cardCenterY = getHeight() / 2;
 
-        SelectionTool tool = (SelectionTool) ToolsContext.getInstance().forceToolSelection(ToolType.SELECT, false);
+        SelectionTool tool = (SelectionTool) WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.SELECT, false);
         tool.createSelection(image, new Point(cardCenterX - image.getWidth() / 2, cardCenterY - image.getHeight() / 2));
     }
 
@@ -678,7 +678,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
             thisField.getPartModel().notifyPropertyChangedObserver(context, thisField);
         }
 
-        editingBackgroundSubscription = ToolsContext.getInstance().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
+        editingBackgroundSubscription = WyldCard.getInstance().getToolsManager().isEditingBackgroundProvider().subscribe(editingBackgroundObserver);
         foregroundScaleSubscription = getForegroundCanvas().getScaleObservable().subscribe(foregroundScaleObserver);
         backgroundScaleSubscription = getBackgroundCanvas().getScaleObservable().subscribe(backgroundScaleObserver);
 

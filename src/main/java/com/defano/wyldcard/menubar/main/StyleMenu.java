@@ -1,11 +1,12 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.FontSizePicker;
 
@@ -24,21 +25,21 @@ public class StyleMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Align Left")
                 .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("left")))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedLeftAlignProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Center")
                 .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("center")))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedCenterAlignProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Align Right")
                 .withAction(e -> FontContext.getInstance().setSelectedFontAlign(new Value("right")))
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(toolMode -> toolMode == ToolMode.PAINT))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedRightAlignProvider())
                 .build(this);
 
@@ -69,28 +70,28 @@ public class StyleMenu extends HyperCardMenu {
                 .named("Underline")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("underline")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedUnderlineProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Strikethrough")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("strikethrough")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedStrikethroughProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Superscript")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("superscript")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedSuperscriptProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Subscript")
                 .withAction(e -> FontContext.getInstance().toggleSelectedFontStyle(new Value("subscript")))
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedSubscriptProvider())
-                .withDisabledProvider(ToolsContext.getInstance().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
+                .withDisabledProvider(WyldCard.getInstance().getToolsManager().getToolModeProvider().map(value -> value != ToolMode.BROWSE))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()

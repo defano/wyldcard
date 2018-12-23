@@ -1,7 +1,8 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -31,7 +32,7 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
         hexagon.addActionListener(e -> selectShape(6));
         octogon.addActionListener(e -> selectShape(8));
 
-        ToolsContext.getInstance().getShapeSidesProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getShapeSidesProvider().subscribe(this);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ShapesPalette extends WyldCardDialog<Object> implements Consumer<In
     }
 
     private void selectShape(int sides) {
-        ToolsContext.getInstance().setShapeSides(sides);
+        WyldCard.getInstance().getToolsManager().setShapeSides(sides);
     }
 
     @Override

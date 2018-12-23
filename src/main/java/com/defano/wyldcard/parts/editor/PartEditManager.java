@@ -10,7 +10,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,9 +55,9 @@ public class PartEditManager implements AWTEventListener, KeyEventDispatcher {
         // User dragged the mouse
         else if (event.getID() == MouseEvent.MOUSE_DRAGGED) {
             if (WyldCard.getInstance().getKeyboardManager().isCtrlCommandDown() && part == null){
-                if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON) {
+                if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON) {
                     doNewButton();
-                } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD) {
+                } else if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD) {
                     doNewField();
                 }
             }

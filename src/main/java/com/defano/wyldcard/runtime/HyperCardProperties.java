@@ -8,7 +8,7 @@ import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.SelectionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.sound.SoundPlayer;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -103,36 +103,36 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedSetterProperty(PROP_TEXTSIZE, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontSize(value.integerValue()));
         defineComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontSize()));
 
-        defineComputedGetterProperty(PROP_BRUSH, (context, model, propertyName) -> BasicBrushResolver.valueOfBasicBrush(ToolsContext.getInstance().getSelectedBrush()));
-        defineComputedSetterProperty(PROP_BRUSH, (context, model, propertyName, value) -> ToolsContext.getInstance().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));
+        defineComputedGetterProperty(PROP_BRUSH, (context, model, propertyName) -> BasicBrushResolver.valueOfBasicBrush(WyldCard.getInstance().getToolsManager().getSelectedBrush()));
+        defineComputedSetterProperty(PROP_BRUSH, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));
 
-        defineComputedSetterProperty(PROP_LINESIZE, (context, model, propertyName, value) -> ToolsContext.getInstance().setLineWidth(value.integerValue()));
-        defineComputedGetterProperty(PROP_LINESIZE, (context, model, propertyName) -> new Value(ToolsContext.getInstance().getLineWidth()));
+        defineComputedSetterProperty(PROP_LINESIZE, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setLineWidth(value.integerValue()));
+        defineComputedGetterProperty(PROP_LINESIZE, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().getLineWidth()));
 
-        defineComputedSetterProperty(PROP_FILLED, (context, model, propertyName, value) -> ToolsContext.getInstance().setShapesFilled(value.booleanValue()));
-        defineComputedGetterProperty(PROP_FILLED, (context, model, propertyName) -> new Value(ToolsContext.getInstance().isShapesFilled()));
+        defineComputedSetterProperty(PROP_FILLED, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setShapesFilled(value.booleanValue()));
+        defineComputedGetterProperty(PROP_FILLED, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().isShapesFilled()));
 
-        defineComputedSetterProperty(PROP_CENTERED, (context, model, propertyName, value) -> ToolsContext.getInstance().setDrawCentered(value.booleanValue()));
-        defineComputedGetterProperty(PROP_CENTERED, (context, model, propertyName) -> new Value(ToolsContext.getInstance().isDrawCentered()));
+        defineComputedSetterProperty(PROP_CENTERED, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setDrawCentered(value.booleanValue()));
+        defineComputedGetterProperty(PROP_CENTERED, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().isDrawCentered()));
 
-        defineComputedSetterProperty(PROP_MULTIPLE, (context, model, propertyName, value) -> ToolsContext.getInstance().setDrawMultiple(value.booleanValue()));
-        defineComputedGetterProperty(PROP_MULTIPLE, (context, model, propertyName) -> new Value(ToolsContext.getInstance().isDrawMultiple()));
+        defineComputedSetterProperty(PROP_MULTIPLE, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()));
+        defineComputedGetterProperty(PROP_MULTIPLE, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().isDrawMultiple()));
 
         defineComputedSetterProperty(PROP_CURSOR, (context, model, propertyName, value) -> CursorManager.getInstance().setActiveCursor(value));
         defineComputedGetterProperty(PROP_CURSOR, (context, model, propertyName) -> new Value (CursorManager.getInstance().getActiveCursor().hyperTalkName));
 
-        defineComputedSetterProperty(PROP_GRID, (context, model, propertyName, value) -> ToolsContext.getInstance().setGridSpacing(value.booleanValue() ? 8 : 1));
-        defineComputedGetterProperty(PROP_GRID, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getGridSpacing() > 1));
+        defineComputedSetterProperty(PROP_GRID, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setGridSpacing(value.booleanValue() ? 8 : 1));
+        defineComputedGetterProperty(PROP_GRID, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getGridSpacing() > 1));
 
-        defineComputedSetterProperty(PROP_POLYSIDES, (context, model, propertyName, value) -> ToolsContext.getInstance().setShapeSides(value.integerValue()));
-        defineComputedGetterProperty(PROP_POLYSIDES, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getShapeSides()));
+        defineComputedSetterProperty(PROP_POLYSIDES, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setShapeSides(value.integerValue()));
+        defineComputedGetterProperty(PROP_POLYSIDES, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getShapeSides()));
 
         defineComputedSetterProperty(PROP_PATTERN, (context, model, propertyName, value) -> {
             if (value.integerValue() >= 0 && value.integerValue() < 40) {
-                ToolsContext.getInstance().setFillPattern(value.integerValue());
+                WyldCard.getInstance().getToolsManager().setFillPattern(value.integerValue());
             }
         });
-        defineComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (ToolsContext.getInstance().getFillPattern()));
+        defineComputedGetterProperty(PROP_PATTERN, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getFillPattern()));
 
         defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).x));
         defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).y));

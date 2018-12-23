@@ -1,7 +1,8 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -15,8 +16,8 @@ public class IntensityPalette extends WyldCardDialog<Object> {
     private JPanel intensityPanel;
 
     public IntensityPalette() {
-        intensitySlider.setValue((int) (ToolsContext.getInstance().getIntensity() * 100.0));
-        intensitySlider.addChangeListener(e -> ToolsContext.getInstance().setIntensity(intensitySlider.getValue() / 100.0));
+        intensitySlider.setValue((int) (WyldCard.getInstance().getToolsManager().getIntensity() * 100.0));
+        intensitySlider.addChangeListener(e -> WyldCard.getInstance().getToolsManager().setIntensity(intensitySlider.getValue() / 100.0));
     }
 
     @Override

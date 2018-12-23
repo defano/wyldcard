@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.utils.Range;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.DeferredKeyEventComponent;
@@ -17,7 +18,7 @@ import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
@@ -182,7 +183,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     /** {@inheritDoc} */
     @Override
     public boolean isPartToolActive() {
-        return ToolsContext.getInstance().getToolMode() == ToolMode.FIELD;
+        return WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD;
     }
 
     /** {@inheritDoc} */

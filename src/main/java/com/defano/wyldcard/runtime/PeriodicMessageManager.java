@@ -9,7 +9,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -45,7 +45,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
         WyldCard.getInstance().getFocusedStackProvider().subscribe(stackPart -> stackPart.addNavigationObserver(PeriodicMessageManager.this));
 
         // Stop tracking 'within' when not in browse mode
-        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> {
+        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> {
             if (toolMode != ToolMode.BROWSE) {
                 withinParts.clear();
             }
@@ -89,7 +89,7 @@ public class PeriodicMessageManager implements Runnable, StackNavigationObserver
 
     private void send(SystemMessage message, PartModel... models) {
         for (PartModel model : models) {
-            if (ToolsContext.getInstance().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
+            if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BROWSE && deferCycles < 1) {
                 model.receiveMessage(new ExecutionContext(model), message.messageName, new ListExp(null), (command, wasTrapped, error) -> {
                     if (error != null) {
                         error.printStackTrace();

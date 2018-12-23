@@ -5,7 +5,7 @@ import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
@@ -73,15 +73,15 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         line.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getLinesPalette().setVisible(true));
         paintbrush.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().setVisible(true));
         spraypaint.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getIntensityPalette().setVisible(true));
-        rectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
-        roundRectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
-        oval.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
-        curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
-        polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
-        selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
+        rectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
+        roundRectangle.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
+        oval.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
+        curve.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
+        polygon.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
+        selection.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().selectAll());
         text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
 
-        ToolsContext.getInstance().getShapesFilledProvider().subscribe(filled -> {
+        WyldCard.getInstance().getToolsManager().getShapesFilledProvider().subscribe(filled -> {
             SwingUtilities.invokeLater(() -> {
                 rectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/rectangle_filled.png" : "/icons/rectangle.png")));
                 roundRectangle.setIcon(new ImageIcon(getClass().getResource(filled ? "/icons/roundrect_filled.png" : "/icons/roundrect.png")));
@@ -92,8 +92,8 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
             });
         });
 
-        ToolsContext.getInstance().getPaintToolProvider().subscribe(this);
-        ToolsContext.getInstance().getToolModeProvider().subscribe(arg -> {
+        WyldCard.getInstance().getToolsManager().getPaintToolProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(arg -> {
             SwingUtilities.invokeLater(() -> {
                 if (arg == ToolMode.BROWSE) {
                     enableAllTools();
@@ -128,8 +128,8 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
     }
 
     private void selectTool(ToolType tool) {
-        lastTool = ToolsContext.getInstance().getSelectedTool();
-        ToolsContext.getInstance().chooseTool(tool);
+        lastTool = WyldCard.getInstance().getToolsManager().getSelectedTool();
+        WyldCard.getInstance().getToolsManager().chooseTool(tool);
     }
 
     private JButton getButtonForTool(PaintToolType paintToolType) {

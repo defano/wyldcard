@@ -3,7 +3,7 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -32,8 +32,8 @@ public class MagnificationPalette extends WyldCardDialog<Object> {
         map.put(32, new JLabel("32x"));
         slider1.setLabelTable(map);
 
-        magnifierButton.addActionListener(e -> ToolsContext.getInstance().forceToolSelection(ToolType.MAGNIFIER, false));
-        ToolsContext.getInstance().getPaintToolProvider().subscribe(tool -> magnifierButton.setEnabled(tool.getToolType() != PaintToolType.MAGNIFIER));
+        magnifierButton.addActionListener(e -> WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.MAGNIFIER, false));
+        WyldCard.getInstance().getToolsManager().getPaintToolProvider().subscribe(tool -> magnifierButton.setEnabled(tool.getToolType() != PaintToolType.MAGNIFIER));
 
         WyldCard.getInstance().getKeyboardManager().addGlobalKeyListener(new KeyAdapter() {
             @Override

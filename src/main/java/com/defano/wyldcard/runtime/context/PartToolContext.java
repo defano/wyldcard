@@ -36,7 +36,7 @@ public class PartToolContext {
 
     public void start() {
         // Deselect all parts when user changes tool mode
-        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> deselectAllParts());
+        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> deselectAllParts());
 
         // Change part font when user chooses a font/style from the menubar
         FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontObserver);
@@ -46,7 +46,7 @@ public class PartToolContext {
     }
 
     public void setSelectedPart(ToolEditablePart part) {
-        if (ToolsContext.getInstance().getToolMode().isPartTool()) {
+        if (WyldCard.getInstance().getToolsManager().getToolMode().isPartTool()) {
             ThreadUtils.invokeAndWaitAsNeeded(() -> {
                 deselectAllParts();
                 part.setSelectedForEditing(new ExecutionContext(), true);

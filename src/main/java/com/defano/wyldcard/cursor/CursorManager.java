@@ -4,7 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
@@ -29,7 +29,7 @@ public class CursorManager implements StackNavigationObserver {
 
     public void start() {
         // Update cursor when the tool mode changes...
-        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> updateCursor());
+        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> updateCursor());
 
         // ... or when the focused stack changes
         WyldCard.getInstance().getFocusedStackProvider().subscribe(stackPart -> {
@@ -58,8 +58,8 @@ public class CursorManager implements StackNavigationObserver {
     }
 
     private void updateCursor() {
-        ToolMode mode = ToolsContext.getInstance().getToolMode();
-        PaintTool tool = ToolsContext.getInstance().getPaintTool();
+        ToolMode mode = WyldCard.getInstance().getToolsManager().getToolMode();
+        PaintTool tool = WyldCard.getInstance().getToolsManager().getPaintTool();
 
         Cursor effectiveCursor = mode == ToolMode.BROWSE ?
                 activeCursor.cursor :

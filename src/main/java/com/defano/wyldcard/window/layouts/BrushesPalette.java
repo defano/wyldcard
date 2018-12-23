@@ -1,7 +1,8 @@
 package com.defano.wyldcard.window.layouts;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -51,32 +52,32 @@ public class BrushesPalette extends WyldCardDialog<Object> implements Consumer<P
                 bar16, bar12, bar8, bar4
         };
 
-        square16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_16X16));
-        square12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_12X12));
-        square8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_8X8));
-        square4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.SQUARE_4X4));
-        round16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_16X16));
-        round12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_12X12));
-        round8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_8X8));
-        round4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.ROUND_4X4));
-        line16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_16));
-        line12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_12));
-        line8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_8));
-        line4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.LINE_4));
-        forward16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_16));
-        forward12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_12));
-        forward8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_8));
-        forward4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.FORWARD_4));
-        back16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_16));
-        back12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_12));
-        back8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_8));
-        back4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BACK_4));
-        bar16.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_16));
-        bar12.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_12));
-        bar8.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_8));
-        bar4.addActionListener(a -> ToolsContext.getInstance().setSelectedBrush(PaintBrush.BAR_4));
+        square16.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.SQUARE_16X16));
+        square12.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.SQUARE_12X12));
+        square8.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.SQUARE_8X8));
+        square4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.SQUARE_4X4));
+        round16.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_16X16));
+        round12.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_12X12));
+        round8.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_8X8));
+        round4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.ROUND_4X4));
+        line16.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.LINE_16));
+        line12.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.LINE_12));
+        line8.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.LINE_8));
+        line4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.LINE_4));
+        forward16.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.FORWARD_16));
+        forward12.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.FORWARD_12));
+        forward8.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.FORWARD_8));
+        forward4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.FORWARD_4));
+        back16.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BACK_16));
+        back12.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BACK_12));
+        back8.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BACK_8));
+        back4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BACK_4));
+        bar16.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BAR_16));
+        bar12.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BAR_12));
+        bar8.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BAR_8));
+        bar4.addActionListener(a -> WyldCard.getInstance().getToolsManager().setSelectedBrush(PaintBrush.BAR_4));
 
-        ToolsContext.getInstance().getSelectedBrushProvider().subscribe(this);
+        WyldCard.getInstance().getToolsManager().getSelectedBrushProvider().subscribe(this);
     }
 
     @Override

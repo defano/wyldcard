@@ -16,7 +16,7 @@ import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -189,9 +189,9 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     @Override
     @RunOnDispatch
     default void mousePressed(MouseEvent e) {
-        if (ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
+        if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
             PartToolContext.getInstance().setSelectedPart(this);
-        } else if (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField) {
+        } else if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField) {
             PartToolContext.getInstance().setSelectedPart(this);
         }
     }
@@ -212,8 +212,8 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         }
 
         // Single click to select part
-        else if ((ToolsContext.getInstance().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
-                (ToolsContext.getInstance().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
+        else if ((WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
+                (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
         {
             PartToolContext.getInstance().setSelectedPart(this);
         }

@@ -3,7 +3,7 @@ package com.defano.wyldcard.parts.clipboard;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.parts.*;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -61,7 +61,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected
-                ToolsContext.getInstance().forceToolSelection(importedPart.getEditTool(), false);
+                WyldCard.getInstance().getToolsManager().forceToolSelection(importedPart.getEditTool(), false);
                 PartToolContext.getInstance().setSelectedPart(importedPart);
             });
 

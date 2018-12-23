@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window.layouts;
 
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -47,13 +48,13 @@ public class ColorPalette extends WyldCardWindow<Object> {
         backgroundChooserPanel.add(backgroundChooser);
         lineChooserPanel.add(lineChooser);
 
-        ToolsContext.getInstance().getForegroundColorProvider().subscribe(foregroundChooser::setColor);
-        ToolsContext.getInstance().getBackgroundColorProvider().subscribe(backgroundChooser::setColor);
-        ToolsContext.getInstance().getLinePaintProvider().subscribe(paint -> lineChooser.setColor((Color) paint));
+        WyldCard.getInstance().getToolsManager().getForegroundColorProvider().subscribe(foregroundChooser::setColor);
+        WyldCard.getInstance().getToolsManager().getBackgroundColorProvider().subscribe(backgroundChooser::setColor);
+        WyldCard.getInstance().getToolsManager().getLinePaintProvider().subscribe(paint -> lineChooser.setColor((Color) paint));
 
-        foregroundChooser.getSelectionModel().addChangeListener(e -> ToolsContext.getInstance().setForegroundColor(foregroundChooser.getColor()));
-        backgroundChooser.getSelectionModel().addChangeListener(e -> ToolsContext.getInstance().setBackgroundColor(backgroundChooser.getColor()));
-        lineChooser.getSelectionModel().addChangeListener(e -> ToolsContext.getInstance().setLinePaint(lineChooser.getColor()));
+        foregroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setForegroundColor(foregroundChooser.getColor()));
+        backgroundChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setBackgroundColor(backgroundChooser.getColor()));
+        lineChooser.getSelectionModel().addChangeListener(e -> WyldCard.getInstance().getToolsManager().setLinePaint(lineChooser.getColor()));
     }
 
     @Override

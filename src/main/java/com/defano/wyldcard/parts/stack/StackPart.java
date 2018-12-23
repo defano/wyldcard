@@ -18,7 +18,7 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
@@ -200,7 +200,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     @RunOnDispatch
     public CardPart deleteCard(ExecutionContext context) {
         if (canDeleteCard(context)) {
-            ToolsContext.getInstance().setIsEditingBackground(false);
+            WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
             int deletedCardIndex = stackModel.getCurrentCardIndex();
             stackModel.deleteCardModel();
@@ -223,7 +223,7 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart newBackground(ExecutionContext context) {
-        ToolsContext.getInstance().setIsEditingBackground(false);
+        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
         stackModel.newCardWithNewBackground();
         cardCountProvider.onNext(stackModel.getCardCount());
@@ -241,7 +241,7 @@ public class StackPart implements Part, PropertyChangeObserver {
      */
     @RunOnDispatch
     public CardPart newCard(ExecutionContext context) {
-        ToolsContext.getInstance().setIsEditingBackground(false);
+        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
         stackModel.newCard(currentCard.getCardModel().getBackgroundId());
         cardCountProvider.onNext(stackModel.getCardCount());
@@ -281,7 +281,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     @RunOnDispatch
     public void pasteCard(ExecutionContext context) {
         if (cardClipboardProvider.blockingFirst().isPresent()) {
-            ToolsContext.getInstance().setIsEditingBackground(false);
+            WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
             CardModel card = cardClipboardProvider.blockingFirst().get().getCardModel().copyOf();
             card.relinkParentPartModel(getStackModel());
@@ -462,10 +462,10 @@ public class StackPart implements Part, PropertyChangeObserver {
         CardPart displayedCard = getDisplayedCard();
 
         // Deactivate paint tool before doing anything (to commit in-fight changes)
-        ToolsContext.getInstance().getPaintTool().deactivate();
+        WyldCard.getInstance().getToolsManager().getPaintTool().deactivate();
 
         // Stop editing background when card changes
-        ToolsContext.getInstance().setIsEditingBackground(false);
+        WyldCard.getInstance().getToolsManager().setIsEditingBackground(false);
 
         // When requested, push the current card onto the backstack
         if (push) {
@@ -498,7 +498,7 @@ public class StackPart implements Part, PropertyChangeObserver {
             fireOnCardOpened(currentCard);
 
             // Reactivate paint tool on new card's canvas
-            ToolsContext.getInstance().reactivateTool(currentCard.getCanvas());
+            WyldCard.getInstance().getToolsManager().reactivateTool(currentCard.getCanvas());
 
             return currentCard;
 

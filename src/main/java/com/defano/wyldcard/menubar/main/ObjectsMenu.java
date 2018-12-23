@@ -8,7 +8,7 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.BackgroundPropertyEditor;
 import com.defano.wyldcard.window.layouts.CardPropertyEditor;
@@ -28,7 +28,7 @@ public class ObjectsMenu extends HyperCardMenu {
 
         // Show this menu only when an object tool is active
         // Show this menu only when a paint tool is active
-        ToolsContext.getInstance().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
+        WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> ObjectsMenu.this.setVisible(ToolMode.PAINT != toolMode));
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")

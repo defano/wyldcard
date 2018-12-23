@@ -1,7 +1,7 @@
 package com.defano.wyldcard.patterns;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.runtime.context.ToolsContext;
+import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -69,9 +69,9 @@ public class WyldCardPatternFactory {
         for (int x = 0; x < pattern.getWidth(); x++) {
             for (int y = 0; y < pattern.getHeight(); y++) {
                 if (pattern.getRGB(x, y) == 0xffffffff) {
-                    pattern.setRGB(x, y, ToolsContext.getInstance().getBackgroundColor().getRGB());
+                    pattern.setRGB(x, y, WyldCard.getInstance().getToolsManager().getBackgroundColor().getRGB());
                 } else if (pattern.getRGB(x, y) == 0xff000000) {
-                    pattern.setRGB(x, y, ToolsContext.getInstance().getForegroundColor().getRGB());
+                    pattern.setRGB(x, y, WyldCard.getInstance().getToolsManager().getForegroundColor().getRGB());
                 }
             }
         }
