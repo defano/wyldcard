@@ -35,6 +35,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private KeyboardManager keyboardManager;
     @Inject private WindowManager windowManager;
     @Inject private ToolsManager toolsManager;
+    @Inject private FileManager fileManager;
 
     WyldCard() {}
 
@@ -86,7 +87,7 @@ public class WyldCard extends StackManager implements PartFinder {
         });
 
         // Close all open files before we die
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> FileContext.getInstance().closeAll()));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> WyldCard.getInstance().getFileManager().closeAll()));
     }
 
     /**
@@ -118,6 +119,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return toolsManager;
     }
 
+    public FileManager getFileManager() {
+        return fileManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -129,6 +134,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(KeyboardManager.class).to(DefaultKeyboardManager.class);
             bind(WindowManager.class).to(DefaultWindowManager.class);
             bind(ToolsManager.class).to(DefaultToolsManager.class);
+            bind(FileManager.class).to(DefaultFileManager.class);
         }
     }
 }

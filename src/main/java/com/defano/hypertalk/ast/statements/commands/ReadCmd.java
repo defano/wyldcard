@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FileContext;
+import com.defano.wyldcard.runtime.context.DefaultFileManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Command;
@@ -49,7 +50,7 @@ public class ReadCmd extends Command {
         try {
             String contents;
             String filename = file.evaluate(context).stringValue();
-            FileContext.FileHandle file = FileContext.getInstance().getFileHandle(filename);
+            DefaultFileManager.FileHandle file = WyldCard.getInstance().getFileManager().getFileHandle(filename);
 
             if (file == null) {
                 throw new HtSemanticException("Cannot read from file " + filename + " because it is not open.");
