@@ -41,9 +41,7 @@ public class AnnuityFuncTest extends GuiceTest<AnnuityFunc> {
                 .thenReturn(Lists.newArrayList(new Value("barf"), new Value("10")));
 
         // Run the test
-        assertThrows(HtSemanticException.class, () -> {
-            uut.onEvaluate(mockExecutionContext);
-        });
+        assertThrows(HtSemanticException.class, () -> uut.onEvaluate(mockExecutionContext));
     }
 
     @Test
@@ -52,9 +50,7 @@ public class AnnuityFuncTest extends GuiceTest<AnnuityFunc> {
                 .thenReturn(Lists.newArrayList(new Value("10"), new Value("barf")));
 
         // Run the test
-        assertThrows(HtSemanticException.class, () -> {
-            uut.onEvaluate(mockExecutionContext);
-        });
+        assertThrows(HtSemanticException.class, () -> uut.onEvaluate(mockExecutionContext));
     }
 
 }

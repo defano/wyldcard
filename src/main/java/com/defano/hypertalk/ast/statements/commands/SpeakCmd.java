@@ -1,14 +1,19 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.sound.SpeechPlaybackExecutor;
+import com.defano.wyldcard.sound.DefaultSpeechPlaybackManager;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.SpeakingVoice;
 import com.defano.hypertalk.ast.statements.Command;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.wyldcard.sound.SpeechPlaybackManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SpeakCmd extends Command {
+
+    @Inject
+    private SpeechPlaybackManager speechPlaybackManager;
 
     private final Expression textExpression;
     private final Expression voiceExpression;
@@ -31,6 +36,6 @@ public class SpeakCmd extends Command {
         }
 
         String textToSpeak = textExpression.evaluate(context).stringValue();
-        SpeechPlaybackExecutor.getInstance().speak(textToSpeak, voice);
+        speechPlaybackManager.speak(textToSpeak, voice);
     }
 }

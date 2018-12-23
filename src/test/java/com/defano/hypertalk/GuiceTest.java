@@ -10,6 +10,7 @@ import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.SoundManager;
+import com.defano.wyldcard.sound.SpeechPlaybackManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -40,6 +41,7 @@ public class GuiceTest<T> {
     @Mock protected PeriodicMessageManager mockPeriodicMessageManager;
     @Mock protected CursorManager mockCursorManager;
     @Mock protected PartToolManager mockPartToolManager;
+    @Mock protected SpeechPlaybackManager mockSpeechPlaybackManager;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
@@ -84,6 +86,7 @@ public class GuiceTest<T> {
             bind(PeriodicMessageManager.class).toInstance(mockPeriodicMessageManager);
             bind(CursorManager.class).toInstance(mockCursorManager);
             bind(PartToolManager.class).toInstance(mockPartToolManager);
+            bind(SpeechPlaybackManager.class).toInstance(mockSpeechPlaybackManager);
 
             bind(WyldCard.class).toInstance(wyldCard);
         }

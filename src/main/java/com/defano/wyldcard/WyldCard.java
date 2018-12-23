@@ -20,7 +20,9 @@ import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.DefaultSearchManager;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.DefaultSoundManager;
+import com.defano.wyldcard.sound.DefaultSpeechPlaybackManager;
 import com.defano.wyldcard.sound.SoundManager;
+import com.defano.wyldcard.sound.SpeechPlaybackManager;
 import com.defano.wyldcard.window.DefaultWindowManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
@@ -53,6 +55,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private PeriodicMessageManager periodicMessageManager;
     @Inject private CursorManager cursorManager;
     @Inject private PartToolManager partToolManager;
+    @Inject private SpeechPlaybackManager speechPlaybackManager;
 
     WyldCard() {}
 
@@ -60,7 +63,7 @@ public class WyldCard extends StackManager implements PartFinder {
         return instance;
     }
 
-    public static void main(String argv[]) {
+    public static void main(String[] argv) {
 
         try {
             // Configure macOS environment
@@ -104,7 +107,7 @@ public class WyldCard extends StackManager implements PartFinder {
         });
 
         // Close all open files before we die
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> WyldCard.getInstance().getFileManager().closeAll()));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> fileManager.closeAll()));
     }
 
     /**
@@ -176,6 +179,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return partToolManager;
     }
 
+    public SpeechPlaybackManager getSpeechPlaybackManager() {
+        return speechPlaybackManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -197,6 +204,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(PeriodicMessageManager.class).to(DefaultPeriodicMessageManager.class);
             bind(CursorManager.class).to(DefaultCursorManager.class);
             bind(PartToolManager.class).to(DefaultPartToolManager.class);
+            bind(SpeechPlaybackManager.class).to(DefaultSpeechPlaybackManager.class);
         }
     }
 }
