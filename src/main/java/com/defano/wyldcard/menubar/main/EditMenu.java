@@ -8,8 +8,7 @@ import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.parts.clipboard.CardActionListener;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.IconCreator;
 import com.l2fprod.common.swing.JFontChooser;
@@ -114,8 +113,8 @@ public class EditMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Text Style...")
-                .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
+                .withCheckmarkProvider(WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
+                .withAction(e -> WyldCard.getInstance().getFontManager().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", WyldCard.getInstance().getFontManager().getFocusedTextStyle().toFont())))
                 .withShortcut('T')
                 .build(this);
 

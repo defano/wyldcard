@@ -5,6 +5,7 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileManager;
+import com.defano.wyldcard.runtime.context.FontManager;
 import com.defano.wyldcard.runtime.context.ToolsManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.google.inject.AbstractModule;
@@ -27,6 +28,7 @@ public class GuiceTest<T> {
     @Mock protected WindowManager mockWindowManager;
     @Mock protected ToolsManager mockToolsManager;
     @Mock protected FileManager mockFileManager;
+    @Mock protected FontManager mockFontManager;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
@@ -62,6 +64,7 @@ public class GuiceTest<T> {
             bind(WindowManager.class).toInstance(mockWindowManager);
             bind(ToolsManager.class).toInstance(mockToolsManager);
             bind(FileManager.class).toInstance(mockFileManager);
+            bind(FontManager.class).toInstance(mockFontManager);
 
             bind(WyldCard.class).toInstance(wyldCard);
         }

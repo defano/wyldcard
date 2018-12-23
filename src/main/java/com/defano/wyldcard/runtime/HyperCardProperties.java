@@ -6,9 +6,8 @@ import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.runtime.context.SelectionContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.sound.SoundPlayer;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -94,14 +93,14 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getCurrentThemeName()));
         defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().setTheme(WyldCard.getInstance().getWindowManager().getThemeClassForName(value.stringValue())));
 
-        defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
-        defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamily()));
+        defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(value.stringValue()));
+        defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontFamily()));
 
-        defineComputedSetterProperty(PROP_TEXTSTYLE, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontStyle(value));
-        defineComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontStyle()));
+        defineComputedSetterProperty(PROP_TEXTSTYLE, (context, model, propertyName, value) -> WyldCard.getInstance().getFontManager().setSelectedFontStyle(value));
+        defineComputedGetterProperty(PROP_TEXTSTYLE, (context, model, propertyName) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontStyle()));
 
-        defineComputedSetterProperty(PROP_TEXTSIZE, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontSize(value.integerValue()));
-        defineComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontSize()));
+        defineComputedSetterProperty(PROP_TEXTSIZE, (context, model, propertyName, value) -> WyldCard.getInstance().getFontManager().setSelectedFontSize(value.integerValue()));
+        defineComputedGetterProperty(PROP_TEXTSIZE, (context, model, propertyName) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontSize()));
 
         defineComputedGetterProperty(PROP_BRUSH, (context, model, propertyName) -> BasicBrushResolver.valueOfBasicBrush(WyldCard.getInstance().getToolsManager().getSelectedBrush()));
         defineComputedSetterProperty(PROP_BRUSH, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setSelectedBrush(BasicBrushResolver.basicBrushOfValue(value)));

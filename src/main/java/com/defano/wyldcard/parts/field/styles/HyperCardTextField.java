@@ -15,8 +15,7 @@ import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.util.Throttle;
 import com.defano.hypertalk.ast.model.Value;
@@ -191,10 +190,10 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         // Get notified when field tool is selected
         toolModeSubscription = WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolModeObserver);
 
-        fontAlignSubscription = FontContext.getInstance().getSelectedTextAlignProvider().subscribe(fontAlignObserver);
-        fontFamilySubscription = FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);
-        fontStyleSubscription = FontContext.getInstance().getSelectedFontStyleProvider().subscribe(fontStyleObserver);
-        fontSizeSubscription = FontContext.getInstance().getSelectedFontSizeProvider().subscribe(fontSizeObserver);
+        fontAlignSubscription = WyldCard.getInstance().getFontManager().getSelectedTextAlignProvider().subscribe(fontAlignObserver);
+        fontFamilySubscription = WyldCard.getInstance().getFontManager().getSelectedFontFamilyProvider().subscribe(fontFamilyObserver);
+        fontStyleSubscription = WyldCard.getInstance().getFontManager().getSelectedFontStyleProvider().subscribe(fontStyleObserver);
+        fontSizeSubscription = WyldCard.getInstance().getFontManager().getSelectedFontSizeProvider().subscribe(fontSizeObserver);
 
         // React to scripted changes to the field model
         ((FieldModel) toolEditablePart.getPartModel()).setDocumentObserver(this);
@@ -215,7 +214,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
 
         // Initialize font to system font selection if document is empty
         if (textPane.getText().length() == 0) {
-            textPane.setCharacterAttributes(FontContext.getInstance().getFocusedTextStyle().toAttributeSet(), true);
+            textPane.setCharacterAttributes(WyldCard.getInstance().getFontManager().getFocusedTextStyle().toAttributeSet(), true);
         }
 
         // And auto-select any
@@ -480,10 +479,10 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
                 }
             }
 
-            FontContext.getInstance().getFocusedFontFamilyProvider().onNext(families);
-            FontContext.getInstance().getFocusedFontSizeProvider().onNext(sizes);
-            FontContext.getInstance().setFocusedHyperTalkFontStyles(styles);
-            FontContext.getInstance().setFocusedTextAlign(alignment);
+            WyldCard.getInstance().getFontManager().getFocusedFontFamilyProvider().onNext(families);
+            WyldCard.getInstance().getFontManager().getFocusedFontSizeProvider().onNext(sizes);
+            WyldCard.getInstance().getFontManager().setFocusedHyperTalkFontStyles(styles);
+            WyldCard.getInstance().getFontManager().setFocusedTextAlign(alignment);
         });
     }
 

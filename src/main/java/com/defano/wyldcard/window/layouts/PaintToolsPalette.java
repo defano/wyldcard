@@ -4,8 +4,7 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.DoubleClickListenable;
 import com.defano.wyldcard.paint.ToolMode;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.window.WyldCardWindow;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
@@ -79,7 +78,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
         curve.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getToolsManager().selectAll());
-        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
+        text.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getFontManager().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", WyldCard.getInstance().getFontManager().getFocusedTextStyle().toFont())));
 
         WyldCard.getInstance().getToolsManager().getShapesFilledProvider().subscribe(filled -> {
             SwingUtilities.invokeLater(() -> {

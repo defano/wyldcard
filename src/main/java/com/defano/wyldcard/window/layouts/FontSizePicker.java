@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window.layouts;
 
-import com.defano.wyldcard.runtime.context.FontContext;
+import com.defano.wyldcard.WyldCard;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
@@ -19,7 +20,7 @@ public class FontSizePicker extends WyldCardDialog<Object> {
         fontSize.setModel(new SpinnerNumberModel(12, 2, Integer.MAX_VALUE, 1));
 
         okButton.addActionListener(e -> {
-            FontContext.getInstance().setSelectedFontSize((int) (fontSize.getValue()));
+            WyldCard.getInstance().getFontManager().setSelectedFontSize((int) (fontSize.getValue()));
             dispose();
         });
 
@@ -33,7 +34,7 @@ public class FontSizePicker extends WyldCardDialog<Object> {
 
     @Override
     public void bindModel(Object data) {
-        fontSize.setValue(FontContext.getInstance().getSelectedFontSize().integerValue());
+        fontSize.setValue(WyldCard.getInstance().getFontManager().getSelectedFontSize().integerValue());
     }
 
     @Override

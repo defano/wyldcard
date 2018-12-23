@@ -36,6 +36,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private WindowManager windowManager;
     @Inject private ToolsManager toolsManager;
     @Inject private FileManager fileManager;
+    @Inject private FontManager fontManager;
 
     WyldCard() {}
 
@@ -123,6 +124,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return fileManager;
     }
 
+    public FontManager getFontManager() {
+        return fontManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -135,6 +140,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(WindowManager.class).to(DefaultWindowManager.class);
             bind(ToolsManager.class).to(DefaultToolsManager.class);
             bind(FileManager.class).to(DefaultFileManager.class);
+            bind(FontManager.class).to(DefaultFontManager.class);
         }
     }
 }

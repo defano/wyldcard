@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.field;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.fonts.TextStyleSpecifier;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
@@ -9,7 +10,7 @@ import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.runtime.context.SelectionContext;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
@@ -253,7 +254,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         StyledDocument document = getStyledDocument(context);
 
         AttributeSet style = document.getLength() == 0 ?
-                FontContext.getInstance().getFocusedTextStyle().toAttributeSet() :
+                WyldCard.getInstance().getFontManager().getFocusedTextStyle().toAttributeSet() :
                 document.getCharacterElement(0).getAttributes();
 
         try {
@@ -328,7 +329,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
-            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
             tss.setFontFamily(fontFamily.stringValue());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }
@@ -356,7 +357,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
-            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
             tss.setFontSize(fontSize.integerValue());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }
@@ -385,7 +386,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
-            TextStyleSpecifier tss = FontContext.getInstance().getFocusedTextStyle();
+            TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
             tss.setFontStyle(fontStyle);
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }

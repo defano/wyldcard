@@ -9,8 +9,7 @@ import com.defano.wyldcard.parts.button.styles.*;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
@@ -60,7 +59,7 @@ public abstract class StyleableButton implements Styleable<ButtonStyle,HyperCard
 
         if (beingEdited) {
             MarchingAnts.getInstance().addObserver(this);
-            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
+            WyldCard.getInstance().getFontManager().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }

@@ -17,8 +17,7 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
@@ -78,9 +77,9 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         // Place the field in the center of the card
         newField.initProperties(context, rectangle, parent.getPartModel());
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(FontContext.getInstance().getFocusedTextStyle().getFontFamily()));
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(FontContext.getInstance().getFocusedTextStyle().getFontSize()));
-        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSTYLE, FontContext.getInstance().getFocusedTextStyle().getHyperTalkStyle());
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTFONT, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontFamily()));
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSIZE, new Value(WyldCard.getInstance().getFontManager().getFocusedTextStyle().getFontSize()));
+        newField.partModel.setKnownProperty(context, FieldModel.PROP_TEXTSTYLE, WyldCard.getInstance().getFontManager().getFocusedTextStyle().getHyperTalkStyle());
 
         return newField;
     }

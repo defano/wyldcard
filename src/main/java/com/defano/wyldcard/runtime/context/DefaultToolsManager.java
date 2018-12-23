@@ -468,7 +468,7 @@ public class DefaultToolsManager implements ToolsManager {
                 .withStrokeObservable(getStrokeProviderForTool(selectedToolType))
                 .withStrokePaintObservable(getStrokePaintProviderForTool(selectedToolType))
                 .withFillPaintObservable(fillPatternProvider.map(t -> isShapesFilled() || !selectedToolType.isShapeTool() ? Optional.of(WyldCardPatternFactory.getInstance().getPattern(t)) : Optional.empty()))
-                .withFontObservable(FontContext.getInstance().getPaintFontProvider())
+                .withFontObservable(WyldCard.getInstance().getFontManager().getPaintFontProvider())
                 .withFontColorObservable(foregroundColorProvider)
                 .withShapeSidesObservable(shapeSidesProvider)
                 .withIntensityObservable(intensityProvider)

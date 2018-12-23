@@ -7,8 +7,7 @@ import com.defano.wyldcard.parts.ToolEditablePart;
 import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.*;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.FontContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import io.reactivex.disposables.Disposable;
@@ -51,7 +50,7 @@ public abstract class StyleableField implements Styleable<FieldStyle,HyperCardTe
             MarchingAnts.getInstance().addObserver(this);
 
             // TODO: Focus style only reflects first char; should reflect entire field
-            FontContext.getInstance().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
+            WyldCard.getInstance().getFontManager().setFocusedTextStyle((((CardLayerPartModel) getPartModel()).getTextStyle(context)));
         } else {
             MarchingAnts.getInstance().removeObserver(this);
         }

@@ -39,10 +39,10 @@ public class PartToolContext {
         WyldCard.getInstance().getToolsManager().getToolModeProvider().subscribe(toolMode -> deselectAllParts());
 
         // Change part font when user chooses a font/style from the menubar
-        FontContext.getInstance().getSelectedFontFamilyProvider().subscribe(fontObserver);
-        FontContext.getInstance().getSelectedFontSizeProvider().subscribe(sizeObserver);
-        FontContext.getInstance().getSelectedFontStyleProvider().subscribe(styleObserver);
-        FontContext.getInstance().getSelectedTextAlignProvider().subscribe(alignObserver);
+        WyldCard.getInstance().getFontManager().getSelectedFontFamilyProvider().subscribe(fontObserver);
+        WyldCard.getInstance().getFontManager().getSelectedFontSizeProvider().subscribe(sizeObserver);
+        WyldCard.getInstance().getFontManager().getSelectedFontStyleProvider().subscribe(styleObserver);
+        WyldCard.getInstance().getFontManager().getSelectedTextAlignProvider().subscribe(alignObserver);
     }
 
     public void setSelectedPart(ToolEditablePart part) {
