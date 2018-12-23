@@ -2,8 +2,7 @@ package com.defano.wyldcard.parts.clipboard;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.parts.*;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -30,7 +29,7 @@ public class CardPartTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-        return TransferablePart.from(PartToolContext.getInstance().getSelectedPart());
+        return TransferablePart.from(WyldCard.getInstance().getPartToolManager().getSelectedPart());
     }
 
     @Override
@@ -41,7 +40,7 @@ public class CardPartTransferHandler extends TransferHandler {
     @Override
     protected void exportDone(JComponent c, Transferable data, int action) {
         if (action == MOVE) {
-            PartToolContext.getInstance().deleteSelectedPart();
+            WyldCard.getInstance().getPartToolManager().deleteSelectedPart();
         }
     }
 
@@ -62,7 +61,7 @@ public class CardPartTransferHandler extends TransferHandler {
             SwingUtilities.invokeLater(() -> {
                 // Make imported part selected
                 WyldCard.getInstance().getToolsManager().forceToolSelection(importedPart.getEditTool(), false);
-                PartToolContext.getInstance().setSelectedPart(importedPart);
+                WyldCard.getInstance().getPartToolManager().setSelectedPart(importedPart);
             });
 
             return true;

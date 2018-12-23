@@ -7,8 +7,7 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.window.WindowBuilder;
 import com.defano.wyldcard.window.layouts.BackgroundPropertyEditor;
 import com.defano.wyldcard.window.layouts.CardPropertyEditor;
@@ -32,14 +31,14 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Button Info...")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof ButtonPart))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Field Info...")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
-                .withAction(a -> PartToolContext.getInstance().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(toolEditablePart -> toolEditablePart.isPresent() && toolEditablePart.get() instanceof FieldPart))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().getSelectedPart().getPartModel().editProperties(new ExecutionContext()))
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -76,15 +75,15 @@ public class ObjectsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Bring Closer")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(Optional::isPresent))
-                .withAction(a -> PartToolContext.getInstance().bringSelectedPartCloser())
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(Optional::isPresent))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().bringSelectedPartCloser())
                 .withShortcut('=')
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Send Further")
-                .withEnabledProvider(PartToolContext.getInstance().getSelectedPartProvider().map(Optional::isPresent))
-                .withAction(a -> PartToolContext.getInstance().sendSelectedPartFurther())
+                .withEnabledProvider(WyldCard.getInstance().getPartToolManager().getSelectedPartProvider().map(Optional::isPresent))
+                .withAction(a -> WyldCard.getInstance().getPartToolManager().sendSelectedPartFurther())
                 .withShortcut('-')
                 .build(this);
 

@@ -17,9 +17,8 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.PartsTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.runtime.serializer.Serializer;
-import com.defano.wyldcard.search.DefaultSearchManager;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
@@ -169,7 +168,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         // When a new button is created, make the button tool active and select the newly created button
         WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.BUTTON, false);
-        PartToolContext.getInstance().setSelectedPart(newButton);
+        WyldCard.getInstance().getPartToolManager().setSelectedPart(newButton);
     }
 
     /**
@@ -202,7 +201,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
 
         // When a new button is created, make the button tool active and select the newly created button
         WyldCard.getInstance().getToolsManager().forceToolSelection(ToolType.FIELD, false);
-        PartToolContext.getInstance().setSelectedPart(newField);
+        WyldCard.getInstance().getPartToolManager().setSelectedPart(newField);
     }
 
     /**

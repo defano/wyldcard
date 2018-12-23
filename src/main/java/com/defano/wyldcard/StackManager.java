@@ -13,8 +13,7 @@ import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.defano.wyldcard.runtime.serializer.Serializer;
 import com.defano.wyldcard.util.ImageLayerUtils;
 import com.defano.wyldcard.util.LimitedDepthStack;
@@ -270,7 +269,7 @@ public class StackManager implements StackNavigationObserver {
 
         // Remove focus from last-focused stack when applicable
         if (focusedStack.hasValue()) {
-            PartToolContext.getInstance().deselectAllParts();
+            WyldCard.getInstance().getPartToolManager().deselectAllParts();
             focusedStack.blockingFirst().removeNavigationObserver(this);
 
             // Send suspendStack/resumeStack messages

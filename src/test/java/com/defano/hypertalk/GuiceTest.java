@@ -39,6 +39,7 @@ public class GuiceTest<T> {
     @Mock protected PatternManager mockPatternManager;
     @Mock protected PeriodicMessageManager mockPeriodicMessageManager;
     @Mock protected CursorManager mockCursorManager;
+    @Mock protected PartToolManager mockPartToolManager;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
@@ -82,6 +83,7 @@ public class GuiceTest<T> {
             bind(PatternManager.class).toInstance(mockPatternManager);
             bind(PeriodicMessageManager.class).toInstance(mockPeriodicMessageManager);
             bind(CursorManager.class).toInstance(mockCursorManager);
+            bind(PartToolManager.class).toInstance(mockPartToolManager);
 
             bind(WyldCard.class).toInstance(wyldCard);
         }

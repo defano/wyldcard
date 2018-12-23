@@ -52,6 +52,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private PatternManager patternManager;
     @Inject private PeriodicMessageManager periodicMessageManager;
     @Inject private CursorManager cursorManager;
+    @Inject private PartToolManager partToolManager;
 
     WyldCard() {}
 
@@ -89,7 +90,7 @@ public class WyldCard extends StackManager implements PartFinder {
             patternManager.start();                             // Update pattern palette on color changes
             periodicMessageManager.start();                     // Idle and mouseWithin periodic message generation
             cursorManager.start();                              // Mouse cursor assignment
-            PartToolContext.getInstance().start();              // Button and field tool selection state
+            partToolManager.start();                            // Button and field tool selection state
 
             newStack(new ExecutionContext());
 
@@ -171,6 +172,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return cursorManager;
     }
 
+    public PartToolManager getPartToolManager() {
+        return partToolManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -191,6 +196,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(PatternManager.class).to(DefaultPatternManager.class);
             bind(PeriodicMessageManager.class).to(DefaultPeriodicMessageManager.class);
             bind(CursorManager.class).to(DefaultCursorManager.class);
+            bind(PartToolManager.class).to(DefaultPartToolManager.class);
         }
     }
 }

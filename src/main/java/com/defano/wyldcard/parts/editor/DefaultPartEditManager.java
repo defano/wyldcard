@@ -9,12 +9,11 @@ import com.defano.wyldcard.parts.button.ButtonPart;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.field.FieldPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 import com.google.inject.Singleton;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.AWTEventListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -34,7 +33,7 @@ public class DefaultPartEditManager implements PartEditManager {
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        ToolEditablePart part = PartToolContext.getInstance().getSelectedPart();
+        ToolEditablePart part = WyldCard.getInstance().getPartToolManager().getSelectedPart();
 
         // User pressed the mouse
         if (event.getID() == MouseEvent.MOUSE_PRESSED) {
@@ -61,7 +60,7 @@ public class DefaultPartEditManager implements PartEditManager {
     private void doNewField() {
         CardPart theCard = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getDisplayedCard();
         FieldPart theField = theCard.newField(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
-        PartToolContext.getInstance().setSelectedPart(theField);
+        WyldCard.getInstance().getPartToolManager().setSelectedPart(theField);
 
         new PartResizer(theField, theCard);
     }
@@ -71,7 +70,7 @@ public class DefaultPartEditManager implements PartEditManager {
         ButtonPart theButton = theCard.newButton(new ExecutionContext(), new Rectangle(clickLoc, NEW_PART_DIM));
         theButton.getPartModel().setKnownProperty(new ExecutionContext(), ButtonModel.PROP_STYLE, new Value("transparent"));
 
-        PartToolContext.getInstance().setSelectedPart(theButton);
+        WyldCard.getInstance().getPartToolManager().setSelectedPart(theButton);
 
         new PartResizer(theButton, theCard);
     }
@@ -97,7 +96,7 @@ public class DefaultPartEditManager implements PartEditManager {
         else if (theCard.contains(clickLoc) &&
                 MenuSelectionManager.defaultManager().getSelectedPath().length == 0)
         {
-            PartToolContext.getInstance().deselectAllParts();
+            WyldCard.getInstance().getPartToolManager().deselectAllParts();
         }
     }
 

@@ -15,8 +15,7 @@ import com.defano.wyldcard.parts.card.CardLayerPartModel;
 import com.defano.wyldcard.parts.field.styles.HyperCardTextField;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
+import com.defano.wyldcard.runtime.context.DefaultPartToolManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -190,9 +189,9 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
     @RunOnDispatch
     default void mousePressed(MouseEvent e) {
         if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) {
-            PartToolContext.getInstance().setSelectedPart(this);
+            WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
         } else if (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField) {
-            PartToolContext.getInstance().setSelectedPart(this);
+            WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
         }
     }
 
@@ -215,7 +214,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
         else if ((WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.BUTTON && this.getComponent() instanceof HyperCardButton) ||
                 (WyldCard.getInstance().getToolsManager().getToolMode() == ToolMode.FIELD && this.getComponent() instanceof HyperCardTextField))
         {
-            PartToolContext.getInstance().setSelectedPart(this);
+            WyldCard.getInstance().getPartToolManager().setSelectedPart(this);
         }
     }
 
@@ -229,7 +228,7 @@ public interface ToolEditablePart extends MouseListenable, KeyListenable, CardLa
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
                 case KeyEvent.VK_BACK_SPACE:
-                    PartToolContext.getInstance().deleteSelectedPart();
+                    WyldCard.getInstance().getPartToolManager().deleteSelectedPart();
                     break;
 
                 case KeyEvent.VK_LEFT:
