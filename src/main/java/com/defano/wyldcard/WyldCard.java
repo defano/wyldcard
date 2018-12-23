@@ -11,6 +11,7 @@ import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.editor.DefaultPartEditManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
+import com.defano.wyldcard.patterns.DefaultPatternManager;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
@@ -46,6 +47,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private SoundManager soundManager;
     @Inject private SearchManager searchManager;
     @Inject private PartEditManager partEditManager;
+    @Inject private PatternManager patternManager;
 
     WyldCard() {}
 
@@ -80,7 +82,7 @@ public class WyldCard extends StackManager implements PartFinder {
             mouseManager.start();                               // Global mouse event and mouseLoc handler
             partEditManager.start();                            // Button field movement and resize management
             windowManager.start();                              // Window and palette management
-            PatternManager.getInstance().start();               // Update pattern palette on color changes
+            patternManager.start();                             // Update pattern palette on color changes
             PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
             CursorManager.getInstance().start();                // Mouse cursor assignment
             PartToolContext.getInstance().start();              // Button and field tool selection state
@@ -153,6 +155,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return partEditManager;
     }
 
+    public PatternManager getPatternManager() {
+        return patternManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -170,6 +176,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(SoundManager.class).to(DefaultSoundManager.class);
             bind(SearchManager.class).to(DefaultSearchManager.class);
             bind(PartEditManager.class).to(DefaultPartEditManager.class);
+            bind(PatternManager.class).to(DefaultPatternManager.class);
         }
     }
 }
