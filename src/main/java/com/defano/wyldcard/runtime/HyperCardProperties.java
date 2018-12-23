@@ -6,8 +6,7 @@ import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultFontManager;
-import com.defano.wyldcard.runtime.context.SelectionContext;
+import com.defano.wyldcard.runtime.context.DefaultSelectionManager;
 import com.defano.wyldcard.sound.SoundPlayer;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -143,7 +142,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getManagedSelection(context).getSelectedLineExpression(context);
+                return WyldCard.getInstance().getSelectionManager().getManagedSelection(context).getSelectedLineExpression(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
@@ -151,7 +150,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_SELECTEDFIELD, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getManagedSelection(context).getSelectedFieldExpression(context);
+                return WyldCard.getInstance().getSelectionManager().getManagedSelection(context).getSelectedFieldExpression(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
@@ -159,7 +158,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_SELECTEDCHUNK, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getManagedSelection(context).getSelectedChunkExpression(context);
+                return WyldCard.getInstance().getSelectionManager().getManagedSelection(context).getSelectedChunkExpression(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }
@@ -167,7 +166,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_SELECTEDTEXT, (context, model, propertyName) -> {
             try {
-                return SelectionContext.getInstance().getSelection(context);
+                return WyldCard.getInstance().getSelectionManager().getSelection(context);
             } catch (HtSemanticException e) {
                 return new Value();
             }

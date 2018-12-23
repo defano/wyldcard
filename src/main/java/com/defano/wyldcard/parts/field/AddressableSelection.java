@@ -1,9 +1,10 @@
 package com.defano.wyldcard.parts.field;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.SelectionContext;
+import com.defano.wyldcard.runtime.context.DefaultSelectionManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
@@ -180,7 +181,7 @@ public interface AddressableSelection {
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDFIELD, getSelectedFieldExpression(context), true);
             HyperCardProperties.getInstance().defineProperty(HyperCardProperties.PROP_SELECTEDLINE, getSelectedLineExpression(context), true);
 
-            SelectionContext.getInstance().setSelection(getPartSpecifier(context), getSelectableTextModel().getSelection(context));
+            WyldCard.getInstance().getSelectionManager().setSelection(getPartSpecifier(context), getSelectableTextModel().getSelection(context));
         }
     }
 }

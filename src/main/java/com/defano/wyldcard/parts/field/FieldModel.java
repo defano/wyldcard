@@ -10,8 +10,7 @@ import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultFontManager;
-import com.defano.wyldcard.runtime.context.SelectionContext;
+import com.defano.wyldcard.runtime.context.DefaultSelectionManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -652,7 +651,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
 
     private void fireSelectionChange(ExecutionContext context, Range selection) {
         // Update 'the selection' HyperCard property
-        SelectionContext.getInstance().setSelection(getPartSpecifier(context), selection);
+        WyldCard.getInstance().getSelectionManager().setSelection(getPartSpecifier(context), selection);
 
         if (observer != null && getCurrentCardIdOrNull() == context.getCurrentCard().getId(context)) {
             SwingUtilities.invokeLater(() -> observer.onSelectionChange(selection));
