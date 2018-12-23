@@ -18,9 +18,8 @@ import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.PartsTable;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.runtime.serializer.Serializer;
-import com.defano.wyldcard.search.SearchContext;
+import com.defano.wyldcard.search.DefaultSearchManager;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.hypertalk.ast.expressions.ListExp;
 import com.defano.hypertalk.ast.expressions.LiteralExp;
@@ -760,7 +759,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         }
 
         // Search results are reset/cleared whenever the card is clicked
-        SearchContext.getInstance().reset();
+        WyldCard.getInstance().getSearchManager().reset();
     }
 
     @Override

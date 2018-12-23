@@ -4,38 +4,20 @@ import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.google.inject.Singleton;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchContext implements SearchResultHighlighter {
-
-    private final static SearchContext instance = new SearchContext();
+@Singleton
+public class DefaultSearchManager implements SearchManager {
 
     private SearchQuery lastQuery;
     private List<SearchResult> results = new ArrayList<>();
     private int nextResult = 0;
 
-    private SearchContext() {
-    }
-
-    public static SearchContext getInstance() {
-        return instance;
-    }
-
-    /**
-     * Performs a search of the given query. Search results in field text are highlighted (boxed) and the foundLine,
-     * foundText, foundChunk and foundField HyperCard properties are updated accordingly.
-     *
-     * If the given query is the same as the last query, this method "continues" the previous search, finding and
-     * highlighting the next matching string.
-     *
-     *
-     * @param context The execution context.
-     * @param query The query to perform
-     * @throws HtException Thrown if the query refers to a bogus field
-     */
+    @Override
     public void find(ExecutionContext context, SearchQuery query) throws HtException {
 
         // Wrap search results
@@ -62,10 +44,7 @@ public class SearchContext implements SearchResultHighlighter {
         }
     }
 
-    /**
-     * Reset the search context to its default, no-query state. Removes all search highlights and resets HyperCard
-     * properties to their default, empty state.
-     */
+    @Override
     public void reset() {
         clearSearchHighlights(new ExecutionContext());
         results.clear();

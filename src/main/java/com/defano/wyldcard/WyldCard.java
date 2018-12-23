@@ -8,11 +8,14 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
+import com.defano.wyldcard.parts.editor.DefaultPartEditManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
+import com.defano.wyldcard.search.DefaultSearchManager;
+import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.DefaultSoundManager;
 import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.window.DefaultWindowManager;
@@ -41,6 +44,8 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private FontManager fontManager;
     @Inject private SelectionManager selectionManager;
     @Inject private SoundManager soundManager;
+    @Inject private SearchManager searchManager;
+    @Inject private PartEditManager partEditManager;
 
     WyldCard() {}
 
@@ -73,7 +78,7 @@ public class WyldCard extends StackManager implements PartFinder {
         SwingUtilities.invokeLater(() -> {
             keyboardManager.start();                            // Global key event handler
             mouseManager.start();                               // Global mouse event and mouseLoc handler
-            PartEditManager.getInstance().start();              // Button field movement and resize management
+            partEditManager.start();                            // Button field movement and resize management
             windowManager.start();                              // Window and palette management
             PatternManager.getInstance().start();               // Update pattern palette on color changes
             PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
@@ -140,6 +145,14 @@ public class WyldCard extends StackManager implements PartFinder {
         return soundManager;
     }
 
+    public SearchManager getSearchManager() {
+        return searchManager;
+    }
+
+    public PartEditManager getPartEditManager() {
+        return partEditManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -155,6 +168,8 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(FontManager.class).to(DefaultFontManager.class);
             bind(SelectionManager.class).to(DefaultSelectionManager.class);
             bind(SoundManager.class).to(DefaultSoundManager.class);
+            bind(SearchManager.class).to(DefaultSearchManager.class);
+            bind(PartEditManager.class).to(DefaultPartEditManager.class);
         }
     }
 }

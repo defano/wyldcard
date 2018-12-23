@@ -1,7 +1,8 @@
 package com.defano.hypertalk.ast.statements.commands;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.search.SearchContext;
+import com.defano.wyldcard.search.DefaultSearchManager;
 import com.defano.wyldcard.search.SearchQuery;
 import com.defano.hypertalk.ast.model.SearchType;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
@@ -46,6 +47,6 @@ public class FindCmd extends Command {
                 new SearchQuery(searchType, term.evaluate(context).stringValue(), onlyMarkedCards) :
                 new SearchQuery(searchType, term.evaluate(context).stringValue(), fieldSpecifier);
 
-        SearchContext.getInstance().find(context, query);
+        WyldCard.getInstance().getSearchManager().find(context, query);
     }
 }
