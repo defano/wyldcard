@@ -13,6 +13,8 @@ import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
+import com.defano.wyldcard.sound.DefaultSoundManager;
+import com.defano.wyldcard.sound.SoundManager;
 import com.defano.wyldcard.window.DefaultWindowManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
@@ -38,6 +40,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private FileManager fileManager;
     @Inject private FontManager fontManager;
     @Inject private SelectionManager selectionManager;
+    @Inject private SoundManager soundManager;
 
     WyldCard() {}
 
@@ -133,6 +136,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return selectionManager;
     }
 
+    public SoundManager getSoundManager() {
+        return soundManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -147,6 +154,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(FileManager.class).to(DefaultFileManager.class);
             bind(FontManager.class).to(DefaultFontManager.class);
             bind(SelectionManager.class).to(DefaultSelectionManager.class);
+            bind(SoundManager.class).to(DefaultSoundManager.class);
         }
     }
 }

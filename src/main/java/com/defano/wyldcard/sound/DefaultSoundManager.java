@@ -3,50 +3,40 @@ package com.defano.wyldcard.sound;
 import com.defano.wyldcard.WyldCard;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.google.inject.Singleton;
 
 import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 
-public class SoundPlayer {
+@Singleton
+public class DefaultSoundManager implements SoundManager {
 
     private static final int DEFAULT_TEMPO = 120;
     private static String lastPlayedSound = "";
 
-    /**
-     * Attempts to play a sound as a series of musical notes at a given tempo using the playback executor for
-     * asynchronous playback.
-     *
-     * @param sound The name of the sound to play, i.e., "boing", "harpsichord" or "flute"
-     * @param notes The sequence of notes to be played in name, accidental, octave and duration format (i.e.,
-     *              "c4 d#5h." When empty, the sound sample is played without adjustments to duration or frequency.
-     * @param tempo The speed at which to play the notes, specified in quarter notes per minute. When not specified,
-     *              a tempo of 120 is assumed.
-     */
-    public static void play(Value sound, Value notes, Value tempo) {
+    @Override
+    public void play(Value sound, Value notes, Value tempo) {
         lastPlayedSound = sound.stringValue();
         SoundPlaybackExecutor.getInstance().submit(() -> playSynchronously(sound, notes, tempo));
     }
 
-    public static void play(SoundSample sample) throws HtSemanticException {
+    @Override
+    public void play(SoundSample sample) throws HtSemanticException {
         try {
-            SoundPlayer.playAudio(SoundPlayer.getAudioForSample(sample));
+            playAudio(getAudioForSample(sample));
         } catch (Exception e) {
             throw new HtSemanticException("An error occurred playing the sound.");
         }
     }
 
-    /**
-     * Gets the name of the sound currently playing; when multiple sounds are playing the name of the last enqueued
-     * sound is returned. When no sounds are playing, "done" is returned.
-     * @return The name of the sound playing or "done" if no sound is playing.
-     */
-    public static String getSound() {
+    @Override
+    public String getSound() {
         if (SoundPlaybackExecutor.getInstance().getActiveSoundChannelsCount() == 0) {
             return "done";
         } else {
-            return lastPlayedSound;
+            return DefaultSoundManager.lastPlayedSound;
         }
     }
 
@@ -57,7 +47,7 @@ public class SoundPlayer {
      * @throws IOException Thrown if an error occurs reading the sound sample.
      * @throws UnsupportedAudioFileException Thrown if the sound sample is in an unplayable format.
      */
-    private static AudioInputStream getAudioForSample(SoundSample soundSample) throws IOException, UnsupportedAudioFileException {
+    private AudioInputStream getAudioForSample(SoundSample soundSample) throws IOException, UnsupportedAudioFileException {
         return AudioSystem.getAudioInputStream(soundSample.getResource());
     }
 
@@ -69,7 +59,7 @@ public class SoundPlayer {
      * @throws IOException Thrown if an error occurs playing the sound
      * @throws InterruptedException Thrown if an error occurs playing the sound
      */
-    private static void playAudio(AudioInputStream audio) throws LineUnavailableException, IOException, InterruptedException {
+    private void playAudio(AudioInputStream audio) throws LineUnavailableException, IOException, InterruptedException {
         CountDownLatch cdl = new CountDownLatch(1);
 
         Clip clip = AudioSystem.getClip();
@@ -95,7 +85,7 @@ public class SoundPlayer {
      * @param tempo The speed at which to play the notes, specified in quarter notes per minute. When not specified,
      *              a tempo of 120 is assumed.
      */
-    private static void playSynchronously(Value sound, Value notes, Value tempo) {
+    private void playSynchronously(Value sound, Value notes, Value tempo) {
         long playStartTime = System.currentTimeMillis();
         MusicalNote lastNote = MusicalNote.fromMiddleCQuarterNote();
 
@@ -140,7 +130,7 @@ public class SoundPlayer {
      * @throws IOException Thrown if an error occurs reading the sound sample.
      * @throws UnsupportedAudioFileException Thrown if the sound sample is in an unplayable format.
      */
-    private static AudioInputStream getAudioForNote(SoundSample soundSample, MusicalNote note, int tempoBpm) throws IOException, UnsupportedAudioFileException {
+    private AudioInputStream getAudioForNote(SoundSample soundSample, MusicalNote note, int tempoBpm) throws IOException, UnsupportedAudioFileException {
         if (note.getFrequency() == MusicalPitch.REST) {
             AudioInputStream stream = getAudioForSample(SoundSample.SILENCE);
             return transformAudioDuration(SoundSample.SILENCE, stream, note.getDuration(), tempoBpm);
@@ -160,7 +150,7 @@ public class SoundPlayer {
      * @param to The desired pitch of the sound
      * @return A new AudioInputStream representing the sound of the input stream adjusted for pitch
      */
-    private static AudioInputStream transformAudioFrequency(AudioInputStream stream, MusicalPitch from, MusicalPitch to) {
+    private AudioInputStream transformAudioFrequency(AudioInputStream stream, MusicalPitch from, MusicalPitch to) {
         if (from == to) {
             return stream;
         }
@@ -194,7 +184,7 @@ public class SoundPlayer {
      * @return A new AudioInputStream transformed for duration
      * @throws IOException Thrown if an error occurs reading the sound sample.
      */
-    private static AudioInputStream transformAudioDuration(SoundSample soundSample, AudioInputStream stream, MusicalDuration duration, int tempoBpm) throws IOException {
+    private AudioInputStream transformAudioDuration(SoundSample soundSample, AudioInputStream stream, MusicalDuration duration, int tempoBpm) throws IOException {
         double durationMs = duration.getDurationMs(tempoBpm);
         double samplesPerMs = stream.getFormat().getSampleRate() / 1000.0;
         double framesForDuration = samplesPerMs * durationMs;
@@ -226,7 +216,7 @@ public class SoundPlayer {
      * @return A new AudioInputStream containing the appended silence
      * @throws IOException Thrown if an error occurs reading the sound sample.
      */
-    private static AudioInputStream appendSilenceToAudio(AudioInputStream stream, int desiredFrames) throws IOException {
+    private AudioInputStream appendSilenceToAudio(AudioInputStream stream, int desiredFrames) throws IOException {
         // Create buffer for stretched sound
         byte[] stretched = new byte[stream.getFormat().getFrameSize() * desiredFrames];
 
@@ -255,7 +245,7 @@ public class SoundPlayer {
      * @return A new AudioInputStream stretched to match the requested length.
      * @throws IOException Thrown if an error occurs reading the sound sample.
      */
-    private static AudioInputStream stretchAudio(SoundSample soundSample, AudioInputStream stream, int desiredFrames) throws IOException {
+    private AudioInputStream stretchAudio(SoundSample soundSample, AudioInputStream stream, int desiredFrames) throws IOException {
         int frameSize = stream.getFormat().getFrameSize();              // Bytes per frame
         int stretchedIdx = 0;
 

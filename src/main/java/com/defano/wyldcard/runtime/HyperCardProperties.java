@@ -6,8 +6,7 @@ import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultSelectionManager;
-import com.defano.wyldcard.sound.SoundPlayer;
+import com.defano.wyldcard.sound.DefaultSoundManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -138,7 +137,7 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().x));
         defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().y));
-        defineComputedGetterProperty(PROP_SOUND, (context, model, propertyName) -> new Value(SoundPlayer.getSound()));
+        defineComputedGetterProperty(PROP_SOUND, (context, model, propertyName) -> new Value(WyldCard.getInstance().getSoundManager().getSound()));
 
         defineComputedGetterProperty(PROP_SELECTEDLINE, (context, model, propertyName) -> {
             try {
