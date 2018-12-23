@@ -1,10 +1,10 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 
@@ -22,40 +22,40 @@ public class ToolsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Tools")
-                .withAction(e -> WindowManager.getInstance().getPaintToolsPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getPaintToolsPalette().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getPaintToolsPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getPaintToolsPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Patterns")
-                .withAction(e -> WindowManager.getInstance().getPatternsPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getPatternsPalette().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getPatternsPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Colors")
-                .withAction(e -> WindowManager.getInstance().getColorPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getColorPalette().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getColorPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getColorPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();
 
         MenuItemBuilder.ofCheckType()
                 .named("Shapes")
-                .withAction(e -> WindowManager.getInstance().getShapesPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getShapesPalette().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getShapesPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Brushes")
-                .withAction(e -> WindowManager.getInstance().getBrushesPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getBrushesPalette().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Lines")
-                .withAction(e -> WindowManager.getInstance().getLinesPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getLinesPalette().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getLinesPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();

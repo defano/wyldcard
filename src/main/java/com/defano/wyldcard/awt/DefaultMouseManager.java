@@ -3,7 +3,6 @@ package com.defano.wyldcard.awt;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.google.inject.Singleton;
 
@@ -52,7 +51,7 @@ public class DefaultMouseManager implements MouseManager {
     public Point getMouseLoc(ExecutionContext context) {
         Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 
-        if (WindowManager.getInstance().getFocusedStackWindow() != null) {
+        if (WyldCard.getInstance().getWindowManager().getFocusedStackWindow() != null) {
             CardPart theCard = context.getCurrentCard();
             SwingUtilities.convertPointFromScreen(mouseLoc, theCard);
         }

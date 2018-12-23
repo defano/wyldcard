@@ -10,7 +10,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.BackgroundPropertyEditor;
 import com.defano.wyldcard.window.layouts.CardPropertyEditor;
 import com.defano.wyldcard.window.layouts.StackPropertyEditor;
@@ -49,7 +48,7 @@ public class ObjectsMenu extends HyperCardMenu {
                         .withModel(WyldCard.getInstance().getFocusedCard())
                         .asModal()
                         .withTitle("Card Properties")
-                        .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
@@ -59,7 +58,7 @@ public class ObjectsMenu extends HyperCardMenu {
                         .withModel(WyldCard.getInstance().getFocusedCard())
                         .withTitle("Background Properties")
                         .asModal()
-                        .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 
@@ -69,7 +68,7 @@ public class ObjectsMenu extends HyperCardMenu {
                         .withModel(WyldCard.getInstance().getFocusedStack().getStackModel())
                         .withTitle("Stack Properties")
                         .asModal()
-                        .withLocationCenteredOver(WindowManager.getInstance().getFocusedStackWindow().getWindowPanel())
+                        .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindowPanel())
                         .build())
                 .build(this);
 

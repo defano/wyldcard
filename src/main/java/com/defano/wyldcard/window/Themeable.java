@@ -1,6 +1,7 @@
 package com.defano.wyldcard.window;
 
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -55,7 +56,7 @@ public interface Themeable {
                 try {
                     UIManager.setLookAndFeel(themeClassName);
 
-                    for (WyldCardFrame thisWindow : WindowManager.getInstance().getFrames(true)) {
+                    for (WyldCardFrame thisWindow : WyldCard.getInstance().getWindowManager().getFrames(true)) {
                         thisWindow.getWindow().dispose();
 
                         SwingUtilities.updateComponentTreeUI(thisWindow.getWindow());

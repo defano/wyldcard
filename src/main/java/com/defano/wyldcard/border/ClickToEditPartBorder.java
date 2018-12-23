@@ -1,7 +1,6 @@
 package com.defano.wyldcard.border;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 
 import javax.swing.border.Border;

@@ -11,7 +11,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.ast.expressions.containers.PartExp;
 import com.defano.hypertalk.ast.expressions.Expression;
@@ -21,9 +20,14 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.utils.Range;
 import com.defano.hypertalk.utils.RangeUtils;
+import com.defano.wyldcard.window.WindowManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class SelectCmd extends Command {
+
+    @Inject
+    private WindowManager windowManager;
 
     private Preposition preposition;
     private Expression expression;
@@ -118,7 +122,7 @@ public class SelectCmd extends Command {
         CardLayerPart part = context.getCurrentStack().getDisplayedCard().getPart(context, partModel);
 
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).requestFocus();
+            windowManager.getWindowForStack(context, context.getCurrentStack()).requestFocus();
 
             ToolsContext.getInstance().forceToolSelection(specifier.getType().getEditTool(), false);
             PartToolContext.getInstance().setSelectedPart((ToolEditablePart) part);

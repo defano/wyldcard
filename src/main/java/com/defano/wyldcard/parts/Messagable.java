@@ -7,7 +7,6 @@ import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;

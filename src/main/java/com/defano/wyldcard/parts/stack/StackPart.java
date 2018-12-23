@@ -20,7 +20,6 @@ import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -402,7 +401,7 @@ public class StackPart implements Part, PropertyChangeObserver {
                 break;
 
             case StackModel.PROP_RESIZABLE:
-                WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
+                WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).setAllowResizing(newValue.booleanValue());
                 break;
         }
     }

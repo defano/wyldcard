@@ -3,7 +3,6 @@ package com.defano.wyldcard.window.layouts;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WyldCardDialog;
 import com.intellij.uiDesigner.core.GridConstraints;

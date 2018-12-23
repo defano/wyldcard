@@ -3,6 +3,7 @@ package com.defano.hypertalk;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
+import com.defano.wyldcard.window.WindowManager;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -20,6 +21,7 @@ public class GuiceTest<T> {
     // Mock WyldCard components
     @Mock protected MouseManager mockMouseManager;
     @Mock protected KeyboardManager mockKeyboardManager;
+    @Mock protected WindowManager mockWindowManager;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
@@ -51,6 +53,7 @@ public class GuiceTest<T> {
         protected void configure() {
             bind(MouseManager.class).toInstance(mockMouseManager);
             bind(KeyboardManager.class).toInstance(mockKeyboardManager);
+            bind(WindowManager.class).toInstance(mockWindowManager);
         }
     }
 

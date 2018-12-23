@@ -11,7 +11,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.IconCreator;
 import com.l2fprod.common.swing.JFontChooser;
 
@@ -116,7 +115,7 @@ public class EditMenu extends HyperCardMenu {
         MenuItemBuilder.ofDefaultType()
                 .named("Text Style...")
                 .withCheckmarkProvider(FontContext.getInstance().getFocusedFontSizeProvider().map(e -> !e.contains(new Value(9)) && !e.contains(new Value(10)) && !e.contains(new Value(12)) && !e.contains(new Value(14)) && !e.contains(new Value(18)) && !e.contains(new Value(24))))
-                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
+                .withAction(e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())))
                 .withShortcut('T')
                 .build(this);
 
@@ -161,8 +160,8 @@ public class EditMenu extends HyperCardMenu {
 
             MenuItemBuilder.ofCheckType()
                     .named(thisLaf.getName())
-                    .withAction(a -> WindowManager.getInstance().setTheme(thisLaf.getClassName()))
-                    .withCheckmarkProvider(WindowManager.getInstance().getThemeProvider().map(value -> thisLaf.getName().equalsIgnoreCase(value)))
+                    .withAction(a -> WyldCard.getInstance().getWindowManager().setTheme(thisLaf.getClassName()))
+                    .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getThemeProvider().map(value -> thisLaf.getName().equalsIgnoreCase(value)))
                     .build(laf);
         }
     }

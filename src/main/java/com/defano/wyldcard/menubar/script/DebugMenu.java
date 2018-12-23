@@ -1,10 +1,10 @@
 package com.defano.wyldcard.menubar.script;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.debug.DebugContext;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.defano.wyldcard.window.layouts.TraceDelay;
 
@@ -16,8 +16,8 @@ public class DebugMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Evaluate Expression...")
                 .withEnabledProvider(DebugContext.getInstance().getExecutionIsPausedProvider())
-                .withCheckmarkProvider(WindowManager.getInstance().getExpressionEvaluator().getWindowVisibleProvider())
-                .withAction(a -> WindowManager.getInstance().getExpressionEvaluator().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getExpressionEvaluator().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getExpressionEvaluator().toggleVisible())
                 .build(this);
 
         addSeparator();
@@ -90,14 +90,14 @@ public class DebugMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Message Watcher")
-                .withCheckmarkProvider(WindowManager.getInstance().getMessageWatcher().getWindowVisibleProvider())
-                .withAction(a -> WindowManager.getInstance().getMessageWatcher().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getMessageWatcher().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getMessageWatcher().toggleVisible())
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Variable Watcher")
-                .withCheckmarkProvider(WindowManager.getInstance().getVariableWatcher().getWindowVisibleProvider())
-                .withAction(a -> WindowManager.getInstance().getVariableWatcher().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getVariableWatcher().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getVariableWatcher().toggleVisible())
                 .build(this);
     }
 }

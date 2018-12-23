@@ -4,7 +4,6 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 
 /**
  * The HyperCard Go menu.
@@ -35,7 +34,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Recent")
-                .withAction(e -> WindowManager.getInstance().showRecentCardsWindow())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().showRecentCardsWindow())
                 .withShortcut('R')
                 .build(this);
 
@@ -69,14 +68,14 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Find...")
-                .withAction(e -> WindowManager.getInstance().getMessageWindow().doFind())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getMessageWindow().doFind())
                 .withShortcut('F')
                 .build(this);
 
         MenuItemBuilder.ofCheckType()
                 .named("Message")
-                .withAction(e -> WindowManager.getInstance().getMessageWindow().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getMessageWindow().getWindowVisibleProvider())
+                .withAction(e -> WyldCard.getInstance().getWindowManager().getMessageWindow().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getMessageWindow().getWindowVisibleProvider())
                 .withShortcut('M')
                 .build(this);
 
@@ -88,7 +87,7 @@ public class GoMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Next Window")
-                .withAction(a -> WindowManager.getInstance().nextWindow().getWindow().requestFocus())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
                 .withShortcut('L')
                 .build(this);
     }

@@ -1,8 +1,8 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.WyldCardFrame;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import com.defano.wyldcard.window.layouts.StackWindow;
@@ -17,7 +17,7 @@ public class WindowsMenu extends HyperCardMenu {
 
     public WindowsMenu() {
         super("Windows");
-        WindowManager.getInstance().getVisibleWindowsProvider().subscribe(wyldCardFrames -> reset());
+        WyldCard.getInstance().getWindowManager().getVisibleWindowsProvider().subscribe(wyldCardFrames -> reset());
     }
 
     public void reset() {
@@ -28,13 +28,13 @@ public class WindowsMenu extends HyperCardMenu {
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Minimize")
-                        .withAction(a -> WindowManager.getInstance().getFocusedStackWindow().getWindow().setState(Frame.ICONIFIED))
+                        .withAction(a -> WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().setState(Frame.ICONIFIED))
                         .build(WindowsMenu.this);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Zoom")
                         .withAction(a -> {
-                            JFrame focusedFrame = WindowManager.getInstance().getFocusedStackWindow().getWindow();
+                            JFrame focusedFrame = WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow();
                             focusedFrame.setExtendedState(focusedFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
                         })
                         .build(WindowsMenu.this);
@@ -42,18 +42,18 @@ public class WindowsMenu extends HyperCardMenu {
                 MenuItemBuilder.ofDefaultType()
                         .named("Next Window")
                         .withShortcut('.')
-                        .withAction(a -> WindowManager.getInstance().nextWindow().getWindow().requestFocus())
+                        .withAction(a -> WyldCard.getInstance().getWindowManager().nextWindow().getWindow().requestFocus())
                         .build(WindowsMenu.this);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Previous Window")
                         .withShortcut(',')
-                        .withAction(a -> WindowManager.getInstance().prevWindow().getWindow().requestFocus())
+                        .withAction(a -> WyldCard.getInstance().getWindowManager().prevWindow().getWindow().requestFocus())
                         .build(WindowsMenu.this);
 
                 MenuItemBuilder.ofDefaultType()
                         .named("Restore Default Layout")
-                        .withAction(a -> WindowManager.getInstance().restoreDefaultLayout())
+                        .withAction(a -> WyldCard.getInstance().getWindowManager().restoreDefaultLayout())
                         .build(WindowsMenu.this);
 
                 addSeparator();
@@ -77,13 +77,13 @@ public class WindowsMenu extends HyperCardMenu {
         MenuItemBuilder.ofCheckType()
                 .named("Dock to Card Window")
                 .withShiftShortcut('D')
-                .withAction(a -> WindowManager.getInstance().toggleDockPalettes())
-                .withCheckmarkProvider(WindowManager.getInstance().getPalettesDockedProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().toggleDockPalettes())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getPalettesDockedProvider())
                 .build(parent);
 
         ((JMenu) parent).addSeparator();
 
-        WindowManager.getInstance().getPalettes(false)
+        WyldCard.getInstance().getWindowManager().getPalettes(false)
                 .forEach(wyldCardFrame -> MenuItemBuilder.ofCheckType()
                         .named(wyldCardFrame.getTitle())
                         .withAction(a -> wyldCardFrame.toggleVisible())
@@ -92,7 +92,7 @@ public class WindowsMenu extends HyperCardMenu {
     }
 
     private void addScriptEditors(JMenuItem parent) {
-        List<WyldCardFrame> windows = WindowManager.getInstance().getWindows(true);
+        List<WyldCardFrame> windows = WyldCard.getInstance().getWindowManager().getWindows(true);
 
         parent.setEnabled(windows.stream().anyMatch(p -> p instanceof ScriptEditor));
 
@@ -106,7 +106,7 @@ public class WindowsMenu extends HyperCardMenu {
     }
 
     private void addStacks() {
-        WindowManager.getInstance().getWindows(true)
+        WyldCard.getInstance().getWindowManager().getWindows(true)
                 .stream()
                 .filter(w -> w instanceof StackWindow)
                 .forEach(wyldCardFrame -> MenuItemBuilder.ofCheckType()

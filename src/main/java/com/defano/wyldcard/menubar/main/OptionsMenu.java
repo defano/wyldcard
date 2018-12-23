@@ -1,10 +1,10 @@
 package com.defano.wyldcard.menubar.main;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.menubar.MenuItemBuilder;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 
@@ -29,8 +29,8 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofCheckType()
                 .named("Magnifier")
-                .withAction(a -> WindowManager.getInstance().getMagnifierPalette().toggleVisible())
-                .withCheckmarkProvider(WindowManager.getInstance().getMagnifierPalette().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getMagnifierPalette().toggleVisible())
+                .withCheckmarkProvider(WyldCard.getInstance().getWindowManager().getMagnifierPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
@@ -42,31 +42,31 @@ public class OptionsMenu extends HyperCardMenu {
 
         MenuItemBuilder.ofDefaultType()
                 .named("Line Size...")
-                .withAction(a -> WindowManager.getInstance().getLinesPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getInstance().getLinesPalette().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getLinesPalette().setVisible(true))
+                .withDisabledProvider(WyldCard.getInstance().getWindowManager().getLinesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Brush Shape...")
-                .withAction(a -> WindowManager.getInstance().getBrushesPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getInstance().getBrushesPalette().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getBrushesPalette().setVisible(true))
+                .withDisabledProvider(WyldCard.getInstance().getWindowManager().getBrushesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Edit Pattern...")
-                .withAction(a -> WindowManager.getInstance().showPatternEditor())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().showPatternEditor())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Polygon Sides...")
-                .withAction(a -> WindowManager.getInstance().getShapesPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getInstance().getShapesPalette().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getShapesPalette().setVisible(true))
+                .withDisabledProvider(WyldCard.getInstance().getWindowManager().getShapesPalette().getWindowVisibleProvider())
                 .build(this);
 
         MenuItemBuilder.ofDefaultType()
                 .named("Spray Intensity...")
-                .withAction(a -> WindowManager.getInstance().getIntensityPalette().setVisible(true))
-                .withDisabledProvider(WindowManager.getInstance().getIntensityPalette().getWindowVisibleProvider())
+                .withAction(a -> WyldCard.getInstance().getWindowManager().getIntensityPalette().setVisible(true))
+                .withDisabledProvider(WyldCard.getInstance().getWindowManager().getIntensityPalette().getWindowVisibleProvider())
                 .build(this);
 
         this.addSeparator();

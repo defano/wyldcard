@@ -8,7 +8,6 @@ import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.hypertalk.exception.NoSuchPropertyException;
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.parts.card.CardPart;

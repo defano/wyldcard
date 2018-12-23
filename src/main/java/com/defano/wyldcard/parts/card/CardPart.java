@@ -1,6 +1,7 @@
 package com.defano.wyldcard.parts.card;
 
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.awt.MouseStillDown;
@@ -33,7 +34,6 @@ import com.defano.jmonet.clipboard.CanvasTransferHandler;
 import com.defano.jmonet.tools.SelectionTool;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.builder.PaintTool;
-import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 
@@ -457,7 +457,7 @@ public class CardPart extends CardLayeredPane implements Part, CanvasCommitObser
         // note that a card (or any component) cannot be the content pane of multiple frames simultaneously, so we
         // utilize the screenshot buffer frame only when not already attached to a card window.
         if (getRootPane() == null) {
-            WindowManager.getInstance().getScreenshotBufferWindow().setContentPane(this);
+            WyldCard.getInstance().getWindowManager().getScreenshotBufferWindow().setContentPane(this);
         }
 
         BufferedImage screenshot = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);

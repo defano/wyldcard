@@ -9,7 +9,6 @@ import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.runtime.print.PrintCardAction;
 import com.defano.wyldcard.runtime.print.PrintStackAction;
-import com.defano.wyldcard.window.WindowManager;
 
 import java.util.Optional;
 
@@ -119,7 +118,7 @@ public class FileMenu extends HyperCardMenu {
                 .disabled()
                 .build(this);
 
-        if (!WindowManager.getInstance().isMacOsTheme()) {
+        if (!WyldCard.getInstance().getWindowManager().isMacOsTheme()) {
 
             this.addSeparator();
 

@@ -5,9 +5,13 @@ import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WindowManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ThemesFunc extends Expression {
+
+    @Inject
+    private WindowManager windowManager;
 
     public ThemesFunc(ParserRuleContext context) {
         super(context);
@@ -15,6 +19,6 @@ public class ThemesFunc extends Expression {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return Value.ofItems(WindowManager.getInstance().getThemeNames());
+        return Value.ofItems(windowManager.getThemeNames());
     }
 }

@@ -4,7 +4,6 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.parts.*;
 import com.defano.wyldcard.parts.card.CardLayer;
 import com.defano.wyldcard.parts.card.CardLayerPart;

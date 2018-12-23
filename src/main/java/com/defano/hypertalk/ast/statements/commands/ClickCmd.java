@@ -1,6 +1,5 @@
 package com.defano.hypertalk.ast.statements.commands;
 
-import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.statements.Command;

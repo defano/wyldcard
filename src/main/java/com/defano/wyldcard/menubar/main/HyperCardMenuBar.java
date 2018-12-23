@@ -1,12 +1,12 @@
 package com.defano.wyldcard.menubar.main;
 
 import com.defano.hypertalk.exception.HtSemanticException;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.DeferredMenuAction;
 import com.defano.wyldcard.menubar.HyperCardMenu;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -82,7 +82,7 @@ public class HyperCardMenuBar extends JMenuBar {
             super.repaint();
 
             // Required on non-macOS systems when menu is modified by message window
-            WindowManager.getInstance().getFocusedStackWindow().getWindow().pack();
+            WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().pack();
         });
     }
 
@@ -93,7 +93,7 @@ public class HyperCardMenuBar extends JMenuBar {
             super.repaint();
 
             // Required on non-macOS systems when menu is modified by message window
-            WindowManager.getInstance().getFocusedStackWindow().getWindow().pack();
+            WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow().pack();
         });
     }
 

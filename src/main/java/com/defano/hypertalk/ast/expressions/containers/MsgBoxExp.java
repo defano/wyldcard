@@ -7,11 +7,15 @@ import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.ast.model.PartType;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import javax.swing.*;
 
 public class MsgBoxExp extends ContainerExp {
+
+    @Inject
+    private WindowManager windowManager;
 
     public MsgBoxExp(ParserRuleContext context) {
         super(context);
@@ -19,13 +23,13 @@ public class MsgBoxExp extends ContainerExp {
 
     @Override
     public Value onEvaluate(ExecutionContext context) throws HtException {
-        Value value = new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText());
+        Value value = new Value(windowManager.getMessageWindow().getMsgBoxText());
         return chunkOf(context, value, getChunk());
     }
 
     @Override
     public void putValue(ExecutionContext context, Value value, Preposition preposition) throws HtException {
-        Value destValue = new Value(WindowManager.getInstance().getMessageWindow().getMsgBoxText());
+        Value destValue = new Value(windowManager.getMessageWindow().getMsgBoxText());
 
         // Operating on a chunk of the existing value
         if (getChunk() != null)
@@ -33,13 +37,13 @@ public class MsgBoxExp extends ContainerExp {
         else
             destValue = Value.setValue(destValue, preposition, value);
 
-        WindowManager.getInstance().getMessageWindow().setMsgBoxText(destValue.stringValue());
+        windowManager.getMessageWindow().setMsgBoxText(destValue.stringValue());
         context.setIt(destValue);
 
         // If message is hidden, show it but don't focus it
-        if (!WindowManager.getInstance().getMessageWindow().isVisible()) {
+        if (!windowManager.getMessageWindow().isVisible()) {
             SwingUtilities.invokeLater(() -> {
-                MessageWindow message = WindowManager.getInstance().getMessageWindow();
+                MessageWindow message = windowManager.getMessageWindow();
                 message.setFocusableWindowState(false);
                 message.setVisible(true);
                 message.setFocusableWindowState(true);

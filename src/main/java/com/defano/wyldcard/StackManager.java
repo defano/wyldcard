@@ -21,7 +21,6 @@ import com.defano.wyldcard.util.LimitedDepthStack;
 import com.defano.wyldcard.util.ProxyObservable;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowDock;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -102,7 +101,7 @@ public class StackManager implements StackNavigationObserver {
      *                    to open a new stack).
      */
     public StackPart openStack(ExecutionContext context, boolean inNewWindow, String title) {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), title, FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> name.endsWith(StackModel.FILE_EXTENSION));
         fd.setVisible(true);
@@ -175,7 +174,7 @@ public class StackManager implements StackNavigationObserver {
             defaultName = stackModel.getStackName(context);
         }
 
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow(), "Save Stack", FileDialog.SAVE);
         fd.setFile(defaultName);
         fd.setVisible(true);
         if (fd.getFiles().length > 0) {
@@ -428,7 +427,7 @@ public class StackManager implements StackNavigationObserver {
     private void displayStack(ExecutionContext context, StackPart stack, boolean inNewWindow) {
 
         // Special case: Stack is already open, simply focus it
-        StackWindow existingWindow = WindowManager.getInstance().findWindowForStack(stack.getStackModel());
+        StackWindow existingWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(stack.getStackModel());
         if (existingWindow != null) {
             existingWindow.requestFocus();
         }
@@ -436,7 +435,7 @@ public class StackManager implements StackNavigationObserver {
         // Stack is not already open
         else {
             if (inNewWindow) {
-                stack.bindToWindow(WindowManager.getInstance().getWindowForStack(context, stack));
+                stack.bindToWindow(WyldCard.getInstance().getWindowManager().getWindowForStack(context, stack));
                 openedStacks.add(stack);
             } else {
                 // Stack displayed in window we're about to open new stack inside of

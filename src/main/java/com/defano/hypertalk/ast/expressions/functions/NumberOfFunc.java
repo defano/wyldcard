@@ -14,12 +14,16 @@ import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.window.WindowManager;
+import com.google.inject.Inject;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  * Implementation of a HyperTalk function that counts the number of elements in a given container.
  */
 public class NumberOfFunc extends Expression {
+
+    @Inject
+    private WindowManager windowManager;
 
     public final Countable itemType;
     public final Expression expression;
@@ -68,7 +72,7 @@ public class NumberOfFunc extends Expression {
             case BKGNDS:
                 return countBackgrounds(context);
             case WINDOWS:
-                return new Value(WindowManager.getInstance().getFrames(false).size());
+                return new Value(windowManager.getFrames(false).size());
             default:
                 throw new RuntimeException("Bug! Unimplemented countable item type: " + itemType);
         }

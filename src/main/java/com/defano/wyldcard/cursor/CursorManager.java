@@ -6,7 +6,6 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.stack.StackNavigationObserver;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.layouts.StackWindow;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.jmonet.tools.ArrowTool;
 import com.defano.jmonet.tools.builder.PaintTool;
@@ -71,7 +70,7 @@ public class CursorManager implements StackNavigationObserver {
         }
 
         SwingUtilities.invokeLater(() -> {
-            StackWindow window = WindowManager.getInstance().getFocusedStackWindow();
+            StackWindow window = WyldCard.getInstance().getWindowManager().getFocusedStackWindow();
             if (window != null) {
                 window.getDisplayedCard().setCursor(effectiveCursor);
                 window.getScreenCurtain().setCursor(effectiveCursor);

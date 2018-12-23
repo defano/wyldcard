@@ -3,7 +3,6 @@ package com.defano.wyldcard.parts.editor;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Part;
 import com.defano.wyldcard.parts.model.PartModel;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 

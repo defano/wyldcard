@@ -22,7 +22,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -137,7 +136,7 @@ public class GoCmd extends Command {
     private CardPart goToDestination(ExecutionContext context, Destination destination, VisualEffectSpecifier visualEffect) throws HtSemanticException {
         // This code needs to run on the Swing dispatch thread
         return ThreadUtils.callCheckedAndWaitAsNeeded(() -> {
-            StackWindow stackWindow = WindowManager.getInstance().findWindowForStack(destination.getStack());
+            StackWindow stackWindow = WyldCard.getInstance().getWindowManager().findWindowForStack(destination.getStack());
             context.bind(stackWindow.getStack());
             stackWindow.setVisible(true);
             stackWindow.requestFocus();

@@ -2,7 +2,6 @@ package com.defano.wyldcard.parts.button;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.Styleable;
 import com.defano.wyldcard.parts.ToolEditablePart;

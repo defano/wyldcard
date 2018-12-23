@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.model;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.Messagable;
 import com.defano.wyldcard.parts.button.ButtonModel;
 import com.defano.wyldcard.parts.card.CardLayer;
@@ -10,7 +11,6 @@ import com.defano.wyldcard.runtime.interpreter.CompilationUnit;
 import com.defano.wyldcard.runtime.interpreter.Interpreter;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.WindowBuilder;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.ButtonPropertyEditor;
 import com.defano.wyldcard.window.layouts.FieldPropertyEditor;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
@@ -410,7 +410,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
      * @param caretPosition The location where the caret should be positioned in the text or null to use the last saved
      */
     public ScriptEditor editScript(ExecutionContext context, Integer caretPosition) {
-        ScriptEditor editor = WindowManager.getInstance().findScriptEditorForPart(this);
+        ScriptEditor editor = WyldCard.getInstance().getWindowManager().findScriptEditorForPart(this);
 
         // Existing script editor for this part; show it
         if (editor != null) {
@@ -437,7 +437,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                         .withTitle("Script of " + getName(context))
                         .ownsMenubar()
                         .resizeable(true)
-                        .withLocationStaggeredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                        .withLocationStaggeredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                         .build();
             });
 
@@ -461,7 +461,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                             .withModel((FieldModel) this)
                             .asModal()
                             .withTitle(getName(context))
-                            .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                             .resizeable(false)
                             .build();
                 } else {
@@ -469,7 +469,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                             .withModel((ButtonModel) this)
                             .asModal()
                             .withTitle(getName(context))
-                            .withLocationCenteredOver(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
+                            .withLocationCenteredOver(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindowPanel())
                             .resizeable(false)
                             .build();
                 }

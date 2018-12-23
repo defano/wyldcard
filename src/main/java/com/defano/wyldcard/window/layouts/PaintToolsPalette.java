@@ -7,7 +7,6 @@ import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.window.WyldCardWindow;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
@@ -70,17 +69,17 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
 
         // Double-click actions
         eraser.addMouseListener((DoubleClickListenable) e -> eraseAll());
-        shape.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getShapesPalette().setVisible(true));
-        line.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getLinesPalette().setVisible(true));
-        paintbrush.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getBrushesPalette().setVisible(true));
-        spraypaint.addMouseListener((DoubleClickListenable) e -> WindowManager.getInstance().getIntensityPalette().setVisible(true));
+        shape.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getShapesPalette().setVisible(true));
+        line.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getLinesPalette().setVisible(true));
+        paintbrush.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getBrushesPalette().setVisible(true));
+        spraypaint.addMouseListener((DoubleClickListenable) e -> WyldCard.getInstance().getWindowManager().getIntensityPalette().setVisible(true));
         rectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         roundRectangle.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         oval.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         curve.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         polygon.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().toggleShapesFilled());
         selection.addMouseListener((DoubleClickListenable) e -> ToolsContext.getInstance().selectAll());
-        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WindowManager.getInstance().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
+        text.addMouseListener((DoubleClickListenable) e -> FontContext.getInstance().setSelectedFont(JFontChooser.showDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow(), "Choose Font", FontContext.getInstance().getFocusedTextStyle().toFont())));
 
         ToolsContext.getInstance().getShapesFilledProvider().subscribe(filled -> {
             SwingUtilities.invokeLater(() -> {
@@ -176,7 +175,7 @@ public class PaintToolsPalette extends WyldCardWindow<Object> implements Consume
 
     @Override
     public void toggleVisible() {
-        setLocationLeftOf(WindowManager.getInstance().getFocusedStackWindow());
+        setLocationLeftOf(WyldCard.getInstance().getWindowManager().getFocusedStackWindow());
         super.toggleVisible();
     }
 

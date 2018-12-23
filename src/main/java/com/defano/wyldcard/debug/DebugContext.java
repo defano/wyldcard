@@ -2,11 +2,11 @@ package com.defano.wyldcard.debug;
 
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.ast.statements.Statement;
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.PartException;
 import com.defano.wyldcard.runtime.StackFrame;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.ScriptEditor;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -86,8 +86,8 @@ public class DebugContext {
 
         // Focus the debugger window and update the context of the variable watcher
         ThreadUtils.invokeAndWaitAsNeeded(() -> {
-            WindowManager.getInstance().getVariableWatcher().setWatchedVariables(debugContext);
-            WindowManager.getInstance().getExpressionEvaluator().setContext(debugContext);
+            WyldCard.getInstance().getWindowManager().getVariableWatcher().setWatchedVariables(debugContext);
+            WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setContext(debugContext);
             editor.getEditor().showTraceHighlight(statement.getToken().getLine() - 1);
         });
 
@@ -138,8 +138,8 @@ public class DebugContext {
 
                 SwingUtilities.invokeLater(() -> {
                     editor.getEditor().finishDebugging();
-                    WindowManager.getInstance().getVariableWatcher().setWatchGlobalVariables();
-                    WindowManager.getInstance().getExpressionEvaluator().setVisible(false);
+                    WyldCard.getInstance().getWindowManager().getVariableWatcher().setWatchGlobalVariables();
+                    WyldCard.getInstance().getWindowManager().getExpressionEvaluator().setVisible(false);
                     clearDebugContext();
                 });
             }

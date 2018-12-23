@@ -23,7 +23,6 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.paint.PaintBrush;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.patterns.WyldCardPatternFactory;
-import com.defano.wyldcard.window.WindowManager;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.Subject;
@@ -319,7 +318,7 @@ public class ToolsContext {
         getPaintTool().deactivate();
         isEditingBackground.onNext(!isEditingBackground.blockingFirst());
         reactivateTool(WyldCard.getInstance().getFocusedCard().getCanvas());
-        WindowManager.getInstance().getFocusedStackWindow().invalidateWindowTitle();
+        WyldCard.getInstance().getWindowManager().getFocusedStackWindow().invalidateWindowTitle();
     }
 
     public void setIsEditingBackground(boolean isEditingBackground) {

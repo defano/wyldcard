@@ -6,7 +6,6 @@ import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.KeyListenable;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.wyldcard.awt.MouseListenable;
 import com.defano.wyldcard.paint.ToolMode;
 import com.defano.wyldcard.parts.button.HyperCardButton;

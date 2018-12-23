@@ -2,7 +2,6 @@ package com.defano.wyldcard.paint;
 
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ToolsContext;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.ToolType;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
@@ -25,7 +24,7 @@ public class ArtVandelay {
      * the card as the active selection.
      */
     public static void importPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getFocusedStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
+        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow(), "Import Paint", FileDialog.LOAD);
         fd.setMultipleMode(false);
         fd.setFilenameFilter((dir, name) -> isFileSupportedForImporting(name));
         fd.setVisible(true);
@@ -40,7 +39,7 @@ public class ArtVandelay {
      * exists) to a file of the user's choosing. Displays a syntax error dialog if the export fails for any reason.
      */
     public static void exportPaint() {
-        FileDialog fd = new FileDialog(WindowManager.getInstance().getFocusedStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
+        FileDialog fd = new FileDialog(WyldCard.getInstance().getWindowManager().getFocusedStackWindow().getWindow(), "Export Paint", FileDialog.SAVE);
         fd.setFile("Untitled.png");
         fd.setVisible(true);
 

@@ -1,7 +1,6 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
@@ -11,7 +10,6 @@ import com.defano.wyldcard.runtime.context.FontContext;
 import com.defano.wyldcard.runtime.context.SelectionContext;
 import com.defano.wyldcard.runtime.context.ToolsContext;
 import com.defano.wyldcard.sound.SoundPlayer;
-import com.defano.wyldcard.window.WindowManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -92,9 +90,9 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedReadOnlyProperty(PROP_SYSTEMVERSION, (context, model, propertyName) -> new Value(System.getProperty("java.version")));
 
-        defineComputedReadOnlyProperty(PROP_THEMS, (context, model, propertyName) -> Value.ofItems(WindowManager.getInstance().getThemeNames()));
-        defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WindowManager.getInstance().getCurrentThemeName()));
-        defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WindowManager.getInstance().setTheme(WindowManager.getInstance().getThemeClassForName(value.stringValue())));
+        defineComputedReadOnlyProperty(PROP_THEMS, (context, model, propertyName) -> Value.ofItems(WyldCard.getInstance().getWindowManager().getThemeNames()));
+        defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getCurrentThemeName()));
+        defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().setTheme(WyldCard.getInstance().getWindowManager().getThemeClassForName(value.stringValue())));
 
         defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> FontContext.getInstance().setSelectedFontFamily(value.stringValue()));
         defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(FontContext.getInstance().getSelectedFontFamily()));
@@ -138,7 +136,7 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedGetterProperty(PROP_MOUSEH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).x));
         defineComputedGetterProperty(PROP_MOUSEV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getMouseLoc(context).y));
-        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
+        defineComputedGetterProperty(PROP_SCREENRECT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack()).getWindow().getGraphicsConfiguration().getBounds()));
         defineComputedGetterProperty(PROP_CLICKLOC, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc()));
         defineComputedGetterProperty(PROP_CLICKH, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().x));
         defineComputedGetterProperty(PROP_CLICKV, (context, model, propertyName) -> new Value(WyldCard.getInstance().getMouseManager().getClickLoc().y));

@@ -15,6 +15,7 @@ import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
+import com.defano.wyldcard.window.DefaultWindowManager;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
 import com.google.inject.*;
@@ -34,6 +35,7 @@ public class WyldCard extends StackManager implements PartFinder {
 
     @Inject private MouseManager mouseManager;
     @Inject private KeyboardManager keyboardManager;
+    @Inject private WindowManager windowManager;
 
     WyldCard() {}
 
@@ -67,7 +69,7 @@ public class WyldCard extends StackManager implements PartFinder {
             keyboardManager.start();                            // Global key event handler
             mouseManager.start();                               // Global mouse event and mouseLoc handler
             PartEditManager.getInstance().start();              // Button field movement and resize management
-            WindowManager.getInstance().start();                // Window and palette management
+            windowManager.start();                              // Window and palette management
             PatternManager.getInstance().start();               // Update pattern palette on color changes
             PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
             CursorManager.getInstance().start();                // Mouse cursor assignment
@@ -79,9 +81,9 @@ public class WyldCard extends StackManager implements PartFinder {
             HyperCardMenuBar.getInstance().reset();
 
             // Apply default palette layout
-            WindowManager.getInstance().restoreDefaultLayout();
-            WindowManager.getInstance().getPaintToolsPalette().toggleVisible();
-            WindowManager.getInstance().getPatternsPalette().toggleVisible();
+            WyldCard.getInstance().getWindowManager().restoreDefaultLayout();
+            WyldCard.getInstance().getWindowManager().getPaintToolsPalette().toggleVisible();
+            WyldCard.getInstance().getWindowManager().getPatternsPalette().toggleVisible();
         });
 
         // Close all open files before we die
@@ -109,6 +111,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return keyboardManager;
     }
 
+    public WindowManager getWindowManager() {
+        return windowManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -118,6 +124,7 @@ public class WyldCard extends StackManager implements PartFinder {
         protected void configure() {
             bind(MouseManager.class).to(DefaultMouseManager.class);
             bind(KeyboardManager.class).to(DefaultKeyboardManager.class);
+            bind(WindowManager.class).to(DefaultWindowManager.class);
         }
     }
 }

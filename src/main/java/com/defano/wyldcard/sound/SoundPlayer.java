@@ -1,7 +1,6 @@
 package com.defano.wyldcard.sound;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.awt.DefaultKeyboardManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 

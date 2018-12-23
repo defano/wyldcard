@@ -1,5 +1,6 @@
 package com.defano.wyldcard.window;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.wyldcard.util.ThreadUtils;
@@ -169,7 +170,7 @@ public interface WyldCardFrame<WindowType extends Window, ModelType> {
         SwingUtilities.invokeLater(() -> {
             if (getWindow() instanceof JFrame) {
                 JFrame frame = (JFrame) getWindow();
-                if (hasMenuBar() || WindowManager.getInstance().isMacOsTheme()) {
+                if (hasMenuBar() || WyldCard.getInstance().getWindowManager().isMacOsTheme()) {
                     frame.setJMenuBar(getWyldCardMenuBar());
                     frame.revalidate();
                 }

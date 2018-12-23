@@ -9,7 +9,6 @@ import com.defano.wyldcard.parts.model.WindowProxyPartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.window.WindowManager;
 
 public interface PartFinder {
 
@@ -24,9 +23,9 @@ public interface PartFinder {
      */
     default PartModel findPart(ExecutionContext context, PartSpecifier ps) throws PartException {
         if (ps instanceof WindowSpecifier) {
-            return new WindowProxyPartModel(WindowManager.getInstance().findWindow(context, (WindowSpecifier) ps));
+            return new WindowProxyPartModel(WyldCard.getInstance().getWindowManager().findWindow(context, (WindowSpecifier) ps));
         } else if (ps instanceof PartMessageSpecifier) {
-            return WindowManager.getInstance().getMessageWindow().getPartModel();
+            return WyldCard.getInstance().getWindowManager().getMessageWindow().getPartModel();
         } else if (ps instanceof StackPartSpecifier) {
             return findStackPart(context, (StackPartSpecifier) ps);
         } else {

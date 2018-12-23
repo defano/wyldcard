@@ -1,8 +1,8 @@
 package com.defano.hypertalk.ast.model;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.window.WyldCardFrame;
-import com.defano.wyldcard.window.WindowManager;
 
 public enum SingletonWindowType {
     CARD,
@@ -15,17 +15,17 @@ public enum SingletonWindowType {
     public WyldCardFrame getWindow(ExecutionContext context) {
         switch (this) {
             case CARD:
-                return WindowManager.getInstance().getWindowForStack(context, context.getCurrentStack());
+                return WyldCard.getInstance().getWindowManager().getWindowForStack(context, context.getCurrentStack());
             case MESSAGE:
-                return WindowManager.getInstance().getMessageWindow();
+                return WyldCard.getInstance().getWindowManager().getMessageWindow();
             case MESSAGE_WATCHER:
-                return WindowManager.getInstance().getMessageWatcher();
+                return WyldCard.getInstance().getWindowManager().getMessageWatcher();
             case VARIABLE_WATCHER:
-                return WindowManager.getInstance().getVariableWatcher();
+                return WyldCard.getInstance().getWindowManager().getVariableWatcher();
             case PATTERNS:
-                return WindowManager.getInstance().getPatternsPalette();
+                return WyldCard.getInstance().getWindowManager().getPatternsPalette();
             case TOOLS:
-                return WindowManager.getInstance().getPaintToolsPalette();
+                return WyldCard.getInstance().getWindowManager().getPaintToolsPalette();
         }
 
         throw new IllegalArgumentException("Bug! Unimplemented window type.");
