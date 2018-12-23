@@ -19,7 +19,9 @@ public abstract class ASTNode {
         this.context = context;
 
         // Inject Guice dependencies into the AST
-        WyldCard.getInjector().injectMembers(this);
+        if (WyldCard.getInjector() != null) {
+            WyldCard.getInjector().injectMembers(this);
+        }
     }
 
     /**

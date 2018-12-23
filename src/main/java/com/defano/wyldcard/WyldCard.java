@@ -3,6 +3,7 @@ package com.defano.wyldcard;
 import com.defano.hypertalk.ast.preemptions.ExitToHyperCardPreemption;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.wyldcard.awt.DefaultKeyboardManager;
+import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
@@ -16,10 +17,7 @@ import com.defano.wyldcard.runtime.context.FileContext;
 import com.defano.wyldcard.runtime.context.PartToolContext;
 import com.defano.wyldcard.window.WindowManager;
 import com.defano.wyldcard.window.layouts.HyperTalkErrorDialog;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 
 import javax.swing.*;
 
@@ -57,7 +55,7 @@ public class WyldCard extends StackManager implements PartFinder {
             e.printStackTrace();
         }
 
-        injector = Guice.createInjector(new WyldCardModule());
+        injector = Guice.createInjector(new WyldCardAssembly());
         instance = injector.getInstance(WyldCard.class);
 
         instance.startup();
@@ -113,5 +111,13 @@ public class WyldCard extends StackManager implements PartFinder {
 
     public static Injector getInjector() {
         return injector;
+    }
+
+    private static class WyldCardAssembly extends AbstractModule {
+        @Override
+        protected void configure() {
+            bind(MouseManager.class).to(DefaultMouseManager.class);
+            bind(KeyboardManager.class).to(DefaultKeyboardManager.class);
+        }
     }
 }

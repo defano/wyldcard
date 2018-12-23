@@ -6,12 +6,15 @@ import com.defano.hypertalk.ast.model.Preposition;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.junit.Test;
+import org.mockito.Answers;
+import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 
 public class TestChunkUtils {
 
-    private final ExecutionContext context = new ExecutionContext();
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private ExecutionContext context;
 
     @Test
     public void testDeleteChunks() throws HtSemanticException {
