@@ -5,6 +5,7 @@ import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
+import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.SearchManager;
 import com.defano.wyldcard.sound.SoundManager;
@@ -35,6 +36,7 @@ public class GuiceTest<T> {
     @Mock protected SearchManager mockSearchManager;
     @Mock protected PartEditManager mockPartEditManager;
     @Mock protected PatternManager mockPatternManager;
+    @Mock protected PeriodicMessageManager mockPeriodicMessageManager;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
@@ -76,6 +78,7 @@ public class GuiceTest<T> {
             bind(SearchManager.class).toInstance(mockSearchManager);
             bind(PartEditManager.class).toInstance(mockPartEditManager);
             bind(PatternManager.class).toInstance(mockPatternManager);
+            bind(PeriodicMessageManager.class).toInstance(mockPeriodicMessageManager);
 
             bind(WyldCard.class).toInstance(wyldCard);
         }

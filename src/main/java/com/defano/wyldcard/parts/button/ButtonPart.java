@@ -1,5 +1,6 @@
 package com.defano.wyldcard.parts.button;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.aspect.RunOnDispatch;
 import com.defano.wyldcard.awt.MouseStillDown;
 import com.defano.wyldcard.parts.card.CardLayerPart;
@@ -7,7 +8,7 @@ import com.defano.wyldcard.parts.card.CardPart;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
-import com.defano.wyldcard.runtime.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.DefaultPeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
@@ -110,7 +111,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
     public void partClosed(ExecutionContext context) {
         super.partClosed(context);
         partModel.removePropertyChangedObserver(this);
-        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
     @Override
@@ -182,7 +183,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
-            PeriodicMessageManager.getInstance().addWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
 
@@ -193,7 +194,7 @@ public class ButtonPart extends StyleableButton implements CardLayerPart, MouseL
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
-            PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
 

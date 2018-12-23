@@ -13,6 +13,7 @@ import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.parts.finder.PartFinder;
 import com.defano.wyldcard.patterns.DefaultPatternManager;
 import com.defano.wyldcard.patterns.PatternManager;
+import com.defano.wyldcard.runtime.DefaultPeriodicMessageManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.*;
 import com.defano.wyldcard.search.DefaultSearchManager;
@@ -48,6 +49,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private SearchManager searchManager;
     @Inject private PartEditManager partEditManager;
     @Inject private PatternManager patternManager;
+    @Inject private PeriodicMessageManager periodicMessageManager;
 
     WyldCard() {}
 
@@ -83,7 +85,7 @@ public class WyldCard extends StackManager implements PartFinder {
             partEditManager.start();                            // Button field movement and resize management
             windowManager.start();                              // Window and palette management
             patternManager.start();                             // Update pattern palette on color changes
-            PeriodicMessageManager.getInstance().start();       // Idle and mouseWithin periodic message generation
+            periodicMessageManager.start();                     // Idle and mouseWithin periodic message generation
             CursorManager.getInstance().start();                // Mouse cursor assignment
             PartToolContext.getInstance().start();              // Button and field tool selection state
 
@@ -159,6 +161,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return patternManager;
     }
 
+    public PeriodicMessageManager getPeriodicMessageManager() {
+        return periodicMessageManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -177,6 +183,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(SearchManager.class).to(DefaultSearchManager.class);
             bind(PartEditManager.class).to(DefaultPartEditManager.class);
             bind(PatternManager.class).to(DefaultPatternManager.class);
+            bind(PeriodicMessageManager.class).to(DefaultPeriodicMessageManager.class);
         }
     }
 }

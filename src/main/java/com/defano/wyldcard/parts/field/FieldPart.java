@@ -15,9 +15,8 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.wyldcard.runtime.PeriodicMessageManager;
+import com.defano.wyldcard.runtime.DefaultPeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.util.ThreadUtils;
 
 import javax.swing.*;
@@ -128,7 +127,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
         partModel.removePropertyChangedObserver(this);
         getHyperCardTextPane().removeFocusListener(this);
 
-        PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+        WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
     }
 
     /** {@inheritDoc}
@@ -224,7 +223,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_ENTER.messageName);
-            PeriodicMessageManager.getInstance().addWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().addWithin(getPartModel());
         }
     }
 
@@ -235,7 +234,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
 
         if (!isPartToolActive()) {
             getPartModel().receiveMessage(new ExecutionContext(this), SystemMessage.MOUSE_LEAVE.messageName);
-            PeriodicMessageManager.getInstance().removeWithin(getPartModel());
+            WyldCard.getInstance().getPeriodicMessageManager().removeWithin(getPartModel());
         }
     }
 
