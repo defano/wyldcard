@@ -7,6 +7,7 @@ import com.defano.wyldcard.awt.DefaultMouseManager;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.cursor.CursorManager;
+import com.defano.wyldcard.cursor.DefaultCursorManager;
 import com.defano.wyldcard.menubar.main.HyperCardMenuBar;
 import com.defano.wyldcard.parts.editor.DefaultPartEditManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
@@ -50,6 +51,7 @@ public class WyldCard extends StackManager implements PartFinder {
     @Inject private PartEditManager partEditManager;
     @Inject private PatternManager patternManager;
     @Inject private PeriodicMessageManager periodicMessageManager;
+    @Inject private CursorManager cursorManager;
 
     WyldCard() {}
 
@@ -86,7 +88,7 @@ public class WyldCard extends StackManager implements PartFinder {
             windowManager.start();                              // Window and palette management
             patternManager.start();                             // Update pattern palette on color changes
             periodicMessageManager.start();                     // Idle and mouseWithin periodic message generation
-            CursorManager.getInstance().start();                // Mouse cursor assignment
+            cursorManager.start();                              // Mouse cursor assignment
             PartToolContext.getInstance().start();              // Button and field tool selection state
 
             newStack(new ExecutionContext());
@@ -165,6 +167,10 @@ public class WyldCard extends StackManager implements PartFinder {
         return periodicMessageManager;
     }
 
+    public CursorManager getCursorManager() {
+        return cursorManager;
+    }
+
     public static Injector getInjector() {
         return injector;
     }
@@ -184,6 +190,7 @@ public class WyldCard extends StackManager implements PartFinder {
             bind(PartEditManager.class).to(DefaultPartEditManager.class);
             bind(PatternManager.class).to(DefaultPatternManager.class);
             bind(PeriodicMessageManager.class).to(DefaultPeriodicMessageManager.class);
+            bind(CursorManager.class).to(DefaultCursorManager.class);
         }
     }
 }

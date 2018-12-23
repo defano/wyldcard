@@ -1,12 +1,11 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.cursor.CursorManager;
+import com.defano.wyldcard.cursor.DefaultCursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.sound.DefaultSoundManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.exception.HtSemanticException;
 
@@ -115,8 +114,8 @@ public class HyperCardProperties extends PropertiesModel {
         defineComputedSetterProperty(PROP_MULTIPLE, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setDrawMultiple(value.booleanValue()));
         defineComputedGetterProperty(PROP_MULTIPLE, (context, model, propertyName) -> new Value(WyldCard.getInstance().getToolsManager().isDrawMultiple()));
 
-        defineComputedSetterProperty(PROP_CURSOR, (context, model, propertyName, value) -> CursorManager.getInstance().setActiveCursor(value));
-        defineComputedGetterProperty(PROP_CURSOR, (context, model, propertyName) -> new Value (CursorManager.getInstance().getActiveCursor().hyperTalkName));
+        defineComputedSetterProperty(PROP_CURSOR, (context, model, propertyName, value) -> WyldCard.getInstance().getCursorManager().setActiveCursor(value));
+        defineComputedGetterProperty(PROP_CURSOR, (context, model, propertyName) -> new Value (WyldCard.getInstance().getCursorManager().getActiveCursor().hyperTalkName));
 
         defineComputedSetterProperty(PROP_GRID, (context, model, propertyName, value) -> WyldCard.getInstance().getToolsManager().setGridSpacing(value.booleanValue() ? 8 : 1));
         defineComputedGetterProperty(PROP_GRID, (context, model, propertyName) -> new Value (WyldCard.getInstance().getToolsManager().getGridSpacing() > 1));
@@ -188,6 +187,6 @@ public class HyperCardProperties extends PropertiesModel {
         setKnownProperty(new ExecutionContext(), PROP_LOCKSCREEN, new Value(false));
         setKnownProperty(new ExecutionContext(), PROP_LOCKMESSAGES, new Value(false));
 
-        CursorManager.getInstance().setActiveCursor(HyperCardCursor.HAND);
+        WyldCard.getInstance().getCursorManager().setActiveCursor(HyperCardCursor.HAND);
     }
 }

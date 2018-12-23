@@ -3,6 +3,7 @@ package com.defano.hypertalk;
 import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
+import com.defano.wyldcard.cursor.CursorManager;
 import com.defano.wyldcard.parts.editor.PartEditManager;
 import com.defano.wyldcard.patterns.PatternManager;
 import com.defano.wyldcard.runtime.PeriodicMessageManager;
@@ -37,6 +38,7 @@ public class GuiceTest<T> {
     @Mock protected PartEditManager mockPartEditManager;
     @Mock protected PatternManager mockPatternManager;
     @Mock protected PeriodicMessageManager mockPeriodicMessageManager;
+    @Mock protected CursorManager mockCursorManager;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
@@ -79,6 +81,7 @@ public class GuiceTest<T> {
             bind(PartEditManager.class).toInstance(mockPartEditManager);
             bind(PatternManager.class).toInstance(mockPatternManager);
             bind(PeriodicMessageManager.class).toInstance(mockPeriodicMessageManager);
+            bind(CursorManager.class).toInstance(mockCursorManager);
 
             bind(WyldCard.class).toInstance(wyldCard);
         }
