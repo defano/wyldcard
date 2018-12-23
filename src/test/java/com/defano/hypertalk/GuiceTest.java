@@ -1,5 +1,6 @@
 package com.defano.hypertalk;
 
+import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.awt.KeyboardManager;
 import com.defano.wyldcard.awt.MouseManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
@@ -26,6 +27,7 @@ public class GuiceTest<T> {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     protected ExecutionContext mockExecutionContext;
     @Mock protected ParserRuleContext mockParserRuleContext;
+    @Mock protected WyldCard wyldCard;
 
     /**
      * Initializes this testcase by performing two functions:
@@ -54,6 +56,7 @@ public class GuiceTest<T> {
             bind(MouseManager.class).toInstance(mockMouseManager);
             bind(KeyboardManager.class).toInstance(mockKeyboardManager);
             bind(WindowManager.class).toInstance(mockWindowManager);
+            bind(WyldCard.class).toInstance(wyldCard);
         }
     }
 
