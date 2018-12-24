@@ -19,8 +19,8 @@ public class CompoundFunc extends ArgListFunction {
     public Value onEvaluate(ExecutionContext context) throws HtException {
         List<Value> evaluatedArgs = evaluateArgumentList(context);
 
-        if (evaluatedArgs.size() != 2) {
-            throw new HtSemanticException("Compound function expects two arguments, but got " + evaluatedArgs.size());
+        if (evaluatedArgs.size() != 2 || !evaluatedArgs.get(0).isNumber() || !evaluatedArgs.get(1).isNumber()) {
+            throw new HtSemanticException("Compound function expects two numeric arguments, but got " + evaluatedArgs.size());
         }
 
         double rate = evaluatedArgs.get(0).doubleValue();
