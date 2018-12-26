@@ -1,7 +1,6 @@
 package com.defano.wyldcard.runtime;
 
 import com.defano.wyldcard.WyldCard;
-import com.defano.wyldcard.cursor.DefaultCursorManager;
 import com.defano.wyldcard.cursor.HyperCardCursor;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.patterns.BasicBrushResolver;
@@ -88,9 +87,9 @@ public class HyperCardProperties extends PropertiesModel {
 
         defineComputedReadOnlyProperty(PROP_THEMS, (context, model, propertyName) -> Value.ofItems(WyldCard.getInstance().getWindowManager().getThemeNames()));
         defineComputedGetterProperty(PROP_THEME, (context, model, propertyName) -> new Value(WyldCard.getInstance().getWindowManager().getCurrentThemeName()));
-        defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().setTheme(WyldCard.getInstance().getWindowManager().getThemeClassForName(value.stringValue())));
+        defineComputedSetterProperty(PROP_THEME, (context, model, propertyName, value) -> WyldCard.getInstance().getWindowManager().setTheme(WyldCard.getInstance().getWindowManager().getThemeClassForName(value.toString())));
 
-        defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(value.stringValue()));
+        defineComputedSetterProperty(PROP_TEXTFONT, (context, model, propertyName, value) -> WyldCard.getInstance().getFontManager().setSelectedFontFamily(value.toString()));
         defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(WyldCard.getInstance().getFontManager().getSelectedFontFamily()));
 
         defineComputedSetterProperty(PROP_TEXTSTYLE, (context, model, propertyName, value) -> WyldCard.getInstance().getFontManager().setSelectedFontStyle(value));

@@ -17,6 +17,6 @@ class ValueSerializer implements JsonSerializer<Value>, JsonDeserializer<Value> 
 
     @Override
     public JsonElement serialize(Value src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.stringValue());
+        return new JsonPrimitive(src.toString());
     }
 }

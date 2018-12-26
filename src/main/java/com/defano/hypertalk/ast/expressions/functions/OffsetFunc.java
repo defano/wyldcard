@@ -23,8 +23,8 @@ public class OffsetFunc extends ArgListFunction {
             throw new HtSemanticException("Offset function expects two arguments, but got " + evaluatedArgs.size());
         }
 
-        String text1 = evaluatedArgs.get(0).stringValue();
-        String text2 = evaluatedArgs.get(1).stringValue();
+        String text1 = evaluatedArgs.get(0).toString();
+        String text2 = evaluatedArgs.get(1).toString();
 
         return new Value(text2.indexOf(text1) + 1);
     }

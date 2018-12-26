@@ -18,7 +18,7 @@ public class DefaultSoundManager implements SoundManager {
 
     @Override
     public void play(Value sound, Value notes, Value tempo) {
-        lastPlayedSound = sound.stringValue();
+        lastPlayedSound = sound.toString();
         SoundPlaybackExecutor.getInstance().submit(() -> playSynchronously(sound, notes, tempo));
     }
 
@@ -91,10 +91,10 @@ public class DefaultSoundManager implements SoundManager {
 
         // Tempo is specified in eighth notes played per minute; convert to beats (whole notes) per minute
         int bpm = tempo.isEmpty() || !tempo.isNumber() ? DEFAULT_TEMPO / 4 : tempo.integerValue() / 4;
-        SoundSample soundSampleResource = SoundSample.fromName(sound.stringValue().toLowerCase());
+        SoundSample soundSampleResource = SoundSample.fromName(sound.toString().toLowerCase());
 
         // Play each note
-        for (String thisNoteString : notes.stringValue().split("\\s+")) {
+        for (String thisNoteString : notes.toString().split("\\s+")) {
 
             // Break out of playback sequence if user type cmd-. Can't use ExecutionContext here because this
             // executes in a non-handler thread

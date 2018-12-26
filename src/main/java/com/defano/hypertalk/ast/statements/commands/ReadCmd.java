@@ -49,7 +49,7 @@ public class ReadCmd extends Command {
     public void onExecute(ExecutionContext context) throws HtException {
         try {
             String contents;
-            String filename = file.evaluate(context).stringValue();
+            String filename = file.evaluate(context).toString();
             DefaultFileManager.FileHandle file = WyldCard.getInstance().getFileManager().getFileHandle(filename);
 
             if (file == null) {
@@ -58,7 +58,7 @@ public class ReadCmd extends Command {
 
             // 'read file x until y'
             if (until != null) {
-                contents = file.readUntil(until.evaluate(context).stringValue(), true);
+                contents = file.readUntil(until.evaluate(context).toString(), true);
             }
 
             // 'read file x at y for z

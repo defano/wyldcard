@@ -26,7 +26,7 @@ public class StackPartExp extends PartExp {
         if (stackName == null) {
             return new StackPartSpecifier();
         } else {
-            return new StackPartSpecifier(stackName.evaluate(context).stringValue());
+            return new StackPartSpecifier(stackName.evaluate(context).toString());
         }
     }
 }

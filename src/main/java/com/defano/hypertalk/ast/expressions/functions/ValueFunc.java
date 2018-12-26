@@ -18,7 +18,7 @@ public class ValueFunc extends Expression {
 
     @Override
     public Value onEvaluate(ExecutionContext context) throws HtException {
-        String toEvaluate = expression.evaluate(context).stringValue();
+        String toEvaluate = expression.evaluate(context).toString();
         return Interpreter.blockingEvaluate(toEvaluate, context);
     }
 }

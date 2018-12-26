@@ -15,7 +15,6 @@ import com.defano.wyldcard.parts.field.FieldModelObserver;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultFontManager;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.util.Throttle;
 import com.defano.hypertalk.ast.model.Value;
@@ -354,7 +353,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         // Apply change to field
         if (selection.length() == 0) {
             TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(textPane.getCharacterAttributes());
-            tss.setFontFamily(fontFamily.stringValue());
+            tss.setFontFamily(fontFamily.toString());
             textPane.setCharacterAttributes(tss.toAttributeSet(), true);
         }
 
@@ -362,7 +361,7 @@ public abstract class HyperCardTextField extends JScrollPane implements Property
         else {
             for (int index = selection.start; index < selection.start + selection.length(); index++) {
                 TextStyleSpecifier tss = TextStyleSpecifier.fromAttributeSet(doc.getCharacterElement(index).getAttributes());
-                tss.setFontFamily(fontFamily.stringValue());
+                tss.setFontFamily(fontFamily.toString());
                 doc.setCharacterAttributes(index, 1, tss.toAttributeSet(), true);
             }
         }

@@ -56,7 +56,7 @@ public class ClickCmd extends Command {
 
             mouseManager.clickAt(new Point(xLoc, yLoc), withShift, withOption, withCommand);
         } else {
-            throw new HtSemanticException(clickLoc.stringValue() + " is not a valid location.");
+            throw new HtSemanticException(clickLoc.toString() + " is not a valid location.");
         }
     }
 }

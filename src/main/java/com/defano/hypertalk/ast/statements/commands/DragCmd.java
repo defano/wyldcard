@@ -55,11 +55,11 @@ public class DragCmd extends Command {
         Value to = this.to.evaluate(context);
 
         if (!from.isPoint()) {
-            throw new HtSemanticException(from.stringValue() + " is not a valid location.");
+            throw new HtSemanticException(from.toString() + " is not a valid location.");
         }
 
         if (!to.isPoint()) {
-            throw new HtSemanticException(to.stringValue() + " is not a valid location.");
+            throw new HtSemanticException(to.toString() + " is not a valid location.");
         }
 
         int x1 = from.getItems(context).get(0).integerValue();

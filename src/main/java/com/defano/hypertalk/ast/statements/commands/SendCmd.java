@@ -26,7 +26,7 @@ public class SendCmd extends Command {
 
     public void onExecute(ExecutionContext context) throws HtException, Preemption {
         PartExp recipient = part.factor(context, PartExp.class, new HtSemanticException("Cannot send a message to that."));
-        MessageCmd messageCmd = interpretMessage(message.evaluate(context).stringValue());
+        MessageCmd messageCmd = interpretMessage(message.evaluate(context).toString());
 
         if (messageCmd == null) {
             throw new HtSemanticException("Not a valid message.");

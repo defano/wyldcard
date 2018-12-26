@@ -66,7 +66,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
         editor.addBreakpointToggleObserver(breakpoints -> saveBreakpoints());
 
         editor.getScriptField().setFont(FontUtils.getFontByNameStyleSize(
-                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTFONT).stringValue(),
+                HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTFONT).toString(),
                 Font.PLAIN,
                 HyperCardProperties.getInstance().getKnownProperty(new ExecutionContext(), HyperCardProperties.PROP_SCRIPTTEXTSIZE).integerValue()
         ));
@@ -210,7 +210,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
                     JOptionPane.YES_NO_OPTION);
 
             if (dialogResult == JOptionPane.YES_OPTION) {
-                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
+                editor.getScriptField().setText(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
             }
         }
     }
@@ -402,7 +402,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
 
     @RunOnDispatch
     private boolean isDirty() {
-        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue());
+        return !editor.getScriptField().getText().equals(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString());
     }
 
     @RunOnDispatch
@@ -561,7 +561,7 @@ public class ScriptEditor extends WyldCardWindow<PartModel> implements HandlerCo
      */
     @RunOnDispatch
     private void applyScriptToEditor() {
-        String script = this.model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).stringValue();
+        String script = this.model.getKnownProperty(new ExecutionContext(), PartModel.PROP_SCRIPT).toString();
         editor.getScriptField().setText(script);
         editor.getScriptField().forceReparsing(0);
 

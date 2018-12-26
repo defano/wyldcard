@@ -26,7 +26,7 @@ public class WindowNameExp extends PartExp {
         if (windowValue.isInteger() && !windowValue.isQuotedLiteral()) {
             return new WindowNumberSpecifier(windowValue.integerValue());
         } else {
-            return new WindowNameSpecifier(windowValue.stringValue());
+            return new WindowNameSpecifier(windowValue.toString());
         }
     }
 }

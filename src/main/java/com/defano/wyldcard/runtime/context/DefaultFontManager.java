@@ -211,17 +211,17 @@ public class DefaultFontManager implements FontManager {
 
     @Override
     public Observable<Boolean> getFocusedLeftAlignProvider() {
-        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("left"));
+        return focusedTextAlignProvider.map(value -> value.toString().equalsIgnoreCase("left"));
     }
 
     @Override
     public Observable<Boolean> getFocusedRightAlignProvider() {
-        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("right"));
+        return focusedTextAlignProvider.map(value -> value.toString().equalsIgnoreCase("right"));
     }
 
     @Override
     public Observable<Boolean> getFocusedCenterAlignProvider() {
-        return focusedTextAlignProvider.map(value -> value.stringValue().equalsIgnoreCase("center"));
+        return focusedTextAlignProvider.map(value -> value.toString().equalsIgnoreCase("center"));
     }
 
     @Override

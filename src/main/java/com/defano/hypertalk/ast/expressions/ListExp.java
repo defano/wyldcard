@@ -62,7 +62,7 @@ public class ListExp extends Expression {
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
         if (cdr != null) {
-            return new Value(car.evaluate(context).stringValue() + "," + cdr.evaluate(context).stringValue());
+            return new Value(car.evaluate(context).toString() + "," + cdr.evaluate(context).toString());
         } else {
             return car.evaluate(context);
         }

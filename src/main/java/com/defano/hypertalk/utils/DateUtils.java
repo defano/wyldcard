@@ -42,13 +42,13 @@ public class DateUtils {
 
         ParsePosition position = new ParsePosition(0);
 
-        Date firstDate = dateOf(value.stringValue(), format.first, position);
+        Date firstDate = dateOf(value.toString(), format.first, position);
         if (firstDate == null) {
             return null;
         }
 
         if (format.second != null) {
-            Date secondDate = dateOf(value.stringValue(), format.second, position);
+            Date secondDate = dateOf(value.toString(), format.second, position);
             return mergeDates(firstDate, secondDate, format.second);
         } else {
             return firstDate;
@@ -56,7 +56,7 @@ public class DateUtils {
     }
 
     public static Date dateOf(Value value, ConvertibleDateFormat format) {
-        return dateOf(value.stringValue(), format, new ParsePosition(0));
+        return dateOf(value.toString(), format, new ParsePosition(0));
     }
 
     public static Date dateOf(String text, ConvertibleDateFormat format, ParsePosition parsePosition) {

@@ -19,7 +19,7 @@ public class ParamsFunc extends Expression {
         StringBuilder paramList = new StringBuilder();
 
         for (int index = 0; index < params.size(); index++) {
-            paramList.append(params.get(index).stringValue());
+            paramList.append(params.get(index).toString());
             if (index != params.size() - 1) {
                 paramList.append(", ");
             }

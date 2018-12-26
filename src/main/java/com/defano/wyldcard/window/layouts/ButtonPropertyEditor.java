@@ -111,7 +111,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         partLabelValue.setText(partNumber + " of " + partCount);
         idLabelValue.setText(String.valueOf(model.getId(context)));
 
-        buttonName.setText(model.getKnownProperty(context, ButtonModel.PROP_NAME).stringValue());
+        buttonName.setText(model.getKnownProperty(context, ButtonModel.PROP_NAME).toString());
         buttonTop.setValue(model.getKnownProperty(context, ButtonModel.PROP_TOP).integerValue());
         buttonLeft.setValue(model.getKnownProperty(context, ButtonModel.PROP_LEFT).integerValue());
         buttonHeight.setValue(model.getKnownProperty(context, ButtonModel.PROP_HEIGHT).integerValue());
@@ -119,8 +119,8 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
         isEnabled.setSelected(model.getKnownProperty(context, ButtonModel.PROP_ENABLED).booleanValue());
         isShowTitle.setSelected(model.getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue());
         isVisible.setSelected(model.getKnownProperty(context, ButtonModel.PROP_VISIBLE).booleanValue());
-        style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(context, ButtonModel.PROP_STYLE).stringValue()));
-        family.setSelectedItem(model.getKnownProperty(context, ButtonModel.PROP_FAMILY).stringValue());
+        style.setSelectedItem(ButtonStyle.fromName(model.getKnownProperty(context, ButtonModel.PROP_STYLE).toString()));
+        family.setSelectedItem(model.getKnownProperty(context, ButtonModel.PROP_FAMILY).toString());
         autoHilite.setSelected(model.getKnownProperty(context, ButtonModel.PROP_AUTOHILIGHT).booleanValue());
 
         bindActions(a -> updateProperties(),
@@ -154,7 +154,7 @@ public class ButtonPropertyEditor extends WyldCardDialog<ButtonModel> implements
     @RunOnDispatch
     private void showContentsEditor() {
         dispose();
-        String contents = PartContentsEditor.editContents(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(model.getKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS).toString(), getWindowPanel());
         if (contents != null) {
             model.setKnownProperty(new ExecutionContext(), PartModel.PROP_CONTENTS, new Value(contents));
         }

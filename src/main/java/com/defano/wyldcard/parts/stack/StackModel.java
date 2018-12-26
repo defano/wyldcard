@@ -169,7 +169,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
     }
 
     public String getStackName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).stringValue();
+        return getKnownProperty(context, PROP_NAME).toString();
     }
 
     public void setStackName(ExecutionContext context, String name) {
@@ -404,7 +404,7 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
 
     @Override
     public String getShortName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).stringValue();
+        return getKnownProperty(context, PROP_NAME).toString();
     }
 
     @Override
@@ -435,8 +435,8 @@ public class StackModel extends PartModel implements StackPartFinder, NamedPart 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        String thisId = this.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).stringValue();
-        String thatId = ((StackModel) o).getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).stringValue();
+        String thisId = this.getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).toString();
+        String thatId = ((StackModel) o).getKnownProperty(new ExecutionContext(), PartModel.PROP_ID).toString();
 
         return thisId.equals(thatId);
     }

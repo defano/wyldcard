@@ -1,9 +1,6 @@
 package com.defano.hypertalk.utils;
 
-import com.defano.hypertalk.ast.model.ChunkType;
-import com.defano.hypertalk.ast.model.CompositeChunk;
-import com.defano.hypertalk.ast.model.Ordinal;
-import com.defano.hypertalk.ast.model.Preposition;
+import com.defano.hypertalk.ast.model.*;
 import com.defano.hypertalk.exception.HtException;
 import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.HyperCardProperties;
@@ -193,7 +190,7 @@ public class ChunkUtils {
     private static String getItemDelimiterRegex(ExecutionContext context) {
         List<Character> specialChars = Lists.charactersOf("[\\^$.|?*+()");
 
-        String itemDelimiter = HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).stringValue();
+        String itemDelimiter = HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).toString();
         StringBuilder itemDelimiterRegex = new StringBuilder();
 
         for (char thisChar : itemDelimiter.toCharArray()) {
@@ -229,7 +226,7 @@ public class ChunkUtils {
                 return "\n";
             case ITEMRANGE:
             case ITEM:
-                return HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).stringValue();
+                return HyperCardProperties.getInstance().getKnownProperty(context, HyperCardProperties.PROP_ITEMDELIMITER).toString();
             default:
                 throw new RuntimeException("Bug! Not implemented: " + chunkType);
         }

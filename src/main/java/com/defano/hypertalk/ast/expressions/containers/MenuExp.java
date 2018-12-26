@@ -100,11 +100,11 @@ public class MenuExp extends ContainerExp {
         Collections.reverse(menuItems);
 
         for (Value thisItem : menuItems) {
-            if (thisItem.stringValue().equals("-")) {
+            if (thisItem.toString().equals("-")) {
                 menu.add(new JSeparator(), index);
             } else {
                 MenuItemBuilder.ofDefaultType()
-                        .named(thisItem.stringValue())
+                        .named(thisItem.toString())
                         .atIndex(index)
                         .withAction(e -> {})        // No-op action
                         .build(menu);

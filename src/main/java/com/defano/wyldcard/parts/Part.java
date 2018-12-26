@@ -13,7 +13,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.stack.StackModel;
 import com.defano.wyldcard.parts.stack.StackPart;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.window.layouts.StackWindow;
 
 import java.awt.*;
@@ -97,7 +96,7 @@ public interface Part {
      * @param context The execution context.
      */
     default String getName(ExecutionContext context) {
-        return getPartModel().getKnownProperty(context, PartModel.PROP_NAME).stringValue();
+        return getPartModel().getKnownProperty(context, PartModel.PROP_NAME).toString();
     }
 
     /**

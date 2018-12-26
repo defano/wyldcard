@@ -4,7 +4,6 @@ import com.defano.wyldcard.WyldCard;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.runtime.HyperCardProperties;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultSelectionManager;
 import com.defano.hypertalk.ast.model.Value;
 import com.defano.hypertalk.ast.model.specifiers.PartSpecifier;
 import com.defano.hypertalk.utils.Range;
@@ -59,7 +58,7 @@ public interface AddressableSelection {
         int lineEnd = getLineAtCharPosition(context, getSelectableTextModel().getSelection(context).end - 1);
 
         // No selection; selected line is empty
-        if (getSelectedText(context).stringValue().length() == 0) {
+        if (getSelectedText(context).toString().length() == 0) {
             return new Value();
         }
 

@@ -4,6 +4,7 @@ import com.defano.hypertalk.GuiceTest;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.BuiltInFunction;
 import com.defano.hypertalk.ast.model.Value;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class MathFuncTest extends GuiceTest<MathFunc> {
@@ -226,6 +228,15 @@ public class MathFuncTest extends GuiceTest<MathFunc> {
 
         // Verify the results
         assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void testNonNumericArgument() throws Exception {
+        initialize(new MathFunc(mockParserRuleContext, BuiltInFunction.NUM_TO_CHAR, mockExpression));
+        Mockito.when(mockExpression.evaluate(mockExecutionContext)).thenReturn(new Value("barf"));
+
+        // Run the test
+        assertThrows(HtSemanticException.class, () -> uut.onEvaluate(mockExecutionContext));
     }
 
 }

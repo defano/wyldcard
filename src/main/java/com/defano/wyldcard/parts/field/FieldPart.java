@@ -15,7 +15,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.HyperCardProperties;
-import com.defano.wyldcard.runtime.DefaultPeriodicMessageManager;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import com.defano.wyldcard.util.ThreadUtils;
 
@@ -93,7 +92,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
      * @return The newly created field.
      */
     public static FieldPart fromModel(ExecutionContext context, CardPart parent, FieldModel model) {
-        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(context, FieldModel.PROP_STYLE).stringValue()), parent, model.getOwner());
+        FieldPart field = new FieldPart(FieldStyle.fromName(model.getKnownProperty(context, FieldModel.PROP_STYLE).toString()), parent, model.getOwner());
 
         model.setCurrentCardId(parent.getId(context));
         field.partModel = model;
@@ -278,7 +277,7 @@ public class FieldPart extends StyleableField implements CardLayerPart, Searchab
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case FieldModel.PROP_STYLE:
-                setStyle(context, FieldStyle.fromName(newValue.stringValue()));
+                setStyle(context, FieldStyle.fromName(newValue.toString()));
                 break;
             case FieldModel.PROP_TOP:
             case FieldModel.PROP_LEFT:

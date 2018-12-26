@@ -75,7 +75,7 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
         // Don't display "default" name ('background id xxx')
         Value bkgndNameValue = backgroundModel.getRawProperty(BackgroundModel.PROP_NAME);
         if (bkgndNameValue != null && !bkgndNameValue.isEmpty()) {
-            backgroundName.setText(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_NAME).stringValue());
+            backgroundName.setText(backgroundModel.getKnownProperty(context, BackgroundModel.PROP_NAME).toString());
         }
 
         long cardCount = this.cardPart.getCardModel().getStackModel().getCardsInBackground(backgroundId).size();
@@ -96,7 +96,7 @@ public class BackgroundPropertyEditor extends WyldCardDialog<CardPart> {
 
     private void showContentsEditor() {
         ExecutionContext context = new ExecutionContext();
-        String contents = PartContentsEditor.editContents(backgroundModel.getKnownProperty(context, PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(backgroundModel.getKnownProperty(context, PartModel.PROP_CONTENTS).toString(), getWindowPanel());
         if (contents != null) {
             backgroundModel.setKnownProperty(context, PartModel.PROP_CONTENTS, new Value(contents));
         }

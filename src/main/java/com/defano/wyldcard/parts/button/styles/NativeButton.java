@@ -45,7 +45,7 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
-                button.setText(showName ? newValue.stringValue() : "");
+                button.setText(showName ? newValue.toString() : "");
                 break;
 
             case ButtonModel.PROP_ENABLED:
@@ -57,7 +57,7 @@ public class NativeButton extends JPanel implements ContainerWrappedPart, HyperC
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                button.setFont(FontUtils.getFontByNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                button.setFont(FontUtils.getFontByNameStyleSize(newValue.toString(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:

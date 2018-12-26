@@ -57,7 +57,7 @@ public class IconPicker extends WyldCardDialog<ButtonModel> {
     public void bindModel(ButtonModel data) {
         this.model = data;
 
-        iconAlign.setSelectedItem(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICONALIGN).stringValue());
+        iconAlign.setSelectedItem(this.model.getKnownProperty(new ExecutionContext(), ButtonModel.PROP_ICONALIGN).toString());
         buttons = getButtons();
 
         for (JButton thisButt : buttons) {

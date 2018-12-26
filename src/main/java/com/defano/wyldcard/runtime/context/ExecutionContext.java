@@ -282,9 +282,9 @@ public class ExecutionContext {
 
         // Operating on a chunk of the existing value
         if (chunk != null)
-            mutable = Value.setChunk(this, mutable, preposition, chunk, value);
+            mutable = Value.ofChunk(this, mutable, preposition, chunk, value);
         else
-            mutable = Value.setValue(mutable, preposition, value);
+            mutable = Value.ofValue(mutable, preposition, value);
 
         setVariable(symbol, mutable);
     }
@@ -382,9 +382,9 @@ public class ExecutionContext {
         Value mutable = getProperty(property, ps);
 
         if (chunk != null) {
-            mutable = Value.setChunk(this, mutable, preposition, chunk, value);
+            mutable = Value.ofChunk(this, mutable, preposition, chunk, value);
         } else {
-            mutable = Value.setValue(mutable, preposition, value);
+            mutable = Value.ofValue(mutable, preposition, value);
         }
 
         if (ps == null) {

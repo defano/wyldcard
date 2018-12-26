@@ -15,6 +15,6 @@ public class GreaterThanOrEqualsOp extends BinaryOperatorExp {
 
     @Override
     protected Value onEvaluate(ExecutionContext context) throws HtException {
-        return lhs(context).greaterThanOrEqualTo(rhs(context));
+        return lhs(context).isGreaterThanOrEqualTo(rhs(context));
     }
 }

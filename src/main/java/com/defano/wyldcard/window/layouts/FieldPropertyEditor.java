@@ -101,8 +101,8 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         partLabelValue.setText(partNumber + " of " + partCount);
         idLabelValue.setText(String.valueOf(model.getId(context)));
 
-        fieldName.setText(model.getKnownProperty(context, FieldModel.PROP_NAME).stringValue());
-        idLabelValue.setText(model.getKnownProperty(context, FieldModel.PROP_ID).stringValue());
+        fieldName.setText(model.getKnownProperty(context, FieldModel.PROP_NAME).toString());
+        idLabelValue.setText(model.getKnownProperty(context, FieldModel.PROP_ID).toString());
         fieldTop.setValue(model.getKnownProperty(context, FieldModel.PROP_TOP).integerValue());
         fieldLeft.setValue(model.getKnownProperty(context, FieldModel.PROP_LEFT).integerValue());
         fieldHeight.setValue(model.getKnownProperty(context, FieldModel.PROP_HEIGHT).integerValue());
@@ -111,7 +111,7 @@ public class FieldPropertyEditor extends WyldCardDialog<FieldModel> implements A
         isVisible.setSelected(model.getKnownProperty(context, FieldModel.PROP_VISIBLE).booleanValue());
         isWrapText.setSelected(model.getKnownProperty(context, FieldModel.PROP_DONTWRAP).booleanValue());
         showLines.setSelected(model.getKnownProperty(context, FieldModel.PROP_SHOWLINES).booleanValue());
-        style.setSelectedItem(StringUtils.capitalize(model.getKnownProperty(context, FieldModel.PROP_STYLE).stringValue()));
+        style.setSelectedItem(StringUtils.capitalize(model.getKnownProperty(context, FieldModel.PROP_STYLE).toString()));
         enabled.setSelected(model.getKnownProperty(context, FieldModel.PROP_ENABLED).booleanValue());
         isWideMargins.setSelected(model.getKnownProperty(context, FieldModel.PROP_WIDEMARGINS).booleanValue());
         autoTab.setSelected(model.getKnownProperty(context, FieldModel.PROP_AUTOTAB).booleanValue());

@@ -51,15 +51,15 @@ public class MenuPropertiesDelegate {
                 menuItem.getSpecifiedMenuItem(context).setSelected(value.booleanValue());
                 break;
             case PROP_COMMANDCHAR:
-                if (value.stringValue().length() == 0) {
+                if (value.toString().length() == 0) {
                     menuItem.getSpecifiedMenuItem(context).setAccelerator(null);
                 } else {
-                    char accelerator = value.stringValue().toUpperCase().charAt(0);
+                    char accelerator = value.toString().toUpperCase().charAt(0);
                     menuItem.getSpecifiedMenuItem(context).setAccelerator(KeyStroke.getKeyStroke(accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
                 }
                 break;
             case PROP_NAME:
-                menuItem.getSpecifiedMenuItem(context).setText(value.stringValue());
+                menuItem.getSpecifiedMenuItem(context).setText(value.toString());
             default:
                 throw new HtSemanticException(name + " is not a menu item property.");
         }

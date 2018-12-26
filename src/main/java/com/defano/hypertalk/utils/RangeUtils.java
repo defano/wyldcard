@@ -107,12 +107,12 @@ public class RangeUtils {
     private static Range getRange(ExecutionContext context, String value, CompositeChunk c, Range in) throws HtException {
         Range s = getRange(context, value, (Chunk) c, in);
 
-        value = new Value(value).getChunk(context, new Chunk(c.type, c.start, c.end)).stringValue();
+        value = new Value(value).getChunk(context, new Chunk(c.type, c.start, c.end)).toString();
         s = getRange(context, value, c.chunkOf, s);
 
         if (c.chunkOf instanceof CompositeChunk) {
             Chunk next = ((CompositeChunk) c.chunkOf).chunkOf;
-            value = new Value(value).getChunk(context, new Chunk(c.chunkOf.type, c.chunkOf.start, c.chunkOf.end)).stringValue();
+            value = new Value(value).getChunk(context, new Chunk(c.chunkOf.type, c.chunkOf.start, c.chunkOf.end)).toString();
 
             if (next instanceof CompositeChunk) {
                 return getRange(context, value, (CompositeChunk) next, s);

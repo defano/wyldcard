@@ -68,9 +68,9 @@ public class LiteralExp extends Expression {
 
     private String stringValue(Object object) {
         if (object instanceof Value) {
-            return ((Value) object).stringValue();
+            return ((Value) object).toString();
         } else if (object instanceof LiteralExp) {
-            return ((LiteralExp) object).literal.stringValue();
+            return ((LiteralExp) object).literal.toString();
         } else {
             return String.valueOf(object);
         }

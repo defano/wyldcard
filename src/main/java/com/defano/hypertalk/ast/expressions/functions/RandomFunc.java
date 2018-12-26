@@ -25,7 +25,7 @@ public class RandomFunc extends ArgListFunction {
         if (evaluatedArgument.isNatural()) {
             return new Value(new Random().nextInt(evaluatedArgument.integerValue()));
         } else {
-            throw new HtSemanticException("Random expects a non-negative integer, but got '" + evaluatedArgument.stringValue() + "'");
+            throw new HtSemanticException("Random expects a non-negative integer, but got '" + evaluatedArgument.toString() + "'");
         }
     }
 }

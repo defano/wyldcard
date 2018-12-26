@@ -10,7 +10,6 @@ import com.defano.wyldcard.parts.model.LogicalLinkObserver;
 import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.util.FieldUtilities;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultSelectionManager;
 import com.defano.hypertalk.ast.model.Owner;
 import com.defano.hypertalk.ast.model.PartType;
 import com.defano.hypertalk.ast.model.Value;
@@ -127,7 +126,7 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         super.initialize();
 
         defineComputedGetterProperty(PROP_TEXT, (context, model, propertyName) -> new Value(getText(context)));
-        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.stringValue()));
+        defineComputedSetterProperty(PROP_TEXT, (DispatchComputedSetter) (context, model, propertyName, value) -> replaceText(context, value.toString()));
 
         defineComputedGetterProperty(PROP_TEXTFONT, (context, model, propertyName) -> new Value(getTextFontFamily(context, 0, getText(context).length() + 1)));
         defineComputedSetterProperty(PROP_TEXTFONT, (DispatchComputedSetter) (context, model, propertyName, value) -> setTextFontFamily(context, 0, getText(context).length() + 1, value));
@@ -329,13 +328,13 @@ public class FieldModel extends CardLayerPartModel implements AddressableSelecti
         // Special case; zero-length document does not persist prev style, replace with focused style
         if (doc.getLength() == 0) {
             TextStyleSpecifier tss = WyldCard.getInstance().getFontManager().getFocusedTextStyle();
-            tss.setFontFamily(fontFamily.stringValue());
+            tss.setFontFamily(fontFamily.toString());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), true);
         }
 
         // Apply font family to document
         else {
-            TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.stringValue());
+            TextStyleSpecifier tss = TextStyleSpecifier.fromFontFamily(fontFamily.toString());
             doc.setCharacterAttributes(startPosition, length, tss.toAttributeSet(), false);
         }
 

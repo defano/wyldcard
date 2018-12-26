@@ -33,11 +33,11 @@ public class MsgBoxExp extends ContainerExp {
 
         // Operating on a chunk of the existing value
         if (getChunk() != null)
-            destValue = Value.setChunk(context, destValue, preposition, getChunk(), value);
+            destValue = Value.ofChunk(context, destValue, preposition, getChunk(), value);
         else
-            destValue = Value.setValue(destValue, preposition, value);
+            destValue = Value.ofValue(destValue, preposition, value);
 
-        windowManager.getMessageWindow().setMsgBoxText(destValue.stringValue());
+        windowManager.getMessageWindow().setMsgBoxText(destValue.toString());
         context.setIt(destValue);
 
         // If message is hidden, show it but don't focus it

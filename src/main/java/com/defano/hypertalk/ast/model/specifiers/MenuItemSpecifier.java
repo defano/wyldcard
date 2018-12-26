@@ -54,14 +54,14 @@ public class MenuItemSpecifier {
                 for (int index = 0; index < menu.getItemCount(); index++) {
                     JMenuItem thisItem = menu.getItem(index);
 
-                    if (thisItem == null || thisItem.getText() == null && exprValue.stringValue().equals("-")) {
+                    if (thisItem == null || thisItem.getText() == null && exprValue.toString().equals("-")) {
                         return index;
-                    } else if (exprValue.stringValue().equalsIgnoreCase(thisItem.getText())) {
+                    } else if (exprValue.toString().equalsIgnoreCase(thisItem.getText())) {
                         return index;
                     }
                 }
 
-                throw new HtSemanticException("No such menu item " + exprValue.stringValue() + " in menu " + menu.getText());
+                throw new HtSemanticException("No such menu item " + exprValue.toString() + " in menu " + menu.getText());
             }
         }
 

@@ -42,7 +42,7 @@ public class RadioButton extends JRadioButton implements SharedHilight, HyperCar
             case ButtonModel.PROP_NAME:
             case ButtonModel.PROP_SHOWNAME:
                 boolean showName = toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_SHOWNAME).booleanValue();
-                RadioButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).stringValue() : "");
+                RadioButton.super.setText(showName ? toolEditablePart.getPartModel().getKnownProperty(context, ButtonModel.PROP_NAME).toString() : "");
                 break;
 
             case ButtonModel.PROP_HILITE:
@@ -57,7 +57,7 @@ public class RadioButton extends JRadioButton implements SharedHilight, HyperCar
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(FontUtils.getFontByNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(FontUtils.getFontByNameStyleSize(newValue.toString(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:

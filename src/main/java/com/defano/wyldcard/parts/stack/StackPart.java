@@ -18,7 +18,6 @@ import com.defano.wyldcard.parts.model.PartModel;
 import com.defano.wyldcard.parts.model.PropertiesModel;
 import com.defano.wyldcard.parts.model.PropertyChangeObserver;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.runtime.context.DefaultToolsManager;
 import com.defano.wyldcard.util.ThreadUtils;
 import com.defano.wyldcard.window.layouts.StackWindow;
 import io.reactivex.Observable;
@@ -388,7 +387,7 @@ public class StackPart implements Part, PropertyChangeObserver {
     public void onPropertyChanged(ExecutionContext context, PropertiesModel model, String property, Value oldValue, Value newValue) {
         switch (property) {
             case StackModel.PROP_NAME:
-                fireOnStackNameChanged(newValue.stringValue());
+                fireOnStackNameChanged(newValue.toString());
                 break;
 
             case StackModel.PROP_HEIGHT:

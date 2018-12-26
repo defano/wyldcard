@@ -69,7 +69,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
                 break;
 
             case ButtonModel.PROP_TEXTFONT:
-                setFont(FontUtils.getFontByNameStyleSize(newValue.stringValue(), getFont().getStyle(), getFont().getSize()));
+                setFont(FontUtils.getFontByNameStyleSize(newValue.toString(), getFont().getStyle(), getFont().getSize()));
                 break;
 
             case ButtonModel.PROP_TEXTSTYLE:
@@ -93,7 +93,7 @@ public class PopupButton extends JComboBox<String> implements HyperCardButton {
         }
 
         for (Value thisItem : items) {
-            menuItems.addElement(thisItem.stringValue());
+            menuItems.addElement(thisItem.toString());
         }
 
         // Convert item list to line list

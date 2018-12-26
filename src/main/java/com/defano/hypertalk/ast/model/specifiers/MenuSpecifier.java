@@ -32,14 +32,14 @@ public class MenuSpecifier {
             JMenu foundMenu;
             Value menuExprValue = menuExpr.evaluate(context);
 
-            foundMenu = HyperCardMenuBar.getInstance().findMenuByName(menuExprValue.stringValue());
+            foundMenu = HyperCardMenuBar.getInstance().findMenuByName(menuExprValue.toString());
 
             if (foundMenu == null) {
                 foundMenu = HyperCardMenuBar.getInstance().findMenuByNumber(menuExprValue.integerValue() - 1);
             }
 
             if (foundMenu == null) {
-                throw new HtSemanticException("No such menu " + menuExprValue.stringValue());
+                throw new HtSemanticException("No such menu " + menuExprValue.toString());
             }
 
             return foundMenu;

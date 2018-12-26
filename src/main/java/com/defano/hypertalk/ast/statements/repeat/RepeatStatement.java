@@ -97,14 +97,14 @@ public class RepeatStatement extends Statement {
 
         // While loop
         if (duration.polarity == RepeatDuration.POLARITY_WHILE) {
-            while (duration.condition.evaluate(context).checkedBooleanValue()) {
+            while (duration.condition.evaluate(context).booleanValueOrError(new HtSemanticException("Repeat condition expects a true or false value."))) {
                 iterate(context);
             }
         }
 
         // Until loop
         if (duration.polarity == RepeatDuration.POLARITY_UNTIL) {
-            while (!duration.condition.evaluate(context).checkedBooleanValue()) {
+            while (!duration.condition.evaluate(context).booleanValueOrError(new HtSemanticException("Repeat condition expects a true or false value."))) {
                 iterate(context);
             }
         }

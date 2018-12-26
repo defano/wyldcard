@@ -1,7 +1,6 @@
 package com.defano.hypertalk.ast.statements.commands;
 
 import com.defano.wyldcard.runtime.context.ExecutionContext;
-import com.defano.wyldcard.sound.DefaultSpeechPlaybackManager;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.model.SpeakingVoice;
 import com.defano.hypertalk.ast.statements.Command;
@@ -32,10 +31,10 @@ public class SpeakCmd extends Command {
     protected void onExecute(ExecutionContext context) throws HtException {
         SpeakingVoice voice = SpeakingVoice.getDefaultVoice();
         if (voiceExpression != null) {
-            voice = SpeakingVoice.getVoiceByNameOrGender(voiceExpression.evaluate(context).stringValue());
+            voice = SpeakingVoice.getVoiceByNameOrGender(voiceExpression.evaluate(context).toString());
         }
 
-        String textToSpeak = textExpression.evaluate(context).stringValue();
+        String textToSpeak = textExpression.evaluate(context).toString();
         speechPlaybackManager.speak(textToSpeak, voice);
     }
 }

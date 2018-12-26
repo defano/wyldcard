@@ -106,7 +106,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_HEIGHT, new Value(value.getItemAt(context, 3).longValue() - value.getItemAt(context, 1).longValue()));
                 model.setKnownProperty(context, PROP_WIDTH, new Value(value.getItemAt(context, 2).longValue() - value.getItemAt(context, 0).longValue()));
             } else {
-                throw new HtSemanticException("Expected a rectangle, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a rectangle, but got " + value.toString());
             }
         });
 
@@ -140,7 +140,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_LEFT, value.getItemAt(context, 0));
                 model.setKnownProperty(context, PROP_TOP, value.getItemAt(context, 1));
             } else {
-                throw new HtSemanticException("Expected a point, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
 
@@ -153,7 +153,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue()));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue()));
             } else {
-                throw new HtSemanticException("Expected a point, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
         definePropertyAlias(PROP_BOTTOMRIGHT, PROP_BOTRIGHT);
@@ -177,7 +177,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
                 model.setKnownProperty(context, PROP_LEFT, new Value(value.getItemAt(context, 0).longValue() - model.getKnownProperty(context, PROP_WIDTH).longValue() / 2));
                 model.setKnownProperty(context, PROP_TOP, new Value(value.getItemAt(context, 1).longValue() - model.getKnownProperty(context, PROP_HEIGHT).longValue() / 2));
             } else {
-                throw new HtSemanticException("Expected a point, but got " + value.stringValue());
+                throw new HtSemanticException("Expected a point, but got " + value.toString());
             }
         });
 
@@ -243,7 +243,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
 
     private void precompile(ExecutionContext context) {
         if (hasProperty(PROP_SCRIPTTEXT)) {
-            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).stringValue(), (scriptText, compiledScript, generatedError) -> {
+            Interpreter.asyncCompile(CompilationUnit.SCRIPT, getKnownProperty(context, PROP_SCRIPTTEXT).toString(), (scriptText, compiledScript, generatedError) -> {
                 if (generatedError == null) {
                     script = (Script) compiledScript;
                     script.applyBreakpoints(getBreakpoints());
@@ -265,7 +265,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     }
 
     public String getScriptText(ExecutionContext context) {
-        return getKnownProperty(context, PROP_SCRIPTTEXT).stringValue();
+        return getKnownProperty(context, PROP_SCRIPTTEXT).toString();
     }
 
     public Owner getOwner() {
@@ -292,7 +292,7 @@ public abstract class PartModel extends PropertiesModel implements Messagable {
     }
 
     public String getName(ExecutionContext context) {
-        return getKnownProperty(context, PROP_NAME).stringValue();
+        return getKnownProperty(context, PROP_NAME).toString();
     }
 
     public PartSpecifier getPartSpecifier(ExecutionContext context) {

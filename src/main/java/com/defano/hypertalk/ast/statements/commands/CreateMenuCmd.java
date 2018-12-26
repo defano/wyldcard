@@ -18,6 +18,6 @@ public class CreateMenuCmd extends Command {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException {
-        HyperCardMenuBar.getInstance().createMenu(menuName.evaluate(context).stringValue());
+        HyperCardMenuBar.getInstance().createMenu(menuName.evaluate(context).toString());
     }
 }

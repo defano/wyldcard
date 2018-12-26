@@ -4,6 +4,7 @@ import com.defano.hypertalk.ast.preemptions.Preemption;
 import com.defano.hypertalk.ast.expressions.Expression;
 import com.defano.hypertalk.ast.statements.Statement;
 import com.defano.hypertalk.exception.HtException;
+import com.defano.hypertalk.exception.HtSemanticException;
 import com.defano.wyldcard.runtime.context.ExecutionContext;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -23,7 +24,7 @@ public class IfStatement extends Statement {
 
     @Override
     public void onExecute(ExecutionContext context) throws HtException, Preemption {
-        if (condition.evaluate(context).checkedBooleanValue()) {
+        if (condition.evaluate(context).booleanValueOrError(new HtSemanticException("Condition expects a true or false value."))) {
             then.thenBranch.execute(context);
         } else if (then.elseBranch != null) {
             then.elseBranch.execute(context);

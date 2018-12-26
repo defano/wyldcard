@@ -78,13 +78,13 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
         // Don't display "default" name ('card id xxx')
         Value cardNameValue = cardModel.getRawProperty(CardModel.PROP_NAME);
         if (cardNameValue != null && !cardNameValue.isEmpty()) {
-            cardName.setText(cardModel.getKnownProperty(context, CardModel.PROP_NAME).stringValue());
+            cardName.setText(cardModel.getKnownProperty(context, CardModel.PROP_NAME).toString());
         }
 
         cardMarkedCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_MARKED).booleanValue());
         cantDeleteCardCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_CANTDELETE).booleanValue());
         dontSearchCheckBox.setSelected(cardModel.getKnownProperty(context, CardModel.PROP_DONTSEARCH).booleanValue());
-        cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(context, CardModel.PROP_ID).stringValue()));
+        cardIdLabel.setText(String.valueOf(cardModel.getKnownProperty(context, CardModel.PROP_ID).toString()));
 
         long fieldCount = card.getCardModel().getPartCount(context, PartType.FIELD, Owner.CARD);
         long buttonCount = card.getCardModel().getPartCount(context, PartType.BUTTON, Owner.CARD);
@@ -99,7 +99,7 @@ public class CardPropertyEditor extends WyldCardDialog<CardPart> {
 
     private void showContentsEditor() {
         ExecutionContext context = new ExecutionContext();
-        String contents = PartContentsEditor.editContents(cardModel.getKnownProperty(context, PartModel.PROP_CONTENTS).stringValue(), getWindowPanel());
+        String contents = PartContentsEditor.editContents(cardModel.getKnownProperty(context, PartModel.PROP_CONTENTS).toString(), getWindowPanel());
 
         if (contents != null) {
             cardModel.setKnownProperty(context, PartModel.PROP_CONTENTS, new Value(contents));
