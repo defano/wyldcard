@@ -9,6 +9,7 @@ import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public interface WindowManager extends WindowFinder, Themeable {
 
@@ -71,11 +72,11 @@ public interface WindowManager extends WindowFinder, Themeable {
     @RunOnDispatch
     StackWindow getWindowForStack(ExecutionContext context, StackPart stackPart);
 
-    BehaviorSubject<java.util.List<WyldCardFrame>> getFramesProvider();
+    BehaviorSubject<List<WyldCardFrame>> getFramesProvider();
 
-    BehaviorSubject<java.util.List<WyldCardFrame>> getVisibleWindowsProvider();
+    BehaviorSubject<List<WyldCardFrame>> getVisibleWindowsProvider();
 
-    BehaviorSubject<java.util.List<WyldCardFrame>> getVisiblePalettesProvider();
+    BehaviorSubject<List<WyldCardFrame>> getVisiblePalettesProvider();
 
     WyldCardFrame nextWindow();
 

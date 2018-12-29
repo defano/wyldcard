@@ -126,11 +126,9 @@ public class DateUtils {
             case LONG_DATE:
             case SHORT_DATE:
             case ABBREV_DATE:
-                cal.setTime(updated);
-                cal.set(Calendar.YEAR, second.getYear());
-                cal.set(Calendar.MONTH, second.getMonth());
-                cal.set(Calendar.DATE, second.getDate());
-                return cal.getTime();
+                updated.setYear(second.getYear());
+                updated.setMonth(second.getMonth());
+                updated.setDate(second.getDate());
 
             case LONG_TIME:
             case SHORT_TIME:
