@@ -9,6 +9,7 @@ buildscript {
 
 plugins {
 	id "org.sonarqube" version "2.6"
+	id 'com.gradle.build-scan' version '1.16'
 }
 
 apply plugin: 'java'
@@ -108,9 +109,12 @@ dependencies {
 }
 
 test {
-	useJUnitPlatform {
-		includeEngines 'junit-jupiter', 'junit-vintage'
-	}
+	useJUnitPlatform()
+}
+
+buildScan {
+	termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+	termsOfServiceAgree = 'yes'
 }
 
 generateGrammarSource {
